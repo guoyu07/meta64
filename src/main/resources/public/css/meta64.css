@@ -72,6 +72,7 @@ Bold labels are more visible on a background image.
 	background-size: 100% auto; 
 	background-repeat: no-repeat;
 	*/
+	
 }
 
 .created-by-me {
@@ -132,6 +133,7 @@ Bold labels are more visible on a background image.
 }
 
 .binary-link {
+	
 }
 
 .privilege-entry {
@@ -143,6 +145,10 @@ Bold labels are more visible on a background image.
 
 .jcr-content {
 	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide 
+		becomes difficult to read.
+	*/
+	max-width: 800px;
 }
 
 .property-text {
@@ -201,12 +207,12 @@ Bold labels are more visible on a background image.
 }
 
 .my-container img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    opacity: 0.6;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: auto;
+	opacity: 0.6;
 }
 
 .active-row {

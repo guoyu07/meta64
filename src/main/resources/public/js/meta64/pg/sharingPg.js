@@ -46,4 +46,4 @@ var sharingPg = function() {
 	return _;
 }();
 
-// # sourceURL=sharingPg.js
+//#  sourceURL=sharingPg.js

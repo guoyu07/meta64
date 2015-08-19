@@ -41,4 +41,4 @@ var searchResultsPg = function() {
 	return _;
 }();
 
-// # sourceURL=searchResultsPg.js
+//#  sourceURL=searchResultsPg.js

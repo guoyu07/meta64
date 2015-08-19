@@ -24,9 +24,13 @@ var messagePg = function() {
 
 			util.setHtmlEnhanced($("#messagePg"), content);
 			
-			$("#messagePgOkButton").on("click", function() {
+			$("#messagePgOkButton").on("click", _.runCallback);
+		},
+		
+		runCallback : function() {
+			if (_callback) {
 				_callback();
-			});
+			}
 		},
 
 		init : function() {
@@ -39,4 +43,4 @@ var messagePg = function() {
 	return _;
 }();
 
-// # sourceURL=messagePg.js
+//#  sourceURL=messagePg.js

@@ -100,6 +100,12 @@ var util = function() {
 			 * passed to it end up failing, it fails this "ANDed" one also.
 			 */
 			prms.done(function(jqXHR) {
+				if (jqXHR.errorCodeName === "not-logged-in") {
+					alert("Oops. Session timed out.");
+					$(window).off("beforeunload");
+					window.location.href = window.location.origin;
+				}
+				
 				if (logAjax) {
 					console.log("JSON-RESULT: " + postName + "\nJSON-RESULT-DATA: " + JSON.stringify(jqXHR));
 				}
@@ -119,11 +125,17 @@ var util = function() {
 				} catch (ex) {
 				}
 
-				/* this catch block should also fail silently */
-				try {
-					msg += "Response: " + JSON.parse(xhr.responseText).exception;
-				} catch (ex) {
-				}
+				/*
+				 * this catch block should also fail silently
+				 * 
+				 * This was showing "classCastException" when I threw a regular
+				 * "Exception" from server so for now I'm just turning this off
+				 * since its' not displaying the correct message.
+				 */
+				// try {
+				// msg += "Response: " + JSON.parse(xhr.responseText).exception;
+				// } catch (ex) {
+				// }
 				alert(msg);
 			});
 
@@ -235,7 +247,7 @@ var util = function() {
 		setCheckboxVal : function(id, val) {
 			$(id).prop("checked", val).checkboxradio("refresh");
 		},
-		
+
 		isObject : function(obj) {
 			return obj && obj.length != 0;
 		},

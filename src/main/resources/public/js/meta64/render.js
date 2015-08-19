@@ -643,6 +643,24 @@ var render = function() {
 
 				if (node.width && node.height) {
 
+					/*
+					 * New Logic is try to display image at 150% meaning it can
+					 * go outside the content div it's in, which we want, but
+					 * then we also limit it with max-width so on smaller screen
+					 * devices or small window resizings even on desktop
+					 * browsers the image will always be entirely visible and
+					 * not clipped.
+					 */
+					// var maxWidth = meta64.deviceWidth - 80;
+					// elm.attr("width", "150%");
+					// elm.attr("height", "auto");
+					// elm.attr("style", "max-width: " + maxWidth + "px;");
+					/*
+					 * DO NOT DELETE (for a long time at least) This is the old
+					 * logic for resizing images responsively, and it works fine
+					 * but my new logic is better, with limiting max width based
+					 * on screen size. But keep this old code for now..
+					 */
 					if (node.width > meta64.deviceWidth - 80) {
 
 						/* set the width we want to go for */
@@ -654,8 +672,11 @@ var render = function() {
 						// var height = width * node.height / node.width;
 						elm.attr("width", "100%");
 						elm.attr("height", "auto");
+						elm.attr("style", "max-width: " + maxWidth + "px;");
 					}
-					/* Image does fit on screen so render it at it's exact size */
+					/*
+					 * Image does fit on screen so render it at it's exact size
+					 */
 					else {
 						elm.attr("width", node.width);
 						elm.attr("height", node.height);

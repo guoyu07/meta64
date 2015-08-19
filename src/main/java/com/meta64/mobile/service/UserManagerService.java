@@ -101,8 +101,10 @@ public class UserManagerService {
 	 * reloads.
 	 */
 	public void login(Session session, LoginRequest req, LoginResponse res) throws Exception {
+
 		String userName = req.getUserName();
 		String password = req.getPassword();
+		log.trace("login: user=" + userName);
 
 		/*
 		 * We have to get timezone information from the user's browser, so that all times on all
@@ -120,6 +122,7 @@ public class UserManagerService {
 		}
 
 		if (session == null) {
+			log.trace("    session==null, using anonymous user");
 			/*
 			 * Note: This is not an error condition, this happens whenever the page loads for the
 			 * first time and the user has no session yet,
@@ -148,7 +151,7 @@ public class UserManagerService {
 		}
 		res.setAnonUserLandingPageNode(anonUserLandingPageNode);
 
-		log.debug("Processing Login: homeNodeOverride=" + (sessionContext.getUrlId() != null ? sessionContext.getUrlId() : "null"));
+		log.debug("Processing Login: urlId=" + (sessionContext.getUrlId() != null ? sessionContext.getUrlId() : "null"));
 
 		res.setHomeNodeOverride(sessionContext.getUrlId());
 
@@ -258,7 +261,7 @@ public class UserManagerService {
 		});
 		return ret.getVal();
 	}
-	
+
 	/* Returns true if the user exists and matches the oauthServie */
 	public boolean userExists(Session session, String userName, String oauthService, ValContainer<String> passwordContainer) throws Exception {
 		Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" + userName);
@@ -472,7 +475,7 @@ public class UserManagerService {
 		sessionContext.setPassword(req.getNewPassword());
 		res.setSuccess(true);
 	}
-	
+
 	/*
 	 * Warning: not yet tested. Ended up not needing this yet.
 	 */

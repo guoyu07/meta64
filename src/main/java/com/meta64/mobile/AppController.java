@@ -1,6 +1,7 @@
 package com.meta64.mobile;
 
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -92,6 +93,7 @@ import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.BrandingUtil;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.SpringMvcUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -109,6 +111,10 @@ import com.meta64.mobile.util.ThreadLocals;
  * get pretty ugly when you have various proxied objects calling other proxies objects, so I have
  * all the AOP for a service call in this controller and then all the services are pure and simple
  * Spring Singletons.
+ * 
+ * I realize there is a lot of boiler-plate code in here, which at first glance may appear to be
+ * code that should moved into the AOP cross-cutting processor (i.e. @OakSession), but this really
+ * isn't the case. This code better as it is. Sometimes boiler plate needs to exist.
  */
 @Controller
 public class AppController {
@@ -177,7 +183,7 @@ public class AppController {
 		springMvcUtil.configureSpa(model);
 		return "index";
 	}
-	
+
 	/*
 	 * This is the actual app page loading request, for his SPA (Single Page Application) this is
 	 * the request to load the page.
@@ -239,6 +245,7 @@ public class AppController {
 		logRequest("closeAccount", req);
 		CloseAccountResponse res = new CloseAccountResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		userManagerService.closeAccount(session, req, res);
 		return res;
@@ -263,16 +270,20 @@ public class AppController {
 		session.invalidate();
 		LogoutResponse res = new LogoutResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		res.setSuccess(true);
 		return res;
 	}
 
 	@RequestMapping(value = API_PATH + "/renderNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody RenderNodeResponse renderNode(@RequestBody RenderNodeRequest req) throws Exception {
+	public @ResponseBody RenderNodeResponse renderNode(@RequestBody RenderNodeRequest req, //
+			HttpServletRequest httpReq) throws Exception {
+
 		logRequest("renderNode", req);
 		RenderNodeResponse res = new RenderNodeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeRenderService.renderNode(session, req, res, true);
 		return res;
@@ -284,6 +295,7 @@ public class AppController {
 		logRequest("initNodeEdit", req);
 		InitNodeEditResponse res = new InitNodeEditResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeRenderService.initNodeEdit(session, req, res);
 		return res;
@@ -295,6 +307,7 @@ public class AppController {
 		logRequest("getNodePrivileges", req);
 		GetNodePrivilegesResponse res = new GetNodePrivilegesResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		aclService.getNodePrivileges(session, req, res);
 		return res;
@@ -306,6 +319,7 @@ public class AppController {
 		logRequest("addPrivilege", req);
 		AddPrivilegeResponse res = new AddPrivilegeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		aclService.addPrivilege(session, req, res);
 		return res;
@@ -317,6 +331,7 @@ public class AppController {
 		logRequest("removePrivilege", req);
 		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		aclService.removePrivilege(session, req, res);
 		return res;
@@ -328,6 +343,7 @@ public class AppController {
 		logRequest("exportToXml", req);
 		ExportResponse res = new ExportResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		importExportService.exportToXml(session, req, res);
 		return res;
@@ -339,6 +355,7 @@ public class AppController {
 		logRequest("import", req);
 		ImportResponse res = new ImportResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 
 		String fileName = req.getSourceFileName();
@@ -364,6 +381,7 @@ public class AppController {
 		logRequest("setNodePosition", req);
 		SetNodePositionResponse res = new SetNodePositionResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeMoveService.setNodePosition(session, req, res);
 		return res;
@@ -378,6 +396,7 @@ public class AppController {
 		logRequest("createSubNode", req);
 		CreateSubNodeResponse res = new CreateSubNodeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.createSubNode(session, req, res);
 		return res;
@@ -390,6 +409,7 @@ public class AppController {
 		logRequest("insertNode", req);
 		InsertNodeResponse res = new InsertNodeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.insertNode(session, req, res);
 		return res;
@@ -401,6 +421,7 @@ public class AppController {
 		logRequest("renameNode", req);
 		RenameNodeResponse res = new RenameNodeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.renameNode(session, req, res);
 		return res;
@@ -412,6 +433,7 @@ public class AppController {
 		logRequest("insertBook", req);
 		InsertBookResponse res = new InsertBookResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		importExportService.insertBook(session, req, res);
 		return res;
@@ -423,6 +445,7 @@ public class AppController {
 		logRequest("deleteNodes", req);
 		DeleteNodesResponse res = new DeleteNodesResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeMoveService.deleteNodes(session, req, res);
 		return res;
@@ -434,6 +457,7 @@ public class AppController {
 		logRequest("moveNodes", req);
 		MoveNodesResponse res = new MoveNodesResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeMoveService.moveNodes(session, req, res);
 		return res;
@@ -445,6 +469,7 @@ public class AppController {
 		logRequest("deleteAttachment", req);
 		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		attachmentService.deleteAttachment(session, req, res);
 		return res;
@@ -456,6 +481,7 @@ public class AppController {
 		logRequest("deleteProperty", req);
 		DeletePropertyResponse res = new DeletePropertyResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.deleteProperty(session, req, res);
 		return res;
@@ -467,6 +493,7 @@ public class AppController {
 		logRequest("saveNode", req);
 		SaveNodeResponse res = new SaveNodeResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.saveNode(session, req, res);
 		return res;
@@ -478,6 +505,7 @@ public class AppController {
 		logRequest("makeNodeReferencable", req);
 		MakeNodeReferencableResponse res = new MakeNodeReferencableResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.makeNodeReferencable(session, req, res);
 		return res;
@@ -489,6 +517,7 @@ public class AppController {
 		logRequest("saveProperty", req);
 		SavePropertyResponse res = new SavePropertyResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeEditService.saveProperty(session, req, res);
 		return res;
@@ -500,6 +529,7 @@ public class AppController {
 		logRequest("changePassword", req);
 		ChangePasswordResponse res = new ChangePasswordResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		userManagerService.changePassword(session, req, res);
 		return res;
@@ -533,6 +563,8 @@ public class AppController {
 	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) throws Exception {
 		logRequest("uploadFromUrl", req);
 		UploadFromUrlResponse res = new UploadFromUrlResponse();
+		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		attachmentService.uploadFromUrl(session, req, res);
 		return res;
@@ -543,6 +575,8 @@ public class AppController {
 	public @ResponseBody AnonPageLoadResponse anonPageLoad(@RequestBody AnonPageLoadRequest req) throws Exception {
 		logRequest("anonPageLoad", req);
 		AnonPageLoadResponse res = new AnonPageLoadResponse();
+		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeRenderService.anonPageLoad(session, req, res);
 		return res;
@@ -554,6 +588,7 @@ public class AppController {
 		logRequest("nodeSearch", req);
 		NodeSearchResponse res = new NodeSearchResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeSearchService.search(session, req, res);
 		return res;
@@ -565,6 +600,7 @@ public class AppController {
 		logRequest("saveUserPreferences", req);
 		SaveUserPreferencesResponse res = new SaveUserPreferencesResponse();
 		ThreadLocals.setResponse(res);
+		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		userManagerService.saveUserPreferences(session, req, res);
 		return res;
@@ -572,5 +608,11 @@ public class AppController {
 
 	private static void logRequest(String url, Object req) throws Exception {
 		log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
+	}
+
+	private void checkSession() throws NotLoggedInException {
+		if (sessionContext.getUserName() == null) {
+			throw new NotLoggedInException();
+		}
 	}
 }

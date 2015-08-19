@@ -31,8 +31,7 @@ var user = function() {
 	/* ret is LoginResponse.java */
 	var _loginResponse = function(res, usr, pwd, usingCookies) {
 		if (util.checkSuccess("Login", res)) {
-			// console.log("info.usr=" + info.usr + " homeNodeOverride: " +
-			// res.homeNodeOverride);
+			console.log("info.usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
 			if (usr != "anonymous") {
 				_.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
@@ -57,10 +56,10 @@ var user = function() {
 				id = res.homeNodeOverride;
 			} else {
 				if (res.userPreferences.lastNode) {
-					console.log("loading lastNode="+res.userPreferences.lastNode);
+					console.log("loading lastNode=" + res.userPreferences.lastNode);
 					id = res.userPreferences.lastNode;
 				} else {
-					console.log("loading homeNodeId="+meta64.homeNodeId);
+					console.log("loading homeNodeId=" + meta64.homeNodeId);
 					id = meta64.homeNodeId;
 				}
 			}
@@ -84,6 +83,8 @@ var user = function() {
 	}
 
 	var _refreshLoginResponse = function(res) {
+		console.log("refreshLoginResponse");
+		
 		// if (res.success) {
 		_setStateVarsUsingLoginResponse(res);
 		_setTitleUsingLoginResponse(res);
@@ -209,10 +210,12 @@ var user = function() {
 		},
 
 		refreshLogin : function() {
-
+			console.log("refreshLogin.");
+			
 			var callUsr, callPwd, usingCookies = false;
 			var loginSessionReady = $("#loginSessionReady").text();
 			if (loginSessionReady === "true") {
+				console.log("    loginSessionReady = true");
 				/*
 				 * using blank credentials will cause server to look for a valid
 				 * session
@@ -221,6 +224,8 @@ var user = function() {
 				callPwd = "";
 				usingCookies = true;
 			} else {
+				console.log("    loginSessionReady = false");
+				
 				var loginState = $.cookie(cnst.COOKIE_LOGIN_STATE);
 
 				/* if we have known state as logged out, then do nothing here */
@@ -233,8 +238,8 @@ var user = function() {
 				var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
 
 				usingCookies = !util.emptyString(usr) && !util.emptyString(pwd);
-				// console.log("cookieUser=" + usr + " usingCookies = " +
-				// usingCookies);
+				console.log("cookieUser=" + usr + " usingCookies = " + usingCookies);
+
 				/*
 				 * empyt credentials causes server to try to log in with any
 				 * active session credentials.
@@ -321,4 +326,4 @@ var user = function() {
 	return _;
 }();
 
-// # sourceURL=user.js
+//#  sourceURL=user.js

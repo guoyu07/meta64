@@ -25,10 +25,14 @@ var confirmPg = function() {
 			}, fields);
 
 			util.setHtmlEnhanced($("#confirmPg"), content);
-			
-			$("#confirmPgYesButton").on("click", function() {
+
+			$("#confirmPgYesButton").on("click", _.runCallback);
+		},
+
+		runCallback : function() {
+			if (_callback) {
 				_callback();
-			});
+			}
 		},
 
 		init : function() {

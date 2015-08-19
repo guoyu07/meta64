@@ -343,4 +343,4 @@ var props = function() {
 	return _;
 }();
 
-// # sourceURL=props.js
+//#  sourceURL=props.js

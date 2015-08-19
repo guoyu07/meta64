@@ -768,4 +768,4 @@ var edit = function() {
 	return _;
 }();
 
-// # sourceURL=edit.js
+//#  sourceURL=edit.js

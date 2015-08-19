@@ -61,9 +61,13 @@ public class SessionContext {
 	@Autowired
 	private OakRepository oak;
 
+	public SessionContext() {
+		log.trace(String.format("Creating Session object hashCode[%d]", hashCode()));
+	}
+	
 	@PreDestroy
 	public void preDestroy() {
-		// not used currently
+		log.trace(String.format("Destroying Session object hashCode[%d] of user %s", hashCode(), userName));
 	}
 
 	public boolean isAdmin() {

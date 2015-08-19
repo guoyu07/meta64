@@ -21,6 +21,7 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -49,6 +50,14 @@ public class OakSessionAspect {
 	@Around("@annotation(com.meta64.mobile.annotate.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 
+		// TODO: learn about sessionMutex (I have one i have implemented in my SessionContext object
+		// and I may
+		// be able to do it a better way.
+
+		// ServletRequestAttributes attr = (ServletRequestAttributes)
+		// RequestContextHolder.currentRequestAttributes();
+		// HttpSession httpSession = attr.getRequest().getSession();
+
 		Object ret = null;
 		Session session = null;
 		SessionContext sessionContext = (SessionContext) SpringContextUtil.getBean(SessionContext.class);
@@ -61,6 +70,13 @@ public class OakSessionAspect {
 			ThreadLocals.setJcrSession(session);
 			ret = joinPoint.proceed();
 		}
+		catch (NotLoggedInException e1) {
+			ret = ThreadLocals.getResponse();
+
+			if (ret instanceof OakResponseBase) {
+				((OakResponseBase)ret).setErrorCodeName("not-logged-in");
+			}
+		}
 		catch (Exception e) {
 			log.error("exception: " + e.getMessage());
 
@@ -70,9 +86,13 @@ public class OakSessionAspect {
 			 */
 			ret = ThreadLocals.getResponse();
 
-			if (ret == null) {
-				ret = new OakResponseBase();
-			}
+			/* 
+			 * MVC rest methods will choke if they end up returning an OakResponsBase which is not
+			 * their declared return type, so stop creating this here.
+			 */
+//			if (ret == null) {
+//				ret = new OakResponseBase();
+//			}
 
 			if (ret instanceof OakResponseBase) {
 				OakResponseBase orb = (OakResponseBase) ret;

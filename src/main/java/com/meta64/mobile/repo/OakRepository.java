@@ -61,7 +61,7 @@ public class OakRepository {
 
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
-	
+
 	private LuceneIndexProvider indexProvider;
 	private DocumentNodeStore nodeStore;
 	private DocumentNodeState root;
@@ -69,8 +69,9 @@ public class OakRepository {
 	private Oak oak;
 	private Jcr jcr;
 	private Repository repository;
-	protected ConfigurationParameters securityParams;
+	private ConfigurationParameters securityParams;
 	private SecurityProvider securityProvider;
+	private DB db;
 
 	/*
 	 * Because of the criticality of this variable, I am not using the Spring getter to get it, but
@@ -134,7 +135,8 @@ public class OakRepository {
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
-		mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
+		/* I decided to do lazy init */
+		// mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
 	}
 
 	@PreDestroy
@@ -156,15 +158,23 @@ public class OakRepository {
 		});
 	}
 
-	public Repository getRepository() {
+	public Repository getRepository() throws Exception {
+		lazyInit();
 		return repository;
 	}
 
+	private void lazyInit() throws Exception {
+		if (!initialized) {
+			mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
+		}
+	}
+
 	public Session newAdminSession() throws Exception {
+		lazyInit();
 		return repository.login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
 	}
 
-	public void mongoInit(String mongoDbHost, int mongoDbPort, String mongoDbName) throws Exception {
+	private void mongoInit(String mongoDbHost, int mongoDbPort, String mongoDbName) throws Exception {
 		synchronized (lock) {
 			if (initialized) {
 				throw new Exception("Repository already initialized");
@@ -172,17 +182,18 @@ public class OakRepository {
 			initialized = true;
 
 			try {
-				DB db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
-				DocumentNodeStore ns = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
-				root = ns.getRoot();
+				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
+				nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+				
+				root = nodeStore.getRoot();
 
 				/* can shutdown during startup. */
 				if (AppServer.isShuttingDown()) return;
 
 				executor = Oak.defaultExecutorService();
-				oak = new Oak(ns);
+				oak = new Oak(nodeStore);
 				oak = oak.with(executor);
-				
+
 				jcr = new Jcr(oak);
 				jcr = jcr.with(getSecurityProvider());
 
@@ -202,7 +213,7 @@ public class OakRepository {
 					jcr = jcr.with(new LuceneIndexEditorProvider());
 					jcr = jcr.withAsyncIndexing();
 				}
-				
+
 				/* can shutdown during startup. */
 				if (AppServer.isShuttingDown()) return;
 
@@ -243,15 +254,11 @@ public class OakRepository {
 
 	public void close() {
 		synchronized (lock) {
-			if (!initialized) {
-				return;
-			}
-			initialized = false;
 
-			log.debug("Shutting down Oak Executor");
 			if (executor != null) {
+				log.debug("Shutting down Oak Executor");
 				executor.shutdown();
-				
+
 				log.debug("Awaiting executor shutdown");
 				try {
 					executor.awaitTermination(5, TimeUnit.MINUTES);
@@ -260,33 +267,39 @@ public class OakRepository {
 				catch (InterruptedException ex) {
 					log.error("Executor failed to shutdown gracefully.", ex);
 				}
-				
+
 				executor = null;
 			}
 			
-			log.debug("disposing nodeStore.");
 			if (nodeStore != null) {
+				log.debug("disposing nodeStore.");
 				nodeStore.dispose();
 				nodeStore = null;
 			}
 
-			log.debug("Closing indexProvider.");
 			if (indexProvider != null) {
+				log.debug("Closing indexProvider.");
 				indexProvider.close();
 				indexProvider = null;
 			}
-			
-			log.debug("Shutting down repository.");
-			if (repository!=null) {
-				((RepositoryImpl)repository).shutdown();
+
+			if (repository != null) {
+				log.debug("Shutting down repository.");
+				((RepositoryImpl) repository).shutdown();
 				repository = null;
 			}
 			
-			log.debug("***** All Persistence Shutdown complete. *****");
+			if (db != null) {
+				if (db.getMongo() != null) {
+					db.getMongo().close();
+				}
+				db = null;
+			}
 		}
 	}
 
-	public DocumentNodeState getRoot() {
+	public DocumentNodeState getRoot() throws Exception {
+		lazyInit();
 		return root;
 	}
 

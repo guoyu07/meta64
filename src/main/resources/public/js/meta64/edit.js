@@ -363,6 +363,12 @@ var edit = function() {
 			}
 		},
 
+		fullRepositoryExport : function() {
+			util.json("exportToXml", {
+				"nodeId" : "/"
+			}, _exportResponse);
+		},
+
 		openExportPg : function() {
 			meta64.changePage(exportPg);
 		},
@@ -650,7 +656,7 @@ var edit = function() {
 		replyToComment : function(uid) {
 			_.createSubNode(uid);
 		},
-		
+
 		createSubNode : function(uid) {
 			/*
 			 * If no uid provided we deafult to creating a node under the
@@ -712,7 +718,7 @@ var edit = function() {
 
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
-				alert('You have not selected any nodes. Select nodes to delete first.');
+				alert('You have not selected any nodes. Select nodes to move first.');
 				return;
 			}
 
@@ -768,4 +774,4 @@ var edit = function() {
 	return _;
 }();
 
-//#  sourceURL=edit.js
+// # sourceURL=edit.js

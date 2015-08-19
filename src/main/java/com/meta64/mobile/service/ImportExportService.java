@@ -1,6 +1,7 @@
 package com.meta64.mobile.service;
 
 import java.io.BufferedInputStream;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +72,10 @@ public class ImportExportService {
 	 */
 	private Map<String, String> zipToJcrNameMap = new HashMap<String, String>();
 
+	/*
+	 * Exports the node specified in the req. If the node specified is "/", or the repository root,
+	 * then we don't expect a filename, because we will generate a timestamped one.
+	 */
 	public void exportToXml(Session session, ExportRequest req, ExportResponse res) throws Exception {
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
@@ -85,9 +90,13 @@ public class ImportExportService {
 		}
 
 		String fileName = req.getTargetFileName();
+		if (fileName == null) {
+			fileName = String.format("full-backup-%d", System.currentTimeMillis());
+		}
+
 		fileName = fileName.replace(".", "_");
 		fileName = fileName.replace(File.separator, "_");
-		String fullFileName = adminDataFolder + File.separator + req.getTargetFileName() + ".xml";
+		String fullFileName = adminDataFolder + File.separator + fileName + ".xml";
 
 		if (FileTools.fileExists(fullFileName)) {
 			throw new Exception("File already exists.");

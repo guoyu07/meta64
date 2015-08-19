@@ -50,6 +50,7 @@ var popupMenuPg = function() {
 			_menuItem("Change Password", "changePasswordPgButton", "user.changePasswordPg();") + //
 			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + //
 			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();") + //
+			_menuItem("Full Repository Export", "fullRepositoryExport", " edit.fullRepositoryExport();") + //
 			_menuItem("Donate", "donatePgButton", "meta64.openDonatePg();");
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
@@ -98,6 +99,7 @@ var popupMenuPg = function() {
 			util.setEnablement($("#changePasswordPgButton"), !meta64.isAnonUser);
 			util.setEnablement($("#accountPreferencesPgButton"), !meta64.isAnonUser);
 			util.setEnablement($("#insertBookWarAndPeaceButton"), meta64.isAdminUser && highlightNode != null, meta64.isAdminUser);
+			util.setEnablement($("#fullRepositoryExport"), meta64.isAdminUser, meta64.isAdminUser);
 			util.setEnablement($("#donatePgButton"), true);
 			util.setEnablement($("#manageAttachmentsButton"), highlightNode != null && !meta64.isAnonUser);
 			util.setEnablement($("#editNodeSharingButton"), highlightNode != null && !meta64.isAnonUser);

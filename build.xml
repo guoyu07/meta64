@@ -1,0 +1,24 @@
+<!--
+Note: The entire purpose for this replacement script is because the Eclipse code formatter always puts a space
+after the "//", and there appears to be no formatter setting that can stop this, and unfortunately this space
+breaks the JavaScript, because the browser requires the space to NOT BE THERE in order to properly make the sourcURL.
+So the only way to combat this is just have the ant file that can be capable if fixing the JS before doing a run
+or a build if we plan on doing any "in browser" debugging.
+
+So while in IDE, we can just right-click and run the Ant build, to run this file, and we also can rest assured it 
+always gets called by our main builder bat file as well.
+-->
+	
+<project name="meta64" default="all">
+
+	<target name="all">
+
+		<replace dir="src/main/resources/public/js/meta64" summary="true">
+			<include name="**/*.js" />
+			<replacetoken><![CDATA[// # sourceURL=]]></replacetoken>
+			<replacevalue><![CDATA[//# sourceURL=]]></replacevalue>
+		</replace>
+
+	</target>
+
+</project>

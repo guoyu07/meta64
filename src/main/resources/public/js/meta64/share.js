@@ -188,4 +188,4 @@ var share = function() {
 	return _;
 }();
 
-//#  sourceURL=share.js
+//# sourceURL=share.js

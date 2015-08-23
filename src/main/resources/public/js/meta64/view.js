@@ -99,4 +99,4 @@ var view = function() {
 	return _;
 }();
 
-//#  sourceURL=view.js
+//# sourceURL=view.js

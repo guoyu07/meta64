@@ -5,6 +5,8 @@ pause
 
 cd ..
 
+call ant -buildfile build.xml all
+
 call mvn dependency:sources
 call mvn dependency:resolve -Dclassifier=javadoc
 

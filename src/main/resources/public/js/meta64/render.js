@@ -496,7 +496,7 @@ var render = function() {
 
 			if (!data || !data.node) {
 				util.setVisibility("#listView", false);
-				$("#mainNodeContent").html("No default content is available.");
+				$("#mainNodeContent").html("No content is available here.");
 				return;
 			} else {
 				util.setVisibility("#listView", true);
@@ -549,9 +549,12 @@ var render = function() {
 					buttonBar = _.makeHorizontalFieldSet(editNodeButton, "compact-field-contain page-top-button-bar");
 				}
 
+				var focusNode = meta64.getHighlightedNode();
+				var selected = focusNode && focusNode.uid === uid;
+				
 				var content = _.makeTag("div", //
 				{
-					"class" : "node-table-row page-parent-node inactive-row",
+					"class" : "node-table-row page-parent-node "+(selected ? " active-row" : " inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
 					"id" : cssId,
 					"style" : bkgStyle
@@ -844,4 +847,4 @@ var render = function() {
 	return _;
 }();
 
-// # sourceUrl=render.js
+//# sourceUrl=render.js

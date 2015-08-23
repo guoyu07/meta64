@@ -84,7 +84,7 @@ var user = function() {
 
 	var _refreshLoginResponse = function(res) {
 		console.log("refreshLoginResponse");
-		
+
 		// if (res.success) {
 		_setStateVarsUsingLoginResponse(res);
 		_setTitleUsingLoginResponse(res);
@@ -211,7 +211,7 @@ var user = function() {
 
 		refreshLogin : function() {
 			console.log("refreshLogin.");
-			
+
 			var callUsr, callPwd, usingCookies = false;
 			var loginSessionReady = $("#loginSessionReady").text();
 			if (loginSessionReady === "true") {
@@ -225,7 +225,7 @@ var user = function() {
 				usingCookies = true;
 			} else {
 				console.log("    loginSessionReady = false");
-				
+
 				var loginState = $.cookie(cnst.COOKIE_LOGIN_STATE);
 
 				/* if we have known state as logged out, then do nothing here */
@@ -326,4 +326,4 @@ var user = function() {
 	return _;
 }();
 
-//#  sourceURL=user.js
+//# sourceURL=user.js

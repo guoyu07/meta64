@@ -61,12 +61,12 @@ var meta64 = function() {
 		/*
 		 * Under any given node, there can be one active 'selected' node that
 		 * has the highlighting, and will be scrolled to whenever the page with
-		 * that child is visited, and this object holds the map of parent uid to
-		 * selected node (NodeInfo object), where the key is the parent node
-		 * uid, and the value is the currently selected node within that parent.
-		 * Note this 'selection state' is only significant on the client, and
-		 * only for being able to scroll to the node during navigating around on
-		 * the tree.
+		 * that child is visited, and parentUidToFocusNodeMap holds the map of
+		 * "parent uid to selected node (NodeInfo object)", where the key is the
+		 * parent node uid, and the value is the currently selected node within
+		 * that parent. Note this 'selection state' is only significant on the
+		 * client, and only for being able to scroll to the node during
+		 * navigating around on the tree.
 		 */
 		parentUidToFocusNodeMap : {},
 
@@ -483,8 +483,8 @@ var meta64 = function() {
 		},
 
 		initConstants : function() {
-			util.addAll(_.simpleModePropertyBlackList, [jcrCnst.MIXIN_TYPES, jcrCnst.PRIMARY_TYPE, jcrCnst.POLICY, jcrCnst.IMG_WIDTH, jcrCnst.IMG_HEIGHT,
-					jcrCnst.BIN_VER, jcrCnst.BIN_DATA, jcrCnst.BIN_MIME, jcrCnst.COMMENT_BY, jcrCnst.PUBLIC_APPEND ]);
+			util.addAll(_.simpleModePropertyBlackList, [ jcrCnst.MIXIN_TYPES, jcrCnst.PRIMARY_TYPE, jcrCnst.POLICY, jcrCnst.IMG_WIDTH,
+					jcrCnst.IMG_HEIGHT, jcrCnst.BIN_VER, jcrCnst.BIN_DATA, jcrCnst.BIN_MIME, jcrCnst.COMMENT_BY, jcrCnst.PUBLIC_APPEND ]);
 
 			util.addAll(_.readOnlyPropertyList, [ jcrCnst.UUID, jcrCnst.MIXIN_TYPES, jcrCnst.CREATED, jcrCnst.CREATED_BY,
 					jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY, jcrCnst.IMG_WIDTH, jcrCnst.IMG_HEIGHT, jcrCnst.BIN_VER,
@@ -613,4 +613,4 @@ var meta64 = function() {
 	return _;
 }();
 
-//#  sourceURL=meta64.js
+// # sourceURL=meta64.js

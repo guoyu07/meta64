@@ -4,6 +4,7 @@ import javax.jcr.Credentials;
 import javax.jcr.GuestCredentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.servlet.http.HttpServletResponse;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -71,10 +72,9 @@ public class OakSessionAspect {
 			ret = joinPoint.proceed();
 		}
 		catch (NotLoggedInException e1) {
-			ret = ThreadLocals.getResponse();
-
-			if (ret instanceof OakResponseBase) {
-				((OakResponseBase)ret).setErrorCodeName("not-logged-in");
+			HttpServletResponse res = ThreadLocals.getServletResponse();
+			if (res != null) {
+				res.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
 		catch (Exception e) {
@@ -86,13 +86,13 @@ public class OakSessionAspect {
 			 */
 			ret = ThreadLocals.getResponse();
 
-			/* 
+			/*
 			 * MVC rest methods will choke if they end up returning an OakResponsBase which is not
 			 * their declared return type, so stop creating this here.
 			 */
-//			if (ret == null) {
-//				ret = new OakResponseBase();
-//			}
+			// if (ret == null) {
+			// ret = new OakResponseBase();
+			// }
 
 			if (ret instanceof OakResponseBase) {
 				OakResponseBase orb = (OakResponseBase) ret;

@@ -3,6 +3,8 @@ console.log("running module: util.js");
 var util = function() {
 
 	var logAjax = false;
+	var timeoutMessageShown = false;
+	var offline = false;
 
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
@@ -62,6 +64,10 @@ var util = function() {
 		 * 
 		 */
 		json : function(postName, postData, callback) {
+			if (offline) {
+				console.log("offline: ignoring call for " + postName);
+				return;
+			}
 
 			if (logAjax) {
 				console.log("JSON-POST: " + JSON.stringify(postData));
@@ -100,12 +106,6 @@ var util = function() {
 			 * passed to it end up failing, it fails this "ANDed" one also.
 			 */
 			prms.done(function(jqXHR) {
-				if (jqXHR.errorCodeName === "not-logged-in") {
-					alert("Oops. Session timed out.");
-					$(window).off("beforeunload");
-					window.location.href = window.location.origin;
-				}
-				
 				if (logAjax) {
 					console.log("JSON-RESULT: " + postName + "\nJSON-RESULT-DATA: " + JSON.stringify(jqXHR));
 				}
@@ -115,7 +115,22 @@ var util = function() {
 				}
 			});
 
-			prms.fail(function(xhr, status) {
+			prms.fail(function(xhr) {
+				
+				if (xhr.status == "403") {
+					console.log("Not logged in detected in util.");
+					offline = true;
+
+					if (!timeoutMessageShown) {
+						timeoutMessageShown = true;
+						alert("Session timed out. Page will refresh.");
+					}
+
+					$(window).off("beforeunload");
+					window.location.href = window.location.origin;
+					return;
+				}
+				
 				var msg = "Server request failed.\n\n";
 
 				/* catch block should fail silently */

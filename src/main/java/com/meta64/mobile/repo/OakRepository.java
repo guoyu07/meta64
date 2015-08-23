@@ -135,8 +135,7 @@ public class OakRepository {
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
-		/* I decided to do lazy init */
-		// mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
+		mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
 	}
 
 	@PreDestroy
@@ -159,18 +158,10 @@ public class OakRepository {
 	}
 
 	public Repository getRepository() throws Exception {
-		lazyInit();
 		return repository;
 	}
 
-	private void lazyInit() throws Exception {
-		if (!initialized) {
-			mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
-		}
-	}
-
 	public Session newAdminSession() throws Exception {
-		lazyInit();
 		return repository.login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
 	}
 
@@ -299,7 +290,6 @@ public class OakRepository {
 	}
 
 	public DocumentNodeState getRoot() throws Exception {
-		lazyInit();
 		return root;
 	}
 

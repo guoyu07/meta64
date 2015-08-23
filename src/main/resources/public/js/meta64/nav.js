@@ -24,7 +24,6 @@ var nav = function() {
 		upLevelResponse : function(res, id) {
 			if (!res || !res.node) {
 				alert("No data is visible to you above this node.");
-				//util.setEnablementByName("navUpLevel", false);
 			} else {
 				render.renderPageFromData(res);
 				meta64.highlightRowById(id, true);
@@ -137,7 +136,7 @@ var nav = function() {
 				checked = true;
 			}
 
-			//console.log("Classes: " + classes);
+			// console.log("Classes: " + classes);
 
 			if (checked) {
 				meta64.selectedNodes[uid] = true;
@@ -173,4 +172,4 @@ var nav = function() {
 	return _;
 }();
 
-//#  sourceURL=nav.js
+// # sourceURL=nav.js

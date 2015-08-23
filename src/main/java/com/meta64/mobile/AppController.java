@@ -96,6 +96,7 @@ import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.SpringMvcUtil;
 import com.meta64.mobile.util.ThreadLocals;
+import com.meta64.mobile.util.VarUtil;
 
 /**
  * Primary Spring MVC controller. All application logic from the browser connects directly to this
@@ -270,7 +271,6 @@ public class AppController {
 		session.invalidate();
 		LogoutResponse res = new LogoutResponse();
 		ThreadLocals.setResponse(res);
-		checkSession();
 		res.setSuccess(true);
 		return res;
 	}
@@ -611,7 +611,7 @@ public class AppController {
 	}
 
 	private void checkSession() throws NotLoggedInException {
-		if (sessionContext.getUserName() == null) {
+		if (!VarUtil.safeBooleanVal(ThreadLocals.getInitialSessionExisted())) {
 			throw new NotLoggedInException();
 		}
 	}

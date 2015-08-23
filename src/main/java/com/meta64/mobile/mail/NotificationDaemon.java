@@ -57,7 +57,7 @@ public class NotificationDaemon {
 	 */
 	@Scheduled(fixedDelay = 60 * 1000)
 	public void run() {
-		if (AppServer.isShuttingDown()) return;
+		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 		
 		/* spring always calls immediately upon startup and we will ignore the first call */
 		if (runCounter++ == 0) {

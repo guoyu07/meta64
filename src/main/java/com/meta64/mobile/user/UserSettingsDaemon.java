@@ -35,7 +35,7 @@ public class UserSettingsDaemon {
 
 	@Scheduled(fixedDelay = 20 * 1000)
 	public void run() {
-		if (AppServer.isShuttingDown()) return;
+		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 		
 		//log.trace("UserSettingsDeamon.run");
 		synchronized (lock) {

@@ -16,8 +16,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class AppServer {
 
 	private static boolean shuttingDown;
-	
+	private static boolean enableScheduling;
+
 	public static void main(String[] args) {
+		/*
+		 * If we are running AppServer then enableScheduling, otherwise we may be running some
+		 * command line service such as BackupUtil, in which case deamons need to be deactivated.
+		 */
+		enableScheduling = true;
 		SpringApplication.run(AppServer.class, args);
 		hookEclipseShutdown(args);
 	}
@@ -79,5 +85,9 @@ public class AppServer {
 
 	public static void setShuttingDown(boolean shuttingDown) {
 		AppServer.shuttingDown = shuttingDown;
+	}
+
+	public static boolean isEnableScheduling() {
+		return enableScheduling;
 	}
 }

@@ -1,21 +1,7 @@
 package com.meta64.mobile.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.Node;
-import javax.jcr.Session;
-
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.plugins.backup.FileStoreBackup;
 import org.apache.jackrabbit.oak.plugins.backup.FileStoreRestore;
 import org.apache.jackrabbit.oak.plugins.document.DocumentMK;
@@ -25,30 +11,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.config.SpringContextUtil;
-import com.meta64.mobile.repo.OakRepository;
-import com.meta64.mobile.request.ExportRequest;
-import com.meta64.mobile.request.ImportRequest;
-import com.meta64.mobile.request.InsertBookRequest;
-import com.meta64.mobile.response.ExportResponse;
-import com.meta64.mobile.response.ImportResponse;
-import com.meta64.mobile.response.InsertBookResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.FileTools;
-import com.meta64.mobile.util.ImportWarAndPeace;
-import com.meta64.mobile.util.JcrUtil;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
 /**
- * Import and Export to and from XML files, as well as the special processing to import the book War
- * and Peace in it's special format.
+ * This class is experimental and is not yet working!
  * 
- * TODO: We probably should separate out the book import part into a seperate service file.
+ * Currently, what happens when I run a 'restore' is the following exception gets thrown inside OAK
+ * code because the "NodeBuilder" that Oak creates for it's own use in the restore ends up choking
+ * itself here. So as far as I can determine this is an Oak bug, because it creates this object and
+ * then blows up on it's own object.
+ * 
+ * private static DocumentRootBuilder asDocumentRootBuilder(NodeBuilder builder) throws
+ * IllegalArgumentException { if (!(builder instanceof DocumentRootBuilder)) { throw new
+ * IllegalArgumentException("builder must be a " + DocumentRootBuilder.class.getName()); } return
+ * (DocumentRootBuilder) builder; }
  */
 @Component
 @Scope("singleton")
@@ -73,10 +54,29 @@ public class BackupService {
 	private DocumentNodeStore nodeStore;
 	private DB db;
 
+	@Autowired
+	private Environment env;
+
+	public void runCommandLine() throws Exception {
+		String cmd = env.getProperty("cmd");
+		if ("backup".equals(cmd)) {
+			backup();
+		}
+		else if ("restore".equals(cmd)) {
+			restore();
+		}
+	}
+
 	public void backup() throws Exception {
 		try {
-			connect();
-			FileStoreBackup.backup(nodeStore, new File("c:\\repo-backup"));
+			connect(mongoDbName);
+			if (!FileTools.dirExists(adminDataFolder)) {
+				throw new Exception("adminDataFolder does not exist: " + adminDataFolder);
+			}
+			String targetFolder = adminDataFolder + File.separator + "BK" + System.currentTimeMillis();
+			log.debug("Backing up to: " + targetFolder);
+			FileTools.createDirectory(targetFolder);
+			FileStoreBackup.backup(nodeStore, new File(targetFolder));
 		}
 		finally {
 			disconnect();
@@ -85,22 +85,36 @@ public class BackupService {
 
 	public void restore() throws Exception {
 		try {
-			connect();
-			/*
-			 * Completely untested as of right now.
-			 */
-			//FileStoreRestore.restore(new File("c:\\repo-backup"), nodeStore);
+			String restoreToMongoDbName = env.getProperty("restoreToMongoDbName");
+			if (restoreToMongoDbName == null) {
+				throw new Exception("Missing 'restoreToMongoDbName' parameter.");
+			}
+
+			connect(restoreToMongoDbName);
+			String srcFolder = env.getProperty("restoreFromFolder");
+
+			if (!FileTools.dirExists(adminDataFolder)) {
+				throw new Exception("adminDataFolder does not exist: " + adminDataFolder);
+			}
+			String fullSrcFolder = adminDataFolder + File.separator + srcFolder;
+			log.debug("Restoring from folder: " + fullSrcFolder);
+
+			if (!FileTools.dirExists(fullSrcFolder)) {
+				throw new Exception("adminDataFolder does not exist: " + fullSrcFolder);
+			}
+
+			FileStoreRestore.restore(new File(fullSrcFolder), nodeStore);
 		}
 		finally {
 			disconnect();
 		}
 	}
 
-	private void connect() throws Exception {
+	private void connect(String mongoName) throws Exception {
 		if (db != null || nodeStore != null) {
 			throw new Exception("already connected.");
 		}
-		db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
+		db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoName);
 		nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
 	}
 

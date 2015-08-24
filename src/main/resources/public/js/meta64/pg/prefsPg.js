@@ -25,12 +25,15 @@ var prefsPg = function() {
 
 			var closeAccountButton = render.makeButton("Close Account", "closeAccountButton", "a");
 			var closeAccountButtonBar = render.makeHorzControlGroup(closeAccountButton);
+			var closeAccountButtonBarDiv = render.makeTag("div", {
+				"class" : "close-account-bar"
+			}, closeAccountButtonBar);
 
 			var form = render.makeTag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
-			radioBar + buttonBar + closeAccountButtonBar);
+			radioBar + buttonBar);
 
 			var internalMainContent = "";
 			var mainContent = render.makeTag("div", //
@@ -40,7 +43,7 @@ var prefsPg = function() {
 			}, //
 			internalMainContent + form);
 
-			var content = header + mainContent;
+			var content = header + mainContent + closeAccountButtonBarDiv;
 
 			util.setHtmlEnhanced($("#prefsPg"), content);
 			$("#savePreferencesButton").on("click", prefs.savePreferences);
@@ -52,4 +55,4 @@ var prefsPg = function() {
 	return _;
 }();
 
-//# sourceURL=prefsPg.js
+// # sourceURL=prefsPg.js

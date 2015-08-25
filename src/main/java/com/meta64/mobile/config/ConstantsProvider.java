@@ -10,6 +10,8 @@ public interface ConstantsProvider {
 	public String getCookiePrefix();
 
 	public String getBrandingTitle();
+	
+	public String getBrandingMetaContent();
 
 	public String getCacheVersion();
 

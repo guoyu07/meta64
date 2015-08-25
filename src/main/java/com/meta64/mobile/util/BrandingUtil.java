@@ -12,7 +12,11 @@ public class BrandingUtil {
 	@Value("${brandingTitle}")
 	private String brandingTitle;
 
+	@Value("${brandingMetaContent}")
+	private String brandingMetaContent;
+	
 	public void addBrandingAttributes(Model model) {
 		model.addAttribute("brandingTitle", brandingTitle);
+		model.addAttribute("brandingMetaContent", brandingMetaContent);
 	}
 }

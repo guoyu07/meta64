@@ -11,6 +11,8 @@ Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) bu
 [Screencasts on Youtube](https://www.youtube.com/playlist?list=PL3dRK8t30WnJUQ2vvlrY1ZH_awcGTXtEe)   
 [Browse Demo Content (Book: War and Peace)](http://www.meta64.com/?id=/meta64/war-and-peace)   
 
+*Note: The youtube videos are very out of date by now, and the app is much more feature rich and attractive than they show. I will be re-recording those again soon*.
+
 ## Meta64 Overview
 Meta64 is at it's core a **Content Repository Browser**, or an app for interacting with hierarchical data. The website you are now reading (if you're on meta64.com) is actually running this portal, and makes up everything you are seeing. The technology however is much more than a Content Browser, because it presents a GUI front end appropriate to both non-technical users, as well as the more technical users of back-end content repositories. The theory here is that *"everything is content"* and since both end users and technical users need to be able to interact with hierarchical data stores, it's desirable to have one system architecture that serves both roles well.
 
@@ -77,6 +79,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Smart dynamic image sizing. Images are sized to look best on your device regardless of screen size or orientation.
 * Soft "Branding". Can rebrand portal by a properties properties file entry.
 * For future planned features see file: **/docs/bugs-and-todos.md**
+* Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
 
 ## Technology Stack and APIs
 * Single Page Application (SPA)

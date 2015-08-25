@@ -22,12 +22,13 @@ import org.slf4j.LoggerFactory;
  * delete nodes, etc. Standard access privileges provided by JCR specification.
  * 
  * http://jackrabbit.apache.org/oak/docs/security/accesscontrol/editing.html
+ * 
  */
 public class AccessControlUtil {
 	private static final Logger log = LoggerFactory.getLogger(AccessControlUtil.class);
 
 	public static String interpretPrivilegeName(String name) {
-		if (name.equalsIgnoreCase("read") || name.equalsIgnoreCase("jcr:read")) {
+		if (name.equalsIgnoreCase("read")) {
 			return Privilege.JCR_READ;
 		}
 		if (name.equalsIgnoreCase("write")) {
@@ -58,6 +59,9 @@ public class AccessControlUtil {
 	 * TODO: Also can do this:
 	 * AccessControlUtils.addAccessControlEntry(session, "/", user.getPrincipal(),
      *                   new String[] { Privilege.JCR_ALL }, true);
+     *                   
+     * Also: 
+     * AccessControlUtils.allow() works according to a post on mailing list.
 	 */
 	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
 
@@ -77,7 +81,7 @@ public class AccessControlUtil {
 
 	public static List<String> getOwnerNames(Session session, Node node) throws Exception {
 
-		/* TODO: maybe use a set here to avoid duplidates! */
+		/* TODO: maybe use a set here to avoid duplicates! */
 		List<String> owners = new LinkedList<String>();
 
 		/*

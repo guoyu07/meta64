@@ -90,11 +90,6 @@ var share = function() {
 		publicCommentingChanged : function() {
 			var publicAppend = $("#allowPublicCommenting").is(":checked");
 			
-			/*
-			 * TODO: Need to test of 'nodeTypeManagement' is actually required.
-			 * What is below does work, but need to make it as minimal as
-			 * possible
-			 */
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"publicAppend" : publicAppend ? "true" : "false"
@@ -120,11 +115,6 @@ var share = function() {
 				return;
 			}
 
-			/*
-			 * TODO: Need to test of 'nodeTypeManagement' is actually required.
-			 * What is below does work, but need to make it as minimal as
-			 * possible
-			 */
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"principal" : targetUser,

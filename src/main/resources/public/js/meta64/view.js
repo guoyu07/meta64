@@ -92,6 +92,15 @@ var view = function() {
 				e.show();
 			}
 			e.trigger("updatelayout");
+		},
+		
+		showServerInfo : function() {
+			var prms = util.json("getServerInfo", {
+			});
+
+			prms.done(function(res) {
+				messagePg.showMessage("Server Info", res.serverInfo, null);
+			});
 		}
 	};
 

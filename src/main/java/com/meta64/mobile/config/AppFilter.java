@@ -1,6 +1,7 @@
 package com.meta64.mobile.config;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,6 +23,8 @@ import com.meta64.mobile.util.ThreadLocals;
 public class AppFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(AppFilter.class);
 
+	private static final HashMap<String, Integer> uniqueIpHits = new HashMap<String, Integer>();
+
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
@@ -36,6 +39,8 @@ public class AppFilter implements Filter {
 			else {
 				initialSessionExisted = true;
 			}
+
+			updateHitCounter(httpReq);
 		}
 
 		ThreadLocals.setInitialSessionExisted(initialSessionExisted);
@@ -46,11 +51,68 @@ public class AppFilter implements Filter {
 		chain.doFilter(req, res);
 	}
 
+	private void updateHitCounter(HttpServletRequest httpReq) {
+		String ip = getClientIpAddr(httpReq);
+
+		synchronized (uniqueIpHits) {
+			Integer hitCount = ip != null ? uniqueIpHits.get(ip) : null;
+
+			if (hitCount == null) {
+				uniqueIpHits.put(ip, 1);
+			}
+			else {
+				hitCount = hitCount.intValue() + 1;
+				uniqueIpHits.put(ip, hitCount);
+			}
+		}
+	}
+	
+	/*
+	 * I found this code online and it is not fully tested, but according to my
+	 * research it is the best way you can try determining the source IP.
+	 */
+	public static String getClientIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (!unknownIp(ip))
+			return ip;
+
+		ip = request.getHeader("Proxy-Client-IP");
+		if (!unknownIp(ip))
+			return ip;
+
+		ip = request.getHeader("WL-Proxy-Client-IP");
+		if (!unknownIp(ip))
+			return ip;
+
+		ip = request.getHeader("HTTP_CLIENT_IP");
+		if (!unknownIp(ip))
+			return ip;
+
+		ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		if (!unknownIp(ip))
+			return ip;
+
+		ip = request.getRemoteAddr();
+		if (!unknownIp(ip))
+			return ip;
+
+		return "unknown";
+	}
+	
+	public static boolean unknownIp(String ip) {
+		return ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip);
+	}
+
+
 	@Override
 	public void destroy() {
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
+	}
+
+	public static HashMap<String, Integer> getUniqueIpHits() {
+		return uniqueIpHits;
 	}
 }

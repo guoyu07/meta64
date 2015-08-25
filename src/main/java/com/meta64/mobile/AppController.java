@@ -35,6 +35,7 @@ import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
+import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
 import com.meta64.mobile.request.InsertBookRequest;
@@ -63,6 +64,7 @@ import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
+import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.InsertBookResponse;
@@ -89,6 +91,7 @@ import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
 import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.service.OAuthLoginService;
+import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.BrandingUtil;
@@ -162,6 +165,9 @@ public class AppController {
 	@Autowired
 	private OAuthLoginService oauthLoginService;
 
+	@Autowired
+	private SystemService systemService;
+	
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -603,6 +609,18 @@ public class AppController {
 		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		userManagerService.saveUserPreferences(session, req, res);
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/getServerInfo", method = RequestMethod.POST)
+	//@OakSession
+	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {
+		logRequest("getServerInfo", req);
+		GetServerInfoResponse res = new GetServerInfoResponse();
+		ThreadLocals.setResponse(res);
+		res.setServerInfo(systemService.getSystemInfo());
+		res.setSuccess(true);
+		checkSession();
 		return res;
 	}
 

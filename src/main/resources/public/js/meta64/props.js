@@ -270,7 +270,8 @@ var props = function() {
 						if (isBinaryProp) {
 							ret += "<td class='prop-table-val-col'>[binary]</td>";
 						} else if (!property.values) {
-							ret += "<td class='prop-table-val-col'>" + render.wrapHtml(property.htmlValue) + "</td>";
+							var val = property.htmlValue ? property.htmlValue : property.value;
+							ret += "<td class='prop-table-val-col'>" + render.wrapHtml(val) + "</td>";
 						} else {
 							ret += "<td class='prop-table-val-col'>" + props.renderPropertyValues(property.values) + "</td>";
 						}

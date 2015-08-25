@@ -1,7 +1,7 @@
 console.log("running module: render.js");
 
 var render = function() {
-
+	var _debug = false;
 	/*
 	 * This is the content displayed when the user signs in, and we see that
 	 * they have no content being displayed. We want to give them some
@@ -523,8 +523,11 @@ var render = function() {
 			}
 
 			var propCount = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
-			// console.log("RENDER NODE: " + data.node.id + " propCount=" +
-			// propCount);
+
+			if (_debug) {
+				console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
+			}
+
 			var output = '';
 
 			var bkgStyle = _.getNodeBkgImageStyle(data.node);
@@ -551,10 +554,10 @@ var render = function() {
 
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
-				
+
 				var content = _.makeTag("div", //
 				{
-					"class" : "node-table-row page-parent-node "+(selected ? " active-row" : " inactive-row"),
+					"class" : "node-table-row page-parent-node " + (selected ? " active-row" : " inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
 					"id" : cssId,
 					"style" : bkgStyle
@@ -621,8 +624,9 @@ var render = function() {
 			if (newData) {
 				meta64.initNode(node);
 
-				// console.log(" RENDER ROW[" + i + "]: node.id=" +
-				// node.id);
+				if (_debug) {
+					console.log(" RENDER ROW[" + i + "]: node.id=" + node.id);
+				}
 			}
 
 			rowCount++; // warning: this is the local variable/parameter
@@ -823,6 +827,7 @@ var render = function() {
 		},
 
 		allowPropertyToDisplay : function(propName) {
+			if (!meta64.inSimpleMode()) return true;
 			return meta64.simpleModePropertyBlackList[propName] == null;
 		},
 
@@ -847,4 +852,4 @@ var render = function() {
 	return _;
 }();
 
-//# sourceUrl=render.js
+// # sourceUrl=render.js

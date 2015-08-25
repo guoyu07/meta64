@@ -243,17 +243,25 @@ public class Convert {
 
 		/* multivalue */
 		if (prop.isMultiple()) {
+			log.trace(String.format("prop[%s] isMultiple", prop.getName()));
 			values = new LinkedList<String>();
+
+			int valIdx = 0;
 			for (Value v : prop.getValues()) {
-				values.add(formatValue(sessionContext, v, false));
+				String strVal = formatValue(sessionContext, v, false);
+				log.trace(String.format("     val[%d]=%s", valIdx, strVal));
+				values.add(strVal);
+				valIdx++;
 			}
 		}
 		/* else single value */
 		else {
 			if (prop.getName().equals(JcrProp.BIN_DATA)) {
+				log.trace(String.format("prop[%s] isBinary", prop.getName()));
 				value = "[binary data]";
 			}
 			else if (prop.getName().equals(JcrProp.CONTENT)) {
+				log.trace(String.format("prop[%s] isContent", prop.getName()));
 				if (htmlOnly) {
 					htmlValue = formatValue(sessionContext, prop.getValue(), true);
 					value = "n/r";
@@ -265,6 +273,7 @@ public class Convert {
 			}
 			else {
 				value = formatValue(sessionContext, prop.getValue(), false);
+				log.trace(String.format("prop[%s]=%s", prop.getName(), value));
 			}
 		}
 		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, values);

@@ -193,6 +193,8 @@ public class NodeSearchService {
 	 */
 	public void getSharedNodes(Session session, GetSharedNodesRequest req, GetSharedNodesResponse res) throws Exception {
 
+		String userRootPath = sessionContext.getRootRefInfo().getPath();
+
 		int MAX_NODES = 100;
 		Node searchRoot = JcrUtil.findNode(session, req.getNodeId());
 
@@ -237,6 +239,16 @@ public class NodeSearchService {
 		while (nodes.hasNext()) {
 			Node node = nodes.nextNode();
 			Node parentNode = node.getParent();
+			
+			String path = parentNode.getPath();
+			/*
+			 * If we encounter this user's root node, then ignore it. We don't consider this a
+			 * 'shared' node that the user ever needs to see as shared. 
+			 */
+			if (path.equals(userRootPath)) {
+				continue;
+			}
+			
 			searchResults.add(Convert.convertToNodeInfo(sessionContext, session, parentNode, true));
 			if (counter++ > MAX_NODES) {
 				break;

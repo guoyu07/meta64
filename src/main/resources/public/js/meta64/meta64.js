@@ -355,7 +355,7 @@ var meta64 = function() {
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
 			var highlightNode = _.getHighlightedNode();
 
-			util.setEnablement($("#navHomeButton"), _.currentNode && !nav.displayingHome());
+			util.setEnablement($("#navHomeButton"), true); //_.currentNode && !nav.displayingHome());
 			util.setEnablement($("#navUpLevelButton"), _.currentNode && nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;

@@ -57,6 +57,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Renaming Nodes
 * Sharing a node as Public
 * Sharing a node to a specific User
+* Display of All Shared Nodes (under any branch)
 * Social Media-type Public Commenting (providing conversation under any node)
 * Removing individual Share privileges from nodes
 * Short URL GUID for any node, so it can be referenced by URL

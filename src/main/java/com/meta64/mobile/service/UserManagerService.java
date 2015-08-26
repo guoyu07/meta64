@@ -138,7 +138,9 @@ public class UserManagerService {
 			res.setUserName(userName);
 
 			try {
-				res.setUserPreferences(getUserPreferences(session));
+				UserPreferences userPreferences = getUserPreferences(session);
+				sessionContext.setUserPreferences(userPreferences);
+				res.setUserPreferences(userPreferences);
 			}
 			catch (Exception e) {
 				/*
@@ -394,8 +396,19 @@ public class UserManagerService {
 				/*
 				 * Assign preferences as properties on this node,
 				 */
-				prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, req.getUserPreferences().isAdvancedMode());
+				boolean isAdvancedMode = req.getUserPreferences().isAdvancedMode();
+				prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, isAdvancedMode);
 				session.save();
+
+				/*
+				 * Also update session-scope object, because server-side functions that need
+				 * preference information will get it from there instead of loading it from
+				 * repository. The only time we load user preferences from repository is during
+				 * login when we can't get it form anywhere else at that time.
+				 */
+				UserPreferences userPreferences = sessionContext.getUserPreferences();
+				userPreferences.setAdvancedMode(isAdvancedMode);
+
 				res.setSuccess(true);
 			}
 		});

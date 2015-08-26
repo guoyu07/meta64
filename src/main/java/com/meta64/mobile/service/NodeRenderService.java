@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
@@ -97,7 +98,9 @@ public class NodeRenderService {
 		String path = node.getPath();
 		userSettingsDaemon.setSettingVal(sessionContext.getUserName(), JcrProp.USER_PREF_LAST_NODE, path);
 
-		if (req.isRenderParentIfLeaf() && !node.hasNodes() /* Convert.hasDisplayableNodes(node) */) {
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		
+		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(userPreferences.isAdvancedMode(), node)) {
 			res.setDisplayedParent(true);
 			req.setUpLevel(1);
 		}

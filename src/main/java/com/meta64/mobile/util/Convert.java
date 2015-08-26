@@ -29,6 +29,8 @@ import com.meta64.mobile.model.AccessControlEntryInfo;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.PrivilegeInfo;
 import com.meta64.mobile.model.PropertyInfo;
+import com.meta64.mobile.model.UserPreferences;
+import com.meta64.mobile.model.UserPreferences;
 
 /**
  * Converting objects from one type to another, and formatting.
@@ -106,13 +108,10 @@ public class Convert {
 			// not an error. means node has no binary subnode.
 		}
 
-		/*
-		 * node.hasNodes() won't work here, because the gui doesn't display nt:bin nodes as actual
-		 * nodes
-		 */
-		boolean hasNodes = node.hasNodes();
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		
+		boolean hasNodes = JcrUtil.hasDisplayableNodes(userPreferences.isAdvancedMode(), node);
 		log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
-		boolean hasDisplayableNodes = hasNodes; // hasDisplayableNodes(node);
 
 		ValContainer<String> createdBy = new ValContainer<String>();
 		ValContainer<String> lastModified = new ValContainer<String>();
@@ -122,34 +121,13 @@ public class Convert {
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
 		// log.debug("Node: "+node.getPath()+node.getName()+" type: "+primaryTypeName);
 
-		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasDisplayableNodes, false, hasBinary, binaryIsImage, binVer, //
+		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
 				createdBy.getVal() != null ? createdBy.getVal() : "", //
 				lastModified.getVal() != null ? lastModified.getVal() : "", primaryTypeName);
 		return nodeInfo;
 	}
-
-	/*
-	 * Repository doesn't show binaries as actual nodes, so we need to find out using this method if
-	 * there are any non-binary nodes, so this returns true if there are some nodes that aren't
-	 * binaries.
-	 */
-	// public static boolean hasDisplayableNodes(Node node) throws Exception {
-	// NodeIterator nodeIter = node.getNodes();
-	// try {
-	// while (true) {
-	// Node n = nodeIter.nextNode();
-	// if (!n.getName().equals(AppConstant.JCR_PROP_BIN)) {
-	// return true;
-	// }
-	// }
-	// }
-	// catch (NoSuchElementException ex) {
-	// // not an error. Normal iterator end condition.
-	// }
-	// return false;
-	// }
 
 	public static long getBinaryVersion(Node node) throws Exception {
 		Property versionProperty = node.getProperty(JcrProp.BIN_VER);

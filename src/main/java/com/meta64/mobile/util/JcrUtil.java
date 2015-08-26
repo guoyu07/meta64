@@ -2,9 +2,11 @@ package com.meta64.mobile.util;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -38,7 +40,7 @@ public class JcrUtil {
 
 		nonSavableProperties.add(JcrProp.COMMENT_BY);
 		nonSavableProperties.add(JcrProp.PUBLIC_APPEND);
-		
+
 		nonSavableProperties.add(JcrProp.CREATED);
 		nonSavableProperties.add(JcrProp.CREATED_BY);
 		nonSavableProperties.add(JcrProp.LAST_MODIFIED);
@@ -54,7 +56,7 @@ public class JcrUtil {
 	public static boolean isPublicAppend(Node node) {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}
-	
+
 	public static void checkNodeCreatedBy(Node node, String userName) throws Exception {
 		if (JcrPrincipal.ADMIN.equals(userName)) return;
 		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw new Exception("Access failed.");
@@ -118,6 +120,54 @@ public class JcrUtil {
 
 	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent) throws Exception {
 		return ensureNodeExists(session, parentPath, name, defaultContent, JcrConstants.NT_UNSTRUCTURED, true);
+	}
+
+	/*
+	 * Repository nodes that are shared will have ACL subnodes which will only be visible if the
+	 * user is in 'Advanced Editing' mode.
+	 */
+	public static boolean hasDisplayableNodes(boolean isAdvancedEditingMode, Node node) throws Exception {
+		/*
+		 * If advanced editing mode is on, we want to consider the node to have children if there
+		 * litteraly are any because they will all be visible.
+		 */
+		if (isAdvancedEditingMode) {
+			return node.hasNodes();
+		}
+
+		NodeIterator nodeIter = node.getNodes();
+		try {
+			while (true) {
+				if (nodeVisibleInSimpleMode(nodeIter.nextNode())) {
+					return true;
+				}
+			}
+		}
+		catch (NoSuchElementException ex) {
+			// not an error. Normal iterator end condition.
+		}
+		return false;
+	}
+	
+	public static boolean nodeVisibleInSimpleMode(Node node) throws Exception {
+		if (node==null) return false;
+		
+		String name = node.getName();
+		
+		/*
+		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply
+		 * same logic.
+		 */
+		if (name.startsWith("rep:")) {
+			return false;
+		}
+		
+		String typeName = node.getPrimaryNodeType().getName();
+		if (name.equals("allow") && typeName.contains("rep:GrantACE")) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	/*

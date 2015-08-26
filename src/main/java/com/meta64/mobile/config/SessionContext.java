@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.model.RefInfo;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.util.DateUtil;
 
@@ -44,6 +45,8 @@ public class SessionContext {
 	private String captcha;
 	private String timezone;
 	private String timeZoneAbbrev;
+	
+	private UserPreferences userPreferences;	
 
 	/*
 	 * For extreme scalability we 'could' hold a formatter in a blobal map where there is basically
@@ -160,5 +163,13 @@ public class SessionContext {
 
 	public void setLock(ReentrantLock lock) {
 		this.lock = lock;
+	}
+
+	public UserPreferences getUserPreferences() {
+		return userPreferences;
+	}
+
+	public void setUserPreferences(UserPreferences userPreferences) {
+		this.userPreferences = userPreferences;
 	}
 }

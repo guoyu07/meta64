@@ -34,10 +34,11 @@ var props = function() {
 			meta64.showProperties = meta64.showProperties ? false : true;
 			// setDataIconUsingId("#editModeButton", editMode ? "edit" :
 			// "forbidden");
-			
+
 			/*
-			 * TODO: this button icon needs to change now that the properties is on the main manu 
-			 * instead of navbar button. Currently not functional.
+			 * TODO: this button icon needs to change now that the properties is
+			 * on the main manu instead of navbar button. Currently not
+			 * functional.
 			 */
 			var elm = $("#propsToggleButton");
 			elm.toggleClass("ui-icon-grid", meta64.showProperties);
@@ -309,10 +310,30 @@ var props = function() {
 			}
 			return null;
 		},
-		
+
 		getNodePropertyVal : function(propertyName, node) {
 			var prop = _.getNodeProperty(propertyName, node);
 			return prop ? prop.value : null;
+		},
+
+		/*
+		 * Returns trus if this is a comment node, that the current user doesn't
+		 * own. Used to disable "edit", "delete", etc. on the GUI.
+		 */
+		isNonOwnedNode : function(node) {
+			var createdBy = _.getNodePropertyVal(jcrCnst.CREATED_BY, node);
+
+			return createdBy != null && createdBy != meta64.userName;
+		},
+		
+		/*
+		 * Returns trus if this is a comment node, that the current user doesn't
+		 * own. Used to disable "edit", "delete", etc. on the GUI.
+		 */
+		isNonOwnedCommentNode : function(node) {
+			var commentBy = _.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+
+			return commentBy != null && commentBy != meta64.userName;
 		},
 
 		/*
@@ -324,7 +345,7 @@ var props = function() {
 				if (!property.value || property.value.length == 0) {
 					return "";
 				}
-				return render.wrapHtml(property.htmlValue); 
+				return render.wrapHtml(property.htmlValue);
 			} else {
 				return _.renderPropertyValues(property.values);
 			}

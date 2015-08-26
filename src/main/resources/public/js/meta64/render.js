@@ -217,7 +217,7 @@ var render = function() {
 			 * design this better later.
 			 */
 			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
-			var editingAllowed = meta64.isAdminUser || !isRep;
+			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node) && !props.isNonOwnedNode(node);
 
 			/*
 			 * if not selected by being the new child, then we try to select
@@ -533,6 +533,7 @@ var render = function() {
 			var bkgStyle = _.getNodeBkgImageStyle(data.node);
 
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true);
+
 			// console.log("mainNodeContent: "+mainNodeContent);
 			if (mainNodeContent.length > 0) {
 				var uid = data.node.uid;
@@ -541,7 +542,13 @@ var render = function() {
 				var buttonBar = "";
 
 				/* Add edit button if edit mode and this isn't the root */
-				if (meta64.editMode && data.node.path != "/") {
+				if (meta64.editMode && data.node.path != "/" &&
+				/*
+				 * Check that if we have a commentBy property we are the
+				 * commenter, before allowing edit button also.
+				 */
+				!props.isNonOwnedCommentNode(data.node) && //
+				!props.isNonOwnedNode(data.node)) {
 
 					/* Construct Create Subnode Button */
 					var editNodeButton = _.makeTag("a", //
@@ -827,7 +834,8 @@ var render = function() {
 		},
 
 		allowPropertyToDisplay : function(propName) {
-			if (!meta64.inSimpleMode()) return true;
+			if (!meta64.inSimpleMode())
+				return true;
 			return meta64.simpleModePropertyBlackList[propName] == null;
 		},
 

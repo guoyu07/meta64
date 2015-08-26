@@ -14,11 +14,6 @@ var srch = function() {
 
 	var _UID_ROWID_SUFFIX = "_srch_row";
 
-	var _searchNodesResponse = function(res) {
-		_.searchResults = res;
-		meta64.changePage(searchResultsPg);
-	};
-
 	var _ = {
 
 		/*
@@ -57,6 +52,11 @@ var srch = function() {
 			srch.searchResults.searchResults.length : 0;
 		},
 
+		searchNodesResponse : function(res) {
+			_.searchResults = res;
+			meta64.changePage(searchResultsPg);
+		},
+		
 		searchNodes : function() {
 			if (!util.ajaxReady("searchNodes")) {
 				return;
@@ -78,7 +78,7 @@ var srch = function() {
 				"nodeId" : node.id,
 				"searchText" : searchText,
 				"modSortDesc" : false
-			}, _searchNodesResponse);
+			}, _.searchNodesResponse);
 		},
 		
 		timeline : function() {
@@ -92,7 +92,7 @@ var srch = function() {
 				"nodeId" : node.id,
 				"searchText" : "",
 				"modSortDesc" : true
-			}, _searchNodesResponse);
+			}, _.searchNodesResponse);
 		},
 
 		searchPg : function() {

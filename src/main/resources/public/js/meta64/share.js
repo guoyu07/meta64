@@ -13,6 +13,10 @@ var share = function() {
 		_.populateSharingPg(res);
 	}
 
+	var _findSharedNodesResponse = function(res) {
+		srch.searchNodesResponse(res);
+	}
+	
 	var _renderAclPrivileges = function(principal, aclEntry) {
 		var ret = "";
 		$.each(aclEntry.privileges, function(index, privilege) {
@@ -171,6 +175,17 @@ var share = function() {
 				"includeAcl" : true,
 				"includeOwners" : true
 			}, _getNodePrivilegesResponse);
+		},
+		
+		findSharedNodes : function() {
+			var focusNode = meta64.getHighlightedNode();
+			if (focusNode==null) {
+				return;
+			}
+			
+			util.json("getSharedNodes", {
+				"nodeId" : focusNode.id
+			}, _findSharedNodesResponse);
 		}
 	};
 

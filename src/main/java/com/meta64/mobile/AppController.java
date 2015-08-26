@@ -36,6 +36,7 @@ import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
+import com.meta64.mobile.request.GetSharedNodesRequest;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
 import com.meta64.mobile.request.InsertBookRequest;
@@ -65,6 +66,7 @@ import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
+import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.InsertBookResponse;
@@ -597,6 +599,18 @@ public class AppController {
 		checkSession();
 		Session session = ThreadLocals.getJcrSession();
 		nodeSearchService.search(session, req, res);
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req) throws Exception {
+		logRequest("getSharedNodes", req);
+		GetSharedNodesResponse res = new GetSharedNodesResponse();
+		ThreadLocals.setResponse(res);
+		checkSession();
+		Session session = ThreadLocals.getJcrSession();
+		nodeSearchService.getSharedNodes(session, req, res);
 		return res;
 	}
 

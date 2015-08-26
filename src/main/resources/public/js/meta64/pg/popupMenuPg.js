@@ -56,7 +56,6 @@ var popupMenuPg = function() {
 
 			var editMenuItems = //
 			_menuItem("Attachments", "manageAttachmentsButton", "attachment.openUploadPg();") + // 
-			_menuItem("Sharing", "editNodeSharingButton", "share.editNodeSharing();") + // 
 			_menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + // 
 			_menuItem("Finish Moving", "finishMovingSelNodesButton", "edit.finishMovingSelNodes();") + // 
 			_menuItem("Rename", "renameNodePgButton", "edit.openRenameNodePg();") + //
@@ -64,8 +63,12 @@ var popupMenuPg = function() {
 			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();") + // 
 			_menuItem("Import", "openImportPgButton", "edit.openImportPg();") + // 
 			_menuItem("Export", "openExportPgButton", "edit.openExportPg();"); // 
-
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
+			
+			var sharingMenuItems = //
+			_menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + // 
+			_menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");
+			var sharingMenu = _makeTopLevelMenu("Sharing", sharingMenuItems);
 
 			// var searchMenuItems = //
 			// _menuItem("Text Search", "searchPgButton", "srch.searchPg();") +
@@ -82,7 +85,7 @@ var popupMenuPg = function() {
 			var content = render.makeTag("div", {
 				"style" : "margin: 0; min-width: 300px; position: fixed; top: 2em; left: 2em;",
 				"data-role" : "collapsible-set"
-			}, myAccountMenu + editMenu + viewOptionsMenu/* + searchMenu */);
+			}, myAccountMenu + editMenu + sharingMenu + viewOptionsMenu/* + searchMenu */);
 
 			util.setHtmlEnhanced($("#popupMenuPg"), content);
 		},
@@ -104,6 +107,7 @@ var popupMenuPg = function() {
 			util.setEnablement($("#donatePgButton"), true);
 			util.setEnablement($("#manageAttachmentsButton"), highlightNode != null && !meta64.isAnonUser);
 			util.setEnablement($("#editNodeSharingButton"), highlightNode != null && !meta64.isAnonUser);
+			util.setEnablement($("#findSharedNodesButton"), highlightNode != null && !meta64.isAnonUser);
 			util.setEnablement($("#moveSelNodesButton"), highlightNode != null && !meta64.isAnonUser);
 			util.setEnablement($("#renameNodePgButton"), highlightNode != null && !meta64.isAnonUser);
 			util.setEnablement($("#finishMovingSelNodesButton"), canFinishMoving, canFinishMoving);

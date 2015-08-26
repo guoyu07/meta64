@@ -20,7 +20,9 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.request.GetSharedNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
+import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
@@ -31,6 +33,8 @@ import com.meta64.mobile.util.JcrUtil;
  * first 100 results. Despite it being basic right now, it is however EXTREMELY high performance and
  * leverages the full and best search performance that can be gotten out of Lucene, which beats any
  * other technology in the world in it's power.
+ * 
+ * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev-should-know/
  */
 @Component
 @Scope("singleton")
@@ -175,6 +179,65 @@ public class NodeSearchService {
 
 		while (nodes.hasNext()) {
 			searchResults.add(Convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true));
+			if (counter++ > MAX_NODES) {
+				break;
+			}
+		}
+		res.setSuccess(true);
+		log.debug("search results count: " + counter);
+	}
+
+	/*
+	 * Searches for all nodes having name=rep:policy, and returns a list of the parent nodes of all
+	 * those nodes, because those parent nodes are the actual nodes being shared.
+	 */
+	public void getSharedNodes(Session session, GetSharedNodesRequest req, GetSharedNodesResponse res) throws Exception {
+
+		int MAX_NODES = 100;
+		Node searchRoot = JcrUtil.findNode(session, req.getNodeId());
+
+		QueryManager qm = session.getWorkspace().getQueryManager();
+		String absPath = searchRoot.getPath();
+
+		StringBuilder queryStr = new StringBuilder();
+		queryStr.append("SELECT * from [nt:base] AS t ");
+
+		int whereCount = 0;
+		if (!absPath.equals("/")) {
+			if (whereCount == 0) {
+				queryStr.append(" WHERE ");
+			}
+			whereCount++;
+			queryStr.append("ISDESCENDANTNODE([");
+			queryStr.append(absPath);
+			queryStr.append("])");
+		}
+
+		if (whereCount == 0) {
+			queryStr.append(" WHERE ");
+		}
+		else
+		/*
+		 * To search ALL properties you can put 't.*' instead of 't.[jcr:content]' below.
+		 */
+		if (whereCount > 0) {
+			queryStr.append(" AND ");
+		}
+		whereCount++;
+
+		queryStr.append("NAME() = 'rep:policy'");
+
+		Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);
+		QueryResult r = q.execute();
+		NodeIterator nodes = r.getNodes();
+		int counter = 0;
+		List<NodeInfo> searchResults = new LinkedList<NodeInfo>();
+		res.setSearchResults(searchResults);
+
+		while (nodes.hasNext()) {
+			Node node = nodes.nextNode();
+			Node parentNode = node.getParent();
+			searchResults.add(Convert.convertToNodeInfo(sessionContext, session, parentNode, true));
 			if (counter++ > MAX_NODES) {
 				break;
 			}

@@ -40,6 +40,7 @@ var share = function() {
 	}
 
 	var _removePrivilegeResponse = function(res) {
+		
 		util.json("getNodePrivileges", {
 			"nodeId" : _.sharingNode.path,
 			"includeAcl" : true,
@@ -182,6 +183,8 @@ var share = function() {
 			if (focusNode==null) {
 				return;
 			}
+			
+			srch.searchPageTitle = "Shared Nodes";
 			
 			util.json("getSharedNodes", {
 				"nodeId" : focusNode.id

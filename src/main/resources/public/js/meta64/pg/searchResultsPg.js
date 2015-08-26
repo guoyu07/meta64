@@ -3,17 +3,17 @@ console.log("running module: searchResultsPg.js");
 var searchResultsPg = function() {
 
 	var _ = {
-			domId : "searchResultsPg",
+		domId : "searchResultsPg",
 		build : function() {
 
 			var header = render.makeTag("div", //
 			{
-				"data-role" : "header"//,
-				//"data-position" : "fixed",
-				//"data-tap-toggle" : "false"
+				"data-role" : "header"// ,
+			// "data-position" : "fixed",
+			// "data-tap-toggle" : "false"
 			}, //
 			render.makeButton("Back to Content", "cancelSearchResultsButton", "b") + //
-			"<h2>" + BRANDING_TITLE + " - Search Results</h2>");
+			"<h2 id='searchPageTitle'></h2>");
 
 			var internalMainContent = "<div id='searchResultsView'></div>";
 			var mainContent = render.makeTag("div", //
@@ -33,6 +33,7 @@ var searchResultsPg = function() {
 		},
 
 		init : function() {
+			$("#searchPageTitle").html(BRANDING_TITLE+" - "+srch.searchPageTitle);
 			srch.populateSearchResultsPage();
 		}
 	};

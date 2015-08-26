@@ -16,6 +16,8 @@ var srch = function() {
 
 	var _ = {
 
+		searchPageTitle : "Search Results",
+
 		/*
 		 * Holds the NodeSearchResponse.java JSON, or null if no search has been
 		 * done.
@@ -56,12 +58,12 @@ var srch = function() {
 			_.searchResults = res;
 			meta64.changePage(searchResultsPg);
 		},
-		
+
 		searchNodes : function() {
 			if (!util.ajaxReady("searchNodes")) {
 				return;
 			}
-			
+
 			var node = meta64.getHighlightedNode();
 			if (!node) {
 				alert("No node is selected to search under.");
@@ -74,13 +76,15 @@ var srch = function() {
 				return;
 			}
 
+			_.searchPageTitle = "Search Results";
+			
 			util.json("nodeSearch", {
 				"nodeId" : node.id,
 				"searchText" : searchText,
 				"modSortDesc" : false
 			}, _.searchNodesResponse);
 		},
-		
+
 		timeline : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
@@ -88,6 +92,8 @@ var srch = function() {
 				return;
 			}
 
+			_.searchPageTitle = "Timeline";
+			
 			util.json("nodeSearch", {
 				"nodeId" : node.id,
 				"searchText" : "",
@@ -106,12 +112,12 @@ var srch = function() {
 
 			_.uidToNodeMap[node.uid] = node;
 		},
-		
+
 		populateSearchResultsPage : function(data) {
 			if (!data) {
 				data = _.searchResults;
 			}
-			
+
 			var output = '';
 			var childCount = data.searchResults.length;
 
@@ -131,10 +137,10 @@ var srch = function() {
 				rowCount++;
 				output += _.renderSearchResultAsListItem(node, i, childCount, rowCount);
 			});
-			
+
 			util.setHtmlEnhanced($("#searchResultsView"), output);
 		},
-		
+
 		/*
 		 * Renders a single line of search results on the search results page.
 		 * 

@@ -47,6 +47,8 @@ tr td div p {
 .property-edit-field {
 	margin-top: 0;
 	margin-bottom: 0;
+	padding-left: 16px;
+	padding-right: 16px;
 }
 
 .property-edit-field:nth-child(odd) {

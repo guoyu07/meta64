@@ -355,7 +355,8 @@ var meta64 = function() {
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
 			var highlightNode = _.getHighlightedNode();
 
-			util.setEnablement($("#navHomeButton"), true); //_.currentNode && !nav.displayingHome());
+			util.setEnablement($("#navHomeButton"), true); // _.currentNode &&
+			// !nav.displayingHome());
 			util.setEnablement($("#navUpLevelButton"), _.currentNode && nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
@@ -483,12 +484,33 @@ var meta64 = function() {
 		},
 
 		initConstants : function() {
-			util.addAll(_.simpleModePropertyBlackList, [ jcrCnst.MIXIN_TYPES, jcrCnst.PRIMARY_TYPE, jcrCnst.POLICY, jcrCnst.IMG_WIDTH,
-					jcrCnst.IMG_HEIGHT, jcrCnst.BIN_VER, jcrCnst.BIN_DATA, jcrCnst.BIN_MIME, jcrCnst.COMMENT_BY, jcrCnst.PUBLIC_APPEND ]);
+			util.addAll(_.simpleModePropertyBlackList, [ //
+			jcrCnst.MIXIN_TYPES, //
+			jcrCnst.PRIMARY_TYPE, //
+			jcrCnst.POLICY, //
+			jcrCnst.IMG_WIDTH,//
+			jcrCnst.IMG_HEIGHT, //
+			jcrCnst.BIN_VER, //
+			jcrCnst.BIN_DATA, //
+			jcrCnst.BIN_MIME, //
+			jcrCnst.COMMENT_BY, //
+			jcrCnst.PUBLIC_APPEND ]);
 
-			util.addAll(_.readOnlyPropertyList, [ jcrCnst.UUID, jcrCnst.MIXIN_TYPES, jcrCnst.CREATED, jcrCnst.CREATED_BY,
-					jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY, jcrCnst.IMG_WIDTH, jcrCnst.IMG_HEIGHT, jcrCnst.BIN_VER,
-					jcrCnst.BIN_DATA, jcrCnst.BIN_MIME, jcrCnst.COMMENT_BY, jcrCnst.PUBLIC_APPEND ]);
+			util.addAll(_.readOnlyPropertyList, [ //
+			jcrCnst.PRIMARY_TYPE, //
+			jcrCnst.UUID, //
+			jcrCnst.MIXIN_TYPES, //
+			jcrCnst.CREATED, //
+			jcrCnst.CREATED_BY, //
+			jcrCnst.LAST_MODIFIED, //
+			jcrCnst.LAST_MODIFIED_BY,//
+			jcrCnst.IMG_WIDTH, //
+			jcrCnst.IMG_HEIGHT, //
+			jcrCnst.BIN_VER, //
+			jcrCnst.BIN_DATA, //
+			jcrCnst.BIN_MIME, //
+			jcrCnst.COMMENT_BY, //
+			jcrCnst.PUBLIC_APPEND ]);
 
 			util.addAll(_.binaryPropertyList, [ jcrCnst.BIN_DATA ]);
 		},

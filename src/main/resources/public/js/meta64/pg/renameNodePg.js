@@ -15,6 +15,8 @@ var renameNodePg = function() {
 			}, //
 			"<h2>" + BRANDING_TITLE + " - Rename Node</h2>");
 
+			var curNodeNameDisplay = "<h3 id='curNodeNameDisplay'></h3>";
+
 			var formControls = render.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
 			var renameNodeButton = render.makeButton("Rename", "renameNodeButton", "b");
@@ -27,18 +29,25 @@ var renameNodePg = function() {
 			}, //
 			formControls + buttonBar);
 
-			var internalMainContent = "";
 			var mainContent = render.makeTag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"
 			}, //
-			internalMainContent + form);
+			curNodeNameDisplay + form);
 
 			var content = header + mainContent;
 			util.setHtmlEnhanced($("#renameNodePg"), content);
 
 			$("#renameNodeButton").on("click", edit.renameNode);
+		},
+
+		init : function() {
+			var highlightNode = meta64.getHighlightedNode();
+			if (!highlightNode) {
+				return;
+			}
+			$("#curNodeNameDisplay").html("Path: " + highlightNode.path + "<br/>Name: " + highlightNode.name);
 		}
 	};
 

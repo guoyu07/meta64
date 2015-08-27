@@ -58,10 +58,10 @@ public class NodeMoveService {
 	public void deleteNodes(Session session, DeleteNodesRequest req, DeleteNodesResponse res) throws Exception {
 
 		ValContainer<Boolean> switchedToAdminSession = new ValContainer<Boolean>();
-		
+
 		for (String nodeId : req.getNodeIds()) {
 			deleteNode(session, nodeId, switchedToAdminSession);
-			
+
 			/* did we switch to admin session ? */
 			if (VarUtil.safeBooleanVal(switchedToAdminSession.getVal())) {
 				break;

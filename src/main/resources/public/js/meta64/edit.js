@@ -18,9 +18,8 @@ var edit = function() {
 
 	var _renameNodeResponse = function(res) {
 		if (util.checkSuccess("Rename node", res)) {
-			view.refreshTree(null, false);
+			view.refreshTree(null, false, res.newId);
 			meta64.jqueryChangePage("#mainPage");
-			view.scrollToSelectedNode();
 		}
 	}
 
@@ -328,11 +327,10 @@ var edit = function() {
 		moveNodeUp : function(uid) {
 			var node = meta64.uidToNodeMap[uid];
 			if (node) {
-				var ordinal = meta64.getOrdinalOfNode(node);
-				console.log("ordinal=" + ordinal);
-				if (ordinal == -1 && ordinal <= 0)
+				var nodeAbove = _.getNodeAbove(node);
+				if (nodeAbove == null) {
 					return;
-				var nodeAbove = meta64.currentNodeData.children[ordinal - 1];
+				}
 
 				util.json("setNodePosition", {
 					"parentNodeId" : meta64.currentNodeId,
@@ -347,11 +345,10 @@ var edit = function() {
 		moveNodeDown : function(uid) {
 			var node = meta64.uidToNodeMap[uid];
 			if (node) {
-				var ordinal = meta64.getOrdinalOfNode(node);
-				console.log("ordinal=" + ordinal);
-				if (ordinal == -1 && ordinal >= meta64.currentNodeData.children.length - 1)
+				var nodeBelow = _.getNodeBelow(node);
+				if (nodeBelow == null) {
 					return;
-				var nodeBelow = meta64.currentNodeData.children[ordinal + 1];
+				}
 
 				util.json("setNodePosition", {
 					"parentNodeId" : meta64.currentNodeData.node.id,
@@ -361,6 +358,31 @@ var edit = function() {
 			} else {
 				console.log("idToNodeMap does not contain " + uid);
 			}
+		},
+
+		/*
+		 * Returns the node above the specified node or null if node is itself
+		 * the top node
+		 */
+		getNodeAbove : function(node) {
+			var ordinal = meta64.getOrdinalOfNode(node);
+			// console.log("ordinal=" + ordinal);
+			if (ordinal <= 0)
+				return null;
+			return meta64.currentNodeData.children[ordinal - 1];
+		},
+
+		/*
+		 * Returns the node below the specified node or null if node is itself
+		 * the bottom node
+		 */
+		getNodeBelow : function(node) {
+			var ordinal = meta64.getOrdinalOfNode(node);
+			// console.log("ordinal=" + ordinal);
+			if (ordinal == -1 && ordinal >= meta64.currentNodeData.children.length - 1)
+				return null;
+
+			return meta64.currentNodeData.children[ordinal + 1];
 		},
 
 		fullRepositoryExport : function() {
@@ -391,9 +413,13 @@ var edit = function() {
 				return;
 			}
 
+			/* if no node below this node, returns null */
+			var nodeBelow = _.getNodeBelow(highlightNode);
+
 			util.json("renameNode", {
 				"nodeId" : highlightNode.id,
-				"newName" : newName
+				"newName" : newName,
+				"nodeBelowName" : (nodeBelow == null ? null : nodeBelow.name)
 			}, _renameNodeResponse);
 		},
 

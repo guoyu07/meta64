@@ -1,27 +1,15 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.response.base.OakResponseBase;
 
 public class RenameNodeResponse extends OakResponseBase {
-	/* TODO: remove this field, it's redundant now */
+	private String newId;
 
-	// private String newChildNodeId;
-	private NodeInfo newNode;
-
-	// public String getNewChildNodeId() {
-	// return newChildNodeId;
-	// }
-	//
-	// public void setNewChildNodeId(String newChildNodeId) {
-	// this.newChildNodeId = newChildNodeId;
-	// }
-
-	public NodeInfo getNewNode() {
-		return newNode;
+	public String getNewId() {
+		return newId;
 	}
 
-	public void setNewNode(NodeInfo newNode) {
-		this.newNode = newNode;
+	public void setNewId(String newId) {
+		this.newId = newId;
 	}
 }

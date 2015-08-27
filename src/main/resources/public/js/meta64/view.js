@@ -15,31 +15,48 @@ var view = function() {
 			if (meta64.editMode) {
 				statusLine += " Selections: " + util.getPropertyCount(meta64.selectedNodes);
 			}
-			
+
 			var visible = statusLine.length > 0;
 			util.setVisibility("#mainNodeStatusBar", visible);
-			
+
 			if (visible) {
 				util.setHtmlEnhanced($("#mainNodeStatusBar"), statusLine);
 			}
 		},
 
-		refreshTreeResponse : function(res, targetId, renderParentIfLeaf) {
+		/*
+		 * newId is optional parameter which, if supplied, should be the id we
+		 * scroll to when finally done with the render.
+		 */
+		refreshTreeResponse : function(res, targetId, renderParentIfLeaf, newId) {
 			render.renderPageFromData(res);
-			if (targetId && renderParentIfLeaf && res.displayedParent) {
-				meta64.highlightRowById(targetId, true);
+
+			if (newId) {
+				meta64.highlightRowById(newId, true);
 			} else {
-				_.scrollToSelectedNode();
+				/*
+				 * TODO: Why wasn't this just based on targetId ? This if
+				 * condition is too confusing.
+				 */
+				if (targetId && renderParentIfLeaf && res.displayedParent) {
+					meta64.highlightRowById(targetId, true);
+				} else {
+					_.scrollToSelectedNode();
+				}
 			}
 			meta64.refreshAllGuiEnablement();
 		},
 
-		refreshTree : function(nodeId, renderParentIfLeaf) {
+		/*
+		 * newId is optional and if specified makes the page scroll to
+		 * and highlight that node upon re-rendering.
+		 */
+		refreshTree : function(nodeId, renderParentIfLeaf, newId) {
 			if (!nodeId) {
 				nodeId = meta64.currentNodeId;
 			}
-			
-			console.log("Refreshing tree: nodeId="+nodeId);
+
+			console.log("Refreshing tree: nodeId=" + nodeId);
 
 			var prms = util.json("renderNode", {
 				"nodeId" : nodeId,
@@ -47,7 +64,7 @@ var view = function() {
 			});
 
 			prms.done(function(res) {
-				_.refreshTreeResponse(res, nodeId, renderParentIfLeaf);
+				_.refreshTreeResponse(res, nodeId, renderParentIfLeaf, newId);
 			});
 		},
 
@@ -55,7 +72,7 @@ var view = function() {
 			meta64.jqueryChangePage("#mainPage");
 			view.refreshTree(null, false);
 		},
-		
+
 		scrollToSelectedNode : function() {
 			setTimeout(function() {
 				var elm = nav.getSelectedDomElement();
@@ -86,17 +103,16 @@ var view = function() {
 				e.hide();
 			} else {
 				var pathDisplay = "Path: " + render.formatPath(node);
-				pathDisplay += "<br>ID: "+ node.id;
+				pathDisplay += "<br>ID: " + node.id;
 				pathDisplay += "<br>Modified: " + node.lastModified;
 				e.html(pathDisplay);
 				e.show();
 			}
 			e.trigger("updatelayout");
 		},
-		
+
 		showServerInfo : function() {
-			var prms = util.json("getServerInfo", {
-			});
+			var prms = util.json("getServerInfo", {});
 
 			prms.done(function(res) {
 				messagePg.showMessage("Server Info", res.serverInfo, null);

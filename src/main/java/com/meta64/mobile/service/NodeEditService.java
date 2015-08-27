@@ -162,8 +162,28 @@ public class NodeEditService {
 			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		}
 
-		session.move(node.getPath(), node.getParent().getPath() + "/" + newName);
+		Node parentNode = node.getParent();
+		String newPath = parentNode.getPath() + "/" + newName;
+		session.move(node.getPath(), newPath);
+
+		/*
+		 * if the node we are renaming is already the bottom node we will have null for
+		 * getNodeBelowName()
+		 */
+		if (req.getNodeBelowName() != null) {
+			parentNode.orderBefore(newName, req.getNodeBelowName());
+		}
 		session.save();
+
+		/*
+		 * Now lookup the new node using new path, so we get the value that node.getIdentifier()
+		 * returns for it now, which may or may not be the actual new path
+		 */
+		node = JcrUtil.findNode(session, newPath);
+		if (node == null) {
+			throw new Exception("Failed to be able to readback node just named: " + newPath);
+		}
+		res.setNewId(node.getIdentifier());
 		res.setSuccess(true);
 	}
 

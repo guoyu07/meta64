@@ -6,7 +6,7 @@ var uploadPg = function() {
 			domId : "uploadPg",
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"//,
 				//"data-position" : "fixed",
@@ -14,35 +14,35 @@ var uploadPg = function() {
 			}, //
 			"<h2>" + BRANDING_TITLE + " - Upload File Attachment</h2>");
 
-			var uploadPathDisplay = render.makeTag("div", {//
+			var uploadPathDisplay = render.tag("div", {//
 				"id" : "uploadPathDisplay",
 				"class" : "path-display-in-editor"
 			}, "");
 
-			var formFields = render.makeTag("input", {
+			var formFields = render.tag("input", {
 				"type" : "file",
 				"name" : "file"
 			}, "", true) + //
-			render.makeTag("input", {
+			render.tag("input", {
 				"id" : "uploadFormNodeId",
 				"type" : "hidden",
 				"name" : "nodeId"
 			})
 
-			var form = render.makeTag("form", {
+			var form = render.tag("form", {
 				"id" : "uploadForm",
 				"method" : "POST",
 				"enctype" : "multipart/form-data"
 			}, formFields);
 
-			var uploadFieldContainer = render.makeTag("div", {//
+			var uploadFieldContainer = render.tag("div", {//
 				"id" : "uploadFieldContainer"
 			}, "<p>Upload from your computer</p>" + form);
 
 			var divider = "<div><h3>-- OR --</h3></div>";
 
 			var uploadFromUrlField = render.makeEditField("Upload From URL", "uploadFromUrl");
-			var uploadFromUrlDiv = render.makeTag("div", {//
+			var uploadFromUrlDiv = render.tag("div", {//
 			}, uploadFromUrlField);
 
 			var uploadButton = render.makeButton("Upload", "uploadButton", "b", "ui-btn-icon-left ui-icon-check");
@@ -50,7 +50,7 @@ var uploadPg = function() {
 			var backButton = render.makeBackButton("Close", "closeUploadButton", "a");
 			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
 
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

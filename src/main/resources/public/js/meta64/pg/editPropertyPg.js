@@ -7,7 +7,7 @@ var editPropertyPg = function() {
 
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -22,7 +22,7 @@ var editPropertyPg = function() {
 			var internalMainContent = "<div id='editPropertyPathDisplay' class='path-display-in-editor'></div>" + //
 			"<div id='addPropertyFieldContainer' class='ui-field-contain'></div>";
 
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

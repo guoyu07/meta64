@@ -2,6 +2,7 @@ console.log("running module: render.js");
 
 var render = function() {
 	var _debug = false;
+	
 	/*
 	 * This is the content displayed when the user signs in, and we see that
 	 * they have no content being displayed. We want to give them some
@@ -9,7 +10,7 @@ var render = function() {
 	 */
 	function _getEmptyPagePrompt() {
 		/* Construct Create Subnode Button */
-		var createSubNodeButton = _.makeTag("a", //
+		var createSubNodeButton = _.tag("a", //
 		{
 			"onClick" : "edit.createSubNode();",
 			"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
@@ -31,11 +32,11 @@ var render = function() {
 		 * downloaded.
 		 */
 		else {
-			var anchor = _.makeTag("a", {
+			var anchor = _.tag("a", {
 				"href" : _.getUrlForNodeAttachment(node)
 			}, "[Download Attachment]");
 
-			return _.makeTag("div", {
+			return _.tag("div", {
 				"class" : "binary-link"
 			}, anchor);
 		}
@@ -71,17 +72,7 @@ var render = function() {
 
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 			if (showPath && meta64.editMode) {
-				/*
-				 * todo: come up with a solid plan for wether to show jcr:root
-				 * to end users or not
-				 */
-				// var path = meta64.isAdminUser ? node.path :
-				// node.path.replaceAll("/root", "");
-				// var path = node.path;
-				/* tail end of path is the name, so we can strip that off */
-				// path = path.replace(node.name, "");
 				headerText += "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
-
 				headerText += "<div>";
 
 				if (commentBy) {
@@ -117,7 +108,7 @@ var render = function() {
 			}
 
 			if (headerText) {
-				ret += _.makeTag("div", {
+				ret += _.tag("div", {
 					"class" : "header-text"
 				}, headerText);
 			}
@@ -137,7 +128,7 @@ var render = function() {
 					var jcrContent = props.renderProperty(contentProp);
 
 					if (jcrContent.length > 0) {
-						ret += _.makeTag("div", {
+						ret += _.tag("div", {
 							"class" : "jcr-content"
 						}, _.wrapHtml(jcrContent));
 					}
@@ -166,7 +157,7 @@ var render = function() {
 			 * can reply to some other use.
 			 */
 			if (commentBy && commentBy != meta64.userName) {
-				var replyButton = _.makeTag("a", //
+				var replyButton = _.tag("a", //
 				{
 					"onClick" : "edit.replyToComment('" + node.uid + "');", //
 					"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-comment"
@@ -184,7 +175,7 @@ var render = function() {
 			else {
 				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 				if (publicAppend && commentBy != meta64.userName) {
-					var addComment = _.makeTag("a", //
+					var addComment = _.tag("a", //
 					{
 						"onClick" : "edit.replyToComment('" + node.uid + "');", //
 						"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-comment"
@@ -236,14 +227,14 @@ var render = function() {
 
 			var cssId = uid + "_row";
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
-			return _.makeTag("div", //
+			return _.tag("div", //
 			{
 				"class" : "node-table-row" + (selected ? " active-row" : " inactive-row"),
 				"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
 				"id" : cssId,
 				"style" : bkgStyle
 			},// 
-			buttonBarHtml + _.makeTag("div", //
+			buttonBarHtml + _.tag("div", //
 			{
 				"id" : uid + "_content"
 			}, _.renderNodeContent(node, true, true, true)));
@@ -271,7 +262,7 @@ var render = function() {
 			var topRightImg = props.getNodePropertyVal('img.top.right', node);
 			var topRightImgTag = "";
 			if (topRightImg) {
-				topRightImgTag = _.makeTag("img", {
+				topRightImgTag = _.tag("img", {
 					"src" : topRightImg,
 					"class" : "top-right-image"
 				}, "", false);
@@ -304,7 +295,7 @@ var render = function() {
 
 			/* Construct Open Button */
 			if (_.nodeHasChildren(uid)) {
-				openButton = _.makeTag("a", //
+				openButton = _.tag("a", //
 				{
 					"onClick" : "nav.openNode('" + uid + "');", //
 					"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-left"
@@ -323,7 +314,7 @@ var render = function() {
 
 				var selClass = meta64.selectedNodes[uid] ? "ui-btn-b" : "ui-btn-a";
 
-				selButton = _.makeTag("a", //
+				selButton = _.tag("a", //
 				{
 					"id" : uid + "_sel",//
 					"onClick" : "nav.toggleNodeSel('" + uid + "');",
@@ -334,7 +325,7 @@ var render = function() {
 
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
-					createSubNodeButton = _.makeTag("a", //
+					createSubNodeButton = _.tag("a", //
 					{
 						"onClick" : "edit.createSubNode('" + uid + "');",
 						"class" : "ui-btn ui-btn-inline ui-icon-star ui-mini ui-btn-icon-left"
@@ -343,7 +334,7 @@ var render = function() {
 
 				if (cnst.INS_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
-					insertNodeButton = _.makeTag("a", //
+					insertNodeButton = _.tag("a", //
 					{
 						"onClick" : "edit.insertNode('" + uid + "');",
 						"class" : "ui-btn ui-btn-inline ui-icon-bars ui-mini ui-btn-icon-left"
@@ -354,7 +345,7 @@ var render = function() {
 			if (meta64.editMode && editingAllowed) {
 
 				/* Construct Create Subnode Button */
-				editNodeButton = _.makeTag("a", //
+				editNodeButton = _.tag("a", //
 				{
 					"onClick" : "edit.runEditNode('" + uid + "');",
 					"class" : "ui-btn ui-btn-inline ui-icon-edit ui-mini ui-btn-icon-left"
@@ -364,7 +355,7 @@ var render = function() {
 
 					if (canMoveUp) {
 						/* Construct Create Subnode Button */
-						moveNodeUpButton = _.makeTag("a", //
+						moveNodeUpButton = _.tag("a", //
 						{
 							"onClick" : "edit.moveNodeUp('" + uid + "');",
 							"class" : "ui-btn ui-btn-inline ui-icon-arrow-u ui-mini ui-btn-icon-left"
@@ -373,7 +364,7 @@ var render = function() {
 
 					if (canMoveDown) {
 						/* Construct Create Subnode Button */
-						moveNodeDownButton = _.makeTag("a", //
+						moveNodeDownButton = _.tag("a", //
 						{
 							"onClick" : "edit.moveNodeDown('" + uid + "');",
 							"class" : "ui-btn ui-btn-inline ui-icon-arrow-d ui-mini ui-btn-icon-left"
@@ -394,20 +385,20 @@ var render = function() {
 
 		makeHorizontalFieldSet : function(content, extraClasses) {
 			/* Now build entire control bar */
-			var buttonBar = _.makeTag("fieldset", //
+			var buttonBar = _.tag("fieldset", //
 			{
 				"data-role" : "controlgroup", //
 				"data-type" : "horizontal"
 			}, content);
 
-			return _.makeTag("div", {
+			return _.tag("div", {
 				"class" : "ui-field-contain" + (extraClasses ? (" " + extraClasses) : "")
 			}, buttonBar);
 		},
 
 		makeHorzControlGroup : function(content) {
 			/* Now build entire control bar */
-			return _.makeTag("div", //
+			return _.tag("div", //
 			{
 				"data-role" : "controlgroup", //
 				"data-type" : "horizontal"
@@ -415,7 +406,7 @@ var render = function() {
 		},
 
 		makeRadioButton : function(name, group, id, on) {
-			return _.makeTag("input", //
+			return _.tag("input", //
 			{
 				"type" : "radio", //
 				"name" : group,
@@ -423,7 +414,7 @@ var render = function() {
 				"checked" : on ? "checked" : "unchecked"
 			}, "", true) + // + //
 
-			_.makeTag("label", {
+			_.tag("label", {
 				"for" : id
 			}, name);
 		},
@@ -468,7 +459,7 @@ var render = function() {
 
 			if (srch.numSearchResults() > 0) {
 
-				html += render.makeTag("a", //
+				html += _.tag("a", //
 				{
 					"onClick" : "nav.showSearchPage();", //
 					"class" : "ui-btn ui-btn-inline ui-icon-search ui-btn-icon-left"
@@ -551,7 +542,7 @@ var render = function() {
 				!props.isNonOwnedNode(data.node)) {
 
 					/* Construct Create Subnode Button */
-					var editNodeButton = _.makeTag("a", //
+					var editNodeButton = _.tag("a", //
 					{
 						"onClick" : "edit.runEditNode('" + uid + "');",
 						"class" : "ui-btn ui-btn-inline ui-icon-edit ui-mini ui-btn-icon-left"
@@ -562,7 +553,7 @@ var render = function() {
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
 
-				var content = _.makeTag("div", //
+				var content = _.tag("div", //
 				{
 					"class" : "node-table-row page-parent-node " + (selected ? " active-row" : " inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
@@ -686,7 +677,7 @@ var render = function() {
 						// var height = width * node.height / node.width;
 						elm.attr("width", "100%");
 						elm.attr("height", "auto");
-						elm.attr("style", "max-width: " + maxWidth + "px;");
+						//elm.attr("style", "max-width: " + maxWidth + "px;");
 					}
 					/*
 					 * Image does fit on screen so render it at it's exact size
@@ -731,7 +722,7 @@ var render = function() {
 					 */
 					var height = width * node.height / node.width;
 
-					return _.makeTag("img", {
+					return _.tag("img", {
 						"src" : src,
 						"id" : node.imgId,
 						"width" : width + "px",
@@ -740,7 +731,7 @@ var render = function() {
 				}
 				/* Image does fit on screen so render it at it's exact size */
 				else {
-					return _.makeTag("img", {
+					return _.tag("img", {
 						"src" : src,
 						"id" : node.imgId,
 						"width" : node.width + "px",
@@ -748,7 +739,7 @@ var render = function() {
 					}, null, false);
 				}
 			} else {
-				return _.makeTag("img", {
+				return _.tag("img", {
 					"src" : src,
 					"id" : node.imgId
 				}, null, false);
@@ -759,7 +750,7 @@ var render = function() {
 		 * creates HTML tag with all attributes/values specified in attributes
 		 * object, and closes the tag also if content is non-null
 		 */
-		makeTag : function(tag, attributes, content, closeTag) {
+		tag : function(tag, attributes, content, closeTag) {
 
 			/* default parameter values */
 			if (typeof (closeTag) === 'undefined')
@@ -793,10 +784,10 @@ var render = function() {
 		},
 
 		makeEditField : function(fieldName, fieldId) {
-			return _.makeTag("label", {
+			return _.tag("label", {
 				"for" : fieldId
 			}, fieldName) + //
-			_.makeTag("input", {
+			_.tag("input", {
 				"type" : "text",
 				"name" : fieldId,
 				"id" : fieldId
@@ -804,10 +795,10 @@ var render = function() {
 		},
 
 		makePasswordField : function(fieldName, fieldId) {
-			return _.makeTag("label", {
+			return _.tag("label", {
 				"for" : fieldId
 			}, fieldName) + //
-			_.makeTag("input", {
+			_.tag("input", {
 				"type" : "password",
 				"name" : fieldId,
 				"id" : fieldId
@@ -819,14 +810,14 @@ var render = function() {
 			if (classes) {
 				clazz += " " + classes;
 			}
-			return render.makeTag("a", {
+			return _.tag("a", {
 				"id" : id,
 				"class" : clazz
 			}, text);
 		},
 
 		makeBackButton : function(text, id, theme) {
-			return render.makeTag("a", {
+			return _.tag("a", {
 				"id" : id,
 				"class" : "ui-btn ui-icon-carat-l ui-btn-inline ui-btn-" + theme,
 				"data-rel" : "back"

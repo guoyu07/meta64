@@ -6,7 +6,7 @@ var prefsPg = function() {
 		domId : "prefsPg",
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -25,18 +25,18 @@ var prefsPg = function() {
 
 			var closeAccountButton = render.makeButton("Close Account", "closeAccountButton", "a");
 			var closeAccountButtonBar = render.makeHorzControlGroup(closeAccountButton);
-			var closeAccountButtonBarDiv = render.makeTag("div", {
+			var closeAccountButtonBarDiv = render.tag("div", {
 				"class" : "close-account-bar"
 			}, closeAccountButtonBar);
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
 			radioBar + buttonBar);
 
 			var internalMainContent = "";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

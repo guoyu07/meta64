@@ -160,13 +160,13 @@ var srch = function() {
 
 			var cssId = uid + _UID_ROWID_SUFFIX;
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
-			return render.makeTag("div", //
+			return render.tag("div", //
 			{
 				"class" : "node-table-row inactive-row",
 				"onClick" : "srch.clickOnSearchResultRow(this, '" + uid + "');", //
 				"id" : cssId
 			},// 
-			_.makeButtonBarHtml(uid) + render.makeTag("div", //
+			_.makeButtonBarHtml(uid) + render.tag("div", //
 			{
 				"id" : uid + "_srch_content"
 			}, render.renderNodeContent(node, true, true, true)));
@@ -174,7 +174,7 @@ var srch = function() {
 
 		makeButtonBarHtml : function(uid) {
 
-			var gotoButton = render.makeTag("a", {
+			var gotoButton = render.tag("a", {
 				"onClick" : "srch.clickSearchNode('" + uid + "');",
 				"class" : "ui-btn ui-mini ui-btn-b ui-btn-inline ui-icon-carat-l ui-btn-icon-left"
 			}, //

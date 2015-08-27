@@ -6,7 +6,7 @@ var searchResultsPg = function() {
 		domId : "searchResultsPg",
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -16,7 +16,7 @@ var searchResultsPg = function() {
 			"<h2 id='searchPageTitle'></h2>");
 
 			var internalMainContent = "<div id='searchResultsView'></div>";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content"

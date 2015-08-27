@@ -6,7 +6,7 @@ var loginPg = function() {
 		domId : "loginPg",
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -32,14 +32,14 @@ var loginPg = function() {
 
 			var divider = "<div><h3>Or Login With...</h3></div>";
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
 			formControls + buttonBar);
 
 			var internalMainContent = "";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

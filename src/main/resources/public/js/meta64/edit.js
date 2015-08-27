@@ -522,7 +522,7 @@ var edit = function() {
 					var buttonBar = "";
 
 					if (!isReadOnlyProp && !isBinaryProp) {
-						var clearButton = render.makeTag("a", //
+						var clearButton = render.tag("a", //
 						{
 							"onClick" : "props.clearProperty('" + fieldId + "');", //
 							"class" : "ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
@@ -538,7 +538,7 @@ var edit = function() {
 							 * actual content property cannot be deleted. User
 							 * can leave content blank but not delete it.
 							 */
-							deleteButton = render.makeTag("a", //
+							deleteButton = render.tag("a", //
 							{
 								"onClick" : "props.deleteProperty('" + prop.name + "');", //
 								// "onClick" : function() {
@@ -553,7 +553,7 @@ var edit = function() {
 							 * jcr:content property to be multivalued. I may be
 							 * wrong but this is my current assumption
 							 */
-							addMultiButton = render.makeTag("a", //
+							addMultiButton = render.tag("a", //
 							{
 								"onClick" : "props.addSubProperty('" + fieldId + "');", //
 								"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
@@ -576,26 +576,26 @@ var edit = function() {
 						field += props.makeMultiPropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
 					} else {
 						console.log("Property single-type: " + prop.name);
-						field += render.makeTag("label", {
+						field += render.tag("label", {
 							"for" : fieldId
 						}, render.sanitizePropertyName(prop.name));
 
 						var propVal = isBinaryProp ? "[binary]" : prop.value;
 
 						if (isReadOnlyProp || isBinaryProp) {
-							field += render.makeTag("textarea", {
+							field += render.tag("textarea", {
 								"id" : fieldId,
 								"readonly" : "readonly",
 								"disabled" : "disabled"
 							}, propVal ? propVal : '');
 						} else {
-							field += render.makeTag("textarea", {
+							field += render.tag("textarea", {
 								"id" : fieldId
 							}, propVal ? propVal : '');
 						}
 					}
 
-					fields += render.makeTag("div", {
+					fields += render.tag("div", {
 						"class" : "ui-field-contain property-edit-field"
 					}, field);
 
@@ -603,14 +603,14 @@ var edit = function() {
 				});
 
 			} else {
-				var field = render.makeTag("label", {
+				var field = render.tag("label", {
 					"for" : "newNodeNameId"
 				}, "New Node Name") //
-						+ render.makeTag("textarea", {
+						+ render.tag("textarea", {
 							"id" : "newNodeNameId"
 						}, '');
 
-				fields += render.makeTag("div", {
+				fields += render.tag("div", {
 					"class" : "ui-field-contain property-edit-field"
 				}, field);
 			}

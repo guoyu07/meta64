@@ -7,7 +7,7 @@ var signupPg = function() {
 
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -20,11 +20,11 @@ var signupPg = function() {
 			render.makeEditField("Email", "signupEmail") + //
 			render.makeEditField("Captcha", "signupCaptcha");
 
-			var captchaImage = render.makeTag("div", //
+			var captchaImage = render.tag("div", //
 			{
 				"class" : "captcha-image" //
 			}, //
-			render.makeTag("img", //
+			render.tag("img", //
 			{
 				"id" : "captchaImage",
 				"class" : "captcha",
@@ -38,7 +38,7 @@ var signupPg = function() {
 
 			var buttonBar = render.makeHorzControlGroup(signupButton + newCaptchaButton + backButton);
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
@@ -49,7 +49,7 @@ var signupPg = function() {
 			// app is an alpha site that doesn't
 			// yet have email support.";
 
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main",
 				"class" : "ui-content dialog-content", 

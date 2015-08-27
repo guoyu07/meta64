@@ -37,6 +37,7 @@ public class JcrUtil {
 	static {
 		nonSavableProperties.add(JcrProp.MIXIN_TYPES);
 		nonSavableProperties.add(JcrProp.UUID);
+		nonSavableProperties.add(JcrProp.PRIMARY_TYPE);
 
 		nonSavableProperties.add(JcrProp.COMMENT_BY);
 		nonSavableProperties.add(JcrProp.PUBLIC_APPEND);

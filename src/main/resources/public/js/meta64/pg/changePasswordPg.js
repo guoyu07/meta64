@@ -7,7 +7,7 @@ var changePasswordPg = function() {
 
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -23,14 +23,14 @@ var changePasswordPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelChangePasswordButton", "a");
 			var buttonBar = render.makeHorzControlGroup(changePasswordButton + backButton);
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
 			formControls + buttonBar);
 
 			var internalMainContent = "";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

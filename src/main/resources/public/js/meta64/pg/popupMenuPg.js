@@ -3,7 +3,7 @@ console.log("running module: popupMenuPg.js");
 var popupMenuPg = function() {
 
 	function _makeTopLevelMenu(title, content) {
-		return render.makeTag("div", {
+		return render.tag("div", {
 			"style" : "margin: 0px; padding: 0px;",
 			"data-role" : "collapsible",
 			// "data-inset" : "false",
@@ -18,7 +18,7 @@ var popupMenuPg = function() {
 	}
 
 	function _makeSecondLevelList(content) {
-		return render.makeTag("ul", {
+		return render.tag("ul", {
 			"style" : "margin: 0px; padding: 0px;",
 			"data-role" : "listview",
 			// "data-mini" : "true",
@@ -29,13 +29,13 @@ var popupMenuPg = function() {
 	}
 
 	function _menuItem(name, id, onClick) {
-		var anchor = render.makeTag("a", {
+		var anchor = render.tag("a", {
 			// "data-mini" : "true", //
 			"id" : id,
 			"onclick" : onClick
 		}, name);
 
-		return render.makeTag("li", {
+		return render.tag("li", {
 			// "data-mini" : "true", //
 			"data-icon" : "false"
 		}, anchor);
@@ -82,7 +82,7 @@ var popupMenuPg = function() {
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();");
 			var viewOptionsMenu = _makeTopLevelMenu("View Options", viewOptionsMenuItems);
 
-			var content = render.makeTag("div", {
+			var content = render.tag("div", {
 				"style" : "margin: 0; min-width: 300px; position: fixed; top: 2em; left: 2em;",
 				"data-role" : "collapsible-set"
 			}, myAccountMenu + editMenu + sharingMenu + viewOptionsMenu/* + searchMenu */);

@@ -20,7 +20,7 @@ var confirmPg = function() {
 			var fields = "<h3 id='confirmPgTitle'></h3><p id='confirmPgMessage'></p>";
 			fields += render.makeBackButton("Yes", "confirmPgYesButton", "b");
 			fields += render.makeBackButton("No", "confirmPgNoButton", "a");
-			var content = render.makeTag("div", {
+			var content = render.tag("div", {
 				"data-role" : "content"
 			}, fields);
 

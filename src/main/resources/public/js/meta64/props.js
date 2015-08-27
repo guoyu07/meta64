@@ -82,11 +82,11 @@ var props = function() {
 			{
 				var fieldPropNameId = "addPropertyNameTextContent";
 
-				field += render.makeTag("label", {
+				field += render.tag("label", {
 					"for" : fieldPropNameId
 				}, "Name");
 
-				field += render.makeTag("textarea", {
+				field += render.tag("textarea", {
 					"name" : fieldPropNameId,
 					"id" : fieldPropNameId,
 					"placeholder" : "Enter property name"
@@ -97,11 +97,11 @@ var props = function() {
 			{
 				var fieldPropValueId = "addPropertyValueTextContent";
 
-				field += render.makeTag("label", {
+				field += render.tag("label", {
 					"for" : fieldPropValueId
 				}, "Value");
 
-				field += render.makeTag("textarea", {
+				field += render.tag("textarea", {
 					"name" : fieldPropValueId,
 					"id" : fieldPropValueId,
 					"placeholder" : "Enter property text"
@@ -194,20 +194,20 @@ var props = function() {
 				console.log("prop multi-val[" + i + "]=" + propList[i]);
 				var id = fieldId + "_subProp" + i;
 
-				fields += render.makeTag("label", {
+				fields += render.tag("label", {
 					"for" : id
 				}, (i == 0 ? prop.name : "*") + "." + i);
 
 				var propVal = isBinaryProp ? "[binary]" : propList[i];
 
 				if (isBinaryProp || isReadOnlyProp) {
-					fields += render.makeTag("textarea", {
+					fields += render.tag("textarea", {
 						"id" : id,
 						"readonly" : "readonly",
 						"disabled" : "disabled"
 					}, propVal ? propVal : '');
 				} else {
-					fields += render.makeTag("textarea", {
+					fields += render.tag("textarea", {
 						"id" : id
 					}, propVal ? propVal : '');
 				}

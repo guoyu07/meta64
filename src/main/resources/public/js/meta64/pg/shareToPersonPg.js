@@ -7,7 +7,7 @@ var shareToPersonPg = function() {
 			
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"//,
 				//"data-position" : "fixed",
@@ -21,14 +21,14 @@ var shareToPersonPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelShareNodeToPersonButton", "a");
 			var buttonBar = render.makeHorzControlGroup(shareButton + backButton);
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
 			formControls + buttonBar);
 
 			var internalMainContent = "Enter the username of the person you want to share this node with:";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

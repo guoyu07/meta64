@@ -33,6 +33,7 @@ public class JcrProp {
 	public static final String CREATED_BY = "jcr:createdBy";
 	public static final String CONTENT = "jcr:content";
 	public static final String UUID = "jcr:uuid";
+	public static final String PRIMARY_TYPE = "jcr:primaryType";
 	public static final String LAST_MODIFIED = "jcr:lastModified";
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
 

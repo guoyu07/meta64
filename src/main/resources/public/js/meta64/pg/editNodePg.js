@@ -7,7 +7,7 @@ var editNodePg = function() {
 
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed",
@@ -25,7 +25,7 @@ var editNodePg = function() {
 			"<div id='editNodeInstructions'></div>" + //
 			"<div id='propertyEditFieldContainer'></div>";
 
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

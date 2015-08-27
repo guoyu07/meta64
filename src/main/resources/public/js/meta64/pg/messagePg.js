@@ -18,7 +18,7 @@ var messagePg = function() {
 
 			var fields = "<h3 id='messagePgTitle'></h3><p id='messagePgMessage'></p>";
 			fields += render.makeBackButton("Ok", "messagePgOkButton", "b");
-			var content = render.makeTag("div", {
+			var content = render.tag("div", {
 				"data-role" : "content"
 			}, fields);
 

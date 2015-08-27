@@ -7,7 +7,7 @@ var sharingPg = function() {
 
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"// ,
 			// "data-position" : "fixed"
@@ -23,7 +23,7 @@ var sharingPg = function() {
 			var internalMainContent = "<div id='shareNodeNameDisplay'></div>" + //
 			"<div id='sharingListFieldContainer'></div>";
 
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

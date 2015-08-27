@@ -7,7 +7,7 @@ var importPg = function() {
 			
 		build : function() {
 
-			var header = render.makeTag("div", //
+			var header = render.tag("div", //
 			{
 				"data-role" : "header"//,
 				//"data-position" : "fixed",
@@ -21,14 +21,14 @@ var importPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelImportButton", "a");
 			var buttonBar = render.makeHorzControlGroup(importButton + backButton);
 
-			var form = render.makeTag("div", //
+			var form = render.tag("div", //
 			{
 				"class" : "ui-field-contain" //
 			}, //
 			formControls + buttonBar);
 
 			var internalMainContent = "";
-			var mainContent = render.makeTag("div", //
+			var mainContent = render.tag("div", //
 			{
 				"role" : "main", //
 				"class" : "ui-content dialog-content"

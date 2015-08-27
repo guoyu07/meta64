@@ -21,7 +21,7 @@ var share = function() {
 		var ret = "";
 		$.each(aclEntry.privileges, function(index, privilege) {
 
-			var removeButton = render.makeTag("a", //
+			var removeButton = render.tag("a", //
 			{
 				"onClick" : "share.removePrivilege('" + principal + "', '" + privilege.privilegeName + "');", //
 				"class" : "ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"
@@ -32,7 +32,7 @@ var share = function() {
 
 			row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
 
-			ret += render.makeTag("div", {
+			ret += render.tag("div", {
 				"class" : "privilege-entry"
 			}, row);
 		});
@@ -62,18 +62,18 @@ var share = function() {
 
 			$.each(res.aclEntries, function(index, aclEntry) {
 				html += "<h4>User: " + aclEntry.principalName + "</h4>";
-				html += render.makeTag("div", {
+				html += render.tag("div", {
 					"class" : "privilege-list"
 				}, _renderAclPrivileges(aclEntry.principalName, aclEntry));
 			});
 
-			html += render.makeTag("input", {
+			html += render.tag("input", {
 				"type" : "checkbox",
 				"name" : "allowPublicCommenting",
 				"id" : "allowPublicCommenting"
 			}, "", false);
 
-			html += render.makeTag("label", {
+			html += render.tag("label", {
 				"for" : "allowPublicCommenting"
 			}, "Allow public commenting under this node.", true);
 

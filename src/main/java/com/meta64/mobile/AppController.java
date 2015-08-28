@@ -54,6 +54,7 @@ import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.request.SignupRequest;
+import com.meta64.mobile.request.SplitNodeRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.AddPrivilegeResponse;
 import com.meta64.mobile.response.AnonPageLoadResponse;
@@ -84,6 +85,7 @@ import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
 import com.meta64.mobile.response.SignupResponse;
+import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
@@ -635,6 +637,18 @@ public class AppController {
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
 		checkSession();
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/splitNode", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody SplitNodeResponse splitNode(@RequestBody SplitNodeRequest req) throws Exception {
+		logRequest("splitNode", req);
+		SplitNodeResponse res = new SplitNodeResponse();
+		ThreadLocals.setResponse(res);
+		checkSession();
+		Session session = ThreadLocals.getJcrSession();
+		nodeEditService.splitNode(session, req, res);
 		return res;
 	}
 

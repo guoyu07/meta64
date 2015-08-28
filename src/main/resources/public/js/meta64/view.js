@@ -84,11 +84,10 @@ var view = function() {
 					 * set scroll position to exact top (zero) if this is the
 					 * first (top) child node, or else scroll exactly to it
 					 */
-					var scrollPos = (ordinal == 0 ? 0 : $('#' + elm.id).offset().top - $('#mainPageHeader').height());
-					// console.log("scrollPos: "+scrollPos);
+					var scrollPos = (ordinal == 0 ? 0 : $("#" + elm.id).offset().top - $("#mainPageHeader").height());
 
 					// console.log("Scrolling to dom element id: " +elm.id);
-					$('html, body').animate({
+					$("html, body").animate({
 						scrollTop : scrollPos
 					});
 				}

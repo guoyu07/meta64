@@ -11,7 +11,7 @@ var props = function() {
 	}
 
 	var _deletePropertyResponse = function(res, propertyToDelete) {
-		// alert("info: "+JSON.stringify(info));
+		
 		if (util.checkSuccess("Delete property", res)) {
 
 			/*
@@ -123,7 +123,6 @@ var props = function() {
 				propertyName : propertyNameData,
 				propertyValue : propertyValueData
 			};
-			// alert(JSON.stringify(postData));
 			util.json("saveProperty", postData, _savePropertyResponse);
 		},
 
@@ -151,7 +150,6 @@ var props = function() {
 		},
 
 		clearProperty : function(fieldId) {
-			// console.log("clearing: " + fieldId);
 
 			var elm = $("#" + fieldId);
 			/* checking length is the way to see if the property exists */
@@ -173,7 +171,6 @@ var props = function() {
 		deletePropertyFromLocalData : function(propertyName) {
 			for (var i = 0; i < edit.editNode.properties.length; i++) {
 				if (propertyName === edit.editNode.properties[i].name) {
-					// console.log("Delete id at index: " + i);
 					// splice is how you delete array elements in js.
 					edit.editNode.properties.splice(i, 1);
 					break;
@@ -322,7 +319,6 @@ var props = function() {
 		 */
 		isNonOwnedNode : function(node) {
 			var createdBy = _.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-
 			return createdBy != null && createdBy != meta64.userName;
 		},
 		
@@ -332,7 +328,6 @@ var props = function() {
 		 */
 		isNonOwnedCommentNode : function(node) {
 			var commentBy = _.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-
 			return commentBy != null && commentBy != meta64.userName;
 		},
 

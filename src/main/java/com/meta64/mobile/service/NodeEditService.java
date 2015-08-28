@@ -3,11 +3,9 @@ package com.meta64.mobile.service;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
@@ -28,6 +26,7 @@ import com.meta64.mobile.request.MakeNodeReferencableRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
+import com.meta64.mobile.request.SplitNodeRequest;
 import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.InsertNodeResponse;
@@ -35,7 +34,7 @@ import com.meta64.mobile.response.MakeNodeReferencableResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
-import com.meta64.mobile.user.AccessControlUtil;
+import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
@@ -305,6 +304,34 @@ public class NodeEditService {
 		}
 
 		session.save();
+		res.setSuccess(true);
+	}
+	
+	/*
+	 * When user pastes in a large amount of text and wants to have this text broken out into individual nodes
+	 * one way to do this is put the keyword "{split}" everywhere in the content you want it cut, and this
+	 * splitNode method will break it all up into individual nodes.
+	 */
+	public void splitNode(Session session, SplitNodeRequest req, SplitNodeResponse res) throws Exception {
+
+		String nodeId = req.getNodeId();
+
+		log.debug("Splitting node: " + nodeId);
+		Node node = JcrUtil.findNode(session, nodeId);
+
+		if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
+			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		}
+		
+		String content = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
+		List<String> contentParts = XString.tokenize(content, "{split}", true);
+		
+		for (String part : contentParts) {
+			log.debug("PART: "+part);
+			log.debug("###################");
+		}
+
+		//session.save();
 		res.setSuccess(true);
 	}
 }

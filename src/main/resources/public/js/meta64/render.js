@@ -6,7 +6,7 @@ var render = function() {
 	/*
 	 * This is the content displayed when the user signs in, and we see that
 	 * they have no content being displayed. We want to give them some
-	 * insructions and the ability to add content.
+	 * instructions and the ability to add content.
 	 */
 	function _getEmptyPagePrompt() {
 		/* Construct Create Subnode Button */
@@ -412,7 +412,7 @@ var render = function() {
 				"name" : group,
 				"id" : id,
 				"checked" : on ? "checked" : "unchecked"
-			}, "", true) + // + //
+			}, "", true) + //
 
 			_.tag("label", {
 				"for" : id
@@ -469,7 +469,6 @@ var render = function() {
 
 			var hasContent = html.length > 0;
 			if (hasContent) {
-				// $("#mainPageControls").html(html);
 				util.setHtmlEnhanced($("#mainPageControls"), html);
 			}
 
@@ -494,7 +493,6 @@ var render = function() {
 			}
 
 			_.renderMainPageControls();
-
 			meta64.treeDirty = false;
 
 			if (newData) {

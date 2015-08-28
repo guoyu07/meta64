@@ -10,7 +10,6 @@ var user = function() {
 		$("#headerUserName").html(title);
 
 		var loginEnable = meta64.isAnonUser;
-		// console.log("loginEnable: "+loginEnable);
 		$("#openLoginPgButton").text(loginEnable ? "Login" : "Logout");
 	}
 
@@ -23,7 +22,6 @@ var user = function() {
 		meta64.userName = res.userName;
 		meta64.isAdminUser = res.userName === "admin";
 		meta64.isAnonUser = res.userName === "anonymous";
-		// console.log("***** isAnonUser = "+meta64.isAnonUser);
 		meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
 		meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
 	}
@@ -204,8 +202,6 @@ var user = function() {
 			 * server and browser will never return the same image twice.
 			 */
 			var src = postTargetUrl + "captcha?t=" + n;
-			// console.log("Setting captcha image src: "+src);
-
 			$("#captchaImage").attr("src", src);
 		},
 

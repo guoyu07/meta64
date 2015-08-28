@@ -169,9 +169,8 @@ var meta64 = function() {
 		},
 
 		getSelectedNodeUidsArray : function() {
-			var selArray = [];
-			var idx = 0;
-			var uid;
+			var selArray = [], idx = 0, uid;
+
 			for (uid in _.selectedNodes) {
 				if (_.selectedNodes.hasOwnProperty(uid)) {
 					selArray[idx++] = uid;
@@ -181,9 +180,8 @@ var meta64 = function() {
 		},
 
 		getSelectedNodeIdsArray : function() {
-			var selArray = [];
-			var idx = 0;
-			var uid;
+			var selArray = [], idx = 0, uid;
+			
 			if (!_.selectedNodes) {
 				console.log("no selected nodes.");
 			} else {
@@ -204,9 +202,7 @@ var meta64 = function() {
 
 		/* Gets selected nodes as NodeInfo.java objects array */
 		getSelectedNodesArray : function() {
-			var selArray = [];
-			var idx = 0;
-			var uid;
+			var selArray = [], idx = 0, uid;
 			for (uid in _.selectedNodes) {
 				if (_.selectedNodes.hasOwnProperty(uid)) {
 					selArray[idx++] = _.uidToNodeMap[uid];
@@ -390,14 +386,7 @@ var meta64 = function() {
 			for (uid in _.selectedNodes) {
 				if (_.selectedNodes.hasOwnProperty(uid)) {
 					// console.log("found a single Sel NodeID: " + nodeId);
-					var singleSelNode = _.uidToNodeMap[uid];
-					// if (singleSelNode == null) {
-					// console.log("id doesn't map to a node.");
-					// } else {
-					// console.log("singleSelId: " +
-					// singleSelNode.id);
-					// }
-					return singleSelNode;
+					return _.uidToNodeMap[uid];
 				}
 			}
 			return null;
@@ -423,25 +412,6 @@ var meta64 = function() {
 			_.currentNodeId = data.node.id;
 			_.currentNodePath = data.node.path;
 		},
-
-		// hookInitFunction : function() {
-		// /*
-		// * JQM docs says do the 'pagecreate' thing instead of
-		// * $(document).ready()
-		// *
-		// * Warning: If you leave off the second parameter it calls this for
-		// * each page load, which can hook buttons multiple times, etc.,
-		// * which is a major malfunction, so I target the specific page
-		// * "#mainPage" so that it can only call this ONE time.
-		// */
-		// // $(document).ready(function() {
-		// // _.loadAnonPageHome(false);
-		// // };
-		//			
-		// $(document).on("pagecreate", "#mainPage", function(event) {
-		// // _.initApp();
-		// });
-		// },
 
 		anonPageLoadResponse : function(res) {
 			if (res.renderNodeResponse) {

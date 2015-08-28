@@ -353,65 +353,6 @@ var util = function() {
 		},
 
 		/*
-		 * I stupidly wrote this implementation before I knew about
-		 * 'toggleClass'. oops. My implementation works but isn't necessary
-		 * AFAIK
-		 */
-		changeOrAddClass__mine : function(elm, oldClass, newClass) {
-
-			if (!elm.className || elm.className.length == 0) {
-				console.log("no existing className is available on element, so assigning to " + newClass);
-				elm.className = newClass;
-				return;
-			}
-
-			var classNames = elm.className.split(" ");
-			var newNames = '';
-			var newClassDone = false;
-
-			for (var i = 0; i < classNames.length; i++) {
-				var name = classNames[i];
-
-				/*
-				 * if we found the newClass in the list of classes, ignore, and
-				 * don't add again
-				 */
-				if (name === newClass) {
-					if (newClassDone)
-						continue;
-
-					newClassDone = true;
-				} else {
-					if (name === oldClass) {
-						if (newClassDone)
-							continue;
-						name = newClass;
-						newClassDone = true;
-					}
-				}
-
-				if (newNames.length > 0) {
-					newNames += " ";
-				}
-				newNames += name;
-			}
-
-			/*
-			 * if we didn't replace the old class, or find the class existing,
-			 * then append it to end
-			 */
-			if (!newClassDone) {
-				if (newNames.length > 0) {
-					newNames += " ";
-				}
-				newNames += newClass;
-			}
-
-			elm.className = newNames;
-			// console.log("final class: " + elm.className);
-		},
-
-		/*
 		 * displays message (msg) of object is not of specified type
 		 */
 		verifyType : function(obj, type, msg) {
@@ -427,22 +368,6 @@ var util = function() {
 		// elm.attr('data-icon', dataIcon);
 		// elm.ehanceWithin();
 		// }
-
-		// part of some troubleshooting i'll eventually delete.
-		// setHtmlEnhancedById2 : function(elmId, content) {
-		// console.log("setting content: "+content+" on id "+elmId);
-		// //var elm = _.getRequiredElement(elmId);
-		// var elm = document.getElementById(elmId);
-		// if (elm) {
-		// console.log("setting innerHTML is successful");
-		// elm.innerHtml = content;
-		// //elm.html(content);
-		// //elm.enhanceWithin();
-		// }
-		// else {
-		// console.log("setting failed.");
-		// }
-		// },
 
 		setHtmlEnhancedById : function(elmId, content) {
 			// console.log("setting content: "+content+" on id "+elmId);

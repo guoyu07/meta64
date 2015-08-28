@@ -106,8 +106,7 @@ var edit = function() {
 		if (util.checkSuccess("Make node referencable", res)) {
 			alert("This node is now referencable, and can be accessed by unique ID");
 		}
-
-		// todo: need to refresh gui here to reflect change!
+		view.refreshTree(null, false);
 	}
 
 	var _createSubNodeResponse = function(res) {
@@ -292,8 +291,6 @@ var edit = function() {
 				/* is this an existing gui edit field */
 				if (meta64.fieldIdToPropMap.hasOwnProperty(fieldId)) {
 					var prop = meta64.fieldIdToPropMap[fieldId];
-
-					// alert('prop found: ' + prop.name);
 					var propVal = $("#" + fieldId).val();
 
 					if (propVal !== prop.value) {
@@ -316,7 +313,6 @@ var edit = function() {
 					properties : propertiesList,
 					sendNotification : _sendNotificationPendingSave
 				};
-				// alert(JSON.stringify(postData));
 				util.json("saveNode", postData, _saveNodeResponse);
 				_sendNotificationPendingSave = false;
 			} else {
@@ -366,7 +362,6 @@ var edit = function() {
 		 */
 		getNodeAbove : function(node) {
 			var ordinal = meta64.getOrdinalOfNode(node);
-			// console.log("ordinal=" + ordinal);
 			if (ordinal <= 0)
 				return null;
 			return meta64.currentNodeData.children[ordinal - 1];
@@ -378,7 +373,6 @@ var edit = function() {
 		 */
 		getNodeBelow : function(node) {
 			var ordinal = meta64.getOrdinalOfNode(node);
-			// console.log("ordinal=" + ordinal);
 			if (ordinal == -1 && ordinal >= meta64.currentNodeData.children.length - 1)
 				return null;
 

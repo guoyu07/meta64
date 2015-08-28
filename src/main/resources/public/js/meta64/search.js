@@ -151,7 +151,7 @@ var srch = function() {
 			var uid = node.uid;
 
 			/*
-			 * this checking of "rep:" is just a hack for now to stop from
+			 * TODO: fix. This checking of "rep:" is just a hack for now to stop from
 			 * deleting things I won't want to allow to delete, but I will
 			 * design this better later.
 			 */

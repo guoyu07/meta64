@@ -123,7 +123,7 @@ var nav = function() {
 				return;
 			}
 
-			var elm = $('#' + uid + "_sel");
+			var elm = $("#" + uid + "_sel");
 			var classes = elm.attr("class");
 
 			var checked = classes.contains("ui-btn-b");
@@ -146,7 +146,6 @@ var nav = function() {
 			elm.enhanceWithin();
 			view.updateStatusBar();
 			meta64.refreshAllGuiEnablement();
-			// alert("selections: " + printKeys(selectedNodes));
 		},
 
 		navHomeResponse : function(res) {

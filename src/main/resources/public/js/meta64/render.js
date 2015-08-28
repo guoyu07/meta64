@@ -2,7 +2,7 @@ console.log("running module: render.js");
 
 var render = function() {
 	var _debug = false;
-	
+
 	/*
 	 * This is the content displayed when the user signs in, and we see that
 	 * they have no content being displayed. We want to give them some
@@ -520,7 +520,6 @@ var render = function() {
 			}
 
 			var output = '';
-
 			var bkgStyle = _.getNodeBkgImageStyle(data.node);
 
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true);
@@ -529,7 +528,6 @@ var render = function() {
 			if (mainNodeContent.length > 0) {
 				var uid = data.node.uid;
 				var cssId = uid + "_row";
-
 				var buttonBar = "";
 
 				/* Add edit button if edit mode and this isn't the root */
@@ -585,13 +583,14 @@ var render = function() {
 				 */
 				var rowCount = 0;
 
-				$.each(data.children, function(i, node) {
+				for (var i = 0; i < data.children.length; i++) {
+					var node = data.children[i];
 					var row = _.generateRow(i, node, newData, childCount, rowCount);
 					if (row.length != 0) {
 						output += row;
 						rowCount++;
 					}
-				});
+				}
 			}
 
 			if (output.length == 0 && !meta64.isAnonUser) {
@@ -677,7 +676,7 @@ var render = function() {
 						// var height = width * node.height / node.width;
 						elm.attr("width", "100%");
 						elm.attr("height", "auto");
-						//elm.attr("style", "max-width: " + maxWidth + "px;");
+						// elm.attr("style", "max-width: " + maxWidth + "px;");
 					}
 					/*
 					 * Image does fit on screen so render it at it's exact size

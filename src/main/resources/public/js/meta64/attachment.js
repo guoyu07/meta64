@@ -4,19 +4,26 @@ var attachment = function() {
 
 	function _deleteAttachmentResponse(res) {
 		if (util.checkSuccess("Delete attachment", res)) {
-			// /*
-			// * All that's needed to update client is to set the binary flag on
-			// * the node to false, and re-render
-			// */
-			// _.uploadNode.hasBinary = false;
-			// render.renderPageFromData();
 
 			/*
-			 * noticed the above is broken so for now let's just refresh the
-			 * page,but the above USED to work, simply by setting hasBinary to
-			 * false. So something's changed and that no longer works.
+			 * For some reason just setting hasBinary false on the uploadNode
+			 * and then rebuilding the page doesn't work. I had to write the
+			 * 'removeBinaryByUid' function to make it take effect. What this
+			 * means is that somewhere a 'node' object is getting 'cloned'
+			 * somehow such that setting hasBinary to false here doesn't change
+			 * the source array that's used in renderPageFromData, but I am
+			 * confused, because I'm not cloning any 'node' objects. They get
+			 * sent to us from the JSON return value in renderNode, and I never
+			 * create any new 'node' objects myself yet we have proof some are
+			 * getting created or else setting 'hasBinary' below would work.
+			 * Functionally the code works perfectly but IMO I shouldn't have
+			 * needed to write the 'removeBinaryByUid' at all.
 			 */
-			view.refreshTree(null, false);
+			// _.uploadNode.hasBinary = false;
+			meta64.removeBinaryByUid(_.uploadNode.uid);
+
+			console.log("removed attachment from node uid: " + _.uploadNode.uid);
+			render.renderPageFromData();
 
 			_.closeUploadPg();
 		}

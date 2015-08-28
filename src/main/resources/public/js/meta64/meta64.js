@@ -461,6 +461,17 @@ var meta64 = function() {
 			render.renderMainPageControls();
 		},
 
+		removeBinaryByUid : function(uid) {
+
+			for (var i = 0; i < _.currentNodeData.children.length; i++) {
+				var node = _.currentNodeData.children[i];
+				if (node.uid === uid) {
+					node.hasBinary = false;
+					break;
+				}
+			}
+		},
+
 		/*
 		 * updates client side maps and client-side identifier for new node, so
 		 * that this node is 'recognized' by client side code

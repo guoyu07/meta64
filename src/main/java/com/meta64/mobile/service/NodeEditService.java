@@ -163,14 +163,25 @@ public class NodeEditService {
 
 		Node parentNode = node.getParent();
 		String newPath = parentNode.getPath() + "/" + newName;
+
+		Node checkExists = JcrUtil.safeFindNode(session, newPath);
+		if (checkExists != null) {
+			throw new Exception("Node already exists");
+		}
+
+		/*
+		 * Because we support renaming of the root node of a page (GUI page) we cannot expect the
+		 * client to be able so send the 'nodeBelow' so we have to find that on the server side.
+		 */
+		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node);
+		
 		session.move(node.getPath(), newPath);
 
 		/*
-		 * if the node we are renaming is already the bottom node we will have null for
-		 * getNodeBelowName()
+		 * if the node we are renaming is already the bottom node we will have null for nodeBelow
 		 */
-		if (req.getNodeBelowName() != null) {
-			parentNode.orderBefore(newName, req.getNodeBelowName());
+		if (nodeBelow != null) {
+			parentNode.orderBefore(newName, nodeBelow.getName());
 		}
 		session.save();
 

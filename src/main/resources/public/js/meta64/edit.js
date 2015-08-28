@@ -16,9 +16,13 @@ var edit = function() {
 		}
 	}
 
-	var _renameNodeResponse = function(res) {
+	var _renameNodeResponse = function(res, renamingPageRoot) {
 		if (util.checkSuccess("Rename node", res)) {
-			view.refreshTree(null, false, res.newId);
+			if (renamingPageRoot) {
+				view.refreshTree(res.newId, true);
+			} else {
+				view.refreshTree(null, false, res.newId);
+			}
 			meta64.jqueryChangePage("#mainPage");
 		}
 	}
@@ -389,7 +393,8 @@ var edit = function() {
 		 */
 		getNodeBelow : function(node) {
 			var ordinal = meta64.getOrdinalOfNode(node);
-			if (ordinal == -1 && ordinal >= meta64.currentNodeData.children.length - 1)
+			console.log("ordinal = " + ordinal);
+			if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
 				return null;
 
 			return meta64.currentNodeData.children[ordinal + 1];
@@ -426,11 +431,16 @@ var edit = function() {
 			/* if no node below this node, returns null */
 			var nodeBelow = _.getNodeBelow(highlightNode);
 
-			util.json("renameNode", {
+			var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
+
+			var prms = util.json("renameNode", {
 				"nodeId" : highlightNode.id,
-				"newName" : newName,
-				"nodeBelowName" : (nodeBelow == null ? null : nodeBelow.name)
-			}, _renameNodeResponse);
+				"newName" : newName
+			});
+			
+			prms.done(function(res) {
+				_renameNodeResponse(res, renamingRootNode);
+			});
 		},
 
 		exportNodes : function() {

@@ -6,7 +6,6 @@ package com.meta64.mobile.request;
 public class RenameNodeRequest {
 	private String nodeId;
 	private String newName;
-	private String nodeBelowName;
 
 	public String getNodeId() {
 		return nodeId;
@@ -22,13 +21,5 @@ public class RenameNodeRequest {
 
 	public void setNewName(String newName) {
 		this.newName = newName;
-	}
-
-	public String getNodeBelowName() {
-		return nodeBelowName;
-	}
-
-	public void setNodeBelowName(String nodeBelowName) {
-		this.nodeBelowName = nodeBelowName;
 	}
 }

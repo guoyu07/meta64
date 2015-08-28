@@ -98,6 +98,47 @@ public class JcrUtil {
 	}
 
 	/*
+	 * Returns the node that is below this node in the siblings list. If parent node happens to
+	 * already be available you can pass it in, but if you pass a null parent instead that works too
+	 * because it can just find the parent easily from the node.
+	 * 
+	 * Note: We don't support or expect to find multiple nodes of the same name under any given
+	 * parent even though that's technically supported by the JCR (for some strange reason)
+	 */
+	public static Node getNodeBelow(Session session, Node parentNode, Node node) throws Exception {
+		Node ret = null;
+		if (parentNode == null) {
+			parentNode = node.getParent();
+		}
+
+		String nodeName = node.getName();
+		log.debug("Finding node below node: " + nodeName);
+		NodeIterator nodeIter = parentNode.getNodes();
+		boolean foundNode = false;
+
+		try {
+			while (true) {
+				Node n = nodeIter.nextNode();
+				log.debug("   NAME: " + n.getName());
+				if (foundNode) {
+					ret = n;
+					break;
+				}
+				if (n.getName().equals(nodeName)) {
+					foundNode = true;
+				}
+			}
+		}
+		catch (NoSuchElementException ex) {
+			// not an error. Normal iterator end condition.
+		}
+		if (ret == null) {
+			log.debug("didn't find a node below: " + nodeName);
+		}
+		return ret;
+	}
+
+	/*
 	 * Currently there's a bug in the client code where it sends nulls for some nonsavable types, so
 	 * before even fixing the client I decided to just make the server side block those. This is
 	 * more secure to always have the server allow misbehaving javascript for security reasons.
@@ -149,25 +190,25 @@ public class JcrUtil {
 		}
 		return false;
 	}
-	
+
 	public static boolean nodeVisibleInSimpleMode(Node node) throws Exception {
-		if (node==null) return false;
-		
+		if (node == null) return false;
+
 		String name = node.getName();
-		
+
 		/*
-		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply
-		 * same logic.
+		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply same
+		 * logic.
 		 */
 		if (name.startsWith("rep:")) {
 			return false;
 		}
-		
+
 		String typeName = node.getPrimaryNodeType().getName();
 		if (name.equals("allow") && typeName.contains("rep:GrantACE")) {
 			return false;
 		}
-		
+
 		return true;
 	}
 

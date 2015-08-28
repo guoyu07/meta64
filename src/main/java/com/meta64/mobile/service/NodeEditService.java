@@ -1,12 +1,12 @@
 package com.meta64.mobile.service;
 
 import java.util.Calendar;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,32 +306,61 @@ public class NodeEditService {
 		session.save();
 		res.setSuccess(true);
 	}
-	
+
 	/*
-	 * When user pastes in a large amount of text and wants to have this text broken out into individual nodes
-	 * one way to do this is put the keyword "{split}" everywhere in the content you want it cut, and this
-	 * splitNode method will break it all up into individual nodes.
+	 * When user pastes in a large amount of text and wants to have this text broken out into
+	 * individual nodes one way to do this is put the keyword "{split}" everywhere in the content
+	 * you want it cut, and this splitNode method will break it all up into individual nodes.
 	 */
 	public void splitNode(Session session, SplitNodeRequest req, SplitNodeResponse res) throws Exception {
 
 		String nodeId = req.getNodeId();
+		String nodeBelowId = req.getNodeBelowId();
+		Node nodeBelow = null;
+
+		if (nodeBelowId != null) {
+			nodeBelow = JcrUtil.findNode(session, nodeBelowId);
+		}
 
 		log.debug("Splitting node: " + nodeId);
 		Node node = JcrUtil.findNode(session, nodeId);
+		Node parentNode = node.getParent();
 
 		if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
 			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		}
-		
+
 		String content = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
-		List<String> contentParts = XString.tokenize(content, "{split}", true);
-		
+		String[] contentParts = StringUtils.splitByWholeSeparator(content, "{split}");
+
+		int idx = 0;
 		for (String part : contentParts) {
-			log.debug("PART: "+part);
-			log.debug("###################");
+			if (idx == 0) {
+				node.setProperty(JcrProp.CONTENT, part);
+			}
+			else {
+				String newNodeName = JcrUtil.getGUID();
+				Node newNode = parentNode.addNode(newNodeName, JcrConstants.NT_UNSTRUCTURED);
+				newNode.setProperty(JcrProp.CONTENT, part);
+				JcrUtil.timestampNewNode(session, newNode);
+
+				/*
+				 * Because of how 'orderBefore' works (i.e. it 'moves' the bottom node, not the top
+				 * node), we always have to continually move the new nodes added into the location
+				 * BELOW the node we are splitting, and each time we add a new node it goes just
+				 * above this 'nodeBelow' and then in the end everything maintains proper ordering.
+				 * Note if 'nodeBelow' is null then that means we are splitting a node that was
+				 * already at bottom, so adding all the new nodes as we are here will make them all
+				 * end up in the correct locations without us ever calling 'orderBefore'
+				 */
+				if (nodeBelow != null) {
+					parentNode.orderBefore(newNode.getName(), nodeBelow.getName());
+				}
+			}
+			idx++;
 		}
 
-		//session.save();
+		session.save();
 		res.setSuccess(true);
 	}
 }

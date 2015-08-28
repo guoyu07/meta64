@@ -4,6 +4,7 @@ package com.meta64.mobile.request;
 public class SplitNodeRequest {
 
 	private String nodeId;
+	private String nodeBelowId;
 	private String delimiter;
 
 	public String getNodeId() {
@@ -20,5 +21,13 @@ public class SplitNodeRequest {
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
+	}
+
+	public String getNodeBelowId() {
+		return nodeBelowId;
+	}
+
+	public void setNodeBelowId(String nodeBelowId) {
+		this.nodeBelowId = nodeBelowId;
 	}
 }

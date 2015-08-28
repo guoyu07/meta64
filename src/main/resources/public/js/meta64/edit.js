@@ -109,6 +109,14 @@ var edit = function() {
 		view.refreshTree(null, false);
 	}
 
+	var _splitContentResponse = function(res) {
+		if (util.checkSuccess("Split content", res)) {
+			view.refreshTree(null, false);
+			meta64.jqueryChangePage("#mainPage");
+			view.scrollToSelectedNode();
+		}
+	}
+
 	var _createSubNodeResponse = function(res) {
 		if (util.checkSuccess("Create subnode", res)) {
 
@@ -199,6 +207,14 @@ var edit = function() {
 			util.json("makeNodeReferencable", {
 				"nodeId" : _.editNode.id
 			}, _makeNodeReferencableResponse);
+		},
+
+		splitContent : function() {
+			var nodeBelow = _.getNodeBelow(_.editNode);
+			util.json("splitNode", {
+				"nodeId" : _.editNode.id,
+				"nodeBelowId" : (nodeBelow == null ? null : nodeBelow.id)
+			}, _splitContentResponse);
 		},
 
 		cancelEdit : function() {

@@ -109,8 +109,8 @@ public class Convert {
 		}
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
-		
-		boolean hasNodes = JcrUtil.hasDisplayableNodes(userPreferences.isAdvancedMode(), node);
+		boolean advancedMode = userPreferences!=null ? userPreferences.isAdvancedMode() : false;
+		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
 		log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
 		ValContainer<String> createdBy = new ValContainer<String>();

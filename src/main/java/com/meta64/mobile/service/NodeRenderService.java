@@ -99,8 +99,9 @@ public class NodeRenderService {
 		userSettingsDaemon.setSettingVal(sessionContext.getUserName(), JcrProp.USER_PREF_LAST_NODE, path);
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean advancedMode = userPreferences!=null ? userPreferences.isAdvancedMode() : false;
 		
-		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(userPreferences.isAdvancedMode(), node)) {
+		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
 			res.setDisplayedParent(true);
 			req.setUpLevel(1);
 		}

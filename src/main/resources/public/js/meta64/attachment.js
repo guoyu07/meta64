@@ -23,16 +23,16 @@ var attachment = function() {
 			meta64.removeBinaryByUid(_.uploadNode.uid);
 
 			console.log("removed attachment from node uid: " + _.uploadNode.uid);
-			render.renderPageFromData();
-
-			_.closeUploadPg();
+			//render.renderPageFromData();
+			//_.closeUploadPg();
+		
+			meta64.goToMainPage(true);
 		}
 	}
 
 	function _uploadFromUrlResponse(res) {
-		if (util.checkSuccess("Upload from URL", res)) {
-			view.refreshTree(null, false);
-			_.closeUploadPg();
+		if (util.checkSuccess("Upload from URL", res)) {		
+			meta64.goToMainPage(true, true);
 		}
 	}
 
@@ -83,8 +83,7 @@ var attachment = function() {
 				});
 
 				prms.done(function() {
-					view.refreshTree(null, false);
-					_.closeUploadPg();
+					meta64.goToMainPage(true, true);
 				});
 
 				prms.fail(function() {
@@ -104,11 +103,6 @@ var attachment = function() {
 
 			_.uploadNode = node;
 			meta64.changePage(uploadPg);
-		},
-
-		closeUploadPg : function() {
-			meta64.jqueryChangePage("#mainPage");
-			view.scrollToSelectedNode();
 		}
 	};
 

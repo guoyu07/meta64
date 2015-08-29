@@ -3,7 +3,7 @@ console.log("running module: user.js");
 var share = function() {
 
 	/*
-	 * Handles getNodePrivileges respons.
+	 * Handles getNodePrivileges response.
 	 * 
 	 * res=json of GetNodePrivilegesResponse.java
 	 * 
@@ -16,7 +16,7 @@ var share = function() {
 	var _findSharedNodesResponse = function(res) {
 		srch.searchNodesResponse(res);
 	}
-	
+
 	var _renderAclPrivileges = function(principal, aclEntry) {
 		var ret = "";
 		$.each(aclEntry.privileges, function(index, privilege) {
@@ -40,7 +40,7 @@ var share = function() {
 	}
 
 	var _removePrivilegeResponse = function(res) {
-		
+
 		util.json("getNodePrivileges", {
 			"nodeId" : _.sharingNode.path,
 			"includeAcl" : true,
@@ -91,17 +91,24 @@ var share = function() {
 			util.setCheckboxVal("#allowPublicCommenting", res.publicAppend);
 			$("#allowPublicCommenting").bind("change", _.publicCommentingChanged);
 		},
-		
+
 		publicCommentingChanged : function() {
 			var publicAppend = $("#allowPublicCommenting").is(":checked");
+
+			meta64.treeDirty = true;
 			
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"publicAppend" : publicAppend ? "true" : "false"
-			}, null);
+			});
 		},
 
 		removePrivilege : function(principal, privilege) {
+			/*
+			 * Trigger going to server at next main page refresh
+			 */
+			meta64.treeDirty = true;
+
 			util.json("removePrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"principal" : principal,
@@ -120,6 +127,11 @@ var share = function() {
 				return;
 			}
 
+			/*
+			 * Trigger going to server at next main page refresh
+			 */
+			meta64.treeDirty = true;
+
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"principal" : targetUser,
@@ -129,6 +141,12 @@ var share = function() {
 
 		shareNodeToPublic : function() {
 			console.log("Sharing node to public.");
+
+			/*
+			 * Trigger going to server at next main page refresh
+			 */
+			meta64.treeDirty = true;
+
 			/*
 			 * Add privilege and then reload share nodes dialog from scratch
 			 * doing another callback to server
@@ -177,18 +195,26 @@ var share = function() {
 				"includeOwners" : true
 			}, _getNodePrivilegesResponse);
 		},
-		
+
 		findSharedNodes : function() {
 			var focusNode = meta64.getHighlightedNode();
-			if (focusNode==null) {
+			if (focusNode == null) {
 				return;
 			}
-			
+
 			srch.searchPageTitle = "Shared Nodes";
-			
+
 			util.json("getSharedNodes", {
 				"nodeId" : focusNode.id
 			}, _findSharedNodesResponse);
+		},
+
+		closeSharingDlg : function() {
+			/*
+			 * Go back to main page. If treeDirty has been set everything that
+			 * needs to happen happens.
+			 */
+			meta64.goToMainPage();
 		}
 	};
 

@@ -84,10 +84,7 @@ var edit = function() {
 
 	var _setNodePositionResponse = function(res) {
 		if (util.checkSuccess("Change node position", res)) {
-
-			view.refreshTree(null, false);
-			meta64.jqueryChangePage("#mainPage");
-			view.scrollToSelectedNode();
+			meta64.goToMainPage(true, true);
 		}
 	}
 

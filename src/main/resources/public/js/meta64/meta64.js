@@ -133,6 +133,31 @@ var meta64 = function() {
 			return _.editModeOption === _.MODE_SIMPLE;
 		},
 
+		goToMainPage : function(rerender, forceServerRefresh) {
+			meta64.jqueryChangePage("#mainPage");
+
+			if (forceServerRefresh) {
+				_.treeDirty = true;
+			}
+
+			if (rerender || _.treeDirty) {
+				if (_.treeDirty) {
+					view.refreshTree(null, true);
+				} else {
+					render.renderPageFromData();
+				}
+				_.refreshAllGuiEnablement();
+			}
+			/*
+			 * If not re-rendering page (either from server, or from local data,
+			 * then we just need to litterally switch page into visible, and
+			 * scroll to node)
+			 */
+			else {
+				view.scrollToSelectedNode();
+			}
+		},
+
 		jqueryChangePage : function(pageName) {
 			$.mobile.pageContainer.pagecontainer("change", pageName);
 		},
@@ -181,7 +206,7 @@ var meta64 = function() {
 
 		getSelectedNodeIdsArray : function() {
 			var selArray = [], idx = 0, uid;
-			
+
 			if (!_.selectedNodes) {
 				console.log("no selected nodes.");
 			} else {

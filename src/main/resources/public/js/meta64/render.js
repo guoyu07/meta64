@@ -477,6 +477,10 @@ var render = function() {
 			util.setVisibility("#mainPageControls", hasContent)
 		},
 
+		/*
+		 * Renders page and always also takes care of scrolling to selected node
+		 * if there is one to scroll to
+		 */
 		renderPageFromData : function(data) {
 
 			var newData = false;
@@ -610,6 +614,9 @@ var render = function() {
 
 			if (!meta64.getHighlightedNode()) {
 				util.scrollToTop();
+			}
+			else {
+				view.scrollToSelectedNode();
 			}
 		},
 

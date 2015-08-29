@@ -68,15 +68,11 @@ var view = function() {
 			});
 		},
 
-		refreshPage : function() {
-			meta64.jqueryChangePage("#mainPage");
-			view.refreshTree(null, false);
-		},
-
 		scrollToSelectedNode : function() {
 			setTimeout(function() {
 				var elm = nav.getSelectedDomElement();
 				if (elm) {
+					console.log("Scroll to selected node.");
 					var node = meta64.getHighlightedNode();
 					var ordinal = meta64.getOrdinalOfNode(node);
 

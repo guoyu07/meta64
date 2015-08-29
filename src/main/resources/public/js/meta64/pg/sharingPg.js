@@ -17,7 +17,7 @@ var sharingPg = function() {
 
 			var shareWithPersonButton = render.makeButton("Share with Person", "shareNodeToPersonPgButton", "a");
 			var makePublicButton = render.makeButton("Share to Public", "shareNodeToPublicButton", "a");
-			var backButton = render.makeBackButton("Close", "cancelSharingButton", "a");
+			var backButton = render.makeButton("Close", "closeSharingButton", "a");
 			var buttonBar = render.makeHorzControlGroup(shareWithPersonButton + makePublicButton + backButton);
 
 			var internalMainContent = "<div id='shareNodeNameDisplay'></div>" + //
@@ -35,6 +35,7 @@ var sharingPg = function() {
 
 			$("#shareNodeToPersonPgButton").on("click", share.shareNodeToPersonPg);
 			$("#shareNodeToPublicButton").on("click", share.shareNodeToPublic);
+			$("#closeSharingButton").on("click", share.closeSharingDlg);
 		},
 
 		init : function() {

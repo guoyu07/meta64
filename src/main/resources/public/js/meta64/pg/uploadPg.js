@@ -23,12 +23,12 @@ var uploadPg = function() {
 			var formFields = "";
 
 			/*
-			 * For now I just hard-code in 10 edit fields, but we could
+			 * For now I just hard-code in 7 edit fields, but we could
 			 * theoretically make this dynamic so user can click 'add' button
 			 * and add new ones one at a time. Just not taking the time to do
 			 * that yet.
 			 */
-			for (var i = 0; i < 10; i++) {
+			for (var i = 0; i < 7; i++) {
 				formFields += render.tag("input", {
 					"type" : "file",
 					"name" : "files"

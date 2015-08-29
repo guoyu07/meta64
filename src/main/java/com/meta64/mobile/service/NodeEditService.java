@@ -48,6 +48,8 @@ import com.meta64.mobile.util.XString;
 public class NodeEditService {
 	private static final Logger log = LoggerFactory.getLogger(NodeEditService.class);
 
+	private static final String SPLIT_TAG = "{split}";
+	
 	@Autowired
 	private OakRepository oak;
 
@@ -342,7 +344,16 @@ public class NodeEditService {
 		}
 
 		String content = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
-		String[] contentParts = StringUtils.splitByWholeSeparator(content, "{split}");
+		
+		/* 
+		 * If split will have no effect, just return as if successful.
+		 */
+		if (!content.contains(SPLIT_TAG)) {
+			res.setSuccess(true);
+			return;
+		}
+		
+		String[] contentParts = StringUtils.splitByWholeSeparator(content, SPLIT_TAG);
 
 		int idx = 0;
 		for (String part : contentParts) {

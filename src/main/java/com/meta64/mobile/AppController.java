@@ -369,7 +369,7 @@ public class AppController {
 		Session session = ThreadLocals.getJcrSession();
 
 		String fileName = req.getSourceFileName();
-		if (fileName.toLowerCase().endsWith(".xml")) {
+		if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
 			importExportService.importFromXml(session, req, res);
 			// It is not a mistake that there is no session.save() here. The import is using the
 			// workspace object

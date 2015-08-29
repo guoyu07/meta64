@@ -81,17 +81,62 @@ public class ImportExportService {
 		}
 
 		String nodeId = req.getNodeId();
-		Node exportNode = JcrUtil.findNode(session, nodeId);
-		log.debug("Export Node: " + exportNode.getPath());
 
 		if (!FileTools.dirExists(adminDataFolder)) {
 			throw new Exception("adminDataFolder does not exist");
 		}
 
-		String fileName = req.getTargetFileName();
-		if (fileName == null) {
-			fileName = String.format("full-backup-%d", System.currentTimeMillis());
+		if (nodeId.equals("/")) {
+			// exportEntireRepository(session);
+			throw new Exception("Backing up entire repository is not supported.");
 		}
+		else {
+			String fileName = req.getTargetFileName();
+			exportIdToFile(session, nodeId, fileName);
+		}
+
+		res.setSuccess(true);
+	}
+
+	/*
+	 * Unfortunately the Apache Oak fails with errors related to UUID any time you try to import
+	 * something at the root like "/jcr:system" (confirmed by other users online also, this is not a
+	 * mistake I'm making but a mistake made by the Oak developers). As a second last ditch effort I
+	 * tried to backup one level down (activities, nodeTypes, and versionStorage), but that also
+	 * results in exception getting thrown from inside Oak. Not my fault. They just don't have this
+	 * stuff working. I will leave this in place to show what has been tried, but for now, it seems
+	 * the only way to backup a reposity is to back up the actual MongoDB files themselves, which is
+	 * not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
+	 */
+	private void exportEntireRepository(Session session) throws Exception {
+		long time = System.currentTimeMillis();
+
+		String fileName = String.format("full-backup-%d-jcr_systemActivities", time);
+		exportIdToFile(session, "/jcr:system/jcr:activities", fileName);
+
+		fileName = String.format("full-backup-%d-jcr_systemNodeTypes", time);
+		exportIdToFile(session, "/jcr:system/jcr:nodeTypes", fileName);
+
+		fileName = String.format("full-backup-%d-jcr_systemVersionStorage", time);
+		exportIdToFile(session, "/jcr:system/jcr:versionStorage", fileName);
+
+		fileName = String.format("full-backup-%d-rep_security", time);
+		exportIdToFile(session, "/rep:security", fileName);
+
+		fileName = String.format("full-backup-%d-oak_index", time);
+		exportIdToFile(session, "/oak:index", fileName);
+
+		fileName = String.format("full-backup-%d-meta64", time);
+		exportIdToFile(session, "/meta64", fileName);
+
+		fileName = String.format("full-backup-%d-userPreferences", time);
+		exportIdToFile(session, "/userPreferences", fileName);
+
+		fileName = String.format("full-backup-%d-root", time);
+		exportIdToFile(session, "/root", fileName);
+	}
+
+	private void exportIdToFile(Session session, String nodeId, String fileName) throws Exception {
 
 		fileName = fileName.replace(".", "_");
 		fileName = fileName.replace(File.separator, "_");
@@ -100,6 +145,9 @@ public class ImportExportService {
 		if (FileTools.fileExists(fullFileName)) {
 			throw new Exception("File already exists.");
 		}
+
+		Node exportNode = JcrUtil.findNode(session, nodeId);
+		log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
 
 		BufferedOutputStream output = null;
 		try {
@@ -113,7 +161,6 @@ public class ImportExportService {
 			 */
 			// session.exportDocumentView(exportNode.getPath(), output, false, false);
 			output.flush();
-			res.setSuccess(true);
 		}
 		finally {
 			if (output != null) {
@@ -128,22 +175,50 @@ public class ImportExportService {
 		}
 
 		String nodeId = req.getNodeId();
-		Node importNode = JcrUtil.findNode(session, nodeId);
-		log.debug("Import to Node: " + importNode.getPath());
 
 		if (!FileTools.dirExists(adminDataFolder)) {
 			throw new Exception("adminDataFolder does not exist");
 		}
 
-		String fileName = req.getSourceFileName();
-		fileName = fileName.replace(".", "_");
-		fileName = fileName.replace(File.separator, "_");
-		String fullFileName = adminDataFolder + File.separator + req.getSourceFileName();
+		String sourceFileName = req.getSourceFileName();
+
+		if (nodeId.equals("/") && sourceFileName.startsWith("full-backup-")) {
+
+			// JcrUtil.removeRootNodes(session);
+
+			/* See notes above about backing up root not being doable */
+			throw new Exception("root restore not supported.");
+
+			// importFromFileToNode(session, sourceFileName + "-jcr_systemNodeTypes.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-jcr_systemVersionStorage.xml",
+			// nodeId);
+			// importFromFileToNode(session, sourceFileName + "-jcr_systemActivities.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-rep_security.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-oak_index.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-userPreferences.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-root.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-meta64.xml", nodeId);
+		}
+		else {
+			importFromFileToNode(session, sourceFileName, nodeId);
+		}
+
+		res.setSuccess(true);
+	}
+
+	private void importFromFileToNode(Session session, String sourceFileName, String nodeId) throws Exception {
+
+		// sourceFileName = sourceFileName.replace(".", "_");
+		sourceFileName = sourceFileName.replace(File.separator, "_");
+
+		String fullFileName = adminDataFolder + File.separator + sourceFileName;
 
 		if (!FileTools.fileExists(fullFileName)) {
 			throw new Exception("Import file not found.");
 		}
 
+		Node importNode = JcrUtil.findNode(session, nodeId);
+		log.debug("Import to Node: " + importNode.getPath());
 		BufferedInputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(fullFileName));
@@ -156,9 +231,9 @@ public class ImportExportService {
 			 * This UUID behavior is so interesting and powerful it really needs to be an option
 			 * specified at the user level that determines how this should work.
 			 */
-			session.getWorkspace().importXML(importNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-
-			res.setSuccess(true);
+			session.getWorkspace().importXML(importNode.getPath(), in,
+			// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
+					ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
 
 			/*
 			 * since importXML is documented to close the inputstream we set it to null here,

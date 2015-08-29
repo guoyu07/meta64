@@ -281,6 +281,28 @@ public class JcrUtil {
 		}
 	}
 
+	/*
+	 * This fails. Doesnt' work.
+	 */
+	public static void removeRootNodes(Session session) throws Exception {		
+		safeRemoveNode(session, "/jcr:system");
+		safeRemoveNode(session, "/rep:security");
+		safeRemoveNode(session, "/oak:index");
+		safeRemoveNode(session, "/userPreferences");
+		safeRemoveNode(session, "/root");
+		safeRemoveNode(session, "/meta64");
+		
+		session.save();
+	}
+
+	public static void safeRemoveNode(Session session, String nodeId) throws Exception {
+		Node node = JcrUtil.safeFindNode(session, nodeId);
+		if (node != null) {
+			log.debug("Removing Node: " + nodeId);
+			node.remove();
+		}
+	}
+
 	/* Gets property or returns null of no propery by that name can be retrieved */
 	public static void safeDeleteProperty(Node node, String propName) {
 		try {

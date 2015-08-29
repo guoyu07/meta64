@@ -29,7 +29,7 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Value("${brandingMetaContent}")
 	private String brandingMetaContent;
-	
+
 	@Value("${profileName}")
 	private String profileName;
 

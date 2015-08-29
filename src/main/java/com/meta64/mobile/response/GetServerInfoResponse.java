@@ -12,5 +12,5 @@ public class GetServerInfoResponse extends OakResponseBase {
 	public void setServerInfo(String serverInfo) {
 		this.serverInfo = serverInfo;
 	}
-	
+
 }

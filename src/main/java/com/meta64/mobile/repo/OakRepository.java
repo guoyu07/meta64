@@ -175,7 +175,7 @@ public class OakRepository {
 			try {
 				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
 				nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
-				
+
 				root = nodeStore.getRoot();
 
 				/* can shutdown during startup. */
@@ -261,7 +261,7 @@ public class OakRepository {
 
 				executor = null;
 			}
-			
+
 			if (nodeStore != null) {
 				log.debug("disposing nodeStore.");
 				nodeStore.dispose();
@@ -279,7 +279,7 @@ public class OakRepository {
 				((RepositoryImpl) repository).shutdown();
 				repository = null;
 			}
-			
+
 			if (db != null) {
 				if (db.getMongo() != null) {
 					db.getMongo().close();

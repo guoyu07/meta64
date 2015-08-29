@@ -10,7 +10,7 @@ public class AddPrivilegeRequest {
 	private List<String> privileges;
 
 	private String principal;
-	
+
 	/* if this is null, we ignore it and make no change */
 	private Boolean publicAppend;
 

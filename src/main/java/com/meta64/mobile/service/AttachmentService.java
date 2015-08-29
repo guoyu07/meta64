@@ -28,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
@@ -90,7 +89,7 @@ public class AttachmentService {
 			 * Uploading a single file attaches to the current node, but uploading multiple files
 			 * creates each file on it's own subnode (child nodes)
 			 */
-			boolean addAsChildren = uploadFiles.length > 1;
+			boolean addAsChildren = countFileUploads(uploadFiles) > 1;
 
 			for (MultipartFile uploadFile : uploadFiles) {
 				String fileName = uploadFile.getOriginalFilename();
@@ -109,49 +108,16 @@ public class AttachmentService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	// public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId,
-	// MultipartHttpServletRequest request) throws Exception {
-	// try {
-	// // ////////////
-	// Iterator<String> itrator = request.getFileNames();
-	// while (itrator.hasNext()) {
-	// MultipartFile multiFile = request.getFile(itrator.next());
-	// try {
-	// // just to show that we have actually received the file
-	// System.out.println("File Length:" + multiFile.getBytes().length);
-	// System.out.println("File Type:" + multiFile.getContentType());
-	// String fileName = multiFile.getOriginalFilename();
-	// System.out.println("File Name:" + fileName);
-	// // String path=request.getServletContext().getRealPath("/");
-	// //
-	// // //making directories for our required path.
-	// // byte[] bytes = multiFile.getBytes();
-	// // File directory= new File(path+ "/uploads");
-	// // directory.mkdirs();
-	// // // saving the file
-	// // File file=new
-	// // File(directory.getAbsolutePath()+System.getProperty("file.separator")+picture.getName());
-	// // BufferedOutputStream stream = new BufferedOutputStream(
-	// // new FileOutputStream(file));
-	// // stream.write(bytes);
-	// // stream.close();
-	// }
-	// catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// throw new Exception("Error while loading the file");
-	// }
-	// }
-	// // return toJson("File Uploaded successfully.");
-	// // ////////////
-	// }
-	// catch (Exception e) {
-	// System.out.println(e.getMessage());
-	// return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	// }
-	//
-	// return new ResponseEntity<>(HttpStatus.OK);
-	// }
+	private int countFileUploads(MultipartFile[] uploadFiles) {
+		int count = 0;
+		for (MultipartFile uploadFile : uploadFiles) {
+			String fileName = uploadFile.getOriginalFilename();
+			if (!XString.isEmpty(fileName)) {
+				count++;
+			}
+		}
+		return count;
+	}
 
 	/*
 	 * Gets the binary attachment from a supplied stream and loads it into the repository on the

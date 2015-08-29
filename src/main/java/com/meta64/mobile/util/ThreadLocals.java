@@ -30,7 +30,7 @@ public class ThreadLocals {
 	public static HttpServletResponse getServletResponse() {
 		return servletResponse.get();
 	}
-	
+
 	public static void setJcrSession(Session session) {
 		jcrSession.set(session);
 	}
@@ -54,7 +54,7 @@ public class ThreadLocals {
 	public static OakResponseBase getResponse() {
 		return oakResponse.get();
 	}
-	
+
 	public static void setInitialSessionExisted(Boolean val) {
 		initialSessionExisted.set(val);
 	}

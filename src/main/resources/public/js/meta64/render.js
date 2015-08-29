@@ -175,13 +175,15 @@ var render = function() {
 			else {
 				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 				if (publicAppend && commentBy != meta64.userName) {
-					var addComment = _.tag("a", //
+					var addCommentButton = _.tag("a", //
 					{
 						"onClick" : "edit.replyToComment('" + node.uid + "');", //
 						"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-comment"
 					}, //
 					"Add Comment");
-					ret += addComment;
+
+					var addCommentDiv = _.tag("div", {}, addCommentButton);
+					ret += addCommentDiv;
 				}
 			}
 

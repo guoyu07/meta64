@@ -62,7 +62,7 @@ public class JcrOutboxMgr {
 					Node parentNode = node.getParent();
 					if (parentNode != null) {
 						String parentCreator = JcrUtil.getRequiredStringProp(parentNode, parentProp);
-						if (!parentCreator.equals(userName)) { 
+						if (!parentCreator.equals(userName)) {
 							Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, parentCreator);
 							String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
 							log.debug("TODO: send email to: " + email + " because his node was appended under.");

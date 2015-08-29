@@ -174,7 +174,7 @@ public class NodeEditService {
 		 * client to be able so send the 'nodeBelow' so we have to find that on the server side.
 		 */
 		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node);
-		
+
 		session.move(node.getPath(), newPath);
 
 		/*

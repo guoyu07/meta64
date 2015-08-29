@@ -56,12 +56,10 @@ public class AccessControlUtil {
 	}
 
 	/*
-	 * TODO: Also can do this:
-	 * AccessControlUtils.addAccessControlEntry(session, "/", user.getPrincipal(),
-     *                   new String[] { Privilege.JCR_ALL }, true);
-     *                   
-     * Also: 
-     * AccessControlUtils.allow() works according to a post on mailing list.
+	 * TODO: Also can do this: AccessControlUtils.addAccessControlEntry(session, "/",
+	 * user.getPrincipal(), new String[] { Privilege.JCR_ALL }, true);
+	 * 
+	 * Also: AccessControlUtils.allow() works according to a post on mailing list.
 	 */
 	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
 

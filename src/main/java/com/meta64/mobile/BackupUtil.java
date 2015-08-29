@@ -17,10 +17,10 @@ import com.meta64.mobile.service.BackupService;
 public class BackupUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(BackupUtil.class);
-	
+
 	/*
-	 * WARNING: This backup/restore stuff is new and untested at this point. It appears to work, but has not 
-	 * been fully verified, and the restore function has not yet been completed.
+	 * WARNING: This backup/restore stuff is new and untested at this point. It appears to work, but
+	 * has not been fully verified, and the restore function has not yet been completed.
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(BackupUtil.class, args);

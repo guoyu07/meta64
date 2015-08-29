@@ -45,8 +45,8 @@ public class SessionContext {
 	private String captcha;
 	private String timezone;
 	private String timeZoneAbbrev;
-	
-	private UserPreferences userPreferences;	
+
+	private UserPreferences userPreferences;
 
 	/*
 	 * For extreme scalability we 'could' hold a formatter in a blobal map where there is basically
@@ -67,7 +67,7 @@ public class SessionContext {
 	public SessionContext() {
 		log.trace(String.format("Creating Session object hashCode[%d]", hashCode()));
 	}
-	
+
 	@PreDestroy
 	public void preDestroy() {
 		log.trace(String.format("Destroying Session object hashCode[%d] of user %s", hashCode(), userName));

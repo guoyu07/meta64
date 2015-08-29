@@ -15,7 +15,7 @@ public class FileTools {
 
 		return new File(fileName).isDirectory();
 	}
-	
+
 	public static boolean createDirectory(String dir) {
 		File file = new File(dir);
 		if (file.isDirectory()) return true;

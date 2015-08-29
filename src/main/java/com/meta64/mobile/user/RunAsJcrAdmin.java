@@ -1,7 +1,6 @@
 package com.meta64.mobile.user;
 
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

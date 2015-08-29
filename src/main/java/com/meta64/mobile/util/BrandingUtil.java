@@ -14,7 +14,7 @@ public class BrandingUtil {
 
 	@Value("${brandingMetaContent}")
 	private String brandingMetaContent;
-	
+
 	public void addBrandingAttributes(Model model) {
 		model.addAttribute("brandingTitle", brandingTitle);
 		model.addAttribute("brandingMetaContent", brandingMetaContent);

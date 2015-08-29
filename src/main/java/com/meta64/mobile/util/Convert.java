@@ -30,7 +30,6 @@ import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.PrivilegeInfo;
 import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.model.UserPreferences;
 
 /**
  * Converting objects from one type to another, and formatting.
@@ -109,7 +108,7 @@ public class Convert {
 		}
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
-		boolean advancedMode = userPreferences!=null ? userPreferences.isAdvancedMode() : false;
+		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
 		log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 

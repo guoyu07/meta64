@@ -171,7 +171,7 @@ public class AppController {
 
 	@Autowired
 	private SystemService systemService;
-	
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -558,18 +558,19 @@ public class AppController {
 		return attachmentService.getBinary(session, nodeId);
 	}
 
-	//SINGLE FILE UPLOAD
-	//TODO: This can be deleted very soon, just waiting for a bit more testing on the multi-file upload
-	//before I obliterate the single-file code.
-//	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
-//	@OakSession
-//	public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
-//			@RequestParam("file") MultipartFile uploadFile) throws Exception {
-//		logRequest("upload", null);
-//		Session session = ThreadLocals.getJcrSession();
-//		return attachmentService.uploadSingleFile(session, nodeId, uploadFile);
-//	}
-	
+	// SINGLE FILE UPLOAD
+	// TODO: This can be deleted very soon, just waiting for a bit more testing on the multi-file
+	// upload
+	// before I obliterate the single-file code.
+	// @RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
+	// @OakSession
+	// public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
+	// @RequestParam("file") MultipartFile uploadFile) throws Exception {
+	// logRequest("upload", null);
+	// Session session = ThreadLocals.getJcrSession();
+	// return attachmentService.uploadSingleFile(session, nodeId, uploadFile);
+	// }
+
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
@@ -578,7 +579,7 @@ public class AppController {
 		Session session = ThreadLocals.getJcrSession();
 		return attachmentService.uploadMultipleFiles(session, nodeId, uploadFiles);
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) throws Exception {
@@ -614,7 +615,7 @@ public class AppController {
 		nodeSearchService.search(session, req, res);
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req) throws Exception {
@@ -638,9 +639,9 @@ public class AppController {
 		userManagerService.saveUserPreferences(session, req, res);
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/getServerInfo", method = RequestMethod.POST)
-	//@OakSession
+	// @OakSession
 	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
@@ -650,7 +651,7 @@ public class AppController {
 		checkSession();
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/splitNode", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SplitNodeResponse splitNode(@RequestBody SplitNodeRequest req) throws Exception {

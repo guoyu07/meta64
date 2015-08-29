@@ -3,14 +3,15 @@ console.log("running module: uploadPg.js");
 var uploadPg = function() {
 
 	var _ = {
-			domId : "uploadPg",
+		domId : "uploadPg",
+
 		build : function() {
 
 			var header = render.tag("div", //
 			{
-				"data-role" : "header"//,
-				//"data-position" : "fixed",
-				//"data-tap-toggle" : "false"
+				"data-role" : "header"// ,
+			// "data-position" : "fixed",
+			// "data-tap-toggle" : "false"
 			}, //
 			"<h2>" + BRANDING_TITLE + " - Upload File Attachment</h2>");
 
@@ -19,20 +20,38 @@ var uploadPg = function() {
 				"class" : "path-display-in-editor"
 			}, "");
 
-			var formFields = render.tag("input", {
-				"type" : "file",
-				"name" : "file"
-			}, "", true) + //
-			render.tag("input", {
+			var formFields = "";
+
+			/*
+			 * For now I just hard-code in 10 edit fields, but we could
+			 * theoretically make this dynamic so user can click 'add' button
+			 * and add new ones one at a time. Just not taking the time to do
+			 * that yet.
+			 */
+			for (var i = 0; i < 10; i++) {
+				formFields += render.tag("input", {
+					"type" : "file",
+					"name" : "files"
+				}, "", true);
+			}
+
+			formFields += render.tag("input", {
 				"id" : "uploadFormNodeId",
 				"type" : "hidden",
 				"name" : "nodeId"
-			})
+			}, "", true);
 
+			/*
+			 * According to some online posts I should have needed
+			 * data-ajax="false" on this form but it is working as is without
+			 * that.
+			 */
 			var form = render.tag("form", {
 				"id" : "uploadForm",
 				"method" : "POST",
-				"enctype" : "multipart/form-data"
+				"enctype" : "multipart/form-data",
+				"data-ajax" : "false" // NEW for multiple file upload
+			// support???
 			}, formFields);
 
 			var uploadFieldContainer = render.tag("div", {//
@@ -62,11 +81,11 @@ var uploadPg = function() {
 			$("#uploadButton").on("click", attachment.uploadFileNow);
 			$("#deleteAttachmentButton").on("click", attachment.deleteAttachment);
 		},
-		
+
 		init : function() {
 
 			$("#uploadFromUrl").val("");
-			
+
 			/* display the node path at the top of the edit page */
 			$("#uploadPathDisplay").html("Path: " + render.formatPath(attachment.uploadNode));
 		}
@@ -76,4 +95,4 @@ var uploadPg = function() {
 	return _;
 }();
 
-//# sourceUrl=uploadPg.js
+// # sourceUrl=uploadPg.js

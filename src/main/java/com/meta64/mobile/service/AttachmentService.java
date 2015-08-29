@@ -17,6 +17,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
@@ -38,6 +40,7 @@ import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStream;
+import com.meta64.mobile.util.XString;
 
 /**
  * Service for editing node attachments. Node attachments are binary attachments that the user can
@@ -56,14 +59,46 @@ public class AttachmentService {
 	@Autowired
 	private SessionContext sessionContext;
 
+	// TODO: This can be deleted very soon, just waiting for a bit more testing on the multi-file
+	// upload before I obliterate the single-file code.
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
 	 */
-	public ResponseEntity<?> upload(Session session, String nodeId, MultipartFile uploadFile) throws Exception {
+	// public ResponseEntity<?> uploadSingleFile(Session session, String nodeId, MultipartFile
+	// uploadFile) throws Exception {
+	// try {
+	// String fileName = uploadFile.getOriginalFilename();
+	// log.debug("Uploading onto nodeId: " + nodeId + " file: " + fileName);
+	// attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1,
+	// false);
+	// session.save();
+	// }
+	// catch (Exception e) {
+	// System.out.println(e.getMessage());
+	// return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	// }
+	//
+	// return new ResponseEntity<>(HttpStatus.OK);
+	// }
+
+	/*
+	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
+	 */
+	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles) throws Exception {
 		try {
-			String fileName = uploadFile.getOriginalFilename();
-			log.debug("Uploading onto nodeId: " + nodeId + " file: " + fileName);
-			attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1);
+			/*
+			 * Uploading a single file attaches to the current node, but uploading multiple files
+			 * creates each file on it's own subnode (child nodes)
+			 */
+			boolean addAsChildren = uploadFiles.length > 1;
+
+			for (MultipartFile uploadFile : uploadFiles) {
+				String fileName = uploadFile.getOriginalFilename();
+				if (!XString.isEmpty(fileName)) {
+					log.debug("Uploading file: " + fileName);
+					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren);
+				}
+			}
 			session.save();
 		}
 		catch (Exception e) {
@@ -74,13 +109,68 @@ public class AttachmentService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	// public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId,
+	// MultipartHttpServletRequest request) throws Exception {
+	// try {
+	// // ////////////
+	// Iterator<String> itrator = request.getFileNames();
+	// while (itrator.hasNext()) {
+	// MultipartFile multiFile = request.getFile(itrator.next());
+	// try {
+	// // just to show that we have actually received the file
+	// System.out.println("File Length:" + multiFile.getBytes().length);
+	// System.out.println("File Type:" + multiFile.getContentType());
+	// String fileName = multiFile.getOriginalFilename();
+	// System.out.println("File Name:" + fileName);
+	// // String path=request.getServletContext().getRealPath("/");
+	// //
+	// // //making directories for our required path.
+	// // byte[] bytes = multiFile.getBytes();
+	// // File directory= new File(path+ "/uploads");
+	// // directory.mkdirs();
+	// // // saving the file
+	// // File file=new
+	// // File(directory.getAbsolutePath()+System.getProperty("file.separator")+picture.getName());
+	// // BufferedOutputStream stream = new BufferedOutputStream(
+	// // new FileOutputStream(file));
+	// // stream.write(bytes);
+	// // stream.close();
+	// }
+	// catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw new Exception("Error while loading the file");
+	// }
+	// }
+	// // return toJson("File Uploaded successfully.");
+	// // ////////////
+	// }
+	// catch (Exception e) {
+	// System.out.println(e.getMessage());
+	// return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	// }
+	//
+	// return new ResponseEntity<>(HttpStatus.OK);
+	// }
+
 	/*
 	 * Gets the binary attachment from a supplied stream and loads it into the repository on the
 	 * node specified in 'nodeId'
 	 */
-	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height) throws Exception {
+	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height, boolean addAsChild)
+			throws Exception {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		/*
+		 * Multiple file uploads always attach children for each file uploaded
+		 */
+		if (addAsChild) {
+			/* NT_UNSTRUCTURED IS ORDERABLE */
+			Node newNode = node.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.CONTENT, "File: " + fileName);
+			JcrUtil.timestampNewNode(session, newNode);
+			node = newNode;
+		}
 
 		/* mimeType can be passed as null if it's not yet determined */
 		if (mimeType == null) {
@@ -226,7 +316,7 @@ public class AttachmentService {
 				httpcon.connect();
 				InputStream is = httpcon.getInputStream();
 				uis = new LimitedInputStream(is, maxFileSize);
-				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1);
+				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false);
 			}
 			/*
 			 * if not an image extension, we can just stream directly into the database, but we want
@@ -240,7 +330,7 @@ public class AttachmentService {
 					httpcon.connect();
 					InputStream is = httpcon.getInputStream();
 					uis = new LimitedInputStream(is, maxFileSize);
-					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1);
+					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1, false);
 				}
 			}
 		}
@@ -291,7 +381,7 @@ public class AttachmentService {
 					ImageIO.write(bufImg, formatName, os);
 					is2 = new ByteArrayInputStream(os.toByteArray());
 
-					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null));
+					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false);
 					return true;
 				}
 			}

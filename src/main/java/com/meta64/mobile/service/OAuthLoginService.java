@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ public class OAuthLoginService {
 	 * logs in via twitter
 	 */
 	public String twitterLogin() throws Exception {
-		if (XString.isEmpty(twitterAppId) || XString.isEmpty(twitterAppSecret)) {
+		if (StringUtils.isEmpty(twitterAppId) || StringUtils.isEmpty(twitterAppSecret)) {
 			throw new Exception("Meta64 instance is not configured for twitter logins.");
 		}
 
@@ -135,7 +136,7 @@ public class OAuthLoginService {
 	}
 
 	public String completeAuthenticaion(String oauthToken, String oauthVerifier) throws Exception {
-		if (XString.isEmpty(twitterAppId) || XString.isEmpty(twitterAppSecret)) {
+		if (StringUtils.isEmpty(twitterAppId) || StringUtils.isEmpty(twitterAppSecret)) {
 			throw new Exception("Meta64 instance is not configured for twitter logins.");
 		}
 

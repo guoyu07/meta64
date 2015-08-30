@@ -89,7 +89,7 @@ public class NodeEditService {
 		// JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		// }
 
-		String name = XString.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
+		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = node.addNode(name, JcrConstants.NT_UNSTRUCTURED);
@@ -121,7 +121,7 @@ public class NodeEditService {
 		// JcrUtil.checkNodeCreatedBy(parentNode, session.getUserID());
 		// }
 
-		String name = XString.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
+		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
@@ -132,7 +132,7 @@ public class NodeEditService {
 		// here about why!
 		session.save();
 
-		if (!XString.isEmpty(req.getTargetName())) {
+		if (!StringUtils.isEmpty(req.getTargetName())) {
 			parentNode.orderBefore(newNode.getName(), req.getTargetName());
 		}
 

@@ -2,9 +2,11 @@ package com.meta64.mobile.mail;
 
 import java.util.List;
 
+
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.XString;
 
 /**
  * This is a 'dedicated thread' for sending emails periodically. We need this daemon so that we can
@@ -65,7 +66,7 @@ public class NotificationDaemon {
 		}
 
 		/* fail fast if no mail host is configured. */
-		if (XString.isEmpty(mailHost)) {
+		if (StringUtils.isEmpty(mailHost)) {
 			if (runCounter < 3) {
 				log.debug("NotificationDaemon is disabled, because no mail server is configured.");
 			}

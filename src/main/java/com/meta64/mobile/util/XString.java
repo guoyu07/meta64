@@ -39,10 +39,6 @@ public class XString {
 		if (len < 7 || len > 100) throw new Exception("Invalid email address");
 	}
 
-	public static boolean isEmpty(String text) {
-		return text == null || text.trim().length() == 0;
-	}
-
 	public static List<String> tokenize(String val, String delimiter, boolean trim) {
 		List<String> list = null;
 		StringTokenizer t = new StringTokenizer(val, delimiter, false);

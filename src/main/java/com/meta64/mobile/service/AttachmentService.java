@@ -17,6 +17,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,28 +59,6 @@ public class AttachmentService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	// TODO: This can be deleted very soon, just waiting for a bit more testing on the multi-file
-	// upload before I obliterate the single-file code.
-	/*
-	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
-	 */
-	// public ResponseEntity<?> uploadSingleFile(Session session, String nodeId, MultipartFile
-	// uploadFile) throws Exception {
-	// try {
-	// String fileName = uploadFile.getOriginalFilename();
-	// log.debug("Uploading onto nodeId: " + nodeId + " file: " + fileName);
-	// attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1,
-	// false);
-	// session.save();
-	// }
-	// catch (Exception e) {
-	// System.out.println(e.getMessage());
-	// return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	// }
-	//
-	// return new ResponseEntity<>(HttpStatus.OK);
-	// }
-
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
 	 */
@@ -93,7 +72,7 @@ public class AttachmentService {
 
 			for (MultipartFile uploadFile : uploadFiles) {
 				String fileName = uploadFile.getOriginalFilename();
-				if (!XString.isEmpty(fileName)) {
+				if (!StringUtils.isEmpty(fileName)) {
 					log.debug("Uploading file: " + fileName);
 					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren);
 				}
@@ -112,7 +91,7 @@ public class AttachmentService {
 		int count = 0;
 		for (MultipartFile uploadFile : uploadFiles) {
 			String fileName = uploadFile.getOriginalFilename();
-			if (!XString.isEmpty(fileName)) {
+			if (!StringUtils.isEmpty(fileName)) {
 				count++;
 			}
 		}

@@ -9,6 +9,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.XString;
 
 /**
  * Service for rendering the content of a page. The actual page is not rendered on the server side.
@@ -182,7 +182,7 @@ public class NodeRenderService {
 			}
 		}
 
-		if (!XString.isEmpty(id)) {
+		if (!StringUtils.isEmpty(id)) {
 			RenderNodeResponse renderNodeRes = new RenderNodeResponse();
 			RenderNodeRequest renderNodeReq = new RenderNodeRequest();
 

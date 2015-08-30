@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.spi.security.principal.EveryonePrincipal;
 import org.slf4j.Logger;
@@ -334,7 +335,7 @@ public class UserManagerService {
 
 		addPendingSignupNode(userName, password, email, signupCode);
 
-		if (!XString.isEmpty(mailHost)) {
+		if (!StringUtils.isEmpty(mailHost)) {
 			outboxMgr.queueEmail(email, "Meta64 Account Signup Confirmation", content);
 		}
 	}

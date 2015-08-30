@@ -39,8 +39,7 @@ import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.LimitedInputStream;
-import com.meta64.mobile.util.XString;
+import com.meta64.mobile.util.LimitedInputStreamEx;
 
 /**
  * Service for editing node attachments. Node attachments are binary attachments that the user can
@@ -198,7 +197,6 @@ public class AttachmentService {
 	 */
 	public ResponseEntity<InputStreamResource> getBinary(Session session, String nodeId) throws Exception {
 		try {
-			// System.out.println("Retrieving binary nodeId: " + nodeId);
 			Node node = JcrUtil.findNode(session, nodeId);
 
 			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
@@ -260,7 +258,7 @@ public class AttachmentService {
 				httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
 				httpcon.connect();
 				InputStream is = httpcon.getInputStream();
-				uis = new LimitedInputStream(is, maxFileSize);
+				uis = new LimitedInputStreamEx(is, maxFileSize);
 				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false);
 			}
 			/*
@@ -274,7 +272,7 @@ public class AttachmentService {
 					httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
 					httpcon.connect();
 					InputStream is = httpcon.getInputStream();
-					uis = new LimitedInputStream(is, maxFileSize);
+					uis = new LimitedInputStreamEx(is, maxFileSize);
 					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1, false);
 				}
 			}

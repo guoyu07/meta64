@@ -112,14 +112,14 @@ public class JcrUtil {
 		}
 
 		String nodeName = node.getName();
-		log.debug("Finding node below node: " + nodeName);
+		//log.debug("Finding node below node: " + nodeName);
 		NodeIterator nodeIter = parentNode.getNodes();
 		boolean foundNode = false;
 
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
-				log.debug("   NAME: " + n.getName());
+				//log.debug("   NAME: " + n.getName());
 				if (foundNode) {
 					ret = n;
 					break;
@@ -171,7 +171,7 @@ public class JcrUtil {
 	public static boolean hasDisplayableNodes(boolean isAdvancedEditingMode, Node node) throws Exception {
 		/*
 		 * If advanced editing mode is on, we want to consider the node to have children if there
-		 * litteraly are any because they will all be visible.
+		 * Literally are any because they will all be visible.
 		 */
 		if (isAdvancedEditingMode) {
 			return node.hasNodes();
@@ -284,14 +284,14 @@ public class JcrUtil {
 	/*
 	 * This fails. Doesnt' work.
 	 */
-	public static void removeRootNodes(Session session) throws Exception {		
+	public static void removeRootNodes(Session session) throws Exception {
 		safeRemoveNode(session, "/jcr:system");
 		safeRemoveNode(session, "/rep:security");
 		safeRemoveNode(session, "/oak:index");
 		safeRemoveNode(session, "/userPreferences");
 		safeRemoveNode(session, "/root");
 		safeRemoveNode(session, "/meta64");
-		
+
 		session.save();
 	}
 

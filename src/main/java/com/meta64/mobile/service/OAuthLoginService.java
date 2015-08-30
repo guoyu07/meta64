@@ -27,7 +27,6 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
-import com.meta64.mobile.util.XString;
 
 /**
  * Service methods for processing user management functions. Login, logout, signup, user

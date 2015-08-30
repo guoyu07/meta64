@@ -16,30 +16,30 @@ import org.springframework.stereotype.Component;
 public class SpringContextUtil implements ApplicationContextAware {
 	private static final Logger log = LoggerFactory.getLogger(SpringContextUtil.class);
 
-	private static ApplicationContext applicationContext;
+	private static ApplicationContext context;
 
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		log.debug("SpringContextUtil initialized context.");
-		applicationContext = context;
+		this.context = context;
 	}
 
 	public static ApplicationContext getApplicationContext() {
-		return applicationContext;
+		return context;
 	}
 
 	public static Object getBean(Class clazz) {
-		if (applicationContext == null) {
+		if (context == null) {
 			throw new RuntimeException("SpringContextUtil accessed before spring initialized.");
 		}
 
-		return applicationContext.getBean(clazz);
+		return context.getBean(clazz);
 	}
 
 	public static Object getBean(String name) {
-		if (applicationContext == null) {
+		if (context == null) {
 			throw new RuntimeException("SpringContextUtil accessed before spring initialized.");
 		}
 
-		return applicationContext.getBean(name);
+		return context.getBean(name);
 	}
 }

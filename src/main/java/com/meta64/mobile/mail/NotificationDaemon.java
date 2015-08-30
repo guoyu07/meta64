@@ -2,7 +2,6 @@ package com.meta64.mobile.mail;
 
 import java.util.List;
 
-
 import javax.jcr.Node;
 import javax.jcr.Session;
 

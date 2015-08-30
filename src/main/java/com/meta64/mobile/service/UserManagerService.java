@@ -43,7 +43,7 @@ import com.meta64.mobile.util.Encryptor;
 import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
-import com.meta64.mobile.util.XString;
+import com.meta64.mobile.util.Validator;
 
 /**
  * Service methods for processing user management functions. Login, logout, signup, user
@@ -305,9 +305,9 @@ public class UserManagerService {
 		log.debug("Signup: userName=" + userName + " email=" + email + " captcha=" + captcha);
 
 		/* throw exceptions of the username or password are not valid */
-		XString.checkUserName(userName);
-		XString.checkPassword(password);
-		XString.checkEmail(email);
+		Validator.checkUserName(userName);
+		Validator.checkPassword(password);
+		Validator.checkEmail(email);
 
 		/* test cases will simply pass null, for captcha, and we let that pass */
 		if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {

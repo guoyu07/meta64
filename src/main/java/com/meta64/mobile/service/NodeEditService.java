@@ -38,7 +38,6 @@ import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.XString;
 
 /**
  * Service for editing content of nodes. That is, this method updates property values of JCR nodes.
@@ -49,7 +48,7 @@ public class NodeEditService {
 	private static final Logger log = LoggerFactory.getLogger(NodeEditService.class);
 
 	private static final String SPLIT_TAG = "{split}";
-	
+
 	@Autowired
 	private OakRepository oak;
 
@@ -344,15 +343,15 @@ public class NodeEditService {
 		}
 
 		String content = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
-		
-		/* 
+
+		/*
 		 * If split will have no effect, just return as if successful.
 		 */
 		if (!content.contains(SPLIT_TAG)) {
 			res.setSuccess(true);
 			return;
 		}
-		
+
 		String[] contentParts = StringUtils.splitByWholeSeparator(content, SPLIT_TAG);
 
 		int idx = 0;

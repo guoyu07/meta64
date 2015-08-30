@@ -52,8 +52,7 @@ public class OakSessionAspect {
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 
 		// TODO: learn about sessionMutex (I have one i have implemented in my SessionContext object
-		// and I may
-		// be able to do it a better way.
+		// and I may be able to do it a better way.
 
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
 		// RequestContextHolder.currentRequestAttributes();
@@ -129,7 +128,6 @@ public class OakSessionAspect {
 		Object[] args = joinPoint.getArgs();
 		String userName = "anonymous";
 		String password = "anonymous";
-		// boolean usingCookies = false;
 
 		Object req = (args != null && args.length > 0) ? args[0] : null;
 
@@ -142,7 +140,6 @@ public class OakSessionAspect {
 			LoginRequest loginRequest = (LoginRequest) args[0];
 			userName = loginRequest.getUserName();
 			password = loginRequest.getPassword();
-			// usingCookies = loginRequest.isUsingCookies();
 
 			if (userName.equals("")) {
 				userName = sessionContext.getUserName();

@@ -114,9 +114,6 @@ var meta64 = function() {
 		 */
 		selectedNodes : {},
 
-		/* identifier of newly created node */
-		newChildNodeId : "",
-
 		/* RenderNodeResponse.java object */
 		currentNodeData : null,
 
@@ -483,6 +480,15 @@ var meta64 = function() {
 			 */
 			node.uid = util.getUidForId(_.identToUidMap, node.id);
 			node.properties = props.setPreferredPropertyOrder(node.properties);
+
+			/*
+			 * For these two properties that are accessed frequently we go ahead
+			 * and lookup the properties in the property array, and assign them
+			 * directly as node object properties so to improve performance, and
+			 * also simplify code.
+			 */
+			node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
+			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
 
 			// console.log("******* initNode uid=" + node.uid);
 			_.uidToNodeMap[node.uid] = node;

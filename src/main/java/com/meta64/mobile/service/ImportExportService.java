@@ -42,7 +42,7 @@ import com.meta64.mobile.util.JcrUtil;
  * Import and Export to and from XML files, as well as the special processing to import the book War
  * and Peace in it's special format.
  * 
- * TODO: We probably should separate out the book import part into a seperate service file.
+ * TODO: We probably should separate out the book import part into a separate service file.
  */
 @Component
 @Scope("singleton")

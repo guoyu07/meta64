@@ -91,11 +91,6 @@ var edit = function() {
 	var _insertNodeResponse = function(res) {
 		if (util.checkSuccess("Insert node", res)) {
 
-			/*
-			 * TODO: verify this value gets used now that we aren't going
-			 * IMMEDIATELY to the treeview after creates
-			 */
-			meta64.newChildNodeId = res.newNode.id;
 			meta64.initNode(res.newNode);
 			meta64.highlightNode(res.newNode, true);
 
@@ -120,14 +115,6 @@ var edit = function() {
 
 	var _createSubNodeResponse = function(res) {
 		if (util.checkSuccess("Create subnode", res)) {
-
-			/*
-			 * TODO: verify this value gets used now that we aren't going
-			 * IMMEDIATELY to the treeview after creates
-			 */
-			meta64.newChildNodeId = res.newNode.id;
-			console.log("new child identifier: " + meta64.newChildNodeId);
-
 			meta64.initNode(res.newNode);
 			_.runEditNode(res.newNode.uid);
 		}

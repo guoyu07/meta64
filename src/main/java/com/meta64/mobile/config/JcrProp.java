@@ -38,10 +38,6 @@ public class JcrProp {
 	public static final String LAST_MODIFIED = "jcr:lastModified";
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
 
-	/* TODO: put these in an enum. */
-	public static final String VAL_TWITTER = "twitter";
-	public static final String VAL_META64 = "meta64";
-
 	/*
 	 * Sub Properties of Signup node
 	 * 

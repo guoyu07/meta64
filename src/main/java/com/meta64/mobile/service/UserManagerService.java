@@ -20,6 +20,7 @@ import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.JcrPropVal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.RefInfo;
@@ -210,7 +211,7 @@ public class UserManagerService {
 						password = encryptor.decrypt(password);
 						String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
 
-						initNewUser(session, userName, password, email, JcrProp.VAL_META64);
+						initNewUser(session, userName, password, email, JcrPropVal.META64);
 
 						/*
 						 * allow JavaScript to detect all it needs to detect which is to display a

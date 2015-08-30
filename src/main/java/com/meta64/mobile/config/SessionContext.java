@@ -33,7 +33,9 @@ public class SessionContext {
 
 	/*
 	 * This lock ensures that only one server side function can be running at a time for any give
-	 * session.
+	 * session. Although WebUtils.getSessionMutex is also available for the same purpose we use our
+	 * own lock here because we want a ReentrantLock, rather than using a synchronized block, so we
+	 * have the full concurrency support provided by that ReentrantLock
 	 */
 	private ReentrantLock lock = new ReentrantLock();
 

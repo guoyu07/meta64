@@ -12,6 +12,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,17 @@ public class JcrOutboxMgr {
 	private ConstantsProvider constProvider;
 
 	/*
+	 * For some reason this property cannot be loaded from properties file. Extremely strange.
+	 * 
+	 * @Value("${mailBatchSize}")
+	 */
+	private String mailBatchSize = "10";
+
+	public JcrOutboxMgr() {
+		log.debug("Created OutboxMgr. batchSize = " + mailBatchSize);
+	}
+
+	/*
 	 * node=Node that was created. userName = username of person who just created node.
 	 */
 	public void sendNotificationForChildNodeCreate(final Node node, final String userName, final String parentProp) throws Exception {
@@ -65,7 +77,7 @@ public class JcrOutboxMgr {
 						if (!parentCreator.equals(userName)) {
 							Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, parentCreator);
 							String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
-							log.debug("TODO: send email to: " + email + " because his node was appended under.");
+							log.debug("sending email to: " + email + " because his node was appended under.");
 
 							String content = String.format("User '%s' has created a new subnode under one of your nodes.<br>\n\n" + //
 									"Here is a link to the new node: %s?id=%s", //
@@ -104,19 +116,18 @@ public class JcrOutboxMgr {
 	}
 
 	/*
-	 * Loads only up to 10 emails at a time
-	 * 
-	 * TODO: will need to make this batch size configurable for scalability.
+	 * Loads only up to mailBatchSize emails at a time
+	 *
 	 */
 	public List<Node> getMailNodes(Session session) throws Exception {
-		int mailBatchSize = 10;
 		List<Node> mailNodes = null;
 
 		Node outboxNode = getSystemOutbox(session);
 		NodeIterator nodeIter = outboxNode.getNodes();
 		try {
 			int nodeCount = 0;
-			while (nodeCount++ < mailBatchSize) {
+			int mailBatchSizeInt = Integer.parseInt(mailBatchSize);
+			while (nodeCount++ < mailBatchSizeInt) {
 				Node n = nodeIter.nextNode();
 
 				if (mailNodes == null) {

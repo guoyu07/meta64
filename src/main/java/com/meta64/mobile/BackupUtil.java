@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.service.BackupService;
 
-/**
- * Standard SpringBoot entry point. Starts up entire application, which will run an instance of
- * Tomcat embedded and open the port specified in the properties file and start serving up requests.
+/*
+ * This backup utility DOES NOT WORK YET, due to Oak bug acknowledged by Oak developers on their 
+ * mailing list.
  */
 @SpringBootApplication
 // @EnableScheduling
@@ -18,10 +18,6 @@ public class BackupUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(BackupUtil.class);
 
-	/*
-	 * WARNING: This backup/restore stuff is new and untested at this point. It appears to work, but
-	 * has not been fully verified, and the restore function has not yet been completed.
-	 */
 	public static void main(String[] args) {
 		SpringApplication.run(BackupUtil.class, args);
 		log.debug("App Started, and will shutdown now.");

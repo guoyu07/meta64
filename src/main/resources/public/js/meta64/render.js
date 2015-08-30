@@ -200,7 +200,6 @@ var render = function() {
 		renderNodeAsListItem : function(node, index, count, rowCount) {
 
 			var uid = node.uid;
-			var selected = (node.id === meta64.newChildNodeId);
 			var canMoveUp = index > 0 && rowCount > 1;
 			var canMoveDown = index < count - 1;
 
@@ -219,9 +218,7 @@ var render = function() {
 			// console.log("test: [" + parentIdToFocusIdMap[currentNodeId]
 			// +"]==["+ node.id + "]")
 			var focusNode = meta64.getHighlightedNode();
-			if (!selected && focusNode && focusNode.uid === uid) {
-				selected = true;
-			}
+			var selected = (focusNode && focusNode.uid === uid);
 
 			var buttonBarHtml = _.makeRowButtonBarHtml(uid, canMoveUp, canMoveDown, editingAllowed);
 

@@ -112,9 +112,7 @@ public class Convert {
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
 		log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
-		ValContainer<String> createdBy = new ValContainer<String>();
-		ValContainer<String> lastModified = new ValContainer<String>();
-		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, createdBy, lastModified, htmlOnly);
+		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly);
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
@@ -123,8 +121,7 @@ public class Convert {
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
-				createdBy.getVal() != null ? createdBy.getVal() : "", //
-				lastModified.getVal() != null ? lastModified.getVal() : "", primaryTypeName);
+				primaryTypeName);
 		return nodeInfo;
 	}
 
@@ -159,7 +156,7 @@ public class Convert {
 	}
 
 	public static List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
-			ValContainer<String> createdBy, ValContainer<String> lastModified, boolean htmlOnly) throws RepositoryException {
+			boolean htmlOnly) throws RepositoryException {
 		List<PropertyInfo> props = null;
 		PropertyIterator iter = node.getProperties();
 		PropertyInfo contentPropInfo = null;
@@ -171,24 +168,8 @@ public class Convert {
 			}
 			Property p = iter.nextProperty();
 
-			/*
-			 * This method can extract out the createdBy just as a performance enhancer, because we
-			 * are doing to need that anyway, and this saves us from making a call specifically for
-			 * this.
-			 */
-			if (createdBy != null && JcrProp.CREATED_BY.equals(p.getName())) {
-				createdBy.setVal(p.getValue().getString());
-			}
-
-			if (lastModified != null && JcrProp.LAST_MODIFIED.equals(p.getName())) {
-				String lastModifiedVal = formatValue(sessionContext, p.getValue(), false);
-				lastModified.setVal(lastModifiedVal);
-			}
-
 			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, p, htmlOnly);
-			// if (Log.renderNodeRequest) {
-			// log.debug("   PROP Name: " + p.getName());
-			// }
+			//log.debug("   PROP Name: " + p.getName());
 
 			/*
 			 * grab the content property, and don't put it in the return list YET, because we will

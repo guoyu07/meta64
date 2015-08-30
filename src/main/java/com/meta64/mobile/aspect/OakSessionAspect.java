@@ -36,8 +36,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * because in this case the AOP aspects that the annotations would imply WILL always happen actually
  * will NOT happen.
  * 
- * TODO: Need to paste into this class the Stack Overflow page, or spring page on this proxy issue,
- * because it will cause a HUGE gaping hole and bug if you don't know how it works.
  */
 @Aspect
 @Component
@@ -50,9 +48,6 @@ public class OakSessionAspect {
 
 	@Around("@annotation(com.meta64.mobile.annotate.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
-
-		// TODO: learn about sessionMutex (I have one i have implemented in my SessionContext object
-		// and I may be able to do it a better way.
 
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
 		// RequestContextHolder.currentRequestAttributes();

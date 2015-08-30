@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
 import com.meta64.mobile.config.ConstantsProvider;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.JcrPropVal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
@@ -108,9 +108,9 @@ public class OAuthLoginService {
 		adminRunner.run(new JcrRunnable() {
 			@Override
 			public void run(Session session) throws Exception {
-				if (!userManagerService.userExists(session, userName, JcrProp.VAL_TWITTER, passwordContainer)) {
+				if (!userManagerService.userExists(session, userName, JcrPropVal.TWITTER, passwordContainer)) {
 					String _password = JcrUtil.getGUID();
-					userManagerService.initNewUser(session, userName, _password, null, JcrProp.VAL_TWITTER);
+					userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER);
 					passwordContainer.setVal(_password);
 					log.debug("twitter user created and initialized.");
 				}

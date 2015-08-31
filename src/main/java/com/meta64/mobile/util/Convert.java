@@ -36,25 +36,19 @@ import com.meta64.mobile.model.UserPreferences;
  */
 public class Convert {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
-	static {
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	}
-
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 
 	private static final Logger log = LoggerFactory.getLogger(Convert.class);
 
 	public static String JsonStringify(Object obj) throws Exception {
 		/*
-		 * there ARE performance gains from reusing the same object, but the docs on whether
-		 * ObjectMapper is threadsafe appear to be written by someone not well-versed in threads (at
-		 * least what I found), so for now, i'm just adding thread safety at this layer, to ensure.
-		 * (TODO, remove synchronzie block if truly it's safe)
+		 * I haven't investigated the overhead of creating an ObjectMapper here, instead of using an
+		 * already created one or pooling pattern for them, but I do know they aren't threadsafe, so
+		 * just using a global one would not be good.
 		 */
-		synchronized (mapper) {
-			return mapper.writeValueAsString(obj);
-		}
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		return mapper.writeValueAsString(obj);
 	}
 
 	public static List<AccessControlEntryInfo> convertToAclListInfo(AccessControlEntry[] aclEntries) {

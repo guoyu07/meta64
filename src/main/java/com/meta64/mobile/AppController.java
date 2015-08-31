@@ -550,9 +550,9 @@ public class AppController {
 	}
 
 	/*
-	 * TODO: need to persist the real filename when uploaded, and then make the links actually
-	 * reference that filename on this type of path. Will have to add to binary info property sent
-	 * to client in JSON.
+	 * We could persist the real filename when uploaded, and then make the links actually reference
+	 * that filename on this type of path. Will have to add to binary info property sent to client
+	 * in JSON.
 	 */
 	@RequestMapping(value = API_PATH + "/bin/{fileName}", method = RequestMethod.GET)
 	@OakSession

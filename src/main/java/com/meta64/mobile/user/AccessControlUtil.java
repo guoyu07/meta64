@@ -1,8 +1,11 @@
 package com.meta64.mobile.user;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -13,6 +16,7 @@ import javax.jcr.security.AccessControlPolicy;
 import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 
+import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.jackrabbit.oak.spi.security.principal.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +60,13 @@ public class AccessControlUtil {
 	}
 
 	/*
-	 * TODO: Also can do this: AccessControlUtils.addAccessControlEntry(session, "/",
-	 * user.getPrincipal(), new String[] { Privilege.JCR_ALL }, true);
-	 * 
-	 * Also: AccessControlUtils.allow() works according to a post on mailing list.
+	 * I tried this as a replacement for my grantPrivileges (below) which works perfectly but this
+	 * new one doesn't work. Keeping it here anyway, and will look into this later.
 	 */
+	public static boolean grantPrivileges_new(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
+		return AccessControlUtils.allow(node, principal.getName(), privilegeNames.toArray(new String[privilegeNames.size()]));
+	}
+
 	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
 
 		AccessControlManager acMgr = session.getAccessControlManager();
@@ -78,9 +84,7 @@ public class AccessControlUtil {
 	}
 
 	public static List<String> getOwnerNames(Session session, Node node) throws Exception {
-
-		/* TODO: maybe use a set here to avoid duplicates! */
-		List<String> owners = new LinkedList<String>();
+		Set<String> ownerSet = new HashSet<String>();
 
 		/*
 		 * We walk up the tree util we get to the root, or find ownership on node, or any of it's
@@ -91,7 +95,7 @@ public class AccessControlUtil {
 			while (++sanityCheck < 100) {
 				List<Principal> principals = getNodePrincipals(session, node);
 				for (Principal p : principals) {
-					owners.add(p.getName());
+					ownerSet.add(p.getName());
 				}
 
 				if (principals.size() == 0) {
@@ -106,7 +110,9 @@ public class AccessControlUtil {
 			// not an error, just reached root.
 		}
 
-		return owners;
+		List<String> ownerList = new LinkedList<String>(ownerSet);
+		Collections.sort(ownerList);
+		return ownerList;
 	}
 
 	public static List<Principal> getNodePrincipals(Session session, Node node) throws Exception {
@@ -199,27 +205,22 @@ public class AccessControlUtil {
 		String path = node.getPath();
 
 		AccessControlManager acMgr = session.getAccessControlManager();
-		log.debug("Privileges for node: " + path + " ");
+		log.trace("Privileges for node: " + path + " ");
 
 		AccessControlList acl = getAccessControlList(session, node);
 		AccessControlEntry[] aclArray = acl.getAccessControlEntries();
-		log.debug("ACL entry count: " + (aclArray == null ? 0 : aclArray.length));
+		log.trace("ACL entry count: " + (aclArray == null ? 0 : aclArray.length));
 
 		for (AccessControlEntry ace : aclArray) {
-
-			/*
-			 * TODO: each ACL has multiple privileges, so we need to detect if we have removed all
-			 * privileges and, then in that case call
-			 */
-			log.debug("ACL entry (principal name): " + ace.getPrincipal().getName());
+			log.trace("ACL entry (principal name): " + ace.getPrincipal().getName());
 			if (ace.getPrincipal().getName().equals(principle)) {
-				log.debug("  Found PRINCIPLE to remove priv for: " + principle);
+				log.trace("  Found PRINCIPLE to remove priv for: " + principle);
 				Privilege[] privileges = ace.getPrivileges();
 
 				if (privileges != null) {
 					for (Privilege priv : privileges) {
 						if (priv.getName().equals(privilege)) {
-							log.debug("    Found PRIVILEGE to remove: " + principle);
+							log.trace("    Found PRIVILEGE to remove: " + principle);
 
 							/*
 							 * we remove the entire 'ace' from the 'acl' here. I don't know of a
@@ -249,123 +250,6 @@ public class AccessControlUtil {
 		privs.add(Privilege.JCR_ALL);
 		return grantPrivileges(session, node, principal, privs);
 	}
-
-	//
-	// /*
-	// *
-	// * DO NOT DELETE
-	// */
-	//
-	// // Privilege[] privileges = acMgr.getPrivileges(node.getPath());
-	// // log.debug("getPrivileges=" + (privileges == null ? 0 : privileges.length));
-	// //
-	// // AccessControlPolicy[] effectivePolicies = acMgr.getEffectivePolicies(node.getPath());
-	// // log.debug("getEffectivePolicies=" + (effectivePolicies == null ? 0 :
-	// // effectivePolicies.length));
-	// //
-	// // Privilege[] supportedPrivileges = acMgr.getSupportedPrivileges(node.getPath());
-	// // log.debug("getSupportedPrivileges=" + (supportedPrivileges == null ? 0 :
-	// // supportedPrivileges.length));
-	//
-	// // AccessControlPolicyIterator iter = acMgr.getApplicablePolicies(node.getPath());
-	// // int appliciablePolicyCount = 0;
-	// // while (iter.hasNext()) {
-	// // appliciablePolicyCount++;
-	// //
-
-	/* commenting, because this can be rewritten better now */
-	// see oak's: AbstractSecurityTest.java, ACLTest.java
-	// public static String dumpPrivileges(Session session, Node node) throws Exception {
-	// StringBuilder sb = new StringBuilder();
-	// AccessControlManager acMgr = session.getAccessControlManager();
-	// sb.append("Privileges for node: " + node.getPath() + " ");
-	//
-	// // int policyCounter = 0;
-	// // int aclCounter = 0;
-	// // for (AccessControlPolicy policy : acMgr.getPolicies(node.getPath())) {
-	// //
-	// // if (policy instanceof AccessControlList) {
-	// // aclCounter = 0;
-	// //
-	// // AccessControlList acl = (AccessControlList) policy;
-	// AccessControlEntry[] aclEntries = acl.getAccessControlEntries();
-	// if (aclEntries != null) {
-	// for (AccessControlEntry aclEntry : aclEntries) {
-	// Principal principal = aclEntry.getPrincipal();
-	// sb.append("ACE - Principal: " + principal.getName() + " Grants: ");
-	// Privilege[] privileges = aclEntry.getPrivileges();
-	// if (privileges != null) {
-	// int counter = 0;
-	// for (Privilege privilege : privileges) {
-	// if (counter > 0) {
-	// sb.append(",");
-	// }
-	// sb.append(privilege.getName());
-	// counter++;
-	// }
-	// }
-	// }
-	// }
-	// // }
-	// // policyCounter++;
-	// // }
-	//
-	// // if (policyCounter == 0 || aclCounter == 0) {
-	// // sb.append("no policies.");
-	// // }
-	// return sb.toString();
-	//
-	// // AccessControlManager session.getAccessControlManager();
-	// // AccessControlManager acMgr = getAccessControlManager(node);
-	// // AccessControlList acl = AccessControlUtils.getAccessControlList(acMgr, "/content");
-	// // acl.addAccessControlEntry(getTestUser().getPrincipal(), privilegesFromNames(
-	// // PrivilegeConstants.JCR_READ));
-	// //
-	// // ////////// Node target = testRootNode.addNode("test",
-	// // "test:sameNameSibsFalseChildNodeDefinition");
-	// // AccessControlManager acMgr = superuser.getAccessControlManager();
-	// // for (AccessControlPolicyIterator it = acMgr.getApplicablePolicies(target.getPath());
-	// // it.hasNext(); ) {
-	// // AccessControlPolicy policy = it.nextAccessControlPolicy();
-	// // if (policy instanceof AccessControlList) {
-	// // if (principal != null) {
-	// // Privilege[] privs = new
-	// // Privilege[]{acMgr.privilegeFromName(Privilege.JCR_LOCK_MANAGEMENT)};
-	// // ((AccessControlList) policy).addAccessControlEntry(principal, privs);
-	// // }
-	// // acMgr.setPolicy(target.getPath(), policy);
-	// // }
-	// // }
-	// // if (!isSessionImport()) {
-	// // superuser.save();
-	// // }
-	// // ///////////////
-	// // private AccessControlList getList(@Nullable String path) throws RepositoryException {
-	// // if (path == null || superuser.nodeExists(path)) {
-	// // for (AccessControlPolicy policy : acMgr.getPolicies(path)) {
-	// // if (policy instanceof AccessControlList) {
-	// // return (AccessControlList) policy;
-	// // }
-	// // }
-	// // }
-	// // return null;
-	// // }
-	// // ---
-	// // AccessControlList list = getList(path); //pasted above
-	// // if (list != null) {
-	// // if (remove) {
-	// // acMgr.removePolicy(path, list);
-	// // } else {
-	// // for (AccessControlEntry ace : list.getAccessControlEntries()) {
-	// // list.removeAccessControlEntry(ace);
-	// // }
-	// // for (AccessControlEntry ace : entries) {
-	// // list.addAccessControlEntry(ace.getPrincipal(), ace.getPrivileges());
-	// // }
-	// // acMgr.setPolicy(path, list);
-	// // }
-	// // }
-	// }
 
 	public static String[] namesFromPrivileges(Privilege... privileges) {
 		if (privileges == null || privileges.length == 0) {

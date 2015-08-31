@@ -112,7 +112,8 @@ public class NodeMoveService {
 	}
 
 	/*
-	 * Moves a set of nodes to a new location
+	 * Moves a set of nodes to a new location, underneath (i.e. children of) the target node
+	 * specified.
 	 */
 	public void moveNodes(Session session, MoveNodesRequest req, MoveNodesResponse res) throws Exception {
 		String targetId = req.getTargetNodeId();
@@ -133,17 +134,6 @@ public class NodeMoveService {
 				String dstPath = targetPath + node.getName();
 				// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" + dstPath + "]");
 				session.move(srcPath, dstPath);
-
-				/*
-				 * This code did not work as expected (or at all). This is supposed to move the new
-				 * nodes into the proper ordinal position, and doesn't work. Since this is lower
-				 * priority, i'm not even going to try to figure this out for now, and will just
-				 * leave it as technical debt, TODO
-				 */
-				// if (targetChildId != null) {
-				// targetNode.orderBefore(dstPath, targetChildId);
-				// //session.save();
-				// }
 			}
 			catch (Exception e) {
 				// silently ignore if node cannot be found.

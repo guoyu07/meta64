@@ -62,12 +62,6 @@ public class NodeRenderService {
 	/*
 	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
 	 * page, this method gets called once per page and retrieves all the data for that page.
-	 * 
-	 * TODO: When 'edit mode' is not *on* on the client side, we probably should have a way of
-	 * passing a parameter to this method that retrieves *less than all* (i.e. not all, but a
-	 * subset) of the information for each node, so that rendering can be much faster. Currently
-	 * it's already lightning fast, but for scalability we need to be returning basically the least
-	 * amount of data that we can possible get away with.
 	 */
 	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix) throws Exception {
 

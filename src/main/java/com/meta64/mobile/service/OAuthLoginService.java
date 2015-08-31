@@ -68,10 +68,6 @@ public class OAuthLoginService {
 	private TwitterConnectionFactory twitterConnectionFactory;
 	private static final Object twitterConnectionFactoryLock = new Object();
 
-	/*
-	 * TODO: this map, and the twitterLogin and twitterCallback methods will be moved into a service
-	 * class (out of this class), very soon.
-	 */
 	private final HashMap<String, OAuthToken> oauthTokenMap = new HashMap<String, OAuthToken>();
 
 	/*
@@ -144,10 +140,7 @@ public class OAuthLoginService {
 			throw new Exception("Bad oauth_token");
 		}
 		OAuthToken token = oauthTokenMap.get(oauthToken);
-		/*
-		 * TODO: Very slight risk of memory leak here. Should we only remove it after a certain age,
-		 * like 2 hours, or even attach it to the invalidation of this session also?
-		 */
+
 		oauthTokenMap.remove(oauthToken);
 
 		TwitterConnectionFactory connectionFactory = getTwitterConnectionFactory();

@@ -122,14 +122,9 @@ public class NodeEditService {
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
-		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
 		newNode.setProperty(JcrProp.CONTENT, "");
 		JcrUtil.timestampNewNode(session, newNode);
-
-		// TODO: Did I need this save, in addition to one below?? If so need a big long comment in
-		// here about why!
-		session.save();
 
 		if (!StringUtils.isEmpty(req.getTargetName())) {
 			parentNode.orderBefore(newNode.getName(), req.getTargetName());
@@ -143,9 +138,6 @@ public class NodeEditService {
 	/*
 	 * Renames the node to a new node name specified in the request. In JCR the way you 'rename' a
 	 * node is actually by moving it to a new location, which actually under the same parent.
-	 * 
-	 * TODO: I can't remember if this maintains it's same ordinal position, but if not I'd call that
-	 * a bug. Need to do some testing.
 	 */
 	public void renameNode(Session session, RenameNodeRequest req, RenameNodeResponse res) throws Exception {
 
@@ -175,11 +167,12 @@ public class NodeEditService {
 		 * client to be able so send the 'nodeBelow' so we have to find that on the server side.
 		 */
 		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node);
-
 		session.move(node.getPath(), newPath);
 
 		/*
-		 * if the node we are renaming is already the bottom node we will have null for nodeBelow
+		 * This orderBefore, is required to maintain the same ordinal ordering position after the
+		 * rename. If the node we are renaming is already the bottom node we will have null for
+		 * nodeBelow
 		 */
 		if (nodeBelow != null) {
 			parentNode.orderBefore(newName, nodeBelow.getName());

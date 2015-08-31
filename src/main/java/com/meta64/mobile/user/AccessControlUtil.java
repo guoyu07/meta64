@@ -208,7 +208,7 @@ public class AccessControlUtil {
 		for (AccessControlEntry ace : aclArray) {
 
 			/*
-			 * TODO: each ace has multiple privileges, so we need to detect if we have removed all
+			 * TODO: each ACL has multiple privileges, so we need to detect if we have removed all
 			 * privileges and, then in that case call
 			 */
 			log.debug("ACL entry (principal name): " + ace.getPrincipal().getName());

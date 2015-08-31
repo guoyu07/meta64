@@ -12,7 +12,6 @@ import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -117,7 +116,6 @@ public class JcrOutboxMgr {
 
 	/*
 	 * Loads only up to mailBatchSize emails at a time
-	 *
 	 */
 	public List<Node> getMailNodes(Session session) throws Exception {
 		List<Node> mailNodes = null;

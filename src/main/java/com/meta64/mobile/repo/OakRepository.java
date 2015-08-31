@@ -227,7 +227,7 @@ public class OakRepository {
 		}
 	}
 
-	/* TODO: I don't know what this aggregator is or if I need it */
+	/* I don't fully understand what this aggregator is for. Need to research this some. */
 	private static NodeAggregator getNodeAggregator() {
 		return new SimpleNodeAggregator().newRuleWithName(JcrConstants.NT_UNSTRUCTURED, //
 				newArrayList(JCR_CONTENT, JCR_CONTENT + "/*"));

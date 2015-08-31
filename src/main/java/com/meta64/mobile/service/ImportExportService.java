@@ -25,24 +25,18 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.ImportRequest;
-import com.meta64.mobile.request.InsertBookRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.ImportResponse;
-import com.meta64.mobile.response.InsertBookResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.FileTools;
-import com.meta64.mobile.util.ImportWarAndPeace;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
  * Import and Export to and from XML files, as well as the special processing to import the book War
  * and Peace in it's special format.
- * 
- * TODO: We probably should separate out the book import part into a separate service file.
  */
 @Component
 @Scope("singleton")
@@ -311,24 +305,10 @@ public class ImportExportService {
 	private void importFileFromZip(ZipInputStream zis, ZipEntry zipEntry, Node importNode, Session session) throws Exception {
 		String name = zipEntry.getName();
 
-		/*
-		 * This is a special hack just for Clay Ferguson's machine because the type of zip files i'm
-		 * importing from are the old format export zips from the legacy meta64 zip format, and so I
-		 * focus specifically pulling in files that are named content.html or content.txt.
-		 * 
-		 * This is still alpha testing code but this code runs perfect. Eventually we can remove
-		 * this file name hack and let the system be smarter and actually check MIME types using
-		 * file name extensions and import binaries properly etc.
-		 */
-		// if (name.endsWith("/content.html") || name.endsWith("/content.txt")) {
-
 		StringBuilder buffer = new StringBuilder();
 		synchronized (byteBuf) {
-			/*
-			 * todo: got this code snippet online. someday look to see if there is a more efficient
-			 * way
-			 */
-			for (int n; (n = zis.read(byteBuf)) != -1;) {
+			int n = -1;
+			while ((n = zis.read(byteBuf)) != -1) {
 				if (n > 0) {
 					buffer.append(new String(byteBuf, 0, n));
 				}
@@ -437,25 +417,4 @@ public class ImportExportService {
 			throw e;
 		}
 	}
-
-	public void insertBook(Session session, InsertBookRequest req, InsertBookResponse res) throws Exception {
-
-		if (!sessionContext.isAdmin()) {
-			throw new Exception("insertBook is an admin-only feature.");
-		}
-
-		String nodeId = req.getNodeId();
-		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
-
-		/* for now we don't check book name. Only one book exists: War and Peace */
-		// String name = req.getBookName();
-
-		ImportWarAndPeace iwap = SpringContextUtil.getApplicationContext().getBean(ImportWarAndPeace.class);
-		iwap.importBook(session, "classpath:war-and-peace.txt", node);
-
-		session.save();
-		res.setSuccess(true);
-	}
-
 }

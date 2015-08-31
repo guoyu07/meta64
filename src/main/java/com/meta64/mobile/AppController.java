@@ -89,6 +89,7 @@ import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.ImportBookService;
 import com.meta64.mobile.service.ImportExportService;
 import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
@@ -144,6 +145,9 @@ public class AppController {
 
 	@Autowired
 	private ImportExportService importExportService;
+
+	@Autowired
+	private ImportBookService importBookService;
 
 	@Autowired
 	private NodeEditService nodeEditService;
@@ -445,7 +449,7 @@ public class AppController {
 		ThreadLocals.setResponse(res);
 		checkSession();
 		Session session = ThreadLocals.getJcrSession();
-		importExportService.insertBook(session, req, res);
+		importBookService.insertBook(session, req, res);
 		return res;
 	}
 

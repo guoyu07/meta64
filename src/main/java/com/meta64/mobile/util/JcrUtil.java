@@ -112,14 +112,14 @@ public class JcrUtil {
 		}
 
 		String nodeName = node.getName();
-		//log.debug("Finding node below node: " + nodeName);
+		// log.debug("Finding node below node: " + nodeName);
 		NodeIterator nodeIter = parentNode.getNodes();
 		boolean foundNode = false;
 
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
-				//log.debug("   NAME: " + n.getName());
+				// log.debug("   NAME: " + n.getName());
 				if (foundNode) {
 					ret = n;
 					break;

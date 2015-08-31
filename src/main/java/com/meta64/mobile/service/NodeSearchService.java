@@ -159,11 +159,6 @@ public class NodeSearchService {
 			}
 		}
 
-		/*
-		 * TODO: Currently if there is no WHERE clause then lucene fails to see any restrictions and
-		 * resorts to a full scan, which is slow. Need to add the ability to use lucene index for
-		 * sorting on the lastModified field.
-		 */
 		if (req.isModSortDesc()) {
 			queryStr.append(" ORDER BY [");
 			queryStr.append(JcrProp.LAST_MODIFIED);

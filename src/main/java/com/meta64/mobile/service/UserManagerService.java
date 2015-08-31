@@ -328,7 +328,6 @@ public class UserManagerService {
 	 */
 	public void initiateSignup(String userName, String password, String email) throws Exception {
 
-		// TODO: remove hard coded domain from here and put in properties file
 		String signupCode = JcrUtil.getGUID();
 		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
 		String content = "Confirmation for new meta64 account: " + userName + //

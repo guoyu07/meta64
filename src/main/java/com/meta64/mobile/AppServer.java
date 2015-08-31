@@ -29,9 +29,6 @@ public class AppServer {
 	}
 
 	/*
-	 * TODO: Need to describe what Q-ENTER does in the console when running in eclipse with the
-	 * command line parameter passed. Graceful shutdown.
-	 * 
 	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possibible
 	 * and portabe to shart with other java developers and able to work just from calling this one
 	 * static method.

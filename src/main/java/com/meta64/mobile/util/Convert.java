@@ -88,9 +88,6 @@ public class Convert {
 		long binVer = 0;
 		ImageSize imageSize = null;
 		try {
-			// TODO: is there some better performing way of checking for the existence of a node ?
-			// Node binNode = session.getNode(node.getPath() + "/" + AppConstant.JCR_PROP_BIN);
-
 			binVer = getBinaryVersion(node);
 			if (binVer > 0) {
 
@@ -169,7 +166,7 @@ public class Convert {
 			Property p = iter.nextProperty();
 
 			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, p, htmlOnly);
-			//log.debug("   PROP Name: " + p.getName());
+			// log.debug("   PROP Name: " + p.getName());
 
 			/*
 			 * grab the content property, and don't put it in the return list YET, because we will

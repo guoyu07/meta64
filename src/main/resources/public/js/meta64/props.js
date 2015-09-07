@@ -35,11 +35,6 @@ var props = function() {
 			// setDataIconUsingId("#editModeButton", editMode ? "edit" :
 			// "forbidden");
 
-			/*
-			 * TODO: this button icon needs to change now that the properties is
-			 * on the main manu instead of navbar button. Currently not
-			 * functional.
-			 */
 			var elm = $("#propsToggleButton");
 			elm.toggleClass("ui-icon-grid", meta64.showProperties);
 			elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
@@ -143,7 +138,7 @@ var props = function() {
 			 * 
 			 * TODO: for performance I can do something simpler than
 			 * 'populateEditNodeDialog' here, but for now just re-rendering the
-			 * entire edit page is what I'm doing for simplicity.
+			 * entire edit page.
 			 */
 			prop.values.push('');
 			edit.populateEditNodePg();
@@ -179,6 +174,7 @@ var props = function() {
 		},
 
 		makeMultiPropEditor : function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
+			console.log("Property multi-type: name=" + prop.name + " count=" + prop.values.length);
 			var fields = '';
 
 			var propList = prop.values;
@@ -212,6 +208,28 @@ var props = function() {
 			return fields;
 		},
 
+		makeSinglePropEditor : function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
+			console.log("Property single-type: " + prop.name);
+			var field = render.tag("label", {
+				"for" : fieldId
+			}, render.sanitizePropertyName(prop.name));
+
+			var propVal = isBinaryProp ? "[binary]" : prop.value;
+
+			if (isReadOnlyProp || isBinaryProp) {
+				field += render.tag("textarea", {
+					"id" : fieldId,
+					"readonly" : "readonly",
+					"disabled" : "disabled"
+				}, propVal ? propVal : '');
+			} else {
+				field += render.tag("textarea", {
+					"id" : fieldId
+				}, propVal ? propVal : '');
+			}
+			return field;
+		},
+		
 		/*
 		 * Orders properties in some consisten manor appropriate to display in
 		 * gui. Currenetly all we are doing is moving any 'jcr:content' property
@@ -239,8 +257,6 @@ var props = function() {
 		},
 
 		/*
-		 * TODO: optimize string concats for performance.
-		 * 
 		 * properties will be null or a list of PropertyInfo objects
 		 */
 		renderProperties : function(properties) {

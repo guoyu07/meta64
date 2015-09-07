@@ -208,25 +208,11 @@ var edit = function() {
 		cancelEdit : function() {
 
 			if (meta64.treeDirty) {
-				/*
-				 * TODO: this results in a call to the server to refresh page
-				 * which CAN be avoided if I write smarter client-side code, but
-				 * for now, to get a product up and running soon, i'm just
-				 * calling refresh here for a full blown call to server to
-				 * refresh.
-				 */
-				// console.log("cancel edit, detected dirty, and will call
-				// server.");
-				view.refreshTree(null, false);
-
-				/*
-				 * if I had the logic in place to simply update client variables
-				 * then I could call this simply (and avoid a call to server)
-				 */
-				// renderPageFromData(currentNodeData);
+				meta64.goToMainPage(true);
+			} else {
+				meta64.jqueryChangePage("#mainPage");
+				view.scrollToSelectedNode();
 			}
-			meta64.jqueryChangePage("#mainPage");
-			view.scrollToSelectedNode();
 		},
 
 		/*
@@ -421,7 +407,7 @@ var edit = function() {
 				"nodeId" : highlightNode.id,
 				"newName" : newName
 			});
-			
+
 			prms.done(function(res) {
 				_renameNodeResponse(res, renamingRootNode);
 			});
@@ -495,8 +481,6 @@ var edit = function() {
 			/* clear this map to get rid of old properties */
 			meta64.fieldIdToPropMap = {};
 
-			/* TODO: this block of code nests too deep. clean this up! */
-
 			/* editNode will be null if this is a new node being created */
 			if (_.editNode) {
 				// Iterate PropertyInfo.java objects
@@ -524,79 +508,16 @@ var edit = function() {
 					}
 
 					var buttonBar = "";
-
 					if (!isReadOnlyProp && !isBinaryProp) {
-						var clearButton = render.tag("a", //
-						{
-							"onClick" : "props.clearProperty('" + fieldId + "');", //
-							"class" : "ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
-						}, //
-						"Clear");
-
-						var addMultiButton = "";
-						var deleteButton = "";
-
-						if (prop.name !== jcrCnst.CONTENT) {
-							/*
-							 * For now we just go with the design where the
-							 * actual content property cannot be deleted. User
-							 * can leave content blank but not delete it.
-							 */
-							deleteButton = render.tag("a", //
-							{
-								"onClick" : "props.deleteProperty('" + prop.name + "');", //
-								// "onClick" : function() {
-								// props.deleteProperty(prop.name);
-								// }, //
-								"class" : "ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"
-							}, //
-							"Del");
-
-							/*
-							 * I don't think it really makes sense to allow a
-							 * jcr:content property to be multivalued. I may be
-							 * wrong but this is my current assumption
-							 */
-							addMultiButton = render.tag("a", //
-							{
-								"onClick" : "props.addSubProperty('" + fieldId + "');", //
-								"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
-							}, //
-							"Add Multi");
-						}
-
-						var allButtons = addMultiButton + clearButton + deleteButton;
-						if (allButtons.length > 0) {
-							buttonBar = render.makeHorizontalFieldSet(allButtons, "property-edit-button-bar");
-						} else {
-							buttonBar = "";
-						}
+						buttonBar = _.makePropertyEditButtonBar(prop, fieldId);
 					}
 
 					var field = buttonBar;
 
 					if (isMulti) {
-						console.log("Property multi-type: name=" + prop.name + " count=" + prop.values.length);
 						field += props.makeMultiPropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
 					} else {
-						console.log("Property single-type: " + prop.name);
-						field += render.tag("label", {
-							"for" : fieldId
-						}, render.sanitizePropertyName(prop.name));
-
-						var propVal = isBinaryProp ? "[binary]" : prop.value;
-
-						if (isReadOnlyProp || isBinaryProp) {
-							field += render.tag("textarea", {
-								"id" : fieldId,
-								"readonly" : "readonly",
-								"disabled" : "disabled"
-							}, propVal ? propVal : '');
-						} else {
-							field += render.tag("textarea", {
-								"id" : fieldId
-							}, propVal ? propVal : '');
-						}
+						field += props.makeSinglePropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
 					}
 
 					fields += render.tag("div", {
@@ -639,6 +560,58 @@ var edit = function() {
 			var isUuid = _.editNode && _.editNode.id && !_.editNode.id.startsWith("/");
 			// console.log("isUuid: " + isUuid);
 			util.setVisibility("#makeNodeReferencableButton", _.editNode && !isUuid && !_.editingUnsavedNode);
+		},
+
+		makePropertyEditButtonBar : function(prop, fieldId) {
+			var buttonBar = "";
+
+			var clearButton = render.tag("a", //
+			{
+				"onClick" : "props.clearProperty('" + fieldId + "');", //
+				"class" : "ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
+			}, //
+			"Clear");
+
+			var addMultiButton = "";
+			var deleteButton = "";
+
+			if (prop.name !== jcrCnst.CONTENT) {
+				/*
+				 * For now we just go with the design where the actual content
+				 * property cannot be deleted. User can leave content blank but
+				 * not delete it.
+				 */
+				deleteButton = render.tag("a", //
+				{
+					"onClick" : "props.deleteProperty('" + prop.name + "');", //
+					// "onClick" : function() {
+					// props.deleteProperty(prop.name);
+					// }, //
+					"class" : "ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"
+				}, //
+				"Del");
+
+				/*
+				 * I don't think it really makes sense to allow a jcr:content
+				 * property to be multivalued. I may be wrong but this is my
+				 * current assumption
+				 */
+				addMultiButton = render.tag("a", //
+				{
+					"onClick" : "props.addSubProperty('" + fieldId + "');", //
+					"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
+				}, //
+				"Add Multi");
+			}
+
+			var allButtons = addMultiButton + clearButton + deleteButton;
+			if (allButtons.length > 0) {
+				buttonBar = render.makeHorizontalFieldSet(allButtons, "property-edit-button-bar");
+			} else {
+				buttonBar = "";
+			}
+
+			return buttonBar;
 		},
 
 		insertNode : function(uid) {

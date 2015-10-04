@@ -52,9 +52,6 @@ public class ImportExportService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
 	@Value("${adminDataFolder}")
 	private String adminDataFolder;
 

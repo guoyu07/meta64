@@ -51,9 +51,6 @@ public class NodeSearchService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
 	/*
 	 * Finds an exact property match under the specified node
 	 */

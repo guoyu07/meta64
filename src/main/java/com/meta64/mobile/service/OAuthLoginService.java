@@ -101,19 +101,16 @@ public class OAuthLoginService {
 		final String userName = completeAuthenticaion(oauthToken, oauthVerifier);
 		final ValContainer<String> passwordContainer = new ValContainer<String>();
 
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				if (!userManagerService.userExists(session, userName, JcrPropVal.TWITTER, passwordContainer)) {
-					String _password = JcrUtil.getGUID();
-					userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER);
-					passwordContainer.setVal(_password);
-					log.debug("twitter user created and initialized.");
-				}
-				else {
-					log.debug("twitter account did already exist. Logging in now.");
-					// passwordContainer will already have correct value here from userExists.
-				}
+		adminRunner.run((Session session) -> {
+			if (!userManagerService.userExists(session, userName, JcrPropVal.TWITTER, passwordContainer)) {
+				String _password = JcrUtil.getGUID();
+				userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER);
+				passwordContainer.setVal(_password);
+				log.debug("twitter user created and initialized.");
+			}
+			else {
+				log.debug("twitter account did already exist. Logging in now.");
+				// passwordContainer will already have correct value here from userExists.
 			}
 		});
 

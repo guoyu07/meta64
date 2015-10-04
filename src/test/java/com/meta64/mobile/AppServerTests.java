@@ -62,100 +62,97 @@ public class AppServerTests {
 	 */
 	// @Test
 	public void contextLoads() throws Exception {
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				SignupRequest signupReq = new SignupRequest();
+		adminRunner.run((Session session) -> {
+			SignupRequest signupReq = new SignupRequest();
 
-				/* setup fake captcha */
-				sessionContext.setCaptcha(fakeCaptcha);
+			/* setup fake captcha */
+			sessionContext.setCaptcha(fakeCaptcha);
 
-				/*
-				 * Signup a new user
-				 */
-				String userName = "wclayf" + System.currentTimeMillis();
-				signupReq.setUserName(userName);
-				signupReq.setPassword(userName);
-				signupReq.setEmail("xxx");
-				signupReq.setCaptcha(fakeCaptcha);
-				SignupResponse signupRes = controller.signup(signupReq);
-				assertTrue(signupRes.isSuccess());
+			/*
+			 * Signup a new user
+			 */
+			String userName = "wclayf" + System.currentTimeMillis();
+			signupReq.setUserName(userName);
+			signupReq.setPassword(userName);
+			signupReq.setEmail("xxx");
+			signupReq.setCaptcha(fakeCaptcha);
+			SignupResponse signupRes = controller.signup(signupReq);
+			assertTrue(signupRes.isSuccess());
 
-				/*
-				 * Login the new user
-				 */
-				LoginRequest loginReq = new LoginRequest();
-				loginReq.setUserName(userName);
-				loginReq.setPassword(userName);
-				LoginResponse loginRes = controller.login(loginReq);
-				assertTrue(loginRes.isSuccess());
+			/*
+			 * Login the new user
+			 */
+			LoginRequest loginReq = new LoginRequest();
+			loginReq.setUserName(userName);
+			loginReq.setPassword(userName);
+			LoginResponse loginRes = controller.login(loginReq);
+			assertTrue(loginRes.isSuccess());
 
-				String userRoot = loginRes.getRootNode().getId();
+			String userRoot = loginRes.getRootNode().getId();
 
-				/*
-				 * Create a new node under the root node for user.
-				 */
-				CreateSubNodeRequest createSubNodeReq = new CreateSubNodeRequest();
-				createSubNodeReq.setNodeId(userRoot);
-				createSubNodeReq.setNewNodeName("test-new-node-name");
-				CreateSubNodeResponse createSubNodeRes = controller.createSubNode(createSubNodeReq);
-				assertTrue(createSubNodeRes.isSuccess());
+			/*
+			 * Create a new node under the root node for user.
+			 */
+			CreateSubNodeRequest createSubNodeReq = new CreateSubNodeRequest();
+			createSubNodeReq.setNodeId(userRoot);
+			createSubNodeReq.setNewNodeName("test-new-node-name");
+			CreateSubNodeResponse createSubNodeRes = controller.createSubNode(createSubNodeReq);
+			assertTrue(createSubNodeRes.isSuccess());
 
-				String newNodeId = createSubNodeRes.getNewNode().getId();
+			String newNodeId = createSubNodeRes.getNewNode().getId();
 
-				/*
-				 * Add a public share privilege on the new node
-				 */
-				AddPrivilegeRequest addPrivReq = new AddPrivilegeRequest();
-				addPrivReq.setPrincipal("everyone");
+			/*
+			 * Add a public share privilege on the new node
+			 */
+			AddPrivilegeRequest addPrivReq = new AddPrivilegeRequest();
+			addPrivReq.setPrincipal("everyone");
 
-				List<String> privs = new LinkedList<String>();
-				privs.add("read");
-				addPrivReq.setPrivileges(privs);
-				addPrivReq.setNodeId(newNodeId);
-				AddPrivilegeResponse addPrivRes = controller.addPrivilege(addPrivReq);
-				assertTrue(addPrivRes.isSuccess());
+			List<String> privs = new LinkedList<String>();
+			privs.add("read");
+			addPrivReq.setPrivileges(privs);
+			addPrivReq.setNodeId(newNodeId);
+			AddPrivilegeResponse addPrivRes = controller.addPrivilege(addPrivReq);
+			assertTrue(addPrivRes.isSuccess());
 
-				/*
-				 * Query the privileges to verify that we see the public share
-				 */
-				GetNodePrivilegesRequest getPrivsReq = new GetNodePrivilegesRequest();
-				getPrivsReq.setNodeId(newNodeId);
-				GetNodePrivilegesResponse getPrivsRes = controller.getNodePrivileges(getPrivsReq);
-				assertTrue(getPrivsRes.isSuccess());
+			/*
+			 * Query the privileges to verify that we see the public share
+			 */
+			GetNodePrivilegesRequest getPrivsReq = new GetNodePrivilegesRequest();
+			getPrivsReq.setNodeId(newNodeId);
+			GetNodePrivilegesResponse getPrivsRes = controller.getNodePrivileges(getPrivsReq);
+			assertTrue(getPrivsRes.isSuccess());
 
-				/*
-				 * Verify public share (in a very lazy hacky way for now)
-				 */
-				String privsCheck = Convert.JsonStringify(getPrivsRes);
-				log.debug("***** PRIVS (with public): " + privsCheck);
-				assertTrue(privsCheck.contains("read"));
+			/*
+			 * Verify public share (in a very lazy hacky way for now)
+			 */
+			String privsCheck = Convert.JsonStringify(getPrivsRes);
+			log.debug("***** PRIVS (with public): " + privsCheck);
+			assertTrue(privsCheck.contains("read"));
 
-				/*
-				 * Now we remove the share we just added
-				 */
-				RemovePrivilegeRequest removePrivReq = new RemovePrivilegeRequest();
-				removePrivReq.setNodeId(newNodeId);
-				removePrivReq.setPrincipal("everyone");
-				removePrivReq.setPrivilege("jcr:read");
-				RemovePrivilegeResponse removePrivRes = controller.removePrivilege(removePrivReq);
-				assertTrue(removePrivRes.isSuccess());
+			/*
+			 * Now we remove the share we just added
+			 */
+			RemovePrivilegeRequest removePrivReq = new RemovePrivilegeRequest();
+			removePrivReq.setNodeId(newNodeId);
+			removePrivReq.setPrincipal("everyone");
+			removePrivReq.setPrivilege("jcr:read");
+			RemovePrivilegeResponse removePrivRes = controller.removePrivilege(removePrivReq);
+			assertTrue(removePrivRes.isSuccess());
 
-				/*
-				 * now read back in privileges to verify the one we removed is now gone
-				 */
-				getPrivsReq = new GetNodePrivilegesRequest();
-				getPrivsReq.setNodeId(newNodeId);
-				getPrivsRes = controller.getNodePrivileges(getPrivsReq);
-				assertTrue(getPrivsRes.isSuccess());
+			/*
+			 * now read back in privileges to verify the one we removed is now gone
+			 */
+			getPrivsReq = new GetNodePrivilegesRequest();
+			getPrivsReq.setNodeId(newNodeId);
+			getPrivsRes = controller.getNodePrivileges(getPrivsReq);
+			assertTrue(getPrivsRes.isSuccess());
 
-				privsCheck = Convert.JsonStringify(getPrivsRes);
-				log.debug("***** PRIVS (with public REMOVED): " + privsCheck);
-				assertTrue(!privsCheck.contains("read"));
+			privsCheck = Convert.JsonStringify(getPrivsRes);
+			log.debug("***** PRIVS (with public REMOVED): " + privsCheck);
+			assertTrue(!privsCheck.contains("read"));
 
-				// shareNodeTest(newUserName);
-			}
-		});
+			// shareNodeTest(newUserName);
+			});
 	}
 
 	public void shareNodeTest(String userName) throws Exception {

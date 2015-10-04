@@ -164,30 +164,27 @@ public class UserManagerService {
 		}
 	}
 
-	public void closeAccount(Session session, CloseAccountRequest req, CloseAccountResponse res) throws Exception {
+	public void closeAccount(Session session__unused, CloseAccountRequest req, CloseAccountResponse res) throws Exception {
 		log.debug("Closing Account: " + sessionContext.getUserName());
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				String userName = sessionContext.getUserName();
+		adminRunner.run((Session session) -> {
+			String userName = sessionContext.getUserName();
 
-				/* Remove user from JCR user manager */
-				UserManagerUtil.removeUser(session, userName);
+			/* Remove user from JCR user manager */
+			UserManagerUtil.removeUser(session, userName);
 
-				/*
-				 * And remove the two nodes on the tree that we have for this user (root and
-				 * preferences)
-				 */
-				Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
-				if (allUsersRoot != null) {
-					allUsersRoot.remove();
-				}
-				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-				if (prefsNode != null) {
-					prefsNode.remove();
-				}
-				session.save();
+			/*
+			 * And remove the two nodes on the tree that we have for this user (root and
+			 * preferences)
+			 */
+			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
+			if (allUsersRoot != null) {
+				allUsersRoot.remove();
 			}
+			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+			if (prefsNode != null) {
+				prefsNode.remove();
+			}
+			session.save();
 		});
 	}
 
@@ -198,36 +195,33 @@ public class UserManagerService {
 	 */
 	public void processSignupCode(final String signupCode, final Model model) throws Exception {
 		log.debug("User is trying signupCode: " + signupCode);
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				try {
-					Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.SIGNUP, //
-							JcrProp.CODE, signupCode);
+		adminRunner.run((Session session) -> {
+			try {
+				Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.SIGNUP, //
+						JcrProp.CODE, signupCode);
 
-					if (node != null) {
-						String userName = JcrUtil.getRequiredStringProp(node, JcrProp.USER);
-						String password = JcrUtil.getRequiredStringProp(node, JcrProp.PWD);
-						password = encryptor.decrypt(password);
-						String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
+				if (node != null) {
+					String userName = JcrUtil.getRequiredStringProp(node, JcrProp.USER);
+					String password = JcrUtil.getRequiredStringProp(node, JcrProp.PWD);
+					password = encryptor.decrypt(password);
+					String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
 
-						initNewUser(session, userName, password, email, JcrPropVal.META64);
+					initNewUser(session, userName, password, email, JcrPropVal.META64);
 
-						/*
-						 * allow JavaScript to detect all it needs to detect which is to display a
-						 * message to user saying the signup is complete.
-						 */
-						model.addAttribute("signupCode", "ok");
-						node.remove();
-						session.save();
-					}
-					else {
-						throw new Exception("Signup Code is invalid.");
-					}
+					/*
+					 * allow JavaScript to detect all it needs to detect which is to display a
+					 * message to user saying the signup is complete.
+					 */
+					model.addAttribute("signupCode", "ok");
+					node.remove();
+					session.save();
 				}
-				catch (Exception e) {
-					// need to message back to user signup failed.
+				else {
+					throw new Exception("Signup Code is invalid.");
 				}
+			}
+			catch (Exception e) {
+				// need to message back to user signup failed.
 			}
 		});
 	}
@@ -257,11 +251,8 @@ public class UserManagerService {
 
 	public List<String> getOwnerNames(final Node node) throws Exception {
 		final ValContainer<List<String>> ret = new ValContainer<List<String>>();
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				ret.setVal(AccessControlUtil.getOwnerNames(session, node));
-			}
+		adminRunner.run((Session session) -> {
+			ret.setVal(AccessControlUtil.getOwnerNames(session, node));
 		});
 		return ret.getVal();
 	}
@@ -345,31 +336,28 @@ public class UserManagerService {
 	 */
 	public void addPendingSignupNode(final String userName, final String password, final String email, final String signupCode) throws Exception {
 
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
+		adminRunner.run((Session session) -> {
 
-				try {
-					Node checkNode = session.getNode("/" + JcrName.SIGNUP + "/" + userName);
-					throw new Exception("User name is already pending signup.");
-				}
-				catch (Exception e) {
-					// normal flow. Not an error here.
-				}
-
-				Node signupNode = session.getNode("/" + JcrName.SIGNUP);
-				if (signupNode == null) {
-					throw new Exception("Signup node not found.");
-				}
-
-				Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-				newNode.setProperty(JcrProp.USER, userName);
-				newNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-				newNode.setProperty(JcrProp.EMAIL, email);
-				newNode.setProperty(JcrProp.CODE, signupCode);
-				JcrUtil.timestampNewNode(session, newNode);
-				session.save();
+			try {
+				Node checkNode = session.getNode("/" + JcrName.SIGNUP + "/" + userName);
+				throw new Exception("User name is already pending signup.");
 			}
+			catch (Exception e) {
+				// normal flow. Not an error here.
+			}
+
+			Node signupNode = session.getNode("/" + JcrName.SIGNUP);
+			if (signupNode == null) {
+				throw new Exception("Signup node not found.");
+			}
+
+			Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.USER, userName);
+			newNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
+			newNode.setProperty(JcrProp.EMAIL, email);
+			newNode.setProperty(JcrProp.CODE, signupCode);
+			JcrUtil.timestampNewNode(session, newNode);
+			session.save();
 		});
 	}
 
@@ -385,33 +373,30 @@ public class UserManagerService {
 		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
 	}
 
-	public void saveUserPreferences(Session session, final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
+	public void saveUserPreferences(Session session_unused, final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
 
 		final String userName = sessionContext.getUserName();
 
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+		adminRunner.run((Session session) -> {
+			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
-				/*
-				 * Assign preferences as properties on this node,
-				 */
-				boolean isAdvancedMode = req.getUserPreferences().isAdvancedMode();
-				prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, isAdvancedMode);
-				session.save();
+			/*
+			 * Assign preferences as properties on this node,
+			 */
+			boolean isAdvancedMode = req.getUserPreferences().isAdvancedMode();
+			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, isAdvancedMode);
+			session.save();
 
-				/*
-				 * Also update session-scope object, because server-side functions that need
-				 * preference information will get it from there instead of loading it from
-				 * repository. The only time we load user preferences from repository is during
-				 * login when we can't get it form anywhere else at that time.
-				 */
-				UserPreferences userPreferences = sessionContext.getUserPreferences();
-				userPreferences.setAdvancedMode(isAdvancedMode);
+			/*
+			 * Also update session-scope object, because server-side functions that need preference
+			 * information will get it from there instead of loading it from repository. The only
+			 * time we load user preferences from repository is during login when we can't get it
+			 * form anywhere else at that time.
+			 */
+			UserPreferences userPreferences = sessionContext.getUserPreferences();
+			userPreferences.setAdvancedMode(isAdvancedMode);
 
-				res.setSuccess(true);
-			}
+			res.setSuccess(true);
 		});
 	}
 
@@ -419,22 +404,19 @@ public class UserManagerService {
 		return new UserPreferences();
 	}
 
-	public UserPreferences getUserPreferences(Session session) throws Exception {
+	public UserPreferences getUserPreferences(Session session__unused) throws Exception {
 		final String userName = sessionContext.getUserName();
 		final UserPreferences userPrefs = new UserPreferences();
 
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+		adminRunner.run((Session session) -> {
+			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
-				userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
-				userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
+			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
+			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 
-				// String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
-				// log.debug("password: "+encryptor.decrypt(password));
-			}
-		});
+			// String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
+			// log.debug("password: "+encryptor.decrypt(password));
+			});
 
 		return userPrefs;
 	}
@@ -470,20 +452,17 @@ public class UserManagerService {
 	/*
 	 * Runs when user is doing the 'change password'.
 	 */
-	public void changePassword(Session session, final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
+	public void changePassword(Session session__unused, final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
 		final String userName = sessionContext.getUserName();
 
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				String password = req.getNewPassword();
-				UserManagerUtil.changePassword(session, userName, password);
+		adminRunner.run((Session session) -> {
+			String password = req.getNewPassword();
+			UserManagerUtil.changePassword(session, userName, password);
 
-				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-				prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
+			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+			prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
 
-				session.save();
-			}
+			session.save();
 		});
 
 		sessionContext.setPassword(req.getNewPassword());
@@ -495,13 +474,10 @@ public class UserManagerService {
 	 */
 	public String getPasswordOfUser(final String userName) throws Exception {
 		final ValContainer<String> password = new ValContainer<String>();
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-				String encPwd = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.PWD);
-				password.setVal(encryptor.decrypt(encPwd));
-			}
+		adminRunner.run((Session session) -> {
+			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+			String encPwd = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.PWD);
+			password.setVal(encryptor.decrypt(encPwd));
 		});
 		return password.getVal();
 	}

@@ -61,9 +61,6 @@ public class NodeEditService {
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
 	/*
 	 * Creates a new node as a *child* node of the node specified in the request.
 	 */

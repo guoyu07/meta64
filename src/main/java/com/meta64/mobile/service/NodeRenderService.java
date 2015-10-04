@@ -56,9 +56,6 @@ public class NodeRenderService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
 	/*
 	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
 	 * page, this method gets called once per page and retrieves all the data for that page.

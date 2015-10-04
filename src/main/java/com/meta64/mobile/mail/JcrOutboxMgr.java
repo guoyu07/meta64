@@ -66,39 +66,33 @@ public class JcrOutboxMgr {
 		 * put in a catch block, because nothing going wrong in here should be allowed to blow up
 		 * the save operation
 		 */
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				try {
-					Node parentNode = node.getParent();
-					if (parentNode != null) {
-						String parentCreator = JcrUtil.getRequiredStringProp(parentNode, parentProp);
-						if (!parentCreator.equals(userName)) {
-							Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, parentCreator);
-							String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
-							log.debug("sending email to: " + email + " because his node was appended under.");
+		adminRunner.run((Session session) -> {
+			try {
+				Node parentNode = node.getParent();
+				if (parentNode != null) {
+					String parentCreator = JcrUtil.getRequiredStringProp(parentNode, parentProp);
+					if (!parentCreator.equals(userName)) {
+						Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, parentCreator);
+						String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
+						log.debug("sending email to: " + email + " because his node was appended under.");
 
-							String content = String.format("User '%s' has created a new subnode under one of your nodes.<br>\n\n" + //
-									"Here is a link to the new node: %s?id=%s", //
-									userName, constProvider.getHostAndPort(), node.getPath());
+						String content = String.format("User '%s' has created a new subnode under one of your nodes.<br>\n\n" + //
+								"Here is a link to the new node: %s?id=%s", //
+								userName, constProvider.getHostAndPort(), node.getPath());
 
-							queueMailUsingAdminSession(session, email, "Meta64 New Content Nofification", content);
-						}
+						queueMailUsingAdminSession(session, email, "Meta64 New Content Nofification", content);
 					}
 				}
-				catch (Exception e) {
-					log.debug("failed sending notification", e);
-				}
+			}
+			catch (Exception e) {
+				log.debug("failed sending notification", e);
 			}
 		});
 	}
 
 	public void queueEmail(final String recipients, final String subject, final String content) throws Exception {
-		adminRunner.run(new JcrRunnable() {
-			@Override
-			public void run(Session session) throws Exception {
-				queueMailUsingAdminSession(session, recipients, subject, content);
-			}
+		adminRunner.run((Session session) -> {
+			queueMailUsingAdminSession(session, recipients, subject, content);
 		});
 	}
 

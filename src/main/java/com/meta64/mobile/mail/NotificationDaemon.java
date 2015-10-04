@@ -73,15 +73,10 @@ public class NotificationDaemon {
 		}
 
 		try {
-			adminRunner.run(new JcrRunnable() {
-
-				@Override
-				public void run(Session session) throws Exception {
-
-					List<Node> mailNodes = outboxMgr.getMailNodes(session);
-					if (mailNodes != null) {
-						sendAllMail(session, mailNodes);
-					}
+			adminRunner.run((Session session) -> {
+				List<Node> mailNodes = outboxMgr.getMailNodes(session);
+				if (mailNodes != null) {
+					sendAllMail(session, mailNodes);
 				}
 			});
 		}

@@ -176,9 +176,6 @@ public class AppController {
 	@Autowired
 	private SystemService systemService;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
 	@RequestMapping(value = "/twitterLogin", method = RequestMethod.GET)
 	public ModelAndView twitterLogin(Model model) throws Exception {
 		logRequest("twitterLogin", null);

@@ -47,11 +47,8 @@ public class UserSettingsDaemon {
 		// log.trace("Saving settings.");
 
 		try {
-			adminRunner.run(new JcrRunnable() {
-				@Override
-				public void run(Session session) throws Exception {
-					saveSettings(session);
-				}
+			adminRunner.run((Session session) -> {
+				saveSettings(session);
 			});
 		}
 		catch (Exception e) {

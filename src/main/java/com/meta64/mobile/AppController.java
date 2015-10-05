@@ -98,14 +98,13 @@ import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.service.OAuthLoginService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.BrandingUtil;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.SpringMvcUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
-
-//adding line to test Git Revert
 
 /**
  * Primary Spring MVC controller. All application logic from the browser connects directly to this

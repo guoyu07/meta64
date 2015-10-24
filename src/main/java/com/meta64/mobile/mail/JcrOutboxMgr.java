@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
@@ -37,9 +35,6 @@ import com.meta64.mobile.util.JcrUtil;
 public class JcrOutboxMgr {
 
 	private static final Logger log = LoggerFactory.getLogger(JcrOutboxMgr.class);
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
@@ -76,8 +71,9 @@ public class JcrOutboxMgr {
 						String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
 						log.debug("sending email to: " + email + " because his node was appended under.");
 
-						String content = String.format("User '%s' has created a new subnode under one of your nodes.<br>\n\n" + //
-								"Here is a link to the new node: %s?id=%s", //
+						String content = String.format(
+								"User '%s' has created a new subnode under one of your nodes.<br>\n\n" + //
+										"Here is a link to the new node: %s?id=%s", //
 								userName, constProvider.getHostAndPort(), node.getPath());
 
 						queueMailUsingAdminSession(session, email, "Meta64 New Content Nofification", content);

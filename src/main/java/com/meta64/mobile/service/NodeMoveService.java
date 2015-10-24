@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
@@ -36,9 +35,6 @@ public class NodeMoveService {
 
 	@Autowired
 	private OakRepository oak;
-
-	@Autowired
-	private SessionContext sessionContext;
 
 	/*
 	 * Moves the the node to a new ordinal/position location (relative to parent)
@@ -132,7 +128,8 @@ public class NodeMoveService {
 
 				String srcPath = node.getPath();
 				String dstPath = targetPath + node.getName();
-				// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" + dstPath + "]");
+				// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" +
+				// dstPath + "]");
 				session.move(srcPath, dstPath);
 			}
 			catch (Exception e) {

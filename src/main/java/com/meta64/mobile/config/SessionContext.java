@@ -23,8 +23,8 @@ import com.meta64.mobile.util.DateUtil;
  * Wrapper for holding variables that we need to maintain server state of for a specific session.
  * Basic session state storage is all collected here.
  * 
- * The ScopedProxyMode.TARGET_CLASS annotation allows this session bean to be availabe on singletons
- * or other beans that are not themselves session scoped.
+ * The ScopedProxyMode.TARGET_CLASS annotation allows this session bean to be available on
+ * singletons or other beans that are not themselves session scoped.
  */
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)

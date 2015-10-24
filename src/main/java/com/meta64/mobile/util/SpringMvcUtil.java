@@ -29,7 +29,8 @@ public class SpringMvcUtil {
 	 * to some kind of an actual version number or something, that will be part of managed releases.
 	 */
 	public static final long jsVersion = System.currentTimeMillis();
-	public static final long cssVersion = jsVersion; // match jsVersion for now, why not.
+	public static final long cssVersion = jsVersion; // match jsVersion for now,
+														// why not.
 
 	/*
 	 * This is an acceptable hack to reference the Impl class directly like this.

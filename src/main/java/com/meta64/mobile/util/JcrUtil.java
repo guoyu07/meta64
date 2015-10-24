@@ -34,6 +34,7 @@ public class JcrUtil {
 	 * operation.
 	 */
 	private static HashSet<String> nonSavableProperties = new HashSet<String>();
+
 	static {
 		nonSavableProperties.add(JcrProp.MIXIN_TYPES);
 		nonSavableProperties.add(JcrProp.UUID);
@@ -119,7 +120,7 @@ public class JcrUtil {
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
-				// log.debug("   NAME: " + n.getName());
+				// log.debug(" NAME: " + n.getName());
 				if (foundNode) {
 					ret = n;
 					break;
@@ -245,7 +246,9 @@ public class JcrUtil {
 			log.debug("ensuring node exists: parentPath=" + parentPath + " name=" + nameToken);
 			node = JcrUtil.getNodeByPath(session, parentPath + nameToken);
 
-			/* if this node is found continue on, using it as current parent to build on */
+			/*
+			 * if this node is found continue on, using it as current parent to build on
+			 */
 			if (node != null) {
 				parent = node;
 			}
@@ -275,7 +278,8 @@ public class JcrUtil {
 			return session.getNode(path);
 		}
 		catch (Exception e) {
-			// do nothing. Not error condition. Means allUsersRoot is not found, so will still be
+			// do nothing. Not error condition. Means allUsersRoot is not found,
+			// so will still be
 			// null.
 			return null;
 		}
@@ -303,7 +307,9 @@ public class JcrUtil {
 		}
 	}
 
-	/* Gets property or returns null of no propery by that name can be retrieved */
+	/*
+	 * Gets property or returns null of no propery by that name can be retrieved
+	 */
 	public static void safeDeleteProperty(Node node, String propName) {
 		try {
 			Property prop = node.getProperty(propName);
@@ -314,7 +320,9 @@ public class JcrUtil {
 		}
 	}
 
-	/* Gets property or returns null of no propery by that name can be retrieved */
+	/*
+	 * Gets property or returns null of no propery by that name can be retrieved
+	 */
 	public static Property getProperty(Node node, String propName) {
 		try {
 			return node.getProperty(propName);
@@ -324,7 +332,9 @@ public class JcrUtil {
 		}
 	}
 
-	/* Gets string property from node. Throws exception of anything goes wrong */
+	/*
+	 * Gets string property from node. Throws exception of anything goes wrong
+	 */
 	public static String getRequiredStringProp(Node node, String propName) throws Exception {
 		return node.getProperty(propName).getValue().getString();
 	}
@@ -338,7 +348,9 @@ public class JcrUtil {
 		}
 	}
 
-	/* Gets string property from node. Throws exception of anything goes wrong */
+	/*
+	 * Gets string property from node. Throws exception of anything goes wrong
+	 */
 	public static boolean getRequiredBooleanProp(Node node, String propName) throws Exception {
 		return node.getProperty(propName).getValue().getBoolean();
 	}
@@ -377,7 +389,8 @@ public class JcrUtil {
 		for (int i = 0; i < len; i += 2) {
 			char c = uid.charAt(i);
 			if (c == '-') {
-				i--;// account for the fact we jump by tow, and start just after dash.
+				i--;// account for the fact we jump by tow, and start just after
+					// dash.
 			}
 			else {
 				sb.append(c);

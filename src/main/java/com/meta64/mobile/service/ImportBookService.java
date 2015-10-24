@@ -34,7 +34,9 @@ public class ImportBookService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 
-		/* for now we don't check book name. Only one book exists: War and Peace */
+		/*
+		 * for now we don't check book name. Only one book exists: War and Peace
+		 */
 		// String name = req.getBookName();
 
 		ImportWarAndPeace iwap = SpringContextUtil.getApplicationContext().getBean(ImportWarAndPeace.class);

@@ -19,12 +19,10 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.GetSharedNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
 import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 
@@ -34,7 +32,7 @@ import com.meta64.mobile.util.JcrUtil;
  * leverages the full and best search performance that can be gotten out of Lucene, which beats any
  * other technology in the world in it's power.
  * 
- * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev-should-know/
+ * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev- should-know/
  */
 @Component
 @Scope("singleton")
@@ -44,9 +42,6 @@ public class NodeSearchService {
 	private static boolean useLike = true;
 	private static boolean useContains = false;
 	private static boolean searchAllProps = false;
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -80,8 +75,8 @@ public class NodeSearchService {
 	}
 
 	/*
-	 * see also: http://docs.jboss.org/jbossdna/0.7/manuals/reference/html/jcr-query-and-search.html
-	 * https://wiki.magnolia-cms.com/display/WIKI/JCR+Query+Cheat+Sheet
+	 * see also: http://docs.jboss.org/jbossdna/0.7/manuals/reference/html/jcr-query-and-
+	 * search.html https://wiki.magnolia-cms.com/display/WIKI/JCR+Query+Cheat+Sheet
 	 */
 
 	// see DescendantSearchTest

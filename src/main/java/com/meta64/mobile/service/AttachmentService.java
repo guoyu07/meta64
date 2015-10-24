@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -31,9 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.image.ImageUtil;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
@@ -51,12 +48,6 @@ import com.meta64.mobile.util.LimitedInputStreamEx;
 @Scope("singleton")
 public class AttachmentService {
 	private static final Logger log = LoggerFactory.getLogger(AttachmentService.class);
-
-	@Autowired
-	private OakRepository oak;
-
-	@Autowired
-	private SessionContext sessionContext;
 
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
@@ -203,7 +194,8 @@ public class AttachmentService {
 			if (mimeTypeProp == null) {
 				throw new Exception("unable to find mimeType property");
 			}
-			// log.debug("Retrieving mime: " + mimeTypeProp.getValue().getString());
+			// log.debug("Retrieving mime: " +
+			// mimeTypeProp.getValue().getString());
 
 			Property dataProp = node.getProperty(JcrProp.BIN_DATA);
 			if (dataProp == null) {
@@ -315,7 +307,8 @@ public class AttachmentService {
 
 				if (formatName != null) {
 					formatName = formatName.toLowerCase();
-					// log.debug("determined format name of image url: " + formatName);
+					// log.debug("determined format name of image url: " +
+					// formatName);
 					reader.setInput(is, true, false);
 					BufferedImage bufImg = reader.read(0);
 					String mimeType = "image/" + formatName;

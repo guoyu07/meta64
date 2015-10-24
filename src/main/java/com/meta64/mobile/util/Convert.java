@@ -75,7 +75,9 @@ public class Convert {
 		return aclEntriesInfo;
 	}
 
-	/* WARNING: skips the check for ordered children and just assigns false for performance reasons */
+	/*
+	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
+	 */
 	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
@@ -107,7 +109,8 @@ public class Convert {
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
-		// log.debug("Node: "+node.getPath()+node.getName()+" type: "+primaryTypeName);
+		// log.debug("Node: "+node.getPath()+node.getName()+" type:
+		// "+primaryTypeName);
 
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
@@ -143,7 +146,7 @@ public class Convert {
 		Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
 		return (mimeTypeProp != null && //
 				mimeTypeProp.getValue() != null && //
-		ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
+				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 	}
 
 	public static List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
@@ -160,7 +163,7 @@ public class Convert {
 			Property p = iter.nextProperty();
 
 			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, p, htmlOnly);
-			// log.debug("   PROP Name: " + p.getName());
+			// log.debug(" PROP Name: " + p.getName());
 
 			/*
 			 * grab the content property, and don't put it in the return list YET, because we will

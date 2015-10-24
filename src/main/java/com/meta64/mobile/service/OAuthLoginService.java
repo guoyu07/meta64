@@ -22,9 +22,7 @@ import org.springframework.ui.Model;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.JcrPropVal;
 import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
 
@@ -42,9 +40,6 @@ public class OAuthLoginService {
 	private String anonUserLandingPageNode;
 
 	@Autowired
-	private OakRepository oak;
-
-	@Autowired
 	private SessionContext sessionContext;
 
 	@Autowired
@@ -52,9 +47,6 @@ public class OAuthLoginService {
 
 	@Autowired
 	private UserManagerService userManagerService;
-
-	@Autowired
-	private NodeSearchService nodeSearchService;
 
 	@Autowired
 	private ConstantsProvider constProvider;
@@ -110,7 +102,8 @@ public class OAuthLoginService {
 			}
 			else {
 				log.debug("twitter account did already exist. Logging in now.");
-				// passwordContainer will already have correct value here from userExists.
+				// passwordContainer will already have correct value here from
+				// userExists.
 			}
 		});
 

@@ -25,7 +25,6 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.CloseAccountRequest;
 import com.meta64.mobile.request.LoginRequest;
@@ -41,7 +40,6 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
@@ -65,9 +63,6 @@ public class UserManagerService {
 	 */
 	@Value("${mail.host}")
 	public String mailHost;
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -301,7 +296,9 @@ public class UserManagerService {
 		Validator.checkPassword(password);
 		Validator.checkEmail(email);
 
-		/* test cases will simply pass null, for captcha, and we let that pass */
+		/*
+		 * test cases will simply pass null, for captcha, and we let that pass
+		 */
 		if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
 			log.debug("Captcha match!");
 			throw new Exception("Wrong captcha text.");
@@ -414,9 +411,10 @@ public class UserManagerService {
 			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 
-			// String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
+			// String password = JcrUtil.safeGetStringProp(prefsNode,
+			// JcrProp.PWD);
 			// log.debug("password: "+encryptor.decrypt(password));
-			});
+		});
 
 		return userPrefs;
 	}

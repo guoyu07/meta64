@@ -57,7 +57,8 @@ public class UserManagerUtil {
 			authorizable.remove();
 		}
 		else {
-			// if user not found we just do nothing, and throw no exception so that the rest
+			// if user not found we just do nothing, and throw no exception so
+			// that the rest
 			// of the clean up of the account will continue
 		}
 		return ret;

@@ -199,7 +199,9 @@ public class AccessControlUtil {
 		return sb.toString();
 	}
 
-	/* search for removePolicy in commented code below for a better way to do this */
+	/*
+	 * search for removePolicy in commented code below for a better way to do this
+	 */
 	public static boolean removeAclEntry(Session session, Node node, String principle, String privilege) throws Exception {
 		boolean policyChanged = false;
 		String path = node.getPath();
@@ -230,7 +232,9 @@ public class AccessControlUtil {
 							acl.removeAccessControlEntry(ace);
 							policyChanged = true;
 
-							/* break out of privileges scanning, this entire 'ace' is dead now */
+							/*
+							 * break out of privileges scanning, this entire 'ace' is dead now
+							 */
 							break;
 						}
 					}

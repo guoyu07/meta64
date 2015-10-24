@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
-import com.meta64.mobile.util.JcrRunnable;
 
 /*
  * This is a "Background Thread" which saves user settings for all users (who are logged in)

@@ -55,11 +55,13 @@ class LuceneSortInitializer implements RepositoryInitializer {
 				.setProperty(LuceneIndexConstants.COMPAT_MODE, IndexFormatVersion.V2.getVersion());
 
 		NodeBuilder rulesNode = index.child(LuceneIndexConstants.INDEX_RULES);
-		// rulesNode.setProperty(TreeConstants.OAK_CHILD_ORDER, ImmutableList.of("nt:unstructured"),
+		// rulesNode.setProperty(TreeConstants.OAK_CHILD_ORDER,
+		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
 
 		NodeBuilder props = rulesNode.child("nt:base").child(LuceneIndexConstants.PROP_NODE);
-		// props.setProperty(TreeConstants.OAK_CHILD_ORDER, ImmutableList.of("nt:unstructured"),
+		// props.setProperty(TreeConstants.OAK_CHILD_ORDER,
+		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
 		enableFulltextIndex(props.child("allProps"));
 	}

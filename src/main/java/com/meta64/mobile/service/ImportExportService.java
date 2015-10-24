@@ -25,12 +25,10 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.ImportResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 
@@ -45,9 +43,6 @@ public class ImportExportService {
 
 	public static final int BUF_SIZE = 1024 * 4;
 	private byte[] byteBuf = new byte[BUF_SIZE];
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -150,7 +145,8 @@ public class ImportExportService {
 			 * export as document view instead if system view, and what are the
 			 * advantages/disadvantages.
 			 */
-			// session.exportDocumentView(exportNode.getPath(), output, false, false);
+			// session.exportDocumentView(exportNode.getPath(), output, false,
+			// false);
 			output.flush();
 		}
 		finally {
@@ -180,15 +176,23 @@ public class ImportExportService {
 			/* See notes above about backing up root not being doable */
 			throw new Exception("root restore not supported.");
 
-			// importFromFileToNode(session, sourceFileName + "-jcr_systemNodeTypes.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-jcr_systemVersionStorage.xml",
+			// importFromFileToNode(session, sourceFileName +
+			// "-jcr_systemNodeTypes.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName +
+			// "-jcr_systemVersionStorage.xml",
 			// nodeId);
-			// importFromFileToNode(session, sourceFileName + "-jcr_systemActivities.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-rep_security.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-oak_index.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-userPreferences.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-root.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-meta64.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName +
+			// "-jcr_systemActivities.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName +
+			// "-rep_security.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-oak_index.xml",
+			// nodeId);
+			// importFromFileToNode(session, sourceFileName +
+			// "-userPreferences.xml", nodeId);
+			// importFromFileToNode(session, sourceFileName + "-root.xml",
+			// nodeId);
+			// importFromFileToNode(session, sourceFileName + "-meta64.xml",
+			// nodeId);
 		}
 		else {
 			importFromFileToNode(session, sourceFileName, nodeId);
@@ -223,7 +227,7 @@ public class ImportExportService {
 			 * specified at the user level that determines how this should work.
 			 */
 			session.getWorkspace().importXML(importNode.getPath(), in,
-			// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
+					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
 					ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
 
 			/*
@@ -387,8 +391,10 @@ public class ImportExportService {
 			}
 			catch (Exception e) {
 				// log.debug("path not found, creating");
-				// not an error condition. Simply indicates note at curPath does not exist, so we
-				// create it and continue as part of the algorithm. We will actually build as many
+				// not an error condition. Simply indicates note at curPath does
+				// not exist, so we
+				// create it and continue as part of the algorithm. We will
+				// actually build as many
 				// parents as we need to here.
 				curNode = createChildNode(curNode, jcrName, token, session);
 

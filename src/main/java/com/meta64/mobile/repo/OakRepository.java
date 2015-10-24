@@ -44,7 +44,6 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -223,7 +222,9 @@ public class OakRepository {
 		}
 	}
 
-	/* I don't fully understand what this aggregator is for. Need to research this some. */
+	/*
+	 * I don't fully understand what this aggregator is for. Need to research this some.
+	 */
 	private static NodeAggregator getNodeAggregator() {
 		return new SimpleNodeAggregator().newRuleWithName(JcrConstants.NT_UNSTRUCTURED, //
 				newArrayList(JCR_CONTENT, JCR_CONTENT + "/*"));

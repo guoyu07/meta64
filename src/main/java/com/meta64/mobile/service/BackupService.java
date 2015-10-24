@@ -28,7 +28,7 @@ import com.mongodb.MongoClient;
  * 
  * private static DocumentRootBuilder asDocumentRootBuilder(NodeBuilder builder) throws
  * IllegalArgumentException { if (!(builder instanceof DocumentRootBuilder)) { throw new
- * IllegalArgumentException("builder must be a " + DocumentRootBuilder.class.getName()); } return
+ * IllegalArgumentException( "builder must be a " + DocumentRootBuilder.class.getName()); } return
  * (DocumentRootBuilder) builder; }
  */
 @Component

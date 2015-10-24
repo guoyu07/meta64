@@ -24,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.meta64.mobile.annotate.OakSession;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.image.CaptchaMaker;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
@@ -98,7 +97,6 @@ import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.service.OAuthLoginService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.BrandingUtil;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.NotLoggedInException;
@@ -160,9 +158,6 @@ public class AppController {
 
 	@Autowired
 	private AclService aclService;
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private BrandingUtil brandingUtil;
@@ -264,7 +259,8 @@ public class AppController {
 	}
 
 	@RequestMapping(value = API_PATH + "/logout", method = RequestMethod.POST)
-	// @OakSession // commenting since we currently don't touch the DB during a logout.
+	// @OakSession // commenting since we currently don't touch the DB during a
+	// logout.
 	public @ResponseBody LogoutResponse logout(@RequestBody LogoutRequest req, HttpSession session) throws Exception {
 		logRequest("logout", req);
 
@@ -372,9 +368,11 @@ public class AppController {
 		String fileName = req.getSourceFileName();
 		if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
 			importExportService.importFromXml(session, req, res);
-			// It is not a mistake that there is no session.save() here. The import is using the
+			// It is not a mistake that there is no session.save() here. The
+			// import is using the
 			// workspace object
-			// which specifically documents that the saving on the session is not needed.
+			// which specifically documents that the saving on the session is
+			// not needed.
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
 			importExportService.importFromZip(session, req, res);
@@ -399,7 +397,7 @@ public class AppController {
 	}
 
 	/*
-	 * http://stackoverflow.com/questions/5567905/jackrabbit-jcr-organisation-of-text-content-data
+	 * http://stackoverflow.com/questions/5567905/jackrabbit-jcr-organisation-of -text-content-data
 	 */
 	@RequestMapping(value = API_PATH + "/createSubNode", method = RequestMethod.POST)
 	@OakSession
@@ -413,7 +411,9 @@ public class AppController {
 		return res;
 	}
 
-	/* Inserts node 'inline' at the position specified in the InsertNodeRequest.targetName */
+	/*
+	 * Inserts node 'inline' at the position specified in the InsertNodeRequest.targetName
+	 */
 	@RequestMapping(value = API_PATH + "/insertNode", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody InsertNodeResponse insertNode(@RequestBody InsertNodeRequest req) throws Exception {
@@ -553,7 +553,8 @@ public class AppController {
 	 */
 	@RequestMapping(value = API_PATH + "/bin/{fileName}", method = RequestMethod.GET)
 	@OakSession
-	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName, @RequestParam("nodeId") String nodeId) throws Exception {
+	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName, @RequestParam("nodeId") String nodeId)
+			throws Exception {
 		logRequest("bin", null);
 		Session session = ThreadLocals.getJcrSession();
 		return attachmentService.getBinary(session, nodeId);

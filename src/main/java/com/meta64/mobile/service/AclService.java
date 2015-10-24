@@ -16,9 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.AccessControlEntryInfo;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
@@ -26,7 +24,6 @@ import com.meta64.mobile.response.AddPrivilegeResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.user.AccessControlUtil;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 
@@ -39,12 +36,6 @@ import com.meta64.mobile.util.JcrUtil;
 @Scope("singleton")
 public class AclService {
 	private static final Logger log = LoggerFactory.getLogger(AclService.class);
-
-	@Autowired
-	private OakRepository oak;
-
-	@Autowired
-	private SessionContext sessionContext;
 
 	@Autowired
 	private UserManagerService userManagerService;

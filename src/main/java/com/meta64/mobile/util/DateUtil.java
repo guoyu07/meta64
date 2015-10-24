@@ -5,7 +5,8 @@ import java.util.Locale;
 
 public class DateUtil {
 	/** Used to format date values */
-	// public static final String ECMA_DATE_FORMAT = "EEE MMM dd yyyy HH:mm:ss 'GMT'Z";
+	// public static final String ECMA_DATE_FORMAT = "EEE MMM dd yyyy HH:mm:ss
+	// 'GMT'Z";
 	public static final String DATE_FORMAT_WITH_TIMEZONE = "yyyy/MM/dd hh:mm:ss a z";
 	public static final String DATE_FORMAT_NO_TIMEZONE = "yyyy/MM/dd hh:mm:ss a";
 
@@ -65,12 +66,14 @@ public class DateUtil {
 		// // long minutes = TimeUnit.MILLISECONDS.toMinutes(tz.getRawOffset())
 		// // - TimeUnit.HOURS.toMinutes(hours);
 		// //
-		// // String timeZoneString = String.format("( GMT %d:%02d ) %s(%s)", hours,
+		// // String timeZoneString = String.format("( GMT %d:%02d ) %s(%s)",
+		// hours,
 		// // minutes, tz.getDisplayName(), timeZone);
 		// // tzList.add(timeZoneString);
 		// int h = tz.getRawOffset() / (1000 * 60 * 60);
 		// int m = (tz.getRawOffset() - h * 1000 * 60 * 60)/(1000*60);
-		// System.out.println("tz: " + h + ":" + m + " name: " + tz.getDisplayName());
+		// System.out.println("tz: " + h + ":" + m + " name: " +
+		// tz.getDisplayName());
 		// }
 		// // //////////////////
 		//

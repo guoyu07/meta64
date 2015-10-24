@@ -35,7 +35,6 @@ import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SplitNodeResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 
@@ -54,9 +53,6 @@ public class NodeEditService {
 
 	@Autowired
 	private SessionContext sessionContext;
-
-	@Autowired
-	private UserManagerService userManagerService;
 
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
@@ -213,7 +209,9 @@ public class NodeEditService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		if (node != null) {
-			/* if node already has uuid then we can do nothing here, we just silently return success */
+			/*
+			 * if node already has uuid then we can do nothing here, we just silently return success
+			 */
 			if (!node.hasProperty(JcrProp.UUID)) {
 				node.addMixin(JcrConstants.MIX_REFERENCEABLE);
 				session.save();
@@ -253,7 +251,8 @@ public class NodeEditService {
 				 * the worst behavior from client code, for security and robustness.
 				 */
 				if (JcrUtil.isSavableProperty(property.getName())) {
-					// log.debug("Property to save: " + property.getName() + "=" +
+					// log.debug("Property to save: " + property.getName() + "="
+					// +
 					// property.getValue());
 					node.setProperty(property.getName(), property.getValue());
 				}

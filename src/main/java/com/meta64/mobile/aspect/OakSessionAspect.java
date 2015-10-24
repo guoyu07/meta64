@@ -93,7 +93,9 @@ public class OakSessionAspect {
 				if (orb != null) {
 					orb.setSuccess(false);
 
-					/* for now, we can just send back the actual exception message */
+					/*
+					 * for now, we can just send back the actual exception message
+					 */
 					orb.setMessage(e.getMessage());
 				}
 				else {
@@ -147,7 +149,9 @@ public class OakSessionAspect {
 			}
 		}
 		else if (req instanceof SignupRequest) {
-			/* we will have no session for user for signup request, so return null */
+			/*
+			 * we will have no session for user for signup request, so return null
+			 */
 			return null;
 		}
 		else {

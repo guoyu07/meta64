@@ -21,14 +21,12 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
 import com.meta64.mobile.response.AnonPageLoadResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
@@ -46,9 +44,6 @@ public class NodeRenderService {
 
 	@Value("${anonUserLandingPageNode}")
 	private String anonUserLandingPageNode;
-
-	@Autowired
-	private OakRepository oak;
 
 	@Autowired
 	private UserSettingsDaemon userSettingsDaemon;

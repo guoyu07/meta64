@@ -18,7 +18,6 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
@@ -59,7 +58,9 @@ public class NotificationDaemon {
 	public void run() {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 
-		/* spring always calls immediately upon startup and we will ignore the first call */
+		/*
+		 * spring always calls immediately upon startup and we will ignore the first call
+		 */
 		if (runCounter++ == 0) {
 			return;
 		}
@@ -114,7 +115,9 @@ public class NotificationDaemon {
 				}
 				catch (Exception e) {
 					log.debug("Failed closing mail sender object.", e);
-					/* DO NOT rethrow. Don't want to blow up the daemon thread */
+					/*
+					 * DO NOT rethrow. Don't want to blow up the daemon thread
+					 */
 				}
 			}
 		}

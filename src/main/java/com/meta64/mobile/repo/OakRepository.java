@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -51,6 +50,9 @@ import com.mongodb.MongoTimeoutException;
 
 /**
  * Instance of a MonboDB-based Repository.
+ * 
+ * NOTE: Even inside this class always use getRepository() to get the repository to ensure that the
+ * init() has been called.
  */
 @Component
 @Scope("singleton")
@@ -132,11 +134,6 @@ public class OakRepository {
 		}));
 	}
 
-	@PostConstruct
-	public void postConstruct() throws Exception {
-		mongoInit(mongoDbHost, mongoDbPort, mongoDbName);
-	}
-
 	@PreDestroy
 	public void preDestroy() {
 		close();
@@ -153,19 +150,19 @@ public class OakRepository {
 	}
 
 	public Repository getRepository() throws Exception {
+		init();
 		return repository;
 	}
 
 	public Session newAdminSession() throws Exception {
-		return repository.login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
+		return getRepository().login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
 	}
 
-	private void mongoInit(String mongoDbHost, int mongoDbPort, String mongoDbName) throws Exception {
+	private void init() throws Exception {
+		if (initialized) return;
+
 		synchronized (lock) {
-			if (initialized) {
-				throw new Exception("Repository already initialized");
-			}
-			initialized = true;
+			if (initialized) return;
 
 			try {
 				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
@@ -210,6 +207,12 @@ public class OakRepository {
 				/* can shutdown during startup. */
 				if (AppServer.isShuttingDown()) return;
 
+				/*
+				 * IMPORTANT: Do not move this line below this point. An infinite loop of re-entry can occur into this method
+				 * because of calls to getRepository() always doing an init.
+				 */
+				initialized = true;
+				
 				UserManagerUtil.verifyAdminAccountReady(this);
 				initRequiredNodes();
 

@@ -51,8 +51,8 @@ import com.mongodb.MongoTimeoutException;
 /**
  * Instance of a MonboDB-based Repository.
  * 
- * NOTE: Even inside this class always use getRepository() to get the repository to ensure that the
- * init() has been called.
+ * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
+ * called.
  */
 @Component
 @Scope("singleton")
@@ -208,11 +208,12 @@ public class OakRepository {
 				if (AppServer.isShuttingDown()) return;
 
 				/*
-				 * IMPORTANT: Do not move this line below this point. An infinite loop of re-entry can occur into this method
-				 * because of calls to getRepository() always doing an init.
+				 * IMPORTANT: Do not move this line below this point. An infinite loop of re-entry
+				 * can occur into this method because of calls to getRepository() always doing an
+				 * init.
 				 */
 				initialized = true;
-				
+
 				UserManagerUtil.verifyAdminAccountReady(this);
 				initRequiredNodes();
 

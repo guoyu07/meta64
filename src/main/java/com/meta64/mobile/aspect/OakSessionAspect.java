@@ -31,10 +31,17 @@ import com.meta64.mobile.util.ThreadLocals;
  * comes from the JQuery ajax calls from the client. Primarily we use the cross cutting concerns of
  * user login, and JCR session lifecycle.
  * 
- * Remember, Spring AOP is a big awkward because of the use of Proxies. Problems WILL occur if you
+ * Remember, Spring AOP is a bit awkward because of the use of Proxies. Problems WILL occur if you
  * have a method in a bean that's not annotated calling a method in a bean that IS annotated,
  * because in this case the AOP aspects that the annotations would imply WILL always happen actually
- * will NOT happen.
+ * will NOT happen. This is because of the fact that when calling a proxied object from some other
+ * object than itself, the proxy will be used, but when a method already on the proxied object calls
+ * a method on the same proxied object, the AOP expects that the 'wrapping' of AOP will have already
+ * been performed and will not perform it again. That is, when you have an @Around annotation like
+ * this the wrapping (around stuff) only happens when the proxy is FIRST entered into on any given
+ * callstack, and when calling the same proxy again, reentrantly, it will not call the @Around
+ * processing again. And this nuance is not 'true to AOP' in general, but is a just an
+ * implementation choice made by the Spring developers.
  * 
  */
 @Aspect

@@ -38,9 +38,7 @@ var changePasswordPg = function() {
 			internalMainContent + form);
 
 			var content = header + mainContent;
-
 			util.setHtmlEnhanced($("#changePasswordPg"), content);
-
 			$("#changePasswordActionButton").on("click", user.changePassword);
 		},
 

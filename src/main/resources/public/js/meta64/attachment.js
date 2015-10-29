@@ -6,32 +6,23 @@ var attachment = function() {
 		if (util.checkSuccess("Delete attachment", res)) {
 
 			/*
-			 * For some reason just setting hasBinary false on the uploadNode
-			 * and then rebuilding the page doesn't work. I had to write the
-			 * 'removeBinaryByUid' function to make it take effect. What this
-			 * means is that somewhere a 'node' object is getting 'cloned'
-			 * somehow such that setting hasBinary to false here doesn't change
-			 * the source array that's used in renderPageFromData, but I am
-			 * confused, because I'm not cloning any 'node' objects. They get
-			 * sent to us from the JSON return value in renderNode, and I never
-			 * create any new 'node' objects myself yet we have proof some are
-			 * getting created or else setting 'hasBinary' below would work.
-			 * Functionally the code works perfectly but IMO I shouldn't have
-			 * needed to write the 'removeBinaryByUid' at all.
+			 * TODO: Does just setting hasBinary false not work? 
 			 */
 			// _.uploadNode.hasBinary = false;
 			meta64.removeBinaryByUid(_.uploadNode.uid);
 
-			console.log("removed attachment from node uid: " + _.uploadNode.uid);
-			//render.renderPageFromData();
-			//_.closeUploadPg();
-		
+			console
+					.log("removed attachment from node uid: "
+							+ _.uploadNode.uid);
+			// render.renderPageFromData();
+			// _.closeUploadPg();
+
 			meta64.goToMainPage(true);
 		}
 	}
 
 	function _uploadFromUrlResponse(res) {
-		if (util.checkSuccess("Upload from URL", res)) {		
+		if (util.checkSuccess("Upload from URL", res)) {
 			meta64.goToMainPage(true, true);
 		}
 	}
@@ -42,11 +33,13 @@ var attachment = function() {
 		uploadNode : null,
 
 		deleteAttachment : function() {
-			confirmPg.areYouSure("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.", function() {
-				util.json("deleteAttachment", {
-					"nodeId" : _.uploadNode.id
-				}, _deleteAttachmentResponse);
-			});
+			confirmPg.areYouSure("Confirm Delete Attachment",
+					"Delete the Attachment on the Node?", "Yes, delete.",
+					function() {
+						util.json("deleteAttachment", {
+							"nodeId" : _.uploadNode.id
+						}, _deleteAttachmentResponse);
+					});
 		},
 
 		uploadFileNow : function() {

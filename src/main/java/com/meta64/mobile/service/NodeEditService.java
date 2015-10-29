@@ -76,10 +76,7 @@ public class NodeEditService {
 			node = JcrUtil.findNode(session, nodeId);
 		}
 
-		// //Wrong! Only editing actual content requires a "createdBy" check
-		// if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
-		// JcrUtil.checkNodeCreatedBy(node, session.getUserID());
-		// }
+		// IMPORTANT: Only editing actual content requires a "createdBy" checking by JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
@@ -108,11 +105,8 @@ public class NodeEditService {
 		log.debug("Inserting under parent: " + parentNodeId);
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
-		// Wrong! Only editing actual content requires a "createdBy" check
-		// if (!JcrUtil.isUserAccountRoot(sessionContext, parentNode)) {
-		// JcrUtil.checkNodeCreatedBy(parentNode, session.getUserID());
-		// }
-
+		// IMPORTANT: Only editing actual content requires a "createdBy" checking by JcrUtil.checkNodeCreatedBy
+		
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
 		Node newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);

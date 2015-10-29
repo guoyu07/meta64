@@ -87,15 +87,6 @@ public class UserManagerService {
 	 * LoginRequest and performs authentication BEFORE this 'login' method even gets called, so by
 	 * the time we are in this method we can safely assume the userName and password resulted in a
 	 * successful login. If login fails the getJcrSession() call below will return null also.
-	 * 
-	 * IMPORTANT: this method DOES get called even on a fresh page load when the user hasn't logged
-	 * in yet, and this is done passing "" (blank) in place of userName/password, which tells this
-	 * login method to get a username/password from the session. So a valid session that's already
-	 * logged in will simply return the correct login information from here as if it were logging in
-	 * the first time. For an SPA (Single Page App), handling page reloads needs to do something
-	 * like this because we aren't just having session beans embedded on some JSP the old-school
-	 * way, this is different and this is better! This is the proper way for an SPA to handle page
-	 * reloads.
 	 */
 	public void login(Session session, LoginRequest req, LoginResponse res) throws Exception {
 
@@ -135,7 +126,7 @@ public class UserManagerService {
 			res.setUserName(userName);
 
 			try {
-				UserPreferences userPreferences = getUserPreferences(session);
+				UserPreferences userPreferences = getUserPreferences();
 				sessionContext.setUserPreferences(userPreferences);
 				res.setUserPreferences(userPreferences);
 			}
@@ -159,7 +150,7 @@ public class UserManagerService {
 		}
 	}
 
-	public void closeAccount(Session session__unused, CloseAccountRequest req, CloseAccountResponse res) throws Exception {
+	public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) throws Exception {
 		log.debug("Closing Account: " + sessionContext.getUserName());
 		adminRunner.run((Session session) -> {
 			String userName = sessionContext.getUserName();
@@ -401,7 +392,7 @@ public class UserManagerService {
 		return new UserPreferences();
 	}
 
-	public UserPreferences getUserPreferences(Session session__unused) throws Exception {
+	public UserPreferences getUserPreferences() throws Exception {
 		final String userName = sessionContext.getUserName();
 		final UserPreferences userPrefs = new UserPreferences();
 
@@ -450,7 +441,7 @@ public class UserManagerService {
 	/*
 	 * Runs when user is doing the 'change password'.
 	 */
-	public void changePassword(Session session__unused, final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
+	public void changePassword(final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
 		final String userName = sessionContext.getUserName();
 
 		adminRunner.run((Session session) -> {

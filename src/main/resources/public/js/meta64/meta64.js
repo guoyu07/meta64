@@ -1,5 +1,9 @@
 console.log("running module: meta64.js");
 
+/**
+ * This is the central instance of the entire application, and assumes it owns
+ * the entire browser.
+ */
 var meta64 = function() {
 
 	var appInitialized = false;
@@ -181,7 +185,8 @@ var meta64 = function() {
 
 			var prop;
 			for (prop in _.simpleModeNodePrefixBlackList) {
-				if (_.simpleModeNodePrefixBlackList.hasOwnProperty(prop) && node.name.startsWith(prop)) {
+				if (_.simpleModeNodePrefixBlackList.hasOwnProperty(prop)
+						&& node.name.startsWith(prop)) {
 					return true;
 				}
 			}
@@ -212,7 +217,8 @@ var meta64 = function() {
 				if (_.selectedNodes.hasOwnProperty(uid)) {
 					var node = _.uidToNodeMap[uid];
 					if (!node) {
-						console.log("unable to find uidToNodeMap for uid=" + uid);
+						console.log("unable to find uidToNodeMap for uid="
+								+ uid);
 					} else {
 						selArray[idx++] = node.id;
 					}
@@ -262,9 +268,11 @@ var meta64 = function() {
 				var elm = $("#ownerDisplay" + node.uid);
 				elm.html(" (Manager: " + ownerBuf + ")");
 				if (mine) {
-					util.changeOrAddClass(elm, "created-by-other", "created-by-me");
+					util.changeOrAddClass(elm, "created-by-other",
+							"created-by-me");
 				} else {
-					util.changeOrAddClass(elm, "created-by-me", "created-by-other");
+					util.changeOrAddClass(elm, "created-by-me",
+							"created-by-other");
 				}
 			}
 		},
@@ -374,7 +382,8 @@ var meta64 = function() {
 
 			util.setEnablement($("#navHomeButton"), true); // _.currentNode &&
 			// !nav.displayingHome());
-			util.setEnablement($("#navUpLevelButton"), _.currentNode && nav.parentVisibleToUser());
+			util.setEnablement($("#navUpLevelButton"), _.currentNode
+					&& nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			/*
@@ -393,13 +402,17 @@ var meta64 = function() {
 			 * that
 			 */
 			util.setEnablement($("#editModeButton"), editMode);
-			util.setEnablement($("#insNodeButton"), !_.isAnonUser && highlightNode != null);
-			util.setEnablement($("#createNodeButton"), !_.isAnonUser && highlightNode != null);
+			util.setEnablement($("#insNodeButton"), !_.isAnonUser
+					&& highlightNode != null);
+			util.setEnablement($("#createNodeButton"), !_.isAnonUser
+					&& highlightNode != null);
 
 			util.setVisibility("#menuButton", !_.isAnonUser);
 			util.setVisibility("#openSignupPgButton", _.isAnonUser);
-			util.setVisibility("#mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
-			util.setVisibility("#mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
+			util.setVisibility("#mainMenuSearchButton", !_.isAnonUser
+					&& highlightNode != null);
+			util.setVisibility("#mainMenuTimelineButton", !_.isAnonUser
+					&& highlightNode != null);
 		},
 
 		getSingleSelectedNode : function() {
@@ -487,7 +500,8 @@ var meta64 = function() {
 			 * also simplify code.
 			 */
 			node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
+			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED,
+					node);
 
 			// console.log("******* initNode uid=" + node.uid);
 			_.uidToNodeMap[node.uid] = node;

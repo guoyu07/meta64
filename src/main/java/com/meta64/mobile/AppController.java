@@ -254,7 +254,7 @@ public class AppController {
 		ThreadLocals.setResponse(res);
 		checkSession();
 		Session session = ThreadLocals.getJcrSession();
-		userManagerService.closeAccount(session, req, res);
+		userManagerService.closeAccount(req, res);
 		return res;
 	}
 
@@ -542,7 +542,7 @@ public class AppController {
 		ThreadLocals.setResponse(res);
 		checkSession();
 		Session session = ThreadLocals.getJcrSession();
-		userManagerService.changePassword(session, req, res);
+		userManagerService.changePassword(req, res);
 		return res;
 	}
 

@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.util.ThreadLocals;
 
+/**
+ * This is Filter layer to measure statistics
+ */
 @Component
 public class AppFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(AppFilter.class);

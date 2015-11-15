@@ -12,6 +12,9 @@ import com.meta64.mobile.util.JcrRunnable;
 /**
  * Helper class to run some processing workload as the admin user. Simplifies by encapsulating the
  * session management at this abstracted layer.
+ * 
+ * The use of this class really shows off the new features of Java 8, if you look at the syntax of
+ * where this run method is called from.
  */
 @Component
 @Scope("singleton")

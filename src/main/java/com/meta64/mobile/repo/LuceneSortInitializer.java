@@ -38,7 +38,8 @@ class LuceneSortInitializer implements RepositoryInitializer {
 		log.debug("Creating lucene indexing node: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name);
 		NodeBuilder index = builder.child(IndexConstants.INDEX_DEFINITIONS_NAME).child(name);
 
-		index.setProperty(JCR_PRIMARYTYPE, IndexConstants.INDEX_DEFINITIONS_NODE_TYPE, NAME)//
+		index//
+				.setProperty(JCR_PRIMARYTYPE, IndexConstants.INDEX_DEFINITIONS_NODE_TYPE, NAME)//
 				.setProperty(LuceneIndexConstants.PROP_NAME, name)//
 				.setProperty(IndexConstants.TYPE_PROPERTY_NAME, LuceneIndexConstants.TYPE_LUCENE)//
 				.setProperty(IndexConstants.REINDEX_PROPERTY_NAME, true)//
@@ -59,18 +60,23 @@ class LuceneSortInitializer implements RepositoryInitializer {
 		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
 
-		NodeBuilder props = rulesNode.child("nt:base").child(LuceneIndexConstants.PROP_NODE);
+		NodeBuilder props = rulesNode//
+				.child("jcr:content")//nt:base
+				.child(LuceneIndexConstants.PROP_NODE);
+		
 		// props.setProperty(TreeConstants.OAK_CHILD_ORDER,
 		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
+		
 		enableFulltextIndex(props.child("allProps"));
 	}
 
 	private void enableFulltextIndex(NodeBuilder propNode) {
-		propNode.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true);
-		propNode.setProperty(LuceneIndexConstants.PROP_PROPERTY_INDEX, true);
-		propNode.setProperty(LuceneIndexConstants.PROP_ORDERED, true);
-		propNode.setProperty(LuceneIndexConstants.PROP_NAME, propertyName);
-		propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
+		propNode//
+				.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true)//
+				.setProperty(LuceneIndexConstants.PROP_PROPERTY_INDEX, true)//
+				.setProperty(LuceneIndexConstants.PROP_ORDERED, true)//
+				.setProperty(LuceneIndexConstants.PROP_NAME, propertyName)//
+				.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
 	}
 }

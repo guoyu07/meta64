@@ -115,7 +115,7 @@ public class UserManagerService {
 			 * Note: This is not an error condition, this happens whenever the page loads for the
 			 * first time and the user has no session yet,
 			 */
-			res.setUserName("anonymous");
+			res.setUserName(JcrPrincipal.ANONYMOUS);
 			res.setMessage("not logged in.");
 			res.setSuccess(false);
 		}

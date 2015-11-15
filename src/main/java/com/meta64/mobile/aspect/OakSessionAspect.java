@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.model.UserPreferences;
@@ -87,14 +88,6 @@ public class OakSessionAspect {
 			 */
 			ret = ThreadLocals.getResponse();
 
-			/*
-			 * MVC rest methods will choke if they end up returning an OakResponsBase which is not
-			 * their declared return type, so stop creating this here.
-			 */
-			// if (ret == null) {
-			// ret = new OakResponseBase();
-			// }
-
 			if (ret instanceof OakResponseBase) {
 				OakResponseBase orb = (OakResponseBase) ret;
 				if (orb != null) {
@@ -130,8 +123,8 @@ public class OakSessionAspect {
 	/* Creates a logged in session for any method call for this join point */
 	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) throws Exception {
 		Object[] args = joinPoint.getArgs();
-		String userName = "anonymous";
-		String password = "anonymous";
+		String userName = JcrPrincipal.ANONYMOUS;
+		String password = JcrPrincipal.ANONYMOUS;
 
 		Object req = (args != null && args.length > 0) ? args[0] : null;
 
@@ -166,15 +159,15 @@ public class OakSessionAspect {
 			password = sessionContext.getPassword();
 
 			if (userName == null) {
-				userName = "anonymous";
+				userName = JcrPrincipal.ANONYMOUS;
 			}
 			if (password == null) {
-				password = "anonymous";
+				password = JcrPrincipal.ANONYMOUS;
 			}
 		}
 
 		try {
-			Credentials cred = userName.equals("anonymous") ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
+			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;
 		}

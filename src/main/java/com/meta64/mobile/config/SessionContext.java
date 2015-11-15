@@ -20,7 +20,7 @@ import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.util.DateUtil;
 
 /**
- * Wrapper for holding variables that we need to maintain server state of for a specific session.
+ * Wrapper for holding variables that we need to maintain server state of for a session.
  * Basic session state storage is all collected here.
  * 
  * The ScopedProxyMode.TARGET_CLASS annotation allows this session bean to be available on

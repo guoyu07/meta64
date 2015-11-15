@@ -76,7 +76,8 @@ public class NodeEditService {
 			node = JcrUtil.findNode(session, nodeId);
 		}
 
-		// IMPORTANT: Only editing actual content requires a "createdBy" checking by JcrUtil.checkNodeCreatedBy
+		// IMPORTANT: Only editing actual content requires a "createdBy" checking by
+		// JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
@@ -105,8 +106,9 @@ public class NodeEditService {
 		log.debug("Inserting under parent: " + parentNodeId);
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
-		// IMPORTANT: Only editing actual content requires a "createdBy" checking by JcrUtil.checkNodeCreatedBy
-		
+		// IMPORTANT: Only editing actual content requires a "createdBy" checking by
+		// JcrUtil.checkNodeCreatedBy
+
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
 		Node newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
@@ -251,7 +253,11 @@ public class NodeEditService {
 					node.setProperty(property.getName(), property.getValue());
 				}
 				else {
-					log.debug("Ignoring rogue save attempt on prop: " + property.getName());
+					/**
+					 * TODO: This case indicates that data was sent unnecessarily. fix! (i.e. make
+					 * sure this block cannot ever be entered)
+					 */
+					//log.debug("Ignoring unneeded save attempt on unneeded prop: " + property.getName());
 				}
 			}
 

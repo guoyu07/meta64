@@ -85,10 +85,10 @@ public class ImportExportService {
 	}
 
 	/*
-	 * Unfortunately the Apache Oak fails with errors related to UUID any time you try to import
+	 * Unfortunately the Apache Oak fails with errors related to UUID any time we try to import
 	 * something at the root like "/jcr:system" (confirmed by other users online also, this is not a
 	 * mistake I'm making but a mistake made by the Oak developers). As a second last ditch effort I
-	 * tried to backup one level down (activities, nodeTypes, and versionStorage), but that also
+	 * tried to backup one level down deeper (activities, nodeTypes, and versionStorage), but that also
 	 * results in exception getting thrown from inside Oak. Not my fault. They just don't have this
 	 * stuff working. I will leave this in place to show what has been tried, but for now, it seems
 	 * the only way to backup a reposity is to back up the actual MongoDB files themselves, which is

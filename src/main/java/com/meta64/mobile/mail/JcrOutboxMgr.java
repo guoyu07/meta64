@@ -76,7 +76,7 @@ public class JcrOutboxMgr {
 										"Here is a link to the new node: %s?id=%s", //
 								userName, constProvider.getHostAndPort(), node.getPath());
 
-						queueMailUsingAdminSession(session, email, "Meta64 New Content Nofification", content);
+						queueMailUsingAdminSession(session, email, "Meta64 New Content Notification", content);
 					}
 				}
 			}

@@ -2,7 +2,6 @@
 * We have serval places in the code where we do something like delete nodes, etc, and we are going back to the server to refresh the page, when really the client-side has enough information to refresh the page without going back to server, but it takes additional work. Waiting for the feature set to become more stable before attacking these kinds of performance optimizations.
 
 # TODO
-* Adding a new record is taking way over one second. Which is noticeable. This started happening when lucene indexes were added and warnings are getting logged during this time, so there's something we aren't quite doing right in here I think.
 * Need to implement "forgot my password", and reset password without sending actual password to user, but instead a limited duration (like 5minutes) random code that can be used to login and change password.
 * need 'delete account' capability where user can leave meta64, and have all their data deleted from the server.
 * search results that have no results should show a message instead of just blank page!
@@ -25,6 +24,7 @@
 * Need "Move to Top" and "Move to Bottom" in addition to "up"/"down"
 * More JUnit unit tests.
 * If user spends a very long time editing a node without saving, and the session times out they can lose ability to save. Need intermittent save to a property like "content-unsaved" so that when they open the editor, the next time we can detect this, and ask them if they would like to continue editing their unsaved work.
+* I took away the auto-selecting of newly inserted nodes. Cursor stays as current parent, or sibling. Changed my mind and I think highlighting it is best!
 
 # List of Known Bugs
 * sometimes when I click on the top node (page parent node) it is unable to select the node (no red indicator shows on left). Saw this happen when I accessed a node via url that was shared from another user. Also happens when you click Home button.

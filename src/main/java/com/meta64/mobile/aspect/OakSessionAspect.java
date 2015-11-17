@@ -1,6 +1,7 @@
 package com.meta64.mobile.aspect;
 
 import javax.jcr.Credentials;
+
 import javax.jcr.GuestCredentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -97,9 +98,6 @@ public class OakSessionAspect {
 					 * for now, we can just send back the actual exception message
 					 */
 					orb.setMessage(e.getMessage());
-				}
-				else {
-					log.error("Service method didn't set response object into threadlocals in exception case.");
 				}
 			}
 		}

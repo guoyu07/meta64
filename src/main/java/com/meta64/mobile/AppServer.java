@@ -64,12 +64,17 @@ public class AppServer {
 		}
 		finally {
 			try {
-				br.close();
+				if (br != null) {
+					br.close();
+				}
 			}
 			catch (Exception e) {
 			}
+			
 			try {
-				isr.close();
+				if (isr != null) {
+					isr.close();
+				}
 			}
 			catch (Exception e) {
 			}

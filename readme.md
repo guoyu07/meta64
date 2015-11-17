@@ -101,8 +101,6 @@ Other than SpringBoot, the main dependency needed for running/building meta64 is
 https://github.com/apache/jackrabbit-oak   
 https://jackrabbit.apache.org/oak/docs/index.html
 
-The latest stable release that is recommended by the project owners is 1.2.3, and this is the version that meta64 is using.
-
 ## Technical Notes
 * To build the app use maven.
 * You need to understand 'spring boot'

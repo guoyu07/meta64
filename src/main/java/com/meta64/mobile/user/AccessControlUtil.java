@@ -68,11 +68,10 @@ public class AccessControlUtil {
 	}
 
 	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
-
-		AccessControlManager acMgr = session.getAccessControlManager();
 		AccessControlList acl = getAccessControlList(session, node);
 
 		if (acl != null) {
+			AccessControlManager acMgr = session.getAccessControlManager();
 			Privilege[] privileges = makePrivilegesFromNames(acMgr, privilegeNames);
 			acl.addAccessControlEntry(principal, privileges);
 			acMgr.setPolicy(node.getPath(), (AccessControlPolicy) acl);
@@ -206,43 +205,45 @@ public class AccessControlUtil {
 		boolean policyChanged = false;
 		String path = node.getPath();
 
-		AccessControlManager acMgr = session.getAccessControlManager();
 		log.trace("Privileges for node: " + path + " ");
 
 		AccessControlList acl = getAccessControlList(session, node);
 		AccessControlEntry[] aclArray = acl.getAccessControlEntries();
 		log.trace("ACL entry count: " + (aclArray == null ? 0 : aclArray.length));
 
-		for (AccessControlEntry ace : aclArray) {
-			log.trace("ACL entry (principal name): " + ace.getPrincipal().getName());
-			if (ace.getPrincipal().getName().equals(principle)) {
-				log.trace("  Found PRINCIPLE to remove priv for: " + principle);
-				Privilege[] privileges = ace.getPrivileges();
+		if (aclArray != null) {
+			for (AccessControlEntry ace : aclArray) {
+				log.trace("ACL entry (principal name): " + ace.getPrincipal().getName());
+				if (ace.getPrincipal().getName().equals(principle)) {
+					log.trace("  Found PRINCIPLE to remove priv for: " + principle);
+					Privilege[] privileges = ace.getPrivileges();
 
-				if (privileges != null) {
-					for (Privilege priv : privileges) {
-						if (priv.getName().equals(privilege)) {
-							log.trace("    Found PRIVILEGE to remove: " + principle);
+					if (privileges != null) {
+						for (Privilege priv : privileges) {
+							if (priv.getName().equals(privilege)) {
+								log.trace("    Found PRIVILEGE to remove: " + principle);
 
-							/*
-							 * we remove the entire 'ace' from the 'acl' here. I don't know of a
-							 * more find-grained way to remove privileges than to remove entire
-							 * 'ace' which can have multiple privileges on it. :(
-							 */
-							acl.removeAccessControlEntry(ace);
-							policyChanged = true;
+								/*
+								 * we remove the entire 'ace' from the 'acl' here. I don't know of a
+								 * more find-grained way to remove privileges than to remove entire
+								 * 'ace' which can have multiple privileges on it. :(
+								 */
+								acl.removeAccessControlEntry(ace);
+								policyChanged = true;
 
-							/*
-							 * break out of privileges scanning, this entire 'ace' is dead now
-							 */
-							break;
+								/*
+								 * break out of privileges scanning, this entire 'ace' is dead now
+								 */
+								break;
+							}
 						}
 					}
 				}
-			}
 
-			if (policyChanged) {
-				acMgr.setPolicy(path, (AccessControlPolicy) acl);
+				if (policyChanged) {
+					AccessControlManager acMgr = session.getAccessControlManager();
+					acMgr.setPolicy(path, (AccessControlPolicy) acl);
+				}
 			}
 		}
 		return policyChanged;

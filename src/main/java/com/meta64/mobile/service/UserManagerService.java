@@ -309,6 +309,10 @@ public class UserManagerService {
 
 		String signupCode = JcrUtil.getGUID();
 		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
+		
+		/* We print this out so we can use it in DEV mode when no email support may be configured */
+		log.debug("Signup URL: "+signupLink);
+		
 		String content = "Confirmation for new meta64 account: " + userName + //
 				"<p>\nGo to this page to complete signup: <br>\n" + signupLink;
 
@@ -358,7 +362,8 @@ public class UserManagerService {
 	}
 
 	public void setDefaultUserPreferences(Node prefsNode) throws Exception {
-		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
+		/* for polymer conversion, defaulting to true for now */
+		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, true);
 	}
 
 	public void saveUserPreferences(Session session_unused, final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
@@ -399,7 +404,9 @@ public class UserManagerService {
 		adminRunner.run((Session session) -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
+			/* for polymer conversion, forcing to true here */
 			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
+			
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 
 			// String password = JcrUtil.safeGetStringProp(prefsNode,

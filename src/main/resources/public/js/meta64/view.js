@@ -2,6 +2,8 @@ console.log("running module: view.js");
 
 var view = function() {
 
+	var scrollToSelNodePending = false;
+	
 	var _ = {
 		updateStatusBar : function() {
 			if (!meta64.currentNodeData)
@@ -17,10 +19,10 @@ var view = function() {
 			}
 
 			var visible = statusLine.length > 0;
-			util.setVisibility("#mainNodeStatusBar", visible);
+			util.setVisibility("mainNodeStatusBar", visible);
 
 			if (visible) {
-				util.setHtmlEnhanced($("#mainNodeStatusBar"), statusLine);
+				util.setHtmlEnhanced("mainNodeStatusBar", statusLine);
 			}
 		},
 
@@ -29,6 +31,7 @@ var view = function() {
 		 * scroll to when finally done with the render.
 		 */
 		refreshTreeResponse : function(res, targetId, renderParentIfLeaf, newId) {
+
 			render.renderPageFromData(res);
 
 			if (newId) {
@@ -48,8 +51,8 @@ var view = function() {
 		},
 
 		/*
-		 * newId is optional and if specified makes the page scroll to
-		 * and highlight that node upon re-rendering.
+		 * newId is optional and if specified makes the page scroll to and
+		 * highlight that node upon re-rendering.
 		 */
 		refreshTree : function(nodeId, renderParentIfLeaf, newId) {
 			if (!nodeId) {
@@ -58,34 +61,40 @@ var view = function() {
 
 			console.log("Refreshing tree: nodeId=" + nodeId);
 
-			var prms = util.json("renderNode", {
+			var ironRes = util.json("renderNode", {
 				"nodeId" : nodeId,
 				"renderParentIfLeaf" : renderParentIfLeaf ? true : false
 			});
 
-			prms.done(function(res) {
-				_.refreshTreeResponse(res, nodeId, renderParentIfLeaf, newId);
+			ironRes.completes.then(function() {
+				_.refreshTreeResponse(ironRes.response, nodeId, renderParentIfLeaf, newId);
 			});
 		},
-
+		
+		/* todo:
+		 * this scrolling is slightly imperfect. sometimes the code switches to a tab, which triggers scrollToTop, and then some
+		 * other code scrolls to a specific location a fraction of a second later. the 'pending' boolean here is a crutch for now
+		 * to help visual appeal.
+		 */
 		scrollToSelectedNode : function() {
+			scrollToSelNodePending = true;
+			
 			setTimeout(function() {
-				var elm = nav.getSelectedDomElement();
+				scrollToSelNodePending = false;
+				var elm = nav.getSelectedPolyElement();
 				if (elm) {
-					console.log("Scroll to selected node.");
-					var node = meta64.getHighlightedNode();
-					var ordinal = meta64.getOrdinalOfNode(node);
-
-					/*
-					 * set scroll position to exact top (zero) if this is the
-					 * first (top) child node, or else scroll exactly to it
-					 */
-					var scrollPos = (ordinal == 0 ? 0 : $("#" + elm.id).offset().top - $("#mainPageHeader").height());
-
-					// console.log("Scrolling to dom element id: " +elm.id);
-					$("html, body").animate({
-						scrollTop : scrollPos
-					});
+					elm.node.scrollIntoView();
+				}
+			}, 1000);
+		},
+		
+		scrollToTop : function() {
+			if (scrollToSelNodePending) return;
+			setTimeout(function() {
+				if (scrollToSelNodePending) return;
+				var elm = util.polyElm("mainPaperTabs");
+				if (elm) {
+					elm.node.scrollIntoView();
 				}
 			}, 1000);
 		},
@@ -99,18 +108,19 @@ var view = function() {
 			} else {
 				var pathDisplay = "Path: " + render.formatPath(node);
 				pathDisplay += "<br>ID: " + node.id;
-				pathDisplay += "<br>Modified: " + node.lastModified;
+				if (node.lastModified) {
+					pathDisplay += "<br>Modified: " + node.lastModified;
+				}
 				e.html(pathDisplay);
 				e.show();
 			}
-			e.trigger("updatelayout");
 		},
 
 		showServerInfo : function() {
-			var prms = util.json("getServerInfo", {});
+			var ironRes = util.json("getServerInfo", {});
 
-			prms.done(function(res) {
-				messagePg.showMessage("Server Info", res.serverInfo, null);
+			ironRes.completes.then(function() {
+				messagePg.showMessage("Server Info", ironRes.response.serverInfo, null);
 			});
 		}
 	};

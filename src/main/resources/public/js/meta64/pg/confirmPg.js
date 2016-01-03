@@ -1,44 +1,61 @@
 console.log("running module: confirmPg.js");
 
+/* Runs as Popup. With individal instances created in 'areYouSure' 
+ * 
+ * TODO: I can now get rid of all 'alerts' and do this instead.
+ * */
+
 var confirmPg = function() {
 
-	var _title, _message, _buttonText, _callback;
-
 	var _ = {
+		/*
+		 * Note: this domId always has an suffix like domId-1, domId-2, etc
+		 * driven by guids
+		 */
 		domId : "confirmPg",
 
+		tabId : "popup",
+		//visible : false,
+
 		areYouSure : function(title, message, buttonText, callback) {
-			_title = title;
-			_message = message;
-			_buttonText = buttonText;
-			_callback = callback;
-			meta64.openDialog(confirmPg);
+
+			/* BEGIN MAKE DATA - create data object with a guid */
+			var data = {};
+			data.title = title;
+			data.message = message;
+			data.buttonText = buttonText;
+			data.callback = callback;
+			meta64.registerDataObject(data);
+			/* END MAKE DATA */
+
+			meta64.changePage(confirmPg, data);
 		},
 
-		build : function() {
+		build : function(data) {
 
-			var fields = "<h3 id='confirmPgTitle'></h3><p id='confirmPgMessage'></p>";
-			fields += render.makeBackButton("Yes", "confirmPgYesButton", "b");
-			fields += render.makeBackButton("No", "confirmPgNoButton", "a");
-			var content = render.tag("div", {
-				"data-role" : "content"
-			}, fields);
+			var fields = "<h2 id='confirmPgTitle-" + data.guid + "'></h2>" + //
+			"<p id='confirmPgMessage-" + data.guid + "'></p>";
 
-			util.setHtmlEnhanced($("#confirmPg"), content);
+			fields += render.makePopupBackButton("Yes", "confirmPgYesButton-" + data.guid, _.domId,
+					"confirmPg.runCallback(" + data.guid + ");");
+			fields += render.makePopupBackButton("No", "confirmPgNoButton-" + data.guid, _.domId);
+			var content = render.tag("div", {}, fields);
 
-			$("#confirmPgYesButton").on("click", _.runCallback);
+			util.setHtmlEnhanced("confirmPg-" + data.guid, content);
 		},
 
-		runCallback : function() {
-			if (_callback) {
-				_callback();
+		/* todo move to meta64 mod */
+		runCallback : function(guid) {
+			var dataObj = meta64.getObjectByGuid(guid);
+			if (dataObj.callback) {
+				dataObj.callback();
 			}
 		},
 
-		init : function() {
-			$("#confirmPgTitle").text(_title);
-			$("#confirmPgMessage").text(_message);
-			$("#confirmPgYesButton").text(_buttonText);
+		init : function(data) {
+			$("#confirmPgTitle-" + data.guid).text(data.title);
+			$("#confirmPgMessage-" + data.guid).text(data.message);
+			$("#confirmPgYesButton-" + data.guid).text(data.buttonText);
 		}
 	};
 

@@ -1,0 +1,13 @@
+indent: auto
+indent-spaces: 4
+indent-attributes: true
+indent-cdata: false
+vertical-space: true
+wrap: 120
+quiet: yes
+input-xml: yes
+output-xhtml: yes
+drop-empty-paras: false
+new-blocklevel-tags: dom-module, template, iron-ajax, paper-drawer-panel, paper-scroll-header-panel, 
+  paper-toolbar, paper-menu, paper-button, paper-scroll-header-panel, paper-toast, main-tabs
+

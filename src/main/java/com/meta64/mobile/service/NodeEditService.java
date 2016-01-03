@@ -144,7 +144,8 @@ public class NodeEditService {
 		}
 
 		Node parentNode = node.getParent();
-		String newPath = parentNode.getPath() + "/" + newName;
+		String parentPath = parentNode.getPath();
+		String newPath = (parentPath.equals("/") ? "" : parentPath) + "/" + newName;
 
 		Node checkExists = JcrUtil.safeFindNode(session, newPath);
 		if (checkExists != null) {

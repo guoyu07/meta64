@@ -11,7 +11,7 @@ var edit = function() {
 	var _saveNodeResponse = function(res) {
 		if (util.checkSuccess("Save node", res)) {
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -23,14 +23,14 @@ var edit = function() {
 			} else {
 				view.refreshTree(null, false, res.newId);
 			}
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 		}
 	}
 
 	var _exportResponse = function(res) {
 		if (util.checkSuccess("Export", res)) {
 			alert("Export Successful.");
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -39,7 +39,7 @@ var edit = function() {
 		if (util.checkSuccess("Import", res)) {
 			alert("Import Successful.");
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -49,7 +49,7 @@ var edit = function() {
 
 		util.checkSuccess("Insert Book", res);
 		view.refreshTree(null, false);
-		meta64.jqueryChangePage("#mainPage");
+		meta64.jqueryChangePage("mainTabName");
 		view.scrollToSelectedNode();
 	}
 
@@ -63,6 +63,7 @@ var edit = function() {
 	var _initNodeEditResponse = function(res) {
 		if (util.checkSuccess("Editing node", res)) {
 
+			console.log("Changing to editNodePg.");
 			/*
 			 * Server will have sent us back the raw text content, that should
 			 * be markdown instead of any HTML, so that we can display this and
@@ -70,7 +71,7 @@ var edit = function() {
 			 */
 			_.editNode = res.nodeInfo;
 
-			meta64.changePage(editNodePg);
+			meta64.openDialog(editNodePg);
 		}
 	}
 
@@ -108,7 +109,7 @@ var edit = function() {
 	var _splitContentResponse = function(res) {
 		if (util.checkSuccess("Split content", res)) {
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -192,9 +193,13 @@ var edit = function() {
 		},
 
 		makeNodeReferencable : function() {
-			util.json("makeNodeReferencable", {
-				"nodeId" : _.editNode.id
-			}, _makeNodeReferencableResponse);
+			alert('not yet implemented');
+			return;
+
+			/*
+			 * polymer commented util.json("makeNodeReferencable", { "nodeId" :
+			 * _.editNode.id }, _makeNodeReferencableResponse);
+			 */
 		},
 
 		splitContent : function() {
@@ -210,7 +215,7 @@ var edit = function() {
 			if (meta64.treeDirty) {
 				meta64.goToMainPage(true);
 			} else {
-				meta64.jqueryChangePage("#mainPage");
+				meta64.jqueryChangePage("mainTabName");
 				view.scrollToSelectedNode();
 			}
 		},
@@ -278,18 +283,28 @@ var edit = function() {
 			while (true) {
 				var fieldId = "editNodeTextContent" + counter;
 
-				/* is this an existing gui edit field */
+				/*
+				 * is this an existing gui edit field, that's savable.
+				 */
 				if (meta64.fieldIdToPropMap.hasOwnProperty(fieldId)) {
-					var prop = meta64.fieldIdToPropMap[fieldId];
-					var propVal = $("#" + fieldId).val();
 
-					if (propVal !== prop.value) {
-						propertiesList.push({
-							"name" : prop.name,
-							"value" : propVal
-						});
+					/*
+					 * Since the Readonly ones are prefixed with RdOnly_ in
+					 * front of fieldId, those won't exist and elementExists
+					 * bypasses them
+					 */
+					if (util.elementExists(fieldId)) {
+						var prop = meta64.fieldIdToPropMap[fieldId];
+						var propVal = util.getTextAreaValById(fieldId);
 
-						changeCount++;
+						if (propVal !== prop.value) {
+							propertiesList.push({
+								"name" : prop.name,
+								"value" : propVal
+							});
+
+							changeCount++;
+						}
 					}
 				} else {
 					break;
@@ -403,13 +418,13 @@ var edit = function() {
 
 			var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
-			var prms = util.json("renameNode", {
+			var ironRes = util.json("renameNode", {
 				"nodeId" : highlightNode.id,
 				"newName" : newName
 			});
 
-			prms.done(function(res) {
-				_renameNodeResponse(res, renamingRootNode);
+			ironRes.completes.then(function() {
+				_renameNodeResponse(ironRes.response, renamingRootNode);
 			});
 		},
 
@@ -521,25 +536,20 @@ var edit = function() {
 					}
 
 					fields += render.tag("div", {
-						"class" : "ui-field-contain property-edit-field"
+						"class" : "genericListItem"
 					}, field);
-
 					counter++;
 				});
-
 			} else {
-				var field = render.tag("label", {
-					"for" : "newNodeNameId"
-				}, "New Node Name") //
-						+ render.tag("textarea", {
-							"id" : "newNodeNameId"
-						}, '');
+				var field = render.tag("paper-textarea", {
+					"id" : "newNodeNameId",
+					"label" : "New Node Name"
+				}, '', true);
 
-				fields += render.tag("div", {
-					"class" : "ui-field-contain property-edit-field"
-				}, field);
+				fields += render.tag("div", {}, field);
 			}
-			util.setHtmlEnhanced($("#propertyEditFieldContainer"), fields);
+
+			util.setHtmlEnhanced("propertyEditFieldContainer", fields);
 
 			var instr = _.editingUnsavedNode ? //
 			"You may leave this field blank and a unique ID will be assigned. You only need to provide a name if you want this node to have a more meaningful URL."
@@ -565,10 +575,12 @@ var edit = function() {
 		makePropertyEditButtonBar : function(prop, fieldId) {
 			var buttonBar = "";
 
-			var clearButton = render.tag("a", //
+			var clearButton = render.tag("paper-button", //
 			{
-				"onClick" : "props.clearProperty('" + fieldId + "');", //
-				"class" : "ui-btn ui-btn-inline ui-icon-back ui-btn-icon-left"
+				"raised" : "raised",
+				"onClick" : "props.clearProperty('" + fieldId + "');" //
+				// "class" : "ui-btn ui-btn-inline ui-icon-back
+			// ui-btn-icon-left"
 			}, //
 			"Clear");
 
@@ -581,13 +593,15 @@ var edit = function() {
 				 * property cannot be deleted. User can leave content blank but
 				 * not delete it.
 				 */
-				deleteButton = render.tag("a", //
+				deleteButton = render.tag("paper-button", //
 				{
-					"onClick" : "props.deleteProperty('" + prop.name + "');", //
+					"raised" : "raised",
+					"onClick" : "props.deleteProperty('" + prop.name + "');" //
 					// "onClick" : function() {
-					// props.deleteProperty(prop.name);
-					// }, //
-					"class" : "ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"
+				// props.deleteProperty(prop.name);
+				// }, //
+				// "class" : "ui-btn ui-btn-inline ui-icon-delete
+				// ui-btn-icon-left"
 				}, //
 				"Del");
 
@@ -596,10 +610,12 @@ var edit = function() {
 				 * property to be multivalued. I may be wrong but this is my
 				 * current assumption
 				 */
-				addMultiButton = render.tag("a", //
+				addMultiButton = render.tag("paper-button", //
 				{
-					"onClick" : "props.addSubProperty('" + fieldId + "');", //
-					"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
+					"raised" : "raised",
+					"onClick" : "props.addSubProperty('" + fieldId + "');" //
+					// "class" : "ui-btn ui-btn-inline ui-icon-star
+				// ui-btn-icon-left"
 				}, //
 				"Add Multi");
 			}
@@ -693,7 +709,7 @@ var edit = function() {
 			 * server, so this is actually very efficient.
 			 */
 			render.renderPageFromData();
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 		},
 
 		/*
@@ -702,19 +718,18 @@ var edit = function() {
 		 * selections for multiple selections on the page.
 		 */
 		deleteSelNodes : function() {
-
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
 				alert('You have not selected any nodes. Select nodes to delete first.');
 				return;
 			}
 
-			confirmPg.areYouSure("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.", function() {
-
-				util.json("deleteNodes", {
-					"nodeIds" : selNodesArray
-				}, _deleteNodesResponse);
-			});
+			confirmPg.areYouSure("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
+					function() {
+						util.json("deleteNodes", {
+							"nodeIds" : selNodesArray
+						}, _deleteNodesResponse);
+					});
 		},
 
 		moveSelNodes : function() {
@@ -725,18 +740,24 @@ var edit = function() {
 				return;
 			}
 
-			confirmPg.areYouSure("Confirm Move", "Move " + selNodesArray.length + " node(s) to a new location ?", "Yes, move.", function() {
-				_.nodesToMove = selNodesArray;
-				meta64.selectedNodes = {}; // clear selections. No longer need
-				// or want any selections.
-				alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
-				meta64.refreshAllGuiEnablement();
-			});
+			confirmPg
+					.areYouSure(
+							"Confirm Move",
+							"Move " + selNodesArray.length + " node(s) to a new location ?",
+							"Yes, move.",
+							function() {
+								_.nodesToMove = selNodesArray;
+								meta64.selectedNodes = {}; // clear selections.
+								// No longer need
+								// or want any selections.
+								alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
+								meta64.refreshAllGuiEnablement();
+							});
 		},
 
 		finishMovingSelNodes : function() {
-			confirmPg.areYouSure("Confirm Move", "Move " + _.nodesToMove.length + " node(s) to selected location ?", "Yes, move.",
-					function() {
+			confirmPg.areYouSure("Confirm Move", "Move " + _.nodesToMove.length + " node(s) to selected location ?",
+					"Yes, move.", function() {
 
 						var highlightNode = meta64.getHighlightedNode();
 

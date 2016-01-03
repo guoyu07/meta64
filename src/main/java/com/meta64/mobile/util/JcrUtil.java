@@ -321,7 +321,7 @@ public class JcrUtil {
 	}
 
 	/*
-	 * Gets property or returns null of no propery by that name can be retrieved
+	 * Gets property or returns null of no property by that name can be retrieved
 	 */
 	public static Property getProperty(Node node, String propName) {
 		try {

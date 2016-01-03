@@ -4,18 +4,15 @@ var signupPg = function() {
 
 	var _ = {
 		domId : "signupPg",
+		tabId : "dialogsTabName",
+		visible : false,
 
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Signup</h2>");
+			var header = "<h2>" + BRANDING_TITLE + " Signup</h2>";
 
-			var formControls = render.makeEditField("User", "signupUserName") + //
+			var formControls = //
+			render.makeEditField("User", "signupUserName") + //
 			render.makePasswordField("Password", "signupPassword") + //
 			render.makeEditField("Email", "signupEmail") + //
 			render.makeEditField("Captcha", "signupCaptcha");
@@ -32,45 +29,29 @@ var signupPg = function() {
 			}, //
 			"", false));
 
-			var signupButton = render.makeButton("Signup", "signupButton", "b", "ui-btn-icon-left ui-icon-check");
-			var newCaptchaButton = render.makeButton("Try Different Image", "tryAnotherCaptchaButton", "a");
-			var backButton = render.makeBackButton("Close", "cancelSignupButton", "a");
+			var signupButton = render.makeButton("Signup", "signupButton", "user.signup();");
+			var newCaptchaButton = render.makeButton("Try Different Image", "tryAnotherCaptchaButton",
+					"user.tryAnotherCaptcha();");
+			var backButton = render.makeBackButton("Close", "cancelSignupButton", _.domId);
 
 			var buttonBar = render.makeHorzControlGroup(signupButton + newCaptchaButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				"class" : "ui-field-contain" //
-			}, //
-			formControls + captchaImage + buttonBar);
-
-			var internalMainContent = ""; // Note: No email address is
-			// required currently, because this
-			// app is an alpha site that doesn't
-			// yet have email support.";
+			var form = formControls + captchaImage + buttonBar;
 
 			var mainContent = render.tag("div", //
 			{
-				"role" : "main",
-				"class" : "ui-content dialog-content", 
 				"id" : _.domId + "-main"
 			}, //
-			internalMainContent + form);
+			form);
 
 			var content = header + mainContent;
+			util.setHtmlEnhanced("signupPg", content);
 
-			util.setHtmlEnhanced($("#signupPg"), content);
-
-			/* 
-			$("#" + _.domId + "-main").css({
-				"backgroundImage" : "url(/ibm-702-bright.jpg);" 
-					"background-repeat" : "no-repeat;",
-					"background-size" : "100% auto"
-			});
-			*/
-			
-			$("#tryAnotherCaptchaButton").on("click", user.tryAnotherCaptcha);
-			$("#signupButton").on("click", user.signup);
+			/*
+			 * $("#" + _.domId + "-main").css({ "backgroundImage" :
+			 * "url(/ibm-702-bright.jpg);" "background-repeat" : "no-repeat;",
+			 * "background-size" : "100% auto" });
+			 */
 		},
 
 		init : function() {

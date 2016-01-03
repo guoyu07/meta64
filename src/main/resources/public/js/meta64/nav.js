@@ -17,9 +17,9 @@ var nav = function() {
 			return !_.displayingHome();
 		},
 
-		showSearchPage : function() {
-			meta64.changePage(searchResultsPg);
-		},
+//		showSearchPage : function() {
+//			meta64.changePage(searchResultsPg);
+//		},
 
 		upLevelResponse : function(res, id) {
 			if (!res || !res.node) {
@@ -38,13 +38,13 @@ var nav = function() {
 				return;
 			}
 
-			var prms = util.json("renderNode", {
+			var ironRes = util.json("renderNode", {
 				"nodeId" : meta64.currentNodeId,
 				"upLevel" : 1
 			});
 
-			prms.done(function(res) {
-				_.upLevelResponse(res, meta64.currentNodeId);
+			ironRes.completes.then(function() {
+				_.upLevelResponse(ironRes.response, meta64.currentNodeId);
 			});
 		},
 
@@ -61,7 +61,7 @@ var nav = function() {
 				var node = meta64.uidToNodeMap[currentSelNode.uid];
 
 				if (node) {
-					// console.log("found highlighted node.id=" + node.id);
+					console.log("found highlighted node.id=" + node.id);
 
 					/* now make CSS id from node */
 					var nodeId = node.uid + _UID_ROWID_SUFFIX;
@@ -73,9 +73,35 @@ var nav = function() {
 
 			return null;
 		},
+		
+		/*
+		 * turn of row selection DOM element of whatever row is currently
+		 * selected
+		 */
+		getSelectedPolyElement : function() {
+
+			var currentSelNode = meta64.getHighlightedNode();
+			if (currentSelNode) {
+
+				/* get node by node identifier */
+				var node = meta64.uidToNodeMap[currentSelNode.uid];
+
+				if (node) {
+					console.log("found highlighted node.id=" + node.id);
+
+					/* now make CSS id from node */
+					var nodeId = node.uid + _UID_ROWID_SUFFIX;
+					// console.log("looking up using element id: "+nodeId);
+
+					return util.polyElm(nodeId);
+				}
+			}
+
+			return null;
+		},
 
 		clickOnNodeRow : function(rowElm, uid) {
-
+			
 			var node = meta64.uidToNodeMap[uid];
 			if (!node) {
 				console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);
@@ -117,33 +143,17 @@ var nav = function() {
 		},
 
 		toggleNodeSel : function(uid) {
-			var btn = util.getRequiredElement();
-			if (!btn) {
-				console.log("Unable to find Sel button for uid: " + uid);
-				return;
-			}
+			var toggleButton = util.polyElm(uid+"_sel");
 
-			var elm = $("#" + uid + "_sel");
-			var classes = elm.attr("class");
-
-			var checked = classes.contains("ui-btn-b");
-
-			if (checked) {
-				util.changeOrAddClass(elm, "ui-btn-b", "ui-btn-a");
-				checked = false;
-			} else {
-				util.changeOrAddClass(elm, "ui-btn-a", "ui-btn-b");
-				checked = true;
-			}
-
-			// console.log("Classes: " + classes);
-
-			if (checked) {
+			/*
+			 * Tricky part here, only 'node' seems to be maintained at runtime. I must not understand shadow dom! lol.
+			 */
+			if (toggleButton.node.active) {
 				meta64.selectedNodes[uid] = true;
 			} else {
 				delete meta64.selectedNodes[uid];
 			}
-			elm.enhanceWithin();
+			
 			view.updateStatusBar();
 			meta64.refreshAllGuiEnablement();
 		},
@@ -151,7 +161,7 @@ var nav = function() {
 		navHomeResponse : function(res) {
 			meta64.clearSelectedNodes();
 			render.renderPageFromData(res);
-			util.scrollToTop();
+			view.scrollToTop();
 			meta64.refreshAllGuiEnablement();
 		},
 

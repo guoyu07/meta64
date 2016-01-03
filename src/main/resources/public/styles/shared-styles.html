@@ -1,0 +1,94 @@
+<!-- 
+TIDY WARNING: tidy currently breaks "--" into "- -" (was it in a comment at the time? that would explain it)
+ -->
+
+<link rel="import" href="/bower_components/polymer/polymer.html" />
+<link rel="import" href="/bower_components/paper-styles/typography.html" />
+
+<!-- shared styles for all elements and index.html -->
+<dom-module id="shared-styles"> 
+	<template>
+		<style is="custom-style">
+
+			 .my-menu-section paper-item {
+				padding-left: 30px;
+			}
+		
+		paper-ripple {
+        color: var(--paper-tab-ink, --paper-blue-900);
+      }
+		
+		 :root {
+        --paper-tab-ink: var(--paper-blue-900);
+         --paper-tabs-selection-bar-color: var(--paper-blue-900);
+      }
+		
+		/*	
+			:root {
+        --paper-toolbar-background: var(--paper-blue-900);
+      }
+		*/	
+
+/* thrid attempt at styling, fails. This is a bit tricky 
+			
+			paper-tabs, paper-toolbar {
+        background-color: var(--paper-blue-900);
+        color: #fff;
+      }
+      paper-toolbar paper-tabs {
+        box-shadow: none;
+      }
+      paper-tabs[noink][no-bar] paper-tab.core-selected {
+        color: red;
+      }
+      paper-tabs[align-bottom] {
+        //box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
+      }
+      paper-tabs a {
+        color: #fff;
+      }
+*/
+      
+			/*	  
+		  paper-button.custom:hover {
+		    background-color: var(--paper-indigo-100);
+		  }
+		  */
+			paper-button.highlight-button {
+				background-color: var(--paper-green-500);
+				color: white;
+			}
+			
+			paper-button.custom-toggle {
+				background-color: var(--paper-red-500);
+				color: white;
+			}
+			
+			paper-button.custom-toggle[active] {
+				background-color: lightGray;
+				color: black;
+			}
+			
+			/*
+		  paper-button.disabled {
+		    color: white;
+		  }
+		  */
+		  
+			.page-title { @apply (--paper-font-display2);
+				
+			}
+			
+			paper-menu a>*, paper-menu paper-item>*, paper-menu paper-icon-item>* {
+				pointer-events: none;
+			}
+			
+			@media ( max-width : 600px) {
+				.page-title {
+					font-size: 24px !important;
+				}
+			}
+		
+		</style>
+	</template> 
+</dom-module>

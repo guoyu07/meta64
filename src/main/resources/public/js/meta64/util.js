@@ -2,7 +2,7 @@ console.log("running module: util.js");
 
 var util = function() {
 
-	var logAjax = false;
+	var logAjax = true;
 	var timeoutMessageShown = false;
 	var offline = false;
 
@@ -38,6 +38,23 @@ var util = function() {
 		}
 	}
 
+	if (typeof String.prototype.escapeForAttrib != 'function') {
+		String.prototype.escapeForAttrib = function() {
+			return this.replaceAll("\"", "&quot;");
+		}
+	}
+
+	if (typeof Array.prototype.indexOfObject != 'function') {
+		Array.prototype.indexOfObject = function(obj) {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] === obj) {
+					return i;
+				}
+			}
+			return -1;
+		}
+	}
+
 	var assertNotNull = function(varName) {
 		if (typeof eval(varName) === 'undefined') {
 			alert("Variable not found: " + varName)
@@ -55,7 +72,128 @@ var util = function() {
 
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
+		json : function(postName, postData, callback) {
+
+			if (offline) {
+				console.log("offline: ignoring call for " + postName);
+				return;
+			}
+
+			if (logAjax) {
+				console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
+			}
+
+			/* Do not delete, research this way... */
+			// var ironAjax = this.$$("#myIronAjax");
+			var ironAjax = Polymer.dom(this.root).querySelector("#ironAjax");
+
+			ironAjax.url = postTargetUrl + postName;
+			ironAjax.verbose = true;
+			ironAjax.body = JSON.stringify(postData);
+			ironAjax.method = "POST";
+			ironAjax.contentType = "application/json";
+
+			// specify any url params this way:
+			// ironAjax.params='{"alt":"json", "q":"chrome"}';
+
+			ironAjax.handleAs = "json"; // handle-as (is prop)
+
+			/* This not a required property */
+			// ironAjax.onResponse = "util.ironAjaxResponse"; // on-response (is
+			// prop)
+			ironAjax.debounceDuration = "300"; // debounce-duration (is prop)
+
+			_ajaxCounter++;
+			var ironRequest = ironAjax.generateRequest();
+
+			/**
+			 * Notes
+			 * <p>
+			 * If using then function: promise.then(successFunction,
+			 * failFunction);
+			 * <p>
+			 * I think the way these parameters get passed into done/fail
+			 * functions, is because there are resolve/reject methods getting
+			 * called with the parameters. Basically the parameters passed to
+			 * 'resolve' get distributed to all the waiting methods just like as
+			 * if they were subscribing in a pub/sub model. So the 'promise'
+			 * pattern is sort of a pub/sub model in a way
+			 * <p>
+			 * The reason to return a 'promise.promise()' method is so no other
+			 * code can call resolve/reject but can only react to a
+			 * done/fail/complete.
+			 * <p>
+			 * deferred.when(promise1, promise2) creates a new promise that
+			 * becomes 'resolved' only when all promises are resolved. It's a
+			 * big "and condition" of resolvement, and if any of the promises
+			 * passed to it end up failing, it fails this "ANDed" one also.
+			 */
+			ironRequest.completes.then(//
+
+			// Handle Success
+			function() {
+				_ajaxCounter--;
+				if (logAjax) {
+					console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
+							+ JSON.stringify(ironRequest.response));
+				}
+
+				if (typeof callback == "function") {
+					callback(ironRequest.response);
+				}
+			},
+			// Handle Fail
+			function() {
+				_ajaxCounter--;
+				console.log("Error in util.json");
+
+				// poly-todo: this path is untested
+
+				if (ironRequest.status == "403") {
+					console.log("Not logged in detected in util.");
+					offline = true;
+
+					if (!timeoutMessageShown) {
+						timeoutMessageShown = true;
+						alert("Session timed out. Page will refresh.");
+					}
+
+					$(window).off("beforeunload");
+					window.location.href = window.location.origin;
+					return;
+				}
+
+				var msg = "Server request failed.\n\n";
+
+				/* catch block should fail silently */
+				try {
+					msg += "Status: " + ironRequest.statusText + "\n";
+					msg += "Code: " + ironRequest.status + "\n";
+				} catch (ex) {
+				}
+
+				/*
+				 * this catch block should also fail silently
+				 * 
+				 * This was showing "classCastException" when I threw a regular
+				 * "Exception" from server so for now I'm just turning this off
+				 * since its' not displaying the correct message.
+				 */
+				// try {
+				// msg += "Response: " +
+				// JSON.parse(xhr.responseText).exception;
+				// } catch (ex) {
+				// }
+				alert(msg);
+			});
+
+			return ironRequest;
+		},
+
 		/**
+		 * 
+		 * This is the original JQuery method no longer in use.
+		 * 
 		 * We use the convention that all calls to server are POSTs with a
 		 * 'postName' (like an RPC method name)
 		 * <p>
@@ -63,7 +201,7 @@ var util = function() {
 		 * 'promise' rather than passing in a function.
 		 * 
 		 */
-		json : function(postName, postData, callback) {
+		jsonOrig_noLongerUsed : function(postName, postData, callback) {
 			if (offline) {
 				console.log("offline: ignoring call for " + postName);
 				return;
@@ -116,7 +254,7 @@ var util = function() {
 			});
 
 			prms.fail(function(xhr) {
-				
+
 				if (xhr.status == "403") {
 					console.log("Not logged in detected in util.");
 					offline = true;
@@ -130,7 +268,7 @@ var util = function() {
 					window.location.href = window.location.origin;
 					return;
 				}
-				
+
 				var msg = "Server request failed.\n\n";
 
 				/* catch block should fail silently */
@@ -186,6 +324,8 @@ var util = function() {
 		 * response returns success==false, so we will have to call checkSuccess
 		 * inside every response method instead, if we want that response to
 		 * print a message to the user when fail happens.
+		 * 
+		 * requires: res.success res.message
 		 */
 		checkSuccess : function(opFriendlyName, res) {
 			if (!res.success) {
@@ -232,20 +372,67 @@ var util = function() {
 			return prevPage;
 		},
 
+		elementExists : function(id) {
+			if (id.startsWith("#")) {
+				id = id.substring(1);
+			}
+
+			if (id.contains("#")) {
+				console.log("Invalid # in domElm");
+				return null;
+			}
+
+			var e = document.getElementById(id);
+			return e != null;
+		},
+
+		/* Takes textarea dom Id (# optional) and returns its value */
+		getTextAreaValById : function(id) {
+			var domElm = _.domElm(id);
+			return domElm.value;
+		},
+
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not
 		 * found. Do not prefix with "#"
 		 */
 		domElm : function(id) {
+			if (id.startsWith("#")) {
+				id = id.substring(1);
+			}
+
 			if (id.contains("#")) {
-				console.log("do not use # in domElm");
+				console.log("Invalid # in domElm");
+				return null;
+			}
+
+			var e = document.getElementById(id);
+			if (!e || e.length == 0) {
+				console.log("domElm Error. Required element id not found: " + id);
+			}
+			return e;
+		},
+
+		/*
+		 * Gets the RAW DOM element and displays an error message if it's not
+		 * found. Do not prefix with "#"
+		 */
+		polyElm : function(id) {
+
+			if (id.startsWith("#")) {
+				id = id.substring(1);
+			}
+
+			if (id.contains("#")) {
+				console.log("Invalid # in domElm");
 				return null;
 			}
 			var e = document.getElementById(id);
 			if (!e || e.length == 0) {
 				console.log("domElm Error. Required element id not found: " + id);
 			}
-			return e;
+
+			return Polymer.dom(e);
 		},
 
 		/*
@@ -273,23 +460,6 @@ var util = function() {
 
 		emptyString : function(val) {
 			return !val || val.length == 0;
-		},
-
-		setEnablement : function(elm, enable, visibility) {
-			/*
-			 * optional parameter, undefined means it wasn't passed which means
-			 * 'true' in this case
-			 */
-			if (typeof (visibility) === 'undefined' || visibility) {
-				_.setVisibility(elm, true)
-			} else {
-				_.setVisibility(elm, false);
-			}
-
-			if (enable)
-				elm.removeClass('ui-state-disabled');
-			if (!enable)
-				elm.addClass('ui-state-disabled');
 		},
 
 		hookSliderChanges : function() {
@@ -369,21 +539,43 @@ var util = function() {
 		// elm.ehanceWithin();
 		// }
 
-		setHtmlEnhancedById : function(elmId, content) {
-			// console.log("setting content: "+content+" on id "+elmId);
-			var elm = _.getRequiredElement(elmId);
-			if (elm) {
-				$(elm).html(content);
-				$(elm).enhanceWithin();
-				// console.log("setting is successful");
-			} else {
-				console.log("setting failed.");
-			}
-		},
+		// setHtmlEnhancedById_original : function(elmId, content) {
+		// _.polyElm(elmId).node.innerHTML = content;
+		//			
+		// // // console.log("setting content: "+content+" on id "+elmId);
+		// // var elm = _.getRequiredElement(elmId);
+		// // if (elm) {
+		// // if (content==null) {
+		// // content = "";
+		// // }
+		// //
+		// // var polyElm = util.polyElm(elmId);
+		// // polyElm.node.innerHTML = content;
+		// //
+		// // //Polymer.dom(elm).innerHTML = content;
+		// // //elm.innerHTML = content;
+		// // //this.injectBoundHTML(content, elm);
+		// // //elm.html(content);
+		// // Polymer.dom.flush(); //<----is this required ? todo
+		// // //$(elm).enhanceWithin();
+		// // // console.log("setting is successful");
+		// // } else {
+		// // console.log("setting failed.");
+		// // }
+		// },
 
-		setHtmlEnhanced : function(elm, content) {
-			elm.html(content);
-			elm.enhanceWithin();
+		setHtmlEnhanced : function(id, content) {
+			if (content == null) {
+				content = "";
+			}
+
+			var elm = _.domElm(id);
+			var polyElm = Polymer.dom(elm);
+			polyElm.node.innerHTML = content;
+			
+			// Not sure yet, if these two are required.
+			Polymer.dom.flush();
+			Polymer.updateStyles();
 		},
 
 		getPropertyCount : function(obj) {
@@ -426,12 +618,6 @@ var util = function() {
 			return val;
 		},
 
-		scrollToTop : function() {
-			// setTimeout(function() {
-			window.scrollTo(0, 0);
-			// }, 1);
-		},
-
 		/* iterates over an object creating a string containing it's keys */
 		printKeys : function(obj) {
 			var val = '';
@@ -445,20 +631,61 @@ var util = function() {
 		},
 
 		/*
+		 * Makes eleId enabled based on vis flag
+		 * 
+		 * eleId can be a DOM element or the ID of a dom element, with or
+		 * without leading #
+		 */
+		setEnablement : function(elmId, enable) {
+
+			var domElm = null;
+			if (typeof elmId == "string") {
+				domElm = _.domElm(elmId);
+			} else {
+				domElm = elmId;
+			}
+
+			if (domElm == null) {
+				console.log("setVisibility couldn't find item: " + elmId);
+				return;
+			}
+
+			if (!enable) {
+				//console.log("Enabling element: " + elmId);
+				domElm.disabled = true;
+			} else {
+				//console.log("Disabling element: " + elmId);
+				domElm.disabled = false;
+			}
+		},
+
+		/*
 		 * Makes eleId visible based on vis flag
 		 * 
-		 * elmId: element id with no # prefix
+		 * eleId can be a DOM element or the ID of a dom element, with or
+		 * without leading #
 		 */
 		setVisibility : function(elmId, vis) {
 
-			if (vis) {
-				// console.log("Showing element: " + elmId);
-				$(elmId).show();
+			var domElm = null;
+			if (typeof elmId == "string") {
+				domElm = _.domElm(elmId);
 			} else {
-				// console.log("hiding element: " + elmId);
-				$(elmId).hide();
+				domElm = elmId;
 			}
-			$(elmId).trigger("updatelayout");
+
+			if (domElm == null) {
+				console.log("setVisibility couldn't find item: " + elmId);
+				return;
+			}
+
+			if (vis) {
+				//console.log("Showing element: " + elmId);
+				domElm.style.display = 'block';
+			} else {
+				//console.log("hiding element: " + elmId);
+				domElm.style.display = 'none';
+			}
 		}
 	};
 

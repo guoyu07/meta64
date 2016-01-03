@@ -7,12 +7,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.JcrConstants;
@@ -78,7 +81,8 @@ public class ImportExportService {
 		}
 		else {
 			String fileName = req.getTargetFileName();
-			exportIdToFile(session, nodeId, fileName);
+			exportNodeToXMLFile(session, nodeId, fileName);
+			// exportNodeToFileSingleTextFile(session, nodeId, fileName);
 		}
 
 		res.setSuccess(true);
@@ -88,41 +92,41 @@ public class ImportExportService {
 	 * Unfortunately the Apache Oak fails with errors related to UUID any time we try to import
 	 * something at the root like "/jcr:system" (confirmed by other users online also, this is not a
 	 * mistake I'm making but a mistake made by the Oak developers). As a second last ditch effort I
-	 * tried to backup one level down deeper (activities, nodeTypes, and versionStorage), but that also
-	 * results in exception getting thrown from inside Oak. Not my fault. They just don't have this
-	 * stuff working. I will leave this in place to show what has been tried, but for now, it seems
-	 * the only way to backup a reposity is to back up the actual MongoDB files themselves, which is
-	 * not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
+	 * tried to backup one level down deeper (activities, nodeTypes, and versionStorage), but that
+	 * also results in exception getting thrown from inside Oak. Not my fault. They just don't have
+	 * this stuff working. I will leave this in place to show what has been tried, but for now, it
+	 * seems the only way to backup a reposity is to back up the actual MongoDB files themselves,
+	 * which is not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
 	 */
 	private void exportEntireRepository(Session session) throws Exception {
 		long time = System.currentTimeMillis();
 
 		String fileName = String.format("full-backup-%d-jcr_systemActivities", time);
-		exportIdToFile(session, "/jcr:system/jcr:activities", fileName);
+		exportNodeToXMLFile(session, "/jcr:system/jcr:activities", fileName);
 
 		fileName = String.format("full-backup-%d-jcr_systemNodeTypes", time);
-		exportIdToFile(session, "/jcr:system/jcr:nodeTypes", fileName);
+		exportNodeToXMLFile(session, "/jcr:system/jcr:nodeTypes", fileName);
 
 		fileName = String.format("full-backup-%d-jcr_systemVersionStorage", time);
-		exportIdToFile(session, "/jcr:system/jcr:versionStorage", fileName);
+		exportNodeToXMLFile(session, "/jcr:system/jcr:versionStorage", fileName);
 
 		fileName = String.format("full-backup-%d-rep_security", time);
-		exportIdToFile(session, "/rep:security", fileName);
+		exportNodeToXMLFile(session, "/rep:security", fileName);
 
 		fileName = String.format("full-backup-%d-oak_index", time);
-		exportIdToFile(session, "/oak:index", fileName);
+		exportNodeToXMLFile(session, "/oak:index", fileName);
 
 		fileName = String.format("full-backup-%d-meta64", time);
-		exportIdToFile(session, "/meta64", fileName);
+		exportNodeToXMLFile(session, "/meta64", fileName);
 
 		fileName = String.format("full-backup-%d-userPreferences", time);
-		exportIdToFile(session, "/userPreferences", fileName);
+		exportNodeToXMLFile(session, "/userPreferences", fileName);
 
 		fileName = String.format("full-backup-%d-root", time);
-		exportIdToFile(session, "/root", fileName);
+		exportNodeToXMLFile(session, "/root", fileName);
 	}
 
-	private void exportIdToFile(Session session, String nodeId, String fileName) throws Exception {
+	private void exportNodeToXMLFile(Session session, String nodeId, String fileName) throws Exception {
 
 		fileName = fileName.replace(".", "_");
 		fileName = fileName.replace(File.separator, "_");
@@ -138,6 +142,7 @@ public class ImportExportService {
 		BufferedOutputStream output = null;
 		try {
 			output = new BufferedOutputStream(new FileOutputStream(fullFileName));
+
 			session.exportSystemView(exportNode.getPath(), output, false, false);
 
 			/*
@@ -145,13 +150,78 @@ public class ImportExportService {
 			 * export as document view instead if system view, and what are the
 			 * advantages/disadvantages.
 			 */
-			// session.exportDocumentView(exportNode.getPath(), output, false,
-			// false);
+			//session.exportDocumentView(exportNode.getPath(), output, true, false);
 			output.flush();
 		}
 		finally {
 			if (output != null) {
 				output.close();
+			}
+		}
+	}
+
+	private void exportNodeToFileSingleTextFile(Session session, String nodeId, String fileName) throws Exception {
+
+		fileName = fileName.replace(".", "_");
+		fileName = fileName.replace(File.separator, "_");
+		String fullFileName = adminDataFolder + File.separator + fileName + ".txt";
+
+		if (FileTools.fileExists(fullFileName)) {
+			throw new Exception("File already exists.");
+		}
+
+		Node node = JcrUtil.findNode(session, nodeId);
+		log.debug("Export Node: " + node.getPath() + " to file " + fullFileName);
+		StringBuilder content = new StringBuilder();
+		recurseNode(node, 0, content);
+		FileTools.writeEntireFile(fullFileName, content.toString());
+	}
+
+	/*
+	 * todo: move to string utils class
+	 */
+	private String getIndentString(int level) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < level * 4; i++) {
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+
+	private void recurseNode(Node node, int level, StringBuilder content) throws Exception {
+		if (node == null) return;
+
+		NodeIterator nodeIter = node.getNodes();
+		int nodeCount = 0;
+		String indent = getIndentString(level);
+		try {
+			while (true) {
+				Node n = nodeIter.nextNode();
+
+				appendContent(n, level, indent, nodeCount, content);
+				recurseNode(n, level + 1, content);
+
+				nodeCount++;
+			}
+		}
+		catch (NoSuchElementException ex) {
+			// not an error. Normal iterator end condition.
+		}
+	}
+
+	private void appendContent(Node node, int level, String indent, int nodeCount, StringBuilder content) throws Exception {
+		log.info(indent + "node[" + nodeCount + "] path: " + node.getPath());
+
+		Property contentProp = JcrUtil.getProperty(node, JcrProp.CONTENT);
+		if (contentProp != null) {
+
+			String contentText = contentProp.getString();
+			if (contentText != null) {
+
+				if (content.length() > 0) {
+					content.append("\n[" + String.valueOf(level) + "]__________\n\n");
+				}
+				content.append(contentText);
 			}
 		}
 	}

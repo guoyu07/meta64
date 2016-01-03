@@ -1,0 +1,151 @@
+<link rel="import"
+      href="/bower_components/paper-styles/typography.html" />
+<link rel="import"
+      href="/bower_components/polymer/polymer.html" />
+<link rel="import"
+      href="/bower_components/paper-tabs/paper-tabs.html" />
+<link rel="import"
+      href="/bower_components/paper-tabs/paper-tab.html" />
+<link rel="import"
+      href="/bower_components/paper-input/paper-input.html" />
+<link rel="import"
+      href="/bower_components/paper-input/paper-textarea.html" />
+<link rel="import"
+      href="/bower_components/paper-button/paper-button.html" />
+<link rel="import"
+      href="/bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import"
+      href="/bower_components/paper-styles/color.html" />
+<link rel="import"
+      href="/bower_components/iron-pages/iron-pages.html" />
+<link rel="import"
+      href="/bower_components/iron-pages/iron-pages.html" />
+<link rel="import"
+      href="/styles/shared-styles.html" />
+<dom-module id="main-tabs">
+    <template>
+        <style is="custom-style"
+               include="shared-styles">:host { display: block; } .modelessDialog { padding-left: 15px; padding-right:
+               15px; padding-bottom: 15px; } .mainNodeContent { margin-top: 15px; margin-bottom: 15px;
+               background-color: lightGray; border: 1px solid green; }</style>
+        <!-- 
+        Main Application Tabs 
+        -->
+        <paper-tabs id="mainPaperTabs"
+                    attr-for-selected="name"
+                    selected="{{selected}}">
+            <paper-tab name="mainTabName">Main</paper-tab>
+            <paper-tab name="searchTabName">Search</paper-tab>
+            <paper-tab name="timelineTabName">Timeline</paper-tab>
+            <paper-tab name="dialogsTabName">Dialog</paper-tab>
+        </paper-tabs>
+        <!--  -->
+        <iron-pages id="mainIronPages"
+                    attr-for-selected="name"
+                    selected="{{selected}}">
+            <div name="mainTabName">
+                <div id="contentArea"></div>
+                <div id="mainNodeContent"></div>
+                <div id="mainPageControls"></div>
+                <div id="listView"></div>
+            </div>
+            <!--  bring back after polymer 
+            <div class="donate-center">
+                <a class="donate-link"
+                   onClick="meta64.openDonatePg();">[ Contribute to Meta64 ]</a>
+            </div>
+            -->
+            <div name="searchTabName"
+                 id="searchResultsPg">No search displaying.</div>
+            <div name="timelineTabName"
+                 id="timelinePg">No timeline displaying.</div>
+            <div name="dialogsTabName">
+                <iron-pages id="dialogIronPages"
+                            attr-for-selected="name">
+                    <!-- Define dialog elements here. 
+              
+                                todo: I could just create these dynmaically upon first use
+                        -->
+                    <div name="loginPg"
+                         id="loginPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="editNodePg"
+                         id="editNodePg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="prefsPg"
+                         id="prefsPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="editPropertyPg"
+                         id="editPropertyPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="uploadPg"
+                         id="uploadPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="renameNodePg"
+                         id="renameNodePg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="searchPg"
+                         id="searchPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="sharingPg"
+                         id="sharingPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="shareToPersonPg"
+                         id="shareToPersonPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="signupPg"
+                         id="signupPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                    <div name="changePasswordPg"
+                         id="changePasswordPg"
+                         style="display:none;"
+                         class="modelessDialog"></div>
+                </iron-pages>
+            </div>
+        </iron-pages>
+        <!-- All modal dialogs go in here -->
+        <div id="modalsContainer"
+             style="position:absolute;top:0;left:0"></div>
+        <!--  
+                <h2 class="page-title">Main Tabs: {{greeting}}</h2>
+                <span class="paper-font-body2">Update text to change the greeting.</span> 
+                < ! - - Listens for "input" event and sets greeting to <input>.value - - >
+                <input class="paper-font-body2" value="{{greeting::input}}"> 
+                -->
+    </template>
+    <script>/* 
+<![CDATA[*/
+         (function() {
+                 'use strict';
+        
+                 Polymer({
+                         is : 'main-tabs',
+                         properties : {
+                                 selected: {
+                                   type: String,
+                                   value: 'mainTabName'
+                             },
+                             fieldVal: {
+                                   type: String,
+                                   value: 'Test Field Value'
+                             }
+                 
+                         },
+                         ready : function() {
+                                 console.log("polymer main-tabs ready.");
+                         }
+                 });
+         })();
+    /*]]>
+*/</script>
+</dom-module>

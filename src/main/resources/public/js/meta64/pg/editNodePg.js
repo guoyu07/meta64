@@ -4,44 +4,40 @@ var editNodePg = function() {
 
 	var _ = {
 		domId : "editNodePg",
+		tabId : "dialogsTabName",
+		visible : false,
 
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Edit Node</h2>");
+			var header = "<h2>Edit Node</h2>";
 
-			var saveNodeButton = render.makeButton("Save", "saveNodeButton", "b", "ui-btn-icon-left ui-icon-check");
-			var addPropertyButton = render.makeButton("Add Property", "addPropertyButton", "a");
-			var makeNodeReferencableButton = render.makeButton("Make Node Referencable", "makeNodeReferencableButton", "a");
-			var splitContentButton = render.makeButton("Split Content", "splitContentButton", "a");
-			var cancelEditButton = render.makeButton("Close", "cancelEditButton", "a");
-			var buttonBar = render.makeHorzControlGroup(saveNodeButton + addPropertyButton + makeNodeReferencableButton + splitContentButton + cancelEditButton);
+			var saveNodeButton = render.makeBackButton("Save", "saveNodeButton", _.domId, "edit.saveNode();");
+			var addPropertyButton = render.makeButton("Add Property", "addPropertyButton", "props.addProperty();");
+
+			/*
+			 * commented for polymer 
+			 * 
+			 * 
+			 * var makeNodeReferencableButton =
+			 * render.makeButton("Make Node Referencable",
+			 * "makeNodeReferencableButton", "edit.makeNodeReferencable();");
+			 * var splitContentButton = render.makeButton("Split Content",
+			 * "splitContentButton", "edit.splitContent();");
+			 */
+
+			var cancelEditButton = render.makeBackButton("Close", "cancelEditButton", _.domId, "edit.cancelEdit();");
+
+			var buttonBar = render.makeHorzControlGroup(saveNodeButton + addPropertyButton
+			// + makeNodeReferencableButton
+			// + splitContentButton
+			+ cancelEditButton);
 
 			var internalMainContent = "<div id='editNodePathDisplay' class='path-display-in-editor'></div>" + //
 			"<div id='editNodeInstructions'></div>" + //
-			"<div id='propertyEditFieldContainer'></div>";
+			"<div id='propertyEditFieldContainer'>Loading propertyEditFieldContainer...</div>";
 
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			internalMainContent + buttonBar);
-
-			var content = header + mainContent;
-
-			util.setHtmlEnhanced($("#editNodePg"), content);
-
-			$("#saveNodeButton").on("click", edit.saveNode);
-			$("#cancelEditButton").on("click", edit.cancelEdit);
-			$("#addPropertyButton").on("click", props.addProperty);
-			$("#makeNodeReferencableButton").on("click", edit.makeNodeReferencable);
-			$("#splitContentButton").on("click", edit.splitContent);
+			var content = header + internalMainContent + buttonBar;
+			util.setHtmlEnhanced(_.domId, content);
 		},
 
 		init : function() {

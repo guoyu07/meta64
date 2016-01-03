@@ -1,7 +1,7 @@
 console.log("running module: render.js");
 
 var render = function() {
-	var _debug = false;
+	var _debug = true;
 
 	/*
 	 * This is the content displayed when the user signs in, and we see that
@@ -10,10 +10,11 @@ var render = function() {
 	 */
 	function _getEmptyPagePrompt() {
 		/* Construct Create Subnode Button */
-		var createSubNodeButton = _.tag("a", //
+		var createSubNodeButton = _.tag("paper-button", //
 		{
-			"onClick" : "edit.createSubNode();",
-			"class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
+			"raised" : "raised",
+			"onClick" : "edit.createSubNode();"
+		// "class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
 		}, "Create Content");
 
 		return createSubNodeButton;
@@ -49,47 +50,59 @@ var render = function() {
 		 * method that is called first time only, and then the 'init' method
 		 * called before each time the component gets displayed with new
 		 * information.
+		 * 
+		 * If 'data' is provided, this is the instance data for the dialog
 		 */
-		buildPage : function(pg) {
-			if (!pg.built) {
-				pg.build();
+		buildPage : function(pg, data) {
+			console.log("buildPage: pg.domId=" + pg.domId);
+
+			if (!pg.built || data) {
+				pg.build(data);
 				pg.built = true;
 			}
 
+			if (!data) {
+				meta64.registerDialog(pg);
+			}
+
 			if (pg.init) {
-				pg.init();
+				pg.init(data);
 			}
 		},
 
 		/*
 		 * node: JSON of NodeInfo.java
 		 */
-		renderNodeContent : function(node, showPath, showName, renderBinary) {
+		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling) {
 			var headerText = "";
 			var ret = "";
 
 			ret += _.getTopRightImageTag(node);
 
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-			if (showPath && meta64.editMode) {
-				headerText += "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
-				headerText += "<div>";
 
-				if (commentBy) {
-					var clazz = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
-					headerText += "<span class='" + clazz + "'>Comment By: " + commentBy + "</span>";
-				} //
-				else if (node.createdBy) {
-					var clazz = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
-					headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
-				}
+			// I think path on always for now
+			showPath = true;
+			// if (showPath && meta64.editMode) {
 
-				headerText += "<span id='ownerDisplay" + node.uid + "'></span>";
-				if (node.lastModified) {
-					headerText += "  Modified: " + node.lastModified;
-				}
-				headerText += "</div>";
+			headerText += "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
+			headerText += "<div>";
+
+			if (commentBy) {
+				var clazz = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
+				headerText += "<span class='" + clazz + "'>Comment By: " + commentBy + "</span>";
+			} //
+			else if (node.createdBy) {
+				var clazz = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
+				headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
 			}
+
+			headerText += "<span id='ownerDisplay" + node.uid + "'></span>";
+			if (node.lastModified) {
+				headerText += "  Modified: " + node.lastModified;
+			}
+			headerText += "</div>";
+			// }
 
 			/*
 			 * on root node name will be empty string so don't show that
@@ -128,9 +141,15 @@ var render = function() {
 					var jcrContent = props.renderProperty(contentProp);
 
 					if (jcrContent.length > 0) {
-						ret += _.tag("div", {
-							"class" : "jcr-content"
-						}, _.wrapHtml(jcrContent));
+						if (rowStyling) {
+							ret += _.tag("div", {
+								"class" : "jcr-content"
+							}, jcrContent);
+						} else {
+							ret += _.tag("div", {
+								"class" : "jcr-root-content"
+							}, jcrContent);
+						}
 					}
 				}
 			}
@@ -159,8 +178,7 @@ var render = function() {
 			if (commentBy && commentBy != meta64.userName) {
 				var replyButton = _.tag("a", //
 				{
-					"onClick" : "edit.replyToComment('" + node.uid + "');", //
-					"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-comment"
+					"onClick" : "edit.replyToComment('" + node.uid + "');" //
 				}, //
 				"Reply");
 				ret += replyButton;
@@ -177,8 +195,7 @@ var render = function() {
 				if (publicAppend && commentBy != meta64.userName) {
 					var addCommentButton = _.tag("a", //
 					{
-						"onClick" : "edit.replyToComment('" + node.uid + "');", //
-						"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-comment"
+						"onClick" : "edit.replyToComment('" + node.uid + "');" //
 					}, //
 					"Add Comment");
 
@@ -209,7 +226,8 @@ var render = function() {
 			 * design this better later.
 			 */
 			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
-			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node) && !props.isNonOwnedNode(node);
+			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
+					&& !props.isNonOwnedNode(node);
 
 			/*
 			 * if not selected by being the new child, then we try to select
@@ -236,7 +254,7 @@ var render = function() {
 			buttonBarHtml + _.tag("div", //
 			{
 				"id" : uid + "_content"
-			}, _.renderNodeContent(node, true, true, true)));
+			}, _.renderNodeContent(node, true, true, true, true)));
 		},
 
 		showNodeUrl : function() {
@@ -246,7 +264,7 @@ var render = function() {
 				return;
 			}
 			var url = window.location.origin + "?id=" + node.path;
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 
 			var message = "URL using path: <br>" + url;
 			var uuid = props.getNodePropertyVal("jcr:uuid", node);
@@ -294,10 +312,11 @@ var render = function() {
 
 			/* Construct Open Button */
 			if (_.nodeHasChildren(uid)) {
-				openButton = _.tag("a", //
+				openButton = _.tag("paper-button", //
 				{
-					"onClick" : "nav.openNode('" + uid + "');", //
-					"class" : "ui-btn ui-btn-b ui-btn-inline ui-icon-plus ui-mini ui-btn-icon-left"
+					"class" : "highlight-button",
+					"raised" : "raised",
+					"onClick" : "nav.openNode('" + uid + "');"//
 				}, //
 				"Open");
 			}
@@ -311,32 +330,35 @@ var render = function() {
 			if (meta64.editMode) {
 				// console.log("Editing allowed: " + nodeId);
 
-				var selClass = meta64.selectedNodes[uid] ? "ui-btn-b" : "ui-btn-a";
+				var selected = meta64.selectedNodes[uid] == true ? "true" : "false";
 
-				selButton = _.tag("a", //
+				console.log("      nodeId " + uid + " selected=" + selected);
+
+				selButton = _.tag("paper-button", //
 				{
+					"class" : "custom-toggle",
+					"toggles" : "toggles",
+					"raised" : "raised",
 					"id" : uid + "_sel",//
 					"onClick" : "nav.toggleNodeSel('" + uid + "');",
-					// I tried ui-btn-icon-notext (and the button rendering is
-					// bad) ???
-					"class" : "ui-btn ui-btn-inline ui-icon-check ui-mini ui-btn-icon-left " + selClass
+					"active" : selected
 				}, "Sel");
 
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
-					createSubNodeButton = _.tag("a", //
+					createSubNodeButton = _.tag("paper-button", //
 					{
-						"onClick" : "edit.createSubNode('" + uid + "');",
-						"class" : "ui-btn ui-btn-inline ui-icon-star ui-mini ui-btn-icon-left"
+						"raised" : "raised",
+						"onClick" : "edit.createSubNode('" + uid + "');"
 					}, "New");
 				}
 
 				if (cnst.INS_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
-					insertNodeButton = _.tag("a", //
+					insertNodeButton = _.tag("paper-button", //
 					{
-						"onClick" : "edit.insertNode('" + uid + "');",
-						"class" : "ui-btn ui-btn-inline ui-icon-bars ui-mini ui-btn-icon-left"
+						"raised" : "raised",
+						"onClick" : "edit.insertNode('" + uid + "');"
 					}, "Ins");
 				}
 			}
@@ -344,78 +366,74 @@ var render = function() {
 			if (meta64.editMode && editingAllowed) {
 
 				/* Construct Create Subnode Button */
-				editNodeButton = _.tag("a", //
+				editNodeButton = _.tag("paper-button", //
 				{
-					"onClick" : "edit.runEditNode('" + uid + "');",
-					"class" : "ui-btn ui-btn-inline ui-icon-edit ui-mini ui-btn-icon-left"
+					"raised" : "raised",
+					"onClick" : "edit.runEditNode('" + uid + "');"
 				}, "Edit");
 
 				if (meta64.currentNode.childrenOrdered) {
 
 					if (canMoveUp) {
 						/* Construct Create Subnode Button */
-						moveNodeUpButton = _.tag("a", //
+						moveNodeUpButton = _.tag("paper-button", //
 						{
-							"onClick" : "edit.moveNodeUp('" + uid + "');",
-							"class" : "ui-btn ui-btn-inline ui-icon-arrow-u ui-mini ui-btn-icon-left"
+							"raised" : "raised",
+							"onClick" : "edit.moveNodeUp('" + uid + "');"
 						}, "Up");
 					}
 
 					if (canMoveDown) {
 						/* Construct Create Subnode Button */
-						moveNodeDownButton = _.tag("a", //
+						moveNodeDownButton = _.tag("paper-button", //
 						{
-							"onClick" : "edit.moveNodeDown('" + uid + "');",
-							"class" : "ui-btn ui-btn-inline ui-icon-arrow-d ui-mini ui-btn-icon-left"
+							"raised" : "raised",
+							"onClick" : "edit.moveNodeDown('" + uid + "');"
 						}, "Dn");
 					}
 				}
 			}
 
-			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + editNodeButton + moveNodeUpButton
-					+ moveNodeDownButton;
+			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + editNodeButton
+					+ moveNodeUpButton + moveNodeDownButton;
 
 			if (allButtons.length > 0) {
-				return _.makeHorizontalFieldSet(allButtons, "compact-field-contain");
+				return _.makeHorizontalFieldSet(allButtons);
 			} else {
 				return "";
 			}
 		},
 
 		makeHorizontalFieldSet : function(content, extraClasses) {
-			/* Now build entire control bar */
-			var buttonBar = _.tag("fieldset", //
-			{
-				"data-role" : "controlgroup", //
-				"data-type" : "horizontal"
-			}, content);
 
-			return _.tag("div", {
-				"class" : "ui-field-contain" + (extraClasses ? (" " + extraClasses) : "")
-			}, buttonBar);
-		},
-
-		makeHorzControlGroup : function(content) {
 			/* Now build entire control bar */
 			return _.tag("div", //
 			{
-				"data-role" : "controlgroup", //
-				"data-type" : "horizontal"
-			}, content);
+				"class" : "horizontal layout" + (extraClasses ? (" " + extraClasses) : "")
+			}, content, true);
 		},
 
-		makeRadioButton : function(name, group, id, on) {
-			return _.tag("input", //
-			{
-				"type" : "radio", //
-				"name" : group,
-				"id" : id,
-				"checked" : on ? "checked" : "unchecked"
-			}, "", true) + //
+		makeHorzControlGroup : function(content) {
+			return _.tag("div", {
+				"class" : "horizontal layout"
+			}, content, true);
+		},
 
-			_.tag("label", {
-				"for" : id
-			}, name);
+		/*
+		 * this is not yet used, and paper-checkbox is not polymer imported yet
+		 * makeCheckBox : function(name, id, on) { return
+		 * _.tag("paper-checkbox", // { "id" : id, "checked" : on ? "checked" :
+		 * "unchecked" }, "", true) + //
+		 * 
+		 * _.tag("label", { "for" : id }, name); },
+		 */
+
+		makeRadioButton : function(label, id) {
+			return _.tag("paper-radio-button", //
+			{
+				"id" : id,
+				"name" : id
+			}, label);
 		},
 
 		/*
@@ -445,30 +463,29 @@ var render = function() {
 		},
 
 		wrapHtml : function(text) {
-			return "<div data-ajax='false'>" + text + "</div>";
+			return "<div>" + text + "</div>";
 		},
 
 		/*
 		 * Each page can show buttons at the top of it (not main header buttons
-		 * but additional buttons just for that page only, and this genates that
-		 * content for that entire control bar.
+		 * but additional buttons just for that page only, and this generates
+		 * that content for that entire control bar.
 		 */
 		renderMainPageControls : function() {
 			var html = '';
 
-			if (srch.numSearchResults() > 0) {
-
-				html += _.tag("a", //
-				{
-					"onClick" : "nav.showSearchPage();", //
-					"class" : "ui-btn ui-btn-inline ui-icon-search ui-btn-icon-left"
-				}, //
-				"Back to Search Results");
-			}
+			// if (srch.numSearchResults() > 0) {
+			//
+			// html += _.tag("paper-button", //
+			// {
+			// "raised" : "raised",
+			// "onClick" : "nav.showSearchPage();"
+			// }, "Back to Search Results");
+			// }
 
 			var hasContent = html.length > 0;
 			if (hasContent) {
-				util.setHtmlEnhanced($("#mainPageControls"), html);
+				util.setHtmlEnhanced("mainPageControls", html);
 			}
 
 			util.setVisibility("#mainPageControls", hasContent)
@@ -479,6 +496,8 @@ var render = function() {
 		 * if there is one to scroll to
 		 */
 		renderPageFromData : function(data) {
+
+			console.log("render.renderPageFromData()");
 
 			var newData = false;
 			if (!data) {
@@ -523,7 +542,10 @@ var render = function() {
 			var output = '';
 			var bkgStyle = _.getNodeBkgImageStyle(data.node);
 
-			var mainNodeContent = _.renderNodeContent(data.node, true, true, true);
+			// String mainNodePath =_.formatPath(data.node);
+			// now set to content at dom id mainSubHeading
+
+			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false);
 
 			// console.log("mainNodeContent: "+mainNodeContent);
 			if (mainNodeContent.length > 0) {
@@ -541,12 +563,12 @@ var render = function() {
 				!props.isNonOwnedNode(data.node)) {
 
 					/* Construct Create Subnode Button */
-					var editNodeButton = _.tag("a", //
+					var editNodeButton = _.tag("paper-button", //
 					{
-						"onClick" : "edit.runEditNode('" + uid + "');",
-						"class" : "ui-btn ui-btn-inline ui-icon-edit ui-mini ui-btn-icon-left"
+						"raised" : "raised",
+						"onClick" : "edit.runEditNode('" + uid + "');"
 					}, "Edit");
-					buttonBar = _.makeHorizontalFieldSet(editNodeButton, "compact-field-contain page-top-button-bar");
+					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}
 
 				var focusNode = meta64.getHighlightedNode();
@@ -554,10 +576,13 @@ var render = function() {
 
 				var content = _.tag("div", //
 				{
-					"class" : "node-table-row page-parent-node " + (selected ? " active-row" : " inactive-row"),
-					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
-					"id" : cssId,
-					"style" : bkgStyle
+					"class" : (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
+					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');",
+					"id" : cssId
+					
+					//todo: bkgStyle not used, remove.
+				// ,
+				// "style" : bkgStyle
 				},// 
 				buttonBar + mainNodeContent);
 
@@ -566,7 +591,6 @@ var render = function() {
 			} else {
 				$("#mainNodeContent").hide();
 			}
-			$("#mainNodeContent").trigger("updatelayout");
 
 			// console.log("update status bar.");
 			view.updateStatusBar();
@@ -598,7 +622,7 @@ var render = function() {
 				output = _getEmptyPagePrompt();
 			}
 
-			util.setHtmlEnhancedById("#listView", output);
+			util.setHtmlEnhanced("listView", output);
 
 			/*
 			 * TODO: Instead of calling screenSizeChange here immediately, it
@@ -610,9 +634,8 @@ var render = function() {
 			meta64.screenSizeChange();
 
 			if (!meta64.getHighlightedNode()) {
-				util.scrollToTop();
-			}
-			else {
+				view.scrollToTop();
+			} else {
 				view.scrollToSelectedNode();
 			}
 		},
@@ -777,8 +800,16 @@ var render = function() {
 				});
 			}
 
+			// var shortTag;
+			// if (tag.contains(" ")) {
+			// var spaceIdx = tag.indexOf(" ");
+			// shortTag = tag.substring(0, spaceIdx);
+			// } else {
+			// shortTag = tag;
+			// }
+
 			if (closeTag) {
-				ret += ">" + content + "</" + tag + ">";
+				ret += ">" + content + "</" + tag/* shortTag */+ ">";
 			} else {
 				ret += "/>";
 			}
@@ -786,45 +817,75 @@ var render = function() {
 			return ret;
 		},
 
-		makeEditField : function(fieldName, fieldId) {
-			return _.tag("label", {
-				"for" : fieldId
-			}, fieldName) + //
-			_.tag("input", {
-				"type" : "text",
+		makeTextArea : function(fieldName, fieldId) {
+			return _.tag("paper-textarea", {
 				"name" : fieldId,
+				"label" : fieldName,
+				"id" : fieldId
+			}, "", true);
+		},
+
+		makeEditField : function(fieldName, fieldId) {
+			return _.tag("paper-input", {
+				"name" : fieldId,
+				"label" : fieldName,
 				"id" : fieldId
 			}, "", true);
 		},
 
 		makePasswordField : function(fieldName, fieldId) {
-			return _.tag("label", {
-				"for" : fieldId
-			}, fieldName) + //
-			_.tag("input", {
+			return _.tag("paper-input", {
 				"type" : "password",
 				"name" : fieldId,
+				"label" : fieldName,
 				"id" : fieldId
 			}, "", true);
 		},
 
-		makeButton : function(text, id, theme, classes) {
-			var clazz = "ui-btn ui-btn-inline ui-btn-" + theme;
-			if (classes) {
-				clazz += " " + classes;
+		makeButton : function(text, id, callback) {
+			var attribs = {
+				"raised" : "raised",
+				"id" : id
+			};
+
+			if (callback != undefined) {
+				attribs.onClick = callback;
 			}
-			return _.tag("a", {
-				"id" : id,
-				"class" : clazz
-			}, text);
+
+			return _.tag("paper-button", attribs, text, true);
 		},
 
-		makeBackButton : function(text, id, theme) {
-			return _.tag("a", {
+		/*
+		 * domId is id of dialog being closed.
+		 */
+		makeBackButton : function(text, id, domId, callback) {
+
+			if (callback === undefined) {
+				callback = "";
+			}
+
+			return _.tag("paper-button", {
+				"raised" : "raised",
 				"id" : id,
-				"class" : "ui-btn ui-icon-carat-l ui-btn-inline ui-btn-" + theme,
-				"data-rel" : "back"
-			}, text);
+				"onClick" : "meta64.cancelDialog('" + domId + "');" + callback
+			}, text, true);
+		},
+
+		/*
+		 * domId is id of dialog being closed.
+		 */
+		makePopupBackButton : function(text, id, domId, callback) {
+
+			if (callback === undefined) {
+				callback = "";
+			}
+
+			return _.tag("paper-button", {
+				"raised" : "raised",
+				"dialog-confirm" : "dialog-confirm",
+				"id" : id,
+				"onClick" : /* "meta64.cancelDialog('" + domId + "');" + */callback
+			}, text, true);
 		},
 
 		allowPropertyToDisplay : function(propName) {

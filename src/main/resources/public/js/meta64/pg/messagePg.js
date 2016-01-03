@@ -1,41 +1,48 @@
 console.log("running module: messagePg.js");
 
+/* this is a popup dialog */
 var messagePg = function() {
 
 	var _title, _message, _callback;
 
 	var _ = {
 		domId : "messagePg",
+		tabId : "popup",
 
 		showMessage : function(title, message, callback) {
-			_title = title;
-			_message = message;
-			_callback = callback;
-			meta64.openDialog(messagePg);
+
+			/* BEGIN MAKE DATA - create data object with a guid */
+			var data = {};
+			data.title = title;
+			data.message = message;
+			data.callback = callback;
+			meta64.registerDataObject(data);
+			/* END MAKE DATA */
+
+			meta64.changePage(messagePg, data);
 		},
 
-		build : function() {
+		build : function(data) {
 
-			var fields = "<h3 id='messagePgTitle'></h3><p id='messagePgMessage'></p>";
-			fields += render.makeBackButton("Ok", "messagePgOkButton", "b");
-			var content = render.tag("div", {
-				"data-role" : "content"
-			}, fields);
+			var fields = "<h2 id='messagePgTitle-" + data.guid + "'></h2>" + //
+			"<p id='messagePgMessage-" + data.guid + "'></p>";
+			fields += render.makePopupBackButton("Ok", "messagePgOkButton-" + data.guid, _.domId, "messagePg.runCallback("
+					+ data.guid + ");");
 
-			util.setHtmlEnhanced($("#messagePg"), content);
-			
-			$("#messagePgOkButton").on("click", _.runCallback);
+			util.setHtmlEnhanced("messagePg-"+data.guid, fields);
 		},
-		
-		runCallback : function() {
-			if (_callback) {
-				_callback();
+
+		/* todo move to meta64 mod */
+		runCallback : function(guid) {
+			var dataObj = meta64.getObjectByGuid(guid);
+			if (dataObj.callback) {
+				dataObj.callback();
 			}
 		},
 
-		init : function() {
-			$("#messagePgTitle").text(_title);
-			$("#messagePgMessage").html(_message);
+		init : function(data) {
+			$("#messagePgTitle-" + data.guid).text(data.title);
+			$("#messagePgMessage-" + data.guid).html(data.message);
 		}
 	};
 

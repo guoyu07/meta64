@@ -4,42 +4,22 @@ var changePasswordPg = function() {
 
 	var _ = {
 		domId : "changePasswordPg",
-
+		tabId : "dialogsTabName",
+		visible : false,
+		
 		build : function() {
-
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Login</h2>");
+			var header = "<h2>Change Password</h2>";
 
 			var formControls = render.makePasswordField("Password", "changePassword1") + //
 			render.makePasswordField("Repeat Password", "changePassword2");
 
-			var changePasswordButton = render.makeButton("Change Password", "changePasswordActionButton", "b",
-					"ui-btn-icon-left ui-icon-check");
-			var backButton = render.makeBackButton("Close", "cancelChangePasswordButton", "a");
+			var changePasswordButton = render.makeButton("Change Password", "changePasswordActionButton", "user.changePassword();");
+			var backButton = render.makeBackButton("Close", "cancelChangePasswordButton", _.domId);
+			
 			var buttonBar = render.makeHorzControlGroup(changePasswordButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				"class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
-
-			var internalMainContent = "";
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			internalMainContent + form);
-
-			var content = header + mainContent;
-			util.setHtmlEnhanced($("#changePasswordPg"), content);
-			$("#changePasswordActionButton").on("click", user.changePassword);
+			var content = header + formControls + buttonBar;
+			util.setHtmlEnhanced("changePasswordPg", content);
 		},
 
 		init : function() {

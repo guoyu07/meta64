@@ -17,12 +17,19 @@ var srch = function() {
 	var _ = {
 
 		searchPageTitle : "Search Results",
+		timelinePageTitle : "Timeline",
 
 		/*
 		 * Holds the NodeSearchResponse.java JSON, or null if no search has been
 		 * done.
 		 */
 		searchResults : null,
+		
+		/*
+		 * Holds the NodeSearchResponse.java JSON, or null if no timeline has been
+		 * done.
+		 */
+		timelineResults : null,
 
 		/*
 		 * Will be the last row clicked on (NodeInfo.java object) and having the
@@ -58,6 +65,11 @@ var srch = function() {
 			_.searchResults = res;
 			meta64.changePage(searchResultsPg);
 		},
+		
+		timelineResponse : function(res) {
+			_.timelineResults = res;
+			meta64.changePage(timelinePg);
+		},
 
 		searchNodes : function() {
 			if (!util.ajaxReady("searchNodes")) {
@@ -76,8 +88,6 @@ var srch = function() {
 				return;
 			}
 
-			_.searchPageTitle = "Search Results";
-			
 			util.json("nodeSearch", {
 				"nodeId" : node.id,
 				"searchText" : searchText,
@@ -88,17 +98,15 @@ var srch = function() {
 		timeline : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				alert("No node is selected to search under.");
+				alert("No node is selected to 'timeline' under.");
 				return;
 			}
 
-			_.searchPageTitle = "Timeline";
-			
 			util.json("nodeSearch", {
 				"nodeId" : node.id,
 				"searchText" : "",
 				"modSortDesc" : true
-			}, _.searchNodesResponse);
+			}, _.timelineResponse);
 		},
 
 		searchPg : function() {
@@ -112,12 +120,9 @@ var srch = function() {
 
 			_.uidToNodeMap[node.uid] = node;
 		},
-
-		populateSearchResultsPage : function(data) {
-			if (!data) {
-				data = _.searchResults;
-			}
-
+		
+		populateSearchResultsPage : function(data, viewName) {
+			
 			var output = '';
 			var childCount = data.searchResults.length;
 
@@ -138,7 +143,7 @@ var srch = function() {
 				output += _.renderSearchResultAsListItem(node, i, childCount, rowCount);
 			});
 
-			util.setHtmlEnhanced($("#searchResultsView"), output);
+			util.setHtmlEnhanced(viewName, output);
 		},
 
 		/*
@@ -149,10 +154,11 @@ var srch = function() {
 		renderSearchResultAsListItem : function(node, index, count, rowCount) {
 
 			var uid = node.uid;
+			console.log("renderSearchResult: "+uid);
 
 			/*
-			 * TODO: fix. This checking of "rep:" is just a hack for now to stop from
-			 * deleting things I won't want to allow to delete, but I will
+			 * TODO: fix. This checking of "rep:" is just a hack for now to stop
+			 * from deleting things I won't want to allow to delete, but I will
 			 * design this better later.
 			 */
 			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
@@ -160,27 +166,27 @@ var srch = function() {
 
 			var cssId = uid + _UID_ROWID_SUFFIX;
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
+			
+			var buttonBarHtml = _.makeButtonBarHtml(""+uid);
+			console.log("buttonBarHtml="+buttonBarHtml);
+			var content = render.renderNodeContent(node, true, true, true, true);
+
 			return render.tag("div", //
 			{
 				"class" : "node-table-row inactive-row",
 				"onClick" : "srch.clickOnSearchResultRow(this, '" + uid + "');", //
 				"id" : cssId
 			},// 
-			_.makeButtonBarHtml(uid) + render.tag("div", //
-			{
-				"id" : uid + "_srch_content"
-			}, render.renderNodeContent(node, true, true, true)));
+			buttonBarHtml//
+					+ render.tag("div", //
+					{
+						"id" : uid + "_srch_content"
+					}, content));
 		},
 
 		makeButtonBarHtml : function(uid) {
-
-			var gotoButton = render.tag("a", {
-				"onClick" : "srch.clickSearchNode('" + uid + "');",
-				"class" : "ui-btn ui-mini ui-btn-b ui-btn-inline ui-icon-carat-l ui-btn-icon-left"
-			}, //
-			"Go to Node");
-
-			return render.makeHorizontalFieldSet(gotoButton, "compact-field-contain");
+			var gotoButton = render.makeButton("Go to Node", uid, "srch.clickSearchNode('" + uid + "');");
+			return render.makeHorizontalFieldSet(gotoButton);
 		},
 
 		clickOnSearchResultRow : function(rowElm, uid) {
@@ -198,7 +204,7 @@ var srch = function() {
 			 */
 			srch.highlightRowNode = srch.uidToNodeMap[uid];
 			view.refreshTree(srch.highlightRowNode.id, true);
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 		},
 
 		/*

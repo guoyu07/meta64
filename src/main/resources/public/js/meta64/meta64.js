@@ -11,6 +11,9 @@ var meta64 = function() {
 
 	var _ = {
 
+		/* used as a kind of 'sequence' in the app, when unique vals a needed */
+		nextGuid : 0,
+
 		userName : "anonymous",
 		deviceWidth : 0,
 		deviceHeight : 0,
@@ -129,12 +132,46 @@ var meta64 = function() {
 		currentNodeId : null,
 		currentNodePath : null,
 
+		/* Maps from dialog module.domId to module instance */
+		dialogMap : {},
+
+		/* Maps from guid to Data Object */
+		dataObjMap : {},
+
+		/*
+		 * contains the dialog objects in stacking order from bottom to topmost.
+		 * If empty it means no dialogs currently displaying.
+		 */
+		dialogStack : [],
+
+		updateMainMenuPanel : function() {
+			popupMenuPg.build();
+			popupMenuPg.init();
+		},
+
+		registerDialog : function(dlg) {
+			_.dialogMap[dlg.domId] = dlg;
+		},
+
+		registerDataObject : function(data) {
+			data.guid = ++_.nextGuid;
+			_.dataObjMap[data.guid] = data;
+		},
+
+		getObjectByGuid : function(guid) {
+			var ret = _.dataObjMap[guid];
+			if (!ret) {
+				console.log("data object not found: guid=" + guid);
+			}
+			return ret;
+		},
+
 		inSimpleMode : function() {
 			return _.editModeOption === _.MODE_SIMPLE;
 		},
 
 		goToMainPage : function(rerender, forceServerRefresh) {
-			meta64.jqueryChangePage("#mainPage");
+			_.jqueryChangePage("mainTabName");
 
 			if (forceServerRefresh) {
 				_.treeDirty = true;
@@ -159,19 +196,199 @@ var meta64 = function() {
 		},
 
 		jqueryChangePage : function(pageName) {
-			$.mobile.pageContainer.pagecontainer("change", pageName);
+			var ironPages = document.querySelector("#mainIronPages");
+			ironPages.select(pageName);
 		},
 
-		changePage : function(pg) {
-			render.buildPage(pg);
-			$.mobile.pageContainer.pagecontainer("change", "#" + pg.domId);
+		/*
+		 * If data (if provided) must be the instance data for the current
+		 * instance of the dialog, and all the dialog methods are of course
+		 * singletons that accept this data parameter for any opterations.
+		 * (oldschool way of doing OOP with 'this' being first parameter
+		 * always).
+		 * 
+		 * Note: each data instance is required to have a guid numberic
+		 * property, unique to it.
+		 * 
+		 */
+		changePage : function(pg, data) {
+			if (typeof pg.tabId === 'undefined') {
+				console.log("oops, wrong object type passed to changePage function.");
+				return null;
+			}
+
+			if (pg.tabId != "popup") {
+				/* this is the same as setting using mainIronPages?? */
+				var paperTabs = document.querySelector("#mainPaperTabs");
+				paperTabs.select(pg.tabId);
+			}
+
+			/* Opening as a popup dialog */
+			if (pg.tabId == "popup") {
+				if (data == null) {
+					console.log("Warning: No data for popup: " + pg.tabId);
+				}
+
+				/*
+				 * get container where all dialogs are created (true polymer
+				 * dialogs)
+				 */
+				var modalsContainer = util.polyElm("modalsContainer");
+
+				/* suffix domId for this instance/guid */
+				var domId = data ? pg.domId + "-" + data.guid : pg.domId;
+
+				/*
+				 * TODO. IMPORTANT: need to put code in to remove this dialog
+				 * from the dom once it's closed, AND that same code should
+				 * delete the guid's object in map in this module
+				 */
+				var node = document.createElement("paper-dialog");
+				node.setAttribute("modal", "modal");
+				node.setAttribute("id", domId);
+				modalsContainer.node.appendChild(node);
+
+				Polymer.dom.flush(); // <---- is this needed ? todo
+				Polymer.updateStyles();
+
+				/* now we we finally can construct the dialog instance */
+				render.buildPage(pg, data);
+
+				console.log("Showing dialog: " + domId);
+
+				/* now open and display polymer dialog we just created */
+				var polyElm = util.polyElm(domId);
+				polyElm.node.refit();
+				polyElm.node.constrain();
+				polyElm.node.center();
+				polyElm.node.open();
+			} 
+			//Else a modeless dialog
+			else if (pg.tabId == "dialogsTabName") {
+				render.buildPage(pg);
+
+				_.setTopDialogStackItem(pg);
+				var paperTabs = document.querySelector("#dialogIronPages");
+				paperTabs.select(pg.domId);
+
+				pg.visible = true;
+				util.setVisibility("#" + pg.domId, pg.visible);
+			}
+			else {//else will be just an arbitrary panel
+				render.buildPage(pg);
+			}
 		},
 
+		setTopDialogStackItem : function(pg) {
+			var idx = _.dialogStack.indexOfObject(pg);
+
+			/* if dialog already top, nothing to do here */
+			if (idx == 0) {
+				return;
+			}
+			if (idx != -1) {
+				/* deletes item from position idx */
+				_.dialogStack.splice(idx, 1);
+			}
+			// arr.splice(index, 0, item); will insert item into arr at the
+			// specified index.
+			// todo: implement on prototype.
+			/*
+			 * Array.prototype.insert = function (index, item) {
+			 * this.splice(index, 0, item); };
+			 */
+			if (_.dialogStack.length == 0) {
+				_.dialogStack.push(pg);
+			} else {
+				_.dialogStack.splice(0, 0, pg);
+			}
+			console.log("DialogStack: " + _.dialogPath());
+		},
+
+		dialogPath : function() {
+			var path = '';
+			for (var i = 0; i < _.dialogStack.length; i++) {
+				var pg = _.dialogStack[i];
+				// console.log("STACKITEM["+i+"] "+util.printObject(pg));
+				path += "/" + pg.domId;
+			}
+			return path;
+		},
+
+		/* for now this is alias of changePage */
 		openDialog : function(pg) {
+			return _.changePage(pg);
+		},
+
+		/*
+		 * Id is optional dialog.domId that can be passed, but if not, simply
+		 * cancels dialog first child position
+		 */
+		cancelDialog : function(domId) {
+
+			/*
+			 * if this is the last dialog closing we can go ahead and
+			 * auto-select the data view
+			 */
+			if (_.dialogStack.length == 1) {
+				meta64.jqueryChangePage("mainTabName");
+				view.scrollToSelectedNode();
+			}
+
+			/* get dialog data object (non-element class) from the map */
+			var pg = _.dialogMap[domId];
+			if (pg == null) {
+				console.log("unable to find dialog page for: " + domId);
+				return;
+			}
+
+			var idx = _.dialogStack.indexOfObject(pg);
+			if (idx != -1) {
+				/* deletes item from position idx */
+				_.dialogStack.splice(idx, 1);
+			}
+
+			pg.visible = false;
+			util.setVisibility("#" + pg.domId, pg.visible);
+
+			/* now we have to activate that current 'top' dialog */
+			if (_.dialogStack.length > 0) {
+				_.changePage(_.dialogStack[0]);
+			}
+		},
+
+		/*
+		 * pg is JS module for the dialog (inside /pg/ folder usually)
+		 */
+		openDialog_unused : function(pg) {
+			// [not correct here-->]var paperTabs =
+			// Polymer.dom(this.root).querySelector("mainPaperTabs");
+
+			// correct for tab selecting
+			// var paperTabs = document.querySelector("#mainPaperTabs");
+			// paperTabs.select("dialogTabName");
+
 			render.buildPage(pg);
-			$.mobile.changePage("#" + pg.domId, {
-				role : "dialog"
-			});
+
+			/*
+			 * I think my problem wiht dialogs may have been i need this:
+			 * Polymer.dom(document).querySelector('#someId')
+			 */
+			var paperDialog = document.querySelector("#" + pg.domId + "DialogContainer");
+
+			/*
+			 * without the 'refit' the dialog will go fullscreen on second or
+			 * third display cycle
+			 */
+			paperDialog.autoFitOnAttach = true;
+			paperDialog.modal = true;
+			paperDialog.withBackdrop = true;
+			paperDialog.notifyResize();
+			paperDialog.refit();
+			paperDialog.center();
+			paperDialog.style = "width: 600px; height: 400px";
+
+			paperDialog.open();
 		},
 
 		popup : function() {
@@ -185,8 +402,7 @@ var meta64 = function() {
 
 			var prop;
 			for (prop in _.simpleModeNodePrefixBlackList) {
-				if (_.simpleModeNodePrefixBlackList.hasOwnProperty(prop)
-						&& node.name.startsWith(prop)) {
+				if (_.simpleModeNodePrefixBlackList.hasOwnProperty(prop) && node.name.startsWith(prop)) {
 					return true;
 				}
 			}
@@ -217,8 +433,7 @@ var meta64 = function() {
 				if (_.selectedNodes.hasOwnProperty(uid)) {
 					var node = _.uidToNodeMap[uid];
 					if (!node) {
-						console.log("unable to find uidToNodeMap for uid="
-								+ uid);
+						console.log("unable to find uidToNodeMap for uid=" + uid);
 					} else {
 						selArray[idx++] = node.id;
 					}
@@ -268,24 +483,22 @@ var meta64 = function() {
 				var elm = $("#ownerDisplay" + node.uid);
 				elm.html(" (Manager: " + ownerBuf + ")");
 				if (mine) {
-					util.changeOrAddClass(elm, "created-by-other",
-							"created-by-me");
+					util.changeOrAddClass(elm, "created-by-other", "created-by-me");
 				} else {
-					util.changeOrAddClass(elm, "created-by-me",
-							"created-by-other");
+					util.changeOrAddClass(elm, "created-by-me", "created-by-other");
 				}
 			}
 		},
 
 		updateNodeInfo : function(node) {
-			var prms = util.json("getNodePrivileges", {
+			var ironRes = util.json("getNodePrivileges", {
 				"nodeId" : node.id,
 				"includeAcl" : false,
 				"includeOwners" : true
 			});
 
-			prms.done(function(res) {
-				_.updateNodeInfoResponse(res, node);
+			ironRes.completes.then(function() {
+				_.updateNodeInfoResponse(ironRes.response, node);
 			});
 		},
 
@@ -308,16 +521,17 @@ var meta64 = function() {
 		 * the action name.
 		 */
 		addClickListeners : function() {
-			$("#openLoginPgButton").on("click", user.openLoginPg);
-			$("#navHomeButton").on("click", nav.navHome);
-			$("#navUpLevelButton").on("click", nav.navUpLevel);
+			// $("#openLoginPgButton").on("click", user.openLoginPg);
+			// $("#navHomeButton").on("click", nav.navHome);
+			// $("#navUpLevelButton").on("click", nav.navUpLevel);
 			// $("#propsToggleButton").on("click", props.propsToggle);
 			$("#deletePropertyButton").on("click", props.deleteProperty);
-			$("#editModeButton").on("click", edit.editMode);
+			// $("#editModeButton").on("click", edit.editMode);
 		},
 
 		openDonatePg : function() {
-			meta64.jqueryChangePage("#donatePg");
+			// poly remove
+			// jqueryChangePage("#donatePg");
 		},
 
 		getHighlightedNode : function() {
@@ -374,45 +588,77 @@ var meta64 = function() {
 			}
 		},
 
+		/*
+		 * Really need to use pub/sub event to broadcast enablement, and let
+		 * each component do this independently and decouple
+		 */
 		refreshAllGuiEnablement : function() {
 
+//			var selNodeCount = util.getPropertyCount(meta64.selectedNodes);
+//			var highlightNode = meta64.getHighlightedNode();
+//			var propsToggle = meta64.currentNode && !meta64.isAnonUser;
+//			var editMode = meta64.currentNode && !meta64.isAnonUser;
+//			var canFinishMoving = !util.nullOrUndef(edit.nodesToMove) && !_.isAnonUser;
+			
 			/* multiple select nodes */
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
+			console.log("selCount=" + selNodeCount);
+
 			var highlightNode = _.getHighlightedNode();
 
-			util.setEnablement($("#navHomeButton"), true); // _.currentNode &&
+			util.setEnablement("navLogoutButton", !_.isAnonUser);
+			util.setEnablement("navHomeButton", true); // _.currentNode &&
 			// !nav.displayingHome());
-			util.setEnablement($("#navUpLevelButton"), _.currentNode
-					&& nav.parentVisibleToUser());
+			util.setEnablement("navUpLevelButton", _.currentNode && nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			/*
 			 * this leaves a hole in the toolbar if you hide it. Need to change
 			 * that
 			 */
-			util.setEnablement($("#propsToggleButton"), propsToggle);
+			util.setEnablement("propsToggleButton", propsToggle);
 
-			util.setEnablement($("#deletePropertyButton"), !_.isAnonUser);
+			util.setEnablement("deletePropertyButton", !_.isAnonUser);
 
-			var editMode = _.currentNode && !_.isAnonUser;
+			var allowEditMode = _.currentNode && !_.isAnonUser;
 			// console.log(">>>>>>>>>>>>>>> currentNode=" + _.currentNode + "
 			// anonUser=" + _.anonUser);
 			/*
 			 * this leaves a hole in the toolbar if you hide it. Need to change
 			 * that
 			 */
-			util.setEnablement($("#editModeButton"), editMode);
-			util.setEnablement($("#insNodeButton"), !_.isAnonUser
-					&& highlightNode != null);
-			util.setEnablement($("#createNodeButton"), !_.isAnonUser
-					&& highlightNode != null);
+			util.setEnablement("editModeButton", allowEditMode);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
+			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
+			util.setEnablement("clearSelectionsButton", !_.isAnonUser && _.selectedNodes.length > 0);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
+			util.setEnablement("finishMovingSelNodesButton", !_.isAnonUser && edit.nodesToMove != null);
 
-			util.setVisibility("#menuButton", !_.isAnonUser);
-			util.setVisibility("#openSignupPgButton", _.isAnonUser);
-			util.setVisibility("#mainMenuSearchButton", !_.isAnonUser
-					&& highlightNode != null);
-			util.setVisibility("#mainMenuTimelineButton", !_.isAnonUser
-					&& highlightNode != null);
+			util.setEnablement("insNodeButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("createNodeButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("changePasswordPgButton", !_.isAnonUser);
+			util.setEnablement("accountPreferencesPgButton", !_.isAnonUser);
+			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
+			util.setEnablement("manageAttachmentsButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("searchPgButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("timelineButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("showServerInfoButton", _.isAdminUser);
+			util.setEnablement("showFullNodeUrlButton", highlightNode != null);
+			util.setEnablement("refreshPageButton", !_.isAnonUser); 
+			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null); 
+			
+			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
+			util.setVisibility("propsToggleButton", !_.isAnonUser);
+			util.setVisibility("openLoginPgButton", _.isAnonUser); 
+			util.setVisibility("openSignupPgButton", _.isAnonUser); 
+			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
+			util.setVisibility("mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
+
+
+			Polymer.dom.flush(); // <---- is this needed ? todo
+			Polymer.updateStyles();
 		},
 
 		getSingleSelectedNode : function() {
@@ -448,19 +694,21 @@ var meta64 = function() {
 		},
 
 		anonPageLoadResponse : function(res) {
+
 			if (res.renderNodeResponse) {
 
-				util.setVisibility("#mainNodeContent", true);
-				util.setVisibility("#mainNodeStatusBar", true);
+				util.setVisibility("mainNodeContent", true);
+				util.setVisibility("mainNodeStatusBar", true);
 
 				render.renderPageFromData(res.renderNodeResponse);
+
 				_.refreshAllGuiEnablement();
 			} else {
-				util.setVisibility("#mainNodeContent", false);
-				util.setVisibility("#mainNodeStatusBar", false);
+				util.setVisibility("mainNodeContent", false);
+				util.setVisibility("mainNodeStatusBar", false);
 
 				console.log("setting listview to: " + res.content);
-				util.setHtmlEnhanced($("#listView"), res.content);
+				util.setHtmlEnhanced("listView", res.content);
 			}
 			render.renderMainPageControls();
 		},
@@ -500,8 +748,7 @@ var meta64 = function() {
 			 * also simplify code.
 			 */
 			node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED,
-					node);
+			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
 
 			// console.log("******* initNode uid=" + node.uid);
 			_.uidToNodeMap[node.uid] = node;
@@ -543,13 +790,17 @@ var meta64 = function() {
 		initApp : function() {
 			if (appInitialized)
 				return;
+
 			console.log("initApp running.");
 			appInitialized = true;
 
 			_.initConstants();
 			_.displaySignupMessage();
 
-			$(window).on("orientationchange", _.orientationHandler);
+			/*
+			 * Polymer disabled $(window).on("orientationchange",
+			 * _.orientationHandler);
+			 */
 
 			$(window).bind("beforeunload", function() {
 				return "Leave Meta64 ?";
@@ -565,7 +816,9 @@ var meta64 = function() {
 			 * $(window).on("unload", function() { user.logout(false); });
 			 */
 
-			_.addClickListeners();
+			/*
+			 * Polymer->disabled _.addClickListeners();
+			 */
 
 			_.deviceWidth = $(window).width();
 			_.deviceHeight = $(window).height();
@@ -587,19 +840,20 @@ var meta64 = function() {
 			 * doing it wrong here. This timer is correct in this case and
 			 * behaves superior to events.
 			 */
-			setInterval(function() {
-				var width = $(window).width();
+			/*
+			 * Polymer->disable
+			 * 
+			 * setInterval(function() { var width = $(window).width();
+			 * 
+			 * if (width != _.deviceWidth) { // console.log("Screen width
+			 * changed: " + width);
+			 * 
+			 * _.deviceWidth = width; _.deviceHeight = $(window).height();
+			 * 
+			 * _.screenSizeChange(); } }, 1500);
+			 */
 
-				if (width != _.deviceWidth) {
-					// console.log("Screen width changed: " + width);
-
-					_.deviceWidth = width;
-					_.deviceHeight = $(window).height();
-
-					_.screenSizeChange();
-				}
-			}, 1500);
-
+			_.updateMainMenuPanel();
 			_.refreshAllGuiEnablement();
 		},
 
@@ -640,21 +894,6 @@ var meta64 = function() {
 			}, _.anonPageLoadResponse);
 		}
 	};
-
-	// I decided no to use this technique to generate page content. I'm using
-	// meta64.showPage
-	// to ensure pages get created. Leaving this commented out in case it's
-	// needed for something in the future.
-	// $(document).on("pagecontainerbeforechange", function(event, data) {
-	//
-	// if (typeof data.toPage == "string") {
-	// pageMgr.buildPage(data.toPage);
-	// //}
-	// }
-	//
-	// // else if (typeof toPage == "object") {
-	// // }
-	// });
 
 	console.log("Module ready: meta64.js");
 	return _;

@@ -4,42 +4,27 @@ var renameNodePg = function() {
 
 	var _ = {
 		domId : "renameNodePg",
-
+		tabId : "dialogsTabName",
+		visible : false,
+		
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Rename Node</h2>");
+			var header = "<h2>Rename Node</h2>";
 
 			var curNodeNameDisplay = "<h3 id='curNodeNameDisplay'></h3>";
 
 			var formControls = render.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
-			var renameNodeButton = render.makeButton("Rename", "renameNodeButton", "b");
-			var backButton = render.makeBackButton("Close", "cancelRenameNodeButton", "a");
+			var renameNodeButton = render.makeButton("Rename", "renameNodeButton", "edit.renameNode();");
+			var backButton = render.makeBackButton("Close", "cancelRenameNodeButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(renameNodeButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				"class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			curNodeNameDisplay + form);
+			var mainContent = curNodeNameDisplay + form;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced($("#renameNodePg"), content);
-
-			$("#renameNodeButton").on("click", edit.renameNode);
+			util.setHtmlEnhanced("renameNodePg", content);
 		},
 
 		init : function() {

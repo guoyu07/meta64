@@ -7,10 +7,13 @@ var user = function() {
 		if (!meta64.isAnonUser) {
 			title += " - " + res.userName;
 		}
-		$("#headerUserName").html(title);
 
-		var loginEnable = meta64.isAnonUser;
-		$("#openLoginPgButton").text(loginEnable ? "Login" : "Logout");
+		$("#headerAppName").html(title);
+
+		/*
+		 * todo: commented for polymer var loginEnable = meta64.isAnonUser;
+		 * $("#openLoginPgButton").text(loginEnable ? "Login" : "Logout");
+		 */
 	}
 
 	/* TODO: move this into meta64 module */
@@ -21,15 +24,19 @@ var user = function() {
 		}
 		meta64.userName = res.userName;
 		meta64.isAdminUser = res.userName === "admin";
+		
 		meta64.isAnonUser = res.userName === "anonymous";
 		meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
+
 		meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
+
+		console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
 	}
 
 	/* ret is LoginResponse.java */
 	var _loginResponse = function(res, usr, pwd, usingCookies) {
 		if (util.checkSuccess("Login", res)) {
-			console.log("info.usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
+			console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
 			if (usr != "anonymous") {
 				_.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
@@ -37,7 +44,8 @@ var user = function() {
 				_.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
 			}
 
-			meta64.jqueryChangePage("#mainPage");
+			meta64.cancelDialog(loginPg.domId);
+			meta64.jqueryChangePage("mainTabName");
 
 			_setStateVarsUsingLoginResponse(res);
 
@@ -49,6 +57,7 @@ var user = function() {
 
 			/* set ID to be the page we want to show user right after login */
 			var id = null;
+
 			if (!util.emptyString(res.homeNodeOverride)) {
 				console.log("loading homeNodeOverride=" + res.homeNodeOverride);
 				id = res.homeNodeOverride;
@@ -80,13 +89,14 @@ var user = function() {
 		}
 	}
 
+	// res is JSON response object from server.
 	var _refreshLoginResponse = function(res) {
 		console.log("refreshLoginResponse");
 
-		// if (res.success) {
-		_setStateVarsUsingLoginResponse(res);
-		_setTitleUsingLoginResponse(res);
-		// }
+		if (res.success) {
+			_setStateVarsUsingLoginResponse(res);
+			_setTitleUsingLoginResponse(res);
+		}
 
 		meta64.loadAnonPageHome(false);
 	}
@@ -117,9 +127,14 @@ var user = function() {
 	var _ = {
 
 		twitterLogin : function() {
-			/* Remove warning dialog to ask user about leaving the page */
-			$(window).off("beforeunload");
-			window.location.href = window.location.origin + "/twitterLogin";
+			alert('not yet implemented.');
+			return;
+
+			/*
+			 * polymer Remove warning dialog to ask user about leaving the page
+			 * $(window).off("beforeunload"); window.location.href =
+			 * window.location.origin + "/twitterLogin";
+			 */
 		},
 
 		openSignupPg : function() {
@@ -150,23 +165,7 @@ var user = function() {
 		 * This method is ugly. It is the button that can be login *or* logout.
 		 */
 		openLoginPg : function() {
-
-			var loginEnable = meta64.isAnonUser;
-
-			/* Open login dialog */
-			if (loginEnable) {
-				// _.populateLoginPgFromCookies();
-				//
-				// /* make credentials visible only if not logged in */
-				// util.setVisibility("#loginCredentialFields",
-				// meta64.isAnonUser);
-
-				meta64.changePage(loginPg);
-			}
-			/* or log out immediately */
-			else {
-				_.logout(true);
-			}
+			meta64.openDialog(loginPg);
 		},
 
 		signup : function() {
@@ -206,6 +205,7 @@ var user = function() {
 		},
 
 		refreshLogin : function() {
+
 			console.log("refreshLogin.");
 
 			var callUsr, callPwd, usingCookies = false;
@@ -246,43 +246,39 @@ var user = function() {
 
 			console.log("refreshLogin with name: " + callUsr);
 
-			var prms = util.json("login", {
+			var ironRes = util.json("login", {
 				"userName" : callUsr,
 				"password" : callPwd,
 				"tzOffset" : new Date().getTimezoneOffset(),
 				"dst" : util.daylightSavingsTime
 			});
 
-			if (usingCookies) {
-				prms.done(function(res) {
-					_loginResponse(res, callUsr, callPwd, usingCookies);
-				});
-			} else {
-				prms.done(function(res) {
-					_refreshLoginResponse(res);
-				});
-			}
+			ironRes.completes.then(function() {
+
+				if (usingCookies) {
+					_loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
+				} else {
+					_refreshLoginResponse(ironRes.response);
+				}
+			});
 		},
 
 		login : function() {
 
+			meta64.cancelDialog(loginPg.domId);
+
 			var usr = $.trim($("#userName").val());
 			var pwd = $.trim($("#password").val());
 
-			/*
-			 * the json is in here twice because we happen to need to feed the
-			 * same INFO to the _loginResponse method. I'll just cod it this way
-			 * instead of creating a var to hold it.
-			 */
-			var prms = util.json("login", {
+			var ironRes = util.json("login", {
 				"userName" : usr,
 				"password" : pwd,
 				"tzOffset" : new Date().getTimezoneOffset(),
 				"dst" : util.daylightSavingsTime
 			});
 
-			prms.done(function(res) {
-				_loginResponse(res, usr, pwd);
+			ironRes.completes.then(function() {
+				_loginResponse(ironRes.response, usr, pwd);
 			});
 		},
 

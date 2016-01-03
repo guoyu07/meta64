@@ -21,12 +21,8 @@ var share = function() {
 		var ret = "";
 		$.each(aclEntry.privileges, function(index, privilege) {
 
-			var removeButton = render.tag("a", //
-			{
-				"onClick" : "share.removePrivilege('" + principal + "', '" + privilege.privilegeName + "');", //
-				"class" : "ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"
-			}, //
-			"Remove");
+			var removeButton = render.makeButton("Remove", "removePrivButton", //
+			"share.removePrivilege('" + principal + "', '" + privilege.privilegeName + "');");
 
 			var row = render.makeHorizontalFieldSet(removeButton);
 
@@ -58,7 +54,7 @@ var share = function() {
 		 */
 		populateSharingPg : function(res) {
 
-			var html = "<h2>Node Share Settings</h2>";
+			var html = "";
 
 			$.each(res.aclEntries, function(index, aclEntry) {
 				html += "<h4>User: " + aclEntry.principalName + "</h4>";
@@ -67,6 +63,7 @@ var share = function() {
 				}, _renderAclPrivileges(aclEntry.principalName, aclEntry));
 			});
 
+			/* todo: use actual polymer paper-checkbox here */
 			html += render.tag("input", {
 				"type" : "checkbox",
 				"name" : "allowPublicCommenting",
@@ -86,7 +83,7 @@ var share = function() {
 			// <label for="checkbox-2">I agree</label>
 			// </fieldset>
 			// </div>
-			util.setHtmlEnhanced($("#sharingListFieldContainer"), html);
+			util.setHtmlEnhanced("sharingListFieldContainer", html);
 
 			util.setCheckboxVal("#allowPublicCommenting", res.publicAppend);
 			$("#allowPublicCommenting").bind("change", _.publicCommentingChanged);
@@ -96,7 +93,7 @@ var share = function() {
 			var publicAppend = $("#allowPublicCommenting").is(":checked");
 
 			meta64.treeDirty = true;
-			
+
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,
 				"publicAppend" : publicAppend ? "true" : "false"

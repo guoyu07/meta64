@@ -35,12 +35,14 @@ var props = function() {
 			// setDataIconUsingId("#editModeButton", editMode ? "edit" :
 			// "forbidden");
 
-			var elm = $("#propsToggleButton");
-			elm.toggleClass("ui-icon-grid", meta64.showProperties);
-			elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
+			// fix for polymer 
+//			var elm = $("#propsToggleButton");
+//			elm.toggleClass("ui-icon-grid", meta64.showProperties);
+//			elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
+			
 			render.renderPageFromData();
 			view.scrollToSelectedNode();
-			meta64.jqueryChangePage("#mainPage");
+			meta64.jqueryChangePage("mainTabName");
 		},
 
 		/*
@@ -56,13 +58,13 @@ var props = function() {
 
 		deletePropertyImmediate : function(propName) {
 
-			var prms = util.json("deleteProperty", {
+			var ironRes = util.json("deleteProperty", {
 				"nodeId" : edit.editNode.id,
 				"propName" : propName
 			});
 
-			prms.done(function(res) {
-				_deletePropertyResponse(res, propName);
+			ironRes.completes.then(function() {
+				_deletePropertyResponse(ironRes.response, propName);
 			});
 		},
 
@@ -77,36 +79,30 @@ var props = function() {
 			{
 				var fieldPropNameId = "addPropertyNameTextContent";
 
-				field += render.tag("label", {
-					"for" : fieldPropNameId
-				}, "Name");
-
-				field += render.tag("textarea", {
+				field += render.tag("paper-textarea", {
 					"name" : fieldPropNameId,
 					"id" : fieldPropNameId,
-					"placeholder" : "Enter property name"
-				}, "");
+					"placeholder" : "Enter property name",
+					"label" : "Name"
+				}, "", true);
 			}
 
 			/* Property Value Field */
 			{
 				var fieldPropValueId = "addPropertyValueTextContent";
-
-				field += render.tag("label", {
-					"for" : fieldPropValueId
-				}, "Value");
-
-				field += render.tag("textarea", {
+				
+				field += render.tag("paper-textarea", {
 					"name" : fieldPropValueId,
 					"id" : fieldPropValueId,
-					"placeholder" : "Enter property text"
-				}, "");
+					"placeholder" : "Enter property text",
+					"label" : "Value"
+				}, "", true);
 			}
 
 			/* display the node path at the top of the edit page */
 			view.initEditPathDisplayById("#editPropertyPathDisplay");
 
-			util.setHtmlEnhanced($("#addPropertyFieldContainer"), field);
+			util.setHtmlEnhanced("addPropertyFieldContainer", field);
 		},
 
 		saveProperty : function() {
@@ -187,22 +183,29 @@ var props = function() {
 				console.log("prop multi-val[" + i + "]=" + propList[i]);
 				var id = fieldId + "_subProp" + i;
 
-				fields += render.tag("label", {
-					"for" : id
-				}, (i == 0 ? prop.name : "*") + "." + i);
+				//fields += render.tag("label", {
+				//	"for" : id
+				//}, (i == 0 ? prop.name : "*") + "." + i);
 
 				var propVal = isBinaryProp ? "[binary]" : propList[i];
-
+				var propValStr = propVal ? propVal : '';
+				propValStr = propVal.escapeForAttrib();
+				var label = (i == 0 ? prop.name : "*") + "." + i;
+					
 				if (isBinaryProp || isReadOnlyProp) {
-					fields += render.tag("textarea", {
+					fields += render.tag("paper-textarea", {
 						"id" : id,
 						"readonly" : "readonly",
-						"disabled" : "disabled"
-					}, propVal ? propVal : '');
+						"disabled" : "disabled",
+						"label" : label,
+						"value" : propValStr
+					}, '', true);
 				} else {
-					fields += render.tag("textarea", {
-						"id" : id
-					}, propVal ? propVal : '');
+					fields += render.tag("paper-textarea", {
+						"id" : id,
+						"label" : label,
+						"value" : propValStr
+					}, '', true);
 				}
 			}
 			return fields;
@@ -210,22 +213,29 @@ var props = function() {
 
 		makeSinglePropEditor : function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
 			console.log("Property single-type: " + prop.name);
-			var field = render.tag("label", {
-				"for" : fieldId
-			}, render.sanitizePropertyName(prop.name));
+			
+			var field = ''; 
 
 			var propVal = isBinaryProp ? "[binary]" : prop.value;
-
+			var label = render.sanitizePropertyName(prop.name);
+			var propValStr = propVal ? propVal : '';
+			propValStr = propValStr.escapeForAttrib();
+			console.log("editing: prop["+prop.name+"] val["+prop.val+"]");
+					
 			if (isReadOnlyProp || isBinaryProp) {
-				field += render.tag("textarea", {
+				field += render.tag("paper-textarea", {
 					"id" : fieldId,
 					"readonly" : "readonly",
-					"disabled" : "disabled"
-				}, propVal ? propVal : '');
+					"disabled" : "disabled",
+					"label" : label,
+					"value" : propValStr
+				}, '', true);
 			} else {
-				field += render.tag("textarea", {
-					"id" : fieldId
-				}, propVal ? propVal : '');
+				field += render.tag("paper-textarea", {
+					"id" : fieldId,
+					"label" : label,
+					"value" : propValStr
+				}, '', true);
 			}
 			return field;
 		},
@@ -261,7 +271,7 @@ var props = function() {
 		 */
 		renderProperties : function(properties) {
 			if (properties) {
-				var ret = "<table data-role='table' class='prop-table ui-responsive ui-shadow table-stripe property-text'>";
+				var ret = "<table class='property-text'>";
 				var propCount = 0;
 
 				/*

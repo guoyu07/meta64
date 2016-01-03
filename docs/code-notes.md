@@ -1,6 +1,6 @@
 ## Single Page Application (SPA)
 
-The app is a SPA and the main loading page is 'index.html', which is technically rendered by Spring+Thymeleaf, but it contains JQuery Mobile code in it, which is what does most of the magic. Once the initial page is loaded, REST/AJAX calls do the rest of the work of updating the page content HTML as the user navigates around the app. The same DIVs are simply reloaded with new content as new information is queried from the server and gotten back as JSON.
+The app is a SPA and the main loading page is 'index.html', which is technically rendered by Spring+Thymeleaf, but it contains Google Polymer components primarily, which is what does most of the magic. Once the initial page is loaded, REST/AJAX calls do the rest of the work of updating the page content HTML as the user navigates around the app. The same DIVs are simply reloaded with new content as new information is queried from the server and gotten back as JSON.
 
 ## JSON/Ajax Server Calls
 
@@ -45,9 +45,9 @@ To this... (in index.html)
 
     (profileName === '')
 
-## JQuery + JQueryMobile Javascript CDN
+## Polymer & Bower
 
-The default configurtion in the spring config files is to specify the CDN (Content Delivery Network) location of the minified versions of the jars if you are running in PRODUCTION profile, but for TEST and DEV profiles, it loads the normal (non minified) jars, and loads them from local folder.
+[tbd]
 
 ## Starting MongoDB
 
@@ -80,7 +80,10 @@ The configuration properties are set to use meta64-dev.com as the host name for 
     127.0.0.1 meta64-dev.com
     
 Note: On Windows this file is located in: **c:\Windows\System32\drivers\etc\hosts**. Also remember you need to run your text editor as administrative user in order to be able to edit that file. Do this with right click notepad.exe, and choosing "Run as Administator".  
-    
+
+Note: On Ubuntu: 
+
+	sudo gedit /etc/hosts    
     
 ## Encryption Key Config
 

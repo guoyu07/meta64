@@ -1,0 +1,17 @@
+#!/bin/bash
+./setenv.sh
+java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64.min.js" "../src/main/resources/public/js/meta64/**.js"
+
+cd ..
+
+ant -buildfile build.xml all
+
+mvn dependency:sources
+mvn dependency:resolve -Dclassifier=javadoc
+mvn clean package -DskipTests=true
+
+cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar /run-root/com.meta64.mobile-0.0.1-SNAPSHOT.jar
+
+read -p "All done."
+
+

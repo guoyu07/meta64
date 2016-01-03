@@ -247,7 +247,7 @@ public class Convert {
 			}
 		}
 		catch (Exception e) {
-			return "[date??]";
+			return "";
 		}
 	}
 

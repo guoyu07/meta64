@@ -4,9 +4,6 @@
 # TODO
 * Need to implement "forgot my password", and reset password without sending actual password to user, but instead a limited duration (like 5minutes) random code that can be used to login and change password.
 * need 'delete account' capability where user can leave meta64, and have all their data deleted from the server.
-* search results that have no results should show a message instead of just blank page!
-* search results header bar can scroll off screen. make it fixed at top just like main page header.
-  (attempting this caused problems, so the code is backed out, for now, by being commented out)
 * after changing edit mode (simple/advanced) need to refresh entire page from server
 * on search results screen, need a button to directly edit a node from there.
 * Edit button is not showing on page parent node (by design) but I need to show it I think.

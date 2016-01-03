@@ -3,42 +3,27 @@ console.log("running module: shareToPersonPg.js");
 var shareToPersonPg = function() {
 
 	var _ = {
-			domId : "shareToPersonPg",
-			
+		domId : "shareToPersonPg",
+		tabId : "dialogsTabName",
+		visible : false,
+
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"//,
-				//"data-position" : "fixed",
-				//"data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Share Node to Person</h2>");
+			var header = "<h2>Share Node to Person</h2>";
 
 			var formControls = render.makeEditField("User to Share With", "shareToUserName");
 
-			var shareButton = render.makeButton("Share", "shareNodeToPersonButton", "b", "ui-btn-icon-left ui-icon-check");
-			var backButton = render.makeBackButton("Close", "cancelShareNodeToPersonButton", "a");
+			var shareButton = render.makeBackButton("Share", "shareNodeToPersonButton", _.domId, "share.shareNodeToPerson();");
+			var backButton = render.makeBackButton("Close", "cancelShareNodeToPersonButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(shareButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				"class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
 			var internalMainContent = "Enter the username of the person you want to share this node with:";
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			internalMainContent + form);
+			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced($("#shareToPersonPg"), content);
-
-			$("#shareNodeToPersonButton").on("click", share.shareNodeToPerson);
+			util.setHtmlEnhanced("shareToPersonPg", content);
 		}
 	};
 

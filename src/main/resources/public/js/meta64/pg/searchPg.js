@@ -3,21 +3,18 @@ console.log("running module: searchPg.js");
 var searchPg = function() {
 
 	var _ = {
-			domId : "searchPg",
+		domId : "searchPg",
+		tabId : "dialogsTabName",
+		visible : false,
+
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"//,
-				//"data-position" : "fixed",
-				//"data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Search</h2>");
+			var header = "<h2>Search</h2>";
 
 			var formControls = render.makeEditField("Search", "searchText");
 
-			var searchButton = render.makeButton("Search", "searchNodesButton", "b", "ui-btn-icon-left ui-icon-check");
-			var backButton = render.makeBackButton("Close", "cancelSearchButton", "a");
+			var searchButton = render.makeButton("Search", "searchNodesButton", "srch.searchNodes();");
+			var backButton = render.makeBackButton("Close", "cancelSearchButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(searchButton + backButton);
 
 			var form = render.tag("div", //
@@ -27,22 +24,14 @@ var searchPg = function() {
 			formControls + buttonBar);
 
 			var internalMainContent = "";
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			internalMainContent + form);
+			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
+			util.setHtmlEnhanced("searchPg", content);
 
-			util.setHtmlEnhanced($("#searchPg"), content);
-
-			$("#searchNodesButton").on("click", srch.searchNodes);
-			
 			util.bindEnterKey("#searchText", srch.searchNodes)
 		},
-		
+
 		init : function() {
 			util.delayedFocus("#searchText");
 		}

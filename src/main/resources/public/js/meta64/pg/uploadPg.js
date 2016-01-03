@@ -4,16 +4,12 @@ var uploadPg = function() {
 
 	var _ = {
 		domId : "uploadPg",
+		tabId : "dialogsTabName",
+		visible : false,
 
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Upload File Attachment</h2>");
+			var header = "<h2>Upload File Attachment</h2>";
 
 			var uploadPathDisplay = render.tag("div", {//
 				"id" : "uploadPathDisplay",
@@ -64,22 +60,18 @@ var uploadPg = function() {
 			var uploadFromUrlDiv = render.tag("div", {//
 			}, uploadFromUrlField);
 
-			var uploadButton = render.makeButton("Upload", "uploadButton", "b", "ui-btn-icon-left ui-icon-check");
-			var deleteButton = render.makeButton("Delete", "deleteAttachmentButton", "a");
-			var backButton = render.makeBackButton("Close", "closeUploadButton", "a");
+			var uploadButton = render.makeButton("Upload", "uploadButton", "attachment.uploadFileNow();");
+			var deleteButton = render.makeButton("Delete", "deleteAttachmentButton", "attachment.deleteAttachment();");
+			var backButton = render.makeBackButton("Close", "closeUploadButton", _.domId);
+			
 			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
 
 			var mainContent = render.tag("div", //
 			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
 			}, //
 			uploadPathDisplay + uploadFieldContainer + divider + uploadFromUrlDiv + buttonBar);
 
-			util.setHtmlEnhanced($("#uploadPg"), header + mainContent);
-
-			$("#uploadButton").on("click", attachment.uploadFileNow);
-			$("#deleteAttachmentButton").on("click", attachment.deleteAttachment);
+			util.setHtmlEnhanced("uploadPg", header + mainContent);
 		},
 
 		init : function() {

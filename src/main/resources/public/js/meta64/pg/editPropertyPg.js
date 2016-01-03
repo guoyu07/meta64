@@ -4,36 +4,26 @@ var editPropertyPg = function() {
 
 	var _ = {
 		domId : "editPropertyPg",
+		tabId : "dialogsTabName",
+		visible : false,
 
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Edit Node Property</h2>");
+			var header = "<h2>Edit Node Property</h2>";
 
-			var savePropertyButton = render.makeButton("Save", "savePropertyButton", "b", "ui-btn-icon-left ui-icon-check");
-			var cancelEditButton = render.makeBackButton("Cancel", "editPropertyPgCloseButton", "a");
+			var savePropertyButton = render.makeBackButton("Save", "savePropertyButton", _.domId, "props.saveProperty();");
+			var cancelEditButton = render.makeBackButton("Cancel", "editPropertyPgCloseButton", _.domId);
+			
 			var buttonBar = render.makeHorzControlGroup(savePropertyButton + cancelEditButton);
 
 			var internalMainContent = "<div id='editPropertyPathDisplay' class='path-display-in-editor'></div>" + //
 			"<div id='addPropertyFieldContainer' class='ui-field-contain'></div>";
 
-			var mainContent = render.tag("div", //
-			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
-			}, //
-			internalMainContent + buttonBar);
+			var mainContent = internalMainContent + buttonBar;
 
 			var content = header + mainContent;
 
-			util.setHtmlEnhanced($("#editPropertyPg"), content);
-
-			$("#savePropertyButton").on("click", props.saveProperty);
+			util.setHtmlEnhanced("editPropertyPg", content);
 		},
 
 		init : function() {

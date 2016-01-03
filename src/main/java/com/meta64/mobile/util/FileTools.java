@@ -1,6 +1,8 @@
 package com.meta64.mobile.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 
 public class FileTools {
 
@@ -21,5 +23,18 @@ public class FileTools {
 		if (file.isDirectory()) return true;
 		boolean success = file.mkdirs();
 		return success;
+	}
+
+	public static void writeEntireFile(String fileName, String content) throws Exception {
+		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+		try {
+			out.write(content);
+			out.flush();
+		}
+		finally {
+			if (out != null) {
+				out.close();
+			}
+		}
 	}
 }

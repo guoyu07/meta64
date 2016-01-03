@@ -14,7 +14,7 @@ var loader = function() {
 		loadScript : function(url) {
 			console.log("Requesting Script: " + url);
 
-			var prms = $.ajax({
+			var prms = jQuery.ajax({
 				"dataType" : "script",
 				"cache" : true,
 				"url" : url
@@ -51,27 +51,34 @@ var loader = function() {
 
 			for (var i = 0; i < len; i++) {
 				var script = scripts[i];
+				console.log("Script: " + script);
+
 				var prms = _.loadScript(script + "?ver=" + cacheVersion);
 
-				prms.done(function() {
-					scriptsRemaining--;
-					console.log("Script Loaded Ok. [" + script + "] remaining=" + scriptsRemaining);
-					if (scriptsRemaining == 0) {
-						console.log("All scripts loaded!");
-						/*
-						 * It would be perfectly acceptable to call the
-						 * allScriptsLoaded here but we will go ahead and use
-						 * the deferreds approach instead. So the "when.apply"
-						 * below handles this.
-						 */
-						// allScriptsLoaded();
-					}
-				});
+				(function(script) {
+
+					prms.done(function() {
+						scriptsRemaining--;
+						console.log("Script Loaded Ok. [" + script
+								+ "] remaining=" + scriptsRemaining);
+						
+						if (scriptsRemaining == 0) {
+							console.log("All scripts loaded!");
+							/*
+							 * It would be perfectly acceptable to call the
+							 * allScriptsLoaded here but we will go ahead and
+							 * use the deferreds approach instead. So the
+							 * "when.apply" below handles this.
+							 */
+							// allScriptsLoaded();
+						}
+					});
+				})(script);
 
 				deferreds.push(prms);
 			}
 
-			$.when.apply($, deferreds).done(allScriptsLoaded);
+			$.when.apply(jQuery, deferreds).done(allScriptsLoaded);
 		}
 	};
 
@@ -79,4 +86,4 @@ var loader = function() {
 	return _;
 }();
 
-//# sourceURL=scriptLoader.js
+// # sourceURL=scriptLoader.js

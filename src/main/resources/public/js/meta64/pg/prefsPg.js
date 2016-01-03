@@ -4,26 +4,37 @@ var prefsPg = function() {
 
 	var _ = {
 		domId : "prefsPg",
+		tabId : "dialogsTabName",
+		visible : false,
+		
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Account Peferences</h2>");
+			var header = "<h2>Account Peferences</h2>";
 
-			var formControls = render.makeRadioButton("Simple", "editModeRadioGroup", "editModeSimple", true) + //
-			render.makeRadioButton("Advanced", "editModeRadioGroup", "editModeAdvanced", false);
+			var radioButtons = 
+				render.makeRadioButton("Simple", "editModeSimple") + //
+				render.makeRadioButton("Advanced", "editModeAdvanced");
+			
+			var radioButtonGroup = render.tag("paper-radio-group", {
+				"id" : "simpleModeRadioGroup",
+				"selected" : "editModeSimple"
+			}, radioButtons);
+			
+			var formControls = radioButtonGroup;
+			
 			var legend = "<legend>Edit Mode:</legend>";
 			var radioBar = render.makeHorzControlGroup(legend + formControls);
 
-			var saveButton = render.makeButton("Save", "savePreferencesButton", "b", "ui-btn-icon-left ui-icon-check");
-			var backButton = render.makeBackButton("Cancel", "cancelPreferencesPgButton", "a");
+			var saveButton = render.makeButton("Save", "savePreferencesButton", "prefs.savePreferences();");
+			var backButton = render.makeBackButton("Cancel", "cancelPreferencesPgButton", _.domId);
+			
 			var buttonBar = render.makeHorzControlGroup(saveButton + backButton);
 
-			var closeAccountButton = render.makeButton("Close Account", "closeAccountButton", "a");
+			var closeAccountButton = "";
+			/* disabling for polymer 
+			render.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
+			*/
+			
 			var closeAccountButtonBar = render.makeHorzControlGroup(closeAccountButton);
 			var closeAccountButtonBarDiv = render.tag("div", {
 				"class" : "close-account-bar"
@@ -31,23 +42,18 @@ var prefsPg = function() {
 
 			var form = render.tag("div", //
 			{
-				"class" : "ui-field-contain" //
 			}, //
 			radioBar + buttonBar);
 
 			var internalMainContent = "";
 			var mainContent = render.tag("div", //
 			{
-				"role" : "main", //
-				"class" : "ui-content dialog-content"
 			}, //
 			internalMainContent + form);
 
 			var content = header + mainContent + closeAccountButtonBarDiv;
 
-			util.setHtmlEnhanced($("#prefsPg"), content);
-			$("#savePreferencesButton").on("click", prefs.savePreferences);
-			$("#closeAccountButton").on("click", prefs.closeAccount);
+			util.setHtmlEnhanced("prefsPg", content);
 		}
 	};
 

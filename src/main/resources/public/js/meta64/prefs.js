@@ -5,7 +5,7 @@ var prefs = function() {
 	var _ = {
 		savePreferencesResponse : function(res) {
 			if (util.checkSuccess("Saving Preferences", res)) {
-				meta64.jqueryChangePage("#mainPage");
+				meta64.jqueryChangePage("mainTabName");
 				view.scrollToSelectedNode();
 			}
 		},
@@ -20,14 +20,16 @@ var prefs = function() {
 
 		closeAccount : function() {
 
-			confirmPg.areYouSure("Oh No!", "Close your Account? Are you sure? This was so unexpected!", "Yes, Close Account.", function() {
-				util.json("closeAccount", {}, _.closeAccountResponse);
-			});
+			confirmPg.areYouSure("Oh No!", "Close your Account? Are you sure? This was so unexpected!",
+					"Yes, Close Account.", function() {
+						util.json("closeAccount", {}, _.closeAccountResponse);
+					});
 		},
 
 		savePreferences : function() {
-			meta64.editModeOption = $("#editModeSimple").is(":checked") ? meta64.MODE_SIMPLE : meta64.MODE_ADVANCED;
-
+			var polyElm = util.polyElm("simpleModeRadioGroup");
+			meta64.editModeOption = polyElm.node.selected=="editModeSimple" ? meta64.MODE_SIMPLE :  meta64.MODE_ADVANCED;
+			
 			util.json("saveUserPreferences", {
 				"userPreferences" : {
 					"advancedMode" : meta64.editModeOption === meta64.MODE_ADVANCED
@@ -36,13 +38,13 @@ var prefs = function() {
 		},
 
 		populatePreferencesPg : function() {
-			$('#editModeSimple').prop('checked', meta64.editModeOption === meta64.MODE_SIMPLE).checkboxradio('refresh');
-			$('#editModeAdvanced').prop('checked', meta64.editModeOption === meta64.MODE_ADVANCED).checkboxradio('refresh');
+			var polyElm = util.polyElm("simpleModeRadioGroup");
+			polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? "editModeSimple" : "editModeAdvanced");
+			Polymer.dom.flush();
 		},
 
 		accountPreferencesPg : function() {
-
-			meta64.changePage(prefsPg);
+			meta64.openDialog(prefsPg);
 			_.populatePreferencesPg();
 		}
 	};

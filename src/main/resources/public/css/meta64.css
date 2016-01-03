@@ -16,6 +16,19 @@
 	font-style: normal;
 }
 
+.mainNodeContentStyle {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	background-color: lightGray;
+}
+
+.genericListItem {
+	padding-left: 15px;
+	margin-top: 10px;
+    margin-bottom: 15px;
+    border-left: 8px solid lightGray;
+}
+
 body {
 	font-family: Roboto, open_sansregular, Tahoma, Verdana, Arial;
 }
@@ -64,28 +77,7 @@ tr td div p {
 	margin-left: 10px;
 }
 
-.ui-field-contain>label ~ [class*="ui-"], .ui-field-contain .ui-controlgroup-controls
-	{
-	margin: 0;
-	margin-bottom: 10px;
-}
-
-/*
-Bold labels are more visible on a background image.
-*/
-.ui-mobile label, div.ui-controlgroup-label {
-	font-weight: bold;
-}
-
 .dialog-content {
-	/*
-	We have the ability to style our forms here, but this currenly is not used.
-	
-	background-image: url(/ibm-702-bright.jpg); 
-	background-size: 100% auto; 
-	background-repeat: no-repeat;
-	*/
-	
 }
 
 .created-by-me {
@@ -124,6 +116,7 @@ Bold labels are more visible on a background image.
 .header-text {
 	font-size: small;
 	margin-left: 16px;
+	padding: 10px;
 }
 
 .donate-center {
@@ -150,10 +143,10 @@ Bold labels are more visible on a background image.
 }
 
 .privilege-entry {
-	margin: 10px;
+	margin: 15px;
 	padding: 10px;
 	background: lightGray;
-	border-bottom: 3px solid gray;
+	border-left: 4px solid gray;
 }
 
 .jcr-content {
@@ -162,6 +155,15 @@ Bold labels are more visible on a background image.
 		becomes difficult to read.
 	*/
 	max-width: 800px;
+}
+
+.jcr-root-content {
+	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide 
+		becomes difficult to read.
+	*/
+	max-width: 800px;
+	background: lightGray;
 }
 
 .property-text {
@@ -198,7 +200,6 @@ Bold labels are more visible on a background image.
 }
 
 .path-display-in-editor {
-	background: lightGray;
 	padding: 10px;
 }
 

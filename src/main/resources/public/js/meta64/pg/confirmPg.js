@@ -13,9 +13,7 @@ var confirmPg = function() {
 		 * driven by guids
 		 */
 		domId : "confirmPg",
-
 		tabId : "popup",
-		//visible : false,
 
 		areYouSure : function(title, message, buttonText, callback) {
 

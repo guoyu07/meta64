@@ -78,13 +78,13 @@ var srch = function() {
 
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				alert("No node is selected to search under.");
+				messagePg.alert("No node is selected to search under.");
 				return;
 			}
 
-			var searchText = $.trim($("#searchText").val());
+			var searchText = util.getInputVal("searchText").trim();
 			if (util.emptyString(searchText)) {
-				alert("Enter search text.");
+				messagePg.alert("Enter search text.");
 				return;
 			}
 
@@ -98,7 +98,7 @@ var srch = function() {
 		timeline : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				alert("No node is selected to 'timeline' under.");
+				messagePg.alert("No node is selected to 'timeline' under.");
 				return;
 			}
 

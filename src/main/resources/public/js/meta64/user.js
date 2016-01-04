@@ -75,7 +75,7 @@ var user = function() {
 			_setTitleUsingLoginResponse(res);
 		} else {
 			if (usingCookies) {
-				alert("Cookie login failed.");
+				messagePg.alert("Cookie login failed.");
 
 				/*
 				 * blow away failed cookie credentials and reload page, should
@@ -108,7 +108,7 @@ var user = function() {
 
 	var _changePasswordResponse = function(res) {
 		if (util.checkSuccess("Change password", res)) {
-			alert("Password changed successfully.");
+			messagePg.alert("Password changed successfully.");
 		}
 	}
 
@@ -116,7 +116,7 @@ var user = function() {
 		if (util.checkSuccess("Signup new user", res)) {
 			user.populateLoginPgFromCookies();
 			meta64.changePage(loginPg);
-			alert("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)");
+			messagePg.alert("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)");
 		}
 	}
 
@@ -127,7 +127,7 @@ var user = function() {
 	var _ = {
 
 		twitterLogin : function() {
-			alert('not yet implemented.');
+			messagePg.alert('not yet implemented.');
 			return;
 
 			/*
@@ -169,14 +169,14 @@ var user = function() {
 		},
 
 		signup : function() {
-			var userName = util.getRequiredElement("#signupUserName").val();
-			var password = util.getRequiredElement("#signupPassword").val();
-			var email = util.getRequiredElement("#signupEmail").val();
-			var captcha = util.getRequiredElement("#signupCaptcha").val();
+			var userName = util.getInputVal("signupUserName");
+			var password = util.getInputVal("signupPassword");
+			var email = util.getInputVal("signupEmail");
+			var captcha = util.getInputVal("signupCaptcha");
 
 			/* no real validation yet, other than non-empty */
 			if (util.anyEmpty(userName, password, email, captcha)) {
-				alert('Sorry, you cannot leave any fields blank.');
+				messagePg.alert('Sorry, you cannot leave any fields blank.');
 				return;
 			}
 
@@ -266,9 +266,9 @@ var user = function() {
 		login : function() {
 
 			meta64.cancelDialog(loginPg.domId);
-
-			var usr = $.trim($("#userName").val());
-			var pwd = $.trim($("#password").val());
+			
+			var usr = util.getInputVal("userName").trim();
+			var pwd = util.getInputVal("password").trim();
 
 			var ironRes = util.json("login", {
 				"userName" : usr,
@@ -298,14 +298,15 @@ var user = function() {
 		},
 
 		changePassword : function() {
-			var pwd1 = util.getRequiredElement("#changePassword1").val();
-			var pwd2 = util.getRequiredElement("#changePassword2").val();
+			var pwd1 = util.getInputVal("changePassword1").trim();
+			var pwd2 = util.getInputVal("changePassword2").trim();
+			
 			if (pwd1 && pwd1.length >= 4 && pwd1 === pwd2) {
 				util.json("changePassword", {
 					"newPassword" : pwd1
 				}, _changePasswordResponse);
 			} else {
-				alert('Sorry, invalid password(s).');
+				messagePg.alert("Invalid password(s).");
 			}
 		},
 

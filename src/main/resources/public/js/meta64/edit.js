@@ -29,7 +29,7 @@ var edit = function() {
 
 	var _exportResponse = function(res) {
 		if (util.checkSuccess("Export", res)) {
-			alert("Export Successful.");
+			messagePg.alert("Export Successful.");
 			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
 		}
@@ -37,7 +37,7 @@ var edit = function() {
 
 	var _importResponse = function(res) {
 		if (util.checkSuccess("Import", res)) {
-			alert("Import Successful.");
+			messagePg.alert("Import Successful.");
 			view.refreshTree(null, false);
 			meta64.jqueryChangePage("mainTabName");
 			view.scrollToSelectedNode();
@@ -101,7 +101,7 @@ var edit = function() {
 
 	var _makeNodeReferencableResponse = function(res) {
 		if (util.checkSuccess("Make node referencable", res)) {
-			alert("This node is now referencable, and can be accessed by unique ID");
+			messagePg.alert("This node is now referencable, and can be accessed by unique ID");
 		}
 		view.refreshTree(null, false);
 	}
@@ -193,7 +193,7 @@ var edit = function() {
 		},
 
 		makeNodeReferencable : function() {
-			alert('not yet implemented');
+			messagePg.alert('not yet implemented');
 			return;
 
 			/*
@@ -246,7 +246,7 @@ var edit = function() {
 
 		saveNewNode : function(newNodeName) {
 			if (!newNodeName) {
-				newNodeName = util.getRequiredElement("#newNodeNameId").val();
+				newNodeName = util.getInputVal("newNodeNameId");
 			}
 
 			/*
@@ -321,7 +321,7 @@ var edit = function() {
 				util.json("saveNode", postData, _saveNodeResponse);
 				_sendNotificationPendingSave = false;
 			} else {
-				alert("You didn't change any information!");
+				messagePg.alert("You didn't change any information!");
 			}
 		},
 
@@ -400,16 +400,16 @@ var edit = function() {
 		},
 
 		renameNode : function() {
-			var newName = $("#newNodeNameEditField").val();
+			var newName = util.getInputVal("newNodeNameEditField");
 
 			if (util.emptyString(newName)) {
-				alert("Please enter a new node name.");
+				messagePg.alert("Please enter a new node name.");
 				return;
 			}
 
 			var highlightNode = meta64.getHighlightedNode();
 			if (!highlightNode) {
-				alert("Select a node to rename.");
+				messagePg.alert("Select a node to rename.");
 				return;
 			}
 
@@ -430,10 +430,10 @@ var edit = function() {
 
 		exportNodes : function() {
 			var highlightNode = meta64.getHighlightedNode();
-			var targetFileName = util.getRequiredElement("#exportTargetNodeName").val();
+			var targetFileName = util.getInputVal("exportTargetNodeName");
 
 			if (util.emptyString(targetFileName)) {
-				alert("Please enter a name for the export file.");
+				messagePg.alert("Please enter a name for the export file.");
 				return;
 			}
 
@@ -451,10 +451,10 @@ var edit = function() {
 
 		importNodes : function() {
 			var highlightNode = meta64.getHighlightedNode();
-			var sourceFileName = util.getRequiredElement("#importTargetNodeName").val();
+			var sourceFileName = util.getInputVal("importTargetNodeName");
 
 			if (util.emptyString(sourceFileName)) {
-				alert("Please enter a name for the import file.");
+				messagePg.alert("Please enter a name for the import file.");
 				return;
 			}
 
@@ -470,7 +470,7 @@ var edit = function() {
 			var node = meta64.uidToNodeMap[uid];
 			if (!node) {
 				_.editNode = null;
-				alert("Unknown nodeId in editNodeClick: " + uid);
+				messagePg.alert("Unknown nodeId in editNodeClick: " + uid);
 				return;
 			}
 			_.editingUnsavedNode = false;
@@ -579,8 +579,6 @@ var edit = function() {
 			{
 				"raised" : "raised",
 				"onClick" : "props.clearProperty('" + fieldId + "');" //
-				// "class" : "ui-btn ui-btn-inline ui-icon-back
-			// ui-btn-icon-left"
 			}, //
 			"Clear");
 
@@ -600,8 +598,6 @@ var edit = function() {
 					// "onClick" : function() {
 				// props.deleteProperty(prop.name);
 				// }, //
-				// "class" : "ui-btn ui-btn-inline ui-icon-delete
-				// ui-btn-icon-left"
 				}, //
 				"Del");
 
@@ -614,8 +610,6 @@ var edit = function() {
 				{
 					"raised" : "raised",
 					"onClick" : "props.addSubProperty('" + fieldId + "');" //
-					// "class" : "ui-btn ui-btn-inline ui-icon-star
-				// ui-btn-icon-left"
 				}, //
 				"Add Multi");
 			}
@@ -660,7 +654,7 @@ var edit = function() {
 
 			_parentOfNewNode = meta64.getHighlightedNode();
 			if (!_parentOfNewNode) {
-				alert("Tap a node to insert under.");
+				messagePg.alert("Tap a node to insert under.");
 				return;
 			}
 
@@ -720,7 +714,7 @@ var edit = function() {
 		deleteSelNodes : function() {
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
-				alert('You have not selected any nodes. Select nodes to delete first.');
+				messagePg.alert('You have not selected any nodes. Select nodes to delete first.');
 				return;
 			}
 
@@ -736,7 +730,7 @@ var edit = function() {
 
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
-				alert('You have not selected any nodes. Select nodes to move first.');
+				messagePg.alert('You have not selected any nodes. Select nodes to move first.');
 				return;
 			}
 
@@ -750,7 +744,7 @@ var edit = function() {
 								meta64.selectedNodes = {}; // clear selections.
 								// No longer need
 								// or want any selections.
-								alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
+								messagePg.alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
 								meta64.refreshAllGuiEnablement();
 							});
 		},
@@ -783,7 +777,7 @@ var edit = function() {
 				var node = meta64.getHighlightedNode();
 
 				if (!node) {
-					alert("No node is selected.");
+					messagePg.alert("No node is selected.");
 				} else {
 					util.json("insertBook", {
 						"nodeId" : node.id,

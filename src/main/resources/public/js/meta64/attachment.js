@@ -44,7 +44,7 @@ var attachment = function() {
 
 		uploadFileNow : function() {
 
-			var sourceUrl = $("#uploadFromUrl").val();
+			var sourceUrl = util.getInputVal("uploadFromUrl");
 
 			/* if uploading from URL */
 			if (sourceUrl) {
@@ -80,7 +80,7 @@ var attachment = function() {
 				});
 
 				prms.fail(function() {
-					alert("Upload failed.");
+					messagePg.alert("Upload failed.");
 				});
 			}
 		},
@@ -90,7 +90,7 @@ var attachment = function() {
 
 			if (!node) {
 				_.uploadNode = null;
-				alert("No node is selected.");
+				messagePg.alert("No node is selected.");
 				return;
 			}
 

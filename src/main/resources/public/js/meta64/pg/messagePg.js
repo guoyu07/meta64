@@ -3,11 +3,13 @@ console.log("running module: messagePg.js");
 /* this is a popup dialog */
 var messagePg = function() {
 
-	var _title, _message, _callback;
-
 	var _ = {
 		domId : "messagePg",
 		tabId : "popup",
+
+		alert : function(message) {
+			_.showMessage(null, message, null);
+		},
 
 		showMessage : function(title, message, callback) {
 
@@ -26,10 +28,10 @@ var messagePg = function() {
 
 			var fields = "<h2 id='messagePgTitle-" + data.guid + "'></h2>" + //
 			"<p id='messagePgMessage-" + data.guid + "'></p>";
-			fields += render.makePopupBackButton("Ok", "messagePgOkButton-" + data.guid, _.domId, "messagePg.runCallback("
-					+ data.guid + ");");
+			fields += render.makePopupBackButton("Ok", "messagePgOkButton-" + data.guid, _.domId,
+					"messagePg.runCallback(" + data.guid + ");");
 
-			util.setHtmlEnhanced("messagePg-"+data.guid, fields);
+			util.setHtmlEnhanced("messagePg-" + data.guid, fields);
 		},
 
 		/* todo move to meta64 mod */
@@ -41,7 +43,9 @@ var messagePg = function() {
 		},
 
 		init : function(data) {
-			$("#messagePgTitle-" + data.guid).text(data.title);
+			if (data.title) {
+				$("#messagePgTitle-" + data.guid).text(data.title);
+			}
 			$("#messagePgMessage-" + data.guid).html(data.message);
 		}
 	};
@@ -50,4 +54,4 @@ var messagePg = function() {
 	return _;
 }();
 
-//# sourceURL=messagePg.js
+// # sourceURL=messagePg.js

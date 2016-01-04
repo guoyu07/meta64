@@ -357,40 +357,6 @@ var meta64 = function() {
 			}
 		},
 
-		/*
-		 * pg is JS module for the dialog (inside /pg/ folder usually)
-		 */
-		openDialog_unused : function(pg) {
-			// [not correct here-->]var paperTabs =
-			// Polymer.dom(this.root).querySelector("mainPaperTabs");
-
-			// correct for tab selecting
-			// var paperTabs = document.querySelector("#mainPaperTabs");
-			// paperTabs.select("dialogTabName");
-
-			render.buildPage(pg);
-
-			/*
-			 * I think my problem wiht dialogs may have been i need this:
-			 * Polymer.dom(document).querySelector('#someId')
-			 */
-			var paperDialog = document.querySelector("#" + pg.domId + "DialogContainer");
-
-			/*
-			 * without the 'refit' the dialog will go fullscreen on second or
-			 * third display cycle
-			 */
-			paperDialog.autoFitOnAttach = true;
-			paperDialog.modal = true;
-			paperDialog.withBackdrop = true;
-			paperDialog.notifyResize();
-			paperDialog.refit();
-			paperDialog.center();
-			paperDialog.style = "width: 600px; height: 400px";
-
-			paperDialog.open();
-		},
-
 		popup : function() {
 			render.buildPage(popupMenuPg);
 			$("#" + popupMenuPg.domId).popup("open");
@@ -516,19 +482,6 @@ var meta64 = function() {
 			}
 		},
 
-		/*
-		 * All action function names must end with 'Action', and are prefixed by
-		 * the action name.
-		 */
-		addClickListeners : function() {
-			// $("#openLoginPgButton").on("click", user.openLoginPg);
-			// $("#navHomeButton").on("click", nav.navHome);
-			// $("#navUpLevelButton").on("click", nav.navUpLevel);
-			// $("#propsToggleButton").on("click", props.propsToggle);
-			$("#deletePropertyButton").on("click", props.deleteProperty);
-			// $("#editModeButton").on("click", edit.editMode);
-		},
-
 		openDonatePg : function() {
 			// poly remove
 			// jqueryChangePage("#donatePg");
@@ -593,40 +546,23 @@ var meta64 = function() {
 		 * each component do this independently and decouple
 		 */
 		refreshAllGuiEnablement : function() {
-
-//			var selNodeCount = util.getPropertyCount(meta64.selectedNodes);
-//			var highlightNode = meta64.getHighlightedNode();
-//			var propsToggle = meta64.currentNode && !meta64.isAnonUser;
-//			var editMode = meta64.currentNode && !meta64.isAnonUser;
-//			var canFinishMoving = !util.nullOrUndef(edit.nodesToMove) && !_.isAnonUser;
 			
 			/* multiple select nodes */
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
-			console.log("selCount=" + selNodeCount);
 
 			var highlightNode = _.getHighlightedNode();
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
-			util.setEnablement("navHomeButton", true); // _.currentNode &&
-			// !nav.displayingHome());
+			util.setEnablement("navHomeButton", true);
 			util.setEnablement("navUpLevelButton", _.currentNode && nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
-			/*
-			 * this leaves a hole in the toolbar if you hide it. Need to change
-			 * that
-			 */
 			util.setEnablement("propsToggleButton", propsToggle);
 
 			util.setEnablement("deletePropertyButton", !_.isAnonUser);
 
 			var allowEditMode = _.currentNode && !_.isAnonUser;
-			// console.log(">>>>>>>>>>>>>>> currentNode=" + _.currentNode + "
-			// anonUser=" + _.anonUser);
-			/*
-			 * this leaves a hole in the toolbar if you hide it. Need to change
-			 * that
-			 */
+
 			util.setEnablement("editModeButton", allowEditMode);
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
@@ -816,10 +752,6 @@ var meta64 = function() {
 			 * $(window).on("unload", function() { user.logout(false); });
 			 */
 
-			/*
-			 * Polymer->disabled _.addClickListeners();
-			 */
-
 			_.deviceWidth = $(window).width();
 			_.deviceHeight = $(window).height();
 
@@ -860,7 +792,7 @@ var meta64 = function() {
 		displaySignupMessage : function() {
 			var signupResponse = $("#signupCodeResponse").text();
 			if (signupResponse === "ok") {
-				alert("Signup complete. You may now login.");
+				messagePg.alert("Signup complete. You may now login.");
 			}
 		},
 

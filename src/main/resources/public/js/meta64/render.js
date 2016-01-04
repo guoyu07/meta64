@@ -1,7 +1,7 @@
 console.log("running module: render.js");
 
 var render = function() {
-	var _debug = true;
+	var _debug = false;
 
 	/*
 	 * This is the content displayed when the user signs in, and we see that
@@ -14,7 +14,6 @@ var render = function() {
 		{
 			"raised" : "raised",
 			"onClick" : "edit.createSubNode();"
-		// "class" : "ui-btn ui-btn-inline ui-icon-star ui-btn-icon-left"
 		}, "Create Content");
 
 		return createSubNodeButton;
@@ -239,7 +238,6 @@ var render = function() {
 			var selected = (focusNode && focusNode.uid === uid);
 
 			var buttonBarHtml = _.makeRowButtonBarHtml(uid, canMoveUp, canMoveDown, editingAllowed);
-
 			var bkgStyle = _.getNodeBkgImageStyle(node);
 
 			var cssId = uid + "_row";
@@ -260,7 +258,7 @@ var render = function() {
 		showNodeUrl : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				alert("You must first click on a node.");
+				messagePg.alert("You must first click on a node.");
 				return;
 			}
 			var url = window.location.origin + "?id=" + node.path;
@@ -473,15 +471,6 @@ var render = function() {
 		 */
 		renderMainPageControls : function() {
 			var html = '';
-
-			// if (srch.numSearchResults() > 0) {
-			//
-			// html += _.tag("paper-button", //
-			// {
-			// "raised" : "raised",
-			// "onClick" : "nav.showSearchPage();"
-			// }, "Back to Search Results");
-			// }
 
 			var hasContent = html.length > 0;
 			if (hasContent) {
@@ -800,16 +789,8 @@ var render = function() {
 				});
 			}
 
-			// var shortTag;
-			// if (tag.contains(" ")) {
-			// var spaceIdx = tag.indexOf(" ");
-			// shortTag = tag.substring(0, spaceIdx);
-			// } else {
-			// shortTag = tag;
-			// }
-
 			if (closeTag) {
-				ret += ">" + content + "</" + tag/* shortTag */+ ">";
+				ret += ">" + content + "</" + tag + ">";
 			} else {
 				ret += "/>";
 			}
@@ -884,7 +865,7 @@ var render = function() {
 				"raised" : "raised",
 				"dialog-confirm" : "dialog-confirm",
 				"id" : id,
-				"onClick" : /* "meta64.cancelDialog('" + domId + "');" + */callback
+				"onClick" : callback
 			}, text, true);
 		},
 

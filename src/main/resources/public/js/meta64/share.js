@@ -118,9 +118,9 @@ var share = function() {
 		},
 
 		shareNodeToPerson : function() {
-			var targetUser = $("#shareToUserName").val();
+			var targetUser = util.getInputVal("shareToUserName");
 			if (!targetUser) {
-				alert("Please enter a username");
+				messagePg.alert("Please enter a username");
 				return;
 			}
 
@@ -166,7 +166,7 @@ var share = function() {
 			var node = meta64.getHighlightedNode();
 
 			if (!node) {
-				alert("No node is selected.");
+				messagePg.alert("No node is selected.");
 				return;
 			}
 			_.sharingNode = node;

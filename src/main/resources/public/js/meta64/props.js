@@ -106,8 +106,8 @@ var props = function() {
 		},
 
 		saveProperty : function() {
-			var propertyNameData = $("#addPropertyNameTextContent").val();
-			var propertyValueData = $("#addPropertyValueTextContent").val();
+			var propertyNameData = util.getInputVal("addPropertyNameTextContent");
+			var propertyValueData = util.getInputVal("addPropertyValueTextContent");
 
 			var postData = {
 				nodeId : edit.editNode.id,
@@ -241,8 +241,8 @@ var props = function() {
 		},
 		
 		/*
-		 * Orders properties in some consisten manor appropriate to display in
-		 * gui. Currenetly all we are doing is moving any 'jcr:content' property
+		 * Orders properties in some consistent manor appropriate to display in
+		 * gui. Currently all we are doing is moving any 'jcr:content' property
 		 * to the beginning of the list
 		 * 
 		 * properties will be null or a list of PropertyInfo objects

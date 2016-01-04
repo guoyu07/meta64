@@ -63,13 +63,9 @@ var uploadPg = function() {
 			var uploadButton = render.makeButton("Upload", "uploadButton", "attachment.uploadFileNow();");
 			var deleteButton = render.makeButton("Delete", "deleteAttachmentButton", "attachment.deleteAttachment();");
 			var backButton = render.makeBackButton("Close", "closeUploadButton", _.domId);
-			
-			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
 
-			var mainContent = render.tag("div", //
-			{
-			}, //
-			uploadPathDisplay + uploadFieldContainer + divider + uploadFromUrlDiv + buttonBar);
+			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
+			var mainContent = uploadPathDisplay + uploadFieldContainer + divider + uploadFromUrlDiv + buttonBar;
 
 			util.setHtmlEnhanced("uploadPg", header + mainContent);
 		},

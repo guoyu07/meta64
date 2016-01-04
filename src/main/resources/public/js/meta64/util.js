@@ -2,7 +2,7 @@ console.log("running module: util.js");
 
 var util = function() {
 
-	var logAjax = true;
+	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
 
@@ -57,7 +57,7 @@ var util = function() {
 
 	var assertNotNull = function(varName) {
 		if (typeof eval(varName) === 'undefined') {
-			alert("Variable not found: " + varName)
+			messagePg.alert("Variable not found: " + varName)
 		}
 	}
 
@@ -155,7 +155,7 @@ var util = function() {
 
 					if (!timeoutMessageShown) {
 						timeoutMessageShown = true;
-						alert("Session timed out. Page will refresh.");
+						messagePg.alert("Session timed out. Page will refresh.");
 					}
 
 					$(window).off("beforeunload");
@@ -184,7 +184,7 @@ var util = function() {
 				// JSON.parse(xhr.responseText).exception;
 				// } catch (ex) {
 				// }
-				alert(msg);
+				messagePg.alert(msg);
 			});
 
 			return ironRequest;
@@ -261,7 +261,7 @@ var util = function() {
 
 					if (!timeoutMessageShown) {
 						timeoutMessageShown = true;
-						alert("Session timed out. Page will refresh.");
+						messagePg.alert("Session timed out. Page will refresh.");
 					}
 
 					$(window).off("beforeunload");
@@ -289,7 +289,7 @@ var util = function() {
 				// msg += "Response: " + JSON.parse(xhr.responseText).exception;
 				// } catch (ex) {
 				// }
-				alert(msg);
+				messagePg.alert(msg);
 			});
 
 			prms.complete(function() {
@@ -329,7 +329,7 @@ var util = function() {
 		 */
 		checkSuccess : function(opFriendlyName, res) {
 			if (!res.success) {
-				alert(opFriendlyName + " failed: " + res.message);
+				messagePg.alert(opFriendlyName + " failed: " + res.message);
 			}
 			return res.success;
 		},
@@ -368,7 +368,7 @@ var util = function() {
 		getPreviousPage : function() {
 			// get the ID of the previous page
 			var prevPage = '#' + $.mobile.activePage.prev('div[data-role="page"]')[0].id;
-			alert('prevPage=' + prevPage);
+			messagePg.alert('prevPage=' + prevPage);
 			return prevPage;
 		},
 
@@ -467,23 +467,24 @@ var util = function() {
 				var funcName = arguments[i] + "SliderChange";
 				var func = window[funcName];
 				if (typeof func !== "function") {
-					alert("Function not found: " + funcName);
+					messagePg.alert("Function not found: " + funcName);
 				}
 				var id = "#" + arguments[i] + "Slider";
 
 				if (!hookSlider(id, func)) {
-					alert("Failed to hook slider: " + arguments[i]);
+					messagePg.alert("Failed to hook slider: " + arguments[i]);
 					return;
 				}
 			}
 		},
 
+		/* like jquery: $("#someId").val(); */
+		getInputVal : function(id) {
+			return _.polyElm(id).node.value;
+		},
+		
 		hookSlider : function(id, func) {
 			_.getRequiredElement(id).change(func);
-			// function() {
-			// var slider_value = $("#slider-1").val();
-			// // do something..
-			// });
 			return true;
 		},
 
@@ -527,42 +528,11 @@ var util = function() {
 		 */
 		verifyType : function(obj, type, msg) {
 			if (typeof obj !== type) {
-				alert(msg);
+				messagePg.alert(msg);
 				return false;
 			}
 			return true;
 		},
-
-		// function setDataIconUsingId(id, dataIcon) {
-		// var elm = $(id);
-		// elm.attr('data-icon', dataIcon);
-		// elm.ehanceWithin();
-		// }
-
-		// setHtmlEnhancedById_original : function(elmId, content) {
-		// _.polyElm(elmId).node.innerHTML = content;
-		//			
-		// // // console.log("setting content: "+content+" on id "+elmId);
-		// // var elm = _.getRequiredElement(elmId);
-		// // if (elm) {
-		// // if (content==null) {
-		// // content = "";
-		// // }
-		// //
-		// // var polyElm = util.polyElm(elmId);
-		// // polyElm.node.innerHTML = content;
-		// //
-		// // //Polymer.dom(elm).innerHTML = content;
-		// // //elm.innerHTML = content;
-		// // //this.injectBoundHTML(content, elm);
-		// // //elm.html(content);
-		// // Polymer.dom.flush(); //<----is this required ? todo
-		// // //$(elm).enhanceWithin();
-		// // // console.log("setting is successful");
-		// // } else {
-		// // console.log("setting failed.");
-		// // }
-		// },
 
 		setHtmlEnhanced : function(id, content) {
 			if (content == null) {

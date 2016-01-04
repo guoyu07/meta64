@@ -17,13 +17,9 @@ var nav = function() {
 			return !_.displayingHome();
 		},
 
-//		showSearchPage : function() {
-//			meta64.changePage(searchResultsPg);
-//		},
-
 		upLevelResponse : function(res, id) {
 			if (!res || !res.node) {
-				alert("No data is visible to you above this node.");
+				messagePg.alert("No data is visible to you above this node.");
 			} else {
 				render.renderPageFromData(res);
 				meta64.highlightRowById(id, true);
@@ -136,7 +132,7 @@ var nav = function() {
 			meta64.highlightNode(node, true);
 
 			if (!node) {
-				alert("Unknown nodeId in openNode: " + uid);
+				messagePg.alert("Unknown nodeId in openNode: " + uid);
 			} else {
 				view.refreshTree(node.id, false);
 			}

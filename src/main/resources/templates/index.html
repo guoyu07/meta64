@@ -205,7 +205,7 @@
         </dom-module>
         <script src="scripts/app.js"></script>
         <script>/* 
-<![CDATA[*/
+<![CDATA[*/  
         console.log("Loading scripts.");
         
         $(window).load(function() {
@@ -253,7 +253,13 @@
         */
         loader.loadScripts(scripts, //
                 function() {
+                
+                                /*
+                                http://stackoverflow.com/questions/33265769/polymer-1-0-on-firefox-referenceerror-polymer-is-not-defined
+                                */
+                                addEventListener('WebComponentsReady', function() {
                         meta64.initApp();
+                                });
                 });
         });
 /*]]>

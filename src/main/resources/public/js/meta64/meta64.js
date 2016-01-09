@@ -212,7 +212,6 @@ var meta64 = function() {
 		 * 
 		 */
 		changePage : function(pg, data) {
-			debugger;
 			if (typeof pg.tabId === 'undefined') {
 				console.log("oops, wrong object type passed to changePage function.");
 				return null;
@@ -545,7 +544,6 @@ var meta64 = function() {
 			
 			/* multiple select nodes */
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
-
 			var highlightNode = _.getHighlightedNode();
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
@@ -559,14 +557,12 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("moveSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
-			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
-			util.setEnablement("clearSelectionsButton", !_.isAnonUser && _.selectedNodes.length > 0);
-			util.setEnablement("moveSelNodesButton", !_.isAnonUser && _.selectedNodes.length > 0);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
+			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
+			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("finishMovingSelNodesButton", !_.isAnonUser && edit.nodesToMove != null);
 
-			util.setEnablement("insNodeButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("createNodeButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("changePasswordPgButton", !_.isAnonUser);
 			util.setEnablement("accountPreferencesPgButton", !_.isAnonUser);
 			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
@@ -586,7 +582,6 @@ var meta64 = function() {
 			util.setVisibility("openSignupPgButton", _.isAnonUser); 
 			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
 			util.setVisibility("mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
-
 
 			Polymer.dom.flush(); // <---- is this needed ? todo
 			Polymer.updateStyles();

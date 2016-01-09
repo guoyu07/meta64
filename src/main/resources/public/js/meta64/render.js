@@ -339,7 +339,7 @@ var render = function() {
 					{
 						"raised" : "raised",
 						"onClick" : "edit.createSubNode('" + uid + "');"
-					}, "New");
+					}, "Add");
 				}
 
 				if (cnst.INS_ON_TOOLBAR) {
@@ -530,7 +530,6 @@ var render = function() {
 			 * is always the node displayed at the to of the page above all the
 			 * other nodes which are its child nodes.
 			 */
-			debugger;
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false);
 
 			// console.log("mainNodeContent: "+mainNodeContent);

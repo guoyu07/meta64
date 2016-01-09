@@ -184,8 +184,15 @@
                     <paper-header-panel main="main"
                                         id="headerPanelMain">
                         <paper-toolbar id="mainToolbar">
-                            <div id="headerAppName"
-                                 class="app-name">Meta64</div>
+                        	<!--
+                        	when implemented this button will toggle visibility of left-side menu  
+                        	<paper-icon-button icon="menu"></paper-icon-button>
+                        	-->
+                            <span id="headerAppName"
+                                 class="app-name title">Meta64</span>
+                            <paper-button id="navLogoutButton" onClick="nav.navHome();">Home</paper-button>
+                            <paper-button id="editModeButton" onClick="edit.editMode();">Edit</paper-button>
+    						<paper-button id="navHomeButton" onClick="user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)

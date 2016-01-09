@@ -13,8 +13,8 @@ var cnst = function() {
 		COOKIE_LOGIN_STATE : cookiePrefix + "loginState",
 		BR : "<div class='vert-space'></div>",
 		INSERT_ATTACHMENT : "{{insert-attachment}}",
-		NEW_ON_TOOLBAR : false,
-		INS_ON_TOOLBAR : false
+		NEW_ON_TOOLBAR : true,
+		INS_ON_TOOLBAR : true
 	};
 
 	console.log("Module ready: cnst.js");

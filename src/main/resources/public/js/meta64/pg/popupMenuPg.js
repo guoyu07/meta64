@@ -42,13 +42,7 @@ var popupMenuPg = function() {
 			 */
 			var navItems = //
 			_menuItem("Signup", "openSignupPgButton", "user.openSignupPg();") + // 
-			_menuItem("Login", "openLoginPgButton", "user.openLoginPg();") + // 
-
-			_menuItem("Logout", "navLogoutButton", "user.logout(true);") + // 
-			_menuItem("Home", "navHomeButton", "nav.navHome();") + // 
-			_menuItem("Insert Node", "insNodeButton", "edit.insertNode();") + // 
-			_menuItem("New Node", "createNodeButton", "edit.createSubNodeUnderHighlight();") + // 
-			_menuItem("Edit Mode", "editModeButton", "edit.editMode();"); // 
+			_menuItem("Login", "openLoginPgButton", "user.openLoginPg();"); // 
 			var navMenu = _makeTopLevelMenu("Navigate", navItems);
 
 			var myAccountItems = //

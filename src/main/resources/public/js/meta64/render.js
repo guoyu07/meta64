@@ -525,6 +525,12 @@ var render = function() {
 			// String mainNodePath =_.formatPath(data.node);
 			// now set to content at dom id mainSubHeading
 
+			/*
+			 * NOTE: mainNodeContent is the parent node of the page content, and
+			 * is always the node displayed at the to of the page above all the
+			 * other nodes which are its child nodes.
+			 */
+			debugger;
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false);
 
 			// console.log("mainNodeContent: "+mainNodeContent);
@@ -532,6 +538,8 @@ var render = function() {
 				var uid = data.node.uid;
 				var cssId = uid + "_row";
 				var buttonBar = "";
+				var upLevelButton = "";
+				var editNodeButton = "";
 
 				/* Add edit button if edit mode and this isn't the root */
 				if (meta64.editMode && data.node.path != "/" &&
@@ -543,24 +551,38 @@ var render = function() {
 				!props.isNonOwnedNode(data.node)) {
 
 					/* Construct Create Subnode Button */
-					var editNodeButton = _.tag("paper-button", //
+					editNodeButton = _.tag("paper-button", //
 					{
 						"raised" : "raised",
 						"onClick" : "edit.runEditNode('" + uid + "');"
 					}, "Edit");
-					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}
 
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
+				
+				if (meta64.currentNode && nav.parentVisibleToUser()) {
+
+					/* Construct Create Subnode Button */
+					upLevelButton = _.tag("paper-button", //
+					{
+						"class" : "highlight-button",
+						"raised" : "raised",
+						"onClick" : "nav.navUpLevel();"
+					}, "Up Level");
+				}
+
+				if (upLevelButton || editNodeButton) {
+					buttonBar = _.makeHorizontalFieldSet(upLevelButton + editNodeButton);
+				}
 
 				var content = _.tag("div", //
 				{
 					"class" : (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');",
 					"id" : cssId
-					
-					//todo: bkgStyle not used, remove.
+
+				// todo: bkgStyle not used, remove.
 				// ,
 				// "style" : bkgStyle
 				},// 

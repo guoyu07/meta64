@@ -46,7 +46,6 @@ var popupMenuPg = function() {
 
 			_menuItem("Logout", "navLogoutButton", "user.logout(true);") + // 
 			_menuItem("Home", "navHomeButton", "nav.navHome();") + // 
-			_menuItem("Up Level", "navUpLevelButton", "nav.navUpLevel();") + // 
 			_menuItem("Insert Node", "insNodeButton", "edit.insertNode();") + // 
 			_menuItem("New Node", "createNodeButton", "edit.createSubNodeUnderHighlight();") + // 
 			_menuItem("Edit Mode", "editModeButton", "edit.editMode();"); // 

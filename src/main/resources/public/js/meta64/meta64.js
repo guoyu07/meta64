@@ -550,7 +550,6 @@ var meta64 = function() {
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
 			util.setEnablement("navHomeButton", true);
-			util.setEnablement("navUpLevelButton", _.currentNode && nav.parentVisibleToUser());
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			util.setEnablement("propsToggleButton", propsToggle);

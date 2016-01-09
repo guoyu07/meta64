@@ -212,6 +212,7 @@ var meta64 = function() {
 		 * 
 		 */
 		changePage : function(pg, data) {
+			debugger;
 			if (typeof pg.tabId === 'undefined') {
 				console.log("oops, wrong object type passed to changePage function.");
 				return null;
@@ -480,11 +481,6 @@ var meta64 = function() {
 			} else {
 				return node.path;
 			}
-		},
-
-		openDonatePg : function() {
-			// poly remove
-			// jqueryChangePage("#donatePg");
 		},
 
 		getHighlightedNode : function() {

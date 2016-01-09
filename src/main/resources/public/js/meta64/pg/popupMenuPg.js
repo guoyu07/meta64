@@ -55,10 +55,10 @@ var popupMenuPg = function() {
 			var myAccountItems = //
 			_menuItem("Change Password", "changePasswordPgButton", "user.changePasswordPg();") + // 
 			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + // 
-			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();"); // 
+			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();")+ // 
 			// _menuItem("Full Repository Export", "fullRepositoryExport", "
 			// edit.fullRepositoryExport();") + //
-			// _menuItem("Donate", "donatePgButton", "meta64.openDonatePg();");
+			_menuItem("Donate", "donatePgButton", "donatePg.open();");
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
 			var editMenuItems = //

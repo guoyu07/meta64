@@ -6,23 +6,29 @@
 # Trouble with Tidy: check for "- -" where "--" was needed.
 #
 
-timestamp=`eval date +%Y-%m-%d-%s`
-backupFolder=/ferguson/meta64Oak-private/auto-bak
+export timestamp=`eval date +%Y-%m-%d-%s`
+export backupFolder=/ferguson/meta64Oak-private/auto-bak
 
 #todo this tidy stuff should be wrapped in a callable script for DRY.
 
-cd /ferguson/meta64Oak/src/main/resources/templates
-cp index.html $backupFolder/index-$timestamp.html
-tidy -config /ferguson/meta64Oak/tidy-config.txt index.html > $backupFolder/index-out.html
-cp $backupFolder/index-out.html index.html
-read -p "Tidy done. index.htm."
+./run-tidy.sh /ferguson/meta64Oak/src/main/resources/templates index
+./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs main-tabs
+./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/donate-panel donate-panel
+
+read -p "temp halt"
+
+#cd /ferguson/meta64Oak/src/main/resources/templates
+#cp index.html $backupFolder/index-$timestamp.html
+#tidy -config /ferguson/meta64Oak/tidy-config.txt index.html > $backupFolder/index-out.html
+#cp $backupFolder/index-out.html index.html
+#read -p "Tidy done. index.htm."
 
 
-cd /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs
-cp main-tabs.html $backupFolder/main-tabs-$timestamp.html
-tidy -config /ferguson/meta64Oak/tidy-config.txt main-tabs.html > $backupFolder/main-tabs-out.html
-cp $backupFolder/main-tabs-out.html main-tabs.html
-read -p "Tidy done. /elements/main-tabs"
+#cd /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs
+#cp main-tabs.html $backupFolder/main-tabs-$timestamp.html
+#tidy -config /ferguson/meta64Oak/tidy-config.txt main-tabs.html > $backupFolder/main-tabs-out.html
+#cp $backupFolder/main-tabs-out.html main-tabs.html
+#read -p "Tidy done. /elements/main-tabs"
 
 
 #go back to folder with this script in it. sort of 'home' for this script

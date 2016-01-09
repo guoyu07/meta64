@@ -52,6 +52,7 @@ var scripts = (profileName === 'prod') ? [ "/js/meta64.min.js" ] : //
 "/js/meta64/view.js", //
 "/js/meta64/pg/popupMenuPg.js",//
 "/js/meta64/pg/confirmPg.js",//
+"/js/meta64/pg/donatePg.js",//
 "/js/meta64/pg/messagePg.js",//
 "/js/meta64/pg/searchResultsPg.js",//
 "/js/meta64/pg/loginPg.js",//

@@ -189,14 +189,16 @@
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)
+                        
+                        WARNING: do not try using this: </main-tabs> polymer chokes on that and will truncate everything
+                        after the tag (at least in its parent element)
                         -->
-                        <main-tabs />
+                        <main-tabs></main-tabs>
                     </paper-header-panel>
                 </paper-drawer-panel>
             </template>
         </dom-module>
-
-		<!-- Warning: This script must be here, at end of body. -->
+        <!-- Warning: This script must be here, at end of body. -->
         <script src="/js/app.js"></script>
     </body>
 </html>

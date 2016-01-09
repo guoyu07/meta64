@@ -66,9 +66,6 @@ var popupMenuPg = function() {
 			_menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + // 
 			_menuItem("Finish Moving", "finishMovingSelNodesButton", "edit.finishMovingSelNodes();") + // 
 
-			/*
-			 * todo: polymer code fails. will investigage later.
-			 */
 			_menuItem("Rename", "renameNodePgButton", "edit.openRenameNodePg();") + //
 			_menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();") + // 
 			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();"); // 

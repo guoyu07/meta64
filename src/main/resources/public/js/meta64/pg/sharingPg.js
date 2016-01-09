@@ -23,7 +23,7 @@ var sharingPg = function() {
 			var mainContent = internalMainContent + buttonBar;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("sharingPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		},
 
 		init : function() {

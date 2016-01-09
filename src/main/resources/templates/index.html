@@ -183,17 +183,9 @@
                     <!-- Main Area -->
                     <paper-header-panel main="main"
                                         id="headerPanelMain">
-                        <!-- 
-                        Main App Header (Colored region at top RHS)
-                        -->
                         <paper-toolbar id="mainToolbar">
                             <div id="headerAppName"
                                  class="app-name">Meta64</div>
-                            <!-- 
-                            <div class="bottom bottom-container center horizontal layout">
-                                <div id="mainSubHeading" class="bottom-title paper-font-subhead">A new kind of Semantic Web</div>
-                            </div>
-                            -->
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)
@@ -203,66 +195,8 @@
                 </paper-drawer-panel>
             </template>
         </dom-module>
-        <script src="scripts/app.js"></script>
-        <script>/* 
-<![CDATA[*/  
-        console.log("Loading scripts.");
-        
-        $(window).load(function() {
-        
-        //We load scripts from 'min' (minimized) single file for production, or each individual file
-        //if not in production.
-        
-        var scripts = (profileName === 'prod') ? [ "/js/meta64.min.js" ] : //
-        [ //
-        "/js/meta64/cnst.js",//
-        "/js/meta64/jcrCnst.js",//
-        "/js/meta64/attachment.js", //
-        "/js/meta64/edit.js", //
-        "/js/meta64/meta64.js", //
-        "/js/meta64/nav.js", //
-        "/js/meta64/prefs.js", //
-        "/js/meta64/props.js", //
-        "/js/meta64/render.js", //
-        "/js/meta64/search.js", //
-        "/js/meta64/share.js", //
-        "/js/meta64/user.js", //
-        "/js/meta64/util.js", //
-        "/js/meta64/view.js", //
-        "/js/meta64/pg/popupMenuPg.js",//
-        "/js/meta64/pg/confirmPg.js",//
-        "/js/meta64/pg/messagePg.js",//
-        "/js/meta64/pg/searchResultsPg.js",//
-        "/js/meta64/pg/loginPg.js",//
-        "/js/meta64/pg/signupPg.js",//
-        "/js/meta64/pg/prefsPg.js",//
-        "/js/meta64/pg/exportPg.js",//
-        "/js/meta64/pg/importPg.js",//
-        "/js/meta64/pg/searchPg.js",//
-        "/js/meta64/pg/changePasswordPg.js",//
-        "/js/meta64/pg/uploadPg.js",//
-        "/js/meta64/pg/editNodePg.js",//
-        "/js/meta64/pg/editPropertyPg.js",//
-        "/js/meta64/pg/shareToPersonPg.js",//,
-        "/js/meta64/pg/sharingPg.js", //
-        "/js/meta64/pg/renameNodePg.js", //
-        "/js/meta64/pg/timelinePg.js" //
-        ];
-        /*
-        Loads all JS files, and then calls initApp once they are all completely loaded
-        */
-        loader.loadScripts(scripts, //
-                function() {
-                
-                                /*
-                                http://stackoverflow.com/questions/33265769/polymer-1-0-on-firefox-referenceerror-polymer-is-not-defined
-                                */
-                                addEventListener('WebComponentsReady', function() {
-                        meta64.initApp();
-                                });
-                });
-        });
-/*]]>
-*/</script>
+
+		<!-- Warning: This script must be here, at end of body. -->
+        <script src="/js/app.js"></script>
     </body>
 </html>

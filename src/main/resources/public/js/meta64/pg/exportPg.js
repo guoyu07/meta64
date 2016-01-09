@@ -36,7 +36,7 @@ var exportPg = function() {
 			internalMainContent + form);
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("exportPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 
 			$("#exportNodesButton").on("click", edit.exportNodes);
 		}

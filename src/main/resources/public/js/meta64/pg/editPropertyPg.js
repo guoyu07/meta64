@@ -23,7 +23,7 @@ var editPropertyPg = function() {
 
 			var content = header + mainContent;
 
-			util.setHtmlEnhanced("editPropertyPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		},
 
 		init : function() {

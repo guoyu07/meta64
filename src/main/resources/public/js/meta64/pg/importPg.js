@@ -36,7 +36,7 @@ var importPg = function() {
 			internalMainContent + form);
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("importPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 
 			$("#importNodesButton").on("click", edit.importNodes);
 		}

@@ -53,7 +53,7 @@ var prefsPg = function() {
 
 			var content = header + mainContent + closeAccountButtonBarDiv;
 
-			util.setHtmlEnhanced("prefsPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		}
 	};
 

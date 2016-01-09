@@ -3,7 +3,7 @@ console.log("running module: view.js");
 var view = function() {
 
 	var scrollToSelNodePending = false;
-	
+
 	var _ = {
 		updateStatusBar : function() {
 			if (!meta64.currentNodeData)
@@ -70,15 +70,18 @@ var view = function() {
 				_.refreshTreeResponse(ironRes.response, nodeId, renderParentIfLeaf, newId);
 			});
 		},
-		
-		/* todo:
-		 * this scrolling is slightly imperfect. sometimes the code switches to a tab, which triggers scrollToTop, and then some
-		 * other code scrolls to a specific location a fraction of a second later. the 'pending' boolean here is a crutch for now
-		 * to help visual appeal.
+
+		/*
+		 * todo: this scrolling is slightly imperfect. sometimes the code
+		 * switches to a tab, which triggers scrollToTop, and then some other
+		 * code scrolls to a specific location a fraction of a second later. the
+		 * 'pending' boolean here is a crutch for now to help visual appeal
+		 * (i.e. stop if from scrolling to one place and then scrolling to a
+		 * different place a fraction of a second later)
 		 */
 		scrollToSelectedNode : function() {
 			scrollToSelNodePending = true;
-			
+
 			setTimeout(function() {
 				scrollToSelNodePending = false;
 				var elm = nav.getSelectedPolyElement();
@@ -87,11 +90,13 @@ var view = function() {
 				}
 			}, 1000);
 		},
-		
+
 		scrollToTop : function() {
-			if (scrollToSelNodePending) return;
+			if (scrollToSelNodePending)
+				return;
 			setTimeout(function() {
-				if (scrollToSelNodePending) return;
+				if (scrollToSelNodePending)
+					return;
 				var elm = util.polyElm("mainPaperTabs");
 				if (elm) {
 					elm.node.scrollIntoView();
@@ -129,4 +134,4 @@ var view = function() {
 	return _;
 }();
 
-//# sourceURL=view.js
+// # sourceURL=view.js

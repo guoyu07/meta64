@@ -45,7 +45,7 @@ var signupPg = function() {
 			form);
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("signupPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 
 			/*
 			 * $("#" + _.domId + "-main").css({ "backgroundImage" :

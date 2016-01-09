@@ -24,7 +24,7 @@ var renameNodePg = function() {
 			var mainContent = curNodeNameDisplay + form;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("renameNodePg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		},
 
 		init : function() {

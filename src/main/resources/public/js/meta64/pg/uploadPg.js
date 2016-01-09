@@ -67,7 +67,7 @@ var uploadPg = function() {
 			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
 			var mainContent = uploadPathDisplay + uploadFieldContainer + divider + uploadFromUrlDiv + buttonBar;
 
-			util.setHtmlEnhanced("uploadPg", header + mainContent);
+			util.setHtmlEnhanced(_.domId, header + mainContent);
 		},
 
 		init : function() {

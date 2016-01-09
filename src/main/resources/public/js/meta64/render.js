@@ -294,16 +294,7 @@ var render = function() {
 			return bkgImgStyle;
 		},
 
-		/*
-		 * TODO: This approach is going to be too heavy weight with large
-		 * numbers of rows, so I will need to make the main menu dropdown
-		 * operate on selected nodes when this happens (like rows > 100) rather
-		 * than having buttons on all rows.
-		 */
 		makeRowButtonBarHtml : function(uid, canMoveUp, canMoveDown, editingAllowed) {
-
-			/* TODO: make this a user option, each user can choose button sizes */
-			var mini = "true";
 
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
 			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";

@@ -133,7 +133,7 @@ var props = function() {
 			 * now add new empty property and populate it onto the screen
 			 * 
 			 * TODO: for performance I can do something simpler than
-			 * 'populateEditNodeDialog' here, but for now just re-rendering the
+			 * 'populateEditNodePg' here, but for now just re-rendering the
 			 * entire edit page.
 			 */
 			prop.values.push('');

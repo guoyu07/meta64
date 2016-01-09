@@ -23,7 +23,7 @@ var shareToPersonPg = function() {
 			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("shareToPersonPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		}
 	};
 

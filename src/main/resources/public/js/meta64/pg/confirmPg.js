@@ -1,9 +1,8 @@
 console.log("running module: confirmPg.js");
 
-/* Runs as Popup. With individal instances created in 'areYouSure' 
- * 
- * TODO: I can now get rid of all 'alerts' and do this instead.
- * */
+/*
+ * Runs as Popup. With individal instances created in 'areYouSure'
+ */
 
 var confirmPg = function() {
 
@@ -39,7 +38,7 @@ var confirmPg = function() {
 			fields += render.makePopupBackButton("No", "confirmPgNoButton-" + data.guid, _.domId);
 			var content = render.tag("div", {}, fields);
 
-			util.setHtmlEnhanced("confirmPg-" + data.guid, content);
+			util.setHtmlEnhanced(_.domId + "-" + data.guid, content);
 		},
 
 		/* todo move to meta64 mod */
@@ -61,4 +60,4 @@ var confirmPg = function() {
 	return _;
 }();
 
-//# sourceURL=confirmPg.js
+// # sourceURL=confirmPg.js

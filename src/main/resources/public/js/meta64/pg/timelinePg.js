@@ -12,7 +12,7 @@ var timelinePg = function() {
 			var mainContent = "<div id='timelineView'></div>";
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("timelinePg", content);
+			util.setHtmlEnhanced(_.domId, content);
 		},
 
 		init : function() {

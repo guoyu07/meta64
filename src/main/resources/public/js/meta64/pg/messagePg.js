@@ -31,7 +31,7 @@ var messagePg = function() {
 			fields += render.makePopupBackButton("Ok", "messagePgOkButton-" + data.guid, _.domId,
 					"messagePg.runCallback(" + data.guid + ");");
 
-			util.setHtmlEnhanced("messagePg-" + data.guid, fields);
+			util.setHtmlEnhanced(_.domId + "-" + data.guid, fields);
 		},
 
 		/* todo move to meta64 mod */
@@ -54,4 +54,4 @@ var messagePg = function() {
 	return _;
 }();
 
-//# sourceURL=messagePg.js
+// # sourceURL=messagePg.js

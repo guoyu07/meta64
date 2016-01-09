@@ -27,7 +27,7 @@ var searchPg = function() {
 			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("searchPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 
 			util.bindEnterKey("#searchText", srch.searchNodes)
 		},

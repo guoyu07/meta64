@@ -13,7 +13,7 @@ var searchResultsPg = function() {
 			var mainContent = "<div id='searchResultsView'></div>";
 
 			var content = header + mainContent;
-			util.setHtmlEnhanced("searchResultsPg", content);
+			util.setHtmlEnhanced(_.domId, content);
 
 		},
 

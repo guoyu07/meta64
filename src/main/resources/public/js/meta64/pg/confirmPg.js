@@ -30,13 +30,13 @@ var confirmPg = function() {
 
 		build : function(data) {
 
-			var fields = "<h2 id='confirmPgTitle-" + data.guid + "'></h2>" + //
+			var content = "<h2 id='confirmPgTitle-" + data.guid + "'></h2>" + //
 			"<p id='confirmPgMessage-" + data.guid + "'></p>";
 
-			fields += render.makePopupBackButton("Yes", "confirmPgYesButton-" + data.guid, _.domId,
-					"meta64.runCallback(" + data.guid + ");");
-			fields += render.makePopupBackButton("No", "confirmPgNoButton-" + data.guid, _.domId);
-			var content = render.tag("div", {}, fields);
+			var buttons = render.makePopupBackButton("Yes", "confirmPgYesButton-" + data.guid, _.domId,
+					"meta64.runCallback(" + data.guid + ");")
+					+ render.makePopupBackButton("No", "confirmPgNoButton-" + data.guid, _.domId);
+			content += render.centeredButtonBar(buttons);
 
 			util.setHtmlEnhanced(_.domId + "-" + data.guid, content);
 		},

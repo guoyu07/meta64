@@ -15,7 +15,7 @@ var shareToPersonPg = function() {
 
 			var shareButton = render.makeBackButton("Share", "shareNodeToPersonButton", _.domId, "share.shareNodeToPerson();");
 			var backButton = render.makeBackButton("Close", "cancelShareNodeToPersonButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(shareButton + backButton);
+			var buttonBar = render.centeredButtonBar(shareButton + backButton);
 
 			var form = formControls + buttonBar;
 

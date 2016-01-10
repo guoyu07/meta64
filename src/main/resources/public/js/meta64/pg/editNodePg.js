@@ -13,24 +13,13 @@ var editNodePg = function() {
 
 			var saveNodeButton = render.makeBackButton("Save", "saveNodeButton", _.domId, "edit.saveNode();");
 			var addPropertyButton = render.makeButton("Add Property", "addPropertyButton", "props.addProperty();");
-
-			/*
-			 * commented for polymer 
-			 * 
-			 * 
-			 * var makeNodeReferencableButton =
-			 * render.makeButton("Make Node Referencable",
-			 * "makeNodeReferencableButton", "edit.makeNodeReferencable();");
-			 * var splitContentButton = render.makeButton("Split Content",
-			 * "splitContentButton", "edit.splitContent();");
-			 */
-
+			var makeNodeReferencableButton = render.makeButton("Make Node Referencable", "makeNodeReferencableButton",
+					"edit.makeNodeReferencable();");
+			var splitContentButton = render.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
 			var cancelEditButton = render.makeBackButton("Close", "cancelEditButton", _.domId, "edit.cancelEdit();");
 
-			var buttonBar = render.makeHorzControlGroup(saveNodeButton + addPropertyButton
-			// + makeNodeReferencableButton
-			// + splitContentButton
-			+ cancelEditButton);
+			var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + makeNodeReferencableButton
+					+ splitContentButton + cancelEditButton);
 
 			var internalMainContent = "<div id='editNodePathDisplay' class='path-display-in-editor'></div>" + //
 			"<div id='editNodeInstructions'></div>" + //
@@ -49,4 +38,4 @@ var editNodePg = function() {
 	return _;
 }();
 
-//# sourceURL=editNodePg.js
+// # sourceURL=editNodePg.js

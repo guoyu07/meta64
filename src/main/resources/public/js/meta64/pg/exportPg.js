@@ -15,7 +15,7 @@ var exportPg = function() {
 
 			var exportButton = render.makeButton("Export", "exportNodesButton");
 			var backButton = render.makeBackButton("Close", "cancelExportButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(exportButton + backButton);
+			var buttonBar = render.centeredButtonBar(exportButton + backButton);
 
 			var form = formControls + buttonBar;
 

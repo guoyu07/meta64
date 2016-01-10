@@ -16,7 +16,7 @@ var loginPg = function() {
 
 			var loginButton = render.makeButton("Login", "loginButton", "user.login();");
 			var backButton = render.makeBackButton("Close", "cancelLoginButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(loginButton + backButton);
+			var buttonBar = render.centeredButtonBar(loginButton + backButton);
 
 			/*
 			 * Social Login Buttons

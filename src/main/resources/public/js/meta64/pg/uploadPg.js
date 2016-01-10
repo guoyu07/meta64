@@ -68,7 +68,7 @@ var uploadPg = function() {
 			var deleteButton = render.makeButton("Delete", "deleteAttachmentButton", "attachment.deleteAttachment();");
 			var backButton = render.makeBackButton("Close", "closeUploadButton", _.domId);
 
-			var buttonBar = render.makeHorzControlGroup(uploadButton + deleteButton + backButton);
+			var buttonBar = render.centeredButtonBar(uploadButton + deleteButton + backButton);
 			var mainContent = uploadPathDisplay + uploadFieldContainer + divider + uploadFromUrlDiv + buttonBar;
 
 			util.setHtmlEnhanced(_.domId, header + mainContent);

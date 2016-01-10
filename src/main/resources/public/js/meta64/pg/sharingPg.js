@@ -15,7 +15,7 @@ var sharingPg = function() {
 			var makePublicButton = render.makeButton("Share to Public", "shareNodeToPublicButton", "share.shareNodeToPublic();");
 			var backButton = render.makeBackButton("Close", "closeSharingButton", _.domId, "share.closeSharingDlg();");
 			
-			var buttonBar = render.makeHorzControlGroup(shareWithPersonButton + makePublicButton + backButton);
+			var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
 
 			var internalMainContent = "<div id='shareNodeNameDisplay'></div>" + //
 			"<div id='sharingListFieldContainer'></div>";

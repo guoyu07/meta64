@@ -315,7 +315,7 @@ var util = function() {
 		delayedFocus : function(id) {
 			setTimeout(function() {
 				$(id).focus();
-			}, 500);
+			}, 1000);
 		},
 
 		/*

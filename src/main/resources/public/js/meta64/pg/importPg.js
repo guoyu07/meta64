@@ -15,7 +15,7 @@ var importPg = function() {
 
 			var importButton = render.makeButton("Import", "importNodesButton");
 			var backButton = render.makeBackButton("Close", "cancelImportButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(importButton + backButton);
+			var buttonBar = render.centeredButtonBar(importButton + backButton);
 
 			var form = formControls + buttonBar;
 

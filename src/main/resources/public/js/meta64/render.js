@@ -294,6 +294,12 @@ var render = function() {
 			return bkgImgStyle;
 		},
 
+		centeredButtonBar : function(buttons) {
+			return _.tag("div", {
+				"class" : "horizontal center-justified layout"
+			}, buttons);
+		},
+
 		makeRowButtonBarHtml : function(uid, canMoveUp, canMoveDown, editingAllowed) {
 
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
@@ -396,7 +402,7 @@ var render = function() {
 		makeDialogHeader : function(text) {
 			return _.tag("h2", {}, text);
 		},
-		
+
 		makeHorizontalFieldSet : function(content, extraClasses) {
 
 			/* Now build entire control bar */
@@ -563,7 +569,7 @@ var render = function() {
 
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
-				
+
 				if (meta64.currentNode && nav.parentVisibleToUser()) {
 
 					/* Construct Create Subnode Button */
@@ -789,14 +795,18 @@ var render = function() {
 			if (attributes) {
 				ret += " ";
 				$.each(attributes, function(k, v) {
-					/*
-					 * we intelligently wrap strings that contain single quotes
-					 * in double quotes and vice versa
-					 */
-					if (v.contains("'")) {
-						ret += k + "=\"" + v + "\" ";
+					if (v) {
+						/*
+						 * we intelligently wrap strings that contain single
+						 * quotes in double quotes and vice versa
+						 */
+						if (v.contains("'")) {
+							ret += k + "=\"" + v + "\" ";
+						} else {
+							ret += k + "='" + v + "' ";
+						}
 					} else {
-						ret += k + "='" + v + "' ";
+						ret += k + " ";
 					}
 				});
 			}

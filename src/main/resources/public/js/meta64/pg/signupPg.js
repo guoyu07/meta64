@@ -34,7 +34,7 @@ var signupPg = function() {
 					"user.tryAnotherCaptcha();");
 			var backButton = render.makeBackButton("Close", "cancelSignupButton", _.domId);
 
-			var buttonBar = render.makeHorzControlGroup(signupButton + newCaptchaButton + backButton);
+			var buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
 
 			var form = formControls + captchaImage + buttonBar;
 

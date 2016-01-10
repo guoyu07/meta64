@@ -19,7 +19,6 @@ var prefs = function() {
 		},
 
 		closeAccount : function() {
-
 			confirmPg.areYouSure("Oh No!", "Close your Account? Are you sure? This was so unexpected!",
 					"Yes, Close Account.", function() {
 						util.json("closeAccount", {}, _.closeAccountResponse);

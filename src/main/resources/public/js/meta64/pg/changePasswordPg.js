@@ -17,7 +17,7 @@ var changePasswordPg = function() {
 					"user.changePassword();");
 			var backButton = render.makeBackButton("Close", "cancelChangePasswordButton", _.domId);
 
-			var buttonBar = render.makeHorzControlGroup(changePasswordButton + backButton);
+			var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
 
 			var content = header + formControls + buttonBar;
 			util.setHtmlEnhanced(_.domId, content);

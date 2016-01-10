@@ -28,18 +28,16 @@ var prefsPg = function() {
 			var saveButton = render.makeButton("Save", "savePreferencesButton", "prefs.savePreferences();");
 			var backButton = render.makeBackButton("Cancel", "cancelPreferencesPgButton", _.domId);
 			
-			var buttonBar = render.makeHorzControlGroup(saveButton + backButton);
+			var buttonBar = render.centeredButtonBar(saveButton + backButton);
 
-			var closeAccountButton = "";
-			/* disabling for polymer 
-			render.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
-			*/
+			var closeAccountButton = render.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
 			
-			var closeAccountButtonBar = render.makeHorzControlGroup(closeAccountButton);
+			var closeAccountButtonBar = render.centeredButtonBar(closeAccountButton);
 			var closeAccountButtonBarDiv = render.tag("div", {
 				"class" : "close-account-bar"
 			}, closeAccountButtonBar);
 
+			//todo: clean up these useless divs.
 			var form = render.tag("div", //
 			{
 			}, //

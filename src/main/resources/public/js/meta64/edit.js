@@ -193,13 +193,9 @@ var edit = function() {
 		},
 
 		makeNodeReferencable : function() {
-			messagePg.alert('not yet implemented');
-			return;
-
-			/*
-			 * polymer commented util.json("makeNodeReferencable", { "nodeId" :
-			 * _.editNode.id }, _makeNodeReferencableResponse);
-			 */
+			util.json("makeNodeReferencable", {
+				"nodeId" : _.editNode.id
+			}, _makeNodeReferencableResponse);
 		},
 
 		splitContent : function() {
@@ -744,7 +740,8 @@ var edit = function() {
 								meta64.selectedNodes = {}; // clear selections.
 								// No longer need
 								// or want any selections.
-								messagePg.alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
+								messagePg
+										.alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
 								meta64.refreshAllGuiEnablement();
 							});
 		},
@@ -792,4 +789,4 @@ var edit = function() {
 	return _;
 }();
 
-//# sourceURL=edit.js
+// # sourceURL=edit.js

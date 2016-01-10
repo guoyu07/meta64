@@ -14,7 +14,7 @@ var editPropertyPg = function() {
 			var savePropertyButton = render.makeBackButton("Save", "savePropertyButton", _.domId, "props.saveProperty();");
 			var cancelEditButton = render.makeBackButton("Cancel", "editPropertyPgCloseButton", _.domId);
 			
-			var buttonBar = render.makeHorzControlGroup(savePropertyButton + cancelEditButton);
+			var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
 
 			var internalMainContent = "<div id='editPropertyPathDisplay' class='path-display-in-editor'></div>" + //
 			"<div id='addPropertyFieldContainer' class='ui-field-contain'></div>";

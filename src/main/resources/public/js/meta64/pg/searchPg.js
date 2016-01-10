@@ -15,7 +15,7 @@ var searchPg = function() {
 
 			var searchButton = render.makeButton("Search", "searchNodesButton", "srch.searchNodes();");
 			var backButton = render.makeBackButton("Close", "cancelSearchButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(searchButton + backButton);
+			var buttonBar = render.centeredButtonBar(searchButton + backButton);
 
 			var form = formControls + buttonBar;
 

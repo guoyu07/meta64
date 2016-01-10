@@ -17,7 +17,7 @@ var renameNodePg = function() {
 
 			var renameNodeButton = render.makeButton("Rename", "renameNodeButton", "edit.renameNode();");
 			var backButton = render.makeBackButton("Close", "cancelRenameNodeButton", _.domId);
-			var buttonBar = render.makeHorzControlGroup(renameNodeButton + backButton);
+			var buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
 
 			var form = formControls + buttonBar;
 

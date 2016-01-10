@@ -27,13 +27,12 @@ var donatePg = function() {
 		build : function(data) {
 			/*
 			 * Warning: Due to apparent bug in polymer the single open/close tag style like </donate-panel> will
-			 * cause problems by truncating all content after the donate-panel content.
+			 * cause problems by truncating all content after the donate-panel content, so leave this as separate
+			 * open/close tags.
 			 */
 			var content = "<donate-panel></donate-panel>";
 
-			content += "<div>";
-			content += render.makePopupBackButton("Close", "donatePgCloseButton-" + data.guid, _.domId);
-			content += "</div>";
+			content += render.centeredButtonBar(render.makePopupBackButton("Close", "donatePgCloseButton-" + data.guid, _.domId));
 			
 			console.log("fields="+content);
 			

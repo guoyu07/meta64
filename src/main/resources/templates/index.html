@@ -26,8 +26,7 @@
         <meta name="application-name"
               content="meta64.com" />
         <link rel="icon"
-              sizes="192x192"
-              href="images/touch/chrome-touch-icon-192x192.png" />
+              href="favicon.ico" />
         <!-- Add to homescreen for Safari on iOS -->
         <meta name="apple-mobile-web-app-capable"
               content="yes" />
@@ -35,11 +34,6 @@
               content="black" />
         <meta name="apple-mobile-web-app-title"
               content="Meta64" />
-        <link rel="apple-touch-icon"
-              href="images/touch/apple-touch-icon.png" />
-        <!-- Tile icon for Win8 (144x144) -->
-        <meta name="msapplication-TileImage"
-              content="images/touch/ms-touch-icon-144x144-precomposed.png" />
         <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
         <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
         <link rel="import"
@@ -102,8 +96,6 @@
         Add our elements here 
         -->
         <link rel="import"
-              href="/styles/app-theme.html" />
-        <link rel="import"
               href="/styles/shared-styles.html" />
         <link rel="import"
               href="/elements/main-tabs/main-tabs.html" />
@@ -147,7 +139,6 @@
 */</script>
         <script type="text/javascript"
                 th:src="@{${jqueryJs}}"></script>
-        <!-- script type="text/javascript" th:src="@{${jqueryMobileJs}}"></script -->
         <script type="text/javascript"
                 th:src="@{/js/cookie/jquery.cookie.js?ver.md=1}"></script>
         <script type="text/javascript"
@@ -186,13 +177,16 @@
                         <paper-toolbar id="mainToolbar">
                         	<!--
                         	when implemented this button will toggle visibility of left-side menu  
-                        	<paper-icon-button icon="menu"></paper-icon-button>
                         	-->
+                        	<paper-icon-button icon="menu"></paper-icon-button>
+                        	
                             <span id="headerAppName"
                                  class="app-name title">Meta64</span>
-                            <paper-button id="navLogoutButton" onClick="nav.navHome();">Home</paper-button>
-                            <paper-button id="editModeButton" onClick="edit.editMode();">Edit</paper-button>
-    						<paper-button id="navHomeButton" onClick="user.logout(true);">Logout</paper-button>
+                            <paper-button id="navHomeButton" onClick="nav.navHome();">Home</paper-button>
+                            <paper-button style="display:none;" id="editModeButton" onClick="edit.editMode();">Edit</paper-button>
+     						<paper-button style="display:none;" id="openSignupPgButton" onClick="user.openSignupPg();">Signup</paper-button>
+    						<paper-button style="display:none;" id="openLoginPgButton" onClick="user.openLoginPg();">Login</paper-button>
+    						<paper-button style="display:none;" id="navLogoutButton" onClick="user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)

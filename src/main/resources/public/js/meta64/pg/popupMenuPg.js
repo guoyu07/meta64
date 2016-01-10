@@ -40,11 +40,6 @@ var popupMenuPg = function() {
 			/*
 			 * whatever is commented is only commented for polymer conversion
 			 */
-			var navItems = //
-			_menuItem("Signup", "openSignupPgButton", "user.openSignupPg();") + // 
-			_menuItem("Login", "openLoginPgButton", "user.openLoginPg();"); // 
-			var navMenu = _makeTopLevelMenu("Navigate", navItems);
-
 			var myAccountItems = //
 			_menuItem("Change Password", "changePasswordPgButton", "user.changePasswordPg();") + // 
 			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + // 
@@ -85,7 +80,7 @@ var popupMenuPg = function() {
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
 			var viewOptionsMenu = _makeTopLevelMenu("View Options", viewOptionsMenuItems);
 
-			var content = navMenu + myAccountMenu + editMenu + sharingMenu + viewOptionsMenu + searchMenu;
+			var content = myAccountMenu + editMenu + sharingMenu + viewOptionsMenu + searchMenu;
 			util.setHtmlEnhanced(_.domId, content);
 		},
 

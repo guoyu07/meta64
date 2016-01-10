@@ -547,6 +547,8 @@ var meta64 = function() {
 			var highlightNode = _.getHighlightedNode();
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
+			util.setEnablement("navLoginButton", _.isAnonUser);
+			util.setEnablement("openSignupPgButton", _.isAnonUser);
 			util.setEnablement("navHomeButton", true);
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
@@ -576,10 +578,12 @@ var meta64 = function() {
 			util.setEnablement("refreshPageButton", !_.isAnonUser); 
 			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null); 
 			
+			util.setVisibility("editModeButton", allowEditMode);
 			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginPgButton", _.isAnonUser); 
-			util.setVisibility("openSignupPgButton", _.isAnonUser); 
+			util.setVisibility("navLogoutButton", !_.isAnonUser);
+			util.setVisibility("openSignupPgButton", _.isAnonUser);
 			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
 			util.setVisibility("mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
 

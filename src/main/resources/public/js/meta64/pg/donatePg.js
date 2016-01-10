@@ -40,18 +40,7 @@ var donatePg = function() {
 			util.setHtmlEnhanced(_.domId + "-" + data.guid, content);
 		},
 
-		/* todo move to meta64 mod */
-		runCallback : function(guid) {
-			var dataObj = meta64.getObjectByGuid(guid);
-			if (dataObj.callback) {
-				dataObj.callback();
-			}
-		},
-
 		init : function(data) {
-			//$("#confirmPgTitle-" + data.guid).text(data.title);
-			//$("#confirmPgMessage-" + data.guid).text(data.message);
-			//$("#confirmPgYesButton-" + data.guid).text(data.buttonText);
 		}
 	};
 

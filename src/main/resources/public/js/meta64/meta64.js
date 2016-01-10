@@ -165,6 +165,13 @@ var meta64 = function() {
 			}
 			return ret;
 		},
+		
+		runCallback : function(guid) {
+			var dataObj = meta64.getObjectByGuid(guid);
+			if (dataObj.callback) {
+				dataObj.callback();
+			}
+		},
 
 		inSimpleMode : function() {
 			return _.editModeOption === _.MODE_SIMPLE;

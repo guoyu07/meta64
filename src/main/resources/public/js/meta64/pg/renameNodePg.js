@@ -9,7 +9,7 @@ var renameNodePg = function() {
 		
 		build : function() {
 
-			var header = "<h2>Rename Node</h2>";
+			var header = render.makeDialogHeader("Rename Node");
 
 			var curNodeNameDisplay = "<h3 id='curNodeNameDisplay'></h3>";
 

@@ -8,7 +8,7 @@ var changePasswordPg = function() {
 		visible : false,
 
 		build : function() {
-			var header = "<h2>Change Password</h2>";
+			var header = render.makeDialogHeader("Change Password");
 
 			var formControls = render.makePasswordField("Password", "changePassword1") + //
 			render.makePasswordField("Repeat Password", "changePassword2");

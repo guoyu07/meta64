@@ -9,7 +9,7 @@ var searchPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Search</h2>";
+			var header = render.makeDialogHeader("Search");
 
 			var formControls = render.makeEditField("Search", "searchText");
 
@@ -17,11 +17,7 @@ var searchPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelSearchButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(searchButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				"class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
 			var internalMainContent = "";
 			var mainContent = internalMainContent + form;
@@ -41,4 +37,4 @@ var searchPg = function() {
 	return _;
 }();
 
-//# sourceURL=searchPg.js
+// # sourceURL=searchPg.js

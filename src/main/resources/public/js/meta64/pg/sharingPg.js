@@ -9,7 +9,7 @@ var sharingPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Node Sharing</h2>";
+			var header = render.makeDialogHeader("Node Sharing");
 
 			var shareWithPersonButton = render.makeButton("Share with Person", "shareNodeToPersonPgButton", "share.shareNodeToPersonPg();");
 			var makePublicButton = render.makeButton("Share to Public", "shareNodeToPublicButton", "share.shareNodeToPublic();");

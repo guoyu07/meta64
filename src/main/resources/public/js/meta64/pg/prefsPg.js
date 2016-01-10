@@ -9,7 +9,7 @@ var prefsPg = function() {
 		
 		build : function() {
 
-			var header = "<h2>Account Peferences</h2>";
+			var header = render.makeDialogHeader("Account Peferences");
 
 			var radioButtons = 
 				render.makeRadioButton("Simple", "editModeSimple") + //

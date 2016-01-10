@@ -6,16 +6,10 @@ var exportPg = function() {
 		domId : "exportPg",
 		tabId : "dialogsTabName",
 		visible : false,
-		
+
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				//"data-role" : "header"//,
-				//"data-position" : "fixed",
-				//"data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Export to XML</h2>");
+			var header = render.makeDialogHeader("Export to XML");
 
 			var formControls = render.makeEditField("Export to File Name", "exportTargetNodeName");
 
@@ -23,17 +17,10 @@ var exportPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelExportButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(exportButton + backButton);
 
-			var form = render.tag("div", //
-			{
-				//"class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
 			var internalMainContent = "";
-			var mainContent = render.tag("div", //
-			{
-			}, //
-			internalMainContent + form);
+			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
 			util.setHtmlEnhanced(_.domId, content);
@@ -46,4 +33,4 @@ var exportPg = function() {
 	return _;
 }();
 
-//# sourceURL=exortPg.js
+// # sourceURL=exortPg.js

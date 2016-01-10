@@ -9,7 +9,7 @@ var loginPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Login</h2>";
+			var header = render.makeDialogHeader("Login");
 
 			var formControls = render.makeEditField("User", "userName") + //
 			render.makePasswordField("Password", "password");
@@ -29,11 +29,7 @@ var loginPg = function() {
 
 			var divider = "<div><h3>Or Login With...</h3></div>";
 
-			var form = render.tag("div", //
-			{
-			// "class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
 			var mainContent = form;
 			/*
@@ -60,4 +56,4 @@ var loginPg = function() {
 	return _;
 }();
 
-//# sourceURL=loginPg.js
+// # sourceURL=loginPg.js

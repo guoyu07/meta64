@@ -9,7 +9,7 @@ var editPropertyPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Edit Node Property</h2>";
+			var header = render.makeDialogHeader("Edit Node Property");
 
 			var savePropertyButton = render.makeBackButton("Save", "savePropertyButton", _.domId, "props.saveProperty();");
 			var cancelEditButton = render.makeBackButton("Cancel", "editPropertyPgCloseButton", _.domId);

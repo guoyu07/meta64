@@ -9,7 +9,7 @@ var uploadPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Upload File Attachment</h2>";
+			var header = render.makeDialogHeader("Upload File Attachment");
 
 			var uploadPathDisplay = render.tag("div", {//
 				"id" : "uploadPathDisplay",
@@ -25,10 +25,15 @@ var uploadPg = function() {
 			 * that yet.
 			 */
 			for (var i = 0; i < 7; i++) {
-				formFields += render.tag("input", {
+				var input = render.tag("input", {
 					"type" : "file",
 					"name" : "files"
 				}, "", true);
+				
+				/* wrap in DIV to force vertical align */
+				formFields += render.tag("div", {
+					"style" : "margin-bottom: 10px;"
+				}, input);
 			}
 
 			formFields += render.tag("input", {
@@ -46,15 +51,14 @@ var uploadPg = function() {
 				"id" : "uploadForm",
 				"method" : "POST",
 				"enctype" : "multipart/form-data",
-				"data-ajax" : "false" // NEW for multiple file upload
-			// support???
+				"data-ajax" : "false" // NEW for multiple file upload support???
 			}, formFields);
 
 			var uploadFieldContainer = render.tag("div", {//
 				"id" : "uploadFieldContainer"
 			}, "<p>Upload from your computer</p>" + form);
 
-			var divider = "<div><h3>-- OR --</h3></div>";
+			var divider = "<div><h3>-- OR --</h3>Enter URL to a file on the web...</div>";
 
 			var uploadFromUrlField = render.makeEditField("Upload From URL", "uploadFromUrl");
 			var uploadFromUrlDiv = render.tag("div", {//

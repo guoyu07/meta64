@@ -29,17 +29,9 @@ var messagePg = function() {
 			var fields = "<h2 id='messagePgTitle-" + data.guid + "'></h2>" + //
 			"<p id='messagePgMessage-" + data.guid + "'></p>";
 			fields += render.makePopupBackButton("Ok", "messagePgOkButton-" + data.guid, _.domId,
-					"messagePg.runCallback(" + data.guid + ");");
+					"meta64.runCallback(" + data.guid + ");");
 
 			util.setHtmlEnhanced(_.domId + "-" + data.guid, fields);
-		},
-
-		/* todo move to meta64 mod */
-		runCallback : function(guid) {
-			var dataObj = meta64.getObjectByGuid(guid);
-			if (dataObj.callback) {
-				dataObj.callback();
-			}
 		},
 
 		init : function(data) {

@@ -9,7 +9,7 @@ var shareToPersonPg = function() {
 
 		build : function() {
 
-			var header = "<h2>Share Node to Person</h2>";
+			var header = render.makeDialogHeader("Share Node to Person");
 
 			var formControls = render.makeEditField("User to Share With", "shareToUserName");
 

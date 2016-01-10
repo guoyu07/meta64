@@ -9,7 +9,7 @@ var editNodePg = function() {
 
 		build : function() {
 
-			var header = "<h2>Edit Node</h2>";
+			var header = render.makeDialogHeader("Edit Node");
 
 			var saveNodeButton = render.makeBackButton("Save", "saveNodeButton", _.domId, "edit.saveNode();");
 			var addPropertyButton = render.makeButton("Add Property", "addPropertyButton", "props.addProperty();");

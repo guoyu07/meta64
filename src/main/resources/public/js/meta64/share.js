@@ -74,15 +74,6 @@ var share = function() {
 				"for" : "allowPublicCommenting"
 			}, "Allow public commenting under this node.", true);
 
-			/* Example to put checkbox in its own div, with label. */
-			// <div class="ui-field-contain">
-			// <fieldset data-role="controlgroup">
-			// <legend>Agree to the terms:</legend>
-			// <input type="checkbox" name="checkbox-2" id="checkbox-2"
-			// class="custom">
-			// <label for="checkbox-2">I agree</label>
-			// </fieldset>
-			// </div>
 			util.setHtmlEnhanced("sharingListFieldContainer", html);
 
 			util.setCheckboxVal("#allowPublicCommenting", res.publicAppend);
@@ -148,8 +139,7 @@ var share = function() {
 			 * Add privilege and then reload share nodes dialog from scratch
 			 * doing another callback to server
 			 * 
-			 * TODO: this additional call can be avoided as an optimization some
-			 * day
+			 * TODO: this additional call can be avoided as an optimization 
 			 */
 			util.json("addPrivilege", {
 				"nodeId" : _.sharingNode.id,

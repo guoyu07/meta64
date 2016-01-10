@@ -9,13 +9,7 @@ var importPg = function() {
 
 		build : function() {
 
-			var header = render.tag("div", //
-			{
-				"data-role" : "header"// ,
-			// "data-position" : "fixed",
-			// "data-tap-toggle" : "false"
-			}, //
-			"<h2>" + BRANDING_TITLE + " - Import from XML</h2>");
+			var header = render.makeDialogHeader("Import from XML");
 
 			var formControls = render.makeEditField("Import Target Node Name", "importTargetNodeName");
 
@@ -23,17 +17,10 @@ var importPg = function() {
 			var backButton = render.makeBackButton("Close", "cancelImportButton", _.domId);
 			var buttonBar = render.makeHorzControlGroup(importButton + backButton);
 
-			var form = render.tag("div", //
-			{
-			// "class" : "ui-field-contain" //
-			}, //
-			formControls + buttonBar);
+			var form = formControls + buttonBar;
 
 			var internalMainContent = "";
-			var mainContent = render.tag("div", //
-			{
-			}, //
-			internalMainContent + form);
+			var mainContent = internalMainContent + form;
 
 			var content = header + mainContent;
 			util.setHtmlEnhanced(_.domId, content);
@@ -46,4 +33,4 @@ var importPg = function() {
 	return _;
 }();
 
-//# sourceURL=importPg.js
+// # sourceURL=importPg.js

@@ -9,11 +9,6 @@ var user = function() {
 		}
 
 		$("#headerAppName").html(title);
-
-		/*
-		 * todo: commented for polymer var loginEnable = meta64.isAnonUser;
-		 * $("#openLoginPgButton").text(loginEnable ? "Login" : "Logout");
-		 */
 	}
 
 	/* TODO: move this into meta64 module */

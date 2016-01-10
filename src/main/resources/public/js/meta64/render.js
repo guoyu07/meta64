@@ -393,6 +393,10 @@ var render = function() {
 			}
 		},
 
+		makeDialogHeader : function(text) {
+			return _.tag("h2", {}, text);
+		},
+		
 		makeHorizontalFieldSet : function(content, extraClasses) {
 
 			/* Now build entire control bar */
@@ -580,10 +584,6 @@ var render = function() {
 					"class" : (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');",
 					"id" : cssId
-
-				// todo: bkgStyle not used, remove.
-				// ,
-				// "style" : bkgStyle
 				},// 
 				buttonBar + mainNodeContent);
 

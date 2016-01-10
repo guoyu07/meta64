@@ -34,19 +34,11 @@ var confirmPg = function() {
 			"<p id='confirmPgMessage-" + data.guid + "'></p>";
 
 			fields += render.makePopupBackButton("Yes", "confirmPgYesButton-" + data.guid, _.domId,
-					"confirmPg.runCallback(" + data.guid + ");");
+					"meta64.runCallback(" + data.guid + ");");
 			fields += render.makePopupBackButton("No", "confirmPgNoButton-" + data.guid, _.domId);
 			var content = render.tag("div", {}, fields);
 
 			util.setHtmlEnhanced(_.domId + "-" + data.guid, content);
-		},
-
-		/* todo move to meta64 mod */
-		runCallback : function(guid) {
-			var dataObj = meta64.getObjectByGuid(guid);
-			if (dataObj.callback) {
-				dataObj.callback();
-			}
 		},
 
 		init : function(data) {

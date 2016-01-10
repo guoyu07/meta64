@@ -9,7 +9,7 @@ var signupPg = function() {
 
 		build : function() {
 
-			var header = "<h2>" + BRANDING_TITLE + " Signup</h2>";
+			var header = render.makeDialogHeader(BRANDING_TITLE + " Signup");
 
 			var formControls = //
 			render.makeEditField("User", "signupUserName") + //

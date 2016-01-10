@@ -47,4 +47,4 @@ var donatePg = function() {
 	return _;
 }();
 
-// # sourceURL=donatePg.js
+//# sourceURL=donatePg.js

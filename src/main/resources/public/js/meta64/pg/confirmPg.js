@@ -52,4 +52,4 @@ var confirmPg = function() {
 	return _;
 }();
 
-// # sourceURL=confirmPg.js
+//# sourceURL=confirmPg.js

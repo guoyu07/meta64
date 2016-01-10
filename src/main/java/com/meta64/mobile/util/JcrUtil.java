@@ -160,7 +160,7 @@ public class JcrUtil {
 			node.addMixin("mix:lastModified");
 		}
 	}
-
+	
 	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent) throws Exception {
 		return ensureNodeExists(session, parentPath, name, defaultContent, JcrConstants.NT_UNSTRUCTURED, true);
 	}

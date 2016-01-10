@@ -15,21 +15,9 @@ export backupFolder=/ferguson/meta64Oak-private/auto-bak
 ./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs main-tabs
 ./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/donate-panel donate-panel
 
-read -p "temp halt"
-
-#cd /ferguson/meta64Oak/src/main/resources/templates
-#cp index.html $backupFolder/index-$timestamp.html
-#tidy -config /ferguson/meta64Oak/tidy-config.txt index.html > $backupFolder/index-out.html
-#cp $backupFolder/index-out.html index.html
-#read -p "Tidy done. index.htm."
-
-
-#cd /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs
-#cp main-tabs.html $backupFolder/main-tabs-$timestamp.html
-#tidy -config /ferguson/meta64Oak/tidy-config.txt main-tabs.html > $backupFolder/main-tabs-out.html
-#cp $backupFolder/main-tabs-out.html main-tabs.html
-#read -p "Tidy done. /elements/main-tabs"
-
+#copy the readme.md from project root to published location (landing-page.md) where the app will 
+#be able to pick it up at runtime.
+cp /ferguson/meta64Oak/readme.md /ferguson/meta64Oak/src/main/resources/static/landing-page.md
 
 #go back to folder with this script in it. sort of 'home' for this script
 cd /ferguson/meta64Oak/build

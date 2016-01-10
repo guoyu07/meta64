@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -36,14 +37,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrName;
+import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.XString;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
@@ -141,7 +147,9 @@ public class OakRepository {
 
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
-			JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, null);
+			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, null);
+			initLandingPage(session, landingPageNode);
+			
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
@@ -224,6 +232,20 @@ public class OakRepository {
 				throw e;
 			}
 		}
+	}
+	
+	private void initLandingPage(Session session, Node node) {
+		try {
+			Resource resource = SpringContextUtil.getApplicationContext().getResource("classpath:/static/landing-page.md");
+			String content = XString.loadResourceIntoString(resource);
+			System.out.println("content: "+content);
+			node.setProperty(JcrProp.CONTENT, content);
+			AccessControlUtil.makeNodePublic(session, node);
+			session.save();
+		} catch (Exception e) {
+			//IMPORTANT: don't rethrow from here, or this could blow up app initialization.
+			e.printStackTrace();
+		} 
 	}
 
 	/*

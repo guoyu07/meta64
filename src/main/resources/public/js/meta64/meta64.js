@@ -735,6 +735,7 @@ var meta64 = function() {
 			_.displaySignupMessage();
 
 			/*
+			 *  todo: how does orientationchange need to work for polymer?
 			 * Polymer disabled $(window).on("orientationchange",
 			 * _.orientationHandler);
 			 */

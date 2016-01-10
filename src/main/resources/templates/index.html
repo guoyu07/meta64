@@ -10,17 +10,8 @@
               content="jcr" />
         <meta name="viewport"
               content="width=device-width, initial-scale=1" />
-        <!-- Place favicon.ico in the `app/` directory -->
-        <!-- Chrome for Android theme color -->
-        <meta name="theme-color"
-              content="#2E3AA1" />
-        <!-- Web Application Manifest -->
         <link rel="manifest"
               href="manifest.json" />
-        <!-- Tile color for Win8 -->
-        <meta name="msapplication-TileColor"
-              content="#3372DF" />
-        <!-- Add to homescreen for Chrome on Android -->
         <meta name="mobile-web-app-capable"
               content="yes" />
         <meta name="application-name"
@@ -34,6 +25,7 @@
               content="black" />
         <meta name="apple-mobile-web-app-title"
               content="Meta64" />
+        <!-- todo: need to enable the minimized version (min) for production -->
         <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
         <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
         <link rel="import"
@@ -92,9 +84,7 @@
               href="/bower_components/paper-radio-button/paper-radio-button.html" />
         <link rel="import"
               href="/bower_components/paper-radio-group/paper-radio-group.html" />
-        <!-- 
-        Add our elements here 
-        -->
+        <!-- Application elements-->
         <link rel="import"
               href="/styles/shared-styles.html" />
         <link rel="import"
@@ -127,7 +117,6 @@
         var BRANDING_TITLE = /*[[${@constantsProvider.getBrandingTitle()}]]*/"";
         var cacheVersion = /*[[${@constantsProvider.getCacheVersion()}]]*/"";
         var profileName = /*[[${@constantsProvider.getProfileName()}]]*/"";
-        
         console.log("cacheVersion: " + cacheVersion);
         
         /**
@@ -175,18 +164,26 @@
                     <paper-header-panel main="main"
                                         id="headerPanelMain">
                         <paper-toolbar id="mainToolbar">
-                        	<!--
-                        	when implemented this button will toggle visibility of left-side menu  
-                        	-->
-                        	<paper-icon-button icon="menu"></paper-icon-button>
-                        	
+                            <!--
+                                when implemented this button will toggle visibility of left-side menu  
+                                -->
+                            <paper-icon-button icon="menu"></paper-icon-button>
                             <span id="headerAppName"
-                                 class="app-name title">Meta64</span>
-                            <paper-button id="navHomeButton" onClick="nav.navHome();">Home</paper-button>
-                            <paper-button style="display:none;" id="editModeButton" onClick="edit.editMode();">Edit Mode</paper-button>
-     						<paper-button style="display:none;" id="openSignupPgButton" onClick="user.openSignupPg();">Signup</paper-button>
-    						<paper-button style="display:none;" id="openLoginPgButton" onClick="user.openLoginPg();">Login</paper-button>
-    						<paper-button style="display:none;" id="navLogoutButton" onClick="user.logout(true);">Logout</paper-button>
+                                  class="app-name title">Meta64</span>
+                            <paper-button id="navHomeButton"
+                                          onClick="nav.navHome();">Home</paper-button>
+                            <paper-button style="display:none;"
+                                          id="editModeButton"
+                                          onClick="edit.editMode();">Edit Mode</paper-button>
+                            <paper-button style="display:none;"
+                                          id="openSignupPgButton"
+                                          onClick="user.openSignupPg();">Signup</paper-button>
+                            <paper-button style="display:none;"
+                                          id="openLoginPgButton"
+                                          onClick="user.openLoginPg();">Login</paper-button>
+                            <paper-button style="display:none;"
+                                          id="navLogoutButton"
+                                          onClick="user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)

@@ -14,17 +14,6 @@
 		console.log('polymer-ready event!');
 	});
 
-	// See https://github.com/Polymer/polymer/issues/1381
-	window.addEventListener('WebComponentsReady', function() {
-		// imports are loaded and elements have been registered
-	});
-
-	// Scroll page to top and expand header
-	app.scrollPageToTop = function() {
-		/* needs research for polymer */
-		// app.$.headerPanelMain.scrollToTop(true);
-	};
-
 })(document);
 
 console.log("Loading scripts.");

@@ -17,6 +17,7 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 
 import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
+import org.apache.jackrabbit.oak.spi.security.principal.EveryonePrincipal;
 import org.apache.jackrabbit.oak.spi.security.principal.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,12 @@ public class AccessControlUtil {
 		return name;
 	}
 
+	public static void makeNodePublic(Session session, Node node) throws Exception {
+		List<String> privileges = new LinkedList<String>();
+		privileges.add(Privilege.JCR_READ);
+		grantPrivileges(session, node, EveryonePrincipal.getInstance(), privileges);
+	}
+	
 	public static Privilege[] makePrivilegesFromNames(AccessControlManager acMgr, List<String> names) throws Exception {
 		List<Privilege> privileges = new LinkedList<Privilege>();
 

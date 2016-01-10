@@ -99,6 +99,10 @@ var view = function() {
 			}, 1000);
 		},
 
+		/*
+		 * todo: The following was in a polymer example (can I use this?):
+		 * app.$.headerPanelMain.scrollToTop(true);
+		 */
 		scrollToTop : function() {
 			if (scrollToSelNodePending)
 				return;
@@ -144,4 +148,4 @@ var view = function() {
 	return _;
 }();
 
-// # sourceURL=view.js
+//# sourceURL=view.js

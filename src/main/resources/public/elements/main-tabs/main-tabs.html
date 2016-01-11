@@ -19,9 +19,9 @@
 <link rel="import"
       href="/bower_components/iron-pages/iron-pages.html" />
 <link rel="import"
-      href="/elements/donate-panel/donate-panel.html" />
+      href="/elements/donate-panel/donate-panel.html?ver={{cacheVersion}}" />
 <link rel="import"
-      href="/styles/shared-styles.html" />
+      href="/styles/shared-styles.html?ver={{cacheVersion}}" />
 <dom-module id="main-tabs">
     <template>
         <style is="custom-style"
@@ -54,13 +54,12 @@
                 <div id="mainNodeContent"></div>
                 <div id="mainPageControls"></div>
                 <div id="listView"></div>
-            </div>
-            <!--  bring back after polymer 
-            <div class="donate-center">
+                <div class="donate-center">
                 <a class="donate-link"
-                   onClick="meta64.openDonatePg();">[ Contribute to Meta64 ]</a>
+                   onClick="donatePg.open();">[ Contribute to Meta64 ]</a>
             </div>
-            -->
+            </div>
+            
             <div name="searchTabName"
                  id="searchResultsPg">No search displaying.</div>
             <div name="timelineTabName"

@@ -2,6 +2,7 @@ package com.meta64.mobile;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.ConstantsProviderImpl;
 
 /*
@@ -28,6 +31,11 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
 public class AppFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(AppFilter.class);
 	private FilterConfig config = null;
+
+	private static boolean useWriter = false;
+
+	@Autowired
+	private ConstantsProvider constProvider;
 
 	/*
 	 * Each time the server restarts we have a new version number here and will
@@ -111,14 +119,33 @@ public class AppFilter implements Filter {
 
 		CharResponseWrapper wrapper = new CharResponseWrapper((HttpServletResponse) res);
 		chain.doFilter(req, wrapper);
-		PrintWriter out = res.getWriter();
 		String content = wrapper.toString();
+
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
 		content = content.replace("{{jqueryJs}}", jqueryJs);
 		content = content.replace("{{brandingTitle}}", brandingTitle);
 		content = content.replace("{{brandingMetaContent}}", brandingMetaContent);
-		out.write(content);
-		out.close();
+		content = content.replace("{{cookiePrefix}}", constProvider.getCookiePrefix());
+		content = content.replace("{{profileName}}", constProvider.getProfileName());
+
+		/*
+		 * WARNING: DO NOT REMOVE WRITER.
+		 * 
+		 * Servlets allow any given request to either call getWriter(), or
+		 * getOutputStream(), but once you call one of them on a given request
+		 * you are not allowed to call the other. So depending on the Web
+		 * Framework you are in (JSPs, etc) that will determine which you need
+		 * to go with. For SpringMVC it appears the getOutputStream() is the way
+		 * to go. But to keep this code flexible for future use leave the
+		 * getWriter() stuff here but commented out.
+		 */
+		if (useWriter) {
+			PrintWriter out = res.getWriter();
+			out.write(content);
+			out.close();
+		} else {
+			res.getOutputStream().write(content.getBytes(Charset.forName("UTF-8")));
+		}
 	}
 
 	public void destroy() {

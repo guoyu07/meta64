@@ -91,7 +91,7 @@
               href="/elements/main-tabs/main-tabs.html?ver={{cacheVersion}}" />
         <link rel="stylesheet"
               href="/css/meta64.css?ver={{cacheVersion}}" />
-        <script th:inline="javascript">/* 
+        <script>/* 
 <![CDATA[*/
         /*
         Old browsers may not have the console.log/console.error functions.
@@ -113,11 +113,10 @@
                 console.log(msg);
         }
         
-        //todo: insert these values using AppFilter instead.
-        var cookiePrefix = /*[[${@constantsProvider.getCookiePrefix()}]]*/"";
-        var BRANDING_TITLE = /*[[${@constantsProvider.getBrandingTitle()}]]*/"";
-        var cacheVersion = /*[[${@constantsProvider.getCacheVersion()}]]*/"";
-        var profileName = /*[[${@constantsProvider.getProfileName()}]]*/"";
+        var cookiePrefix = "{{cookiePrefix}}";
+        var BRANDING_TITLE = "{{brandingTitle}}";
+        var cacheVersion = "{{cacheVersion}}";
+        var profileName = "{{profileName}}";
         console.log("cacheVersion: " + cacheVersion);
         
         /**

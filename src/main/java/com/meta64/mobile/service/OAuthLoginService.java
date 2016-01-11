@@ -27,8 +27,8 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
 
 /**
- * Service methods for processing user management functions. Login, logout, signup, user
- * preferences, and settings persisted per-user
+ * Service methods for processing user management functions. Login, logout,
+ * signup, user preferences, and settings persisted per-user
  * 
  */
 @Component
@@ -63,10 +63,11 @@ public class OAuthLoginService {
 	private final HashMap<String, OAuthToken> oauthTokenMap = new HashMap<String, OAuthToken>();
 
 	/*
-	 * Initiates the information required for performing an oauth call to twitter servers, such that
-	 * if the user gives authorization we get called back by twitter after it's login process, or
-	 * after authentication. The method 'twitterCallback' below is what gets called when the user
-	 * logs in via twitter
+	 * Initiates the information required for performing an oauth call to
+	 * twitter servers, such that if the user gives authorization we get called
+	 * back by twitter after it's login process, or after authentication. The
+	 * method 'twitterCallback' below is what gets called when the user logs in
+	 * via twitter
 	 */
 	public String twitterLogin() throws Exception {
 		if (StringUtils.isEmpty(twitterAppId) || StringUtils.isEmpty(twitterAppSecret)) {
@@ -84,9 +85,9 @@ public class OAuthLoginService {
 	}
 
 	/*
-	 * Handles the oauthToken and oauthVerifier sent back from twitter when the user has completed
-	 * authorization and we use this information to ensure we have the twitter user created in
-	 * meta64, and logged in also.
+	 * Handles the oauthToken and oauthVerifier sent back from twitter when the
+	 * user has completed authorization and we use this information to ensure we
+	 * have the twitter user created in meta64, and logged in also.
 	 */
 	public void twitterCallback(Model model, String oauthToken, String oauthVerifier) throws Exception {
 		log.debug("Twitter auth callback running.");
@@ -99,8 +100,7 @@ public class OAuthLoginService {
 				userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER);
 				passwordContainer.setVal(_password);
 				log.debug("twitter user created and initialized.");
-			}
-			else {
+			} else {
 				log.debug("twitter account did already exist. Logging in now.");
 				// passwordContainer will already have correct value here from
 				// userExists.
@@ -110,7 +110,8 @@ public class OAuthLoginService {
 		String password = passwordContainer.getVal();
 
 		/*
-		 * Setting credentials into sessionContext should be enough to set to "logged in" state.
+		 * Setting credentials into sessionContext should be enough to set to
+		 * "logged in" state.
 		 */
 		model.addAttribute("loginSessionReady", "true");
 
@@ -135,7 +136,8 @@ public class OAuthLoginService {
 
 		TwitterConnectionFactory connectionFactory = getTwitterConnectionFactory();
 		OAuth1Operations oauthOperations = connectionFactory.getOAuthOperations();
-		OAuthToken accessToken = oauthOperations.exchangeForAccessToken(new AuthorizedRequestToken(token, oauthVerifier), null);
+		OAuthToken accessToken = oauthOperations
+				.exchangeForAccessToken(new AuthorizedRequestToken(token, oauthVerifier), null);
 		Connection<Twitter> twitterConnection = connectionFactory.createConnection(accessToken);
 
 		String userName = twitterConnection.fetchUserProfile().getUsername();

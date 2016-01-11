@@ -42,8 +42,7 @@ public class UserManagerUtil {
 				session.save();
 				ret = true;
 			}
-		}
-		else {
+		} else {
 			throw new Exception("UserName is already taken.");
 		}
 		return ret;
@@ -55,8 +54,7 @@ public class UserManagerUtil {
 		Authorizable authorizable = userManager.getAuthorizable(userName);
 		if (authorizable != null) {
 			authorizable.remove();
-		}
-		else {
+		} else {
 			// if user not found we just do nothing, and throw no exception so
 			// that the rest
 			// of the clean up of the account will continue
@@ -68,8 +66,7 @@ public class UserManagerUtil {
 		Node rootNode = null;
 		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN)) {
 			rootNode = session.getRootNode();
-		}
-		else {
+		} else {
 			rootNode = session.getNode("/" + JcrName.ROOT + "/" + userName);
 		}
 		return new RefInfo(rootNode.getIdentifier(), rootNode.getPath());
@@ -109,10 +106,10 @@ public class UserManagerUtil {
 		Session session = null;
 
 		try {
-			session = oak.getRepository().login(new SimpleCredentials(oak.getJcrAdminUserName(), oak.getJcrAdminPassword().toCharArray()));
+			session = oak.getRepository()
+					.login(new SimpleCredentials(oak.getJcrAdminUserName(), oak.getJcrAdminPassword().toCharArray()));
 			log.debug("Admin user login verified, on first attempt.");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.debug("Admin account credentials not working. Trying with default admin/admin.");
 
 			try {
@@ -121,13 +118,12 @@ public class UserManagerUtil {
 
 				changePassword(session, JcrPrincipal.ADMIN, oak.getJcrAdminPassword());
 				session.save();
-			}
-			catch (Exception e2) {
-				log.debug("Admin user login failed with configured credentials AND default. Unable to connect. Server will fail.");
+			} catch (Exception e2) {
+				log.debug(
+						"Admin user login failed with configured credentials AND default. Unable to connect. Server will fail.");
 				throw e2;
 			}
-		}
-		finally {
+		} finally {
 			if (session != null) {
 				session.logout();
 			}

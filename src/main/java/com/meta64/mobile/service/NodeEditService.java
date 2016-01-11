@@ -39,7 +39,8 @@ import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * Service for editing content of nodes. That is, this method updates property values of JCR nodes.
+ * Service for editing content of nodes. That is, this method updates property
+ * values of JCR nodes.
  */
 @Component
 @Scope("singleton")
@@ -58,7 +59,8 @@ public class NodeEditService {
 	private JcrOutboxMgr outboxMgr;
 
 	/*
-	 * Creates a new node as a *child* node of the node specified in the request.
+	 * Creates a new node as a *child* node of the node specified in the
+	 * request.
 	 */
 	public void createSubNode(Session session, CreateSubNodeRequest req, CreateSubNodeResponse res) throws Exception {
 		String nodeId = req.getNodeId();
@@ -66,8 +68,9 @@ public class NodeEditService {
 		String curUser = session.getUserID();
 
 		/*
-		 * If this is a publicly appendable node, then we always use admin to append a comment type
-		 * node under it. No other type of child node creation is allowed.
+		 * If this is a publicly appendable node, then we always use admin to
+		 * append a comment type node under it. No other type of child node
+		 * creation is allowed.
 		 */
 		boolean publicAppend = JcrUtil.isPublicAppend(node);
 		if (publicAppend) {
@@ -76,7 +79,8 @@ public class NodeEditService {
 			node = JcrUtil.findNode(session, nodeId);
 		}
 
-		// IMPORTANT: Only editing actual content requires a "createdBy" checking by
+		// IMPORTANT: Only editing actual content requires a "createdBy"
+		// checking by
 		// JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
@@ -97,8 +101,8 @@ public class NodeEditService {
 	}
 
 	/*
-	 * Creates a new node that is a sibling (same parent) of and at the same ordinal position as the
-	 * node specified in the request.
+	 * Creates a new node that is a sibling (same parent) of and at the same
+	 * ordinal position as the node specified in the request.
 	 */
 	public void insertNode(Session session, InsertNodeRequest req, InsertNodeResponse res) throws Exception {
 
@@ -106,7 +110,8 @@ public class NodeEditService {
 		log.debug("Inserting under parent: " + parentNodeId);
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
-		// IMPORTANT: Only editing actual content requires a "createdBy" checking by
+		// IMPORTANT: Only editing actual content requires a "createdBy"
+		// checking by
 		// JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
@@ -125,8 +130,9 @@ public class NodeEditService {
 	}
 
 	/*
-	 * Renames the node to a new node name specified in the request. In JCR the way you 'rename' a
-	 * node is actually by moving it to a new location, which actually under the same parent.
+	 * Renames the node to a new node name specified in the request. In JCR the
+	 * way you 'rename' a node is actually by moving it to a new location, which
+	 * actually under the same parent.
 	 */
 	public void renameNode(Session session, RenameNodeRequest req, RenameNodeResponse res) throws Exception {
 
@@ -153,16 +159,17 @@ public class NodeEditService {
 		}
 
 		/*
-		 * Because we support renaming of the root node of a page (GUI page) we cannot expect the
-		 * client to be able so send the 'nodeBelow' so we have to find that on the server side.
+		 * Because we support renaming of the root node of a page (GUI page) we
+		 * cannot expect the client to be able so send the 'nodeBelow' so we
+		 * have to find that on the server side.
 		 */
 		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node);
 		session.move(node.getPath(), newPath);
 
 		/*
-		 * This orderBefore, is required to maintain the same ordinal ordering position after the
-		 * rename. If the node we are renaming is already the bottom node we will have null for
-		 * nodeBelow
+		 * This orderBefore, is required to maintain the same ordinal ordering
+		 * position after the rename. If the node we are renaming is already the
+		 * bottom node we will have null for nodeBelow
 		 */
 		if (nodeBelow != null) {
 			parentNode.orderBefore(newName, nodeBelow.getName());
@@ -170,8 +177,9 @@ public class NodeEditService {
 		session.save();
 
 		/*
-		 * Now lookup the new node using new path, so we get the value that node.getIdentifier()
-		 * returns for it now, which may or may not be the actual new path
+		 * Now lookup the new node using new path, so we get the value that
+		 * node.getIdentifier() returns for it now, which may or may not be the
+		 * actual new path
 		 */
 		node = JcrUtil.findNode(session, newPath);
 		if (node == null) {
@@ -197,17 +205,19 @@ public class NodeEditService {
 	}
 
 	/*
-	 * Turns on the mixin MIX_REFERENCABLE which makes the JCR automatically create a UUID for the
-	 * node which is a unique key that can be used to address the node, and will be completely
-	 * unique.
+	 * Turns on the mixin MIX_REFERENCABLE which makes the JCR automatically
+	 * create a UUID for the node which is a unique key that can be used to
+	 * address the node, and will be completely unique.
 	 */
-	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res) throws Exception {
+	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res)
+			throws Exception {
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		if (node != null) {
 			/*
-			 * if node already has uuid then we can do nothing here, we just silently return success
+			 * if node already has uuid then we can do nothing here, we just
+			 * silently return success
 			 */
 			if (!node.hasProperty(JcrProp.UUID)) {
 				node.addMixin(JcrConstants.MIX_REFERENCEABLE);
@@ -218,7 +228,8 @@ public class NodeEditService {
 	}
 
 	/*
-	 * Saves the node with new information based on whatever is specified in the request.
+	 * Saves the node with new information based on whatever is specified in the
+	 * request.
 	 */
 	public void saveNode(Session session, SaveNodeRequest req, SaveNodeResponse res) throws Exception {
 		String nodeId = req.getNodeId();
@@ -234,8 +245,7 @@ public class NodeEditService {
 			session.logout();
 			session = oak.newAdminSession();
 			node = JcrUtil.findNode(session, nodeId);
-		}
-		else {
+		} else {
 			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		}
 
@@ -243,22 +253,24 @@ public class NodeEditService {
 			for (PropertyInfo property : req.getProperties()) {
 
 				/*
-				 * save only if server determines the property is savable. Just protection. Client
-				 * shouldn't be trying to save stuff that is illegal to save, but we have to assume
-				 * the worst behavior from client code, for security and robustness.
+				 * save only if server determines the property is savable. Just
+				 * protection. Client shouldn't be trying to save stuff that is
+				 * illegal to save, but we have to assume the worst behavior
+				 * from client code, for security and robustness.
 				 */
 				if (JcrUtil.isSavableProperty(property.getName())) {
 					// log.debug("Property to save: " + property.getName() + "="
 					// +
 					// property.getValue());
 					node.setProperty(property.getName(), property.getValue());
-				}
-				else {
+				} else {
 					/**
-					 * TODO: This case indicates that data was sent unnecessarily. fix! (i.e. make
-					 * sure this block cannot ever be entered)
+					 * TODO: This case indicates that data was sent
+					 * unnecessarily. fix! (i.e. make sure this block cannot
+					 * ever be entered)
 					 */
-					//log.debug("Ignoring unneeded save attempt on unneeded prop: " + property.getName());
+					// log.debug("Ignoring unneeded save attempt on unneeded
+					// prop: " + property.getName());
 				}
 			}
 
@@ -269,9 +281,9 @@ public class NodeEditService {
 			if (req.isSendNotification()) {
 				if (commentBy != null) {
 					outboxMgr.sendNotificationForChildNodeCreate(node, commentBy, JcrProp.COMMENT_BY);
-				}
-				else {
-					outboxMgr.sendNotificationForChildNodeCreate(node, sessionContext.getUserName(), JcrProp.CREATED_BY);
+				} else {
+					outboxMgr.sendNotificationForChildNodeCreate(node, sessionContext.getUserName(),
+							JcrProp.CREATED_BY);
 				}
 			}
 
@@ -281,9 +293,11 @@ public class NodeEditService {
 	}
 
 	/*
-	 * Removes the property specified in the request from the node specified in the request
+	 * Removes the property specified in the request from the node specified in
+	 * the request
 	 */
-	public void deleteProperty(Session session, DeletePropertyRequest req, DeletePropertyResponse res) throws Exception {
+	public void deleteProperty(Session session, DeletePropertyRequest req, DeletePropertyResponse res)
+			throws Exception {
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -292,15 +306,13 @@ public class NodeEditService {
 			Property prop = node.getProperty(propertyName);
 			if (prop != null) {
 				prop.remove();
-			}
-			else {
+			} else {
 				throw new Exception("Unable to find property to delete: " + propertyName);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			/*
-			 * Don't rethrow this exception. We want to keep processing any properties we can
-			 * successfully process
+			 * Don't rethrow this exception. We want to keep processing any
+			 * properties we can successfully process
 			 */
 			log.info("Failed to delete property: " + propertyName + " Reason: " + e.getMessage());
 		}
@@ -310,9 +322,10 @@ public class NodeEditService {
 	}
 
 	/*
-	 * When user pastes in a large amount of text and wants to have this text broken out into
-	 * individual nodes one way to do this is put the keyword "{split}" everywhere in the content
-	 * you want it cut, and this splitNode method will break it all up into individual nodes.
+	 * When user pastes in a large amount of text and wants to have this text
+	 * broken out into individual nodes one way to do this is put the keyword
+	 * "{split}" everywhere in the content you want it cut, and this splitNode
+	 * method will break it all up into individual nodes.
 	 */
 	public void splitNode(Session session, SplitNodeRequest req, SplitNodeResponse res) throws Exception {
 
@@ -348,21 +361,23 @@ public class NodeEditService {
 		for (String part : contentParts) {
 			if (idx == 0) {
 				node.setProperty(JcrProp.CONTENT, part);
-			}
-			else {
+			} else {
 				String newNodeName = JcrUtil.getGUID();
 				Node newNode = parentNode.addNode(newNodeName, JcrConstants.NT_UNSTRUCTURED);
 				newNode.setProperty(JcrProp.CONTENT, part);
 				JcrUtil.timestampNewNode(session, newNode);
 
 				/*
-				 * Because of how 'orderBefore' works (i.e. it 'moves' the bottom node, not the top
-				 * node), we always have to continually move the new nodes added into the location
-				 * BELOW the node we are splitting, and each time we add a new node it goes just
-				 * above this 'nodeBelow' and then in the end everything maintains proper ordering.
-				 * Note if 'nodeBelow' is null then that means we are splitting a node that was
-				 * already at bottom, so adding all the new nodes as we are here will make them all
-				 * end up in the correct locations without us ever calling 'orderBefore'
+				 * Because of how 'orderBefore' works (i.e. it 'moves' the
+				 * bottom node, not the top node), we always have to continually
+				 * move the new nodes added into the location BELOW the node we
+				 * are splitting, and each time we add a new node it goes just
+				 * above this 'nodeBelow' and then in the end everything
+				 * maintains proper ordering. Note if 'nodeBelow' is null then
+				 * that means we are splitting a node that was already at
+				 * bottom, so adding all the new nodes as we are here will make
+				 * them all end up in the correct locations without us ever
+				 * calling 'orderBefore'
 				 */
 				if (nodeBelow != null) {
 					parentNode.orderBefore(newNode.getName(), nodeBelow.getName());

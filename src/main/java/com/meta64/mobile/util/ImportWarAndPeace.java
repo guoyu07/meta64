@@ -51,7 +51,8 @@ public class ImportWarAndPeace {
 				line = line.trim();
 
 				/*
-				 * if we see a blank line we add the current paragraph text as a node and continue
+				 * if we see a blank line we add the current paragraph text as a
+				 * node and continue
 				 */
 				if (line.length() == 0) {
 					if (paragraph.length() > 0) {
@@ -65,16 +66,16 @@ public class ImportWarAndPeace {
 				}
 
 				/*
-				 * if we processed the chapter, the last paragraph is also added before starting the
-				 * new chapter
+				 * if we processed the chapter, the last paragraph is also added
+				 * before starting the new chapter
 				 */
 				if (processChapter(line)) {
 					continue;
 				}
 
 				/*
-				 * if we processed the book, the last paragraph is also added before starting the
-				 * new book
+				 * if we processed the book, the last paragraph is also added
+				 * before starting the new book
 				 */
 				if (processBook(line)) {
 					continue;
@@ -86,10 +87,10 @@ public class ImportWarAndPeace {
 				}
 				paragraph.append(line);
 
-				if (++lineCount > maxLines) break;
+				if (++lineCount > maxLines)
+					break;
 			}
-		}
-		finally {
+		} finally {
 			if (in != null) {
 				in.close();
 			}
@@ -102,7 +103,8 @@ public class ImportWarAndPeace {
 		if (line.startsWith("CHAPTER ")) {
 			globalChapter++;
 			log.debug("Processing Chapter: " + line);
-			if (curBook == null) throw new Exception("book is null.");
+			if (curBook == null)
+				throw new Exception("book is null.");
 
 			addParagraph();
 
@@ -119,13 +121,15 @@ public class ImportWarAndPeace {
 		String line = paragraph.toString();
 
 		/*
-		 * remove any places where my algorithm stuffed an extra space that just happened to be at a
-		 * sentence end
+		 * remove any places where my algorithm stuffed an extra space that just
+		 * happened to be at a sentence end
 		 */
 		line = line.replace(".   ", ".  ");
 
-		if (line.length() == 0) return false;
-		if (curChapter == null || curBook == null) return false;
+		if (line.length() == 0)
+			return false;
+		if (curChapter == null || curBook == null)
+			return false;
 		globalVerse++;
 
 		// line = XString.injectForQuotations(line);

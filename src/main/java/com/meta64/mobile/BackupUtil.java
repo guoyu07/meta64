@@ -25,8 +25,7 @@ public class BackupUtil {
 		try {
 			BackupService backupService = (BackupService) SpringContextUtil.getBean(BackupService.class);
 			backupService.runCommandLine();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Backup failed.", e);
 		}
 		System.exit(0);

@@ -10,8 +10,9 @@ public class GetNodePrivilegesResponse extends OakResponseBase {
 	private List<String> owners;
 
 	/*
-	 * This value will match (and come from) the property named 'publicAppend' on the nodes which is
-	 * an optional property and if not present this boolean will be 'false'
+	 * This value will match (and come from) the property named 'publicAppend'
+	 * on the nodes which is an optional property and if not present this
+	 * boolean will be 'false'
 	 */
 	private boolean publicAppend;
 

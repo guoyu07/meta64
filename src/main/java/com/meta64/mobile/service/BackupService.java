@@ -21,14 +21,16 @@ import com.mongodb.MongoClient;
 /**
  * This class is experimental and is not yet working!
  * 
- * Currently, what happens when I run a 'restore' is the following exception gets thrown inside OAK
- * code because the "NodeBuilder" that Oak creates for it's own use in the restore ends up choking
- * itself here. So as far as I can determine this is an Oak bug, because it creates this object and
- * then blows up on it's own object.
+ * Currently, what happens when I run a 'restore' is the following exception
+ * gets thrown inside OAK code because the "NodeBuilder" that Oak creates for
+ * it's own use in the restore ends up choking itself here. So as far as I can
+ * determine this is an Oak bug, because it creates this object and then blows
+ * up on it's own object.
  * 
- * private static DocumentRootBuilder asDocumentRootBuilder(NodeBuilder builder) throws
- * IllegalArgumentException { if (!(builder instanceof DocumentRootBuilder)) { throw new
- * IllegalArgumentException( "builder must be a " + DocumentRootBuilder.class.getName()); } return
+ * private static DocumentRootBuilder asDocumentRootBuilder(NodeBuilder builder)
+ * throws IllegalArgumentException { if (!(builder instanceof
+ * DocumentRootBuilder)) { throw new IllegalArgumentException(
+ * "builder must be a " + DocumentRootBuilder.class.getName()); } return
  * (DocumentRootBuilder) builder; }
  */
 @Component
@@ -61,8 +63,7 @@ public class BackupService {
 		String cmd = env.getProperty("cmd");
 		if ("backup".equals(cmd)) {
 			backup();
-		}
-		else if ("restore".equals(cmd)) {
+		} else if ("restore".equals(cmd)) {
 			restore();
 		}
 	}
@@ -77,8 +78,7 @@ public class BackupService {
 			log.debug("Backing up to: " + targetFolder);
 			FileTools.createDirectory(targetFolder);
 			FileStoreBackup.backup(nodeStore, new File(targetFolder));
-		}
-		finally {
+		} finally {
 			disconnect();
 		}
 	}
@@ -104,8 +104,7 @@ public class BackupService {
 			}
 
 			FileStoreRestore.restore(new File(fullSrcFolder), nodeStore);
-		}
-		finally {
+		} finally {
 			disconnect();
 		}
 	}

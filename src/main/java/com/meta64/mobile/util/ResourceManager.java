@@ -10,24 +10,28 @@ import org.springframework.stereotype.Component;
 public class ResourceManager {
 	private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
 
-	//we use initialized to support lazy init.
+	// we use initialized to support lazy init.
 	private boolean initialized;
-	
+
 	private void init() {
-		if (initialized) return;
+		if (initialized)
+			return;
 		initialized = true;
-		
-		//This is part of a work in progress. 
-		//Commented code works fine but is not yet needed.
-		
-//		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//		try {
-//			Resource[] resources = resolver.getResources("classpath*:/static/**/*.*");
-//			for (Resource res : resources) {
-//				System.out.println("Resource: URI: " + res.getURI() + " URL: " + res.getURL());
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+
+		// This is part of a work in progress.
+		// Commented code works fine but is not yet needed.
+
+		// PathMatchingResourcePatternResolver resolver = new
+		// PathMatchingResourcePatternResolver();
+		// try {
+		// Resource[] resources =
+		// resolver.getResources("classpath*:/static/**/*.*");
+		// for (Resource res : resources) {
+		// System.out.println("Resource: URI: " + res.getURI() + " URL: " +
+		// res.getURL());
+		// }
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 	}
 }

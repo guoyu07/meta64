@@ -3,8 +3,8 @@ package com.meta64.mobile.model;
 import java.util.List;
 
 /**
- * Primary object passed back to client to represent a 'node'. Client sees the JSON version of this,
- * in javascript.
+ * Primary object passed back to client to represent a 'node'. Client sees the
+ * JSON version of this, in javascript.
  */
 public class NodeInfo {
 
@@ -26,8 +26,9 @@ public class NodeInfo {
 	public NodeInfo() {
 	}
 
-	public NodeInfo(String id, String path, String name, List<PropertyInfo> properties, boolean hasChildren, boolean childrenOrdered, boolean hasBinary,
-			boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
+	public NodeInfo(String id, String path, String name, List<PropertyInfo> properties, boolean hasChildren,
+			boolean childrenOrdered, boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height,
+			String primaryTypeName) {
 		this.id = id;
 		this.path = path;
 		this.name = name;

@@ -97,10 +97,8 @@ import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.service.OAuthLoginService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
-import com.meta64.mobile.util.BrandingUtil;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.NotLoggedInException;
-import com.meta64.mobile.util.SpringMvcUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
@@ -168,12 +166,6 @@ public class AppController {
 	private AclService aclService;
 
 	@Autowired
-	private BrandingUtil brandingUtil;
-
-	@Autowired
-	private SpringMvcUtil springMvcUtil;
-
-	@Autowired
 	private OAuthLoginService oauthLoginService;
 
 	@Autowired
@@ -193,9 +185,6 @@ public class AppController {
 			Model model) throws Exception {
 		logRequest("twitterCallback", null);
 		oauthLoginService.twitterCallback(model, oauthToken, oauthVerifier);
-
-		brandingUtil.addBrandingAttributes(model);
-		springMvcUtil.configureSpa(model);
 		return "index";
 	}
 
@@ -206,7 +195,8 @@ public class AppController {
 	 * ID is optional url parameter that user can specify to access a specific
 	 * node in the repository by uuid.
 	 * 
-	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of "/index.html"
+	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of
+	 * "/index.html"
 	 */
 	@RequestMapping("/")
 	public String mobile(@RequestParam(value = "id", required = false) String id, //
@@ -220,8 +210,6 @@ public class AppController {
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 
-		brandingUtil.addBrandingAttributes(model);
-		springMvcUtil.configureSpa(model);
 		sessionContext.setUrlId(id);
 		return "index";
 	}

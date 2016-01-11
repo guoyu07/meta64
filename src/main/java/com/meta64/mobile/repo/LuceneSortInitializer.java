@@ -31,7 +31,8 @@ class LuceneSortInitializer implements RepositoryInitializer {
 	public void initialize(NodeBuilder builder) {
 		if (builder.hasChildNode(IndexConstants.INDEX_DEFINITIONS_NAME) && //
 				builder.getChildNode(IndexConstants.INDEX_DEFINITIONS_NAME).hasChildNode(name)) {
-			log.debug("Index node already exists: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name + " so it will not be created.");
+			log.debug("Index node already exists: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name
+					+ " so it will not be created.");
 			return;
 		}
 
@@ -45,8 +46,9 @@ class LuceneSortInitializer implements RepositoryInitializer {
 				.setProperty(IndexConstants.REINDEX_PROPERTY_NAME, true)//
 
 				/*
-				 * Using ASYNC appears to completely disable the index. Not sure what else I need to
-				 * do here or how badly this will impact performance, to have 'synchronous'.
+				 * Using ASYNC appears to completely disable the index. Not sure
+				 * what else I need to do here or how badly this will impact
+				 * performance, to have 'synchronous'.
 				 */
 				// .setProperty(IndexConstants.ASYNC_PROPERTY_NAME, "async") //
 
@@ -61,13 +63,13 @@ class LuceneSortInitializer implements RepositoryInitializer {
 		// Type.NAMES);
 
 		NodeBuilder props = rulesNode//
-				.child("jcr:content")//nt:base
+				.child("jcr:content")// nt:base
 				.child(LuceneIndexConstants.PROP_NODE);
-		
+
 		// props.setProperty(TreeConstants.OAK_CHILD_ORDER,
 		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
-		
+
 		enableFulltextIndex(props.child("allProps"));
 	}
 

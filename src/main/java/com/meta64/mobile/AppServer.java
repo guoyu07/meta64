@@ -5,14 +5,17 @@ import java.io.InputStreamReader;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Standard SpringBoot entry point. Starts up entire application, which will run an instance of
- * Tomcat embedded and open the port specified in the properties file and start serving up requests.
+ * Standard SpringBoot entry point. Starts up entire application, which will run
+ * an instance of Tomcat embedded and open the port specified in the properties
+ * file and start serving up requests.
  */
 @SpringBootApplication
 @EnableScheduling
+@ServletComponentScan
 public class AppServer {
 
 	private static boolean shuttingDown;
@@ -20,8 +23,9 @@ public class AppServer {
 
 	public static void main(String[] args) {
 		/*
-		 * If we are running AppServer then enableScheduling, otherwise we may be running some
-		 * command line service such as BackupUtil, in which case deamons need to be deactivated.
+		 * If we are running AppServer then enableScheduling, otherwise we may
+		 * be running some command line service such as BackupUtil, in which
+		 * case deamons need to be deactivated.
 		 */
 		enableScheduling = true;
 		SpringApplication.run(AppServer.class, args);
@@ -29,9 +33,9 @@ public class AppServer {
 	}
 
 	/*
-	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possibible
-	 * and portabe to shart with other java developers and able to work just from calling this one
-	 * static method.
+	 * The 'args' search in this method is not ideal but I wanted this to be as
+	 * simple as possibible and portabe to shart with other java developers and
+	 * able to work just from calling this one static method.
 	 */
 	private static void hookEclipseShutdown(String[] args) {
 		boolean inEclipse = false;
@@ -41,7 +45,8 @@ public class AppServer {
 				break;
 			}
 		}
-		if (!inEclipse) return;
+		if (!inEclipse)
+			return;
 
 		boolean loopz = true;
 		InputStreamReader isr = null;
@@ -57,26 +62,22 @@ public class AppServer {
 					System.exit(0);
 				}
 			}
-		}
-		catch (Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			loopz = false;
-		}
-		finally {
+		} finally {
 			try {
 				if (br != null) {
 					br.close();
 				}
+			} catch (Exception e) {
 			}
-			catch (Exception e) {
-			}
-			
+
 			try {
 				if (isr != null) {
 					isr.close();
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 			}
 		}
 	}

@@ -22,11 +22,12 @@ import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.VarUtil;
 
 /**
- * Service for controlling the positions (ordinals) of nodes relative to their parents and/or moving
- * nodes to locate them under a different parent. This is similar type of functionality to
- * cut-and-paste in file systems. Currently there is no way to 'clone' or copy nodes, but user can
- * move any existing nodes they have to any new location they want, subject to security constraints
- * of course.
+ * Service for controlling the positions (ordinals) of nodes relative to their
+ * parents and/or moving nodes to locate them under a different parent. This is
+ * similar type of functionality to cut-and-paste in file systems. Currently
+ * there is no way to 'clone' or copy nodes, but user can move any existing
+ * nodes they have to any new location they want, subject to security
+ * constraints of course.
  */
 @Component
 @Scope("singleton")
@@ -37,9 +38,11 @@ public class NodeMoveService {
 	private OakRepository oak;
 
 	/*
-	 * Moves the the node to a new ordinal/position location (relative to parent)
+	 * Moves the the node to a new ordinal/position location (relative to
+	 * parent)
 	 */
-	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res) throws Exception {
+	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res)
+			throws Exception {
 		String parentNodeId = req.getParentNodeId();
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 		JcrUtil.checkNodeCreatedBy(parentNode, session.getUserID());
@@ -65,9 +68,10 @@ public class NodeMoveService {
 		}
 
 		/*
-		 * This is kinda ugly but the logic is that if 'deleteNode' conducted the delete as the
-		 * admin session then we expect it to also have done a save, so this 'session' in this local
-		 * scope is now logged out and unuable actually.
+		 * This is kinda ugly but the logic is that if 'deleteNode' conducted
+		 * the delete as the admin session then we expect it to also have done a
+		 * save, so this 'session' in this local scope is now logged out and
+		 * unuable actually.
 		 */
 		if (!VarUtil.safeBooleanVal(switchedToAdminSession.getVal())) {
 			session.save();
@@ -78,16 +82,19 @@ public class NodeMoveService {
 	/*
 	 * Deletes a single node by nodeId
 	 */
-	private void deleteNode(Session session, String nodeId, ValContainer<Boolean> switchedToAdminSession) throws Exception {
+	private void deleteNode(Session session, String nodeId, ValContainer<Boolean> switchedToAdminSession)
+			throws Exception {
 		Node node = JcrUtil.findNode(session, nodeId);
 		String commentBy = JcrUtil.safeGetStringProp(node, JcrProp.COMMENT_BY);
 
 		/*
-		 * Detect if this node is a comment we "own" (although true security rules make it belong to
-		 * admin user) then we should be able to delete it, so we execute the delete under an
-		 * 'AdminSession'. Also now that we have switched sessions, we set that in the return value,
-		 * so the caller can always, stop processing after this happens. Meaning essentialy only
-		 * *one* comment node can be deleted at a time unless you are admin user.
+		 * Detect if this node is a comment we "own" (although true security
+		 * rules make it belong to admin user) then we should be able to delete
+		 * it, so we execute the delete under an 'AdminSession'. Also now that
+		 * we have switched sessions, we set that in the return value, so the
+		 * caller can always, stop processing after this happens. Meaning
+		 * essentialy only *one* comment node can be deleted at a time unless
+		 * you are admin user.
 		 */
 		if (session.getUserID().equals(commentBy)) {
 			session.logout();
@@ -100,16 +107,15 @@ public class NodeMoveService {
 			}
 			node.remove();
 			session.save();
-		}
-		else {
+		} else {
 			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 			node.remove();
 		}
 	}
 
 	/*
-	 * Moves a set of nodes to a new location, underneath (i.e. children of) the target node
-	 * specified.
+	 * Moves a set of nodes to a new location, underneath (i.e. children of) the
+	 * target node specified.
 	 */
 	public void moveNodes(Session session, MoveNodesRequest req, MoveNodesResponse res) throws Exception {
 		String targetId = req.getTargetNodeId();
@@ -122,8 +128,9 @@ public class NodeMoveService {
 				Node node = JcrUtil.findNode(session, nodeId);
 				JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 				/*
-				 * This code moves the copied nodes to the bottom of child list underneath the
-				 * target node (i.e. targetNode being the parent) for the new node locations.
+				 * This code moves the copied nodes to the bottom of child list
+				 * underneath the target node (i.e. targetNode being the parent)
+				 * for the new node locations.
 				 */
 
 				String srcPath = node.getPath();
@@ -131,8 +138,7 @@ public class NodeMoveService {
 				// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" +
 				// dstPath + "]");
 				session.move(srcPath, dstPath);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// silently ignore if node cannot be found.
 			}
 		}

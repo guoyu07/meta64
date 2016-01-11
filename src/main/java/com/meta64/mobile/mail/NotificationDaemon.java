@@ -21,12 +21,13 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * This is a 'dedicated thread' for sending emails periodically. We need this daemon so that we can
- * do email sending without blocking any of the requests that require emails to be sent. That is,
- * when some service method requires an email to be sent it doesn't send the request or even spawn a
- * thread to send the request. It simply queues up in persistent storage he emails ready to be send
- * and sends them out all in a single mail session all at once. This is the most efficient way for
- * lots of obvious reasons.
+ * This is a 'dedicated thread' for sending emails periodically. We need this
+ * daemon so that we can do email sending without blocking any of the requests
+ * that require emails to be sent. That is, when some service method requires an
+ * email to be sent it doesn't send the request or even spawn a thread to send
+ * the request. It simply queues up in persistent storage he emails ready to be
+ * send and sends them out all in a single mail session all at once. This is the
+ * most efficient way for lots of obvious reasons.
  * 
  */
 @Component
@@ -47,19 +48,22 @@ public class NotificationDaemon {
 	private int runCounter = 0;
 
 	/*
-	 * Runs every 10 seconds. Note: Spring does correctly protect against concurrent runs. It will
-	 * always wait until the last run of this function is completed before running again. So we can
-	 * always assume only one thread/deamon of this class is running at at time, because this is a
+	 * Runs every 10 seconds. Note: Spring does correctly protect against
+	 * concurrent runs. It will always wait until the last run of this function
+	 * is completed before running again. So we can always assume only one
+	 * thread/deamon of this class is running at at time, because this is a
 	 * singleton class.
 	 * 
 	 * see also: @EnableScheduling (in this project)
 	 */
 	@Scheduled(fixedDelay = 60 * 1000)
 	public void run() {
-		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
+		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling())
+			return;
 
 		/*
-		 * spring always calls immediately upon startup and we will ignore the first call
+		 * spring always calls immediately upon startup and we will ignore the
+		 * first call
 		 */
 		if (runCounter++ == 0) {
 			return;
@@ -80,8 +84,7 @@ public class NotificationDaemon {
 					sendAllMail(session, mailNodes);
 				}
 			});
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.debug("Failed processing mail.", e);
 		}
 	}
@@ -105,15 +108,13 @@ public class NotificationDaemon {
 					session.save();
 				}
 			}
-		}
-		finally {
+		} finally {
 			if (mailSender != null) {
 				try {
 					log.debug("Closing mail sender after sending some mail(s).");
 					mailSender.close();
 					mailSender = null;
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					log.debug("Failed closing mail sender object.", e);
 					/*
 					 * DO NOT rethrow. Don't want to blow up the daemon thread

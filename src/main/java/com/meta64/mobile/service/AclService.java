@@ -28,8 +28,8 @@ import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * Service methods for (ACL): processing security, privileges, and Access Control List information
- * on nodes.
+ * Service methods for (ACL): processing security, privileges, and Access
+ * Control List information on nodes.
  * 
  */
 @Component
@@ -43,7 +43,8 @@ public class AclService {
 	/**
 	 * Returns the privileges that exist on the node identified in the request.
 	 */
-	public void getNodePrivileges(Session session, GetNodePrivilegesRequest req, GetNodePrivilegesResponse res) throws Exception {
+	public void getNodePrivileges(Session session, GetNodePrivilegesRequest req, GetNodePrivilegesResponse res)
+			throws Exception {
 
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
@@ -69,8 +70,9 @@ public class AclService {
 	}
 
 	/*
-	 * I made this privilege capable of doing either a 'publicAppend' update, or actual privileges
-	 * update. Only one at a time will be done, usually, if not always.
+	 * I made this privilege capable of doing either a 'publicAppend' update, or
+	 * actual privileges update. Only one at a time will be done, usually, if
+	 * not always.
 	 * 
 	 * Adds a new privilege to a node. Request object is self explanatory.
 	 */
@@ -88,15 +90,13 @@ public class AclService {
 
 			if (principal.equalsIgnoreCase(EveryonePrincipal.NAME)) {
 				principalObj = EveryonePrincipal.getInstance();
-			}
-			else {
+			} else {
 				principalObj = new PrincipalImpl(principal);
 			}
 
 			try {
 				success = AccessControlUtil.grantPrivileges(session, node, principalObj, privileges);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// leave success==false and continue.
 			}
 		}
@@ -105,8 +105,7 @@ public class AclService {
 			boolean publicAppend = req.getPublicAppend().booleanValue();
 			if (!publicAppend) {
 				JcrUtil.safeDeleteProperty(node, JcrProp.PUBLIC_APPEND);
-			}
-			else {
+			} else {
 				node.setProperty(JcrProp.PUBLIC_APPEND, true);
 			}
 			success = true;
@@ -114,17 +113,18 @@ public class AclService {
 
 		if (success) {
 			session.save();
-		}
-		else {
+		} else {
 			res.setMessage("Unable to alter privileges on node.");
 		}
 		res.setSuccess(success);
 	}
-	
+
 	/*
-	 * Removes the privilege specified in the request from the node specified in the request
+	 * Removes the privilege specified in the request from the node specified in
+	 * the request
 	 */
-	public void removePrivilege(Session session, RemovePrivilegeRequest req, RemovePrivilegeResponse res) throws Exception {
+	public void removePrivilege(Session session, RemovePrivilegeRequest req, RemovePrivilegeResponse res)
+			throws Exception {
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());

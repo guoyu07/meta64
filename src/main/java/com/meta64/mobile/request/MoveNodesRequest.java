@@ -7,12 +7,13 @@ public class MoveNodesRequest {
 	private String targetNodeId;
 
 	/*
-	 * optional (can be null), when provided as non-null, this means not only do we have
-	 * 'targetNodeId' specifying the parent node for the paste but we also have the targetChildId,
-	 * which is the node at the ordinal position that we want to have the nodes being moved end up
-	 * at. So the nodes getting moved will be all put in at the targetChildId node position and all
-	 * the existing child nodes will be moved down enough slots to make room for the nodes being
-	 * moved in.
+	 * optional (can be null), when provided as non-null, this means not only do
+	 * we have 'targetNodeId' specifying the parent node for the paste but we
+	 * also have the targetChildId, which is the node at the ordinal position
+	 * that we want to have the nodes being moved end up at. So the nodes
+	 * getting moved will be all put in at the targetChildId node position and
+	 * all the existing child nodes will be moved down enough slots to make room
+	 * for the nodes being moved in.
 	 */
 	private String targetChildId;
 

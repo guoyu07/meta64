@@ -8,8 +8,8 @@ public class SaveNodeRequest {
 	private String nodeId;
 
 	/*
-	 * properties to save. Not necessarily the complete list of properties on this node, but just
-	 * the ones we will persist
+	 * properties to save. Not necessarily the complete list of properties on
+	 * this node, but just the ones we will persist
 	 */
 	private List<PropertyInfo> properties;
 

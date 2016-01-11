@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 /**
  * Symmetric Encryption using AES
  * 
- * It's highly recommended that you put --aeskey=XXXXXXXXXXXXXXXX not in a text file but as a
- * command line parameter when the application is started so that a hacker has to gain access to
- * your actual launch script to see the password.
+ * It's highly recommended that you put --aeskey=XXXXXXXXXXXXXXXX not in a text
+ * file but as a command line parameter when the application is started so that
+ * a hacker has to gain access to your actual launch script to see the password.
  * 
  */
 @Component

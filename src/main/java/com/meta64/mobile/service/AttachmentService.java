@@ -39,10 +39,11 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 
 /**
- * Service for editing node attachments. Node attachments are binary attachments that the user can
- * opload onto a node. Each node allows either zero or one attachments. Uploading a new attachment
- * wipes out and replaces the previous attachment. If the attachment is an 'image' type then it gets
- * displayed right on the page. Otherwise a download link is what gets displayed on the node.
+ * Service for editing node attachments. Node attachments are binary attachments
+ * that the user can opload onto a node. Each node allows either zero or one
+ * attachments. Uploading a new attachment wipes out and replaces the previous
+ * attachment. If the attachment is an 'image' type then it gets displayed right
+ * on the page. Otherwise a download link is what gets displayed on the node.
  */
 @Component
 @Scope("singleton")
@@ -50,13 +51,16 @@ public class AttachmentService {
 	private static final Logger log = LoggerFactory.getLogger(AttachmentService.class);
 
 	/*
-	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
+	 * Upload from User's computer. Standard HTML form-based uploading of a file
+	 * from user machine
 	 */
-	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles) throws Exception {
+	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles)
+			throws Exception {
 		try {
 			/*
-			 * Uploading a single file attaches to the current node, but uploading multiple files
-			 * creates each file on it's own subnode (child nodes)
+			 * Uploading a single file attaches to the current node, but
+			 * uploading multiple files creates each file on it's own subnode
+			 * (child nodes)
 			 */
 			boolean addAsChildren = countFileUploads(uploadFiles) > 1;
 
@@ -64,12 +68,12 @@ public class AttachmentService {
 				String fileName = uploadFile.getOriginalFilename();
 				if (!StringUtils.isEmpty(fileName)) {
 					log.debug("Uploading file: " + fileName);
-					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren);
+					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1,
+							addAsChildren);
 				}
 			}
 			session.save();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -89,11 +93,11 @@ public class AttachmentService {
 	}
 
 	/*
-	 * Gets the binary attachment from a supplied stream and loads it into the repository on the
-	 * node specified in 'nodeId'
+	 * Gets the binary attachment from a supplied stream and loads it into the
+	 * repository on the node specified in 'nodeId'
 	 */
-	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height, boolean addAsChild)
-			throws Exception {
+	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is,
+			String mimeType, int width, int height, boolean addAsChild) throws Exception {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
 		/*
@@ -113,9 +117,10 @@ public class AttachmentService {
 		}
 
 		/*
-		 * Hack/Fix for ms word. Not sure why the URLConnection fails for this, but it's new. I need
-		 * to grab my old mime type map from legacy meta64 and put in this project. Clearly the
-		 * guessContentTypeFromName implementation provided by URLConnection has a screw loose.
+		 * Hack/Fix for ms word. Not sure why the URLConnection fails for this,
+		 * but it's new. I need to grab my old mime type map from legacy meta64
+		 * and put in this project. Clearly the guessContentTypeFromName
+		 * implementation provided by URLConnection has a screw loose.
 		 */
 		if (mimeType == null) {
 			if (fileName.toLowerCase().endsWith(".doc")) {
@@ -132,8 +137,9 @@ public class AttachmentService {
 		Binary binary = session.getValueFactory().createBinary(is);
 
 		/*
-		 * The above 'createBinary' call will have already read the entire stream so we can now
-		 * assume all data is present and width/height of image will ba available.
+		 * The above 'createBinary' call will have already read the entire
+		 * stream so we can now assume all data is present and width/height of
+		 * image will ba available.
 		 */
 		if (ImageUtil.isImageMime(mimeType)) {
 			if (width == -1 || height == -1) {
@@ -151,17 +157,19 @@ public class AttachmentService {
 		node.setProperty(JcrProp.BIN_VER, version + 1);
 
 		/*
-		 * DO NOT DELETE (this code can be used to test uploading) String directory =
-		 * "c:/temp-upload"; String filepath = Paths.get(directory, fileName).toString();
-		 * BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new
-		 * File(filepath))); stream.write(uploadfile.getBytes()); stream.close();
+		 * DO NOT DELETE (this code can be used to test uploading) String
+		 * directory = "c:/temp-upload"; String filepath = Paths.get(directory,
+		 * fileName).toString(); BufferedOutputStream stream = new
+		 * BufferedOutputStream(new FileOutputStream(new File(filepath)));
+		 * stream.write(uploadfile.getBytes()); stream.close();
 		 */
 	}
 
 	/*
 	 * Removes the attachment from the node specified in the request.
 	 */
-	public void deleteAttachment(Session session, DeleteAttachmentRequest req, DeleteAttachmentResponse res) throws Exception {
+	public void deleteAttachment(Session session, DeleteAttachmentRequest req, DeleteAttachmentResponse res)
+			throws Exception {
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -182,9 +190,10 @@ public class AttachmentService {
 	}
 
 	/*
-	 * Returns data for an attachment (Could be an image request, or any type of request for binary
-	 * data from a node). This is the method that services all calls from the browser to get the
-	 * data for the attachment to download/display the attachment.
+	 * Returns data for an attachment (Could be an image request, or any type of
+	 * request for binary data from a node). This is the method that services
+	 * all calls from the browser to get the data for the attachment to
+	 * download/display the attachment.
 	 */
 	public ResponseEntity<InputStreamResource> getBinary(Session session, String nodeId) throws Exception {
 		try {
@@ -208,16 +217,16 @@ public class AttachmentService {
 			return ResponseEntity.ok().contentLength(binary.getSize())//
 					.contentType(MediaType.parseMediaType(mimeTypeProp.getValue().getString()))//
 					.body(new InputStreamResource(binary.getStream()));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	/*
-	 * Uploads an image attachment not from the user's machine but from some arbitrary internet URL
-	 * they have provided, that could be pointing to an image or any other kind of content actually.
+	 * Uploads an image attachment not from the user's machine but from some
+	 * arbitrary internet URL they have provided, that could be pointing to an
+	 * image or any other kind of content actually.
 	 */
 	public void uploadFromUrl(Session session, UploadFromUrlRequest req, UploadFromUrlResponse res) throws Exception {
 		String nodeId = req.getNodeId();
@@ -233,17 +242,18 @@ public class AttachmentService {
 			String mimeType = URLConnection.guessContentTypeFromName(sourceUrl);
 
 			/*
-			 * if this is an image extension, handle it in a special way, mainly to extract the
-			 * width, height from it
+			 * if this is an image extension, handle it in a special way, mainly
+			 * to extract the width, height from it
 			 */
 			if (ImageUtil.isImageMime(mimeType)) {
 
 				/*
 				 * DO NOT DELETE
 				 * 
-				 * Basic version without masquerading as a web browser can cause a 403 error because
-				 * some sites don't want just any old stream reading from them. Leave this note here
-				 * as a warning and explanation
+				 * Basic version without masquerading as a web browser can cause
+				 * a 403 error because some sites don't want just any old stream
+				 * reading from them. Leave this note here as a warning and
+				 * explanation
 				 */
 
 				httpcon = (HttpURLConnection) url.openConnection();
@@ -254,9 +264,10 @@ public class AttachmentService {
 				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false);
 			}
 			/*
-			 * if not an image extension, we can just stream directly into the database, but we want
-			 * to try to get the mime type first, from calling detectImage so that if we do detect
-			 * its an image we can handle it as one.
+			 * if not an image extension, we can just stream directly into the
+			 * database, but we want to try to get the mime type first, from
+			 * calling detectImage so that if we do detect its an image we can
+			 * handle it as one.
 			 */
 			else {
 				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {
@@ -277,7 +288,8 @@ public class AttachmentService {
 			}
 
 			/*
-			 * I may not need this after the stream was close, but I'm calling it just in case
+			 * I may not need this after the stream was close, but I'm calling
+			 * it just in case
 			 */
 			if (httpcon != null) {
 				httpcon.disconnect();
@@ -317,12 +329,12 @@ public class AttachmentService {
 					ImageIO.write(bufImg, formatName, os);
 					is2 = new ByteArrayInputStream(os.toByteArray());
 
-					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false);
+					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null),
+							bufImg.getHeight(null), false);
 					return true;
 				}
 			}
-		}
-		finally {
+		} finally {
 			if (is != null) {
 				is.close();
 			}

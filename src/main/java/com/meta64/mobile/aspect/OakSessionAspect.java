@@ -1,7 +1,6 @@
 package com.meta64.mobile.aspect;
 
 import javax.jcr.Credentials;
-
 import javax.jcr.GuestCredentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -28,22 +27,26 @@ import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * This is the core (and maybe only) chunk of AOP that we use in this app, that wraps the processing
- * of a JSON call and handles all the boilerplate for performing a JSON call on the server which
- * comes from the JQuery ajax calls from the client. Primarily we use the cross cutting concerns of
- * user login, and JCR session lifecycle.
+ * This is the core (and maybe only) chunk of AOP that we use in this app, that
+ * wraps the processing of a JSON call and handles all the boilerplate for
+ * performing a JSON call on the server which comes from the JQuery ajax calls
+ * from the client. Primarily we use the cross cutting concerns of user login,
+ * and JCR session lifecycle.
  * 
- * Remember, Spring AOP is a bit awkward because of the use of Proxies. Problems WILL occur if you
- * have a method in a bean that's not annotated calling a method in a bean that IS annotated,
- * because in this case the AOP aspects that the annotations would imply WILL always happen actually
- * will NOT happen. This is because of the fact that when calling a proxied object from some other
- * object than itself, the proxy will be used, but when a method already on the proxied object calls
- * a method on the same proxied object, the AOP expects that the 'wrapping' of AOP will have already
- * been performed and will not perform it again. That is, when you have an @Around annotation like
- * this the wrapping (around stuff) only happens when the proxy is FIRST entered into on any given
- * callstack, and when calling the same proxy again, reentrantly, it will not call the @Around
- * processing again. And this nuance is not 'true to AOP' in general, but is a just an
- * implementation choice made by the Spring developers.
+ * Remember, Spring AOP is a bit awkward because of the use of Proxies. Problems
+ * WILL occur if you have a method in a bean that's not annotated calling a
+ * method in a bean that IS annotated, because in this case the AOP aspects that
+ * the annotations would imply WILL always happen actually will NOT happen. This
+ * is because of the fact that when calling a proxied object from some other
+ * object than itself, the proxy will be used, but when a method already on the
+ * proxied object calls a method on the same proxied object, the AOP expects
+ * that the 'wrapping' of AOP will have already been performed and will not
+ * perform it again. That is, when you have an @Around annotation like this the
+ * wrapping (around stuff) only happens when the proxy is FIRST entered into on
+ * any given callstack, and when calling the same proxy again, reentrantly, it
+ * will not call the @Around processing again. And this nuance is not 'true to
+ * AOP' in general, but is a just an implementation choice made by the Spring
+ * developers.
  * 
  */
 @Aspect
@@ -73,19 +76,18 @@ public class OakSessionAspect {
 
 			ThreadLocals.setJcrSession(session);
 			ret = joinPoint.proceed();
-		}
-		catch (NotLoggedInException e1) {
+		} catch (NotLoggedInException e1) {
 			HttpServletResponse res = ThreadLocals.getServletResponse();
 			if (res != null) {
 				res.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("exception: " + e.getMessage());
 
 			/*
-			 * if exception was thrown we get response from threadlocal, but really if we wanted to
-			 * we should always be able to retrieve from threadlocal.
+			 * if exception was thrown we get response from threadlocal, but
+			 * really if we wanted to we should always be able to retrieve from
+			 * threadlocal.
 			 */
 			ret = ThreadLocals.getResponse();
 
@@ -95,13 +97,13 @@ public class OakSessionAspect {
 					orb.setSuccess(false);
 
 					/*
-					 * for now, we can just send back the actual exception message
+					 * for now, we can just send back the actual exception
+					 * message
 					 */
 					orb.setMessage(e.getMessage());
 				}
 			}
-		}
-		finally {
+		} finally {
 			if (session != null) {
 				session.logout();
 				session = null;
@@ -119,7 +121,8 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) throws Exception {
+	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext)
+			throws Exception {
 		Object[] args = joinPoint.getArgs();
 		String userName = JcrPrincipal.ANONYMOUS;
 		String password = JcrPrincipal.ANONYMOUS;
@@ -145,14 +148,13 @@ public class OakSessionAspect {
 			if (userName == null) {
 				return null;
 			}
-		}
-		else if (req instanceof SignupRequest) {
+		} else if (req instanceof SignupRequest) {
 			/*
-			 * we will have no session for user for signup request, so return null
+			 * we will have no session for user for signup request, so return
+			 * null
 			 */
 			return null;
-		}
-		else {
+		} else {
 			userName = sessionContext.getUserName();
 			password = sessionContext.getPassword();
 
@@ -165,11 +167,11 @@ public class OakSessionAspect {
 		}
 
 		try {
-			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
+			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials()
+					: new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (res != null) {
 				res.setSuccess(false);
 				res.setMessage("Wrong username/password.");

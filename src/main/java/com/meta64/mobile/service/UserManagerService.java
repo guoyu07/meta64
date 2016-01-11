@@ -45,8 +45,8 @@ import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
 
 /**
- * Service methods for processing user management functions. Login, logout, signup, user
- * preferences, and settings persisted per-user
+ * Service methods for processing user management functions. Login, logout,
+ * signup, user preferences, and settings persisted per-user
  * 
  */
 @Component
@@ -58,8 +58,9 @@ public class UserManagerService {
 	private String anonUserLandingPageNode;
 
 	/*
-	 * We only use mailHost in this class to detect if email is configured and if not we fail all
-	 * signups. Currently this system does require email to be in the process for signing up users.
+	 * We only use mailHost in this class to detect if email is configured and
+	 * if not we fail all signups. Currently this system does require email to
+	 * be in the process for signing up users.
 	 */
 	@Value("${mail.host}")
 	public String mailHost;
@@ -83,10 +84,12 @@ public class UserManagerService {
 	private Encryptor encryptor;
 
 	/*
-	 * Login mechanism is a bit tricky because the OakSession ASPECT (AOP) actually detects the
-	 * LoginRequest and performs authentication BEFORE this 'login' method even gets called, so by
-	 * the time we are in this method we can safely assume the userName and password resulted in a
-	 * successful login. If login fails the getJcrSession() call below will return null also.
+	 * Login mechanism is a bit tricky because the OakSession ASPECT (AOP)
+	 * actually detects the LoginRequest and performs authentication BEFORE this
+	 * 'login' method even gets called, so by the time we are in this method we
+	 * can safely assume the userName and password resulted in a successful
+	 * login. If login fails the getJcrSession() call below will return null
+	 * also.
 	 */
 	public void login(Session session, LoginRequest req, LoginResponse res) throws Exception {
 
@@ -95,16 +98,15 @@ public class UserManagerService {
 		log.trace("login: user=" + userName);
 
 		/*
-		 * We have to get timezone information from the user's browser, so that all times on all
-		 * nodes always show up in their precise local time!
+		 * We have to get timezone information from the user's browser, so that
+		 * all times on all nodes always show up in their precise local time!
 		 */
 		sessionContext.setTimezone(DateUtil.getTimezoneFromOffset(req.getTzOffset()));
 		sessionContext.setTimeZoneAbbrev(DateUtil.getUSTimezone(-req.getTzOffset() / 60, req.isDst()));
 
 		if (userName.equals("")) {
 			userName = sessionContext.getUserName();
-		}
-		else {
+		} else {
 			sessionContext.setUserName(userName);
 			sessionContext.setPassword(password);
 		}
@@ -112,14 +114,13 @@ public class UserManagerService {
 		if (session == null) {
 			log.trace("    session==null, using anonymous user");
 			/*
-			 * Note: This is not an error condition, this happens whenever the page loads for the
-			 * first time and the user has no session yet,
+			 * Note: This is not an error condition, this happens whenever the
+			 * page loads for the first time and the user has no session yet,
 			 */
 			res.setUserName(JcrPrincipal.ANONYMOUS);
 			res.setMessage("not logged in.");
 			res.setSuccess(false);
-		}
-		else {
+		} else {
 			RefInfo rootRefInfo = UserManagerUtil.getRootNodeRefInfoForUser(session, userName);
 			sessionContext.setRootRefInfo(rootRefInfo);
 			res.setRootNode(rootRefInfo);
@@ -129,11 +130,11 @@ public class UserManagerService {
 				UserPreferences userPreferences = getUserPreferences();
 				sessionContext.setUserPreferences(userPreferences);
 				res.setUserPreferences(userPreferences);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				/*
-				 * If something goes wrong loading preferences just log and continue. Should never
-				 * happen but we might as well be resilient here.
+				 * If something goes wrong loading preferences just log and
+				 * continue. Should never happen but we might as well be
+				 * resilient here.
 				 */
 				// log.error("Failed loading preferences: ", e);
 			}
@@ -141,7 +142,8 @@ public class UserManagerService {
 		}
 		res.setAnonUserLandingPageNode(anonUserLandingPageNode);
 
-		log.debug("Processing Login: urlId=" + (sessionContext.getUrlId() != null ? sessionContext.getUrlId() : "null"));
+		log.debug(
+				"Processing Login: urlId=" + (sessionContext.getUrlId() != null ? sessionContext.getUrlId() : "null"));
 
 		res.setHomeNodeOverride(sessionContext.getUrlId());
 
@@ -159,8 +161,8 @@ public class UserManagerService {
 			UserManagerUtil.removeUser(session, userName);
 
 			/*
-			 * And remove the two nodes on the tree that we have for this user (root and
-			 * preferences)
+			 * And remove the two nodes on the tree that we have for this user
+			 * (root and preferences)
 			 */
 			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
 			if (allUsersRoot != null) {
@@ -175,9 +177,10 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Processes last set of signup, which is validation of registration code. This means user has
-	 * clicked the link they were sent during the signup email verification, and they are sending in
-	 * a signupCode that will turn on their account and actually create their account.
+	 * Processes last set of signup, which is validation of registration code.
+	 * This means user has clicked the link they were sent during the signup
+	 * email verification, and they are sending in a signupCode that will turn
+	 * on their account and actually create their account.
 	 */
 	public void processSignupCode(final String signupCode, final Model model) throws Exception {
 		log.debug("User is trying signupCode: " + signupCode);
@@ -195,18 +198,17 @@ public class UserManagerService {
 					initNewUser(session, userName, password, email, JcrPropVal.META64);
 
 					/*
-					 * allow JavaScript to detect all it needs to detect which is to display a
-					 * message to user saying the signup is complete.
+					 * allow JavaScript to detect all it needs to detect which
+					 * is to display a message to user saying the signup is
+					 * complete.
 					 */
 					model.addAttribute("signupCode", "ok");
 					node.remove();
 					session.save();
-				}
-				else {
+				} else {
 					throw new Exception("Signup Code is invalid.");
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// need to message back to user signup failed.
 			}
 		});
@@ -217,7 +219,8 @@ public class UserManagerService {
 	 * 
 	 * oauthService == 'twitter' or 'meta64'
 	 */
-	public void initNewUser(Session session, String userName, String password, String email, String oauthService) throws Exception {
+	public void initNewUser(Session session, String userName, String password, String email, String oauthService)
+			throws Exception {
 		if (UserManagerUtil.createUser(session, userName, password)) {
 			UserManagerUtil.createUserRootNode(session, userName);
 
@@ -244,7 +247,8 @@ public class UserManagerService {
 	}
 
 	/* Returns true if the user exists and matches the oauthServie */
-	public boolean userExists(Session session, String userName, String oauthService, ValContainer<String> passwordContainer) throws Exception {
+	public boolean userExists(Session session, String userName, String oauthService,
+			ValContainer<String> passwordContainer) throws Exception {
 		Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" + userName);
 		if (prefsNode != null) {
 			String serviceProperty = JcrUtil.safeGetStringProp(prefsNode, JcrProp.AUTH_SERVICE);
@@ -261,9 +265,10 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Processes a signup request from a user. The user doesn't immediately get an account, but an
-	 * email goes out to them that when they click on the link in the email the signupCode comes
-	 * back and actually creates their account at that time.
+	 * Processes a signup request from a user. The user doesn't immediately get
+	 * an account, but an email goes out to them that when they click on the
+	 * link in the email the signupCode comes back and actually creates their
+	 * account at that time.
 	 */
 	public void signup(SignupRequest req, SignupResponse res) throws Exception {
 
@@ -302,17 +307,21 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Adds user to the JCR list of pending accounts and they will stay in pending status until
-	 * their signupCode has been used to validate their email address
+	 * Adds user to the JCR list of pending accounts and they will stay in
+	 * pending status until their signupCode has been used to validate their
+	 * email address
 	 */
 	public void initiateSignup(String userName, String password, String email) throws Exception {
 
 		String signupCode = JcrUtil.getGUID();
 		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
-		
-		/* We print this out so we can use it in DEV mode when no email support may be configured */
-		log.debug("Signup URL: "+signupLink);
-		
+
+		/*
+		 * We print this out so we can use it in DEV mode when no email support
+		 * may be configured
+		 */
+		log.debug("Signup URL: " + signupLink);
+
 		String content = "Confirmation for new meta64 account: " + userName + //
 				"<p>\nGo to this page to complete signup: <br>\n" + signupLink;
 
@@ -324,17 +333,18 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Creates the node on the tree that holds the user info pending email validation.
+	 * Creates the node on the tree that holds the user info pending email
+	 * validation.
 	 */
-	public void addPendingSignupNode(final String userName, final String password, final String email, final String signupCode) throws Exception {
+	public void addPendingSignupNode(final String userName, final String password, final String email,
+			final String signupCode) throws Exception {
 
 		adminRunner.run((Session session) -> {
 
 			try {
 				Node checkNode = session.getNode("/" + JcrName.SIGNUP + "/" + userName);
 				throw new Exception("User name is already pending signup.");
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// normal flow. Not an error here.
 			}
 
@@ -354,7 +364,8 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Get node that contains all preferences for this user, as properties on it.
+	 * Get node that contains all preferences for this user, as properties on
+	 * it.
 	 */
 	public static Node getPrefsNodeForSessionUser(Session session, String userName) throws Exception {
 		return JcrUtil.ensureNodeExists(session, "/" + JcrName.USER_PREFERENCES + "/", userName, //
@@ -366,7 +377,8 @@ public class UserManagerService {
 		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, true);
 	}
 
-	public void saveUserPreferences(Session session_unused, final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
+	public void saveUserPreferences(Session session_unused, final SaveUserPreferencesRequest req,
+			final SaveUserPreferencesResponse res) throws Exception {
 
 		final String userName = sessionContext.getUserName();
 
@@ -381,9 +393,10 @@ public class UserManagerService {
 			session.save();
 
 			/*
-			 * Also update session-scope object, because server-side functions that need preference
-			 * information will get it from there instead of loading it from repository. The only
-			 * time we load user preferences from repository is during login when we can't get it
+			 * Also update session-scope object, because server-side functions
+			 * that need preference information will get it from there instead
+			 * of loading it from repository. The only time we load user
+			 * preferences from repository is during login when we can't get it
 			 * form anywhere else at that time.
 			 */
 			UserPreferences userPreferences = sessionContext.getUserPreferences();
@@ -406,7 +419,7 @@ public class UserManagerService {
 
 			/* for polymer conversion, forcing to true here */
 			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
-			
+
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 
 			// String password = JcrUtil.safeGetStringProp(prefsNode,
@@ -418,8 +431,9 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Each user has a node on the tree that holds all their user preferences. This method retrieves
-	 * that node for the user logged into the current HTTP Session (Session Scope Bean)
+	 * Each user has a node on the tree that holds all their user preferences.
+	 * This method retrieves that node for the user logged into the current HTTP
+	 * Session (Session Scope Bean)
 	 */
 	public Node getUserPrefsNode(Session session) throws Exception {
 

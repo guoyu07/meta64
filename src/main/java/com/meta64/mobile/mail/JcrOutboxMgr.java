@@ -23,12 +23,14 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * Meta64 has a node where it stores all emails that are queued up to be sent for whatever reason.
- * Emails related to User Signups in progress can be cached on the tree, or email notifications
- * because of node editing can also be cached on the tree. So basically this is a persistent queue
- * of emails that are ready to be sent. This class manages storing the emails on the tree. There are
- * other classes that handle the actual sending of the messages, and a background deamon thread that
- * periodically checks for emails ready to be sent and sends them.
+ * Meta64 has a node where it stores all emails that are queued up to be sent
+ * for whatever reason. Emails related to User Signups in progress can be cached
+ * on the tree, or email notifications because of node editing can also be
+ * cached on the tree. So basically this is a persistent queue of emails that
+ * are ready to be sent. This class manages storing the emails on the tree.
+ * There are other classes that handle the actual sending of the messages, and a
+ * background deamon thread that periodically checks for emails ready to be sent
+ * and sends them.
  */
 @Component
 @Scope("singleton")
@@ -43,7 +45,8 @@ public class JcrOutboxMgr {
 	private ConstantsProvider constProvider;
 
 	/*
-	 * For some reason this property cannot be loaded from properties file. Extremely strange.
+	 * For some reason this property cannot be loaded from properties file.
+	 * Extremely strange.
 	 * 
 	 * @Value("${mailBatchSize}")
 	 */
@@ -54,12 +57,14 @@ public class JcrOutboxMgr {
 	}
 
 	/*
-	 * node=Node that was created. userName = username of person who just created node.
+	 * node=Node that was created. userName = username of person who just
+	 * created node.
 	 */
-	public void sendNotificationForChildNodeCreate(final Node node, final String userName, final String parentProp) throws Exception {
+	public void sendNotificationForChildNodeCreate(final Node node, final String userName, final String parentProp)
+			throws Exception {
 		/*
-		 * put in a catch block, because nothing going wrong in here should be allowed to blow up
-		 * the save operation
+		 * put in a catch block, because nothing going wrong in here should be
+		 * allowed to blow up the save operation
 		 */
 		adminRunner.run((Session session) -> {
 			try {
@@ -79,8 +84,7 @@ public class JcrOutboxMgr {
 						queueMailUsingAdminSession(session, email, "Meta64 New Content Notification", content);
 					}
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				log.debug("failed sending notification", e);
 			}
 		});
@@ -92,7 +96,8 @@ public class JcrOutboxMgr {
 		});
 	}
 
-	public void queueMailUsingAdminSession(Session session, final String recipients, final String subject, final String content) throws Exception {
+	public void queueMailUsingAdminSession(Session session, final String recipients, final String subject,
+			final String content) throws Exception {
 		Node outboxNode = getSystemOutbox(session);
 
 		String name = JcrUtil.getGUID();
@@ -123,15 +128,15 @@ public class JcrOutboxMgr {
 				}
 				mailNodes.add(n);
 			}
-		}
-		catch (NoSuchElementException ex) {
+		} catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
 		return mailNodes;
 	}
 
 	/*
-	 * Get node that contains all preferences for this user, as properties on it.
+	 * Get node that contains all preferences for this user, as properties on
+	 * it.
 	 */
 	public static Node getSystemOutbox(Session session) throws Exception {
 		return JcrUtil.ensureNodeExists(session, "/" + JcrName.OUTBOX + "/", JcrName.SYSTEM, "System Messages");

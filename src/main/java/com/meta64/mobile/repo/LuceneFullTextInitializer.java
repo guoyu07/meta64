@@ -21,8 +21,8 @@ class LuceneFullTextInitializer implements RepositoryInitializer {
 	private final String propertyName;
 
 	/*
-	 * To index all properties in the repository pass null for propertyName instead of an actual
-	 * property name.
+	 * To index all properties in the repository pass null for propertyName
+	 * instead of an actual property name.
 	 */
 	public LuceneFullTextInitializer(String name, String propertyName) {
 		this.name = name;
@@ -33,7 +33,8 @@ class LuceneFullTextInitializer implements RepositoryInitializer {
 	public void initialize(NodeBuilder builder) {
 		if (builder.hasChildNode(IndexConstants.INDEX_DEFINITIONS_NAME) && //
 				builder.getChildNode(IndexConstants.INDEX_DEFINITIONS_NAME).hasChildNode(name)) {
-			log.debug("Index node already exists: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name + " so it will not be created.");
+			log.debug("Index node already exists: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name
+					+ " so it will not be created.");
 			return;
 		}
 
@@ -46,8 +47,9 @@ class LuceneFullTextInitializer implements RepositoryInitializer {
 				.setProperty(IndexConstants.REINDEX_PROPERTY_NAME, true) //
 
 				/*
-				 * Using ASYNC appears to completely disable the index. Not sure what else I need to
-				 * do here or how badly this will impact performance, to have 'synchronous'.
+				 * Using ASYNC appears to completely disable the index. Not sure
+				 * what else I need to do here or how badly this will impact
+				 * performance, to have 'synchronous'.
 				 */
 				.setProperty(IndexConstants.ASYNC_PROPERTY_NAME, "async") //
 
@@ -80,7 +82,8 @@ class LuceneFullTextInitializer implements RepositoryInitializer {
 
 		if (propertyName == null) {
 			/*
-			 * I am not using spell-checking or 'suggest' until I research what those are
+			 * I am not using spell-checking or 'suggest' until I research what
+			 * those are
 			 */
 			// .setProperty(LuceneIndexConstants.PROP_USE_IN_SPELLCHECK, true)//
 			// .setProperty(LuceneIndexConstants.PROP_USE_IN_SUGGEST, true)
@@ -88,8 +91,7 @@ class LuceneFullTextInitializer implements RepositoryInitializer {
 			propNode //
 					.setProperty(LuceneIndexConstants.PROP_NAME, LuceneIndexConstants.REGEX_ALL_PROPS)//
 					.setProperty(LuceneIndexConstants.PROP_IS_REGEX, true);
-		}
-		else {
+		} else {
 			propNode //
 					.setProperty(LuceneIndexConstants.PROP_NAME, propertyName)//
 					.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);

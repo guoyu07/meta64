@@ -57,8 +57,8 @@ import com.mongodb.MongoTimeoutException;
 /**
  * Instance of a MonboDB-based Repository.
  * 
- * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
- * called.
+ * NOTE: Even inside this class always use getRepository() to ensure that the
+ * init() has been called.
  */
 @Component
 @Scope("singleton")
@@ -81,16 +81,17 @@ public class OakRepository {
 	private DB db;
 
 	/*
-	 * Because of the criticality of this variable, I am not using the Spring getter to get it, but
-	 * just using a private static. It's slightly safer and better for the purpose of cleanup in the
-	 * shutdown hook which is all it's used for.
+	 * Because of the criticality of this variable, I am not using the Spring
+	 * getter to get it, but just using a private static. It's slightly safer
+	 * and better for the purpose of cleanup in the shutdown hook which is all
+	 * it's used for.
 	 */
 	private static OakRepository instance;
 
 	/*
-	 * We only need this lock to protect against startup and/or shutdown concurrency. Remember
-	 * during debugging, etc the server process can be shutdown (CTRL-C) even while it's in the
-	 * startup phase.
+	 * We only need this lock to protect against startup and/or shutdown
+	 * concurrency. Remember during debugging, etc the server process can be
+	 * shutdown (CTRL-C) even while it's in the startup phase.
 	 */
 	private static final Object lock = new Object();
 
@@ -130,9 +131,10 @@ public class OakRepository {
 			@Override
 			public void run() {
 				/*
-				 * I know this tight coupling is going to be upsetting to some developers, but this
-				 * is a good design despite that. I don't want a complex PUB/SUB or indirection to
-				 * get in the way of this working perfectly and being dead simple!
+				 * I know this tight coupling is going to be upsetting to some
+				 * developers, but this is a good design despite that. I don't
+				 * want a complex PUB/SUB or indirection to get in the way of
+				 * this working perfectly and being dead simple!
 				 */
 				AppServer.setShuttingDown(true);
 				instance.close();
@@ -149,7 +151,7 @@ public class OakRepository {
 		adminRunner.run((Session session) -> {
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, null);
 			initLandingPage(session, landingPageNode);
-			
+
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
@@ -167,10 +169,12 @@ public class OakRepository {
 	}
 
 	private void init() throws Exception {
-		if (initialized) return;
+		if (initialized)
+			return;
 
 		synchronized (lock) {
-			if (initialized) return;
+			if (initialized)
+				return;
 
 			try {
 				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
@@ -179,7 +183,8 @@ public class OakRepository {
 				root = nodeStore.getRoot();
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown()) return;
+				if (AppServer.isShuttingDown())
+					return;
 
 				executor = Oak.defaultExecutorService();
 				oak = new Oak(nodeStore);
@@ -190,9 +195,10 @@ public class OakRepository {
 
 				if (indexingEnabled) {
 					/*
-					 * WARNING: Not all valid SQL will work with these lucene queries. Namely the
-					 * contains() method fails so always use '=' operator for exact string matches
-					 * or LIKE %something%, instead of using the contains method.
+					 * WARNING: Not all valid SQL will work with these lucene
+					 * queries. Namely the contains() method fails so always use
+					 * '=' operator for exact string matches or LIKE
+					 * %something%, instead of using the contains method.
 					 */
 					indexProvider = new LuceneIndexProvider();
 					indexProvider = indexProvider.with(getNodeAggregator());
@@ -206,19 +212,21 @@ public class OakRepository {
 				}
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown()) return;
+				if (AppServer.isShuttingDown())
+					return;
 
 				repository = jcr.createRepository();
 
 				log.debug("MongoDb connection ok.");
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown()) return;
+				if (AppServer.isShuttingDown())
+					return;
 
 				/*
-				 * IMPORTANT: Do not move this line below this point. An infinite loop of re-entry
-				 * can occur into this method because of calls to getRepository() always doing an
-				 * init.
+				 * IMPORTANT: Do not move this line below this point. An
+				 * infinite loop of re-entry can occur into this method because
+				 * of calls to getRepository() always doing an init.
 				 */
 				initialized = true;
 
@@ -226,30 +234,31 @@ public class OakRepository {
 				initRequiredNodes();
 
 				log.debug("Repository fully initialized.");
-			}
-			catch (MongoTimeoutException e) {
+			} catch (MongoTimeoutException e) {
 				log.error("********** Did you forget to start MongoDb Server? **********", e);
 				throw e;
 			}
 		}
 	}
-	
+
 	private void initLandingPage(Session session, Node node) {
 		try {
-			Resource resource = SpringContextUtil.getApplicationContext().getResource("classpath:/static/landing-page.md");
+			Resource resource = SpringContextUtil.getApplicationContext()
+					.getResource("classpath:/static/landing-page.md");
 			String content = XString.loadResourceIntoString(resource);
-			System.out.println("content: "+content);
 			node.setProperty(JcrProp.CONTENT, content);
 			AccessControlUtil.makeNodePublic(session, node);
 			session.save();
 		} catch (Exception e) {
-			//IMPORTANT: don't rethrow from here, or this could blow up app initialization.
+			// IMPORTANT: don't rethrow from here, or this could blow up app
+			// initialization.
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	/*
-	 * I don't fully understand what this aggregator is for. Need to research this some.
+	 * I don't fully understand what this aggregator is for. Need to research
+	 * this some.
 	 */
 	private static NodeAggregator getNodeAggregator() {
 		return new SimpleNodeAggregator().newRuleWithName(JcrConstants.NT_UNSTRUCTURED, //
@@ -261,7 +270,8 @@ public class OakRepository {
 		userParams.put(UserConstants.PARAM_ADMIN_ID, "admin");
 		userParams.put(UserConstants.PARAM_OMIT_ADMIN_PW, false);
 
-		securityParams = ConfigurationParameters.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
+		securityParams = ConfigurationParameters
+				.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
 		securityProvider = new SecurityProviderImpl(securityParams);
 		return securityProvider;
 	}
@@ -277,8 +287,7 @@ public class OakRepository {
 				try {
 					executor.awaitTermination(5, TimeUnit.MINUTES);
 					log.debug("Executor shutdown completed ok.");
-				}
-				catch (InterruptedException ex) {
+				} catch (InterruptedException ex) {
 					log.error("Executor failed to shutdown gracefully.", ex);
 				}
 

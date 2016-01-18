@@ -95,7 +95,7 @@
 <![CDATA[*/
         /*
         Old browsers may not have the console.log/console.error functions.
-        */
+         */
         if (!window.console) {
                 console = {
                         log : function() {
@@ -104,7 +104,7 @@
                         }
                 };
         }
-        
+
         window.onerror = function(message, url, line, col, err) {
                 var msg = "ERROR: " + message + " [url:" + url + "] line " + line + " col: " + col;
                 if (err.stack) {
@@ -112,19 +112,19 @@
                 }
                 console.log(msg);
         }
-        
+
         var cookiePrefix = "{{cookiePrefix}}";
         var BRANDING_TITLE = "{{brandingTitle}}";
         var cacheVersion = "{{cacheVersion}}";
         var profileName = "{{profileName}}";
         console.log("cacheVersion: " + cacheVersion);
-        
+
         /**
          * IMPORTANT: "Same Origin Policy" is very very strict on the precise text of the name even if
          * it maps in DNS to same thing it must be a text match and may different to browser.
          */
-         var postTargetUrl = window.location.origin + "/mobile/api/";
-         /*]]>
+        var postTargetUrl = window.location.origin + "/mobile/api/";
+        /*]]>
 */</script>
         <script type="text/javascript"
                 src="{{jqueryJs}}"></script>

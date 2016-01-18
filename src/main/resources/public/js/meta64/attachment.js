@@ -33,13 +33,13 @@ var attachment = function() {
 		uploadNode : null,
 
 		deleteAttachment : function() {
-			confirmPg.areYouSure("Confirm Delete Attachment",
+			(new ConfirmDlg("Confirm Delete Attachment",
 					"Delete the Attachment on the Node?", "Yes, delete.",
 					function() {
 						util.json("deleteAttachment", {
 							"nodeId" : _.uploadNode.id
 						}, _deleteAttachmentResponse);
-					});
+					})).open();
 		},
 
 		uploadFileNow : function() {

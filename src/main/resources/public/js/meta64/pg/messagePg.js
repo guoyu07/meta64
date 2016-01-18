@@ -37,9 +37,9 @@ var messagePg = function() {
 
 		init : function(data) {
 			if (data.title) {
-				$("#messagePgTitle-" + data.guid).text(data.title);
+				util.setHtml("messagePgTitle-" + data.guid, data.title);
 			}
-			$("#messagePgMessage-" + data.guid).html(data.message);
+			util.setHtml("messagePgMessage-" + data.guid, data.message);
 		}
 	};
 

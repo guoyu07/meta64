@@ -262,7 +262,7 @@ var render = function() {
 				return;
 			}
 			var url = window.location.origin + "?id=" + node.path;
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 
 			var message = "URL using path: <br>" + url;
 			var uuid = props.getNodePropertyVal("jcr:uuid", node);
@@ -876,6 +876,8 @@ var render = function() {
 
 		/*
 		 * domId is id of dialog being closed.
+		 * 
+		 * todo: Once all dialogs are refactored to new design this method can be removed.
 		 */
 		makePopupBackButton : function(text, id, domId, callback) {
 

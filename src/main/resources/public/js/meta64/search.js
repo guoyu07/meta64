@@ -204,7 +204,7 @@ var srch = function() {
 			 */
 			srch.highlightRowNode = srch.uidToNodeMap[uid];
 			view.refreshTree(srch.highlightRowNode.id, true);
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 		},
 
 		/*

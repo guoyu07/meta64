@@ -37,18 +37,6 @@ var popupMenuPg = function() {
 
 		build : function() {
 
-			/*
-			 * whatever is commented is only commented for polymer conversion
-			 */
-			var myAccountItems = //
-			_menuItem("Change Password", "changePasswordPgButton", "user.changePasswordPg();") + // 
-			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + // 
-			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();")+ // 
-			// _menuItem("Full Repository Export", "fullRepositoryExport", "
-			// edit.fullRepositoryExport();") + //
-			_menuItem("Donate", "donatePgButton", "donatePg.open();");
-			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
-
 			var editMenuItems = //
 			_menuItem("Attachments", "manageAttachmentsButton", "attachment.openUploadPg();") + //
 			_menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + // 
@@ -80,7 +68,19 @@ var popupMenuPg = function() {
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
 			var viewOptionsMenu = _makeTopLevelMenu("View Options", viewOptionsMenuItems);
 
-			var content = myAccountMenu + editMenu + sharingMenu + viewOptionsMenu + searchMenu;
+			/*
+			 * whatever is commented is only commented for polymer conversion
+			 */
+			var myAccountItems = //
+			_menuItem("Change Password", "changePasswordPgButton", "(new ChangePasswordDlg()).open();") + // 
+			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + // 
+			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();") + // 
+			// _menuItem("Full Repository Export", "fullRepositoryExport", "
+			// edit.fullRepositoryExport();") + //
+			_menuItem("Donate", "donatePgButton", "donatePg.open();");
+			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
+
+			var content = editMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu;
 			util.setHtmlEnhanced(_.domId, content);
 		},
 

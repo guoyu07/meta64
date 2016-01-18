@@ -11,7 +11,7 @@ var edit = function() {
 	var _saveNodeResponse = function(res) {
 		if (util.checkSuccess("Save node", res)) {
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -23,14 +23,14 @@ var edit = function() {
 			} else {
 				view.refreshTree(null, false, res.newId);
 			}
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 		}
 	}
 
 	var _exportResponse = function(res) {
 		if (util.checkSuccess("Export", res)) {
 			messagePg.alert("Export Successful.");
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -39,7 +39,7 @@ var edit = function() {
 		if (util.checkSuccess("Import", res)) {
 			messagePg.alert("Import Successful.");
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -49,7 +49,7 @@ var edit = function() {
 
 		util.checkSuccess("Insert Book", res);
 		view.refreshTree(null, false);
-		meta64.jqueryChangePage("mainTabName");
+		meta64.selectTab("mainTabName");
 		view.scrollToSelectedNode();
 	}
 
@@ -109,7 +109,7 @@ var edit = function() {
 	var _splitContentResponse = function(res) {
 		if (util.checkSuccess("Split content", res)) {
 			view.refreshTree(null, false);
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
 		}
 	}
@@ -211,7 +211,7 @@ var edit = function() {
 			if (meta64.treeDirty) {
 				meta64.goToMainPage(true);
 			} else {
-				meta64.jqueryChangePage("mainTabName");
+				meta64.selectTab("mainTabName");
 				view.scrollToSelectedNode();
 			}
 		},
@@ -271,6 +271,7 @@ var edit = function() {
 		},
 
 		saveExistingNode : function() {
+			console.log("**************** saveExistingNode");
 			var propertiesList = [];
 			var counter = 0;
 			var changeCount = 0;
@@ -284,23 +285,62 @@ var edit = function() {
 				 */
 				if (meta64.fieldIdToPropMap.hasOwnProperty(fieldId)) {
 
+					console.log("Saving property field: " + fieldId);
+
 					/*
 					 * Since the Readonly ones are prefixed with RdOnly_ in
 					 * front of fieldId, those won't exist and elementExists
 					 * bypasses them
 					 */
 					if (util.elementExists(fieldId)) {
+						console.log("Element exists: " + fieldId);
+
 						var prop = meta64.fieldIdToPropMap[fieldId];
 						var propVal = util.getTextAreaValById(fieldId);
 
-						if (propVal !== prop.value) {
+						console.log("prop name: " + prop.name);
+
+						var isMulti = prop.values && prop.values.length > 0;
+						if (isMulti) {
+							alert("multi prop not handled: fieldId=" + fieldId);
+						} //
+						else if (propVal !== prop.value) {
+							console.log("Prop change: " + fieldId + " newVal=" + propVal);
 							propertiesList.push({
 								"name" : prop.name,
 								"value" : propVal
 							});
 
 							changeCount++;
+						} else {
+							console.log("Prop didn't change: " + fieldId);
 						}
+					} else {
+						console.log("Element doesn't exist: " + fieldId + " trying subprops");
+						var subPropIdx = 0;
+						var propVals = [];
+						var prop = meta64.fieldIdToPropMap[fieldId];
+						while (true) {
+							var subPropId = fieldId + "_subProp" + subPropIdx;
+							if (util.elementExists(subPropId)) {
+								console.log("Element subprop exists: " + subPropId);
+
+								var propVal = util.getTextAreaValById(subPropId);
+								console.log("prop: " + prop.name + " val[" + subPropIdx + "]=" + propVal);
+								propVals.push(propVal);
+							} else {
+								console.log("Element subprop does not exist: " + subPropId);
+								break;
+							}
+							subPropIdx++;
+						}
+						
+						propertiesList.push({
+							"name" : prop.name,
+							"values" : propVals
+						});
+
+						changeCount++;
 					}
 				} else {
 					break;
@@ -308,6 +348,7 @@ var edit = function() {
 				counter++;
 			}
 
+			/* if anything changed, save to server */
 			if (changeCount > 0) {
 				var postData = {
 					nodeId : _.editNode.id,
@@ -317,7 +358,7 @@ var edit = function() {
 				util.json("saveNode", postData, _saveNodeResponse);
 				_sendNotificationPendingSave = false;
 			} else {
-				messagePg.alert("You didn't change any information!");
+				console.log("nothing chaged. Nothing to save.");
 			}
 		},
 
@@ -502,6 +543,8 @@ var edit = function() {
 					}
 
 					var fieldId = "editNodeTextContent" + counter;
+
+					console.log("Creating edit field " + fieldId + " for property " + prop.name);
 
 					meta64.fieldIdToPropMap[fieldId] = prop;
 					var isMulti = prop.values && prop.values.length > 0;
@@ -699,7 +742,7 @@ var edit = function() {
 			 * server, so this is actually very efficient.
 			 */
 			render.renderPageFromData();
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 		},
 
 		/*
@@ -714,12 +757,12 @@ var edit = function() {
 				return;
 			}
 
-			confirmPg.areYouSure("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
+			(new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
 					function() {
 						util.json("deleteNodes", {
 							"nodeIds" : selNodesArray
 						}, _deleteNodesResponse);
-					});
+					})).open();
 		},
 
 		moveSelNodes : function() {
@@ -730,8 +773,7 @@ var edit = function() {
 				return;
 			}
 
-			confirmPg
-					.areYouSure(
+			(new ConfirmDlg(
 							"Confirm Move",
 							"Move " + selNodesArray.length + " node(s) to a new location ?",
 							"Yes, move.",
@@ -743,11 +785,11 @@ var edit = function() {
 								messagePg
 										.alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
 								meta64.refreshAllGuiEnablement();
-							});
+							})).open();
 		},
 
 		finishMovingSelNodes : function() {
-			confirmPg.areYouSure("Confirm Move", "Move " + _.nodesToMove.length + " node(s) to selected location ?",
+			(new ConfirmDlg("Confirm Move", "Move " + _.nodesToMove.length + " node(s) to selected location ?",
 					"Yes, move.", function() {
 
 						var highlightNode = meta64.getHighlightedNode();
@@ -763,12 +805,12 @@ var edit = function() {
 							"targetChildId" : highlightNode != null ? highlightNode.id : null,
 							"nodeIds" : _.nodesToMove
 						}, _moveNodesResponse);
-					});
+					})).open();
 		},
 
 		insertBookWarAndPeace : function() {
 
-			confirmPg.areYouSure("Confirm", "Insert book War and Peace?", "Yes, insert book.", function() {
+			(new ConfirmDlg("Confirm", "Insert book War and Peace?", "Yes, insert book.", function() {
 
 				/* inserting under whatever node user has focused */
 				var node = meta64.getHighlightedNode();
@@ -781,7 +823,7 @@ var edit = function() {
 						"bookName" : "War and Peace"
 					}, _insertBookResponse);
 				}
-			});
+			})).open();
 		}
 	};
 

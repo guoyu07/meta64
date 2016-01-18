@@ -11,6 +11,7 @@ var loginPg = function() {
 
 			var header = render.makeDialogHeader("Login");
 
+			// todo: trying this binding now.
 			var formControls = render.makeEditField("User", "userName") + //
 			render.makePasswordField("Password", "password");
 
@@ -45,10 +46,22 @@ var loginPg = function() {
 		},
 
 		init : function() {
-			user.populateLoginPgFromCookies();
+			_.populateFromCookies();
 
 			// polymer experiment removing
 			// util.delayedFocus("#userName");
+		},
+
+		populateFromCookies : function() {
+			var usr = $.cookie(cnst.COOKIE_LOGIN_USR);
+			var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
+
+			if (usr) {
+				util.setInputVal("userName", usr);
+			}
+			if (pwd) {
+				util.setInputVal("password", pwd);
+			}
 		}
 	};
 

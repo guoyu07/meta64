@@ -84,12 +84,17 @@ var view = function() {
 
 			setTimeout(function() {
 				scrollToSelNodePending = false;
-				
+
 				var elm = nav.getSelectedPolyElement();
 				if (elm) {
-					elm.node.scrollIntoView();
+					if (elm.node.scrollIntoView) {
+						elm.node.scrollIntoView();
+					} else {
+						alert("selected element didn't have scrollIntoView function");
+					}
 				}
-				//If we couldn't find a selected node on this page, scroll to top instead.
+				// If we couldn't find a selected node on this page, scroll to
+				// top instead.
 				else {
 					elm = util.polyElm("mainPaperTabs");
 					if (elm) {
@@ -106,11 +111,11 @@ var view = function() {
 		scrollToTop : function() {
 			if (scrollToSelNodePending)
 				return;
-			
+
 			setTimeout(function() {
 				if (scrollToSelNodePending)
 					return;
-				
+
 				var elm = util.polyElm("mainPaperTabs");
 				if (elm) {
 					elm.node.scrollIntoView();

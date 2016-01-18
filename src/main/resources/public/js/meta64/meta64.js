@@ -168,8 +168,17 @@ var meta64 = function() {
 		
 		runCallback : function(guid) {
 			var dataObj = meta64.getObjectByGuid(guid);
+			
+			//if this is an object, we expect it to have a 'callback' property that is a function
 			if (dataObj.callback) {
 				dataObj.callback();
+			}
+			//or else sometimes the registered object itself is the function, which is ok too
+			else if (typeof dataObj == 'function') {
+				dataObj();
+			}
+			else {
+				alert("unable to find callback on registered guid: "+guid);
 			}
 		},
 
@@ -202,7 +211,7 @@ var meta64 = function() {
 			}
 		},
 
-		jqueryChangePage : function(pageName) {
+		selectTab : function(pageName) {
 			var ironPages = document.querySelector("#mainIronPages");
 			ironPages.select(pageName);
 		},
@@ -338,7 +347,7 @@ var meta64 = function() {
 			 * auto-select the data view
 			 */
 			if (_.dialogStack.length == 1) {
-				meta64.jqueryChangePage("mainTabName");
+				meta64.selectTab("mainTabName");
 				view.scrollToSelectedNode();
 			}
 

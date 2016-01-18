@@ -5,7 +5,7 @@ var prefs = function() {
 	var _ = {
 		savePreferencesResponse : function(res) {
 			if (util.checkSuccess("Saving Preferences", res)) {
-				meta64.jqueryChangePage("mainTabName");
+				meta64.selectTab("mainTabName");
 				view.scrollToSelectedNode();
 			}
 		},
@@ -19,10 +19,10 @@ var prefs = function() {
 		},
 
 		closeAccount : function() {
-			confirmPg.areYouSure("Oh No!", "Close your Account? Are you sure? This was so unexpected!",
+			(new ConfirmDlg("Oh No!", "Close your Account? Are you sure? This was so unexpected!",
 					"Yes, Close Account.", function() {
 						util.json("closeAccount", {}, _.closeAccountResponse);
-					});
+					})).open();
 		},
 
 		savePreferences : function() {

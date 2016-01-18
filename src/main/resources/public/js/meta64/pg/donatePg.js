@@ -8,7 +8,7 @@ var donatePg = function() {
 
 	var _ = {
 		/*
-		 * Note: this domId always has an suffix like domId-1, domId-2, etc
+		 * Note: this domId always has a suffix like domId-1, domId-2, etc
 		 * driven by guids
 		 */
 		domId : "donatePg",

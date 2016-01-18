@@ -55,11 +55,10 @@
                 <div id="mainPageControls"></div>
                 <div id="listView"></div>
                 <div class="donate-center">
-                <a class="donate-link"
-                   onClick="donatePg.open();">[ Contribute to Meta64 ]</a>
+                    <a class="donate-link"
+                       onClick="donatePg.open();">[ Contribute to Meta64 ]</a>
+                </div>
             </div>
-            </div>
-            
             <div name="searchTabName"
                  id="searchResultsPg">No search displaying.</div>
             <div name="timelineTabName"
@@ -110,10 +109,6 @@
                          id="signupPg"
                          style="display:none;"
                          class="modelessDialog"></div>
-                    <div name="changePasswordPg"
-                         id="changePasswordPg"
-                         style="display:none;"
-                         class="modelessDialog"></div>
                 </iron-pages>
             </div>
         </iron-pages>
@@ -129,7 +124,7 @@
                  Polymer({
                          is : 'main-tabs',
                          properties : {
-                                 selected: {
+                             selected: {
                                    type: String,
                                    value: 'mainTabName'
                              },
@@ -137,7 +132,6 @@
                                    type: String,
                                    value: 'Test Field Value'
                              }
-                 
                          },
                          ready : function() {
                                  console.log("polymer main-tabs ready.");

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.model.RefInfo;
 
 /**
@@ -149,6 +150,42 @@ public class JcrUtil {
 	 */
 	public static boolean isSavableProperty(String propertyName) {
 		return !nonSavableProperties.contains(propertyName);
+	}
+
+	public static void savePropertyToNode(Node node, PropertyInfo property) throws Exception {
+
+		/* if multi-valued */
+		if (property.getValues() != null) {
+			String[] values = new String[property.getValues().size()];
+			int idx = 0;
+			for (String val : property.getValues()) {
+				values[idx++] = val;
+			}
+
+			/*
+			 * Because jackrabbit throws exceptions if you try to set a
+			 * single-valued property to multi-valued property without nulling
+			 * it out first, we have to do that check.
+			 */
+			Property prop = JcrUtil.getProperty(node, property.getName());
+			if (prop != null && !prop.isMultiple()) {
+				node.setProperty(property.getName(), (String) null);
+			}
+			node.setProperty(property.getName(), values);
+		}
+		/* else is single valued */
+		else {
+			/*
+			 * Because jackrabbit throws exceptions if you try to set a
+			 * multi-valued property to single-valued property without nulling
+			 * it out first, we have to do that check.
+			 */
+			Property prop = JcrUtil.getProperty(node, property.getName());
+			if (prop != null && prop.isMultiple()) {
+				node.setProperty(property.getName(), (String) null);
+			}
+			node.setProperty(property.getName(), property.getValue());
+		}
 	}
 
 	public static void timestampNewNode(Session session, Node node) throws Exception {

@@ -11,7 +11,7 @@ var props = function() {
 	}
 
 	var _deletePropertyResponse = function(res, propertyToDelete) {
-		
+
 		if (util.checkSuccess("Delete property", res)) {
 
 			/*
@@ -35,14 +35,14 @@ var props = function() {
 			// setDataIconUsingId("#editModeButton", editMode ? "edit" :
 			// "forbidden");
 
-			// fix for polymer 
-//			var elm = $("#propsToggleButton");
-//			elm.toggleClass("ui-icon-grid", meta64.showProperties);
-//			elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
-			
+			// fix for polymer
+			// var elm = $("#propsToggleButton");
+			// elm.toggleClass("ui-icon-grid", meta64.showProperties);
+			// elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
+
 			render.renderPageFromData();
 			view.scrollToSelectedNode();
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 		},
 
 		/*
@@ -51,9 +51,9 @@ var props = function() {
 		 */
 		deleteProperty : function(propName) {
 
-			confirmPg.areYouSure("Confirm Delete", "Delete the Property", "Yes, delete.", function() {
+			(new ConfirmDlg("Confirm Delete", "Delete the Property", "Yes, delete.", function() {
 				_.deletePropertyImmediate(propName);
-			});
+			})).open();
 		},
 
 		deletePropertyImmediate : function(propName) {
@@ -90,7 +90,7 @@ var props = function() {
 			/* Property Value Field */
 			{
 				var fieldPropValueId = "addPropertyValueTextContent";
-				
+
 				field += render.tag("paper-textarea", {
 					"name" : fieldPropValueId,
 					"id" : fieldPropValueId,
@@ -132,8 +132,8 @@ var props = function() {
 			/*
 			 * now add new empty property and populate it onto the screen
 			 * 
-			 * TODO: for performance I can do something simpler than
-			 * 'populateEditNodePg' here, but for now just re-rendering the
+			 * TODO: for performance we could do something simpler than
+			 * 'populateEditNodePg' here, but for now we just rerendering the
 			 * entire edit page.
 			 */
 			prop.values.push('');
@@ -142,19 +142,15 @@ var props = function() {
 
 		clearProperty : function(fieldId) {
 
-			var elm = $("#" + fieldId);
-			/* checking length is the way to see if the property exists */
-			if (elm.length != 0) {
-				elm.val('');
-			}
+			util.setInputVal(fieldId, "");
 
 			/* scan for all multi-value property fields and clear them */
 			var counter = 0;
 			while (counter < 1000) {
-				elm = $("#" + fieldId + "_subProp" + counter);
-				if (elm.length == 0)
+				
+				if (!util.setInputVal(fieldId + "_subProp" + counter, "")) {
 					break;
-				elm.val('');
+				}
 				counter++;
 			}
 		},
@@ -170,7 +166,8 @@ var props = function() {
 		},
 
 		makeMultiPropEditor : function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
-			console.log("Property multi-type: name=" + prop.name + " count=" + prop.values.length);
+			console.log("************* Making Multi Editor: Property multi-type: name=" + prop.name + " count="
+					+ prop.values.length);
 			var fields = '';
 
 			var propList = prop.values;
@@ -183,15 +180,13 @@ var props = function() {
 				console.log("prop multi-val[" + i + "]=" + propList[i]);
 				var id = fieldId + "_subProp" + i;
 
-				//fields += render.tag("label", {
-				//	"for" : id
-				//}, (i == 0 ? prop.name : "*") + "." + i);
-
 				var propVal = isBinaryProp ? "[binary]" : propList[i];
 				var propValStr = propVal ? propVal : '';
 				propValStr = propVal.escapeForAttrib();
 				var label = (i == 0 ? prop.name : "*") + "." + i;
-					
+
+				console.log("Creating textarea with id=" + id);
+
 				if (isBinaryProp || isReadOnlyProp) {
 					fields += render.tag("paper-textarea", {
 						"id" : id,
@@ -213,15 +208,15 @@ var props = function() {
 
 		makeSinglePropEditor : function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
 			console.log("Property single-type: " + prop.name);
-			
-			var field = ''; 
+
+			var field = '';
 
 			var propVal = isBinaryProp ? "[binary]" : prop.value;
 			var label = render.sanitizePropertyName(prop.name);
 			var propValStr = propVal ? propVal : '';
 			propValStr = propValStr.escapeForAttrib();
-			console.log("editing: prop["+prop.name+"] val["+prop.val+"]");
-					
+			console.log("editing: prop[" + prop.name + "] val[" + prop.val + "]");
+
 			if (isReadOnlyProp || isBinaryProp) {
 				field += render.tag("paper-textarea", {
 					"id" : fieldId,
@@ -239,7 +234,7 @@ var props = function() {
 			}
 			return field;
 		},
-		
+
 		/*
 		 * Orders properties in some consistent manor appropriate to display in
 		 * gui. Currently all we are doing is moving any 'jcr:content' property
@@ -289,7 +284,8 @@ var props = function() {
 						propCount++;
 						ret += "<tr class='prop-table-row'>";
 
-						ret += "<td class='prop-table-name-col'>" + render.sanitizePropertyName(property.name) + "</td>";
+						ret += "<td class='prop-table-name-col'>" + render.sanitizePropertyName(property.name)
+								+ "</td>";
 
 						if (isBinaryProp) {
 							ret += "<td class='prop-table-val-col'>[binary]</td>";
@@ -297,7 +293,8 @@ var props = function() {
 							var val = property.htmlValue ? property.htmlValue : property.value;
 							ret += "<td class='prop-table-val-col'>" + render.wrapHtml(val) + "</td>";
 						} else {
-							ret += "<td class='prop-table-val-col'>" + props.renderPropertyValues(property.values) + "</td>";
+							ret += "<td class='prop-table-val-col'>" + props.renderPropertyValues(property.values)
+									+ "</td>";
 						}
 						ret += "</tr>";
 					} else {
@@ -347,7 +344,7 @@ var props = function() {
 			var createdBy = _.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 			return createdBy != null && createdBy != meta64.userName;
 		},
-		
+
 		/*
 		 * Returns trus if this is a comment node, that the current user doesn't
 		 * own. Used to disable "edit", "delete", etc. on the GUI.

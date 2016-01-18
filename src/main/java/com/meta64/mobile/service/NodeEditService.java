@@ -262,7 +262,7 @@ public class NodeEditService {
 					// log.debug("Property to save: " + property.getName() + "="
 					// +
 					// property.getValue());
-					node.setProperty(property.getName(), property.getValue());
+					JcrUtil.savePropertyToNode(node, property);
 				} else {
 					/**
 					 * TODO: This case indicates that data was sent

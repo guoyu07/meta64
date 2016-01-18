@@ -40,7 +40,7 @@ var user = function() {
 			}
 
 			meta64.cancelDialog(loginPg.domId);
-			meta64.jqueryChangePage("mainTabName");
+			meta64.selectTab("mainTabName");
 
 			_setStateVarsUsingLoginResponse(res);
 
@@ -109,8 +109,8 @@ var user = function() {
 
 	var _signupResponse = function(res) {
 		if (util.checkSuccess("Signup new user", res)) {
-			user.populateLoginPgFromCookies();
 			meta64.changePage(loginPg);
+			loginPg.populateFromCookies();
 			messagePg.alert("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)");
 		}
 	}
@@ -142,18 +142,6 @@ var user = function() {
 				expires : 365,
 				path : '/'
 			});
-		},
-
-		populateLoginPgFromCookies : function() {
-			var usr = $.cookie(cnst.COOKIE_LOGIN_USR);
-			var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
-
-			if (usr) {
-				$("#userName").val(usr);
-			}
-			if (pwd) {
-				$("#password").val(pwd);
-			}
 		},
 
 		/*
@@ -303,11 +291,8 @@ var user = function() {
 			} else {
 				messagePg.alert("Invalid password(s).");
 			}
-		},
-
-		changePasswordPg : function() {
-			meta64.changePage(changePasswordPg);
 		}
+
 	};
 
 	console.log("Module ready: user.js");

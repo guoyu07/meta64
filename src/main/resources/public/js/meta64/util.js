@@ -5,7 +5,7 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
-
+	
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
 		var jul = new Date(this.getFullYear(), 6, 1);
@@ -72,6 +72,10 @@ var util = function() {
 
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
+		inherit : function (parent, child) {
+		    child.prototype = Object.create(parent.prototype);
+		},
+				
 		json : function(postName, postData, callback) {
 
 			if (offline) {
@@ -190,114 +194,115 @@ var util = function() {
 			return ironRequest;
 		},
 
-//		/**
-//		 * 
-//		 * This is the original JQuery method no longer in use.
-//		 * 
-//		 * We use the convention that all calls to server are POSTs with a
-//		 * 'postName' (like an RPC method name)
-//		 * <p>
-//		 * Note: 'callback' can be null, if you want to use the returned
-//		 * 'promise' rather than passing in a function.
-//		 * 
-//		 */
-//		jsonOrig_noLongerUsed : function(postName, postData, callback) {
-//			if (offline) {
-//				console.log("offline: ignoring call for " + postName);
-//				return;
-//			}
-//
-//			if (logAjax) {
-//				console.log("JSON-POST: " + JSON.stringify(postData));
-//			}
-//
-//			_ajaxCounter++;
-//			var prms = $.ajax({
-//				url : postTargetUrl + postName,
-//				contentType : "application/json",
-//				type : "post",
-//				dataType : "json",
-//				cache : false,
-//				data : JSON.stringify(postData)
-//			});
-//
-//			/**
-//			 * Notes
-//			 * <p>
-//			 * If using then function: promise.then(successFunction,
-//			 * failFunction);
-//			 * <p>
-//			 * I think the way these parameters get passed into done/fail
-//			 * functions, is because there are resolve/reject methods getting
-//			 * called with the parameters. Basically the parameters passed to
-//			 * 'resolve' get distributed to all the waiting methods just like as
-//			 * if they were subscribing in a pub/sub model. So the 'promose'
-//			 * pattern is sort of a pub/sub model in a way
-//			 * <p>
-//			 * The reason to return a 'promise.promise()' method is so no other
-//			 * code can call resolve/reject but can only react to a
-//			 * done/fail/complete.
-//			 * <p>
-//			 * deferred.when(promise1, promise2) creates a new promise that
-//			 * becomes 'resolved' only when all promises are resolved. It's a
-//			 * big "and condition" of resolvement, and if any of the promises
-//			 * passed to it end up failing, it fails this "ANDed" one also.
-//			 */
-//			prms.done(function(jqXHR) {
-//				if (logAjax) {
-//					console.log("JSON-RESULT: " + postName + "\nJSON-RESULT-DATA: " + JSON.stringify(jqXHR));
-//				}
-//
-//				if (typeof callback == "function") {
-//					callback(jqXHR);
-//				}
-//			});
-//
-//			prms.fail(function(xhr) {
-//
-//				if (xhr.status == "403") {
-//					console.log("Not logged in detected in util.");
-//					offline = true;
-//
-//					if (!timeoutMessageShown) {
-//						timeoutMessageShown = true;
-//						messagePg.alert("Session timed out. Page will refresh.");
-//					}
-//
-//					$(window).off("beforeunload");
-//					window.location.href = window.location.origin;
-//					return;
-//				}
-//
-//				var msg = "Server request failed.\n\n";
-//
-//				/* catch block should fail silently */
-//				try {
-//					msg += "Status: " + xhr.statusText + "\n";
-//					msg += "Code: " + xhr.status + "\n";
-//				} catch (ex) {
-//				}
-//
-//				/*
-//				 * this catch block should also fail silently
-//				 * 
-//				 * This was showing "classCastException" when I threw a regular
-//				 * "Exception" from server so for now I'm just turning this off
-//				 * since its' not displaying the correct message.
-//				 */
-//				// try {
-//				// msg += "Response: " + JSON.parse(xhr.responseText).exception;
-//				// } catch (ex) {
-//				// }
-//				messagePg.alert(msg);
-//			});
-//
-//			prms.complete(function() {
-//				_ajaxCounter--;
-//			});
-//
-//			return prms;
-//		},
+		// /**
+		// *
+		// * This is the original JQuery method no longer in use.
+		// *
+		// * We use the convention that all calls to server are POSTs with a
+		// * 'postName' (like an RPC method name)
+		// * <p>
+		// * Note: 'callback' can be null, if you want to use the returned
+		// * 'promise' rather than passing in a function.
+		// *
+		// */
+		// jsonOrig_noLongerUsed : function(postName, postData, callback) {
+		// if (offline) {
+		// console.log("offline: ignoring call for " + postName);
+		// return;
+		// }
+		//
+		// if (logAjax) {
+		// console.log("JSON-POST: " + JSON.stringify(postData));
+		// }
+		//
+		// _ajaxCounter++;
+		// var prms = $.ajax({
+		// url : postTargetUrl + postName,
+		// contentType : "application/json",
+		// type : "post",
+		// dataType : "json",
+		// cache : false,
+		// data : JSON.stringify(postData)
+		// });
+		//
+		// /**
+		// * Notes
+		// * <p>
+		// * If using then function: promise.then(successFunction,
+		// * failFunction);
+		// * <p>
+		// * I think the way these parameters get passed into done/fail
+		// * functions, is because there are resolve/reject methods getting
+		// * called with the parameters. Basically the parameters passed to
+		// * 'resolve' get distributed to all the waiting methods just like as
+		// * if they were subscribing in a pub/sub model. So the 'promose'
+		// * pattern is sort of a pub/sub model in a way
+		// * <p>
+		// * The reason to return a 'promise.promise()' method is so no other
+		// * code can call resolve/reject but can only react to a
+		// * done/fail/complete.
+		// * <p>
+		// * deferred.when(promise1, promise2) creates a new promise that
+		// * becomes 'resolved' only when all promises are resolved. It's a
+		// * big "and condition" of resolvement, and if any of the promises
+		// * passed to it end up failing, it fails this "ANDed" one also.
+		// */
+		// prms.done(function(jqXHR) {
+		// if (logAjax) {
+		// console.log("JSON-RESULT: " + postName + "\nJSON-RESULT-DATA: " +
+		// JSON.stringify(jqXHR));
+		// }
+		//
+		// if (typeof callback == "function") {
+		// callback(jqXHR);
+		// }
+		// });
+		//
+		// prms.fail(function(xhr) {
+		//
+		// if (xhr.status == "403") {
+		// console.log("Not logged in detected in util.");
+		// offline = true;
+		//
+		// if (!timeoutMessageShown) {
+		// timeoutMessageShown = true;
+		// messagePg.alert("Session timed out. Page will refresh.");
+		// }
+		//
+		// $(window).off("beforeunload");
+		// window.location.href = window.location.origin;
+		// return;
+		// }
+		//
+		// var msg = "Server request failed.\n\n";
+		//
+		// /* catch block should fail silently */
+		// try {
+		// msg += "Status: " + xhr.statusText + "\n";
+		// msg += "Code: " + xhr.status + "\n";
+		// } catch (ex) {
+		// }
+		//
+		// /*
+		// * this catch block should also fail silently
+		// *
+		// * This was showing "classCastException" when I threw a regular
+		// * "Exception" from server so for now I'm just turning this off
+		// * since its' not displaying the correct message.
+		// */
+		// // try {
+		// // msg += "Response: " + JSON.parse(xhr.responseText).exception;
+		// // } catch (ex) {
+		// // }
+		// messagePg.alert(msg);
+		// });
+		//
+		// prms.complete(function() {
+		// _ajaxCounter--;
+		// });
+		//
+		// return prms;
+		// },
 
 		ajaxReady : function(requestName) {
 			if (_ajaxCounter > 0) {
@@ -455,14 +460,20 @@ var util = function() {
 			return !val || val.length == 0;
 		},
 
-		/* like jquery: $("#someId").val(); */
 		getInputVal : function(id) {
 			return _.polyElm(id).node.value;
 		},
-		
-		hookSlider : function(id, func) {
-			_.getRequiredElement(id).change(func);
-			return true;
+
+		/* returns true if element was found, or false if element not found */
+		setInputVal : function(id, val) {
+			if (val == null) {
+				val = "";
+			}
+			var elm = _.polyElm(id);
+			if (elm) {
+				elm.node.value = val;
+			}
+			return elm != null;
 		},
 
 		bindEnterKey : function(id, func) {
@@ -519,10 +530,20 @@ var util = function() {
 			var elm = _.domElm(id);
 			var polyElm = Polymer.dom(elm);
 			polyElm.node.innerHTML = content;
-			
+
 			// Not sure yet, if these two are required.
 			Polymer.dom.flush();
 			Polymer.updateStyles();
+		},
+		
+		setHtml : function(id, content) {
+			if (content == null) {
+				content = "";
+			}
+
+			var elm = _.domElm(id);
+			var polyElm = Polymer.dom(elm);
+			polyElm.node.innerHTML = content;
 		},
 
 		getPropertyCount : function(obj) {
@@ -598,10 +619,10 @@ var util = function() {
 			}
 
 			if (!enable) {
-				//console.log("Enabling element: " + elmId);
+				// console.log("Enabling element: " + elmId);
 				domElm.disabled = true;
 			} else {
-				//console.log("Disabling element: " + elmId);
+				// console.log("Disabling element: " + elmId);
 				domElm.disabled = false;
 			}
 		},
@@ -627,10 +648,10 @@ var util = function() {
 			}
 
 			if (vis) {
-				//console.log("Showing element: " + elmId);
+				// console.log("Showing element: " + elmId);
 				domElm.style.display = 'block';
 			} else {
-				//console.log("hiding element: " + elmId);
+				// console.log("hiding element: " + elmId);
 				domElm.style.display = 'none';
 			}
 		}

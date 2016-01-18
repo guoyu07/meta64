@@ -28,8 +28,8 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
  * at runtime, which is done in the 'transform' method.
  */
 @WebFilter(urlPatterns = { "/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
-public class AppFilter implements Filter {
-	private static final Logger log = LoggerFactory.getLogger(AppFilter.class);
+public class PreProcFilter implements Filter {
+	private static final Logger log = LoggerFactory.getLogger(PreProcFilter.class);
 	private FilterConfig config = null;
 
 	private static boolean useWriter = false;
@@ -53,10 +53,6 @@ public class AppFilter implements Filter {
 	static {
 		cacheVersionStr = String.valueOf(cacheVersion);
 	}
-
-	public static final long cssVersion = cacheVersion; // match jsVersion for
-														// now,
-														// why not.
 
 	/*
 	 * This is an acceptable hack to reference the Impl class directly like
@@ -94,7 +90,8 @@ public class AppFilter implements Filter {
 		 */
 		if (!uri.contains("/bower_components/") && //
 				!uri.contains("/cookie/") && //
-				!uri.contains("/jquery/")) {
+				!uri.contains("/jquery/") && //
+				!uri.startsWith("/mobile/api/")) {
 			String ver = request.getParameter("ver");
 			String warning = "";
 			if (ver == null) {
@@ -129,7 +126,7 @@ public class AppFilter implements Filter {
 		content = content.replace("{{profileName}}", constProvider.getProfileName());
 
 		/*
-		 * WARNING: DO NOT REMOVE WRITER.
+		 * WARNING: DO NOT DELETE.
 		 * 
 		 * Servlets allow any given request to either call getWriter(), or
 		 * getOutputStream(), but once you call one of them on a given request

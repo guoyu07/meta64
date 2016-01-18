@@ -76,7 +76,7 @@ var uploadPg = function() {
 
 		init : function() {
 
-			$("#uploadFromUrl").val("");
+			util.setInputVal("uploadFromUrl", "");
 
 			/* display the node path at the top of the edit page */
 			$("#uploadPathDisplay").html("Path: " + render.formatPath(attachment.uploadNode));

@@ -5,7 +5,6 @@ console.log("running module: ChangePasswordDlg.js");
  * to become dialog boxes using the same design pattern as used in this class. This class (ChangePasswordDlg
  * was the first prototype of this type of design, and works great using inheritance and a base class!)
  */
-
 var ChangePasswordDlg = function() {
 	// boiler plate for inheritance
 	Dialog.call(this);

@@ -22,6 +22,9 @@ $(window).load(function() {
 
 //We load scripts from 'min' (minimized) single file for production, or each individual file
 //if not in production.
+//
+//todo: When the google closure compiler combines all this into a single file does the order matter? When it 
+//compacts all into a single file what order is it evaluated?>
 
 var scripts = (profileName === 'prod') ? [ "/js/meta64.min.js" ] : //
 [ //
@@ -42,7 +45,7 @@ var scripts = (profileName === 'prod') ? [ "/js/meta64.min.js" ] : //
 	"/js/meta64/pg/Dialog.js", //
 	"/js/meta64/pg/popupMenuPg.js",//
 	"/js/meta64/pg/ConfirmDlg.js",//
-	"/js/meta64/pg/donatePg.js",//
+	"/js/meta64/pg/DonateDlg.js",//
 	"/js/meta64/pg/messagePg.js",//
 	"/js/meta64/pg/searchResultsPg.js",//
 	"/js/meta64/pg/loginPg.js",//

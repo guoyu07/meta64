@@ -77,7 +77,7 @@ var popupMenuPg = function() {
 			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();") + // 
 			// _menuItem("Full Repository Export", "fullRepositoryExport", "
 			// edit.fullRepositoryExport();") + //
-			_menuItem("Donate", "donatePgButton", "donatePg.open();");
+			_menuItem("Donate", "DonateDlgButton", "(new DonateDlg()).open();");
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
 			var content = editMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu;

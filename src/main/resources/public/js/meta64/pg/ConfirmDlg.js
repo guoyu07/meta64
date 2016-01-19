@@ -13,7 +13,6 @@ var ConfirmDlg = function(title, message, buttonText, callback) {
 	this.buttonText = buttonText;
 	this.callback = callback;
 	meta64.registerDataObject(this.callback);
-	alert("function guid: "+this.callback.guid);
 }
 
 // more boilerplate for inheritance

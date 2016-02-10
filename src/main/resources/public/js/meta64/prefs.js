@@ -34,17 +34,6 @@ var prefs = function() {
 					"advancedMode" : meta64.editModeOption === meta64.MODE_ADVANCED
 				}
 			}, _.savePreferencesResponse);
-		},
-
-		populatePreferencesPg : function() {
-			var polyElm = util.polyElm("simpleModeRadioGroup");
-			polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? "editModeSimple" : "editModeAdvanced");
-			Polymer.dom.flush();
-		},
-
-		accountPreferencesPg : function() {
-			meta64.openDialog(prefsPg);
-			_.populatePreferencesPg();
 		}
 	};
 

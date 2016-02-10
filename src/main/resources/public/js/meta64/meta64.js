@@ -145,17 +145,23 @@ var meta64 = function() {
 		dialogStack : [],
 
 		updateMainMenuPanel : function() {
-			popupMenuPg.build();
-			popupMenuPg.init();
+			menuPanel.build();
+			menuPanel.init();
 		},
 
 		registerDialog : function(dlg) {
 			_.dialogMap[dlg.domId] = dlg;
 		},
 
+		/*
+		 * Creates a 'guid' on this object, and makes dataObjMap able to look up
+		 * the object using that guid in the future.
+		 */
 		registerDataObject : function(data) {
-			data.guid = ++_.nextGuid;
-			_.dataObjMap[data.guid] = data;
+			if (!data.guid) {
+				data.guid = ++_.nextGuid;
+				_.dataObjMap[data.guid] = data;
+			}
 		},
 
 		getObjectByGuid : function(guid) {
@@ -165,20 +171,57 @@ var meta64 = function() {
 			}
 			return ret;
 		},
-		
-		runCallback : function(guid) {
-			var dataObj = meta64.getObjectByGuid(guid);
-			
-			//if this is an object, we expect it to have a 'callback' property that is a function
+
+		/*
+		 * If callback is a string, it will be interpreted as a script to run,
+		 * or if it's a function object that will be the function to run.
+		 * 
+		 * Whenever we are building an onClick string, and we have the actual
+		 * function, rather than the name of the function (i.e. we have the
+		 * function object and not a string representation we hande that by
+		 * assigning a guid to the function object, and then encode a call to
+		 * run that guid by calling runCallback. There is a level of indirection
+		 * here, but this is the simplest approach when we need to be able to
+		 * map from a string to a function.
+		 * 
+		 * ctx=context, which is the 'this' to call with if we have a function,
+		 * and have a 'this' context to bind to it.
+		 */
+		encodeOnClick : function(callback, ctx) {
+			if (typeof callback == "string") {
+				return callback;
+			} //
+			else if (typeof callback == "function") {
+				_.registerDataObject(callback);
+
+				if (ctx) {
+					_.registerDataObject(ctx);
+					return "meta64.runCallback(" + callback.guid + "," + ctx.guid + ");";
+				} else {
+					return "meta64.runCallback(" + callback.guid + ");";
+				}
+			}
+		},
+
+		runCallback : function(guid, ctx) {
+			var dataObj = _.getObjectByGuid(guid);
+
+			// if this is an object, we expect it to have a 'callback' property
+			// that is a function
 			if (dataObj.callback) {
 				dataObj.callback();
 			}
-			//or else sometimes the registered object itself is the function, which is ok too
+			// or else sometimes the registered object itself is the function,
+			// which is ok too
 			else if (typeof dataObj == 'function') {
-				dataObj();
-			}
-			else {
-				alert("unable to find callback on registered guid: "+guid);
+				if (ctx) {
+					var This = _.getObjectByGuid(ctx);
+					dataObj.call(This);
+				} else {
+					dataObj();
+				}
+			} else {
+				alert("unable to find callback on registered guid: " + guid);
 			}
 		},
 
@@ -278,8 +321,8 @@ var meta64 = function() {
 				polyElm.node.constrain();
 				polyElm.node.center();
 				polyElm.node.open();
-			} 
-			//Else a modeless dialog
+			}
+			// Else a modeless dialog
 			else if (pg.tabId == "dialogsTabName") {
 				render.buildPage(pg);
 
@@ -289,8 +332,7 @@ var meta64 = function() {
 
 				pg.visible = true;
 				util.setVisibility("#" + pg.domId, pg.visible);
-			}
-			else {//else will be just an arbitrary panel
+			} else {// else will be just an arbitrary panel
 				render.buildPage(pg);
 			}
 		},
@@ -374,8 +416,8 @@ var meta64 = function() {
 		},
 
 		popup : function() {
-			render.buildPage(popupMenuPg);
-			$("#" + popupMenuPg.domId).popup("open");
+			render.buildPage(menuPanel);
+			$("#" + menuPanel.domId).popup("open");
 		},
 
 		isNodeBlackListed : function(node) {
@@ -557,7 +599,7 @@ var meta64 = function() {
 		 * each component do this independently and decouple
 		 */
 		refreshAllGuiEnablement : function() {
-			
+
 			/* multiple select nodes */
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
 			var highlightNode = _.getHighlightedNode();
@@ -587,17 +629,17 @@ var meta64 = function() {
 			util.setEnablement("manageAttachmentsButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("searchPgButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("searchDlgButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("timelineButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("showServerInfoButton", _.isAdminUser);
 			util.setEnablement("showFullNodeUrlButton", highlightNode != null);
-			util.setEnablement("refreshPageButton", !_.isAnonUser); 
-			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null); 
-			
+			util.setEnablement("refreshPageButton", !_.isAnonUser);
+			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null);
+
 			util.setVisibility("editModeButton", allowEditMode);
 			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
-			util.setVisibility("openLoginPgButton", _.isAnonUser); 
+			util.setVisibility("openLoginDlgButton", _.isAnonUser);
 			util.setVisibility("navLogoutButton", !_.isAnonUser);
 			util.setVisibility("openSignupPgButton", _.isAnonUser);
 			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
@@ -744,7 +786,7 @@ var meta64 = function() {
 			_.displaySignupMessage();
 
 			/*
-			 *  todo: how does orientationchange need to work for polymer?
+			 * todo: how does orientationchange need to work for polymer?
 			 * Polymer disabled $(window).on("orientationchange",
 			 * _.orientationHandler);
 			 */
@@ -803,7 +845,7 @@ var meta64 = function() {
 		displaySignupMessage : function() {
 			var signupResponse = $("#signupCodeResponse").text();
 			if (signupResponse === "ok") {
-				messagePg.alert("Signup complete. You may now login.");
+				(new MessageDlg("Signup complete. You may now login.")).open();
 			}
 		},
 
@@ -842,4 +884,4 @@ var meta64 = function() {
 	return _;
 }();
 
-//# sourceURL=meta64.js
+// # sourceURL=meta64.js

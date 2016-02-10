@@ -2,20 +2,6 @@ console.log("running module: edit.js");
 
 var edit = function() {
 
-	/*
-	 * node (NodeInfo.java) that is being created under when new node is created
-	 */
-	var _parentOfNewNode;
-	var _sendNotificationPendingSave;
-
-	var _saveNodeResponse = function(res) {
-		if (util.checkSuccess("Save node", res)) {
-			view.refreshTree(null, false);
-			meta64.selectTab("mainTabName");
-			view.scrollToSelectedNode();
-		}
-	}
-
 	var _renameNodeResponse = function(res, renamingPageRoot) {
 		if (util.checkSuccess("Rename node", res)) {
 			if (renamingPageRoot) {
@@ -29,7 +15,7 @@ var edit = function() {
 
 	var _exportResponse = function(res) {
 		if (util.checkSuccess("Export", res)) {
-			messagePg.alert("Export Successful.");
+			(new MessageDlg("Export Successful.")).open();
 			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
 		}
@@ -37,7 +23,7 @@ var edit = function() {
 
 	var _importResponse = function(res) {
 		if (util.checkSuccess("Import", res)) {
-			messagePg.alert("Import Successful.");
+			(new MessageDlg("Import Successful.")).open();
 			view.refreshTree(null, false);
 			meta64.selectTab("mainTabName");
 			view.scrollToSelectedNode();
@@ -63,7 +49,6 @@ var edit = function() {
 	var _initNodeEditResponse = function(res) {
 		if (util.checkSuccess("Editing node", res)) {
 
-			console.log("Changing to editNodePg.");
 			/*
 			 * Server will have sent us back the raw text content, that should
 			 * be markdown instead of any HTML, so that we can display this and
@@ -71,7 +56,7 @@ var edit = function() {
 			 */
 			_.editNode = res.nodeInfo;
 
-			meta64.openDialog(editNodePg);
+			(new EditNodeDlg()).open();
 		}
 	}
 
@@ -89,19 +74,9 @@ var edit = function() {
 		}
 	}
 
-	var _insertNodeResponse = function(res) {
-		if (util.checkSuccess("Insert node", res)) {
-
-			meta64.initNode(res.newNode);
-			meta64.highlightNode(res.newNode, true);
-
-			_.runEditNode(res.newNode.uid);
-		}
-	}
-
 	var _makeNodeReferencableResponse = function(res) {
 		if (util.checkSuccess("Make node referencable", res)) {
-			messagePg.alert("This node is now referencable, and can be accessed by unique ID");
+			(new MessageDlg("This node is now referencable, and can be accessed by unique ID")).open();
 		}
 		view.refreshTree(null, false);
 	}
@@ -114,25 +89,25 @@ var edit = function() {
 		}
 	}
 
-	var _createSubNodeResponse = function(res) {
-		if (util.checkSuccess("Create subnode", res)) {
-			meta64.initNode(res.newNode);
-			_.runEditNode(res.newNode.uid);
-		}
-	}
-
 	var _ = {
 		/*
 		 * Node ID array of nodes that are ready to be moved when user clicks
 		 * 'Finish Moving'
 		 */
 		nodesToMove : null,
+		
+		parentOfNewNode : null,
 
 		/*
 		 * indicates editor is displaying a node that is not yet saved on the
 		 * server
 		 */
 		editingUnsavedNode : false,
+		
+		/*
+		 * node (NodeInfo.java) that is being created under when new node is created
+		 */
+		sendNotificationPendingSave : false,
 
 		/* Node being edited */
 		editNode : null,
@@ -174,14 +149,37 @@ var edit = function() {
 		startEditingNewNodeWithName : function() {
 			_.editingUnsavedNode = true;
 			_.editNode = null;
-			meta64.changePage(editNodePg);
+			(new EditNodeDlg()).open();
+		},
+		
+		insertNodeResponse : function(res) {
+			if (util.checkSuccess("Insert node", res)) {
+
+				meta64.initNode(res.newNode);
+				meta64.highlightNode(res.newNode, true);
+
+				_.runEditNode(res.newNode.uid);
+			}
 		},
 
+		createSubNodeResponse : function(res) {
+			if (util.checkSuccess("Create subnode", res)) {
+				meta64.initNode(res.newNode);
+				_.runEditNode(res.newNode.uid);
+			}
+		},
+		
+		saveNodeResponse : function(res) {
+			if (util.checkSuccess("Save node", res)) {
+				view.refreshTree(null, false);
+				meta64.selectTab("mainTabName");
+				view.scrollToSelectedNode();
+			}
+		},
+		
 		editMode : function() {
 			meta64.editMode = meta64.editMode ? false : true;
-			var elm = $("#editModeButton");
-			elm.toggleClass("ui-icon-edit", meta64.editMode);
-			elm.toggleClass("ui-icon-forbidden", !meta64.editMode);
+			//todo: really edit mode button needs to be some kind of button that can show an on/off state.
 			render.renderPageFromData();
 
 			/*
@@ -213,152 +211,6 @@ var edit = function() {
 			} else {
 				meta64.selectTab("mainTabName");
 				view.scrollToSelectedNode();
-			}
-		},
-
-		/*
-		 * for now just let server side choke on invalid things. It has enough
-		 * security and validation to at least protect itself from any kind of
-		 * damage.
-		 */
-		saveNode : function() {
-
-			/*
-			 * If editing an unsaved node it's time to run the insertNode, or
-			 * createSubNode, which actually saves onto the server, and will
-			 * initiate further editing like for properties, etc.
-			 */
-			if (_.editingUnsavedNode) {
-				_.saveNewNode();
-			}
-			/*
-			 * Else we are editing a saved node, which is already saved on
-			 * server.
-			 */
-			else {
-				_.saveExistingNode();
-			}
-		},
-
-		saveNewNode : function(newNodeName) {
-			if (!newNodeName) {
-				newNodeName = util.getInputVal("newNodeNameId");
-			}
-
-			/*
-			 * If we didn't create the node we are inserting under, and neither
-			 * did "admin", then we need to send notification email upon saving
-			 * this new node.
-			 */
-			if (meta64.userName != _parentOfNewNode.createdBy && //
-			_parentOfNewNode.createdBy != "admin") {
-				_sendNotificationPendingSave = true;
-			}
-
-			meta64.treeDirty = true;
-			if (_.nodeInsertTarget) {
-				util.json("insertNode", {
-					"parentId" : _parentOfNewNode.id,
-					"targetName" : _.nodeInsertTarget.name,
-					"newNodeName" : newNodeName
-				}, _insertNodeResponse);
-			} else {
-				util.json("createSubNode", {
-					"nodeId" : _parentOfNewNode.id,
-					"newNodeName" : newNodeName
-				}, _createSubNodeResponse);
-			}
-		},
-
-		saveExistingNode : function() {
-			console.log("**************** saveExistingNode");
-			var propertiesList = [];
-			var counter = 0;
-			var changeCount = 0;
-
-			// iterate for all fields we can find
-			while (true) {
-				var fieldId = "editNodeTextContent" + counter;
-
-				/*
-				 * is this an existing gui edit field, that's savable.
-				 */
-				if (meta64.fieldIdToPropMap.hasOwnProperty(fieldId)) {
-
-					console.log("Saving property field: " + fieldId);
-
-					/*
-					 * Since the Readonly ones are prefixed with RdOnly_ in
-					 * front of fieldId, those won't exist and elementExists
-					 * bypasses them
-					 */
-					if (util.elementExists(fieldId)) {
-						console.log("Element exists: " + fieldId);
-
-						var prop = meta64.fieldIdToPropMap[fieldId];
-						var propVal = util.getTextAreaValById(fieldId);
-
-						console.log("prop name: " + prop.name);
-
-						var isMulti = prop.values && prop.values.length > 0;
-						if (isMulti) {
-							alert("multi prop not handled: fieldId=" + fieldId);
-						} //
-						else if (propVal !== prop.value) {
-							console.log("Prop change: " + fieldId + " newVal=" + propVal);
-							propertiesList.push({
-								"name" : prop.name,
-								"value" : propVal
-							});
-
-							changeCount++;
-						} else {
-							console.log("Prop didn't change: " + fieldId);
-						}
-					} else {
-						console.log("Element doesn't exist: " + fieldId + " trying subprops");
-						var subPropIdx = 0;
-						var propVals = [];
-						var prop = meta64.fieldIdToPropMap[fieldId];
-						while (true) {
-							var subPropId = fieldId + "_subProp" + subPropIdx;
-							if (util.elementExists(subPropId)) {
-								console.log("Element subprop exists: " + subPropId);
-
-								var propVal = util.getTextAreaValById(subPropId);
-								console.log("prop: " + prop.name + " val[" + subPropIdx + "]=" + propVal);
-								propVals.push(propVal);
-							} else {
-								console.log("Element subprop does not exist: " + subPropId);
-								break;
-							}
-							subPropIdx++;
-						}
-						
-						propertiesList.push({
-							"name" : prop.name,
-							"values" : propVals
-						});
-
-						changeCount++;
-					}
-				} else {
-					break;
-				}
-				counter++;
-			}
-
-			/* if anything changed, save to server */
-			if (changeCount > 0) {
-				var postData = {
-					nodeId : _.editNode.id,
-					properties : propertiesList,
-					sendNotification : _sendNotificationPendingSave
-				};
-				util.json("saveNode", postData, _saveNodeResponse);
-				_sendNotificationPendingSave = false;
-			} else {
-				console.log("nothing chaged. Nothing to save.");
 			}
 		},
 
@@ -440,13 +292,13 @@ var edit = function() {
 			var newName = util.getInputVal("newNodeNameEditField");
 
 			if (util.emptyString(newName)) {
-				messagePg.alert("Please enter a new node name.");
+				(new MessageDlg("Please enter a new node name.")).open();
 				return;
 			}
 
 			var highlightNode = meta64.getHighlightedNode();
 			if (!highlightNode) {
-				messagePg.alert("Select a node to rename.");
+				(new MessageDlg("Select a node to rename.")).open();
 				return;
 			}
 
@@ -470,7 +322,7 @@ var edit = function() {
 			var targetFileName = util.getInputVal("exportTargetNodeName");
 
 			if (util.emptyString(targetFileName)) {
-				messagePg.alert("Please enter a name for the export file.");
+				(new MessageDlg("Please enter a name for the export file.")).open();
 				return;
 			}
 
@@ -491,7 +343,7 @@ var edit = function() {
 			var sourceFileName = util.getInputVal("importTargetNodeName");
 
 			if (util.emptyString(sourceFileName)) {
-				messagePg.alert("Please enter a name for the import file.");
+				(new MessageDlg("Please enter a name for the import file.")).open();
 				return;
 			}
 
@@ -507,7 +359,7 @@ var edit = function() {
 			var node = meta64.uidToNodeMap[uid];
 			if (!node) {
 				_.editNode = null;
-				messagePg.alert("Unknown nodeId in editNodeClick: " + uid);
+				(new MessageDlg("Unknown nodeId in editNodeClick: " + uid)).open();
 				return;
 			}
 			_.editingUnsavedNode = false;
@@ -517,156 +369,10 @@ var edit = function() {
 			}, _initNodeEditResponse);
 		},
 
-		/*
-		 * Generates all the HTML edit fields and puts them into the DOM model
-		 * of the property editor dialog box.
-		 * 
-		 */
-		populateEditNodePg : function() {
-
-			/* display the node path at the top of the edit page */
-			view.initEditPathDisplayById("#editNodePathDisplay");
-
-			var fields = '';
-			var counter = 0;
-
-			/* clear this map to get rid of old properties */
-			meta64.fieldIdToPropMap = {};
-
-			/* editNode will be null if this is a new node being created */
-			if (_.editNode) {
-				// Iterate PropertyInfo.java objects
-				$.each(_.editNode.properties, function(index, prop) {
-					if (!render.allowPropertyToDisplay(prop.name)) {
-						console.log("Hiding property: " + prop.name);
-						return;
-					}
-
-					var fieldId = "editNodeTextContent" + counter;
-
-					console.log("Creating edit field " + fieldId + " for property " + prop.name);
-
-					meta64.fieldIdToPropMap[fieldId] = prop;
-					var isMulti = prop.values && prop.values.length > 0;
-
-					var isReadOnlyProp = render.isReadOnlyProperty(prop.name);
-					var isBinaryProp = render.isBinaryProperty(prop.name);
-
-					/*
-					 * this is the way (for now) that we make sure this node
-					 * won't be attempted to be saved. If it has RdOnly_ prefix
-					 * it won't be found by the saving logic.
-					 */
-					if (isReadOnlyProp || isBinaryProp) {
-						fieldId = "RdOnly_" + fieldId;
-					}
-
-					var buttonBar = "";
-					if (!isReadOnlyProp && !isBinaryProp) {
-						buttonBar = _.makePropertyEditButtonBar(prop, fieldId);
-					}
-
-					var field = buttonBar;
-
-					if (isMulti) {
-						field += props.makeMultiPropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
-					} else {
-						field += props.makeSinglePropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
-					}
-
-					fields += render.tag("div", {
-						"class" : "genericListItem"
-					}, field);
-					counter++;
-				});
-			} else {
-				var field = render.tag("paper-textarea", {
-					"id" : "newNodeNameId",
-					"label" : "New Node Name"
-				}, '', true);
-
-				fields += render.tag("div", {}, field);
-			}
-
-			util.setHtmlEnhanced("propertyEditFieldContainer", fields);
-
-			var instr = _.editingUnsavedNode ? //
-			"You may leave this field blank and a unique ID will be assigned. You only need to provide a name if you want this node to have a more meaningful URL."
-					: //
-					"";
-
-			$("#editNodeInstructions").html(instr);
-
-			/*
-			 * Allow adding of new properties as long as this is a saved node we
-			 * are editing, because we don't want to start managing new
-			 * properties on the client side. We need a genuine node already
-			 * saved on the server before we allow any property editing to
-			 * happen.
-			 */
-			util.setVisibility("#addPropertyButton", !_.editingUnsavedNode);
-
-			var isUuid = _.editNode && _.editNode.id && !_.editNode.id.startsWith("/");
-			// console.log("isUuid: " + isUuid);
-			util.setVisibility("#makeNodeReferencableButton", _.editNode && !isUuid && !_.editingUnsavedNode);
-		},
-
-		makePropertyEditButtonBar : function(prop, fieldId) {
-			var buttonBar = "";
-
-			var clearButton = render.tag("paper-button", //
-			{
-				"raised" : "raised",
-				"onClick" : "props.clearProperty('" + fieldId + "');" //
-			}, //
-			"Clear");
-
-			var addMultiButton = "";
-			var deleteButton = "";
-
-			if (prop.name !== jcrCnst.CONTENT) {
-				/*
-				 * For now we just go with the design where the actual content
-				 * property cannot be deleted. User can leave content blank but
-				 * not delete it.
-				 */
-				deleteButton = render.tag("paper-button", //
-				{
-					"raised" : "raised",
-					"onClick" : "props.deleteProperty('" + prop.name + "');" //
-					// "onClick" : function() {
-				// props.deleteProperty(prop.name);
-				// }, //
-				}, //
-				"Del");
-
-				/*
-				 * I don't think it really makes sense to allow a jcr:content
-				 * property to be multivalued. I may be wrong but this is my
-				 * current assumption
-				 */
-				addMultiButton = render.tag("paper-button", //
-				{
-					"raised" : "raised",
-					"onClick" : "props.addSubProperty('" + fieldId + "');" //
-				}, //
-				"Add Multi");
-			}
-
-			var allButtons = addMultiButton + clearButton + deleteButton;
-			if (allButtons.length > 0) {
-				buttonBar = render.makeHorizontalFieldSet(allButtons, "property-edit-button-bar");
-			} else {
-				buttonBar = "";
-			}
-
-			return buttonBar;
-		},
-
 		insertNode : function(uid) {
 
-			_parentOfNewNode = meta64.currentNode;
-			if (!_parentOfNewNode) {
+			_.parentOfNewNode = meta64.currentNode;
+			if (!_.parentOfNewNode) {
 				console.log("Unknown parent");
 				return;
 			}
@@ -691,9 +397,9 @@ var edit = function() {
 
 		createSubNodeUnderHighlight : function() {
 
-			_parentOfNewNode = meta64.getHighlightedNode();
-			if (!_parentOfNewNode) {
-				messagePg.alert("Tap a node to insert under.");
+			_.parentOfNewNode = meta64.getHighlightedNode();
+			if (!_.parentOfNewNode) {
+				(new MessageDlg("Tap a node to insert under.")).open();
 				return;
 			}
 
@@ -715,10 +421,10 @@ var edit = function() {
 			 * currently viewed node (parent of current page)
 			 */
 			if (!uid) {
-				_parentOfNewNode = meta64.currentNode;
+				_.parentOfNewNode = meta64.currentNode;
 			} else {
-				_parentOfNewNode = meta64.uidToNodeMap[uid];
-				if (!_parentOfNewNode) {
+				_.parentOfNewNode = meta64.uidToNodeMap[uid];
+				if (!_.parentOfNewNode) {
 					console.log("Unknown nodeId in createSubNode: " + uid);
 					return;
 				}
@@ -753,7 +459,7 @@ var edit = function() {
 		deleteSelNodes : function() {
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
-				messagePg.alert('You have not selected any nodes. Select nodes to delete first.');
+				(new MessageDlg("You have not selected any nodes. Select nodes to delete first.")).open();
 				return;
 			}
 
@@ -769,7 +475,7 @@ var edit = function() {
 
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
 			if (!selNodesArray || selNodesArray.length == 0) {
-				messagePg.alert('You have not selected any nodes. Select nodes to move first.');
+				(new MessageDlg("You have not selected any nodes. Select nodes to move first.")).open();
 				return;
 			}
 
@@ -782,8 +488,7 @@ var edit = function() {
 								meta64.selectedNodes = {}; // clear selections.
 								// No longer need
 								// or want any selections.
-								messagePg
-										.alert("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'");
+								(new MessageDlg("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'")).open();
 								meta64.refreshAllGuiEnablement();
 							})).open();
 		},
@@ -816,7 +521,7 @@ var edit = function() {
 				var node = meta64.getHighlightedNode();
 
 				if (!node) {
-					messagePg.alert("No node is selected.");
+					(new MessageDlg("No node is selected.")).open();
 				} else {
 					util.json("insertBook", {
 						"nodeId" : node.id,

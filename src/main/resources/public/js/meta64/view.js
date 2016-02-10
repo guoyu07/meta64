@@ -144,7 +144,7 @@ var view = function() {
 			var ironRes = util.json("getServerInfo", {});
 
 			ironRes.completes.then(function() {
-				messagePg.showMessage("Server Info", ironRes.response.serverInfo, null);
+				(new MessageDlg(ironRes.response.serverInfo)).open();
 			});
 		}
 	};

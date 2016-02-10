@@ -80,7 +80,7 @@ var attachment = function() {
 				});
 
 				prms.fail(function() {
-					messagePg.alert("Upload failed.");
+					(new MessageDlg("Upload failed.")).open();
 				});
 			}
 		},
@@ -90,7 +90,7 @@ var attachment = function() {
 
 			if (!node) {
 				_.uploadNode = null;
-				messagePg.alert("No node is selected.");
+				(new MessageDlg("No node is selected.")).open();
 				return;
 			}
 

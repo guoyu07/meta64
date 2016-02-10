@@ -12,7 +12,6 @@ var ConfirmDlg = function(title, message, buttonText, callback) {
 	this.message = message;
 	this.buttonText = buttonText;
 	this.callback = callback;
-	meta64.registerDataObject(this.callback);
 }
 
 // more boilerplate for inheritance
@@ -26,7 +25,7 @@ ConfirmDlg.prototype.build = function() {
 	var content = "<h2 id='" + this.id("ConfirmDlgTitle") + "'></h2>" + //
 	"<p id='" + this.id("ConfirmDlgMessage") + "'></p>";
 
-	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", "meta64.runCallback(" + this.callback.guid + ");")
+	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
 			+ this.makeCloseButton("No", "ConfirmDlgNoButton");
 	content += render.centeredButtonBar(buttons);
 

@@ -130,8 +130,6 @@
                 src="{{jqueryJs}}"></script>
         <script type="text/javascript"
                 src="/js/cookie/jquery.cookie.js?ver.md=1"></script>
-        <script type="text/javascript"
-                src="/js/scriptLoader.js?ver={{cacheVersion}}"></script>
     </head>
     <body unresolved="unresolved"
           class="fullbleed layout vertical">
@@ -178,8 +176,8 @@
                                           id="openSignupPgButton"
                                           onClick="user.openSignupPg();">Signup</paper-button>
                             <paper-button style="display:none;"
-                                          id="openLoginPgButton"
-                                          onClick="user.openLoginPg();">Login</paper-button>
+                                          id="openLoginDlgButton"
+                                          onClick="(new LoginDlg()).open();">Login</paper-button>
                             <paper-button style="display:none;"
                                           id="navLogoutButton"
                                           onClick="user.logout(true);">Logout</paper-button>
@@ -197,5 +195,16 @@
         </dom-module>
         <!-- Warning: This script must be here, at end of body. -->
         <script src="/js/app.js?ver={{cacheVersion}}"></script>
+        
+        <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
+        {{html.scripts}}
+       
+        <script>/* 
+<![CDATA[*/
+                addEventListener('WebComponentsReady', function() {
+                                meta64.initApp();
+                        });
+         /*]]>
+*/</script>
     </body>
 </html>

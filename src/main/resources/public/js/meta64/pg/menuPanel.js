@@ -1,6 +1,6 @@
-console.log("running module: popupMenuPg.js");
+console.log("running module: menuPanel.js");
 
-var popupMenuPg = function() {
+var menuPanel = function() {
 
 	function _makeTopLevelMenu(title, content) {
 		return render.tag("paper-submenu", {}, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
@@ -57,7 +57,7 @@ var popupMenuPg = function() {
 			var sharingMenu = _makeTopLevelMenu("Sharing", sharingMenuItems);
 
 			var searchMenuItems = //
-			_menuItem("Text Search", "searchPgButton", "srch.searchPg();") + // 
+			_menuItem("Text Search", "searchDlgButton", "(new SearchDlg()).open();") + // 
 			_menuItem("Timeline", "timelineButton", "srch.timeline();");// 
 			var searchMenu = _makeTopLevelMenu("Search", searchMenuItems);
 
@@ -73,7 +73,7 @@ var popupMenuPg = function() {
 			 */
 			var myAccountItems = //
 			_menuItem("Change Password", "changePasswordPgButton", "(new ChangePasswordDlg()).open();") + // 
-			_menuItem("Preferences", "accountPreferencesPgButton", "prefs.accountPreferencesPg();") + // 
+			_menuItem("Preferences", "accountPreferencesPgButton", "(new PrefsDlg()).open();") + // 
 			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();") + // 
 			// _menuItem("Full Repository Export", "fullRepositoryExport", "
 			// edit.fullRepositoryExport();") + //
@@ -89,8 +89,8 @@ var popupMenuPg = function() {
 		}
 	};
 
-	console.log("Module ready: popupMenuPg.js");
+	console.log("Module ready: menuPanel.js");
 	return _;
 }();
 
-//# sourceURL=popupMenuPg.js
+//# sourceURL=menuPanel.js

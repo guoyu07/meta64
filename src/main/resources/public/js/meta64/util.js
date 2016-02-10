@@ -5,7 +5,7 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
-	
+
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
 		var jul = new Date(this.getFullYear(), 6, 1);
@@ -57,7 +57,7 @@ var util = function() {
 
 	var assertNotNull = function(varName) {
 		if (typeof eval(varName) === 'undefined') {
-			messagePg.alert("Variable not found: " + varName)
+			(new MessageDlg("Variable not found: " + varName)).open()
 		}
 	}
 
@@ -72,11 +72,15 @@ var util = function() {
 
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
-		inherit : function (parent, child) {
-		    child.prototype = Object.create(parent.prototype);
+		inherit : function(parent, child) {
+			child.prototype = Object.create(parent.prototype);
 		},
-				
-		json : function(postName, postData, callback) {
+
+		/*
+		 * If the callback function needs a 'this' context for the call, then
+		 * pass the 'this' in the callbackThis parameter.
+		 */
+		json : function(postName, postData, callback, callbackThis) {
 
 			if (offline) {
 				console.log("offline: ignoring call for " + postName);
@@ -143,7 +147,11 @@ var util = function() {
 				}
 
 				if (typeof callback == "function") {
-					callback(ironRequest.response);
+					if (callbackThis) {
+						callback.call(callbackThis, ironRequest.response);
+					} else {
+						callback(ironRequest.response);
+					}
 				}
 			},
 			// Handle Fail
@@ -159,7 +167,7 @@ var util = function() {
 
 					if (!timeoutMessageShown) {
 						timeoutMessageShown = true;
-						messagePg.alert("Session timed out. Page will refresh.");
+						(new MessageDlg("Session timed out. Page will refresh.")).open();
 					}
 
 					$(window).off("beforeunload");
@@ -188,7 +196,7 @@ var util = function() {
 				// JSON.parse(xhr.responseText).exception;
 				// } catch (ex) {
 				// }
-				messagePg.alert(msg);
+				(new MessageDlg(msg)).open();
 			});
 
 			return ironRequest;
@@ -334,7 +342,7 @@ var util = function() {
 		 */
 		checkSuccess : function(opFriendlyName, res) {
 			if (!res.success) {
-				messagePg.alert(opFriendlyName + " failed: " + res.message);
+				(new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
 			}
 			return res.success;
 		},
@@ -516,7 +524,7 @@ var util = function() {
 		 */
 		verifyType : function(obj, type, msg) {
 			if (typeof obj !== type) {
-				messagePg.alert(msg);
+				(new MessageDlg(msg)).open();
 				return false;
 			}
 			return true;
@@ -535,7 +543,7 @@ var util = function() {
 			Polymer.dom.flush();
 			Polymer.updateStyles();
 		},
-		
+
 		setHtml : function(id, content) {
 			if (content == null) {
 				content = "";
@@ -563,26 +571,26 @@ var util = function() {
 		 * values
 		 */
 		printObject : function(obj) {
-			var val = '';
-			$.each(obj, function(k, v) {
-				val += k + " , " + v + "\n";
-			});
-			return val;
-		},
-
-		/*
-		 * iterates over an object creating a string containing it's keys and
-		 * values
-		 */
-		printProperties : function(obj) {
 			if (!obj) {
-				console.error("printProperties recieved null.");
-				return;
+				return "null";
 			}
-			var val = '';
-			$.each(obj, function(k, v) {
-				val += k + "\n";
-			});
+
+			try {
+				var count = 0;
+				for (prop in obj) {
+					if (obj.hasOwnProperty(prop)) {
+						console.log("Property[" + count + "]");
+						count++;
+					}
+				}
+
+				var val = '';
+				$.each(obj, function(k, v) {
+					val += k + " , " + v + "\n";
+				});
+			} catch (err) {
+				return "err";
+			}
 			return val;
 		},
 
@@ -661,5 +669,5 @@ var util = function() {
 	return _;
 }();
 
-//# sourceURL=util.js
+// # sourceURL=util.js
 

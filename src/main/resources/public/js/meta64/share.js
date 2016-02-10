@@ -111,7 +111,7 @@ var share = function() {
 		shareNodeToPerson : function() {
 			var targetUser = util.getInputVal("shareToUserName");
 			if (!targetUser) {
-				messagePg.alert("Please enter a username");
+				(new MessageDlg("Please enter a username")).open();
 				return;
 			}
 
@@ -156,7 +156,7 @@ var share = function() {
 			var node = meta64.getHighlightedNode();
 
 			if (!node) {
-				messagePg.alert("No node is selected.");
+				(new MessageDlg("No node is selected.")).open();
 				return;
 			}
 			_.sharingNode = node;

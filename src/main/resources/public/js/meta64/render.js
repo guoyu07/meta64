@@ -258,7 +258,7 @@ var render = function() {
 		showNodeUrl : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				messagePg.alert("You must first click on a node.");
+				(new MessageDlg("You must first click on a node.")).open();
 				return;
 			}
 			var url = window.location.origin + "?id=" + node.path;
@@ -270,7 +270,7 @@ var render = function() {
 				message += "<p>URL for UUID: <br>" + window.location.origin + "?id=" + uuid;
 			}
 
-			messagePg.showMessage("URL of Node", message);
+			(new MessageDlg(message, "URL of Node")).open();
 		},
 
 		getTopRightImageTag : function(node) {

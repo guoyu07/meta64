@@ -71,34 +71,10 @@ var srch = function() {
 			meta64.changePage(timelinePg);
 		},
 
-		searchNodes : function() {
-			if (!util.ajaxReady("searchNodes")) {
-				return;
-			}
-
-			var node = meta64.getHighlightedNode();
-			if (!node) {
-				messagePg.alert("No node is selected to search under.");
-				return;
-			}
-
-			var searchText = util.getInputVal("searchText").trim();
-			if (util.emptyString(searchText)) {
-				messagePg.alert("Enter search text.");
-				return;
-			}
-
-			util.json("nodeSearch", {
-				"nodeId" : node.id,
-				"searchText" : searchText,
-				"modSortDesc" : false
-			}, _.searchNodesResponse);
-		},
-
 		timeline : function() {
 			var node = meta64.getHighlightedNode();
 			if (!node) {
-				messagePg.alert("No node is selected to 'timeline' under.");
+				(new MessageDlg("No node is selected to 'timeline' under.")).open();
 				return;
 			}
 
@@ -107,10 +83,6 @@ var srch = function() {
 				"searchText" : "",
 				"modSortDesc" : true
 			}, _.timelineResponse);
-		},
-
-		searchPg : function() {
-			meta64.changePage(searchPg);
 		},
 
 		initSearchNode : function(node) {

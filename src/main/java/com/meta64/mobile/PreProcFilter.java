@@ -3,6 +3,7 @@ package com.meta64.mobile;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,6 +31,8 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
 @WebFilter(urlPatterns = { "/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
 public class PreProcFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(PreProcFilter.class);
+	private Properties props;
+
 	private FilterConfig config = null;
 
 	private static boolean useWriter = false;
@@ -73,6 +76,11 @@ public class PreProcFilter implements Filter {
 
 	public void init(FilterConfig config) throws ServletException {
 		this.config = config;
+		try {
+			ensurePropsLoaded();
+		} catch (Exception ex) {
+			log.error("Failed loading properties.", ex);
+		}
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -118,6 +126,8 @@ public class PreProcFilter implements Filter {
 		chain.doFilter(req, wrapper);
 		String content = wrapper.toString();
 
+		content = insertProps(content);
+
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
 		content = content.replace("{{jqueryJs}}", jqueryJs);
 		content = content.replace("{{brandingTitle}}", brandingTitle);
@@ -142,6 +152,30 @@ public class PreProcFilter implements Filter {
 			out.close();
 		} else {
 			res.getOutputStream().write(content.getBytes(Charset.forName("UTF-8")));
+		}
+	}
+
+	private void ensurePropsLoaded() throws Exception {
+		/* if props already loaded, nothing to do here */
+		if (props != null)
+			return;
+		props = new Properties();
+		props.load(ClassLoader.getSystemResourceAsStream("html-" + constProvider.getProfileName() + ".properties"));
+		dumpProps();
+	}
+
+	private String insertProps(String content) {
+		for (Object key : props.keySet()) {
+			String val = (String) props.getProperty((String) key);
+			content = content.replace("{{html." + key + "}}", val);
+		}
+		return content;
+	}
+
+	private void dumpProps() {
+		for (Object key : props.keySet()) {
+			String val = (String) props.getProperty((String) key);
+			log.info("PROP: key=" + key + " val=" + val);
 		}
 	}
 

@@ -2,88 +2,6 @@ console.log("running module: user.js");
 
 var user = function() {
 
-	var _setTitleUsingLoginResponse = function(res) {
-		var title = BRANDING_TITLE;
-		if (!meta64.isAnonUser) {
-			title += " - " + res.userName;
-		}
-
-		$("#headerAppName").html(title);
-	}
-
-	/* TODO: move this into meta64 module */
-	var _setStateVarsUsingLoginResponse = function(res) {
-		if (res.rootNode) {
-			meta64.homeNodeId = res.rootNode.id;
-			meta64.homeNodePath = res.rootNode.path;
-		}
-		meta64.userName = res.userName;
-		meta64.isAdminUser = res.userName === "admin";
-		
-		meta64.isAnonUser = res.userName === "anonymous";
-		meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
-
-		meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
-
-		console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
-	}
-
-	/* ret is LoginResponse.java */
-	var _loginResponse = function(res, usr, pwd, usingCookies) {
-		if (util.checkSuccess("Login", res)) {
-			console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
-
-			if (usr != "anonymous") {
-				_.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
-				_.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
-				_.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
-			}
-
-			meta64.cancelDialog(loginPg.domId);
-			meta64.selectTab("mainTabName");
-
-			_setStateVarsUsingLoginResponse(res);
-
-			if (res.userPreferences.lastNode) {
-				console.log("lastNode: " + res.userPreferences.lastNode);
-			} else {
-				console.log("lastNode is null.");
-			}
-
-			/* set ID to be the page we want to show user right after login */
-			var id = null;
-
-			if (!util.emptyString(res.homeNodeOverride)) {
-				console.log("loading homeNodeOverride=" + res.homeNodeOverride);
-				id = res.homeNodeOverride;
-			} else {
-				if (res.userPreferences.lastNode) {
-					console.log("loading lastNode=" + res.userPreferences.lastNode);
-					id = res.userPreferences.lastNode;
-				} else {
-					console.log("loading homeNodeId=" + meta64.homeNodeId);
-					id = meta64.homeNodeId;
-				}
-			}
-
-			view.refreshTree(id, false);
-			_setTitleUsingLoginResponse(res);
-		} else {
-			if (usingCookies) {
-				messagePg.alert("Cookie login failed.");
-
-				/*
-				 * blow away failed cookie credentials and reload page, should
-				 * result in brand new page load as anon user.
-				 */
-				$.removeCookie(cnst.COOKIE_LOGIN_USR);
-				$.removeCookie(cnst.COOKIE_LOGIN_PWD);
-				$.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
-				location.reload();
-			}
-		}
-	}
-
 	// res is JSON response object from server.
 	var _refreshLoginResponse = function(res) {
 		console.log("refreshLoginResponse");
@@ -103,15 +21,17 @@ var user = function() {
 
 	var _changePasswordResponse = function(res) {
 		if (util.checkSuccess("Change password", res)) {
-			messagePg.alert("Password changed successfully.");
+			(new MessageDlg("Password changed successfully.")).open();
 		}
 	}
 
 	var _signupResponse = function(res) {
 		if (util.checkSuccess("Signup new user", res)) {
-			meta64.changePage(loginPg);
-			loginPg.populateFromCookies();
-			messagePg.alert("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)");
+			var loginDlg = new LoginDlg();
+			loginDlg.populateFromCookies();
+			loginDlg.open();
+
+			(new MessageDlg("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)")).open();
 		}
 	}
 
@@ -120,9 +40,34 @@ var user = function() {
 	}
 
 	var _ = {
+		setTitleUsingLoginResponse : function(res) {
+			var title = BRANDING_TITLE;
+			if (!meta64.isAnonUser) {
+				title += " - " + res.userName;
+			}
+
+			$("#headerAppName").html(title);
+		},
+
+		/* TODO: move this into meta64 module */
+		setStateVarsUsingLoginResponse : function(res) {
+			if (res.rootNode) {
+				meta64.homeNodeId = res.rootNode.id;
+				meta64.homeNodePath = res.rootNode.path;
+			}
+			meta64.userName = res.userName;
+			meta64.isAdminUser = res.userName === "admin";
+
+			meta64.isAnonUser = res.userName === "anonymous";
+			meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
+
+			meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
+
+			console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
+		},
 
 		twitterLogin : function() {
-			messagePg.alert('not yet implemented.');
+			(new MessageDlg("not yet implemented.")).open();
 			return;
 
 			/*
@@ -148,7 +93,9 @@ var user = function() {
 		 * This method is ugly. It is the button that can be login *or* logout.
 		 */
 		openLoginPg : function() {
-			meta64.openDialog(loginPg);
+			var loginDlg = new LoginDlg();
+			loginDlg.populateFromCookies();
+			loginDlg.open();
 		},
 
 		signup : function() {
@@ -159,7 +106,7 @@ var user = function() {
 
 			/* no real validation yet, other than non-empty */
 			if (util.anyEmpty(userName, password, email, captcha)) {
-				messagePg.alert('Sorry, you cannot leave any fields blank.');
+				(new MessageDlg("Sorry, you cannot leave any fields blank.")).open();
 				return;
 			}
 
@@ -239,29 +186,10 @@ var user = function() {
 			ironRes.completes.then(function() {
 
 				if (usingCookies) {
-					_loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
+					user.loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
 				} else {
 					_refreshLoginResponse(ironRes.response);
 				}
-			});
-		},
-
-		login : function() {
-
-			meta64.cancelDialog(loginPg.domId);
-			
-			var usr = util.getInputVal("userName").trim();
-			var pwd = util.getInputVal("password").trim();
-
-			var ironRes = util.json("login", {
-				"userName" : usr,
-				"password" : pwd,
-				"tzOffset" : new Date().getTimezoneOffset(),
-				"dst" : util.daylightSavingsTime
-			});
-
-			ironRes.completes.then(function() {
-				_loginResponse(ironRes.response, usr, pwd);
 			});
 		},
 
@@ -283,13 +211,69 @@ var user = function() {
 		changePassword : function() {
 			var pwd1 = util.getInputVal("changePassword1").trim();
 			var pwd2 = util.getInputVal("changePassword2").trim();
-			
+
 			if (pwd1 && pwd1.length >= 4 && pwd1 === pwd2) {
 				util.json("changePassword", {
 					"newPassword" : pwd1
 				}, _changePasswordResponse);
 			} else {
-				messagePg.alert("Invalid password(s).");
+				(new MessageDlg("Invalid password(s).")).open();
+			}
+		},
+
+		loginResponse : function(res, usr, pwd, usingCookies, loginDlg) {
+			if (util.checkSuccess("Login", res)) {
+				console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
+
+				if (usr != "anonymous") {
+					user.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
+					user.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
+					user.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
+				}
+
+				if (loginDlg) {
+					loginDlg.cancel();
+				}
+
+				user.setStateVarsUsingLoginResponse(res);
+
+				if (res.userPreferences.lastNode) {
+					console.log("lastNode: " + res.userPreferences.lastNode);
+				} else {
+					console.log("lastNode is null.");
+				}
+
+				/* set ID to be the page we want to show user right after login */
+				var id = null;
+
+				if (!util.emptyString(res.homeNodeOverride)) {
+					console.log("loading homeNodeOverride=" + res.homeNodeOverride);
+					id = res.homeNodeOverride;
+				} else {
+					if (res.userPreferences.lastNode) {
+						console.log("loading lastNode=" + res.userPreferences.lastNode);
+						id = res.userPreferences.lastNode;
+					} else {
+						console.log("loading homeNodeId=" + meta64.homeNodeId);
+						id = meta64.homeNodeId;
+					}
+				}
+
+				view.refreshTree(id, false);
+				user.setTitleUsingLoginResponse(res);
+			} else {
+				if (usingCookies) {
+					(new MessageDlg("Cookie login failed.")).open();
+
+					/*
+					 * blow away failed cookie credentials and reload page,
+					 * should result in brand new page load as anon user.
+					 */
+					$.removeCookie(cnst.COOKIE_LOGIN_USR);
+					$.removeCookie(cnst.COOKIE_LOGIN_PWD);
+					$.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+					location.reload();
+				}
 			}
 		}
 

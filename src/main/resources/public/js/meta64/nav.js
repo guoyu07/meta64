@@ -19,7 +19,7 @@ var nav = function() {
 
 		upLevelResponse : function(res, id) {
 			if (!res || !res.node) {
-				messagePg.alert("No data is visible to you above this node.");
+				(new MessageDlg("No data is visible to you above this node.")).open();
 			} else {
 				render.renderPageFromData(res);
 				meta64.highlightRowById(id, true);
@@ -132,7 +132,7 @@ var nav = function() {
 			meta64.highlightNode(node, true);
 
 			if (!node) {
-				messagePg.alert("Unknown nodeId in openNode: " + uid);
+				(new MessageDlg("Unknown nodeId in openNode: " + uid)).open();
 			} else {
 				view.refreshTree(node.id, false);
 			}

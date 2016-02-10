@@ -159,8 +159,7 @@ EditNodeDlg.prototype.addProperty = function() {
  */
 EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 	var buttonBar = "";
-	
-	
+		
 	var clearButton = render.tag("paper-button", //
 	{
 		"raised" : "raised",

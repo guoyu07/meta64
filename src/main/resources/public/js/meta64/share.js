@@ -105,26 +105,7 @@ var share = function() {
 		},
 
 		shareNodeToPersonPg : function() {
-			meta64.changePage(shareToPersonPg);
-		},
-
-		shareNodeToPerson : function() {
-			var targetUser = util.getInputVal("shareToUserName");
-			if (!targetUser) {
-				(new MessageDlg("Please enter a username")).open();
-				return;
-			}
-
-			/*
-			 * Trigger going to server at next main page refresh
-			 */
-			meta64.treeDirty = true;
-
-			util.json("addPrivilege", {
-				"nodeId" : _.sharingNode.id,
-				"principal" : targetUser,
-				"privileges" : [ "read", "write", "addChildren", "nodeTypeManagement" ]
-			}, _.reloadFromShareWithPerson);
+			(new ShareToPersonDlg()).open();
 		},
 
 		shareNodeToPublic : function() {
@@ -161,12 +142,6 @@ var share = function() {
 			}
 			_.sharingNode = node;
 			meta64.changePage(sharingPg);
-		},
-
-		reloadFromShareWithPerson : function(res) {
-			if (util.checkSuccess("Share Node with Person", res)) {
-				meta64.changePage(sharingPg);
-			}
 		},
 
 		/*

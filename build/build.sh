@@ -54,7 +54,7 @@ cat ../src/main/resources/public/js/meta64/pg/EditNodeDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/EditPropertyDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/shareToPersonPg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/sharingPg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/renameNodePg.js >> all.js
+cat ../src/main/resources/public/js/meta64/pg/RenameNodeDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/timelinePg.js
 
 

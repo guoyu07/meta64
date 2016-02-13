@@ -2,17 +2,6 @@ console.log("running module: edit.js");
 
 var edit = function() {
 
-	var _renameNodeResponse = function(res, renamingPageRoot) {
-		if (util.checkSuccess("Rename node", res)) {
-			if (renamingPageRoot) {
-				view.refreshTree(res.newId, true);
-			} else {
-				view.refreshTree(null, false, res.newId);
-			}
-			meta64.selectTab("mainTabName");
-		}
-	}
-
 	var _exportResponse = function(res) {
 		if (util.checkSuccess("Export", res)) {
 			(new MessageDlg("Export Successful.")).open();
@@ -282,39 +271,6 @@ var edit = function() {
 
 		openExportPg : function() {
 			meta64.changePage(exportPg);
-		},
-
-		openRenameNodePg : function() {
-			meta64.changePage(renameNodePg);
-		},
-
-		renameNode : function() {
-			var newName = util.getInputVal("newNodeNameEditField");
-
-			if (util.emptyString(newName)) {
-				(new MessageDlg("Please enter a new node name.")).open();
-				return;
-			}
-
-			var highlightNode = meta64.getHighlightedNode();
-			if (!highlightNode) {
-				(new MessageDlg("Select a node to rename.")).open();
-				return;
-			}
-
-			/* if no node below this node, returns null */
-			var nodeBelow = _.getNodeBelow(highlightNode);
-
-			var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
-
-			var ironRes = util.json("renameNode", {
-				"nodeId" : highlightNode.id,
-				"newName" : newName
-			});
-
-			ironRes.completes.then(function() {
-				_renameNodeResponse(ironRes.response, renamingRootNode);
-			});
 		},
 
 		exportNodes : function() {

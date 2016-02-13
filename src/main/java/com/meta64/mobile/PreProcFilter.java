@@ -23,10 +23,11 @@ import org.springframework.beans.factory.annotation.Value;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.ConstantsProviderImpl;
 
-/*
- * This WebFilter is capable of logging all URL requests, but the primary purpose is to eliminate any need for something like
- * JSPs or Thymeleaf, by providing all we need in this app which the ability to substitute strings into the HTML 
- * at runtime, which is done in the 'transform' method.
+/**
+ * This WebFilter is used to eliminate any need for something like JSPs or
+ * Thymeleaf, by providing all we need in this app which the ability to
+ * substitute strings into the HTML at runtime, which is done in the 'transform'
+ * method.
  */
 @WebFilter(urlPatterns = { "/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
 public class PreProcFilter implements Filter {
@@ -43,12 +44,12 @@ public class PreProcFilter implements Filter {
 	/*
 	 * Each time the server restarts we have a new version number here and will
 	 * cause clients to download new version of JS files into their local
-	 * browser cache. For now the assumption is that this is better then having
+	 * browser cache. For now the assumption is that this is better than having
 	 * to remember to update version numbers to invalidate client caches, but in
 	 * production systems we may not want to push new JS just because of a
 	 * server restart so this will change in the future. That is, the
 	 * 'currentTimeMillis' part will change to some kind of an actual version
-	 * number or something, that will be part of managed releases.
+	 * number that will be part of managed releases.
 	 */
 	public static final long cacheVersion = System.currentTimeMillis();
 	public static final String cacheVersionStr;

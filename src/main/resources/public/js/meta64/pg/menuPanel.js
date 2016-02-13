@@ -42,7 +42,7 @@ var menuPanel = function() {
 			_menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + // 
 			_menuItem("Finish Moving", "finishMovingSelNodesButton", "edit.finishMovingSelNodes();") + // 
 
-			_menuItem("Rename", "renameNodePgButton", "edit.openRenameNodePg();") + //
+			_menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
 			_menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();") + // 
 			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();"); // 
 			// _menuItem("Import", "openImportPgButton", "edit.openImportPg();")

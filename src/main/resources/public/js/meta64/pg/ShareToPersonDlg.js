@@ -49,7 +49,7 @@ ShareToPersonDlg.prototype.shareNodeToPerson = function() {
 
 ShareToPersonDlg.prototype.reloadFromShareWithPerson = function(res) {
 	if (util.checkSuccess("Share Node with Person", res)) {
-		meta64.changePage(sharingPg);
+		(new SharingDlg()).open();
 	}
 }
 

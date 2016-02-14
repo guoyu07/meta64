@@ -43,7 +43,7 @@ cat ../src/main/resources/public/js/meta64/pg/DonateDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/MessageDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/searchResultsPg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/LoginDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/signupPg.js >> all.js
+cat ../src/main/resources/public/js/meta64/pg/SignupDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/PrefsDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/exportPg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/importPg.js >> all.js

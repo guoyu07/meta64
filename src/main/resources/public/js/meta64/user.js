@@ -25,16 +25,6 @@ var user = function() {
 		}
 	}
 
-	var _signupResponse = function(res) {
-		if (util.checkSuccess("Signup new user", res)) {
-			var loginDlg = new LoginDlg();
-			loginDlg.populateFromCookies();
-			loginDlg.open();
-
-			(new MessageDlg("User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)")).open();
-		}
-	}
-
 	var _twitterLoginResponse = function(res) {
 		console.log("twitter Login response recieved.");
 	}
@@ -78,7 +68,7 @@ var user = function() {
 		},
 
 		openSignupPg : function() {
-			meta64.changePage(signupPg);
+			(new SignupDlg()).open();
 		},
 
 		/* Write a cookie that expires in a year for all paths */
@@ -96,42 +86,6 @@ var user = function() {
 			var loginDlg = new LoginDlg();
 			loginDlg.populateFromCookies();
 			loginDlg.open();
-		},
-
-		signup : function() {
-			var userName = util.getInputVal("signupUserName");
-			var password = util.getInputVal("signupPassword");
-			var email = util.getInputVal("signupEmail");
-			var captcha = util.getInputVal("signupCaptcha");
-
-			/* no real validation yet, other than non-empty */
-			if (util.anyEmpty(userName, password, email, captcha)) {
-				(new MessageDlg("Sorry, you cannot leave any fields blank.")).open();
-				return;
-			}
-
-			util.json("signup", {
-				"userName" : userName,
-				"password" : password,
-				"email" : email,
-				"captcha" : captcha
-			}, _signupResponse);
-		},
-
-		pageInitSignupPg : function() {
-			user.tryAnotherCaptcha();
-		},
-
-		tryAnotherCaptcha : function() {
-
-			var n = util.currentTimeMillis();
-
-			/*
-			 * embed a time parameter just to thwart browser caching, and ensure
-			 * server and browser will never return the same image twice.
-			 */
-			var src = postTargetUrl + "captcha?t=" + n;
-			$("#captchaImage").attr("src", src);
 		},
 
 		refreshLogin : function() {

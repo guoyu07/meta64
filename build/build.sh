@@ -49,7 +49,7 @@ cat ../src/main/resources/public/js/meta64/pg/exportPg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/importPg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/SearchDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/ChangePasswordDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/uploadPg.js >> all.js
+cat ../src/main/resources/public/js/meta64/pg/UploadDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/EditNodeDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/EditPropertyDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/pg/ShareToPersonDlg.js >> all.js

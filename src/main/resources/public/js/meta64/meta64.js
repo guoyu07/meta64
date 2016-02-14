@@ -230,7 +230,7 @@ var meta64 = function() {
 		},
 
 		goToMainPage : function(rerender, forceServerRefresh) {
-			_.jqueryChangePage("mainTabName");
+			//_.jqueryChangePage("mainTabName");
 
 			if (forceServerRefresh) {
 				_.treeDirty = true;

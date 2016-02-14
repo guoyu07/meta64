@@ -66,15 +66,9 @@
             <div name="timelineTabName"
                  id="timelinePg">No timeline displaying.</div>
             <div name="dialogsTabName">
+            	<!-- should be able to delete this entire div now that I've removed the jank dialogs -->
                 <iron-pages id="dialogIronPages"
                             attr-for-selected="name">
-                    <!-- Define dialog elements here. 
-                                todo: we could create these dynamically upon first use
-                        -->
-                    <div name="uploadPg"
-                         id="uploadPg"
-                         style="display:none;"
-                         class="modelessDialog"></div>
                 </iron-pages>
             </div>
         </iron-pages>

@@ -133,24 +133,14 @@ var meta64 = function() {
 		currentNodePath : null,
 
 		/* Maps from dialog module.domId to module instance */
-		dialogMap : {},
+		//dialogMap : {},
 
 		/* Maps from guid to Data Object */
 		dataObjMap : {},
 
-		/*
-		 * contains the dialog objects in stacking order from bottom to topmost.
-		 * If empty it means no dialogs currently displaying.
-		 */
-		dialogStack : [],
-
 		updateMainMenuPanel : function() {
 			menuPanel.build();
 			menuPanel.init();
-		},
-
-		registerDialog : function(dlg) {
-			_.dialogMap[dlg.domId] = dlg;
 		},
 
 		/*
@@ -230,7 +220,6 @@ var meta64 = function() {
 		},
 
 		goToMainPage : function(rerender, forceServerRefresh) {
-			//_.jqueryChangePage("mainTabName");
 
 			if (forceServerRefresh) {
 				_.treeDirty = true;
@@ -281,138 +270,14 @@ var meta64 = function() {
 				var paperTabs = document.querySelector("#mainPaperTabs");
 				paperTabs.select(pg.tabId);
 			}
-
-			/* Opening as a popup dialog */
-			if (pg.tabId == "popup") {
-				if (data == null) {
-					console.log("Warning: No data for popup: " + pg.tabId);
-				}
-
-				/*
-				 * get container where all dialogs are created (true polymer
-				 * dialogs)
-				 */
-				var modalsContainer = util.polyElm("modalsContainer");
-
-				/* suffix domId for this instance/guid */
-				var domId = data ? pg.domId + "-" + data.guid : pg.domId;
-
-				/*
-				 * TODO. IMPORTANT: need to put code in to remove this dialog
-				 * from the dom once it's closed, AND that same code should
-				 * delete the guid's object in map in this module
-				 */
-				var node = document.createElement("paper-dialog");
-				node.setAttribute("modal", "modal");
-				node.setAttribute("id", domId);
-				modalsContainer.node.appendChild(node);
-
-				Polymer.dom.flush(); // <---- is this needed ? todo
-				Polymer.updateStyles();
-
-				/* now we we finally can construct the dialog instance */
-				render.buildPage(pg, data);
-
-				console.log("Showing dialog: " + domId);
-
-				/* now open and display polymer dialog we just created */
-				var polyElm = util.polyElm(domId);
-				polyElm.node.refit();
-				polyElm.node.constrain();
-				polyElm.node.center();
-				polyElm.node.open();
-			}
-			// Else a modeless dialog
-			else if (pg.tabId == "dialogsTabName") {
-				render.buildPage(pg);
-
-				_.setTopDialogStackItem(pg);
-				var paperTabs = document.querySelector("#dialogIronPages");
-				paperTabs.select(pg.domId);
-
-				pg.visible = true;
-				util.setVisibility("#" + pg.domId, pg.visible);
-			} else {// else will be just an arbitrary panel
+			else {// else will be just an arbitrary panel
 				render.buildPage(pg);
 			}
-		},
-
-		setTopDialogStackItem : function(pg) {
-			var idx = _.dialogStack.indexOfObject(pg);
-
-			/* if dialog already top, nothing to do here */
-			if (idx == 0) {
-				return;
-			}
-			if (idx != -1) {
-				/* deletes item from position idx */
-				_.dialogStack.splice(idx, 1);
-			}
-			// arr.splice(index, 0, item); will insert item into arr at the
-			// specified index.
-			// todo: implement on prototype.
-			/*
-			 * Array.prototype.insert = function (index, item) {
-			 * this.splice(index, 0, item); };
-			 */
-			if (_.dialogStack.length == 0) {
-				_.dialogStack.push(pg);
-			} else {
-				_.dialogStack.splice(0, 0, pg);
-			}
-			console.log("DialogStack: " + _.dialogPath());
-		},
-
-		dialogPath : function() {
-			var path = '';
-			for (var i = 0; i < _.dialogStack.length; i++) {
-				var pg = _.dialogStack[i];
-				// console.log("STACKITEM["+i+"] "+util.printObject(pg));
-				path += "/" + pg.domId;
-			}
-			return path;
 		},
 
 		/* for now this is alias of changePage */
 		openDialog : function(pg) {
 			return _.changePage(pg);
-		},
-
-		/*
-		 * Id is optional dialog.domId that can be passed, but if not, simply
-		 * cancels dialog first child position
-		 */
-		cancelDialog : function(domId) {
-
-			/*
-			 * if this is the last dialog closing we can go ahead and
-			 * auto-select the data view
-			 */
-			if (_.dialogStack.length == 1) {
-				meta64.selectTab("mainTabName");
-				view.scrollToSelectedNode();
-			}
-
-			/* get dialog data object (non-element class) from the map */
-			var pg = _.dialogMap[domId];
-			if (pg == null) {
-				console.log("unable to find dialog page for: " + domId);
-				return;
-			}
-
-			var idx = _.dialogStack.indexOfObject(pg);
-			if (idx != -1) {
-				/* deletes item from position idx */
-				_.dialogStack.splice(idx, 1);
-			}
-
-			pg.visible = false;
-			util.setVisibility("#" + pg.domId, pg.visible);
-
-			/* now we have to activate that current 'top' dialog */
-			if (_.dialogStack.length > 0) {
-				_.changePage(_.dialogStack[0]);
-			}
 		},
 
 		popup : function() {

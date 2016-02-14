@@ -60,10 +60,6 @@ var render = function() {
 				pg.built = true;
 			}
 
-			if (!data) {
-				meta64.registerDialog(pg);
-			}
-
 			if (pg.init) {
 				pg.init(data);
 			}

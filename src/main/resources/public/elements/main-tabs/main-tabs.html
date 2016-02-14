@@ -45,7 +45,6 @@
             <paper-tab name="mainTabName">Main</paper-tab>
             <paper-tab name="searchTabName">Search</paper-tab>
             <paper-tab name="timelineTabName">Timeline</paper-tab>
-            <paper-tab name="dialogsTabName">Dialog</paper-tab>
         </paper-tabs>
         <!--  -->
         <iron-pages id="mainIronPages"
@@ -65,12 +64,6 @@
                  id="searchResultsPg">No search displaying.</div>
             <div name="timelineTabName"
                  id="timelinePg">No timeline displaying.</div>
-            <div name="dialogsTabName">
-            	<!-- should be able to delete this entire div now that I've removed the jank dialogs -->
-                <iron-pages id="dialogIronPages"
-                            attr-for-selected="name">
-                </iron-pages>
-            </div>
         </iron-pages>
         <!-- All modal dialogs go in here -->
         <div id="modalsContainer"

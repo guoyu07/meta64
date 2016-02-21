@@ -44,11 +44,9 @@ var menuPanel = function() {
 
 			_menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
 			_menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();") + // 
-			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();"); // 
-			// _menuItem("Import", "openImportPgButton", "edit.openImportPg();")
-			// + //
-			// _menuItem("Export", "openExportPgButton",
-			// "edit.openExportPg();"); //
+			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();") + // 
+			_menuItem("Import", "openImportPgButton", "edit.openImportPg();") +
+			_menuItem("Export", "openExportPgButton", "edit.openExportPg();"); //
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
 
 			var sharingMenuItems = //

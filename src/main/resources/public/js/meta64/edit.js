@@ -270,7 +270,7 @@ var edit = function() {
 		},
 
 		openExportPg : function() {
-			meta64.changePage(exportPg);
+			(new ExportDlg()).open();
 		},
 
 		exportNodes : function() {

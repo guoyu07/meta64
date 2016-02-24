@@ -139,6 +139,7 @@ var meta64 = function() {
 		dataObjMap : {},
 
 		updateMainMenuPanel : function() {
+			//alert("building main menu panel");
 			menuPanel.build();
 			menuPanel.init();
 		},
@@ -265,14 +266,14 @@ var meta64 = function() {
 				return null;
 			}
 
-			if (pg.tabId != "popup") {
+			//if (pg.tabId != "popup") { &&&
 				/* this is the same as setting using mainIronPages?? */
 				var paperTabs = document.querySelector("#mainPaperTabs");
 				paperTabs.select(pg.tabId);
-			}
-			else {// else will be just an arbitrary panel
-				render.buildPage(pg);
-			}
+			//}
+			//else {// else will be just an arbitrary panel
+			//	render.buildPage(pg);
+			//}
 		},
 
 		/* for now this is alias of changePage */
@@ -281,6 +282,8 @@ var meta64 = function() {
 		},
 
 		popup : function() {
+			alert("popup function: "+menuPanel.domId);
+			debugger; //&&&
 			render.buildPage(menuPanel);
 			$("#" + menuPanel.domId).popup("open");
 		},

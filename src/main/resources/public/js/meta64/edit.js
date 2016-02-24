@@ -291,7 +291,7 @@ var edit = function() {
 		},
 
 		openImportPg : function() {
-			meta64.changePage(importPg);
+			(new ImportDlg()).open();
 		},
 
 		importNodes : function() {

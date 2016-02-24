@@ -63,12 +63,18 @@ var srch = function() {
 
 		searchNodesResponse : function(res) {
 			_.searchResults = res;
-			meta64.changePage(searchResultsPg);
+			var content = searchResultsPanel.build();
+			util.setHtmlEnhanced("searchResultsPanel", content);
+			searchResultsPanel.init();
+			meta64.changePage(searchResultsPanel);
 		},
 		
 		timelineResponse : function(res) {
 			_.timelineResults = res;
-			meta64.changePage(timelinePg);
+			var content = timelineResultsPanel.build();
+			util.setHtmlEnhanced("timelineResultsPanel", content);
+			timelineResultsPanel.init();
+			meta64.changePage(timelineResultsPanel);
 		},
 
 		timeline : function() {
@@ -95,6 +101,7 @@ var srch = function() {
 		
 		populateSearchResultsPage : function(data, viewName) {
 			
+			debugger;
 			var output = '';
 			var childCount = data.searchResults.length;
 

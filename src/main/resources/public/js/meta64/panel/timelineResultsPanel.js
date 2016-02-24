@@ -1,18 +1,16 @@
-console.log("running module: timelinePg.js");
+console.log("running module: timelineResultsPanel.js");
 
-var timelinePg = function() {
+var timelineResultsPanel = function() {
 
 	var _ = {
-		domId : "timelinePg",
+		domId : "timelineResultsPanel",
 		tabId : "timelineTabName",
 		visible : false,
 
 		build : function() {
 			var header = "<h2 id='timelinePageTitle'></h2>";
 			var mainContent = "<div id='timelineView'></div>";
-
-			var content = header + mainContent;
-			util.setHtmlEnhanced(_.domId, content);
+			return header + mainContent;
 		},
 
 		init : function() {
@@ -21,8 +19,8 @@ var timelinePg = function() {
 		}
 	};
 
-	console.log("Module ready: timelinePg.js");
+	console.log("Module ready: timelineResultsPanel.js");
 	return _;
 }();
 
-//# sourceURL=timelinePg.js
+//# sourceURL=timelineResultsPanel.js

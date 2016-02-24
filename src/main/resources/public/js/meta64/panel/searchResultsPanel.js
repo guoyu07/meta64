@@ -1,20 +1,16 @@
-console.log("running module: searchResultsPg.js");
+console.log("running module: searchResultsPanel.js");
 
-var searchResultsPg = function() {
+var searchResultsPanel = function() {
 
 	var _ = {
-		domId : "searchResultsPg",
+		domId : "searchResultsPanel",
 		tabId : "searchTabName",
 		visible : false,
 
 		build : function() {
 			var header = "<h2 id='searchPageTitle'></h2>";
-
 			var mainContent = "<div id='searchResultsView'></div>";
-
-			var content = header + mainContent;
-			util.setHtmlEnhanced(_.domId, content);
-
+			return header + mainContent; 
 		},
 
 		init : function() {
@@ -23,8 +19,8 @@ var searchResultsPg = function() {
 		}
 	};
 
-	console.log("Module ready: searchResultsPg.js");
+	console.log("Module ready: searchResultsPanel.js");
 	return _;
 }();
 
-//# sourceURL=searchResultsPg.js
+//# sourceURL=searchResultsPanel.js

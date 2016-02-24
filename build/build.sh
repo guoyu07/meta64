@@ -36,26 +36,26 @@ cat ../src/main/resources/public/js/meta64/search.js >> all.js
 cat ../src/main/resources/public/js/meta64/share.js >> all.js
 cat ../src/main/resources/public/js/meta64/user.js >> all.js
 cat ../src/main/resources/public/js/meta64/view.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/Dialog.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/menuPanel.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/ConfirmDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/DonateDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/MessageDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/searchResultsPg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/LoginDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/SignupDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/PrefsDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/ExportDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/importPg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/SearchDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/ChangePasswordDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/UploadDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/EditNodeDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/EditPropertyDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/ShareToPersonDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/SharingDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/RenameNodeDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/pg/timelinePg.js
+cat ../src/main/resources/public/js/meta64/dlg/base/Dialog.js >> all.js
+cat ../src/main/resources/public/js/meta64/menu/menuPanel.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ConfirmDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/DonateDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/MessageDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/LoginDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/SignupDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/PrefsDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ExportDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ImportDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/SearchDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ChangePasswordDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/UploadDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/EditNodeDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/EditPropertyDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ShareToPersonDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/SharingDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/RenameNodeDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/panel/searchResultsPanel.js >> all.js
+cat ../src/main/resources/public/js/meta64/panel/timelineResultsPanel.js  >> all.js
 
 
 #java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64.min.js" "../src/main/resources/public/js/meta64/**.js"

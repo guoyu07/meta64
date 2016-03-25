@@ -283,7 +283,6 @@ var meta64 = function() {
 
 		popup : function() {
 			alert("popup function: "+menuPanel.domId);
-			debugger; //&&&
 			render.buildPage(menuPanel);
 			$("#" + menuPanel.domId).popup("open");
 		},
@@ -485,6 +484,7 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
+			util.setEnablement("upLevelButton", true); //&&&
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
@@ -505,6 +505,7 @@ var meta64 = function() {
 			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null);
 
 			util.setVisibility("editModeButton", allowEditMode);
+			util.setVisibility("upLevelButton", true); //&&&
 			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);
@@ -752,4 +753,4 @@ var meta64 = function() {
 	return _;
 }();
 
-// # sourceURL=meta64.js
+//# sourceURL=meta64.js

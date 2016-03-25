@@ -15,6 +15,7 @@ import com.meta64.mobile.request.InsertBookRequest;
 import com.meta64.mobile.response.InsertBookResponse;
 import com.meta64.mobile.util.ImportWarAndPeace;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 @Component
 @Scope("singleton")
@@ -25,7 +26,9 @@ public class ImportBookService {
 	private SessionContext sessionContext;
 
 	public void insertBook(Session session, InsertBookRequest req, InsertBookResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("insertBook is an admin-only feature.");
 		}

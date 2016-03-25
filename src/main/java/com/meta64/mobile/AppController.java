@@ -117,12 +117,12 @@ import com.meta64.mobile.util.VarUtil;
  * operation in here. It's a better architecture to have all the AOP for any
  * given aspect be in one particular layer, because of how Spring AOP uses
  * Proxies. Things can get pretty ugly when you have various proxied objects
- * calling other proxies objects, so I have all the AOP for a service call in
+ * calling other proxies objects, so we have all the AOP for a service call in
  * this controller and then all the services are pure and simple Spring
  * Singletons.
  * 
  * There's a lot of boiler-plate code in here, but it's just required. This is
- * probably the only code in the system that looks 'redundant', but there is
+ * probably the only code in the system that looks 'redundant' (non-DRY), but there is
  * really no advantageous way to remove it.
  * 
  * TODO: need to get all "program logic" out of this layer (there is a tiny bit
@@ -239,8 +239,7 @@ public class AppController {
 		LoginResponse res = new LoginResponse();
 		ThreadLocals.setResponse(res);
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));
-		Session session = ThreadLocals.getJcrSession();
-		userManagerService.login(session, req, res);
+		userManagerService.login(null, req, res);
 		return res;
 	}
 
@@ -266,7 +265,7 @@ public class AppController {
 		 * 
 		 * We are defining this method with a 'session' parameter, because
 		 * Spring will automatically autowire that correctly, but here is
-		 * another good way to do it:
+		 * another possible way to do it:
 		 * 
 		 * ServletRequestAttributes attr = (ServletRequestAttributes)
 		 * RequestContextHolder.currentRequestAttributes(); HttpSession session
@@ -289,8 +288,7 @@ public class AppController {
 		RenderNodeResponse res = new RenderNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeRenderService.renderNode(session, req, res, true);
+		nodeRenderService.renderNode(null, req, res, true);
 		return res;
 	}
 
@@ -301,8 +299,7 @@ public class AppController {
 		InitNodeEditResponse res = new InitNodeEditResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeRenderService.initNodeEdit(session, req, res);
+		nodeRenderService.initNodeEdit(null, req, res);
 		return res;
 	}
 
@@ -314,8 +311,7 @@ public class AppController {
 		GetNodePrivilegesResponse res = new GetNodePrivilegesResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		aclService.getNodePrivileges(session, req, res);
+		aclService.getNodePrivileges(null, req, res);
 		return res;
 	}
 
@@ -326,8 +322,7 @@ public class AppController {
 		AddPrivilegeResponse res = new AddPrivilegeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		aclService.addPrivilege(session, req, res);
+		aclService.addPrivilege(null, req, res);
 		return res;
 	}
 
@@ -339,8 +334,7 @@ public class AppController {
 		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		aclService.removePrivilege(session, req, res);
+		aclService.removePrivilege(null, req, res);
 		return res;
 	}
 
@@ -351,8 +345,7 @@ public class AppController {
 		ExportResponse res = new ExportResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		importExportService.exportToXml(session, req, res);
+		importExportService.exportToXml(null, req, res);
 		return res;
 	}
 
@@ -363,19 +356,18 @@ public class AppController {
 		ImportResponse res = new ImportResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
 
 		String fileName = req.getSourceFileName();
 		if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
-			importExportService.importFromXml(session, req, res);
+			importExportService.importFromXml(null, req, res);
 			// It is not a mistake that there is no session.save() here. The
 			// import is using the
 			// workspace object
 			// which specifically documents that the saving on the session is
 			// not needed.
 		} else if (fileName.toLowerCase().endsWith(".zip")) {
-			importExportService.importFromZip(session, req, res);
-			session.save();
+			importExportService.importFromZip(null, req, res);
+			ThreadLocals.getJcrSession().save();
 		} else {
 			throw new Exception("Unable to import from file with unknown extension: " + fileName);
 		}
@@ -390,8 +382,7 @@ public class AppController {
 		SetNodePositionResponse res = new SetNodePositionResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeMoveService.setNodePosition(session, req, res);
+		nodeMoveService.setNodePosition(null, req, res);
 		return res;
 	}
 
@@ -406,8 +397,7 @@ public class AppController {
 		CreateSubNodeResponse res = new CreateSubNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.createSubNode(session, req, res);
+		nodeEditService.createSubNode(null, req, res);
 		return res;
 	}
 
@@ -422,8 +412,7 @@ public class AppController {
 		InsertNodeResponse res = new InsertNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.insertNode(session, req, res);
+		nodeEditService.insertNode(null, req, res);
 		return res;
 	}
 
@@ -434,8 +423,7 @@ public class AppController {
 		RenameNodeResponse res = new RenameNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.renameNode(session, req, res);
+		nodeEditService.renameNode(null, req, res);
 		return res;
 	}
 
@@ -446,8 +434,7 @@ public class AppController {
 		InsertBookResponse res = new InsertBookResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		importBookService.insertBook(session, req, res);
+		importBookService.insertBook(null, req, res);
 		return res;
 	}
 
@@ -458,8 +445,7 @@ public class AppController {
 		DeleteNodesResponse res = new DeleteNodesResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeMoveService.deleteNodes(session, req, res);
+		nodeMoveService.deleteNodes(null, req, res);
 		return res;
 	}
 
@@ -470,8 +456,7 @@ public class AppController {
 		MoveNodesResponse res = new MoveNodesResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeMoveService.moveNodes(session, req, res);
+		nodeMoveService.moveNodes(null, req, res);
 		return res;
 	}
 
@@ -483,8 +468,7 @@ public class AppController {
 		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		attachmentService.deleteAttachment(session, req, res);
+		attachmentService.deleteAttachment(null, req, res);
 		return res;
 	}
 
@@ -496,8 +480,7 @@ public class AppController {
 		DeletePropertyResponse res = new DeletePropertyResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.deleteProperty(session, req, res);
+		nodeEditService.deleteProperty(null, req, res);
 		return res;
 	}
 
@@ -508,8 +491,7 @@ public class AppController {
 		SaveNodeResponse res = new SaveNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.saveNode(session, req, res);
+		nodeEditService.saveNode(null, req, res);
 		return res;
 	}
 
@@ -521,8 +503,7 @@ public class AppController {
 		MakeNodeReferencableResponse res = new MakeNodeReferencableResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.makeNodeReferencable(session, req, res);
+		nodeEditService.makeNodeReferencable(null, req, res);
 		return res;
 	}
 
@@ -533,8 +514,7 @@ public class AppController {
 		SavePropertyResponse res = new SavePropertyResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.saveProperty(session, req, res);
+		nodeEditService.saveProperty(null, req, res);
 		return res;
 	}
 
@@ -546,7 +526,6 @@ public class AppController {
 		ChangePasswordResponse res = new ChangePasswordResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
 		userManagerService.changePassword(req, res);
 		return res;
 	}
@@ -561,8 +540,7 @@ public class AppController {
 	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName,
 			@RequestParam("nodeId") String nodeId) throws Exception {
 		logRequest("bin", null);
-		Session session = ThreadLocals.getJcrSession();
-		return attachmentService.getBinary(session, nodeId);
+		return attachmentService.getBinary(null, nodeId);
 	}
 
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
@@ -570,8 +548,7 @@ public class AppController {
 	public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
 			@RequestParam("files") MultipartFile[] uploadFiles) throws Exception {
 		logRequest("upload", null);
-		Session session = ThreadLocals.getJcrSession();
-		return attachmentService.uploadMultipleFiles(session, nodeId, uploadFiles);
+		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles);
 	}
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
@@ -581,8 +558,7 @@ public class AppController {
 		UploadFromUrlResponse res = new UploadFromUrlResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		attachmentService.uploadFromUrl(session, req, res);
+		attachmentService.uploadFromUrl(null, req, res);
 		return res;
 	}
 
@@ -593,8 +569,7 @@ public class AppController {
 		AnonPageLoadResponse res = new AnonPageLoadResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeRenderService.anonPageLoad(session, req, res);
+		nodeRenderService.anonPageLoad(null, req, res);
 		return res;
 	}
 
@@ -605,8 +580,7 @@ public class AppController {
 		NodeSearchResponse res = new NodeSearchResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeSearchService.search(session, req, res);
+		nodeSearchService.search(null, req, res);
 		return res;
 	}
 
@@ -618,8 +592,7 @@ public class AppController {
 		GetSharedNodesResponse res = new GetSharedNodesResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeSearchService.getSharedNodes(session, req, res);
+		nodeSearchService.getSharedNodes(null, req, res);
 		return res;
 	}
 
@@ -631,8 +604,7 @@ public class AppController {
 		SaveUserPreferencesResponse res = new SaveUserPreferencesResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		userManagerService.saveUserPreferences(session, req, res);
+		userManagerService.saveUserPreferences(req, res);
 		return res;
 	}
 
@@ -657,8 +629,7 @@ public class AppController {
 		SplitNodeResponse res = new SplitNodeResponse();
 		ThreadLocals.setResponse(res);
 		checkHttpSession();
-		Session session = ThreadLocals.getJcrSession();
-		nodeEditService.splitNode(session, req, res);
+		nodeEditService.splitNode(null, req, res);
 		return res;
 	}
 

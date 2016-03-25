@@ -41,6 +41,7 @@ import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
 
@@ -92,6 +93,10 @@ public class UserManagerService {
 	 * also.
 	 */
 	public void login(Session session, LoginRequest req, LoginResponse res) throws Exception {
+
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 
 		String userName = req.getUserName();
 		String password = req.getPassword();
@@ -377,9 +382,9 @@ public class UserManagerService {
 		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, true);
 	}
 
-	public void saveUserPreferences(Session session_unused, final SaveUserPreferencesRequest req,
+	public void saveUserPreferences(final SaveUserPreferencesRequest req,
 			final SaveUserPreferencesResponse res) throws Exception {
-
+		
 		final String userName = sessionContext.getUserName();
 
 		adminRunner.run((Session session) -> {

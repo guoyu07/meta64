@@ -90,7 +90,8 @@ var view = function() {
 					if (elm.node.scrollIntoView) {
 						elm.node.scrollIntoView();
 					} else {
-						alert("selected element didn't have scrollIntoView function");
+						//todo-1: sometimes we can't scroll into view. for now not worrying about it.
+						//alert("selected element didn't have scrollIntoView function");
 					}
 				}
 				// If we couldn't find a selected node on this page, scroll to

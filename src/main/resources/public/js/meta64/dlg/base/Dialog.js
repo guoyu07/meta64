@@ -152,4 +152,4 @@ Dialog.prototype.makeRadioButton = function(label, id) {
 	}, label);
 }
 
-// # sourceURL=Dialog.js
+//# sourceURL=Dialog.js

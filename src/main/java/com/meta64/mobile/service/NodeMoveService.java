@@ -18,6 +18,7 @@ import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.VarUtil;
 
@@ -43,6 +44,9 @@ public class NodeMoveService {
 	 */
 	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res)
 			throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String parentNodeId = req.getParentNodeId();
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 		JcrUtil.checkNodeCreatedBy(parentNode, session.getUserID());
@@ -55,7 +59,9 @@ public class NodeMoveService {
 	 * Deletes the set of nodes specified in the request
 	 */
 	public void deleteNodes(Session session, DeleteNodesRequest req, DeleteNodesResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		ValContainer<Boolean> switchedToAdminSession = new ValContainer<Boolean>();
 
 		for (String nodeId : req.getNodeIds()) {
@@ -118,6 +124,10 @@ public class NodeMoveService {
 	 * target node specified.
 	 */
 	public void moveNodes(Session session, MoveNodesRequest req, MoveNodesResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String targetId = req.getTargetNodeId();
 		Node targetNode = JcrUtil.findNode(session, targetId);
 		String targetPath = targetNode.getPath() + "/";

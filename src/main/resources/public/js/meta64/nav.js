@@ -75,24 +75,28 @@ var nav = function() {
 		 * selected
 		 */
 		getSelectedPolyElement : function() {
+			try {
+				var currentSelNode = meta64.getHighlightedNode();
+				if (currentSelNode) {
 
-			var currentSelNode = meta64.getHighlightedNode();
-			if (currentSelNode) {
+					/* get node by node identifier */
+					var node = meta64.uidToNodeMap[currentSelNode.uid];
 
-				/* get node by node identifier */
-				var node = meta64.uidToNodeMap[currentSelNode.uid];
+					if (node) {
+						console.log("found highlighted node.id=" + node.id);
 
-				if (node) {
-					console.log("found highlighted node.id=" + node.id);
+						/* now make CSS id from node */
+						var nodeId = node.uid + _UID_ROWID_SUFFIX;
+						console.log("looking up using element id: "+nodeId);
 
-					/* now make CSS id from node */
-					var nodeId = node.uid + _UID_ROWID_SUFFIX;
-					// console.log("looking up using element id: "+nodeId);
-
-					return util.polyElm(nodeId);
+						return util.polyElm(nodeId);
+					}
+				} else {
+					console.log("no node highlighted");
 				}
+			} catch (e) {
+				console.log("getSelectedPolyElement failed.");
 			}
-
 			return null;
 		},
 

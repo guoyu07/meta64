@@ -73,6 +73,8 @@
         <link rel="import"
               href="/bower_components/paper-button/paper-button.html" />
         <link rel="import"
+              href="/bower_components/paper-tooltip/paper-tooltip.html" />
+        <link rel="import"
               href="/bower_components/paper-header-panel/paper-header-panel.html" />
         <link rel="import"
               href="/bower_components/paper-styles/color.html" />
@@ -133,78 +135,78 @@
     </head>
     <body unresolved="unresolved"
           class="fullbleed layout vertical">
-        <span id="browser-sync-binding"></span>
-        <dom-module is="main-dom-module">
-            <!--  link rel="import" type="css" href="/css/meta64.css"/ -->
-            <template is="dom-bind"
-                      id="app">
-                <style is="custom-style"
-                       include="shared-styles"></style>
-                <iron-ajax id="ironAjax"></iron-ajax>
-                <paper-drawer-panel id="paperDrawerPanel">
-                    <!-- Left Side Panel -->
-                    <paper-scroll-header-panel drawer="drawer"
-                                               fixed="fixed">
-                        <!--
+    <span id="browser-sync-binding"></span>
+    <dom-module is="main-dom-module">
+        <!--  link rel="import" type="css" href="/css/meta64.css"/ -->
+        <template is="dom-bind"
+                  id="app">
+            <style is="custom-style"
+                   include="shared-styles"></style>
+            <iron-ajax id="ironAjax"></iron-ajax>
+            <paper-drawer-panel id="paperDrawerPanel">
+                <!-- Left Side Panel -->
+                <paper-scroll-header-panel drawer="drawer"
+                                           fixed="fixed">
+                    <!--
                         commenting until I learn to style this in polymer                        
                         <paper-toolbar id="drawerToolbar">
                             <span class="paper-font-title">Menu</span>
                         </paper-toolbar>
                         -->
-                        <div class="horizontal-section">
-                            <paper-menu id="mainNavBar"
-                                        attr-for-item-title="label"
-                                        multi="multi"></paper-menu>
-                        </div>
-                    </paper-scroll-header-panel>
-                    <!-- Main Area -->
-                    <paper-header-panel main="main"
-                                        id="headerPanelMain">
-                        <paper-toolbar id="mainToolbar">
-                            <!--
+                    <div class="horizontal-section">
+                        <paper-menu id="mainNavBar"
+                                    attr-for-item-title="label"
+                                    multi="multi"></paper-menu>
+                    </div>
+                </paper-scroll-header-panel>
+                <!-- Main Area -->
+                <paper-header-panel main="main"
+                                    id="headerPanelMain">
+                    <paper-toolbar id="mainToolbar">
+                        <!--
                                 when implemented this button will toggle visibility of left-side menu  
                                 -->
-                            <paper-icon-button icon="menu"></paper-icon-button>
-                            <span id="headerAppName"
-                                  class="app-name title">Meta64</span>
-                            <paper-button id="navHomeButton"
-                                          onClick="nav.navHome();">Home</paper-button>
-                            <paper-button style="display:none;"
-                                          id="editModeButton"
-                                          onClick="edit.editMode();">Edit Mode</paper-button>
-                            <paper-button style="display:none;"
-                                          id="openSignupPgButton"
-                                          onClick="user.openSignupPg();">Signup</paper-button>
-                            <paper-button style="display:none;"
-                                          id="openLoginDlgButton"
-                                          onClick="(new LoginDlg()).open();">Login</paper-button>
-                            <paper-button style="display:none;"
-                                          id="navLogoutButton"
-                                          onClick="user.logout(true);">Logout</paper-button>
-                        </paper-toolbar>
-                        <!-- 
+                        <paper-icon-button icon="menu"></paper-icon-button>
+                        <span id="headerAppName"
+                              class="app-name title">Meta64</span>
+                        <paper-button id="navHomeButton"
+                                      onClick="nav.navHome();">Home</paper-button>
+                        <paper-button style="display:none;"
+                                      id="upLevelButton"
+                                      onClick="nav.navUpLevel();">Up Level</paper-button>
+                        <paper-button style="display:none;"
+                                      id="editModeButton"
+                                      onClick="edit.editMode();">Edit Mode</paper-button>
+                        <paper-button style="display:none;"
+                                      id="openSignupPgButton"
+                                      onClick="user.openSignupPg();">Signup</paper-button>
+                        <paper-button style="display:none;"
+                                      id="openLoginDlgButton"
+                                      onClick="(new LoginDlg()).open();">Login</paper-button>
+                        <paper-button style="display:none;"
+                                      id="navLogoutButton"
+                                      onClick="user.logout(true);">Logout</paper-button>
+                    </paper-toolbar>
+                    <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)
                         
                         WARNING: do not try using this: </main-tabs> polymer chokes on that and will truncate everything
                         after the tag (at least in its parent element)
                         -->
-                        <main-tabs></main-tabs>
-                    </paper-header-panel>
-                </paper-drawer-panel>
-            </template>
-        </dom-module>
-        <!-- Warning: This script must be here, at end of body. -->
-        <script src="/js/app.js?ver={{cacheVersion}}"></script>
-        
-        <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
-        {{html.scripts}}
-       
-        <script>/* 
+                    <main-tabs></main-tabs>
+                </paper-header-panel>
+            </paper-drawer-panel>
+        </template>
+    </dom-module>
+    <!-- Warning: This script must be here, at end of body. -->
+    <script src="/js/app.js?ver={{cacheVersion}}"></script>
+    <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
+    {{html.scripts}} 
+    <script>/* 
 <![CDATA[*/
                 addEventListener('WebComponentsReady', function() {
                                 meta64.initApp();
                         });
          /*]]>
-*/</script>
-    </body>
+*/</script></body>
 </html>

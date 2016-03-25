@@ -25,6 +25,7 @@ import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service for searching the repository. This searching is currently very basic,
@@ -87,7 +88,9 @@ public class NodeSearchService {
 
 	// see DescendantSearchTest
 	public void search(Session session, NodeSearchRequest req, NodeSearchResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		int MAX_NODES = 100;
 		Node searchRoot = JcrUtil.findNode(session, req.getNodeId());
 
@@ -186,7 +189,9 @@ public class NodeSearchService {
 	 */
 	public void getSharedNodes(Session session, GetSharedNodesRequest req, GetSharedNodesResponse res)
 			throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String userRootPath = sessionContext.getRootRefInfo().getPath();
 
 		int MAX_NODES = 100;

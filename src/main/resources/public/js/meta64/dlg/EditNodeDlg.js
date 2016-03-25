@@ -150,7 +150,8 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 }
 
 EditNodeDlg.prototype.addProperty = function() {
-	(new EditPropertyDlg(this)).open();
+	this.editPropertyDlgInst = new EditPropertyDlg(this);
+	this.editPropertyDlgInst.open();
 }
 
 /*
@@ -509,4 +510,4 @@ EditNodeDlg.prototype.init = function() {
 	this.populateEditNodePg();
 }
 
-// # sourceURL=EditNodeDlg.js
+//# sourceURL=EditNodeDlg.js

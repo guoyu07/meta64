@@ -31,7 +31,6 @@ import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
-import com.meta64.mobile.util.JcrRunnable;
 import com.meta64.mobile.util.ThreadLocals;
 
 @RunWith(SpringJUnit4ClassRunner.class)

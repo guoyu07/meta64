@@ -92,4 +92,4 @@ EditPropertyDlg.prototype.init = function() {
 	this.populatePropertyEdit();
 }
 
-// # sourceURL=EditPropertyDlg.js
+//# sourceURL=EditPropertyDlg.js

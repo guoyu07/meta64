@@ -37,6 +37,7 @@ import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service for editing node attachments. Node attachments are binary attachments
@@ -57,6 +58,9 @@ public class AttachmentService {
 	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles)
 			throws Exception {
 		try {
+			if (session == null) {
+				session = ThreadLocals.getJcrSession();
+			}
 			/*
 			 * Uploading a single file attaches to the current node, but
 			 * uploading multiple files creates each file on it's own subnode
@@ -170,6 +174,9 @@ public class AttachmentService {
 	 */
 	public void deleteAttachment(Session session, DeleteAttachmentRequest req, DeleteAttachmentResponse res)
 			throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -197,6 +204,9 @@ public class AttachmentService {
 	 */
 	public ResponseEntity<InputStreamResource> getBinary(Session session, String nodeId) throws Exception {
 		try {
+			if (session == null) {
+				session = ThreadLocals.getJcrSession();
+			}
 			Node node = JcrUtil.findNode(session, nodeId);
 
 			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
@@ -229,6 +239,9 @@ public class AttachmentService {
 	 * image or any other kind of content actually.
 	 */
 	public void uploadFromUrl(Session session, UploadFromUrlRequest req, UploadFromUrlResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		String sourceUrl = req.getSourceUrl();
 		String FAKE_USER_AGENT = "Mozilla/5.0";

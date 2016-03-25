@@ -45,7 +45,8 @@ var edit = function() {
 			 */
 			_.editNode = res.nodeInfo;
 
-			(new EditNodeDlg()).open();
+			_.editNodeDlgInst = new EditNodeDlg();
+			_.editNodeDlgInst.open();
 		}
 	}
 
@@ -98,8 +99,14 @@ var edit = function() {
 		 */
 		sendNotificationPendingSave : false,
 
-		/* Node being edited */
+		/* Node being edited 
+		 * 
+		 * todo-1: this and several other variables can now be moved into the dialog class? Is that good or bad coupling/responsibility?
+		 * */
 		editNode : null,
+		
+		/* Instance of EditNodeDialog: For now creating new one each time */
+		editNodeDlgInst : null,
 
 		/*
 		 * type=NodeInfo.java
@@ -116,7 +123,8 @@ var edit = function() {
 		startEditingNewNode : function() {
 			_.editingUnsavedNode = false;
 			_.editNode = null;
-			_.saveNewNode("");
+			_.editNodeDlgInst = new EditNodeDlg();
+			_.editNodeDlgInst.saveNewNode("");
 		},
 
 		/*
@@ -138,7 +146,8 @@ var edit = function() {
 		startEditingNewNodeWithName : function() {
 			_.editingUnsavedNode = true;
 			_.editNode = null;
-			(new EditNodeDlg()).open();
+			_.editNodeDlgInst = new EditNodeDlg();
+			_.editNodeDlgInst.open();
 		},
 		
 		insertNodeResponse : function(res) {

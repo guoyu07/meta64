@@ -339,6 +339,7 @@ var render = function() {
 					/* Construct Create Subnode Button */
 					createSubNodeButton = _.tag("paper-button", //
 					{
+						"id" : "addNodeButtonId" + uid,
 						"raised" : "raised",
 						"onClick" : "edit.createSubNode('" + uid + "');"
 					}, "Add");
@@ -348,6 +349,7 @@ var render = function() {
 					/* Construct Create Subnode Button */
 					insertNodeButton = _.tag("paper-button", //
 					{
+						"id" : "insertNodeButtonId" + uid,
 						"raised" : "raised",
 						"onClick" : "edit.insertNode('" + uid + "');"
 					}, "Ins");
@@ -385,8 +387,19 @@ var render = function() {
 				}
 			}
 
+			/* i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment */
+			var insertNodeTooltip = _.tag("paper-tooltip", {
+				"for" : "insertNodeButtonId" + uid
+			}, "INSERTS a new node at the current tree position. As a sibling on this level.");
+
+			var addNodeTooltip = _.tag("paper-tooltip", {
+				"for" : "addNodeButtonId" + uid
+			}, "ADDS a new node inside the current node, as a child of it.");
+			
 			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + editNodeButton
 					+ moveNodeUpButton + moveNodeDownButton;
+			
+			allButtons += insertNodeTooltip + addNodeTooltip;
 
 			if (allButtons.length > 0) {
 				return _.makeHorizontalFieldSet(allButtons);
@@ -568,13 +581,15 @@ var render = function() {
 
 				if (meta64.currentNode && nav.parentVisibleToUser()) {
 
-					/* Construct Create Subnode Button */
-					upLevelButton = _.tag("paper-button", //
-					{
-						"class" : "highlight-button",
-						"raised" : "raised",
-						"onClick" : "nav.navUpLevel();"
-					}, "Up Level");
+					/*
+					 * I decided putting UpLevel at very top of main app control
+					 * bar was best, because I got tired of having to scroll to
+					 * the top at every level of a tree when backing out
+					 * 
+					 * upLevelButton = _.tag("paper-button", // { "class" :
+					 * "highlight-button", "raised" : "raised", "onClick" :
+					 * "nav.navUpLevel();" }, "Up Level");
+					 */
 				}
 
 				if (upLevelButton || editNodeButton) {
@@ -873,7 +888,8 @@ var render = function() {
 		/*
 		 * domId is id of dialog being closed.
 		 * 
-		 * todo: Once all dialogs are refactored to new design this method can be removed.
+		 * todo: Once all dialogs are refactored to new design this method can
+		 * be removed.
 		 */
 		makePopupBackButton : function(text, id, domId, callback) {
 

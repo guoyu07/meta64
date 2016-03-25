@@ -30,6 +30,7 @@ import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service for rendering the content of a page. The actual page is not rendered
@@ -60,6 +61,10 @@ public class NodeRenderService {
 	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix)
 			throws Exception {
 
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		List<NodeInfo> children = new LinkedList<NodeInfo>();
 		res.setChildren(children);
 		String targetId = req.getNodeId();
@@ -139,6 +144,11 @@ public class NodeRenderService {
 	}
 
 	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) throws Exception {
+		
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.safeFindNode(session, nodeId);
 
@@ -159,7 +169,9 @@ public class NodeRenderService {
 	 * is browsing the site, and this method retrieves that page data.
 	 */
 	public void anonPageLoad(Session session, AnonPageLoadRequest req, AnonPageLoadResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		boolean allowRootAutoPrefix = false;
 		String id = null;
 		if (id == null) {

@@ -37,6 +37,7 @@ import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service for editing content of nodes. That is, this method updates property
@@ -63,6 +64,10 @@ public class NodeEditService {
 	 * request.
 	 */
 	public void createSubNode(Session session, CreateSubNodeRequest req, CreateSubNodeResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		String curUser = session.getUserID();
@@ -105,7 +110,9 @@ public class NodeEditService {
 	 * ordinal position as the node specified in the request.
 	 */
 	public void insertNode(Session session, InsertNodeRequest req, InsertNodeResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String parentNodeId = req.getParentId();
 		log.debug("Inserting under parent: " + parentNodeId);
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
@@ -135,7 +142,10 @@ public class NodeEditService {
 	 * actually under the same parent.
 	 */
 	public void renameNode(Session session, RenameNodeRequest req, RenameNodeResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		String newName = req.getNewName().trim();
 		if (newName.length() == 0) {
@@ -193,6 +203,9 @@ public class NodeEditService {
 	 * Saves the value(s) of properties on the node specified in the request.
 	 */
 	public void saveProperty(Session session, SavePropertyRequest req, SavePropertyResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -211,6 +224,9 @@ public class NodeEditService {
 	 */
 	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res)
 			throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -232,6 +248,9 @@ public class NodeEditService {
 	 * request.
 	 */
 	public void saveNode(Session session, SaveNodeRequest req, SaveNodeResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 
 		// log.debug("saveNode. nodeId=" + nodeId);
@@ -298,6 +317,9 @@ public class NodeEditService {
 	 */
 	public void deleteProperty(Session session, DeletePropertyRequest req, DeletePropertyResponse res)
 			throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -328,7 +350,9 @@ public class NodeEditService {
 	 * method will break it all up into individual nodes.
 	 */
 	public void splitNode(Session session, SplitNodeRequest req, SplitNodeResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
 		String nodeId = req.getNodeId();
 		String nodeBelowId = req.getNodeBelowId();
 		Node nodeBelow = null;

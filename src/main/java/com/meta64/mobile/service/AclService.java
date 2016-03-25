@@ -26,6 +26,7 @@ import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service methods for (ACL): processing security, privileges, and Access
@@ -46,6 +47,10 @@ public class AclService {
 	public void getNodePrivileges(Session session, GetNodePrivilegesRequest req, GetNodePrivilegesResponse res)
 			throws Exception {
 
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 
@@ -77,7 +82,10 @@ public class AclService {
 	 * Adds a new privilege to a node. Request object is self explanatory.
 	 */
 	public void addPrivilege(Session session, AddPrivilegeRequest req, AddPrivilegeResponse res) throws Exception {
-
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
@@ -125,6 +133,10 @@ public class AclService {
 	 */
 	public void removePrivilege(Session session, RemovePrivilegeRequest req, RemovePrivilegeResponse res)
 			throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkNodeCreatedBy(node, session.getUserID());

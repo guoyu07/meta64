@@ -34,6 +34,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Import and Export to and from XML files, as well as the special processing to
@@ -66,6 +67,10 @@ public class ImportExportService {
 	 * generate a timestamped one.
 	 */
 	public void exportToXml(Session session, ExportRequest req, ExportResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
@@ -231,6 +236,10 @@ public class ImportExportService {
 	}
 
 	public void importFromXml(Session session, ImportRequest req, ImportResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
@@ -319,6 +328,10 @@ public class ImportExportService {
 	}
 
 	public void importFromZip(Session session, ImportRequest req, ImportResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}

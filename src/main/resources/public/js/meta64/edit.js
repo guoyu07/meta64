@@ -101,7 +101,7 @@ var edit = function() {
 
 		/* Node being edited 
 		 * 
-		 * todo-1: this and several other variables can now be moved into the dialog class? Is that good or bad coupling/responsibility?
+		 * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad coupling/responsibility?
 		 * */
 		editNode : null,
 		
@@ -177,7 +177,7 @@ var edit = function() {
 		
 		editMode : function() {
 			meta64.editMode = meta64.editMode ? false : true;
-			//todo: really edit mode button needs to be some kind of button that can show an on/off state.
+			//todo-3: really edit mode button needs to be some kind of button that can show an on/off state.
 			render.renderPageFromData();
 
 			/*

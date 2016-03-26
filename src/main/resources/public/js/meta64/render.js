@@ -216,7 +216,7 @@ var render = function() {
 			var canMoveDown = index < count - 1;
 
 			/*
-			 * TODO: this checking of "rep:" is just a hack for now to stop from
+			 * TODO-2: this checking of "rep:" is just a hack for now to stop from
 			 * deleting things I won't want to allow to delete, but I will
 			 * design this better later.
 			 */
@@ -461,7 +461,7 @@ var render = function() {
 		formatPath : function(node) {
 			var path = node.path;
 			/*
-			 * TODO: This will fail now that jcr: is removed because it can
+			 * TODO-2: This will fail now that jcr: is removed because it can
 			 * match and corrupt any path that happens to start with root!
 			 * BEWARE! FIX!
 			 */
@@ -643,7 +643,7 @@ var render = function() {
 			util.setHtmlEnhanced("listView", output);
 
 			/*
-			 * TODO: Instead of calling screenSizeChange here immediately, it
+			 * TODO-3: Instead of calling screenSizeChange here immediately, it
 			 * would be better to set the image sizes exactly on the attributes
 			 * of each image, as the HTML text is rendered before we even call
 			 * setHtmlEnhancedById, so that images always are GUARANTEED to
@@ -882,26 +882,6 @@ var render = function() {
 				"raised" : "raised",
 				"id" : id,
 				"onClick" : "meta64.cancelDialog('" + domId + "');" + callback
-			}, text, true);
-		},
-
-		/*
-		 * domId is id of dialog being closed.
-		 * 
-		 * todo: Once all dialogs are refactored to new design this method can
-		 * be removed.
-		 */
-		makePopupBackButton : function(text, id, domId, callback) {
-
-			if (callback === undefined) {
-				callback = "";
-			}
-
-			return _.tag("paper-button", {
-				"raised" : "raised",
-				"dialog-confirm" : "dialog-confirm",
-				"id" : id,
-				"onClick" : callback
 			}, text, true);
 		},
 

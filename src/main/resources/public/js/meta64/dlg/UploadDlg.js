@@ -146,7 +146,7 @@ UploadDlg.prototype.deleteAttachmentResponse = function(res) {
 	if (util.checkSuccess("Delete attachment", res)) {
 
 		/*
-		 * TODO: Does just setting hasBinary false not work? 
+		 * TODO-2: Does just setting hasBinary false not work? 
 		 */
 		// _.uploadNode.hasBinary = false;
 		meta64.removeBinaryByUid(attachment.uploadNode.uid);

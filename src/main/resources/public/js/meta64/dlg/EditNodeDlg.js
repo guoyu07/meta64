@@ -23,11 +23,11 @@ EditNodeDlg.prototype.build = function() {
 	var header = render.makeDialogHeader("Edit Node");
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty, this);
-	var makeNodeReferencableButton = this.makeButton("Make Node Referencable", "makeNodeReferencableButton",
-			"edit.makeNodeReferencable();");
+	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty);
+	var makeNodeReferencableButton = this.makeCloseButton("Make Node Referencable", "makeNodeReferencableButton",
+			"edit.makeNodeReferencable();", this);
 	var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
-	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();");
+	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
 
 	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + makeNodeReferencableButton
 			+ splitContentButton + cancelEditButton);
@@ -36,7 +36,7 @@ EditNodeDlg.prototype.build = function() {
 	var height = window.innerHeight * 0.4;
 
 	var internalMainContent = "<div id='" + this.id("editNodePathDisplay") + "' class='path-display-in-editor'></div>" + //
-	"<div id='"+this.id("editNodeInstructions")+"'></div>" + //
+	"<div id='" + this.id("editNodeInstructions") + "'></div>" + //
 	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;\" id='"
 			+ this.id("propertyEditFieldContainer") + "'>Loading propertyEditFieldContainer...</div>";
 
@@ -49,7 +49,7 @@ EditNodeDlg.prototype.build = function() {
  * 
  */
 EditNodeDlg.prototype.populateEditNodePg = function() {
-	
+
 	/* display the node path at the top of the edit page */
 	view.initEditPathDisplayById(this.id("editNodePathDisplay"));
 
@@ -61,10 +61,10 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 
 	/* editNode will be null if this is a new node being created */
 	if (edit.editNode) {
-		
+
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
-		
+
 		// Iterate PropertyInfo.java objects
 		$.each(edit.editNode.properties, function(index, prop) {
 
@@ -77,9 +77,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 				return;
 			}
 
-			// todo: search other parts of code and make sure dialog-specific id is used where needed (only on element access)
-			var fieldId = "editNodeTextContent" + counter;
-
+			var fieldId = this.id("editNodeTextContent" + counter);
 			console.log("Creating edit field " + fieldId + " for property " + prop.name);
 
 			meta64.fieldIdToPropMap[fieldId] = prop;
@@ -100,7 +98,6 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 
 			var buttonBar = "";
 			if (!isReadOnlyProp && !isBinaryProp) {
-				debugger;
 				buttonBar = _this.makePropertyEditButtonBar(prop, fieldId);
 			}
 
@@ -134,7 +131,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 			: //
 			"";
 
-	$("#"+this.id("editNodeInstructions")).html(instr);
+	$("#" + this.id("editNodeInstructions")).html(instr);
 
 	/*
 	 * Allow adding of new properties as long as this is a saved node we are
@@ -142,11 +139,12 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 * client side. We need a genuine node already saved on the server before we
 	 * allow any property editing to happen.
 	 */
-	util.setVisibility("#"+this.id("addPropertyButton"), !edit.editingUnsavedNode);
+	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
 
 	var isUuid = edit.editNode && edit.editNode.id && !edit.editNode.id.startsWith("/");
 	// console.log("isUuid: " + isUuid);
-	util.setVisibility("#"+this.id("makeNodeReferencableButton"), edit.editNode && !isUuid && !edit.editingUnsavedNode);
+	util.setVisibility("#" + this.id("makeNodeReferencableButton"), edit.editNode && !isUuid
+			&& !edit.editingUnsavedNode);
 }
 
 EditNodeDlg.prototype.addProperty = function() {
@@ -160,11 +158,11 @@ EditNodeDlg.prototype.addProperty = function() {
  */
 EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 	var buttonBar = "";
-		
+
 	var clearButton = render.tag("paper-button", //
 	{
 		"raised" : "raised",
-		"onClick" : "meta64.getObjectByGuid("+this.guid+").clearProperty('" + fieldId + "');" //
+		"onClick" : "meta64.getObjectByGuid(" + this.guid + ").clearProperty('" + fieldId + "');" //
 	}, //
 	"Clear");
 
@@ -179,7 +177,7 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 		deleteButton = render.tag("paper-button", //
 		{
 			"raised" : "raised",
-			"onClick" : "meta64.getObjectByGuid("+this.guid+").deleteProperty('" + prop.name + "');" //
+			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');" //
 		}, //
 		"Del");
 
@@ -190,7 +188,7 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 		addMultiButton = render.tag("paper-button", //
 		{
 			"raised" : "raised",
-			"onClick" : "meta64.getObjectByGuid("+this.guid+").addSubProperty('" + fieldId + "');" //
+			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
 		}, //
 		"Add Multi");
 	}
@@ -206,6 +204,9 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 }
 
 EditNodeDlg.prototype.addSubProperty = function(fieldId) {
+	//todo-2: paranoia
+	fieldId = this.id(fieldId); 
+	
 	var prop = meta64.fieldIdToPropMap[fieldId];
 
 	var isMulti = util.isObject(prop.values);
@@ -220,18 +221,18 @@ EditNodeDlg.prototype.addSubProperty = function(fieldId) {
 	/*
 	 * now add new empty property and populate it onto the screen
 	 * 
-	 * TODO: for performance we could do something simpler than
-	 * 'populateEditNodePg' here, but for now we just rerendering the
-	 * entire edit page.
+	 * TODO-3: for performance we could do something simpler than
+	 * 'populateEditNodePg' here, but for now we just rerendering the entire
+	 * edit page.
 	 */
 	prop.values.push('');
-	
+
 	this.populateEditNodePg();
 }
 
 /*
- * Deletes the property of the specified name on the node being edited,
- * but first gets confirmation from user
+ * Deletes the property of the specified name on the node being edited, but
+ * first gets confirmation from user
  */
 EditNodeDlg.prototype.deleteProperty = function(propName) {
 	var _this = this;
@@ -248,9 +249,9 @@ EditNodeDlg.prototype.deletePropertyImmediate = function(propName) {
 	});
 
 	var _this = this;
-	
+
 	ironRes.completes.then(function() {
-		//todo: not sure if 'this' will be correct here (using _this until I check)
+		// not sure if 'this' will be correct here (using _this until I check)
 		_this.deletePropertyResponse(ironRes.response, propName);
 	});
 }
@@ -260,21 +261,21 @@ EditNodeDlg.prototype.deletePropertyResponse = function(res, propertyToDelete) {
 	if (util.checkSuccess("Delete property", res)) {
 
 		/*
-		 * remove deleted property from client side storage, so we can
-		 * re-render screen without making another call to server
+		 * remove deleted property from client side storage, so we can re-render
+		 * screen without making another call to server
 		 */
 		props.deletePropertyFromLocalData(propertyToDelete);
 
 		/* now just re-render screen from local variables */
 		meta64.treeDirty = true;
-		
+
 		this.populateEditNodePg();
 	}
 }
 
 EditNodeDlg.prototype.clearProperty = function(fieldId) {
 	util.setInputVal(this.id(fieldId), "");
-	
+
 	/* scan for all multi-value property fields and clear them */
 	var counter = 0;
 	while (counter < 1000) {
@@ -286,39 +287,38 @@ EditNodeDlg.prototype.clearProperty = function(fieldId) {
 }
 
 /*
- * for now just let server side choke on invalid things. It has enough
- * security and validation to at least protect itself from any kind of
- * damage.
+ * for now just let server side choke on invalid things. It has enough security
+ * and validation to at least protect itself from any kind of damage.
  */
 EditNodeDlg.prototype.saveNode = function() {
 
 	/*
 	 * If editing an unsaved node it's time to run the insertNode, or
-	 * createSubNode, which actually saves onto the server, and will
-	 * initiate further editing like for properties, etc.
+	 * createSubNode, which actually saves onto the server, and will initiate
+	 * further editing like for properties, etc.
 	 */
 	if (edit.editingUnsavedNode) {
+		console.log("saveNewNode.");
 		this.saveNewNode();
 	}
 	/*
-	 * Else we are editing a saved node, which is already saved on
-	 * server.
+	 * Else we are editing a saved node, which is already saved on server.
 	 */
 	else {
+		console.log("saveExistingNode.");
 		this.saveExistingNode();
 	}
 }
 
 EditNodeDlg.prototype.saveNewNode = function(newNodeName) {
-	debugger;
 	if (!newNodeName) {
 		newNodeName = util.getInputVal(this.id("newNodeNameId"));
 	}
 
 	/*
-	 * If we didn't create the node we are inserting under, and neither
-	 * did "admin", then we need to send notification email upon saving
-	 * this new node.
+	 * If we didn't create the node we are inserting under, and neither did
+	 * "admin", then we need to send notification email upon saving this new
+	 * node.
 	 */
 	if (meta64.userName != edit.parentOfNewNode.createdBy && //
 	edit.parentOfNewNode.createdBy != "admin") {
@@ -342,15 +342,13 @@ EditNodeDlg.prototype.saveNewNode = function(newNodeName) {
 
 EditNodeDlg.prototype.saveExistingNode = function() {
 	console.log("**************** saveExistingNode");
-	debugger;
 	var propertiesList = [];
 	var counter = 0;
 	var changeCount = 0;
 
 	// iterate for all fields we can find
 	while (true) {
-		//todo: this id needs this.id() for it for dialog-specific value.
-		var fieldId = "editNodeTextContent" + counter;
+		var fieldId = this.id("editNodeTextContent" + counter);
 
 		/*
 		 * is this an existing gui edit field, that's savable.
@@ -360,15 +358,14 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 			console.log("Saving property field: " + fieldId);
 
 			/*
-			 * Since the Readonly ones are prefixed with RdOnly_ in
-			 * front of fieldId, those won't exist and elementExists
-			 * bypasses them
+			 * Since the Readonly ones are prefixed with RdOnly_ in front of
+			 * fieldId, those won't exist and elementExists bypasses them
 			 */
-			if (util.elementExists(this.id(fieldId))) {
+			if (util.elementExists(fieldId)) {
 				console.log("Element exists: " + fieldId);
 
 				var prop = meta64.fieldIdToPropMap[fieldId];
-				var propVal = util.getTextAreaValById(this.id(fieldId));
+				var propVal = util.getTextAreaValById(fieldId);
 
 				console.log("prop name: " + prop.name);
 
@@ -393,12 +390,14 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 				var propVals = [];
 				var prop = meta64.fieldIdToPropMap[fieldId];
 				while (true) {
-					//todo: find other places where _subProp is used and make sure id is dialog-relative
+					//remember: fieldId is already dialog-specific
 					var subPropId = fieldId + "_subProp" + subPropIdx;
-					if (util.elementExists(this.id(subPropId))) {
+
+					// note subPropId inherits dialog-specific key from fieldId
+					if (util.elementExists(subPropId)) {
 						console.log("Element subprop exists: " + subPropId);
 
-						var propVal = util.getTextAreaValById(this.id(subPropId));
+						var propVal = util.getTextAreaValById(subPropId);
 						console.log("prop: " + prop.name + " val[" + subPropIdx + "]=" + propVal);
 						propVals.push(propVal);
 					} else {
@@ -407,7 +406,7 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 					}
 					subPropIdx++;
 				}
-				
+
 				propertiesList.push({
 					"name" : prop.name,
 					"values" : propVals
@@ -428,6 +427,7 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 			properties : propertiesList,
 			sendNotification : edit.sendNotificationPendingSave
 		};
+		console.log("running saveNode()");
 		util.json("saveNode", postData, edit.saveNodeResponse);
 		edit.sendNotificationPendingSave = false;
 	} else {
@@ -448,7 +448,7 @@ EditNodeDlg.prototype.makeMultiPropEditor = function(fieldId, prop, isReadOnlyPr
 
 	for (var i = 0; i < propList.length; i++) {
 		console.log("prop multi-val[" + i + "]=" + propList[i]);
-		var id = fieldId + "_subProp" + i;
+		var id = this.id(fieldId + "_subProp" + i);
 
 		var propVal = isBinaryProp ? "[binary]" : propList[i];
 		var propValStr = propVal ? propVal : '';
@@ -459,7 +459,7 @@ EditNodeDlg.prototype.makeMultiPropEditor = function(fieldId, prop, isReadOnlyPr
 
 		if (isBinaryProp || isReadOnlyProp) {
 			fields += render.tag("paper-textarea", {
-				"id" : this.id(id),
+				"id" : id,
 				"readonly" : "readonly",
 				"disabled" : "disabled",
 				"label" : label,
@@ -467,7 +467,7 @@ EditNodeDlg.prototype.makeMultiPropEditor = function(fieldId, prop, isReadOnlyPr
 			}, '', true);
 		} else {
 			fields += render.tag("paper-textarea", {
-				"id" : this.id(id),
+				"id" : id,
 				"label" : label,
 				"value" : propValStr
 			}, '', true);
@@ -510,4 +510,4 @@ EditNodeDlg.prototype.init = function() {
 	this.populateEditNodePg();
 }
 
-//# sourceURL=EditNodeDlg.js
+// # sourceURL=EditNodeDlg.js

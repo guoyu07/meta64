@@ -159,7 +159,7 @@ var util = function() {
 				_ajaxCounter--;
 				console.log("Error in util.json");
 
-				// poly-todo: this path is untested
+				// poly-todo-1: this path is untested
 
 				if (ironRequest.status == "403") {
 					console.log("Not logged in detected in util.");

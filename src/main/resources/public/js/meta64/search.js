@@ -136,7 +136,7 @@ var srch = function() {
 			console.log("renderSearchResult: "+uid);
 
 			/*
-			 * TODO: fix. This checking of "rep:" is just a hack for now to stop
+			 * TODO-2: fix. This checking of "rep:" is just a hack for now to stop
 			 * from deleting things I won't want to allow to delete, but I will
 			 * design this better later.
 			 */

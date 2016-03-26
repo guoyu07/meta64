@@ -514,7 +514,7 @@ var meta64 = function() {
 			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
 			util.setVisibility("mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
 
-			Polymer.dom.flush(); // <---- is this needed ? todo
+			Polymer.dom.flush(); // <---- is this needed ? todo-3
 			Polymer.updateStyles();
 		},
 
@@ -655,7 +655,7 @@ var meta64 = function() {
 			_.displaySignupMessage();
 
 			/*
-			 * todo: how does orientationchange need to work for polymer?
+			 * todo-3: how does orientationchange need to work for polymer?
 			 * Polymer disabled $(window).on("orientationchange",
 			 * _.orientationHandler);
 			 */

@@ -38,7 +38,7 @@ var view = function() {
 				meta64.highlightRowById(newId, true);
 			} else {
 				/*
-				 * TODO: Why wasn't this just based on targetId ? This if
+				 * TODO-3: Why wasn't this just based on targetId ? This if
 				 * condition is too confusing.
 				 */
 				if (targetId && renderParentIfLeaf && res.displayedParent) {
@@ -72,7 +72,7 @@ var view = function() {
 		},
 
 		/*
-		 * todo: this scrolling is slightly imperfect. sometimes the code
+		 * todo-3: this scrolling is slightly imperfect. sometimes the code
 		 * switches to a tab, which triggers scrollToTop, and then some other
 		 * code scrolls to a specific location a fraction of a second later. the
 		 * 'pending' boolean here is a crutch for now to help visual appeal
@@ -90,7 +90,7 @@ var view = function() {
 					if (elm.node.scrollIntoView) {
 						elm.node.scrollIntoView();
 					} else {
-						//todo-1: sometimes we can't scroll into view. for now not worrying about it.
+						//todo-2: sometimes we can't scroll into view. for now not worrying about it.
 						//alert("selected element didn't have scrollIntoView function");
 					}
 				}
@@ -106,7 +106,7 @@ var view = function() {
 		},
 
 		/*
-		 * todo: The following was in a polymer example (can I use this?):
+		 * todo-3: The following was in a polymer example (can I use this?):
 		 * app.$.headerPanelMain.scrollToTop(true);
 		 */
 		scrollToTop : function() {

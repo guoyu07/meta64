@@ -39,7 +39,7 @@ var user = function() {
 			$("#headerAppName").html(title);
 		},
 
-		/* TODO: move this into meta64 module */
+		/* TODO-3: move this into meta64 module */
 		setStateVarsUsingLoginResponse : function(res) {
 			if (res.rootNode) {
 				meta64.homeNodeId = res.rootNode.id;

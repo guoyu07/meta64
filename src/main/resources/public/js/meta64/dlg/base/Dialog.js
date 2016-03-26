@@ -7,7 +7,7 @@ console.log("running module: Dialog.js");
  * creating a new dialog each time, so the next optimization will be to make
  * certain dialogs (indeed most of them) be able to behave as singletons once
  * they have been constructed where they merely have to be reshown and
- * respopulated to reopen one of them, and closing any of them is merely done by
+ * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
 var Dialog = function() {
@@ -80,7 +80,13 @@ Dialog.prototype.cancel = function() {
  * suffix appended)
  */
 Dialog.prototype.id = function(id) {
-	return id + "-" + this.data.guid;
+	if (id==null) return null;
+	
+	/* if dialog already suffixed */
+	if (id.contains("->DlgId")) {
+		return id;
+	}
+	return id + "->dlgId" + this.data.guid;
 }
 
 Dialog.prototype.makePasswordField = function(text, id) {

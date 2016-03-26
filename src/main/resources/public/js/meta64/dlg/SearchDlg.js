@@ -56,7 +56,7 @@ SearchDlg.prototype.searchNodes = function() {
 }
 
 SearchDlg.prototype.init = function() {
-	//todo: put in base class.
+	//todo-2: put in base class.
 	util.delayedFocus(this.id("searchText"));
 }
 

@@ -388,13 +388,15 @@ var render = function() {
 			}
 
 			/* i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment */
-			var insertNodeTooltip = _.tag("paper-tooltip", {
-				"for" : "insertNodeButtonId" + uid
-			}, "INSERTS a new node at the current tree position. As a sibling on this level.");
+			var insertNodeTooltip = "";	
+//				_.tag("paper-tooltip", {
+//				"for" : "insertNodeButtonId" + uid
+//			}, "INSERTS a new node at the current tree position. As a sibling on this level.");
 
-			var addNodeTooltip = _.tag("paper-tooltip", {
-				"for" : "addNodeButtonId" + uid
-			}, "ADDS a new node inside the current node, as a child of it.");
+			var addNodeTooltip = "";
+//				_.tag("paper-tooltip", {
+//				"for" : "addNodeButtonId" + uid
+//			}, "ADDS a new node inside the current node, as a child of it.");
 			
 			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + editNodeButton
 					+ moveNodeUpButton + moveNodeDownButton;

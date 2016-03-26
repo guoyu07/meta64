@@ -66,6 +66,9 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 		var _this = this;
 
 		// Iterate PropertyInfo.java objects
+		/*
+		 * Warning each iterator loop has its own 'this'
+		 */
 		$.each(edit.editNode.properties, function(index, prop) {
 
 			/*
@@ -77,7 +80,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 				return;
 			}
 
-			var fieldId = this.id("editNodeTextContent" + counter);
+			var fieldId = _this.id("editNodeTextContent" + counter);
 			console.log("Creating edit field " + fieldId + " for property " + prop.name);
 
 			meta64.fieldIdToPropMap[fieldId] = prop;
@@ -510,4 +513,4 @@ EditNodeDlg.prototype.init = function() {
 	this.populateEditNodePg();
 }
 
-// # sourceURL=EditNodeDlg.js
+//# sourceURL=EditNodeDlg.js

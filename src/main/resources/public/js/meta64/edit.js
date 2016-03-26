@@ -152,10 +152,8 @@ var edit = function() {
 		
 		insertNodeResponse : function(res) {
 			if (util.checkSuccess("Insert node", res)) {
-
 				meta64.initNode(res.newNode);
 				meta64.highlightNode(res.newNode, true);
-
 				_.runEditNode(res.newNode.uid);
 			}
 		},

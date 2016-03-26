@@ -83,10 +83,10 @@ Dialog.prototype.id = function(id) {
 	if (id==null) return null;
 	
 	/* if dialog already suffixed */
-	if (id.contains("->DlgId")) {
+	if (id.contains("_dlgId")) {
 		return id;
 	}
-	return id + "->dlgId" + this.data.guid;
+	return id + "_dlgId" + this.data.guid;
 }
 
 Dialog.prototype.makePasswordField = function(text, id) {

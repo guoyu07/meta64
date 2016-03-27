@@ -144,10 +144,14 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
 
-	var isUuid = edit.editNode && edit.editNode.id && !edit.editNode.id.startsWith("/");
-	// console.log("isUuid: " + isUuid);
-	util.setVisibility("#" + this.id("makeNodeReferencableButton"), edit.editNode && !isUuid
-			&& !edit.editingUnsavedNode);
+	// todo-2: this needs more investigation
+	// var isUuid = edit.editNode && edit.editNode.id && !edit.editNode.id.startsWith("/");
+
+	console.log(/* "isUuid: " + isUuid + */" edit.editingUnsavedNode=" + edit.editingUnsavedNode + " edit.editNode="
+			+ edit.editNode);
+	var nodeRefVis = edit.editNode /* && !isUuid */&& !edit.editingUnsavedNode;
+	console.log("nodeRefVis=" + nodeRefVis);
+	util.setVisibility("#" + this.id("makeNodeReferencableButton"), nodeRefVis);
 }
 
 EditNodeDlg.prototype.addProperty = function() {
@@ -161,7 +165,7 @@ EditNodeDlg.prototype.addProperty = function() {
  */
 EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 	var buttonBar = "";
-
+	
 	var clearButton = render.tag("paper-button", //
 	{
 		"raised" : "raised",
@@ -207,9 +211,6 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 }
 
 EditNodeDlg.prototype.addSubProperty = function(fieldId) {
-	//todo-2: paranoia
-	fieldId = this.id(fieldId); 
-	
 	var prop = meta64.fieldIdToPropMap[fieldId];
 
 	var isMulti = util.isObject(prop.values);
@@ -393,7 +394,7 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 				var propVals = [];
 				var prop = meta64.fieldIdToPropMap[fieldId];
 				while (true) {
-					//remember: fieldId is already dialog-specific
+					// remember: fieldId is already dialog-specific
 					var subPropId = fieldId + "_subProp" + subPropIdx;
 
 					// note subPropId inherits dialog-specific key from fieldId
@@ -513,4 +514,4 @@ EditNodeDlg.prototype.init = function() {
 	this.populateEditNodePg();
 }
 
-//# sourceURL=EditNodeDlg.js
+// # sourceURL=EditNodeDlg.js

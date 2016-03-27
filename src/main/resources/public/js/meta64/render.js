@@ -143,7 +143,9 @@ var render = function() {
 						} else {
 							ret += _.tag("div", {
 								"class" : "jcr-root-content"
-							}, jcrContent);
+							}, 
+							"<img src='/fork-me-on-github.png' class='corner-style'/>"+
+							jcrContent);
 						}
 					}
 				}

@@ -159,8 +159,6 @@ var util = function() {
 				_ajaxCounter--;
 				console.log("Error in util.json");
 
-				// poly-todo-1: this path is untested
-
 				if (ironRequest.status == "403") {
 					console.log("Not logged in detected in util.");
 					offline = true;
@@ -201,116 +199,6 @@ var util = function() {
 
 			return ironRequest;
 		},
-
-		// /**
-		// *
-		// * This is the original JQuery method no longer in use.
-		// *
-		// * We use the convention that all calls to server are POSTs with a
-		// * 'postName' (like an RPC method name)
-		// * <p>
-		// * Note: 'callback' can be null, if you want to use the returned
-		// * 'promise' rather than passing in a function.
-		// *
-		// */
-		// jsonOrig_noLongerUsed : function(postName, postData, callback) {
-		// if (offline) {
-		// console.log("offline: ignoring call for " + postName);
-		// return;
-		// }
-		//
-		// if (logAjax) {
-		// console.log("JSON-POST: " + JSON.stringify(postData));
-		// }
-		//
-		// _ajaxCounter++;
-		// var prms = $.ajax({
-		// url : postTargetUrl + postName,
-		// contentType : "application/json",
-		// type : "post",
-		// dataType : "json",
-		// cache : false,
-		// data : JSON.stringify(postData)
-		// });
-		//
-		// /**
-		// * Notes
-		// * <p>
-		// * If using then function: promise.then(successFunction,
-		// * failFunction);
-		// * <p>
-		// * I think the way these parameters get passed into done/fail
-		// * functions, is because there are resolve/reject methods getting
-		// * called with the parameters. Basically the parameters passed to
-		// * 'resolve' get distributed to all the waiting methods just like as
-		// * if they were subscribing in a pub/sub model. So the 'promose'
-		// * pattern is sort of a pub/sub model in a way
-		// * <p>
-		// * The reason to return a 'promise.promise()' method is so no other
-		// * code can call resolve/reject but can only react to a
-		// * done/fail/complete.
-		// * <p>
-		// * deferred.when(promise1, promise2) creates a new promise that
-		// * becomes 'resolved' only when all promises are resolved. It's a
-		// * big "and condition" of resolvement, and if any of the promises
-		// * passed to it end up failing, it fails this "ANDed" one also.
-		// */
-		// prms.done(function(jqXHR) {
-		// if (logAjax) {
-		// console.log("JSON-RESULT: " + postName + "\nJSON-RESULT-DATA: " +
-		// JSON.stringify(jqXHR));
-		// }
-		//
-		// if (typeof callback == "function") {
-		// callback(jqXHR);
-		// }
-		// });
-		//
-		// prms.fail(function(xhr) {
-		//
-		// if (xhr.status == "403") {
-		// console.log("Not logged in detected in util.");
-		// offline = true;
-		//
-		// if (!timeoutMessageShown) {
-		// timeoutMessageShown = true;
-		// messagePg.alert("Session timed out. Page will refresh.");
-		// }
-		//
-		// $(window).off("beforeunload");
-		// window.location.href = window.location.origin;
-		// return;
-		// }
-		//
-		// var msg = "Server request failed.\n\n";
-		//
-		// /* catch block should fail silently */
-		// try {
-		// msg += "Status: " + xhr.statusText + "\n";
-		// msg += "Code: " + xhr.status + "\n";
-		// } catch (ex) {
-		// }
-		//
-		// /*
-		// * this catch block should also fail silently
-		// *
-		// * This was showing "classCastException" when I threw a regular
-		// * "Exception" from server so for now I'm just turning this off
-		// * since its' not displaying the correct message.
-		// */
-		// // try {
-		// // msg += "Response: " + JSON.parse(xhr.responseText).exception;
-		// // } catch (ex) {
-		// // }
-		// messagePg.alert(msg);
-		// });
-		//
-		// prms.complete(function() {
-		// _ajaxCounter--;
-		// });
-		//
-		// return prms;
-		// },
 
 		ajaxReady : function(requestName) {
 			if (_ajaxCounter > 0) {

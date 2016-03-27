@@ -140,7 +140,7 @@ var edit = function() {
 		 * 
 		 * What this means is if we call this function
 		 * (startEditingNewNodeWithName) instead of 'startEditingNewNode()' that
-		 * will cause the GUI to always prompt for the node name before creting
+		 * will cause the GUI to always prompt for the node name before creating
 		 * the node. This was the original functionality and still works.
 		 */
 		startEditingNewNodeWithName : function() {

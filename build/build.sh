@@ -73,6 +73,10 @@ mvn clean package -DskipTests=true
 
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar /run-root/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
+@echo Cleaning up...
+del /ferguson/meta64Oak/build/all.js
+del /ferguson/meta64Oak/src/main/resources/public/js/meta64.min.js
+
 read -p "All done."
 
 

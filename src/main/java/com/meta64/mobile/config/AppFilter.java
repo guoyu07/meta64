@@ -51,7 +51,18 @@ public class AppFilter implements Filter {
 		if (res instanceof HttpServletResponse) {
 			ThreadLocals.setServletResponse((HttpServletResponse) res);
 		}
-		chain.doFilter(req, res);
+
+		try {
+			chain.doFilter(req, res);
+		} finally {
+			/* Set thread back to clean slate, for it's next cycle time in threadpool */
+			ThreadLocals.setInitialSessionExisted(false);
+			ThreadLocals.setServletResponse(null);
+			ThreadLocals.setJcrSession(null);
+			ThreadLocals.setMarkdownProc(null);
+			ThreadLocals.setResponse(null);
+			ThreadLocals.setServletResponse(null);
+		}
 	}
 
 	private void updateHitCounter(HttpServletRequest httpReq) {

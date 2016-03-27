@@ -1,6 +1,5 @@
 package com.meta64.mobile;
 
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -122,8 +121,9 @@ import com.meta64.mobile.util.VarUtil;
  * Singletons.
  * 
  * There's a lot of boiler-plate code in here, but it's just required. This is
- * probably the only code in the system that looks 'redundant' (non-DRY), but there is
- * really no advantageous way to remove it.
+ * probably the only code in the system that looks 'redundant' (non-DRY), but
+ * this is because we want certain things in certain layers (abstraction related
+ * and for loose-coupling).
  * 
  * TODO: need to get all "program logic" out of this layer (there is a tiny bit
  * of it in here), because it doesn't belong here. Should all be contained in
@@ -227,7 +227,6 @@ public class AppController {
 	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) throws Exception {
 		logRequest("signup", req);
 		SignupResponse res = new SignupResponse();
-		ThreadLocals.setResponse(res);
 		userManagerService.signup(req, res);
 		return res;
 	}
@@ -237,7 +236,6 @@ public class AppController {
 	public @ResponseBody LoginResponse login(@RequestBody LoginRequest req) throws Exception {
 		logRequest("login", req);
 		LoginResponse res = new LoginResponse();
-		ThreadLocals.setResponse(res);
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));
 		userManagerService.login(null, req, res);
 		return res;
@@ -248,7 +246,6 @@ public class AppController {
 	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req) throws Exception {
 		logRequest("closeAccount", req);
 		CloseAccountResponse res = new CloseAccountResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		userManagerService.closeAccount(req, res);
 		return res;
@@ -274,7 +271,6 @@ public class AppController {
 
 		session.invalidate();
 		LogoutResponse res = new LogoutResponse();
-		ThreadLocals.setResponse(res);
 		res.setSuccess(true);
 		return res;
 	}
@@ -286,7 +282,6 @@ public class AppController {
 
 		logRequest("renderNode", req);
 		RenderNodeResponse res = new RenderNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeRenderService.renderNode(null, req, res, true);
 		return res;
@@ -297,7 +292,6 @@ public class AppController {
 	public @ResponseBody InitNodeEditResponse initNodeEdit(@RequestBody InitNodeEditRequest req) throws Exception {
 		logRequest("initNodeEdit", req);
 		InitNodeEditResponse res = new InitNodeEditResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeRenderService.initNodeEdit(null, req, res);
 		return res;
@@ -309,7 +303,6 @@ public class AppController {
 			throws Exception {
 		logRequest("getNodePrivileges", req);
 		GetNodePrivilegesResponse res = new GetNodePrivilegesResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		aclService.getNodePrivileges(null, req, res);
 		return res;
@@ -320,7 +313,6 @@ public class AppController {
 	public @ResponseBody AddPrivilegeResponse addPrivilege(@RequestBody AddPrivilegeRequest req) throws Exception {
 		logRequest("addPrivilege", req);
 		AddPrivilegeResponse res = new AddPrivilegeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		aclService.addPrivilege(null, req, res);
 		return res;
@@ -332,7 +324,6 @@ public class AppController {
 			throws Exception {
 		logRequest("removePrivilege", req);
 		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		aclService.removePrivilege(null, req, res);
 		return res;
@@ -343,7 +334,6 @@ public class AppController {
 	public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) throws Exception {
 		logRequest("exportToXml", req);
 		ExportResponse res = new ExportResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		importExportService.exportToXml(null, req, res);
 		return res;
@@ -354,7 +344,6 @@ public class AppController {
 	public @ResponseBody ImportResponse importFromFile(@RequestBody ImportRequest req) throws Exception {
 		logRequest("import", req);
 		ImportResponse res = new ImportResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 
 		String fileName = req.getSourceFileName();
@@ -380,7 +369,6 @@ public class AppController {
 			throws Exception {
 		logRequest("setNodePosition", req);
 		SetNodePositionResponse res = new SetNodePositionResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeMoveService.setNodePosition(null, req, res);
 		return res;
@@ -395,7 +383,6 @@ public class AppController {
 	public @ResponseBody CreateSubNodeResponse createSubNode(@RequestBody CreateSubNodeRequest req) throws Exception {
 		logRequest("createSubNode", req);
 		CreateSubNodeResponse res = new CreateSubNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.createSubNode(null, req, res);
 		return res;
@@ -410,7 +397,6 @@ public class AppController {
 	public @ResponseBody InsertNodeResponse insertNode(@RequestBody InsertNodeRequest req) throws Exception {
 		logRequest("insertNode", req);
 		InsertNodeResponse res = new InsertNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.insertNode(null, req, res);
 		return res;
@@ -421,7 +407,6 @@ public class AppController {
 	public @ResponseBody RenameNodeResponse renameNode(@RequestBody RenameNodeRequest req) throws Exception {
 		logRequest("renameNode", req);
 		RenameNodeResponse res = new RenameNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.renameNode(null, req, res);
 		return res;
@@ -432,7 +417,6 @@ public class AppController {
 	public @ResponseBody InsertBookResponse insertBook(@RequestBody InsertBookRequest req) throws Exception {
 		logRequest("insertBook", req);
 		InsertBookResponse res = new InsertBookResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		importBookService.insertBook(null, req, res);
 		return res;
@@ -443,7 +427,6 @@ public class AppController {
 	public @ResponseBody DeleteNodesResponse deleteNodes(@RequestBody DeleteNodesRequest req) throws Exception {
 		logRequest("deleteNodes", req);
 		DeleteNodesResponse res = new DeleteNodesResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeMoveService.deleteNodes(null, req, res);
 		return res;
@@ -454,7 +437,6 @@ public class AppController {
 	public @ResponseBody MoveNodesResponse moveNodes(@RequestBody MoveNodesRequest req) throws Exception {
 		logRequest("moveNodes", req);
 		MoveNodesResponse res = new MoveNodesResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeMoveService.moveNodes(null, req, res);
 		return res;
@@ -466,7 +448,6 @@ public class AppController {
 			throws Exception {
 		logRequest("deleteAttachment", req);
 		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		attachmentService.deleteAttachment(null, req, res);
 		return res;
@@ -478,7 +459,6 @@ public class AppController {
 			throws Exception {
 		logRequest("deleteProperty", req);
 		DeletePropertyResponse res = new DeletePropertyResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.deleteProperty(null, req, res);
 		return res;
@@ -489,7 +469,6 @@ public class AppController {
 	public @ResponseBody SaveNodeResponse saveNode(@RequestBody SaveNodeRequest req) throws Exception {
 		logRequest("saveNode", req);
 		SaveNodeResponse res = new SaveNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.saveNode(null, req, res);
 		return res;
@@ -501,7 +480,6 @@ public class AppController {
 			throws Exception {
 		logRequest("makeNodeReferencable", req);
 		MakeNodeReferencableResponse res = new MakeNodeReferencableResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.makeNodeReferencable(null, req, res);
 		return res;
@@ -512,7 +490,6 @@ public class AppController {
 	public @ResponseBody SavePropertyResponse saveProperty(@RequestBody SavePropertyRequest req) throws Exception {
 		logRequest("saveProperty", req);
 		SavePropertyResponse res = new SavePropertyResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.saveProperty(null, req, res);
 		return res;
@@ -524,7 +501,6 @@ public class AppController {
 			throws Exception {
 		logRequest("changePassword", req);
 		ChangePasswordResponse res = new ChangePasswordResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		userManagerService.changePassword(req, res);
 		return res;
@@ -556,7 +532,6 @@ public class AppController {
 	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) throws Exception {
 		logRequest("uploadFromUrl", req);
 		UploadFromUrlResponse res = new UploadFromUrlResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		attachmentService.uploadFromUrl(null, req, res);
 		return res;
@@ -567,7 +542,6 @@ public class AppController {
 	public @ResponseBody AnonPageLoadResponse anonPageLoad(@RequestBody AnonPageLoadRequest req) throws Exception {
 		logRequest("anonPageLoad", req);
 		AnonPageLoadResponse res = new AnonPageLoadResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeRenderService.anonPageLoad(null, req, res);
 		return res;
@@ -578,7 +552,6 @@ public class AppController {
 	public @ResponseBody NodeSearchResponse nodeSearch(@RequestBody NodeSearchRequest req) throws Exception {
 		logRequest("nodeSearch", req);
 		NodeSearchResponse res = new NodeSearchResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeSearchService.search(null, req, res);
 		return res;
@@ -590,7 +563,6 @@ public class AppController {
 			throws Exception {
 		logRequest("getSharedNodes", req);
 		GetSharedNodesResponse res = new GetSharedNodesResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeSearchService.getSharedNodes(null, req, res);
 		return res;
@@ -602,7 +574,6 @@ public class AppController {
 			throws Exception {
 		logRequest("saveUserPreferences", req);
 		SaveUserPreferencesResponse res = new SaveUserPreferencesResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		userManagerService.saveUserPreferences(req, res);
 		return res;
@@ -615,7 +586,6 @@ public class AppController {
 	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
-		ThreadLocals.setResponse(res);
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
 		checkHttpSession();
@@ -627,12 +597,11 @@ public class AppController {
 	public @ResponseBody SplitNodeResponse splitNode(@RequestBody SplitNodeRequest req) throws Exception {
 		logRequest("splitNode", req);
 		SplitNodeResponse res = new SplitNodeResponse();
-		ThreadLocals.setResponse(res);
 		checkHttpSession();
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}
-
+	
 	private static void logRequest(String url, Object req) throws Exception {
 		log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
 	}

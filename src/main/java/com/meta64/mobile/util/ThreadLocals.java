@@ -24,6 +24,14 @@ public class ThreadLocals {
 	private static final ThreadLocal<OakResponseBase> oakResponse = new ThreadLocal<OakResponseBase>();
 	private static final ThreadLocal<PegDownProcessor> markdownProc = new ThreadLocal<PegDownProcessor>();
 
+	public static void removeAll() {
+		servletResponse.remove();
+		initialSessionExisted.remove();
+		jcrSession.remove();
+		oakResponse.remove();
+		markdownProc.remove();
+	}
+	
 	public static void setServletResponse(HttpServletResponse res) {
 		servletResponse.set(res);
 	}

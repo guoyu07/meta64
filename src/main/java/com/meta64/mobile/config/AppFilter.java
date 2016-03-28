@@ -56,12 +56,7 @@ public class AppFilter implements Filter {
 			chain.doFilter(req, res);
 		} finally {
 			/* Set thread back to clean slate, for it's next cycle time in threadpool */
-			ThreadLocals.setInitialSessionExisted(false);
-			ThreadLocals.setServletResponse(null);
-			ThreadLocals.setJcrSession(null);
-			ThreadLocals.setMarkdownProc(null);
-			ThreadLocals.setResponse(null);
-			ThreadLocals.setServletResponse(null);
+			ThreadLocals.removeAll();
 		}
 	}
 

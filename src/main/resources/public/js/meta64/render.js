@@ -144,7 +144,8 @@ var render = function() {
 							ret += _.tag("div", {
 								"class" : "jcr-root-content"
 							}, 
-							"<img src='/fork-me-on-github.png' class='corner-style'/>"+
+							//probably could "img.top.right" feature for this if we wanted to. oops.
+							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"+
 							jcrContent);
 						}
 					}
@@ -391,19 +392,17 @@ var render = function() {
 
 			/* i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment */
 			var insertNodeTooltip = "";	
-//				_.tag("paper-tooltip", {
-//				"for" : "insertNodeButtonId" + uid
-//			}, "INSERTS a new node at the current tree position. As a sibling on this level.");
+			//	_.tag("paper-tooltip", {
+			//	"for" : "insertNodeButtonId" + uid
+			//}, "INSERTS a new node at the current tree position. As a sibling on this level.");
 
 			var addNodeTooltip = "";
-//				_.tag("paper-tooltip", {
-//				"for" : "addNodeButtonId" + uid
-//			}, "ADDS a new node inside the current node, as a child of it.");
+			//	_.tag("paper-tooltip", {
+			//	"for" : "addNodeButtonId" + uid
+			//}, "ADDS a new node inside the current node, as a child of it.");
 			
-			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + editNodeButton
+			var allButtons = selButton + openButton + insertNodeButton +insertNodeTooltip+ createSubNodeButton + addNodeTooltip+editNodeButton
 					+ moveNodeUpButton + moveNodeDownButton;
-			
-			allButtons += insertNodeTooltip + addNodeTooltip;
 
 			if (allButtons.length > 0) {
 				return _.makeHorizontalFieldSet(allButtons);

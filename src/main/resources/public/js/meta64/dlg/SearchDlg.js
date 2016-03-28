@@ -20,13 +20,14 @@ util.inherit(Dialog, SearchDlg);
 SearchDlg.prototype.build = function() {
 	var header = render.makeDialogHeader("Search");
 
+	var instructions = "<p>Enter some text to find. All sub-nodes under the selected node are included in the search.</p>";
 	var formControls = this.makeEditField("Search", "searchText");
 
 	var searchButton = this.makeCloseButton("Search", "searchNodesButton", SearchDlg.prototype.searchNodes, this);
 	var backButton = this.makeCloseButton("Close", "cancelSearchButton");
 	var buttonBar = render.centeredButtonBar(searchButton + backButton);
 
-	var content = header + formControls + buttonBar;
+	var content = header + instructions + formControls + buttonBar;
 	this.bindEnterKey("searchText", srch.searchNodes)
 	return content;
 }

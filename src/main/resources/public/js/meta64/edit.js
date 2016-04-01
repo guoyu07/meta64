@@ -37,16 +37,27 @@ var edit = function() {
 
 	var _initNodeEditResponse = function(res) {
 		if (util.checkSuccess("Editing node", res)) {
+			debugger;
+			var node = res.nodeInfo;
+						
+			//todo-2: this code is duplicated elsewhere.
+			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
+			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
+			&& !props.isNonOwnedNode(node);
+						
+			if (editingAllowed) {
+				/*
+				 * Server will have sent us back the raw text content, that
+				 * should be markdown instead of any HTML, so that we can
+				 * display this and save.
+				 */
+				_.editNode = res.nodeInfo;
 
-			/*
-			 * Server will have sent us back the raw text content, that should
-			 * be markdown instead of any HTML, so that we can display this and
-			 * save.
-			 */
-			_.editNode = res.nodeInfo;
-
-			_.editNodeDlgInst = new EditNodeDlg();
-			_.editNodeDlgInst.open();
+				_.editNodeDlgInst = new EditNodeDlg();
+				_.editNodeDlgInst.open();
+			} else {
+				(new MessageDlg("Edit not allowed.")).open();
+			}
 		}
 	}
 
@@ -85,7 +96,7 @@ var edit = function() {
 		 * 'Finish Moving'
 		 */
 		nodesToMove : null,
-		
+
 		parentOfNewNode : null,
 
 		/*
@@ -93,18 +104,21 @@ var edit = function() {
 		 * server
 		 */
 		editingUnsavedNode : false,
-		
+
 		/*
-		 * node (NodeInfo.java) that is being created under when new node is created
+		 * node (NodeInfo.java) that is being created under when new node is
+		 * created
 		 */
 		sendNotificationPendingSave : false,
 
-		/* Node being edited 
+		/*
+		 * Node being edited
 		 * 
-		 * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad coupling/responsibility?
-		 * */
+		 * todo-2: this and several other variables can now be moved into the
+		 * dialog class? Is that good or bad coupling/responsibility?
+		 */
 		editNode : null,
-		
+
 		/* Instance of EditNodeDialog: For now creating new one each time */
 		editNodeDlgInst : null,
 
@@ -149,7 +163,7 @@ var edit = function() {
 			_.editNodeDlgInst = new EditNodeDlg();
 			_.editNodeDlgInst.open();
 		},
-		
+
 		insertNodeResponse : function(res) {
 			if (util.checkSuccess("Insert node", res)) {
 				meta64.initNode(res.newNode);
@@ -164,7 +178,7 @@ var edit = function() {
 				_.runEditNode(res.newNode.uid);
 			}
 		},
-		
+
 		saveNodeResponse : function(res) {
 			if (util.checkSuccess("Save node", res)) {
 				view.refreshTree(null, false);
@@ -172,10 +186,11 @@ var edit = function() {
 				view.scrollToSelectedNode();
 			}
 		},
-		
+
 		editMode : function() {
 			meta64.editMode = meta64.editMode ? false : true;
-			//todo-3: really edit mode button needs to be some kind of button that can show an on/off state.
+			// todo-3: really edit mode button needs to be some kind of button
+			// that can show an on/off state.
 			render.renderPageFromData();
 
 			/*
@@ -443,17 +458,19 @@ var edit = function() {
 			}
 
 			(new ConfirmDlg(
-							"Confirm Move",
-							"Move " + selNodesArray.length + " node(s) to a new location ?",
-							"Yes, move.",
-							function() {
-								_.nodesToMove = selNodesArray;
-								meta64.selectedNodes = {}; // clear selections.
-								// No longer need
-								// or want any selections.
-								(new MessageDlg("Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'")).open();
-								meta64.refreshAllGuiEnablement();
-							})).open();
+					"Confirm Move",
+					"Move " + selNodesArray.length + " node(s) to a new location ?",
+					"Yes, move.",
+					function() {
+						_.nodesToMove = selNodesArray;
+						meta64.selectedNodes = {}; // clear selections.
+						// No longer need
+						// or want any selections.
+						(new MessageDlg(
+								"Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'"))
+								.open();
+						meta64.refreshAllGuiEnablement();
+					})).open();
 		},
 
 		finishMovingSelNodes : function() {

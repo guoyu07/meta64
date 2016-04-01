@@ -70,12 +70,8 @@
               href="/bower_components/paper-dialog/paper-dialog.html" />
         <link rel="import"
               href="/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
-            
         <link rel="import"
               href="/bower_components/paper-button/paper-button.html" />
-              
-                <link rel="import"
-              href="/bower_components/paper-tooltip/paper-tooltip.html" />
         <link rel="import"
               href="/bower_components/paper-tooltip/paper-tooltip.html" />
         <link rel="import"
@@ -136,6 +132,7 @@
                 src="{{jqueryJs}}"></script>
         <script type="text/javascript"
                 src="/js/cookie/jquery.cookie.js?ver.md=1"></script>
+         
     </head>
     <body unresolved="unresolved"
           class="fullbleed layout vertical">
@@ -173,8 +170,11 @@
                         <paper-icon-button icon="menu"></paper-icon-button>
                         <span id="headerAppName"
                               class="app-name title">Meta64</span>
-                        <paper-button id="navHomeButton"
-                                      onClick="nav.navHome();">Home</paper-button>
+                        <paper-button id="navPublicHomeButton"
+                                      onClick="nav.navPublicHome();">Home</paper-button>
+                        <paper-button style="display:none;"
+                                      id="navHomeButton"
+                                      onClick="nav.navHome();">My Info</paper-button>
                         <paper-button style="display:none;"
                                       id="upLevelButton"
                                       onClick="nav.navUpLevel();">Up Level</paper-button>

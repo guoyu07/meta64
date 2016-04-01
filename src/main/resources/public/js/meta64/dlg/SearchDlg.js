@@ -24,8 +24,9 @@ SearchDlg.prototype.build = function() {
 	var formControls = this.makeEditField("Search", "searchText");
 
 	var searchButton = this.makeCloseButton("Search", "searchNodesButton", SearchDlg.prototype.searchNodes, this);
+	var searchTagsButton = this.makeCloseButton("Search Tags", "searchTagsButton", SearchDlg.prototype.searchTags, this);
 	var backButton = this.makeCloseButton("Close", "cancelSearchButton");
-	var buttonBar = render.centeredButtonBar(searchButton + backButton);
+	var buttonBar = render.centeredButtonBar(searchButton + searchTagsButton + backButton);
 
 	var content = header + instructions + formControls + buttonBar;
 	this.bindEnterKey("searchText", srch.searchNodes)
@@ -33,16 +34,27 @@ SearchDlg.prototype.build = function() {
 }
 
 SearchDlg.prototype.searchNodes = function() {
+	return this.searchProperty("jcr:content");
+}
+
+SearchDlg.prototype.searchTags = function() {
+	return this.searchProperty("tags");
+}
+
+SearchDlg.prototype.searchProperty = function(searchProp) {
+	debugger;
 	if (!util.ajaxReady("searchNodes")) {
 		return;
 	}
 
+	//until i get better validation
 	var node = meta64.getHighlightedNode();
 	if (!node) {
 		(new MessageDlg("No node is selected to search under.")).open();
 		return;
 	}
 
+	//until better validation
 	var searchText = this.getInputVal("searchText");
 	if (util.emptyString(searchText)) {
 		(new MessageDlg("Enter search text.")).open();
@@ -52,7 +64,8 @@ SearchDlg.prototype.searchNodes = function() {
 	util.json("nodeSearch", {
 		"nodeId" : node.id,
 		"searchText" : searchText,
-		"modSortDesc" : false
+		"modSortDesc" : false,
+		"searchProp" : searchProp
 	}, srch.searchNodesResponse);
 }
 

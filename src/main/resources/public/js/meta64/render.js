@@ -73,7 +73,6 @@ var render = function() {
 			var ret = "";
 
 			ret += _.getTopRightImageTag(node);
-
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
 			// I think path on always for now
@@ -143,10 +142,11 @@ var render = function() {
 						} else {
 							ret += _.tag("div", {
 								"class" : "jcr-root-content"
-							}, 
-							//probably could "img.top.right" feature for this if we wanted to. oops.
-							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"+
-							jcrContent);
+							},
+							// probably could "img.top.right" feature for this
+							// if we wanted to. oops.
+							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+									+ jcrContent);
 						}
 					}
 				}
@@ -219,8 +219,8 @@ var render = function() {
 			var canMoveDown = index < count - 1;
 
 			/*
-			 * TODO-2: this checking of "rep:" is just a hack for now to stop from
-			 * deleting things I won't want to allow to delete, but I will
+			 * TODO-2: this checking of "rep:" is just a hack for now to stop
+			 * from deleting things I won't want to allow to delete, but I will
 			 * design this better later.
 			 */
 			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
@@ -390,19 +390,23 @@ var render = function() {
 				}
 			}
 
-			/* i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment */
-			var insertNodeTooltip = "";	
-			//	_.tag("paper-tooltip", {
-			//	"for" : "insertNodeButtonId" + uid
-			//}, "INSERTS a new node at the current tree position. As a sibling on this level.");
+			/*
+			 * i will be finding a reusable/DRY way of doing tooltops soon, this
+			 * is just my first experiment
+			 */
+			var insertNodeTooltip = "";
+			// _.tag("paper-tooltip", {
+			// "for" : "insertNodeButtonId" + uid
+			// }, "INSERTS a new node at the current tree position. As a sibling
+			// on this level.");
 
 			var addNodeTooltip = "";
-			//	_.tag("paper-tooltip", {
-			//	"for" : "addNodeButtonId" + uid
-			//}, "ADDS a new node inside the current node, as a child of it.");
-			
-			var allButtons = selButton + openButton + insertNodeButton +insertNodeTooltip+ createSubNodeButton + addNodeTooltip+editNodeButton
-					+ moveNodeUpButton + moveNodeDownButton;
+			// _.tag("paper-tooltip", {
+			// "for" : "addNodeButtonId" + uid
+			// }, "ADDS a new node inside the current node, as a child of it.");
+
+			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
+					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
 			if (allButtons.length > 0) {
 				return _.makeHorizontalFieldSet(allButtons);
@@ -562,6 +566,11 @@ var render = function() {
 				var upLevelButton = "";
 				var editNodeButton = "";
 
+				// console.log("data.node.path="+data.node.path);
+				// console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
+				// //
+				// console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
+
 				/* Add edit button if edit mode and this isn't the root */
 				if (meta64.editMode && data.node.path != "/" &&
 				/*
@@ -579,6 +588,7 @@ var render = function() {
 					}, "Edit");
 				}
 
+				/* Construct Create Subnode Button */
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
 

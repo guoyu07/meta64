@@ -64,10 +64,12 @@ public class AclService {
 			AccessControlEntry[] aclEntries = AccessControlUtil.getAccessControlEntries(session, node);
 			List<AccessControlEntryInfo> aclEntriesInfo = Convert.convertToAclListInfo(aclEntries);
 			res.setAclEntries(aclEntriesInfo);
+			log.info("ACL Count: "+aclEntriesInfo.size());
 		}
 
 		if (req.isIncludeOwners()) {
 			List<String> owners = userManagerService.getOwnerNames(node);
+			log.info("Owner Count: "+owners.size());
 			res.setOwners(owners);
 		}
 

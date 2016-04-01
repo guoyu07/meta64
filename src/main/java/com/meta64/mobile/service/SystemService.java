@@ -30,19 +30,20 @@ public class SystemService {
 	}
 
 	private static String getIpReport() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Unique IPs During Run<br>");
-		int count = 0;
-		HashMap<String, Integer> map = AppFilter.getUniqueIpHits();
-		synchronized (map) {
-			for (String key : map.keySet()) {
-				int hits = map.get(key);
-				sb.append("IP=" + key + " hits=" + hits);
-				sb.append("<br>");
-				count++;
-			}
-		}
-		sb.append("count=" + count + "<br>");
-		return sb.toString();
+		return "Number of Unique IPs since startup: "+AppFilter.getUniqueIpHits().size();
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("Unique IPs During Run<br>");
+//		int count = 0;
+//		HashMap<String, Integer> map = AppFilter.getUniqueIpHits();
+//		synchronized (map) {
+//			for (String key : map.keySet()) {
+//				int hits = map.get(key);
+//				sb.append("IP=" + key + " hits=" + hits);
+//				sb.append("<br>");
+//				count++;
+//			}
+//		}
+//		sb.append("count=" + count + "<br>");
+//		return sb.toString();
 	}
 }

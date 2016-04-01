@@ -159,6 +159,7 @@ var nav = function() {
 		},
 
 		navHomeResponse : function(res) {
+			debugger;
 			meta64.clearSelectedNodes();
 			render.renderPageFromData(res);
 			view.scrollToTop();
@@ -166,6 +167,7 @@ var nav = function() {
 		},
 
 		navHome : function() {
+			debugger;
 			if (meta64.isAnonUser) {
 				meta64.loadAnonPageHome(true);
 				// window.location.href = window.location.origin;
@@ -174,6 +176,10 @@ var nav = function() {
 					"nodeId" : meta64.homeNodeId
 				}, _.navHomeResponse);
 			}
+		},
+		
+		navPublicHome : function() {
+			meta64.loadAnonPageHome(true);
 		}
 	};
 

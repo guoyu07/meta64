@@ -18,6 +18,7 @@ export backupFolder=/ferguson/meta64Oak-private/auto-bak
 #copy the readme.md from project root to published location (landing-page.md) where the app will 
 #be able to pick it up at runtime.
 cp /ferguson/meta64Oak/readme.md /ferguson/meta64Oak/src/main/resources/static/landing-page.md
+cp /ferguson/meta64Oak/cheatsheet.md /ferguson/meta64Oak/src/main/resources/static/cheatsheet.md
 
 #go back to folder with this script in it. sort of 'home' for this script
 cd /ferguson/meta64Oak/build
@@ -73,9 +74,8 @@ mvn clean package -DskipTests=true
 
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar /run-root/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
-@echo Cleaning up...
-del /ferguson/meta64Oak/build/all.js
-del /ferguson/meta64Oak/src/main/resources/public/js/meta64.min.js
+rm /ferguson/meta64Oak/build/all.js
+rm /ferguson/meta64Oak/src/main/resources/public/js/meta64.min.js
 
 read -p "All done."
 

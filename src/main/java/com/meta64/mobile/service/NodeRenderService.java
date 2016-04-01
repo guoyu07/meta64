@@ -107,7 +107,7 @@ public class NodeRenderService {
 			log.trace("   upLevel to nodeid: " + node.getPath());
 			levelsUpRemaining--;
 		}
-
+		
 		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
@@ -158,7 +158,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, false);
+		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, false); 
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

@@ -203,6 +203,7 @@ public class OakRepository {
 					indexProvider = new LuceneIndexProvider();
 					indexProvider = indexProvider.with(getNodeAggregator());
 					jcr = jcr.with(new LuceneFullTextInitializer("contentIndex", "jcr:content"));
+					jcr = jcr.with(new LuceneFullTextInitializer("tagsIndex", "tags"));
 					jcr = jcr.with(new LuceneSortInitializer("lastModifiedIndex", "jcr:lastModified"));
 					jcr = jcr.with(new LuceneSortInitializer("codeIndex", "code"));
 					jcr = jcr.with((QueryIndexProvider) indexProvider);

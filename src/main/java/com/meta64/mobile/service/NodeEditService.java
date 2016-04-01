@@ -118,8 +118,7 @@ public class NodeEditService {
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
 		// IMPORTANT: Only editing actual content requires a "createdBy"
-		// checking by
-		// JcrUtil.checkNodeCreatedBy
+		// checking by JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 

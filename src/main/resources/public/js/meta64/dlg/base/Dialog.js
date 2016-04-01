@@ -20,6 +20,7 @@ var Dialog = function() {
 	meta64.registerDataObject(this);
 	meta64.registerDataObject(this.data);
 }
+
 Dialog.prototype.constructor = Dialog;
 
 Dialog.prototype.open = function() {
@@ -51,14 +52,19 @@ Dialog.prototype.open = function() {
 	Polymer.dom.flush(); // <---- is this needed ? todo
 	Polymer.updateStyles();
 
-	var content = this.build();
-	util.setHtmlEnhanced(id, content);
-	this.built = true;
+//try {
+		var content = this.build();
+		util.setHtmlEnhanced(id, content);
+		this.built = true;
 
-	if (this.init) {
-		this.init();
-	}
-
+		if (this.init) {
+			console.log("init() for dialog domId="+this.domId);
+			this.init();
+			console.log("init() complete for dialog domId="+this.domId);
+		}
+//	} catch (ex) {
+//		(console.error || console.log).call(console, ex.stack || ex);
+//	}
 	console.log("Showing dialog: " + id);
 
 	/* now open and display polymer dialog we just created */
@@ -80,8 +86,9 @@ Dialog.prototype.cancel = function() {
  * suffix appended)
  */
 Dialog.prototype.id = function(id) {
-	if (id==null) return null;
-	
+	if (id == null)
+		return null;
+
 	/* if dialog already suffixed */
 	if (id.contains("_dlgId")) {
 		return id;
@@ -158,4 +165,4 @@ Dialog.prototype.makeRadioButton = function(label, id) {
 	}, label);
 }
 
-//# sourceURL=Dialog.js
+// # sourceURL=Dialog.js

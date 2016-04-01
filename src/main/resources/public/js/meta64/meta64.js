@@ -261,19 +261,15 @@ var meta64 = function() {
 		 * 
 		 */
 		changePage : function(pg, data) {
+			debugger;
 			if (typeof pg.tabId === 'undefined') {
 				console.log("oops, wrong object type passed to changePage function.");
 				return null;
 			}
 
-			//if (pg.tabId != "popup") { &&&
-				/* this is the same as setting using mainIronPages?? */
-				var paperTabs = document.querySelector("#mainPaperTabs");
-				paperTabs.select(pg.tabId);
-			//}
-			//else {// else will be just an arbitrary panel
-			//	render.buildPage(pg);
-			//}
+			/* this is the same as setting using mainIronPages?? */
+			var paperTabs = document.querySelector("#mainPaperTabs");
+			paperTabs.select(pg.tabId);
 		},
 
 		/* for now this is alias of changePage */
@@ -474,7 +470,6 @@ var meta64 = function() {
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
 			util.setEnablement("navLoginButton", _.isAnonUser);
 			util.setEnablement("openSignupPgButton", _.isAnonUser);
-			util.setEnablement("navHomeButton", true);
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			util.setEnablement("propsToggleButton", propsToggle);
@@ -484,7 +479,7 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("upLevelButton", true); //&&&
+			util.setEnablement("upLevelButton", true); //todo-1
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
@@ -504,8 +499,9 @@ var meta64 = function() {
 			util.setEnablement("refreshPageButton", !_.isAnonUser);
 			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null);
 
+			util.setVisibility("navHomeButton", !_.isAnonUser);
 			util.setVisibility("editModeButton", allowEditMode);
-			util.setVisibility("upLevelButton", true); //&&&
+			util.setVisibility("upLevelButton", true); //todo-1
 			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);

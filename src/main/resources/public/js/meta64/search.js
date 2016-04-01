@@ -87,7 +87,8 @@ var srch = function() {
 			util.json("nodeSearch", {
 				"nodeId" : node.id,
 				"searchText" : "",
-				"modSortDesc" : true
+				"modSortDesc" : true,
+				"searchProp" : "jcr:content" //should have no effect, for timeline?
 			}, _.timelineResponse);
 		},
 

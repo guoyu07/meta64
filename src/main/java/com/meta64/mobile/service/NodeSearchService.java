@@ -136,7 +136,7 @@ public class NodeSearchService {
 			 */
 			if (useContains) {
 				queryStr.append("contains(t.[");
-				queryStr.append(JcrProp.CONTENT);
+				queryStr.append(req.getSearchProp()); //JcrProp.CONTENT);
 				queryStr.append("], '");
 				queryStr.append(escapeQueryString(searchText));
 				queryStr.append("')");
@@ -149,7 +149,7 @@ public class NodeSearchService {
 					queryStr.append("*");
 				} else {
 					queryStr.append("t.[");
-					queryStr.append(JcrProp.CONTENT);
+					queryStr.append(req.getSearchProp()); //JcrProp.CONTENT);
 					queryStr.append("]");
 				}
 

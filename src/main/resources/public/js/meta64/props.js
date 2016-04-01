@@ -138,7 +138,14 @@ var props = function() {
 		 */
 		isNonOwnedNode : function(node) {
 			var createdBy = _.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-			return createdBy != null && createdBy != meta64.userName;
+			
+			//if we don't know who owns this node assume the admin owns it.
+			if (!createdBy) {
+				createdBy = "admin";
+			}
+			
+			/* This is OR condition because of createdBy is null we assume we do not own it */
+			return createdBy != meta64.userName;
 		},
 
 		/*
@@ -172,7 +179,7 @@ var props = function() {
 			});
 			ret += "</div>";
 			return ret;
-		}
+		} 
 	};
 
 	console.log("Module ready: props.js");

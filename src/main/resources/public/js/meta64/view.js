@@ -86,19 +86,14 @@ var view = function() {
 				scrollToSelNodePending = false;
 
 				var elm = nav.getSelectedPolyElement();
-				if (elm) {
-					if (elm.node.scrollIntoView) {
-						elm.node.scrollIntoView();
-					} else {
-						//todo-2: sometimes we can't scroll into view. for now not worrying about it.
-						//alert("selected element didn't have scrollIntoView function");
-					}
+				if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
+					elm.node.scrollIntoView();
 				}
 				// If we couldn't find a selected node on this page, scroll to
 				// top instead.
 				else {
 					elm = util.polyElm("mainPaperTabs");
-					if (elm) {
+					if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
 						elm.node.scrollIntoView();
 					}
 				}
@@ -118,7 +113,7 @@ var view = function() {
 					return;
 
 				var elm = util.polyElm("mainPaperTabs");
-				if (elm) {
+				if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
 					elm.node.scrollIntoView();
 				}
 			}, 1000);

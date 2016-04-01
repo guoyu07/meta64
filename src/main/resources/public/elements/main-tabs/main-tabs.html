@@ -1,93 +1,118 @@
-<link rel="import" href="/bower_components/paper-styles/typography.html" />
-<link rel="import" href="/bower_components/polymer/polymer.html" />
-<link rel="import" href="/bower_components/paper-tabs/paper-tabs.html" />
-<link rel="import" href="/bower_components/paper-tabs/paper-tab.html" />
-<link rel="import" href="/bower_components/paper-input/paper-input.html" />
-<link rel="import" href="/bower_components/paper-input/paper-textarea.html" />
-<link rel="import" href="/bower_components/paper-button/paper-button.html" />
-<link rel="import" href="/bower_components/paper-tooltip/paper-tooltip.html" />
-<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html" />
-<link rel="import" href="/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
-<link rel="import" href="/bower_components/paper-styles/color.html" />
-<link rel="import" href="/bower_components/iron-pages/iron-pages.html" />
-<link rel="import" href="/elements/donate-panel/donate-panel.html?ver={{cacheVersion}}" />
-<link rel="import" href="/styles/shared-styles.html?ver={{cacheVersion}}" />
-<dom-module id="main-tabs"> <template>
-<style is="custom-style" include="shared-styles">/* 
+<link rel="import"
+      href="/bower_components/paper-styles/typography.html" />
+<link rel="import"
+      href="/bower_components/polymer/polymer.html" />
+<link rel="import"
+      href="/bower_components/paper-tabs/paper-tabs.html" />
+<link rel="import"
+      href="/bower_components/paper-tabs/paper-tab.html" />
+<link rel="import"
+      href="/bower_components/paper-input/paper-input.html" />
+<link rel="import"
+      href="/bower_components/paper-input/paper-textarea.html" />
+<link rel="import"
+      href="/bower_components/paper-button/paper-button.html" />
+<link rel="import"
+      href="/bower_components/paper-tooltip/paper-tooltip.html" />
+<link rel="import"
+      href="/bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import"
+      href="/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
+<link rel="import"
+      href="/bower_components/paper-styles/color.html" />
+<link rel="import"
+      href="/bower_components/iron-pages/iron-pages.html" />
+<link rel="import"
+      href="/elements/donate-panel/donate-panel.html?ver={{cacheVersion}}" />
+<link rel="import"
+      href="/styles/shared-styles.html?ver={{cacheVersion}}" />
+<dom-module id="main-tabs">
+    <template>
+        <style is="custom-style"
+               include="shared-styles">/* 
 <![CDATA[*/
 :host {
-	display: block;
+        display: block;
 }
 
 .modelessDialog {
-	padding-left: 15px;
-	padding-right: 15px;
-	padding-bottom: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
 }
 
 .mainNodeContent {
-	margin-top: 15px;
-	margin-bottom: 15px;
-	background-color: lightGray;
-	border: 1px solid green;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        background-color: lightGray;
+        border: 1px solid green;
 }
 /*]]>
-*/
-</style>
-<!-- 
+*/</style>
+        <!-- 
         Main Application Tabs 
-        --> <paper-tabs id="mainPaperTabs" attr-for-selected="name" selected="{{selected}}"> <paper-tab
-	name="mainTabName"
->Main</paper-tab> <paper-tab name="searchTabName">Search</paper-tab> <paper-tab name="timelineTabName">Timeline</paper-tab> </paper-tabs> <!--  -->
-<iron-pages id="mainIronPages" attr-for-selected="name" selected="{{selected}}">
-<div name="mainTabName">
-	<div id="contentArea"></div>
-	<div id="mainNodeContent"></div>
-	<div id="mainPageControls"></div>
-	<div id="listView"></div>
-</div>
-<div name="searchTabName" id="searchResultsPanel">
-	No search displaying.<p>
-    Click a node to search under (on Main tab), and then choose menu item <b>[Search -> Text Search]</b>
-</div>
-<div name="timelineTabName" id="timelineResultsPanel">No timeline displaying.</div>
-</iron-pages> <!-- All modal dialogs go in here -->
-<div id="modalsContainer" style="position: absolute; top: 0; left: 0"></div>
-</template> <script>
-	/* 
-	<![CDATA[*/
-	(function() {
-		'use strict';
+        -->
+        <paper-tabs id="mainPaperTabs"
+                    attr-for-selected="name"
+                    selected="{{selected}}">
+            <paper-tab name="mainTabName">Main</paper-tab>
+            <paper-tab name="searchTabName">Search</paper-tab>
+            <paper-tab name="timelineTabName">Timeline</paper-tab>
+        </paper-tabs>
+        <!--  -->
+        <iron-pages id="mainIronPages"
+                    attr-for-selected="name"
+                    selected="{{selected}}">
+            <div name="mainTabName">
+                <div id="contentArea"></div>
+                <div id="mainNodeContent"></div>
+                <div id="mainPageControls"></div>
+                <div id="listView"></div>
+            </div>
+            <div name="searchTabName"
+                 id="searchResultsPanel">No search displaying.
+            	 </div>
+            <div name="timelineTabName"
+                 id="timelineResultsPanel">No timeline displaying.</div>
+        </iron-pages>
+        <!-- All modal dialogs go in here -->
+        <div id="modalsContainer"
+             style="position: absolute; top: 0; left: 0"></div>
+    </template>
+    <script>/* 
+<![CDATA[*/
+        (function() {
+                'use strict';
 
-		Polymer({
-			is : 'main-tabs',
-			properties : {
-				selected : {
-					type : String,
-					value : 'mainTabName'
-				},
-				fieldVal : {
-					type : String,
-					value : 'Test Field Value'
-				}
-			},
-			ready : function() {
-				console.log("polymer main-tabs ready.");
-			}
-		});
-	})();
-	
-	/*
-	todo-3: come back to this later
-	was trying to get a listener on the tabs. no can do. selectors return null.
-	var pages = document.querySelector('#mainIronPages');
-	var tabs = document.querySelector('#mainPaperTabs');
-	tabs.addEventListener('iron-select', function() {
-		pages.selected = tabs.selected;
-		console.log("Select!");
-	});
-	*/
-	
-	/*]]>
-	 */
-</script> </dom-module>
+                Polymer({
+                        is : 'main-tabs',
+                        properties : {
+                                selected : {
+                                        type : String,
+                                        value : 'mainTabName'
+                                },
+                                fieldVal : {
+                                        type : String,
+                                        value : 'Test Field Value'
+                                }
+                        },
+                        ready : function() {
+                                console.log("polymer main-tabs ready.");
+                        }
+                });
+        })();
+        
+        /*
+        todo-3: come back to this later
+        was trying to get a listener on the tabs. no can do. selectors return null.
+        var pages = document.querySelector('#mainIronPages');
+        var tabs = document.querySelector('#mainPaperTabs');
+        tabs.addEventListener('iron-select', function() {
+                pages.selected = tabs.selected;
+                console.log("Select!");
+        });
+        */
+        
+        /*]]>
+*/</script>
+</dom-module>

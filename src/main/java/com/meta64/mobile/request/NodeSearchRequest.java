@@ -8,6 +8,8 @@ public class NodeSearchRequest {
 	private String nodeId;
 
 	private String searchText;
+	
+	private String searchProp;
 
 	public String getNodeId() {
 		return nodeId;
@@ -31,5 +33,13 @@ public class NodeSearchRequest {
 
 	public void setModSortDesc(boolean modSortDesc) {
 		this.modSortDesc = modSortDesc;
+	}
+
+	public String getSearchProp() {
+		return searchProp;
+	}
+
+	public void setSearchProp(String searchProp) {
+		this.searchProp = searchProp;
 	}
 }

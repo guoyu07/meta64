@@ -49,7 +49,7 @@ public class NodeMoveService {
 		}
 		String parentNodeId = req.getParentNodeId();
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
-		JcrUtil.checkNodeCreatedBy(parentNode, session.getUserID());
+		JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
 		parentNode.orderBefore(req.getNodeId(), req.getSiblingId());
 		session.save();
 		res.setSuccess(true);
@@ -114,7 +114,7 @@ public class NodeMoveService {
 			node.remove();
 			session.save();
 		} else {
-			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+			JcrUtil.checkWriteAuthorized(node, session.getUserID());
 			node.remove();
 		}
 	}
@@ -136,7 +136,7 @@ public class NodeMoveService {
 			// log.debug("Moving ID: " + nodeId);
 			try {
 				Node node = JcrUtil.findNode(session, nodeId);
-				JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+				JcrUtil.checkWriteAuthorized(node, session.getUserID());
 				/*
 				 * This code moves the copied nodes to the bottom of child list
 				 * underneath the target node (i.e. targetNode being the parent)

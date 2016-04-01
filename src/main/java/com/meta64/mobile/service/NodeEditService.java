@@ -155,7 +155,7 @@ public class NodeEditService {
 		Node node = JcrUtil.findNode(session, nodeId);
 
 		if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
-			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+			JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		}
 
 		Node parentNode = node.getParent();
@@ -207,7 +207,7 @@ public class NodeEditService {
 		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		node.setProperty(req.getPropertyName(), req.getPropertyValue());
 		session.save();
 
@@ -228,7 +228,7 @@ public class NodeEditService {
 		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		if (node != null) {
 			/*
 			 * if node already has uuid then we can do nothing here, we just
@@ -264,7 +264,7 @@ public class NodeEditService {
 			session = oak.newAdminSession();
 			node = JcrUtil.findNode(session, nodeId);
 		} else {
-			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+			JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		}
 
 		if (req.getProperties() != null) {
@@ -321,7 +321,7 @@ public class NodeEditService {
 		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		String propertyName = req.getPropName();
 		try {
 			Property prop = node.getProperty(propertyName);
@@ -365,7 +365,7 @@ public class NodeEditService {
 		Node parentNode = node.getParent();
 
 		if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
-			JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+			JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		}
 
 		String content = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);

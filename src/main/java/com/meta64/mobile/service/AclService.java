@@ -90,7 +90,7 @@ public class AclService {
 		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 
 		boolean success = false;
 		String principal = req.getPrincipal();
@@ -141,7 +141,7 @@ public class AclService {
 		
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 
 		String principal = req.getPrincipal();
 		String privilege = req.getPrivilege();

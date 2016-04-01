@@ -35,7 +35,7 @@ public class ImportBookService {
 
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 
 		/*
 		 * for now we don't check book name. Only one book exists: War and Peace

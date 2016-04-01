@@ -103,7 +103,7 @@ public class AttachmentService {
 	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is,
 			String mimeType, int width, int height, boolean addAsChild) throws Exception {
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		/*
 		 * Multiple file uploads always attach children for each file uploaded
 		 */
@@ -179,7 +179,7 @@ public class AttachmentService {
 		}
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkNodeCreatedBy(node, session.getUserID());
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		deleteAllBinaryProperties(node);
 		session.save();
 		res.setSuccess(true);

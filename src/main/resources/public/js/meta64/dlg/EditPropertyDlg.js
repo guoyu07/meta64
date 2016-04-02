@@ -60,9 +60,9 @@ EditPropertyDlg.prototype.populatePropertyEdit = function() {
 			"label" : "Value"
 		}, "", true);
 	}
-
+	
 	/* display the node path at the top of the edit page */
-	view.initEditPathDisplayById("#" + this.id("editPropertyPathDisplay"));
+	view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
 
 	util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
 }

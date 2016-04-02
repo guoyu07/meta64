@@ -24,13 +24,13 @@ EditNodeDlg.prototype.build = function() {
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
 	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty);
-	var makeNodeReferencableButton = this.makeCloseButton("Make Node Referencable", "makeNodeReferencableButton",
-			"edit.makeNodeReferencable();", this);
+//	var makeNodeReferencableButton = this.makeCloseButton("Make Node Referencable", "makeNodeReferencableButton",
+//			"edit.makeNodeReferencable();", this);
 	var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
 	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
 
-	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + makeNodeReferencableButton
-			+ splitContentButton + cancelEditButton);
+	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton /* + makeNodeReferencableButton */
+			+ splitContentButton + cancelEditButton, "buttons");
 
 	var width = window.innerWidth * 0.6;
 	var height = window.innerHeight * 0.4;

@@ -60,10 +60,7 @@ public class JcrUtil {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}
 
-	public static void checkWriteAuthorized(Node node, String userName) throws Exception {
-		
-		//todo-1: this is correct but MISLEADING logic here because its used for writability not what it's name implies. Has effect of claiming
-		//all nodes were created by admin when reality they are only WRITABLE/READABLE to admin, which also describes the mistake.
+	public static void checkWriteAuthorized(Node node, String userName) throws Exception {		
 		if (JcrPrincipal.ADMIN.equals(userName))
 			return;
 		

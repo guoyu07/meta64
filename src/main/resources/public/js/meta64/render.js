@@ -293,9 +293,11 @@ var render = function() {
 			return bkgImgStyle;
 		},
 
-		centeredButtonBar : function(buttons) {
+		centeredButtonBar : function(buttons, classes) {
+			classes = classes || "";
+			
 			return _.tag("div", {
-				"class" : "horizontal center-justified layout"
+				"class" : "horizontal center-justified layout "+classes
 			}, buttons);
 		},
 
@@ -587,19 +589,6 @@ var render = function() {
 				/* Construct Create Subnode Button */
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
-
-				if (meta64.currentNode && nav.parentVisibleToUser()) {
-
-					/*
-					 * I decided putting UpLevel at very top of main app control
-					 * bar was best, because I got tired of having to scroll to
-					 * the top at every level of a tree when backing out
-					 * 
-					 * upLevelButton = _.tag("paper-button", // { "class" :
-					 * "highlight-button", "raised" : "raised", "onClick" :
-					 * "nav.navUpLevel();" }, "Up Level");
-					 */
-				}
 
 				if (upLevelButton || editNodeButton) {
 					buttonBar = _.makeHorizontalFieldSet(upLevelButton + editNodeButton);

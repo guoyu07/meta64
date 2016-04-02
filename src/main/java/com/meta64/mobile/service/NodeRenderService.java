@@ -64,7 +64,7 @@ public class NodeRenderService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		List<NodeInfo> children = new LinkedList<NodeInfo>();
 		res.setChildren(children);
 		String targetId = req.getNodeId();
@@ -107,7 +107,7 @@ public class NodeRenderService {
 			log.trace("   upLevel to nodeid: " + node.getPath());
 			levelsUpRemaining--;
 		}
-		
+
 		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
@@ -121,18 +121,25 @@ public class NodeRenderService {
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
-				children.add(Convert.convertToNodeInfo(sessionContext, session, n, true));
 
-				/*
-				 * Instead of crashing browser with too much load, just fail a
-				 * bit more gracefully when the limits of this application are
-				 * exceeded.
-				 */
-				if (++nodeCount > 1000) {
-					throw new Exception("Node has too many children (> 1000)");
+				// Filter on server now too
+				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
+
+					children.add(Convert.convertToNodeInfo(sessionContext, session, n, true));
+
+					/*
+					 * Instead of crashing browser with too much load, just fail
+					 * a bit more gracefully when the limits of this application
+					 * are exceeded.
+					 */
+					if (++nodeCount > 1000) {
+						throw new Exception("Node has too many children (> 1000)");
+					}
+
+					log.trace("    node[" + nodeCount + "] path: " + n.getPath());
+				} else {
+					log.trace("    MODE-REJECT node[" + nodeCount + "] path: " + n.getPath());
 				}
-
-				log.trace("    node[" + nodeCount + "] path: " + n.getPath());
 			}
 		} catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
@@ -144,11 +151,11 @@ public class NodeRenderService {
 	}
 
 	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) throws Exception {
-		
+
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.safeFindNode(session, nodeId);
 
@@ -158,7 +165,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, false); 
+		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, false);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

@@ -71,10 +71,11 @@ var edit = function() {
 
 	var _setNodePositionResponse = function(res) {
 		if (util.checkSuccess("Change node position", res)) {
-			meta64.goToMainPage(true, true);
+			meta64.refresh();
 		}
 	}
 
+	//todo-2 (should be a dead method now)
 	var _makeNodeReferencableResponse = function(res) {
 		if (util.checkSuccess("Make node referencable", res)) {
 			(new MessageDlg("This node is now referencable, and can be accessed by unique ID")).open();
@@ -217,6 +218,7 @@ var edit = function() {
 			view.scrollToSelectedNode();
 		},
 
+		//todo-2 (should be a dead function now)
 		makeNodeReferencable : function() {
 			util.json("makeNodeReferencable", {
 				"nodeId" : _.editNode.id

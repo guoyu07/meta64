@@ -145,14 +145,31 @@ public class NodeEditService {
 			session = ThreadLocals.getJcrSession();
 		}
 		
+		//////////////////make referencable begin
 		String nodeId = req.getNodeId();
+		Node node = JcrUtil.findNode(session, nodeId);
+		JcrUtil.checkWriteAuthorized(node, session.getUserID());
+		if (node != null) {
+			/*
+			 * if node already has uuid then we can do nothing here, we just
+			 * silently return success
+			 */
+			if (!node.hasProperty(JcrProp.UUID)) {
+				node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+				//session.save();
+			}
+			//res.setSuccess(true);
+		}
+		//////////////////make referencable end
+		
+		//String nodeId = req.getNodeId();
 		String newName = req.getNewName().trim();
 		if (newName.length() == 0) {
 			throw new Exception("No node name provided.");
 		}
 
 		log.debug("Renaming node: " + nodeId);
-		Node node = JcrUtil.findNode(session, nodeId);
+		//Node node = JcrUtil.findNode(session, nodeId);
 
 		if (!JcrUtil.isUserAccountRoot(sessionContext, node)) {
 			JcrUtil.checkWriteAuthorized(node, session.getUserID());
@@ -220,6 +237,8 @@ public class NodeEditService {
 	 * Turns on the mixin MIX_REFERENCABLE which makes the JCR automatically
 	 * create a UUID for the node which is a unique key that can be used to
 	 * address the node, and will be completely unique.
+	 * 
+	 * todo-2: method no longer needed. functionality added to 'renameNode'.
 	 */
 	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res)
 			throws Exception {

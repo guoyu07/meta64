@@ -220,6 +220,10 @@ var meta64 = function() {
 			return _.editModeOption === _.MODE_SIMPLE;
 		},
 
+		refresh : function() {
+			_.goToMainPage(true, true);
+		},
+		
 		goToMainPage : function(rerender, forceServerRefresh) {
 
 			if (forceServerRefresh) {
@@ -479,7 +483,7 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("upLevelButton", true); //todo-1
+			util.setEnablement("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
@@ -491,7 +495,7 @@ var meta64 = function() {
 			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("deleteAttachmentButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("searchDlgButton", !_.isAnonUser && highlightNode != null);
@@ -503,7 +507,7 @@ var meta64 = function() {
 
 			util.setVisibility("navHomeButton", !_.isAnonUser);
 			util.setVisibility("editModeButton", allowEditMode);
-			util.setVisibility("upLevelButton", true); //todo-1
+			util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
 			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);

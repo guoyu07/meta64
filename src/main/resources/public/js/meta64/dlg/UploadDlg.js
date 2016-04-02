@@ -126,7 +126,7 @@ UploadDlg.prototype.uploadFileNow = function() {
 		});
 
 		prms.done(function() {
-			meta64.goToMainPage(true, true);
+			meta64.refresh();
 		});
 
 		prms.fail(function() {
@@ -137,7 +137,7 @@ UploadDlg.prototype.uploadFileNow = function() {
 
 UploadDlg.prototype.uploadFromUrlResponse = function(res) {
 	if (util.checkSuccess("Upload from URL", res)) {
-		meta64.goToMainPage(true, true);
+		meta64.refresh();
 	}
 }
 
@@ -148,4 +148,4 @@ UploadDlg.prototype.init = function() {
 	$("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }
 
-// # sourceURL=UploadDlg.js
+//# sourceURL=UploadDlg.js

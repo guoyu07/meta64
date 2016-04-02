@@ -120,8 +120,9 @@ var view = function() {
 		},
 
 		initEditPathDisplayById : function(domId) {
+			debugger;
 			var node = edit.editNode;
-			var e = $(domId);
+			var e = $("#"+domId);
 			if (edit.editingUnsavedNode) {
 				e.html("");
 				e.hide();

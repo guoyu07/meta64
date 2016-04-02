@@ -65,7 +65,7 @@ var menuPanel = function() {
 
 			var viewOptionsMenuItems = //
 			_menuItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + // 
-			_menuItem("Refresh", "refreshPageButton", "meta64.goToMainPage(true,true);") + // 
+			_menuItem("Refresh", "refreshPageButton", "meta64.refresh();") + // 
 			_menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + // 
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
 			var viewOptionsMenu = _makeTopLevelMenu("View Options", viewOptionsMenuItems);

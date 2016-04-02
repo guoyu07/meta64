@@ -52,19 +52,19 @@ Dialog.prototype.open = function() {
 	Polymer.dom.flush(); // <---- is this needed ? todo
 	Polymer.updateStyles();
 
-//try {
-		var content = this.build();
-		util.setHtmlEnhanced(id, content);
-		this.built = true;
+	// try {
+	var content = this.build();
+	util.setHtmlEnhanced(id, content);
+	this.built = true;
 
-		if (this.init) {
-			console.log("init() for dialog domId="+this.domId);
-			this.init();
-			console.log("init() complete for dialog domId="+this.domId);
-		}
-//	} catch (ex) {
-//		(console.error || console.log).call(console, ex.stack || ex);
-//	}
+	if (this.init) {
+		console.log("init() for dialog domId=" + this.domId);
+		this.init();
+		console.log("init() complete for dialog domId=" + this.domId);
+	}
+	// } catch (ex) {
+	// (console.error || console.log).call(console, ex.stack || ex);
+	// }
 	console.log("Showing dialog: " + id);
 
 	/* now open and display polymer dialog we just created */
@@ -127,6 +127,7 @@ Dialog.prototype.makeCloseButton = function(text, id, callback, ctx) {
 
 	var attribs = {
 		"raised" : "raised",
+		//warning: this dialog-confirm is required (logic fails without)
 		"dialog-confirm" : "dialog-confirm",
 		"id" : this.id(id)
 	};

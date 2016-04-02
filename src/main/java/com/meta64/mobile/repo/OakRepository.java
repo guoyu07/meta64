@@ -121,6 +121,9 @@ public class OakRepository {
 	@Value("${anonUserLandingPageNode}")
 	private String userLandingPageNode;
 
+	@Value("${helpNode}")
+	private String helpNode;
+	
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -149,9 +152,13 @@ public class OakRepository {
 
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
+			
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, null);
-			initLandingPage(session, landingPageNode);
+			initPageNodeFromClasspath(session, landingPageNode, "classpath:/static/landing-page.md");
 
+			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, null);
+			initPageNodeFromClasspath(session, helpPageNode, "classpath:/static/help.md");
+			
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
@@ -242,10 +249,10 @@ public class OakRepository {
 		}
 	}
 
-	private void initLandingPage(Session session, Node node) {
+	private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
 		try {
 			Resource resource = SpringContextUtil.getApplicationContext()
-					.getResource("classpath:/static/landing-page.md");
+					.getResource(classpath);
 			String content = XString.loadResourceIntoString(resource);
 			node.setProperty(JcrProp.CONTENT, content);
 			AccessControlUtil.makeNodePublic(session, node);
@@ -333,5 +340,13 @@ public class OakRepository {
 
 	public String getJcrAdminPassword() {
 		return jcrAdminPassword;
+	}
+
+	public String getHelpNode() {
+		return helpNode;
+	}
+
+	public void setHelpNode(String helpNode) {
+		this.helpNode = helpNode;
 	}
 }

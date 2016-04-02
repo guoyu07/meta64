@@ -392,7 +392,9 @@ var render = function() {
 
 			/*
 			 * i will be finding a reusable/DRY way of doing tooltops soon, this
-			 * is just my first experiment
+			 * is just my first experiment.
+			 * 
+			 * However tooltops ALWAYS cause problems. Mystery for now.
 			 */
 			var insertNodeTooltip = "";
 			// _.tag("paper-tooltip", {
@@ -572,13 +574,7 @@ var render = function() {
 				// console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
 				/* Add edit button if edit mode and this isn't the root */
-				if (meta64.editMode && data.node.path != "/" &&
-				/*
-				 * Check that if we have a commentBy property we are the
-				 * commenter, before allowing edit button also.
-				 */
-				!props.isNonOwnedCommentNode(data.node) && //
-				!props.isNonOwnedNode(data.node)) {
+				if (edit.isEditAllowed(data.node)) {
 
 					/* Construct Create Subnode Button */
 					editNodeButton = _.tag("paper-button", //
@@ -649,8 +645,10 @@ var render = function() {
 				}
 			}
 
-			if (output.length == 0 && !meta64.isAnonUser) {
-				output = _getEmptyPagePrompt();
+			if (edit.isInsertAllowed(data.node)) {
+				if (output.length == 0 && !meta64.isAnonUser) {
+					output = _getEmptyPagePrompt();
+				}
 			}
 
 			util.setHtmlEnhanced("listView", output);

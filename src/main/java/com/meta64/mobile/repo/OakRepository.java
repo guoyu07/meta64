@@ -249,6 +249,7 @@ public class OakRepository {
 			String content = XString.loadResourceIntoString(resource);
 			node.setProperty(JcrProp.CONTENT, content);
 			AccessControlUtil.makeNodePublic(session, node);
+			node.setProperty(JcrProp.DISABLE_INSERT, "y");
 			session.save();
 		} catch (Exception e) {
 			// IMPORTANT: don't rethrow from here, or this could blow up app

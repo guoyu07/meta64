@@ -38,17 +38,21 @@ var menuPanel = function() {
 		build : function() {
 
 			var editMenuItems = //
-			_menuItem("Attachments", "manageAttachmentsButton", "attachment.openUploadPg();") + //
 			_menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + // 
 			_menuItem("Finish Moving", "finishMovingSelNodesButton", "edit.finishMovingSelNodes();") + // 
-
 			_menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
 			_menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();") + // 
 			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();"); // 
 			//_menuItem("Import", "openImportPgButton", "edit.openImportPg();") +
 			//_menuItem("Export", "openExportPgButton", "edit.openExportPg();"); //
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
-
+			
+			var attachmentMenuItems = //
+			_menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadPg('file');") + //
+			_menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadPg('url');") + //
+			_menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");	
+			var attachmentMenu = _makeTopLevelMenu("Attachments", attachmentMenuItems);
+			
 			var sharingMenuItems = //
 			_menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + // 
 			_menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");
@@ -60,7 +64,7 @@ var menuPanel = function() {
 			var searchMenu = _makeTopLevelMenu("Search", searchMenuItems);
 
 			var viewOptionsMenuItems = //
-			_menuToggleItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + // 
+			_menuItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + // 
 			_menuItem("Refresh", "refreshPageButton", "meta64.goToMainPage(true,true);") + // 
 			_menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + // 
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
@@ -78,7 +82,7 @@ var menuPanel = function() {
 			_menuItem("Donate", "DonateDlgButton", "(new DonateDlg()).open();");
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
-			var content = editMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu;
+			var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu;
 			util.setHtmlEnhanced(_.domId, content);
 		},
 

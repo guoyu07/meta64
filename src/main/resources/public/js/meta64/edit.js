@@ -134,6 +134,22 @@ var edit = function() {
 		 */
 		nodeInsertTarget : null,
 
+		/* returns true if we can 'try to' insert under 'node' or false if not */
+		isEditAllowed : function(node) {
+			return meta64.editMode && node.path != "/" &&
+					/*
+					 * Check that if we have a commentBy property we are the
+					 * commenter, before allowing edit button also.
+					 */
+					!props.isNonOwnedCommentNode(node) && //
+					!props.isNonOwnedNode(node);
+		},
+		
+		/* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
+		isInsertAllowed : function(node) {
+			return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node)==null;
+		},
+		
 		startEditingNewNode : function() {
 			_.editingUnsavedNode = false;
 			_.editNode = null;

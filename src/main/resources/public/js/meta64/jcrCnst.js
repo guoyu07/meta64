@@ -22,6 +22,7 @@ var jcrCnst = function() {
 		LAST_MODIFIED_BY : "jcr:lastModifiedBy",
 		
 		DISABLE_INSERT : "disableInsert",
+		TAGS : "tags",
 
 		USER : "user",
 		PWD : "pwd",

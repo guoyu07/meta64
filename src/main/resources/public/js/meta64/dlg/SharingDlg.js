@@ -30,7 +30,7 @@ SharingDlg.prototype.build = function() {
 	var height = window.innerHeight * 0.4;
 	
 	var internalMainContent = "<div id='"+this.id("shareNodeNameDisplay")+"'></div>" + //
-	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;\" id='"+this.id("sharingListFieldContainer")+"'></div>";
+	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"+this.id("sharingListFieldContainer")+"'></div>";
 
 	return header + internalMainContent + buttonBar;
 }

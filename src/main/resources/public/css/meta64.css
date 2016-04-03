@@ -155,6 +155,15 @@ tr td div p {
 	background: lightGray;
 }
 
+.tags-content {
+	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide 
+		becomes difficult to read.
+	*/
+	border: 1px dotted lightGray;
+	max-width: 800px;
+}
+
 .corner-style {
 	position: absolute;
     top: 0px;
@@ -239,3 +248,4 @@ tr td div p {
 .value-column {
 	width: 80%;
 }
+

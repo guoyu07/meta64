@@ -60,7 +60,7 @@ public class NodeRenderService {
 	 */
 	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix)
 			throws Exception {
-
+		
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}

@@ -145,10 +145,11 @@ public class NodeEditService {
 			session = ThreadLocals.getJcrSession();
 		}
 		
-		//////////////////make referencable begin
 		String nodeId = req.getNodeId();
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkWriteAuthorized(node, session.getUserID());
+		
+		/* make the node referencable, required for accessing via URL */
 		if (node != null) {
 			/*
 			 * if node already has uuid then we can do nothing here, we just
@@ -156,11 +157,8 @@ public class NodeEditService {
 			 */
 			if (!node.hasProperty(JcrProp.UUID)) {
 				node.addMixin(JcrConstants.MIX_REFERENCEABLE);
-				//session.save();
 			}
-			//res.setSuccess(true);
 		}
-		//////////////////make referencable end
 		
 		//String nodeId = req.getNodeId();
 		String newName = req.getNewName().trim();
@@ -240,6 +238,7 @@ public class NodeEditService {
 	 * 
 	 * todo-2: method no longer needed. functionality added to 'renameNode'.
 	 */
+	@Deprecated
 	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res)
 			throws Exception {
 		if (session == null) {

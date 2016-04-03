@@ -474,6 +474,7 @@ public class AppController {
 		return res;
 	}
 
+	@Deprecated
 	@RequestMapping(value = API_PATH + "/makeNodeReferencable", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody MakeNodeReferencableResponse makeNodeReferencable(@RequestBody MakeNodeReferencableRequest req)

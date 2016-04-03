@@ -75,4 +75,4 @@ PrefsDlg.prototype.init = function() {
 	Polymer.dom.flush();
 }
 
-// # sourceURL=PrefsDlg.js
+//# sourceURL=PrefsDlg.js

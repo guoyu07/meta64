@@ -24,21 +24,20 @@ EditNodeDlg.prototype.build = function() {
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
 	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty);
-//	var makeNodeReferencableButton = this.makeCloseButton("Make Node Referencable", "makeNodeReferencableButton",
-//			"edit.makeNodeReferencable();", this);
-	var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
+	//this split works afaik,but I don't want it in front of users yet.
+	//var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
 	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
 
-	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton /* + makeNodeReferencableButton */
-			+ splitContentButton + cancelEditButton, "buttons");
+	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton 
+			/* + splitContentButton */ + cancelEditButton, "buttons");
 
 	var width = window.innerWidth * 0.6;
 	var height = window.innerHeight * 0.4;
 
 	var internalMainContent = "<div id='" + this.id("editNodePathDisplay") + "' class='path-display-in-editor'></div>" + //
 	"<div id='" + this.id("editNodeInstructions") + "'></div>" + //
-	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;\" id='"
-			+ this.id("propertyEditFieldContainer") + "'>Loading propertyEditFieldContainer...</div>";
+	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
+			+ this.id("propertyEditFieldContainer") + "'>Loading...</div>";
 
 	return header + internalMainContent + buttonBar;
 }
@@ -65,18 +64,21 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
 
+		var editOrderedProps = this.getPropertiesInEditingOrder(edit.editNode.properties);
+		
 		// Iterate PropertyInfo.java objects
 		/*
 		 * Warning each iterator loop has its own 'this'
+		 * 
 		 */
-		$.each(edit.editNode.properties, function(index, prop) {
+		$.each(editOrderedProps, function(index, prop) {
 
 			/*
 			 * if property not allowed to display return to bypass this
 			 * property/iteration
 			 */
 			if (!render.allowPropertyToDisplay(prop.name)) {
-				console.log("Hiding property: " + prop.name);
+				//console.log("Hiding property: " + prop.name);
 				return;
 			}
 
@@ -143,15 +145,27 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 * allow any property editing to happen.
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
+}
 
-	// todo-2: this needs more investigation
-	// var isUuid = edit.editNode && edit.editNode.id && !edit.editNode.id.startsWith("/");
+/* Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content' node and puts it
+ * on the top, and then does same for 'jctCnst.TAGS'
+ */
+EditNodeDlg.prototype.getPropertiesInEditingOrder = function(props) {
+	
+	var propsNew = props.clone();
+	var targetIdx=0;
+	
+	var tagIdx = util.indexOfItemByProp(propsNew, "name", "jcr:content");
+	if (tagIdx!=-1) {
+		util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+	}
 
-	console.log(/* "isUuid: " + isUuid + */" edit.editingUnsavedNode=" + edit.editingUnsavedNode + " edit.editNode="
-			+ edit.editNode);
-	var nodeRefVis = edit.editNode /* && !isUuid */&& !edit.editingUnsavedNode;
-	console.log("nodeRefVis=" + nodeRefVis);
-	util.setVisibility("#" + this.id("makeNodeReferencableButton"), nodeRefVis);
+	tagIdx = util.indexOfItemByProp(propsNew, "name", "tags");
+	if (tagIdx!=-1) {
+		util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+	}
+	
+	return propsNew;
 }
 
 EditNodeDlg.prototype.addProperty = function() {

@@ -48,6 +48,9 @@ Dialog.prototype.open = function() {
 	// node.setAttribute("modal", "modal");
 	node.setAttribute("id", id);
 	modalsContainer.node.appendChild(node);
+	
+	//todo-3: this was an experiment. do it correctly now.
+	node.style.border = "8px solid gray";
 
 	Polymer.dom.flush(); // <---- is this needed ? todo
 	Polymer.updateStyles();
@@ -166,4 +169,4 @@ Dialog.prototype.makeRadioButton = function(label, id) {
 	}, label);
 }
 
-// # sourceURL=Dialog.js
+//# sourceURL=Dialog.js

@@ -38,7 +38,7 @@ SearchDlg.prototype.searchNodes = function() {
 }
 
 SearchDlg.prototype.searchTags = function() {
-	return this.searchProperty("tags");
+	return this.searchProperty(jcrCnst.TAGS);
 }
 
 SearchDlg.prototype.searchProperty = function(searchProp) {

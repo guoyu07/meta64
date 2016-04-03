@@ -6,6 +6,10 @@ var util = function() {
 	var timeoutMessageShown = false;
 	var offline = false;
 
+	Array.prototype.clone = function() {
+		return this.slice(0);
+	};
+	
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
 		var jul = new Date(this.getFullYear(), 6, 1);
@@ -418,6 +422,7 @@ var util = function() {
 			return true;
 		},
 
+		/* sets html and returns DOM element */
 		setHtmlEnhanced : function(id, content) {
 			if (content == null) {
 				content = "";
@@ -430,6 +435,8 @@ var util = function() {
 			// Not sure yet, if these two are required.
 			Polymer.dom.flush();
 			Polymer.updateStyles();
+			
+			return elm;
 		},
 
 		setHtml : function(id, content) {
@@ -550,6 +557,23 @@ var util = function() {
 				// console.log("hiding element: " + elmId);
 				domElm.style.display = 'none';
 			}
+		},
+		
+		//todo-2: make prototype property of Array
+		indexOfItemByProp : function(array, propName, propVal) {
+			var len = array.length;
+			for (var i=0; i < len; i++) {
+				if (array[i][propName]===propVal) {
+					return i;
+				}
+			}
+			return -1;
+		},
+		
+		//todo-2: ditto, prototype here
+		arrayMoveItem : function(array, fromIndex, toIndex) {
+			array.splice(toIndex, 0, array.splice(fromIndex, 1)[0]);
+			return array;
 		}
 	};
 

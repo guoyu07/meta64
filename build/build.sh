@@ -58,7 +58,6 @@ cat ../src/main/resources/public/js/meta64/dlg/RenameNodeDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/panel/searchResultsPanel.js >> all.js
 cat ../src/main/resources/public/js/meta64/panel/timelineResultsPanel.js  >> all.js
 
-#java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64.min.js" "../src/main/resources/public/js/meta64/**.js"
 java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64.min.js" all.js
  
 #java -jar google-compiler.jar --help

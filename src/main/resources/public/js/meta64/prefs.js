@@ -16,11 +16,11 @@ var prefs = function() {
 					"Yes, Close Account.", function() {
 						util.json("closeAccount", {}, _.closeAccountResponse);
 					})).open();
-		},
+		}
 	};
 
 	console.log("Module ready: prefs.js");
 	return _;
 }();
 
-// # sourceURL=prefs.js
+//# sourceURL=prefs.js

@@ -83,10 +83,9 @@ UploadDlg.prototype.build = function() {
 	}
 
 	var uploadButton = this.makeCloseButton("Upload", "uploadButton", UploadDlg.prototype.uploadFileNow, this);
-	var deleteButton = this.makeButton("Delete", "deleteAttachmentButton", UploadDlg.prototype.deleteAttachment, this);
 	var backButton = this.makeCloseButton("Close", "closeUploadButton");
 
-	var buttonBar = render.centeredButtonBar(uploadButton + deleteButton + backButton);
+	var buttonBar = render.centeredButtonBar(uploadButton + backButton);
 
 	return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
 }

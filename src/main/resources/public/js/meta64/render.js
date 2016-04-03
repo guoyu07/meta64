@@ -201,6 +201,13 @@ var render = function() {
 					ret += addCommentDiv;
 				}
 			}
+			
+			var tags = props.getNodePropertyVal(jcrCnst.TAGS, node);
+			if (tags) {
+				ret += _.tag("div", {
+					"class" : "tags-content"
+				}, "Tags: "+tags);
+			}
 
 			return ret;
 		},

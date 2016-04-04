@@ -9,6 +9,10 @@ var EditPropertyDlg = function(editNodeDlg) {
 	Dialog.call(this);
 	this.editNodeDlg = editNodeDlg;
 	this.domId = "EditPropertyDlg";
+	if (this.editNodeDlg.domId!="EditNodeDlg") {
+		console.log("error: incorrect object for EditNodeDlg");
+	}
+	//console.log("***************** printKeys.this.EditNodeDlg(in property editor constructorconstructor): "+util.printKeys(editNodeDlg));
 }
 
 // more boilerplate for inheritance
@@ -85,6 +89,9 @@ EditPropertyDlg.prototype.savePropertyResponse = function(res) {
 	edit.editNode.properties.push(res.propertySaved);
 	meta64.treeDirty = true;
 	
+	if (this.editNodeDlg.domId!="EditNodeDlg") {
+		console.log("error: incorrect object for EditNodeDlg");
+	}
 	this.editNodeDlg.populateEditNodePg();
 }
 

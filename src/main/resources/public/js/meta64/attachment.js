@@ -10,7 +10,7 @@ var attachment = function() {
 		/*
 		 * srcOption = url | file
 		 */
-		openUploadPg : function(srcOption) {
+		openUploadDlg : function(srcOption) {
 			var node = meta64.getHighlightedNode();
 
 			if (!node) {

@@ -93,7 +93,7 @@ var render = function() {
 
 			headerText += "<span id='ownerDisplay" + node.uid + "'></span>";
 			if (node.lastModified) {
-				headerText += "  Modified: " + node.lastModified;
+				headerText += "  Mod: " + node.lastModified;
 			}
 			headerText += "</div>";
 			// }
@@ -445,15 +445,6 @@ var render = function() {
 			}, content, true);
 		},
 
-		/*
-		 * this is not yet used, and paper-checkbox is not polymer imported yet
-		 * makeCheckBox : function(name, id, on) { return
-		 * _.tag("paper-checkbox", // { "id" : id, "checked" : on ? "checked" :
-		 * "unchecked" }, "", true) + //
-		 * 
-		 * _.tag("label", { "for" : id }, name); },
-		 */
-
 		makeRadioButton : function(label, id) {
 			return _.tag("paper-radio-button", //
 			{
@@ -483,7 +474,8 @@ var render = function() {
 			 * match and corrupt any path that happens to start with root!
 			 * BEWARE! FIX!
 			 */
-			var ret = meta64.isAdminUser ? path : path.replaceAll("/root", "");
+			var shortPath = path.length < 50 ? path : path.substring(0, 40)+"...";
+			var ret = meta64.isAdminUser ? shortPath : shortPath.replaceAll("/root", "");
 			ret += " [" + node.primaryTypeName + "]";
 			return ret;
 		},
@@ -579,7 +571,6 @@ var render = function() {
 
 				// console.log("data.node.path="+data.node.path);
 				// console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
-				// //
 				// console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
 				/* Add edit button if edit mode and this isn't the root */

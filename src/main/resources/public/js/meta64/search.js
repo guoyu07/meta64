@@ -1,15 +1,9 @@
 console.log("running module: search.js");
 
 /*
- * WARNING
- * 
- * Due to something apparently in the global namespace, if I try to use 'search'
- * as the variable name here instead of 'srch' the onClick handler of JQuery
- * Mobile-decorated anchor tags gives an error saying the function is not found.
- * So either Chrome or JQuery is somehow not compatible with a global variable
- * named 'search'.
+ * todo-3: try to rename to 'search', but remember you had inexpliable problems
+ * the first time you tried to use 'search' as the var name.
  */
-
 var srch = function() {
 
 	var _UID_ROWID_SUFFIX = "_srch_row";
@@ -24,10 +18,10 @@ var srch = function() {
 		 * done.
 		 */
 		searchResults : null,
-		
+
 		/*
-		 * Holds the NodeSearchResponse.java JSON, or null if no timeline has been
-		 * done.
+		 * Holds the NodeSearchResponse.java JSON, or null if no timeline has
+		 * been done.
 		 */
 		timelineResults : null,
 
@@ -68,7 +62,7 @@ var srch = function() {
 			searchResultsPanel.init();
 			meta64.changePage(searchResultsPanel);
 		},
-		
+
 		timelineResponse : function(res) {
 			_.timelineResults = res;
 			var content = timelineResultsPanel.build();
@@ -88,21 +82,17 @@ var srch = function() {
 				"nodeId" : node.id,
 				"searchText" : "",
 				"modSortDesc" : true,
-				"searchProp" : "jcr:content" //should have no effect, for timeline?
+				"searchProp" : "jcr:content" // should have no effect, for
+												// timeline?
 			}, _.timelineResponse);
 		},
 
 		initSearchNode : function(node) {
 			node.uid = util.getUidForId(_.identToUidMap, node.id);
-			// node.properties =
-			// props.setPreferredPropertyOrder(node.properties);
-
 			_.uidToNodeMap[node.uid] = node;
 		},
-		
+
 		populateSearchResultsPage : function(data, viewName) {
-			
-			debugger;
 			var output = '';
 			var childCount = data.searchResults.length;
 
@@ -134,21 +124,21 @@ var srch = function() {
 		renderSearchResultAsListItem : function(node, index, count, rowCount) {
 
 			var uid = node.uid;
-			console.log("renderSearchResult: "+uid);
+			console.log("renderSearchResult: " + uid);
 
 			/*
-			 * TODO-2: fix. This checking of "rep:" is just a hack for now to stop
-			 * from deleting things I won't want to allow to delete, but I will
-			 * design this better later.
+			 * TODO-2: fix. This checking of "rep:" is just a hack for now to
+			 * stop from deleting things I won't want to allow to delete, but I
+			 * will design this better later.
 			 */
 			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
 			var editingAllowed = meta64.isAdminUser || !isRep;
 
 			var cssId = uid + _UID_ROWID_SUFFIX;
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
-			
-			var buttonBarHtml = _.makeButtonBarHtml(""+uid);
-			console.log("buttonBarHtml="+buttonBarHtml);
+
+			var buttonBarHtml = _.makeButtonBarHtml("" + uid);
+			console.log("buttonBarHtml=" + buttonBarHtml);
 			var content = render.renderNodeContent(node, true, true, true, true);
 
 			return render.tag("div", //
@@ -211,4 +201,4 @@ var srch = function() {
 	return _;
 }();
 
-//# sourceURL=search.js
+// # sourceURL=search.js

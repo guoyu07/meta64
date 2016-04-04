@@ -23,7 +23,7 @@ EditNodeDlg.prototype.build = function() {
 	var header = render.makeDialogHeader("Edit Node");
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty);
+	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty, this);
 	//this split works afaik,but I don't want it in front of users yet.
 	//var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
 	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
@@ -63,8 +63,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
-
-		var editOrderedProps = this.getPropertiesInEditingOrder(edit.editNode.properties);
+		var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
 		
 		// Iterate PropertyInfo.java objects
 		/*
@@ -145,27 +144,6 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 * allow any property editing to happen.
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
-}
-
-/* Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content' node and puts it
- * on the top, and then does same for 'jctCnst.TAGS'
- */
-EditNodeDlg.prototype.getPropertiesInEditingOrder = function(props) {
-	
-	var propsNew = props.clone();
-	var targetIdx=0;
-	
-	var tagIdx = util.indexOfItemByProp(propsNew, "name", "jcr:content");
-	if (tagIdx!=-1) {
-		util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
-	}
-
-	tagIdx = util.indexOfItemByProp(propsNew, "name", "tags");
-	if (tagIdx!=-1) {
-		util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
-	}
-	
-	return propsNew;
 }
 
 EditNodeDlg.prototype.addProperty = function() {
@@ -254,7 +232,7 @@ EditNodeDlg.prototype.addSubProperty = function(fieldId) {
  */
 EditNodeDlg.prototype.deleteProperty = function(propName) {
 	var _this = this;
-	(new ConfirmDlg("Confirm Delete", "Delete the Property", "Yes, delete.", function() {
+	(new ConfirmDlg("Confirm Delete", "Delete the Property: "+propName, "Yes, delete.", function() {
 		_this.deletePropertyImmediate(propName);
 	})).open();
 }

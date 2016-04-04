@@ -121,7 +121,7 @@ public class Convert {
 				primaryTypeName);
 		return nodeInfo;
 	}
-
+	
 	public static long getBinaryVersion(Node node) throws Exception {
 		Property versionProperty = node.getProperty(JcrProp.BIN_VER);
 		if (versionProperty != null) {

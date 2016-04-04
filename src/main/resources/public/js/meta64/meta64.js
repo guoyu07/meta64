@@ -1,8 +1,8 @@
 console.log("running module: meta64.js");
 
 /**
- * This is the central instance of the entire application, and assumes it owns
- * the entire browser.
+ * Main Application instance, and central root level object for all code, although each module generally contributes one
+ * singleton variable to the global scope, with a name usually identical to that file.
  */
 var meta64 = function() {
 
@@ -14,7 +14,10 @@ var meta64 = function() {
 		/* used as a kind of 'sequence' in the app, when unique vals a needed */
 		nextGuid : 0,
 
+		/* name of currently logged in user */
 		userName : "anonymous",
+		
+		/* screen capabilities */
 		deviceWidth : 0,
 		deviceHeight : 0,
 
@@ -25,8 +28,7 @@ var meta64 = function() {
 		homeNodePath : "",
 
 		/*
-		 * specifies if this is admin user. Server side still protects itself
-		 * from all access, even if this variable is hacked by attackers.
+		 * specifies if this is admin user.
 		 */
 		isAdminUser : false,
 
@@ -41,7 +43,7 @@ var meta64 = function() {
 		treeDirty : false,
 
 		/*
-		 * maps node.uid values to the NodeInfo.java objects
+		 * maps node.uid values to NodeInfo.java objects
 		 * 
 		 * The only contract about uid values is that they are unique insofar as
 		 * any one of them always maps to the same node. Limited lifetime
@@ -82,6 +84,7 @@ var meta64 = function() {
 		 */
 		editMode : false,
 
+		/* User-selectable user-account options each user can set on his account */
 		MODE_ADVANCED : "advanced",
 		MODE_SIMPLE : "simple",
 
@@ -132,14 +135,11 @@ var meta64 = function() {
 		currentNodeId : null,
 		currentNodePath : null,
 
-		/* Maps from dialog module.domId to module instance */
-		//dialogMap : {},
-
 		/* Maps from guid to Data Object */
 		dataObjMap : {},
 
 		updateMainMenuPanel : function() {
-			//alert("building main menu panel");
+			console.log("building main menu panel");
 			menuPanel.build();
 			menuPanel.init();
 		},
@@ -206,8 +206,8 @@ var meta64 = function() {
 			// which is ok too
 			else if (typeof dataObj == 'function') {
 				if (ctx) {
-					var This = _.getObjectByGuid(ctx);
-					dataObj.call(This);
+					var thiz = _.getObjectByGuid(ctx);
+					dataObj.call(thiz);
 				} else {
 					dataObj();
 				}
@@ -265,7 +265,6 @@ var meta64 = function() {
 		 * 
 		 */
 		changePage : function(pg, data) {
-			debugger;
 			if (typeof pg.tabId === 'undefined') {
 				console.log("oops, wrong object type passed to changePage function.");
 				return null;
@@ -598,7 +597,7 @@ var meta64 = function() {
 			 * approach
 			 */
 			node.uid = util.getUidForId(_.identToUidMap, node.id);
-			node.properties = props.setPreferredPropertyOrder(node.properties);
+			node.properties = props.getPropertiesInEditingOrder(node.properties);
 
 			/*
 			 * For these two properties that are accessed frequently we go ahead

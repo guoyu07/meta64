@@ -116,7 +116,7 @@ tr td div p {
 .header-text {
 	font-size: small;
 	margin-left: 16px;
-	padding: 10px;
+	padding-top: 10px;
 }
 
 .captcha {

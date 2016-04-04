@@ -37,7 +37,6 @@ var edit = function() {
 
 	var _initNodeEditResponse = function(res) {
 		if (util.checkSuccess("Editing node", res)) {
-			debugger;
 			var node = res.nodeInfo;
 						
 			//todo-2: this code is duplicated elsewhere.

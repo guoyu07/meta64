@@ -51,7 +51,6 @@ PrefsDlg.prototype.build = function() {
 PrefsDlg.prototype.savePreferences = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
 	meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE : meta64.MODE_ADVANCED;
-	debugger;
 	util.json("saveUserPreferences", {
 		"userPreferences" : {
 			"advancedMode" : meta64.editModeOption === meta64.MODE_ADVANCED
@@ -70,7 +69,6 @@ PrefsDlg.prototype.savePreferencesResponse = function(res) {
 
 PrefsDlg.prototype.init = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
-	debugger;
 	polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this.id("editModeAdvanced"));
 	Polymer.dom.flush();
 }

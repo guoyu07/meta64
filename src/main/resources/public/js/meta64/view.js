@@ -120,7 +120,6 @@ var view = function() {
 		},
 
 		initEditPathDisplayById : function(domId) {
-			debugger;
 			var node = edit.editNode;
 			var e = $("#"+domId);
 			if (edit.editingUnsavedNode) {
@@ -130,7 +129,7 @@ var view = function() {
 				var pathDisplay = "Path: " + render.formatPath(node);
 				pathDisplay += "<br>ID: " + node.id;
 				if (node.lastModified) {
-					pathDisplay += "<br>Modified: " + node.lastModified;
+					pathDisplay += "<br>Mod: " + node.lastModified;
 				}
 				e.html(pathDisplay);
 				e.show();

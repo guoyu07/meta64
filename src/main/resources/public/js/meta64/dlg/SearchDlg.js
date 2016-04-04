@@ -42,7 +42,6 @@ SearchDlg.prototype.searchTags = function() {
 }
 
 SearchDlg.prototype.searchProperty = function(searchProp) {
-	debugger;
 	if (!util.ajaxReady("searchNodes")) {
 		return;
 	}

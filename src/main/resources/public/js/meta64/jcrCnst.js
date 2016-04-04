@@ -17,12 +17,12 @@ var jcrCnst = function() {
 		CREATED : "jcr:created",
 		CREATED_BY : "jcr:createdBy",
 		CONTENT : "jcr:content",
+		TAGS : "tags",
 		UUID : "jcr:uuid",
 		LAST_MODIFIED : "jcr:lastModified",
 		LAST_MODIFIED_BY : "jcr:lastModifiedBy",
 		
 		DISABLE_INSERT : "disableInsert",
-		TAGS : "tags",
 
 		USER : "user",
 		PWD : "pwd",

@@ -9,7 +9,7 @@ var util = function() {
 	Array.prototype.clone = function() {
 		return this.slice(0);
 	};
-	
+
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
 		var jul = new Date(this.getFullYear(), 6, 1);
@@ -435,7 +435,7 @@ var util = function() {
 			// Not sure yet, if these two are required.
 			Polymer.dom.flush();
 			Polymer.updateStyles();
-			
+
 			return elm;
 		},
 
@@ -491,8 +491,15 @@ var util = function() {
 
 		/* iterates over an object creating a string containing it's keys */
 		printKeys : function(obj) {
+			if (!obj)
+				return "null";
+						
 			var val = '';
 			$.each(obj, function(k, v) {
+				if (!k) {
+					k = "null";
+				}
+				
 				if (val.length > 0) {
 					val += ',';
 				}
@@ -558,19 +565,19 @@ var util = function() {
 				domElm.style.display = 'none';
 			}
 		},
-		
-		//todo-2: make prototype property of Array
+
+		// todo-2: make prototype property of Array
 		indexOfItemByProp : function(array, propName, propVal) {
 			var len = array.length;
-			for (var i=0; i < len; i++) {
-				if (array[i][propName]===propVal) {
+			for (var i = 0; i < len; i++) {
+				if (array[i][propName] === propVal) {
 					return i;
 				}
 			}
 			return -1;
 		},
-		
-		//todo-2: ditto, prototype here
+
+		// todo-2: ditto, prototype here
 		arrayMoveItem : function(array, fromIndex, toIndex) {
 			array.splice(toIndex, 0, array.splice(fromIndex, 1)[0]);
 			return array;
@@ -581,5 +588,5 @@ var util = function() {
 	return _;
 }();
 
-//# sourceURL=util.js
+// # sourceURL=util.js
 

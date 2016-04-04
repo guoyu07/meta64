@@ -153,10 +153,10 @@ public class OakRepository {
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
 			
-			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, null);
+			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/static/landing-page.md");
 
-			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, null);
+			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, "Help Node");
 			initPageNodeFromClasspath(session, helpPageNode, "classpath:/static/help.md");
 			
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");

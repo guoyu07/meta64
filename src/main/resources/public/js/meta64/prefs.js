@@ -12,7 +12,7 @@ var prefs = function() {
 		},
 
 		closeAccount : function() {
-			(new ConfirmDlg("Oh No!", "Close your Account? Are you sure? This was so unexpected!",
+			(new ConfirmDlg("Oh No!", "Close your Account?<p> Are you sure?",
 					"Yes, Close Account.", function() {
 						util.json("closeAccount", {}, _.closeAccountResponse);
 					})).open();

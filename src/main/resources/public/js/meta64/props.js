@@ -31,34 +31,30 @@ var props = function() {
 			}
 		},
 
-		/*
-		 * Orders properties in some consistent manor appropriate to display in
-		 * gui. Currently all we are doing is moving any 'jcr:content' property
-		 * to the beginning of the list
-		 * 
-		 * properties will be null or a list of PropertyInfo objects
+		/* Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content' node and puts it
+		 * on the top, and then does same for 'jctCnst.TAGS'
 		 */
-		setPreferredPropertyOrder : function(properties) {
-			if (!properties)
-				return;
+		getPropertiesInEditingOrder : function(props) {
+			var propsNew = props.clone();
+			var targetIdx=0;
+			
+			var tagIdx = util.indexOfItemByProp(propsNew, "name", jcrCnst.CONTENT);
+			if (tagIdx!=-1) {
+				util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+			}
 
-			var newList = [];
-			$.each(properties, function(i, property) {
-				if (property.name === jcrCnst.CONTENT) {
-					/*
-					 * unshift is how javascript adds an element to the head of
-					 * an array shifting to the right any existing elements
-					 */
-					newList.unshift(property);
-				} else {
-					newList.push(property);
-				}
-			});
-			return newList;
+			tagIdx = util.indexOfItemByProp(propsNew, "name", jcrCnst.TAGS);
+			if (tagIdx!=-1) {
+				util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+			}
+			
+			return propsNew;
 		},
-
+		
 		/*
-		 * properties will be null or a list of PropertyInfo objects
+		 * properties will be null or a list of PropertyInfo objects.
+		 * 
+		 * todo-3: I can do much better in this method, I just haven't had time to clean it up. this method is ugly.
 		 */
 		renderProperties : function(properties) {
 			if (properties) {
@@ -110,7 +106,7 @@ var props = function() {
 		},
 
 		/*
-		 * does brute force search on node (NodeInfo.java) object properties
+		 * brute force searches on node (NodeInfo.java) object properties
 		 * list, and returns the first property (PropertyInfo.java) with name
 		 * matching propertyName, else null.
 		 */

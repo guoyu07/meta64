@@ -302,13 +302,16 @@ public class JcrUtil {
 					throw new Exception("unable to create " + nameToken);
 				}
 				nodesCreated = true;
-				if (defaultContent != null) {
-					parent.setProperty(JcrProp.CONTENT, defaultContent);
-				}
+				
+				parent.setProperty(JcrProp.CONTENT, "");
 			}
 			parentPath += nameToken + "/";
 		}
 
+		if (defaultContent != null) {
+			parent.setProperty(JcrProp.CONTENT, defaultContent);
+		}
+		
 		if (saveImmediate && nodesCreated) {
 			session.save();
 		}

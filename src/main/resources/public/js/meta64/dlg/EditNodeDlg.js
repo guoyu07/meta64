@@ -23,13 +23,17 @@ EditNodeDlg.prototype.build = function() {
 	var header = render.makeDialogHeader("Edit Node");
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty, this);
-	//this split works afaik,but I don't want it in front of users yet.
-	//var splitContentButton = this.makeButton("Split Content", "splitContentButton", "edit.splitContent();");
+	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty,
+			this);
+	var addTagsPropertyButton = this.makeButton("Add Tags Property", "addTagsPropertyButton",
+			EditNodeDlg.prototype.addTagsProperty, this);
+	// this split works afaik,but I don't want it in front of users yet.
+	// var splitContentButton = this.makeButton("Split Content",
+	// "splitContentButton", "edit.splitContent();");
 	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
 
-	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton 
-			/* + splitContentButton */ + cancelEditButton, "buttons");
+	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton
+	/* + splitContentButton */+ cancelEditButton, "buttons");
 
 	var width = window.innerWidth * 0.6;
 	var height = window.innerHeight * 0.4;
@@ -64,7 +68,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
 		var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
-		
+
 		// Iterate PropertyInfo.java objects
 		/*
 		 * Warning each iterator loop has its own 'this'
@@ -77,7 +81,7 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 			 * property/iteration
 			 */
 			if (!render.allowPropertyToDisplay(prop.name)) {
-				//console.log("Hiding property: " + prop.name);
+				// console.log("Hiding property: " + prop.name);
 				return;
 			}
 
@@ -144,11 +148,42 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 * allow any property editing to happen.
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
+	
+	var tagsProp = props.getNodePropertyVal("tags", edit.editNode);
+	console.log("hasTagsProp: " + tagsProp);
+	util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsProp);
 }
 
 EditNodeDlg.prototype.addProperty = function() {
 	this.editPropertyDlgInst = new EditPropertyDlg(this);
 	this.editPropertyDlgInst.open();
+}
+
+EditNodeDlg.prototype.addTagsProperty = function() {
+	if (props.getNodePropertyVal(edit.editNode, "tags")) {
+		// tag already exists, should disable button when this is true! todo-0
+		return;
+	}
+
+	var postData = {
+		nodeId : edit.editNode.id,
+		propertyName : "tags",
+		propertyValue : ""
+	};
+	util.json("saveProperty", postData, EditNodeDlg.prototype.savePropertyResponse, this);
+}
+
+/* Warning: don't confuse with EditPropertyDlg */
+EditNodeDlg.prototype.savePropertyResponse = function(res) {
+	util.checkSuccess("Save properties", res);
+
+	edit.editNode.properties.push(res.propertySaved);
+	meta64.treeDirty = true;
+
+	if (this.domId != "EditNodeDlg") {
+		console.log("error: incorrect object for EditNodeDlg");
+	}
+	this.populateEditNodePg();
 }
 
 /*
@@ -157,7 +192,7 @@ EditNodeDlg.prototype.addProperty = function() {
  */
 EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 	var buttonBar = "";
-	
+
 	var clearButton = render.tag("paper-button", //
 	{
 		"raised" : "raised",
@@ -232,7 +267,7 @@ EditNodeDlg.prototype.addSubProperty = function(fieldId) {
  */
 EditNodeDlg.prototype.deleteProperty = function(propName) {
 	var _this = this;
-	(new ConfirmDlg("Confirm Delete", "Delete the Property: "+propName, "Yes, delete.", function() {
+	(new ConfirmDlg("Confirm Delete", "Delete the Property: " + propName, "Yes, delete.", function() {
 		_this.deletePropertyImmediate(propName);
 	})).open();
 }

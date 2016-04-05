@@ -83,6 +83,7 @@ EditPropertyDlg.prototype.saveProperty = function() {
 	util.json("saveProperty", postData, EditPropertyDlg.prototype.savePropertyResponse, this);
 }
 
+/* Warning: don't confuse with EditNodeDlg */
 EditPropertyDlg.prototype.savePropertyResponse = function(res) {
 	util.checkSuccess("Save properties", res);
 

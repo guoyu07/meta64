@@ -482,7 +482,7 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
+			util.setEnablement("upLevelButton", _.currentNode && nav.parentVisibleToUser());
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
@@ -494,7 +494,8 @@ var meta64 = function() {
 			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null);
+			
+			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null && highlightNode.hasBinary);
 			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("searchDlgButton", !_.isAnonUser && highlightNode != null);

@@ -2,11 +2,15 @@ package com.meta64.mobile.model;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Primary object passed back to client to represent a 'node'. Client sees the
  * JSON version of this, in javascript.
  */
 public class NodeInfo {
+	private static final Logger log = LoggerFactory.getLogger(NodeInfo.class);
 
 	private String id;
 	private String path;

@@ -515,7 +515,7 @@ EditNodeDlg.prototype.makeSinglePropEditor = function(fieldId, prop, isReadOnlyP
 	var label = render.sanitizePropertyName(prop.name);
 	var propValStr = propVal ? propVal : '';
 	propValStr = propValStr.escapeForAttrib();
-	console.log("editing: prop[" + prop.name + "] val[" + prop.val + "]");
+	//console.log("editing: prop[" + prop.name + "] val[" + prop.val + "]");
 
 	if (isReadOnlyProp || isBinaryProp) {
 		field += render.tag("paper-textarea", {

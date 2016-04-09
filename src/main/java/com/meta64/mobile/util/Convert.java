@@ -89,7 +89,6 @@ public class Convert {
 		try {
 			binVer = getBinaryVersion(node);
 			if (binVer > 0) {
-
 				/* if we didn't get an exception, we know we have a binary */
 				hasBinary = true;
 				binaryIsImage = isImageAttached(node);
@@ -105,7 +104,7 @@ public class Convert {
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
-		log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
+		//log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
 		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly);
 

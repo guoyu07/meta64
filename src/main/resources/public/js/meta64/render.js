@@ -541,7 +541,6 @@ var render = function() {
 		 * if there is one to scroll to
 		 */
 		renderPageFromData : function(data) {
-
 			console.log("render.renderPageFromData()");
 
 			var newData = false;

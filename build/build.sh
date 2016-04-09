@@ -74,7 +74,13 @@ mvn clean package -DskipTests=true
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar /run-root/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
 rm /ferguson/meta64Oak/build/all.js
+rm /ferguson/meta64Oak/build/*.sh~
 rm /ferguson/meta64Oak/src/main/resources/public/js/meta64.min.js
+rm /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs/main-tabs-out.html
+rm /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
+rm /ferguson/meta64Oak/src/main/resources/templates/index-20*.html
+rm /ferguson/meta64Oak/src/main/resources/static/*.md~
+rm /ferguson/meta64Oak/*.md~
 
 read -p "All done."
 

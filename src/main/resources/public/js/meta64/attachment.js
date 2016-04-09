@@ -43,15 +43,8 @@ var attachment = function() {
 
 		deleteAttachmentResponse : function(res) {
 			if (util.checkSuccess("Delete attachment", res)) {
-
-				/*
-				 * TODO-2: Does just setting hasBinary false not work?
-				 */
-				// _.uploadNode.hasBinary = false;
 				meta64.removeBinaryByUid(_.uploadNode.uid);
-
 				console.log("removed attachment from node uid: " + _.uploadNode.uid);
-				
 				//force re-render from local data.
 				meta64.goToMainPage(true);
 			}

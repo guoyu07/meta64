@@ -126,20 +126,12 @@ var srch = function() {
 			var uid = node.uid;
 			console.log("renderSearchResult: " + uid);
 
-			/*
-			 * TODO-2: fix. This checking of "rep:" is just a hack for now to
-			 * stop from deleting things I won't want to allow to delete, but I
-			 * will design this better later.
-			 */
-			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
-			var editingAllowed = meta64.isAdminUser || !isRep;
-
 			var cssId = uid + _UID_ROWID_SUFFIX;
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
 			var buttonBarHtml = _.makeButtonBarHtml("" + uid);
 			console.log("buttonBarHtml=" + buttonBarHtml);
-			var content = render.renderNodeContent(node, true, true, true, true);
+			var content = render.renderNodeContent(node, true, true, true, true, true);
 
 			return render.tag("div", //
 			{

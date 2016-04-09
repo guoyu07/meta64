@@ -38,14 +38,14 @@ var props = function() {
 			var propsNew = props.clone();
 			var targetIdx=0;
 			
-			var tagIdx = util.indexOfItemByProp(propsNew, "name", jcrCnst.CONTENT);
+			var tagIdx = propsNew.indexOfItemByProp("name", jcrCnst.CONTENT);
 			if (tagIdx!=-1) {
-				util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+				propsNew.arrayMoveItem(tagIdx, targetIdx++);
 			}
 
-			tagIdx = util.indexOfItemByProp(propsNew, "name", jcrCnst.TAGS);
+			tagIdx = propsNew.indexOfItemByProp("name", jcrCnst.TAGS);
 			if (tagIdx!=-1) {
-				util.arrayMoveItem(propsNew, tagIdx, targetIdx++);
+				propsNew.arrayMoveItem(tagIdx, targetIdx++);
 			}
 			
 			return propsNew;

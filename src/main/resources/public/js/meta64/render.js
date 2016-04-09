@@ -65,21 +65,10 @@ var render = function() {
 			}
 		},
 
-		/*
-		 * node: JSON of NodeInfo.java
-		 */
-		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling) {
-			var headerText = "";
-			var ret = "";
-
-			ret += _.getTopRightImageTag(node);
+		buildRowHeader : function(node, showPath, showName) {
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
-			// I think path on always for now
-			showPath = true;
-			// if (showPath && meta64.editMode) {
-
-			headerText += "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
+			var headerText = "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
 			headerText += "<div>";
 
 			if (commentBy) {
@@ -96,7 +85,6 @@ var render = function() {
 				headerText += "  Mod: " + node.lastModified;
 			}
 			headerText += "</div>";
-			// }
 
 			/*
 			 * on root node name will be empty string so don't show that
@@ -113,12 +101,24 @@ var render = function() {
 			if (showName && !showPath && node.name) {
 				headerText += "Name: " + node.name + " [uid=" + node.uid + "]";
 			}
-
-			if (headerText) {
-				ret += _.tag("div", {
-					"class" : "header-text"
-				}, headerText);
-			}
+			
+			headerText = _.tag("div", {
+				"class" : "header-text"
+			}, headerText);
+			
+			return headerText;
+		},
+		
+		/*
+		 * node: JSON of NodeInfo.java
+		 * 
+		 * todo-0: rowHeader is always true so remove the param
+		 */
+		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
+			var ret = _.getTopRightImageTag(node);
+			
+			/* todo-0: enable headerText when appropriate here */
+			ret += showHeader ? _.buildRowHeader(node, showPath, showName) : "";
 
 			if (meta64.showProperties) {
 				// console.log("showProperties = " +
@@ -168,6 +168,8 @@ var render = function() {
 				}
 			}
 
+			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+			
 			/*
 			 * If this is a comment node, but not by the current user (because
 			 * they cannot reply to themselves) then add a reply button, so they
@@ -225,12 +227,7 @@ var render = function() {
 			var canMoveUp = index > 0 && rowCount > 1;
 			var canMoveDown = index < count - 1;
 
-			/*
-			 * TODO-2: this checking of "rep:" is just a hack for now to stop
-			 * from deleting things I won't want to allow to delete, but I will
-			 * design this better later.
-			 */
-			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
+			var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
@@ -243,7 +240,7 @@ var render = function() {
 			var focusNode = meta64.getHighlightedNode();
 			var selected = (focusNode && focusNode.uid === uid);
 
-			var buttonBarHtml = _.makeRowButtonBarHtml(uid, canMoveUp, canMoveDown, editingAllowed);
+			var buttonBarHtmlRet = _.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
 			var bkgStyle = _.getNodeBkgImageStyle(node);
 
 			var cssId = uid + "_row";
@@ -255,10 +252,10 @@ var render = function() {
 				"id" : cssId,
 				"style" : bkgStyle
 			},// 
-			buttonBarHtml + _.tag("div", //
+			buttonBarHtmlRet.val + _.tag("div", //
 			{
 				"id" : uid + "_content"
-			}, _.renderNodeContent(node, true, true, true, true)));
+			}, _.renderNodeContent(node, true, true, true, true, !buttonBarHtmlRet.headerShown)));
 		},
 
 		showNodeUrl : function() {
@@ -308,18 +305,31 @@ var render = function() {
 			}, buttons);
 		},
 
-		makeRowButtonBarHtml : function(uid, canMoveUp, canMoveDown, editingAllowed) {
+		makeRowButtonBarHtml : function(node, canMoveUp, canMoveDown, editingAllowed) {
 
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
 			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";
 
+			var buttonCount = 0;
+			
 			/* Construct Open Button */
-			if (_.nodeHasChildren(uid)) {
+			if (_.nodeHasChildren(node.uid)) {
+				buttonCount++;
+								
+//				openButton = _.tag("paper-icon-button", //
+//				{
+//					"class" : "highlight-button",
+//					"raised" : "raised",
+//					"icon" : "folder-open",
+//					"onClick" : "nav.openNode('" + node.uid + "');"//
+//				}, //
+//				"");
+				
 				openButton = _.tag("paper-button", //
 				{
 					"class" : "highlight-button",
 					"raised" : "raised",
-					"onClick" : "nav.openNode('" + uid + "');"//
+					"onClick" : "nav.openNode('" + node.uid + "');"//
 				}, //
 				"Open");
 			}
@@ -333,67 +343,86 @@ var render = function() {
 			if (meta64.editMode) {
 				// console.log("Editing allowed: " + nodeId);
 
-				var selected = meta64.selectedNodes[uid] == true ? "true" : "false";
+				var selected = meta64.selectedNodes[node.uid] ? true : false;
 
-				console.log("      nodeId " + uid + " selected=" + selected);
-
-				selButton = _.tag("paper-button", //
-				{
-					"class" : "custom-toggle",
-					"toggles" : "toggles",
-					"raised" : "raised",
-					"id" : uid + "_sel",//
-					"onClick" : "nav.toggleNodeSel('" + uid + "');",
-					"active" : selected
-				}, "Sel");
-
+				console.log("      nodeId " + node.uid + " selected=" + selected);
+				buttonCount++;
+				
+//				selButton = _.tag("paper-button", //
+//				{
+//					"class" : "custom-toggle",
+//					"toggles" : "toggles",
+//					"raised" : "raised",
+//					"id" : node.uid + "_sel",//
+//					"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
+//					"active" : selected
+//				}, "Sel");
+				
+				var css = selected ? //
+						{
+						"id" : node.uid + "_sel",//
+						"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
+						"checked" : "checked"
+					} : //
+					{
+						"id" : node.uid + "_sel",//
+						"onClick" : "nav.toggleNodeSel('" + node.uid + "');"
+					}
+					;
+				
+				selButton = _.tag("paper-checkbox", css, "");
+				
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
+					buttonCount++;
 					createSubNodeButton = _.tag("paper-button", //
 					{
-						"id" : "addNodeButtonId" + uid,
+						"id" : "addNodeButtonId" + node.uid,
 						"raised" : "raised",
-						"onClick" : "edit.createSubNode('" + uid + "');"
+						"onClick" : "edit.createSubNode('" + node.uid + "');"
 					}, "Add");
 				}
 
 				if (cnst.INS_ON_TOOLBAR) {
+					buttonCount++;
 					/* Construct Create Subnode Button */
 					insertNodeButton = _.tag("paper-button", //
 					{
-						"id" : "insertNodeButtonId" + uid,
+						"id" : "insertNodeButtonId" + node.uid,
 						"raised" : "raised",
-						"onClick" : "edit.insertNode('" + uid + "');"
+						"onClick" : "edit.insertNode('" + node.uid + "');"
 					}, "Ins");
 				}
 			}
 
 			if (meta64.editMode && editingAllowed) {
-
+				buttonCount++;
 				/* Construct Create Subnode Button */
 				editNodeButton = _.tag("paper-button", //
 				{
 					"raised" : "raised",
-					"onClick" : "edit.runEditNode('" + uid + "');"
+					"onClick" : "edit.runEditNode('" + node.uid + "');"
 				}, "Edit");
 
 				if (meta64.currentNode.childrenOrdered) {
 
 					if (canMoveUp) {
+						buttonCount++;
 						/* Construct Create Subnode Button */
 						moveNodeUpButton = _.tag("paper-button", //
 						{
 							"raised" : "raised",
-							"onClick" : "edit.moveNodeUp('" + uid + "');"
+							"onClick" : "edit.moveNodeUp('" + node.uid + "');"
 						}, "Up");
 					}
 
 					if (canMoveDown) {
+						buttonCount++;
 						/* Construct Create Subnode Button */
 						moveNodeDownButton = _.tag("paper-button", //
 						{
 							"raised" : "raised",
-							"onClick" : "edit.moveNodeDown('" + uid + "');"
+							"onClick" : "edit.moveNodeDown('" + node.uid + "');"
 						}, "Dn");
 					}
 				}
@@ -419,11 +448,15 @@ var render = function() {
 			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
 					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
+			//todo-0: can now to back to just returning val here.
+			var ret = {};
+						
 			if (allButtons.length > 0) {
-				return _.makeHorizontalFieldSet(allButtons);
+				ret.val = _.makeHorizontalFieldSet(allButtons);
 			} else {
-				return "";
+				ret.val =  "";
 			}
+			return ret;
 		},
 
 		makeDialogHeader : function(text) {
@@ -471,13 +504,14 @@ var render = function() {
 
 		formatPath : function(node) {
 			var path = node.path;
-			/*
-			 * TODO-2: This will fail now that jcr: is removed because it can
-			 * match and corrupt any path that happens to start with root!
-			 * BEWARE! FIX!
-			 */
 			var shortPath = path.length < 50 ? path : path.substring(0, 40)+"...";
-			var ret = meta64.isAdminUser ? shortPath : shortPath.replaceAll("/root", "");
+			
+			var noRootPath = shortPath;
+			if (noRootPath.startsWith("/root")) {
+				noRootPath = noRootPath.substring(0, 5);
+			}
+			
+			var ret = meta64.isAdminUser ? shortPath : noRootPath;
 			ret += " [" + node.primaryTypeName + "]";
 			return ret;
 		},
@@ -553,22 +587,18 @@ var render = function() {
 			var output = '';
 			var bkgStyle = _.getNodeBkgImageStyle(data.node);
 
-			// String mainNodePath =_.formatPath(data.node);
-			// now set to content at dom id mainSubHeading
-
 			/*
 			 * NOTE: mainNodeContent is the parent node of the page content, and
 			 * is always the node displayed at the to of the page above all the
 			 * other nodes which are its child nodes.
 			 */
-			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false);
+			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false, true);
 
 			// console.log("mainNodeContent: "+mainNodeContent);
 			if (mainNodeContent.length > 0) {
 				var uid = data.node.uid;
 				var cssId = uid + "_row";
 				var buttonBar = "";
-				var upLevelButton = "";
 				var editNodeButton = "";
 
 				// console.log("data.node.path="+data.node.path);
@@ -589,9 +619,10 @@ var render = function() {
 				/* Construct Create Subnode Button */
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
-
-				if (upLevelButton || editNodeButton) {
-					buttonBar = _.makeHorizontalFieldSet(upLevelButton + editNodeButton);
+				//var rowHeader = _.buildRowHeader(data.node, true, true);
+				
+				if (editNodeButton) {
+					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}
 
 				var content = _.tag("div", //

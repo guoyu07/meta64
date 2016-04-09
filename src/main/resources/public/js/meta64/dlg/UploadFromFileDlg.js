@@ -105,4 +105,4 @@ UploadFromFileDlg.prototype.init = function() {
 	$("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }
 
-// # sourceURL=UploadFromFileDlg.js
+//# sourceURL=UploadFromFileDlg.js

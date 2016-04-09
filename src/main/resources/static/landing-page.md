@@ -111,8 +111,11 @@ https://jackrabbit.apache.org/oak/docs/index.html
 * Refer to the 'docs' folder of the project for additional technical documentation.
 
 ## About the Developer
-Meta64 is currently owned and maintained by Clay Ferguson. I am a 47 yr old Java Developer located in Dallas, Texas. I have 24 years of coding experience primarily in business intelligence, financial analysis, and for the past 14 years web development. Feel free to get in touch with me here:
+Meta64 is a FOSS project created by Clay Ferguson. I'm a 48 yr old Java Developer located in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java on Web Apps. Feel free to get in touch with me here:
 
 **linkedin.com:** http://www.linkedin.com/in/wclayf  
 **GitHub:** https://github.com/Clay-Ferguson  
 **email:** wclayf@gmail.com  
+
+###.
+

@@ -1,7 +1,6 @@
 console.log("running module: cnst.js");
 
 var cnst = function() {
-
 	var _ = {
 		ANON : "anonymous",
 		COOKIE_LOGIN_USR : cookiePrefix + "loginUsr",

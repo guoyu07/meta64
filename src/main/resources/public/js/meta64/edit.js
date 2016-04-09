@@ -39,11 +39,11 @@ var edit = function() {
 		if (util.checkSuccess("Editing node", res)) {
 			var node = res.nodeInfo;
 						
-			//todo-2: this code is duplicated elsewhere.
-			var isRep = node.name.startsWith("rep:") || meta64.currentNodeData.node.path.contains("/rep:");
+			var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 			&& !props.isNonOwnedNode(node);
-						
+					
+			
 			if (editingAllowed) {
 				/*
 				 * Server will have sent us back the raw text content, that
@@ -62,7 +62,6 @@ var edit = function() {
 
 	var _moveNodesResponse = function(res) {
 		if (util.checkSuccess("Move nodes", res)) {
-
 			_.nodesToMove = null; // reset
 			view.refreshTree(null, false);
 		}

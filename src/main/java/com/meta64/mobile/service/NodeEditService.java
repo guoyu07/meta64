@@ -237,6 +237,9 @@ public class NodeEditService {
 	 * address the node, and will be completely unique.
 	 * 
 	 * todo-2: method no longer needed. functionality added to 'renameNode'.
+	 * 
+	 * WARNING: before deleting this method review MIX_REFERENCABLE docs once more and check if there is still any
+	 * value in having this something that can be set directly via API call or not?
 	 */
 	@Deprecated
 	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res)

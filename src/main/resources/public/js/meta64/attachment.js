@@ -6,11 +6,8 @@ var attachment = function() {
 
 		/* Node being uploaded to */
 		uploadNode : null,
-
-		/*
-		 * srcOption = url | file
-		 */
-		openUploadDlg : function(srcOption) {
+		
+		openUploadFromFileDlg : function() {
 			var node = meta64.getHighlightedNode();
 
 			if (!node) {
@@ -20,7 +17,20 @@ var attachment = function() {
 			}
 
 			_.uploadNode = node;
-			(new UploadDlg(srcOption)).open();
+			(new UploadFromFileDlg()).open();
+		},
+		
+		openUploadFromUrlDlg : function() {
+			var node = meta64.getHighlightedNode();
+
+			if (!node) {
+				_.uploadNode = null;
+				(new MessageDlg("No node is selected.")).open();
+				return;
+			}
+
+			_.uploadNode = node;
+			(new UploadFromUrlDlg()).open();
 		},
 		
 		deleteAttachment : function() {

@@ -69,7 +69,6 @@ SearchDlg.prototype.searchProperty = function(searchProp) {
 }
 
 SearchDlg.prototype.init = function() {
-	//todo-2: put in base class.
 	util.delayedFocus(this.id("searchText"));
 }
 

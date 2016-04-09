@@ -161,7 +161,6 @@ EditNodeDlg.prototype.addProperty = function() {
 
 EditNodeDlg.prototype.addTagsProperty = function() {
 	if (props.getNodePropertyVal(edit.editNode, "tags")) {
-		// tag already exists, should disable button when this is true! todo-0
 		return;
 	}
 

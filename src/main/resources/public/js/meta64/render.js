@@ -427,7 +427,9 @@ var render = function() {
 		},
 
 		makeDialogHeader : function(text) {
-			return _.tag("h2", {}, text);
+			return _.tag("h2", {
+				"class" : "dialog-header"
+			}, text);
 		},
 
 		makeHorizontalFieldSet : function(content, extraClasses) {

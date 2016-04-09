@@ -50,7 +50,7 @@ Dialog.prototype.open = function() {
 	modalsContainer.node.appendChild(node);
 	
 	//todo-3: this was an experiment. do it correctly now.
-	node.style.border = "8px solid gray";
+	node.style.border = "3px solid gray";
 
 	Polymer.dom.flush(); // <---- is this needed ? todo
 	Polymer.updateStyles();

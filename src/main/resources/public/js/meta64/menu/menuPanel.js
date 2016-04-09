@@ -48,8 +48,8 @@ var menuPanel = function() {
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
 			
 			var attachmentMenuItems = //
-			_menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadDlg('file');") + //
-			_menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadDlg('url');") + //
+			_menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadFromFileDlg();") + //
+			_menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadFromUrlDlg();") + //
 			_menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");	
 			var attachmentMenu = _makeTopLevelMenu("Attachments", attachmentMenuItems);
 			

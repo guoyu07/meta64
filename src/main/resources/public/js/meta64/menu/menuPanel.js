@@ -3,7 +3,9 @@ console.log("running module: menuPanel.js");
 var menuPanel = function() {
 
 	function _makeTopLevelMenu(title, content) {
-		return render.tag("paper-submenu", {}, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
+		return render.tag("paper-submenu", {
+			"class" : "meta64-menu-heading" 
+		}, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
 		_makeSecondLevelList(content), true);
 	}
 

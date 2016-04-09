@@ -16,6 +16,10 @@
 	font-style: normal;
 }
 
+.meta64-menu-heading {
+	cursor: pointer;
+}
+
 .mainNodeContentStyle {
 	margin-top: 15px;
 	margin-bottom: 15px;

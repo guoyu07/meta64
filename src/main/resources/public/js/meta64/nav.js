@@ -69,7 +69,7 @@ var nav = function() {
 
 			return null;
 		},
-		
+
 		/*
 		 * turn of row selection DOM element of whatever row is currently
 		 * selected
@@ -87,7 +87,7 @@ var nav = function() {
 
 						/* now make CSS id from node */
 						var nodeId = node.uid + _UID_ROWID_SUFFIX;
-						console.log("looking up using element id: "+nodeId);
+						console.log("looking up using element id: " + nodeId);
 
 						return util.polyElm(nodeId);
 					}
@@ -101,7 +101,7 @@ var nav = function() {
 		},
 
 		clickOnNodeRow : function(rowElm, uid) {
-			
+
 			var node = meta64.uidToNodeMap[uid];
 			if (!node) {
 				console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);
@@ -142,20 +142,24 @@ var nav = function() {
 			}
 		},
 
+		/*
+		 * unfortunately we have to rely on onClick, because of the fact that
+		 * events to checkboxes don't appear to work in Polmer at all, and since
+		 * onClick runs BEFORE the state change is completed, that is the reason
+		 * for the silly looking async timer here.
+		 */
 		toggleNodeSel : function(uid) {
-			var toggleButton = util.polyElm(uid+"_sel");
+			var toggleButton = util.polyElm(uid + "_sel");
+			setTimeout(function() {
+				if (toggleButton.node.checked) {
+					meta64.selectedNodes[uid] = true;
+				} else {
+					delete meta64.selectedNodes[uid];
+				}
 
-			/*
-			 * Tricky part here, only 'node' seems to be maintained at runtime. I must not understand shadow dom! lol.
-			 */
-			if (toggleButton.node.active) {
-				meta64.selectedNodes[uid] = true;
-			} else {
-				delete meta64.selectedNodes[uid];
-			}
-			
-			view.updateStatusBar();
-			meta64.refreshAllGuiEnablement();
+				view.updateStatusBar();
+				meta64.refreshAllGuiEnablement();
+			}, 500);
 		},
 
 		navHomeResponse : function(res) {
@@ -175,7 +179,7 @@ var nav = function() {
 				}, _.navHomeResponse);
 			}
 		},
-		
+
 		navPublicHome : function() {
 			meta64.loadAnonPageHome(true);
 		}
@@ -185,4 +189,4 @@ var nav = function() {
 	return _;
 }();
 
-//# sourceURL=nav.js
+// # sourceURL=nav.js

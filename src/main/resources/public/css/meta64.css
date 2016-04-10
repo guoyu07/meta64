@@ -164,6 +164,8 @@ tr td div p {
 	/* we limit page width of text content, because text that goes to wide 
 		becomes difficult to read.
 	*/
+	padding-top: 8px;
+	padding-bottom: 8px;
 	max-width: 800px;
 	background: lightGray;
 }

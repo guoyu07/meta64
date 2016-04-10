@@ -6,7 +6,7 @@ var attachment = function() {
 
 		/* Node being uploaded to */
 		uploadNode : null,
-		
+
 		openUploadFromFileDlg : function() {
 			var node = meta64.getHighlightedNode();
 
@@ -19,7 +19,7 @@ var attachment = function() {
 			_.uploadNode = node;
 			(new UploadFromFileDlg()).open();
 		},
-		
+
 		openUploadFromUrlDlg : function() {
 			var node = meta64.getHighlightedNode();
 
@@ -32,28 +32,32 @@ var attachment = function() {
 			_.uploadNode = node;
 			(new UploadFromUrlDlg()).open();
 		},
-		
+
 		deleteAttachment : function() {
-			(new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.", function() {
-				util.json("deleteAttachment", {
-					"nodeId" : _.uploadNode.id
-				}, _.deleteAttachmentResponse);
-			})).open();
+			var node = meta64.getHighlightedNode();
+			
+			if (node) {
+				(new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
+						function() {
+							util.json("deleteAttachment", {
+								"nodeId" : node.id
+							}, _.deleteAttachmentResponse, null, node.uid);
+						})).open();
+			}
 		},
 
-		deleteAttachmentResponse : function(res) {
+		deleteAttachmentResponse : function(res, uid) {
 			if (util.checkSuccess("Delete attachment", res)) {
-				meta64.removeBinaryByUid(_.uploadNode.uid);
-				console.log("removed attachment from node uid: " + _.uploadNode.uid);
-				//force re-render from local data.
+				meta64.removeBinaryByUid(uid);
+				// force re-render from local data.
 				meta64.goToMainPage(true);
 			}
-		}	
+		}
 	};
-	
+
 	console.log("Module ready: attachment.js");
 	return _;
 }();
 
-//# sourceURL=attachment.js
+// # sourceURL=attachment.js
 

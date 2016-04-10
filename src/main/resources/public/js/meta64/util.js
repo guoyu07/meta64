@@ -19,11 +19,11 @@ var util = function() {
 		}
 		return -1;
 	};
-	
+
 	Array.prototype.arrayMoveItem = function(fromIndex, toIndex) {
 		this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
 	};
-	
+
 	Date.prototype.stdTimezoneOffset = function() {
 		var jan = new Date(this.getFullYear(), 0, 1);
 		var jul = new Date(this.getFullYear(), 6, 1);
@@ -97,8 +97,10 @@ var util = function() {
 		/*
 		 * If the callback function needs a 'this' context for the call, then
 		 * pass the 'this' in the callbackThis parameter.
+		 * 
+		 * callbackPayload is passed to callback as its last parameter
 		 */
-		json : function(postName, postData, callback, callbackThis) {
+		json : function(postName, postData, callback, callbackThis, callbackPayload) {
 
 			if (offline) {
 				console.log("offline: ignoring call for " + postName);
@@ -165,10 +167,22 @@ var util = function() {
 				}
 
 				if (typeof callback == "function") {
-					if (callbackThis) {
-						callback.call(callbackThis, ironRequest.response);
+					/*
+					 * This is ugly because it covers all four cases based on
+					 * two booleans, but it's still the simplest way to do this
+					 */
+					if (callbackPayload) {
+						if (callbackThis) {
+							callback.call(callbackThis, ironRequest.response, callbackPayload);
+						} else {
+							callback(ironRequest.response, callbackPayload);
+						}
 					} else {
-						callback(ironRequest.response);
+						if (callbackThis) {
+							callback.call(callbackThis, ironRequest.response);
+						} else {
+							callback(ironRequest.response);
+						}
 					}
 				}
 			},
@@ -507,13 +521,13 @@ var util = function() {
 		printKeys : function(obj) {
 			if (!obj)
 				return "null";
-						
+
 			var val = '';
 			$.each(obj, function(k, v) {
 				if (!k) {
 					k = "null";
 				}
-				
+
 				if (val.length > 0) {
 					val += ',';
 				}
@@ -585,5 +599,5 @@ var util = function() {
 	return _;
 }();
 
-//# sourceURL=util.js
+// # sourceURL=util.js
 

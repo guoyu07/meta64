@@ -5,7 +5,7 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
-
+	
 	Array.prototype.clone = function() {
 		return this.slice(0);
 	};
@@ -99,40 +99,51 @@ var util = function() {
 		 * pass the 'this' in the callbackThis parameter.
 		 * 
 		 * callbackPayload is passed to callback as its last parameter
+		 * 
+		 * todo-3: this method got too long. Need to not inline these function definitions
 		 */
 		json : function(postName, postData, callback, callbackThis, callbackPayload) {
 
-			if (offline) {
-				console.log("offline: ignoring call for " + postName);
-				return;
+			var ironAjax;
+			var ironRequest;
+
+			try {
+				if (offline) {
+					console.log("offline: ignoring call for " + postName);
+					return;
+				}
+
+				if (logAjax) {
+					console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
+				}
+
+				/* Do not delete, research this way... */
+				// var ironAjax = this.$$("#myIronAjax");
+				ironAjax = Polymer.dom(this.root).querySelector("#ironAjax");
+
+				ironAjax.url = postTargetUrl + postName;
+				ironAjax.verbose = true;
+				ironAjax.body = JSON.stringify(postData);
+				ironAjax.method = "POST";
+				ironAjax.contentType = "application/json";
+
+				// specify any url params this way:
+				// ironAjax.params='{"alt":"json", "q":"chrome"}';
+
+				ironAjax.handleAs = "json"; // handle-as (is prop)
+
+				/* This not a required property */
+				// ironAjax.onResponse = "util.ironAjaxResponse"; // on-response
+				// (is
+				// prop)
+				ironAjax.debounceDuration = "300"; // debounce-duration (is
+				// prop)
+
+				_ajaxCounter++;
+				ironRequest = ironAjax.generateRequest();
+			} catch (ex) {
+				throw "Failed starting request: " + postName;
 			}
-
-			if (logAjax) {
-				console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
-			}
-
-			/* Do not delete, research this way... */
-			// var ironAjax = this.$$("#myIronAjax");
-			var ironAjax = Polymer.dom(this.root).querySelector("#ironAjax");
-
-			ironAjax.url = postTargetUrl + postName;
-			ironAjax.verbose = true;
-			ironAjax.body = JSON.stringify(postData);
-			ironAjax.method = "POST";
-			ironAjax.contentType = "application/json";
-
-			// specify any url params this way:
-			// ironAjax.params='{"alt":"json", "q":"chrome"}';
-
-			ironAjax.handleAs = "json"; // handle-as (is prop)
-
-			/* This not a required property */
-			// ironAjax.onResponse = "util.ironAjaxResponse"; // on-response (is
-			// prop)
-			ironAjax.debounceDuration = "300"; // debounce-duration (is prop)
-
-			_ajaxCounter++;
-			var ironRequest = ironAjax.generateRequest();
 
 			/**
 			 * Notes
@@ -160,73 +171,85 @@ var util = function() {
 
 			// Handle Success
 			function() {
-				_ajaxCounter--;
-				if (logAjax) {
-					console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
-							+ JSON.stringify(ironRequest.response));
-				}
+				try {
+					_ajaxCounter--;
+					if (logAjax) {
+						console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
+								+ JSON.stringify(ironRequest.response));
+					}
 
-				if (typeof callback == "function") {
-					/*
-					 * This is ugly because it covers all four cases based on
-					 * two booleans, but it's still the simplest way to do this
-					 */
-					if (callbackPayload) {
-						if (callbackThis) {
-							callback.call(callbackThis, ironRequest.response, callbackPayload);
+					if (typeof callback == "function") {
+						/*
+						 * This is ugly because it covers all four cases based
+						 * on two booleans, but it's still the simplest way to
+						 * do this
+						 */
+						if (callbackPayload) {
+							if (callbackThis) {
+								callback.call(callbackThis, ironRequest.response, callbackPayload);
+							} else {
+								callback(ironRequest.response, callbackPayload);
+							}
 						} else {
-							callback(ironRequest.response, callbackPayload);
-						}
-					} else {
-						if (callbackThis) {
-							callback.call(callbackThis, ironRequest.response);
-						} else {
-							callback(ironRequest.response);
+							if (callbackThis) {
+								callback.call(callbackThis, ironRequest.response);
+							} else {
+								callback(ironRequest.response);
+							}
 						}
 					}
+				} catch (ex) {
+					throw "Failed handling result of: " + postName;
 				}
+
 			},
 			// Handle Fail
 			function() {
-				_ajaxCounter--;
-				console.log("Error in util.json");
+				try {
+					_ajaxCounter--;
+					console.log("Error in util.json");
 
-				if (ironRequest.status == "403") {
-					console.log("Not logged in detected in util.");
-					offline = true;
+					if (ironRequest.status == "403") {
+						console.log("Not logged in detected in util.");
+						offline = true;
 
-					if (!timeoutMessageShown) {
-						timeoutMessageShown = true;
-						(new MessageDlg("Session timed out. Page will refresh.")).open();
+						if (!timeoutMessageShown) {
+							timeoutMessageShown = true;
+							(new MessageDlg("Session timed out. Page will refresh.")).open();
+						}
+
+						$(window).off("beforeunload");
+						window.location.href = window.location.origin;
+						return;
 					}
 
-					$(window).off("beforeunload");
-					window.location.href = window.location.origin;
-					return;
-				}
+					var msg = "Server request failed.\n\n";
 
-				var msg = "Server request failed.\n\n";
+					/* catch block should fail silently */
+					try {
+						msg += "Status: " + ironRequest.statusText + "\n";
+						msg += "Code: " + ironRequest.status + "\n";
+					} catch (ex) {
+					}
 
-				/* catch block should fail silently */
-				try {
-					msg += "Status: " + ironRequest.statusText + "\n";
-					msg += "Code: " + ironRequest.status + "\n";
+					/*
+					 * this catch block should also fail silently
+					 * 
+					 * This was showing "classCastException" when I threw a
+					 * regular "Exception" from server so for now I'm just
+					 * turning this off since its' not displaying the correct
+					 * message.
+					 */
+					// try {
+					// msg += "Response: " +
+					// JSON.parse(xhr.responseText).exception;
+					// } catch (ex) {
+					// }
+					(new MessageDlg(msg)).open();
 				} catch (ex) {
+					throw "Failed processing server-side fail of: " + postName;
 				}
 
-				/*
-				 * this catch block should also fail silently
-				 * 
-				 * This was showing "classCastException" when I threw a regular
-				 * "Exception" from server so for now I'm just turning this off
-				 * since its' not displaying the correct message.
-				 */
-				// try {
-				// msg += "Response: " +
-				// JSON.parse(xhr.responseText).exception;
-				// } catch (ex) {
-				// }
-				(new MessageDlg(msg)).open();
 			});
 
 			return ironRequest;
@@ -463,7 +486,7 @@ var util = function() {
 			// Not sure yet, if these two are required.
 			Polymer.dom.flush();
 			Polymer.updateStyles();
-
+			
 			return elm;
 		},
 
@@ -599,5 +622,5 @@ var util = function() {
 	return _;
 }();
 
-// # sourceURL=util.js
+//# sourceURL=util.js
 

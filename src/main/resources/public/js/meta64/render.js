@@ -152,36 +152,36 @@ var render = function() {
 				if (contentProp) {
 
 					var jcrContent = props.renderProperty(contentProp);
+					jcrContent = jcrContent.replaceAll("\n\n", "{{p}}");
 
 					if (jcrContent.length > 0) {
 
 						// jcrContent = _.injectCodeFormatting(jcrContent);
 
 						/* alternate attribute way */
-						if (false) {
-							jcrContent = jcrContent.replaceAll("'", "{{quot}}");
-							ret += "<marked-element sanitize='true' markdown='" + jcrContent
-									+ "'><div class='markdown-html jcr-content'>";
-							ret += "</div></marked-element>";
+						// jcrContent = jcrContent.replaceAll("'", "{{quot}}");
+						// ret += "<marked-element sanitize='true' markdown='" +
+						// jcrContent
+						// + "'><div class='markdown-html jcr-content'>";
+						// ret += "</div></marked-element>";
+						
+						if (rowStyling) {
+							ret += "<marked-element sanitize='true'><div class='markdown-html jcr-content'>";
+							ret += _.tag("script", {
+								"type" : "text/markdown"
+							}, jcrContent);
 						} else {
-							if (rowStyling) {
-								ret += "<marked-element sanitize='true'><div class='markdown-html jcr-content'>";
-								ret += _.tag("script", {
-									"type" : "text/markdown"
-								}, jcrContent);
-							} else {
-								ret += "<marked-element sanitize='true'><div class='markdown-html jcr-root-content'>";
-								ret += _.tag("script", {
-									"type" : "text/markdown"
-								},
-								// probably could "img.top.right" feature for
-								// this
-								// // if we wanted to. oops.
-								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-										+ jcrContent);
-							}
-							ret += "</div></marked-element>";
+							ret += "<marked-element sanitize='true'><div class='markdown-html jcr-root-content'>";
+							ret += _.tag("script", {
+								"type" : "text/markdown"
+							},
+							// probably could "img.top.right" feature for
+							// this
+							// // if we wanted to. oops.
+							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+									+ jcrContent);
 						}
+						ret += "</div></marked-element>";
 					}
 
 					/*

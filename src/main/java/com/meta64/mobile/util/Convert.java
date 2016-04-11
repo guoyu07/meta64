@@ -36,7 +36,7 @@ import com.meta64.mobile.model.UserPreferences;
  */
 public class Convert {
 	
-	public static final boolean serverMarkdown = false;
+	public static final boolean serverMarkdown = true;
 
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 

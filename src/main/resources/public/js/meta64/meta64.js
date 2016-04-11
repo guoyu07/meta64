@@ -11,7 +11,7 @@ var meta64 = function() {
 
 	var _ = {
 			
-		serverMarkdown : false,
+		serverMarkdown : true,
 
 		/* used as a kind of 'sequence' in the app, when unique vals a needed */
 		nextGuid : 0,

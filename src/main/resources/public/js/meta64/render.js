@@ -152,36 +152,65 @@ var render = function() {
 				if (contentProp) {
 
 					var jcrContent = props.renderProperty(contentProp);
-					jcrContent = jcrContent.replaceAll("\n\n", "{{p}}");
+					jcrContent = "<div>" + jcrContent + "</div>"
 
 					if (jcrContent.length > 0) {
 
-						// jcrContent = _.injectCodeFormatting(jcrContent);
+						if (meta64.serverMarkdown) {
+							if (rowStyling) {
+								// jcr-content (todo-0: put this class back)
+								ret += _.tag("div", {
+									"class" : "jcr-content"
+								}, jcrContent);
+							} else {
+								// jcr-root-content (todo-0: put this class
+								// back)
+								ret += _.tag("div", {
+									"class" : "jcr-root-content"
+								},
+								// probably could "img.top.right" feature for
+								// this
+								// // if we wanted to. oops.
+								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+										+ jcrContent);
+							}
+						} 
+						/*
+						 * I spend hours trying to get marked-element to work. At this point I will have to blame google
+						 * code, i'm 99.999% certain it's their bug and not mine.
+						 */
+						else {
+							// jcrContent = _.injectCodeFormatting(jcrContent);
 
-						/* alternate attribute way */
-						// jcrContent = jcrContent.replaceAll("'", "{{quot}}");
-						// ret += "<marked-element sanitize='true' markdown='" +
-						// jcrContent
-						// + "'><div class='markdown-html jcr-content'>";
-						// ret += "</div></marked-element>";
-						
-						if (rowStyling) {
-							ret += "<marked-element sanitize='true'><div class='markdown-html jcr-content'>";
-							ret += _.tag("script", {
-								"type" : "text/markdown"
-							}, jcrContent);
-						} else {
-							ret += "<marked-element sanitize='true'><div class='markdown-html jcr-root-content'>";
-							ret += _.tag("script", {
-								"type" : "text/markdown"
-							},
-							// probably could "img.top.right" feature for
-							// this
-							// // if we wanted to. oops.
-							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-									+ jcrContent);
+							/* alternate attribute way */
+							// jcrContent = jcrContent.replaceAll("'",
+							// "{{quot}}");
+							// ret += "<marked-element sanitize='true'
+							// markdown='" +
+							// jcrContent
+							// + "'><div class='markdown-html jcr-content'>";
+							// ret += "</div></marked-element>";
+							if (rowStyling) {
+								// jcr-content (todo-0: put this class back)
+								ret += "<marked-element sanitize='true'><div class='markdown-html'>";
+								ret += _.tag("script", {
+									"type" : "text/markdown"
+								}, jcrContent);
+							} else {
+								// jcr-root-content (todo-0: put this class
+								// back)
+								ret += "<marked-element sanitize='true'><div class='markdown-html'>";
+								ret += _.tag("script", {
+									"type" : "text/markdown"
+								},
+								// probably could "img.top.right" feature for
+								// this
+								// // if we wanted to. oops.
+								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+										+ jcrContent);
+							}
+							ret += "</div></marked-element>";
 						}
-						ret += "</div></marked-element>";
 					}
 
 					/*

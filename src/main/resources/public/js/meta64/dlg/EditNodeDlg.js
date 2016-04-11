@@ -148,10 +148,10 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 * allow any property editing to happen.
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
-	
-	var tagsProp = props.getNodePropertyVal("tags", edit.editNode);
-	console.log("hasTagsProp: " + tagsProp);
-	util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsProp);
+
+	var tagsPropExists = props.getNodePropertyVal("tags", edit.editNode)!=null;
+	//console.log("hasTagsProp: " + tagsProp);
+	util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsPropExists);
 }
 
 EditNodeDlg.prototype.addProperty = function() {
@@ -169,7 +169,14 @@ EditNodeDlg.prototype.addTagsProperty = function() {
 		propertyName : "tags",
 		propertyValue : ""
 	};
-	util.json("saveProperty", postData, EditNodeDlg.prototype.savePropertyResponse, this);
+	util.json("saveProperty", postData, EditNodeDlg.prototype.addTagsPropertyResponse, this);
+}
+
+/* Warning: don't confuse with EditPropertyDlg */
+EditNodeDlg.prototype.addTagsPropertyResponse = function(res) {
+	if (util.checkSuccess("Add Tags Property", res)) {
+		this.savePropertyResponse(res);
+	}
 }
 
 /* Warning: don't confuse with EditPropertyDlg */
@@ -515,7 +522,7 @@ EditNodeDlg.prototype.makeSinglePropEditor = function(fieldId, prop, isReadOnlyP
 	var label = render.sanitizePropertyName(prop.name);
 	var propValStr = propVal ? propVal : '';
 	propValStr = propValStr.escapeForAttrib();
-	//console.log("editing: prop[" + prop.name + "] val[" + prop.val + "]");
+	// console.log("editing: prop[" + prop.name + "] val[" + prop.val + "]");
 
 	if (isReadOnlyProp || isBinaryProp) {
 		field += render.tag("paper-textarea", {

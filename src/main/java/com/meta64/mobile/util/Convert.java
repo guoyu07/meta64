@@ -35,6 +35,8 @@ import com.meta64.mobile.model.UserPreferences;
  * Converting objects from one type to another, and formatting.
  */
 public class Convert {
+	
+	public static final boolean serverMarkdown = false;
 
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 
@@ -237,7 +239,7 @@ public class Convert {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
 			} else {
-				if (convertToHtml) {
+				if (convertToHtml && serverMarkdown) {
 					return getMarkdownProc().markdownToHtml(value.getString());
 				} else {
 					return value.getString();
@@ -251,11 +253,15 @@ public class Convert {
 	/*
 	 * PegDownProcessor is not threadsafe, and also I don't want to create more
 	 * of them than necessary so we simply attach one to each thread, and the
-	 * thread-safey is no longer an issue.
+	 * thread-safety is no longer an issue.
 	 */
 	public static PegDownProcessor getMarkdownProc() {
 		PegDownProcessor proc = ThreadLocals.getMarkdownProc();
 		if (proc == null) {
+			/*
+			 * todo-1: consider replacing serverside markdown with this:
+			 * https://github.com/chjj/marked.
+			 */
 			proc = new PegDownProcessor();
 			ThreadLocals.setMarkdownProc(proc);
 		}

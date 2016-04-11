@@ -10,6 +10,8 @@ var meta64 = function() {
 	var curUrlPath = window.location.pathname + window.location.search;
 
 	var _ = {
+			
+		serverMarkdown : false,
 
 		/* used as a kind of 'sequence' in the app, when unique vals a needed */
 		nextGuid : 0,
@@ -41,7 +43,7 @@ var meta64 = function() {
 		 * tree view window we need to refresh data from the server
 		 */
 		treeDirty : false,
-
+		
 		/*
 		 * maps node.uid values to NodeInfo.java objects
 		 * 

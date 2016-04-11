@@ -162,6 +162,7 @@ var props = function() {
 				if (!property.value || property.value.length == 0) {
 					return "";
 				}
+				//todo-1: make sure this wrapHtml isn't creating an unnecessary DIV element.
 				return render.wrapHtml(property.htmlValue);
 			} else {
 				return _.renderPropertyValues(property.values);
@@ -170,8 +171,14 @@ var props = function() {
 
 		renderPropertyValues : function(values) {
 			var ret = "<div>";
+			var count = 0;
 			$.each(values, function(i, value) {
-				ret += render.wrapHtml(value) + cnst.BR;
+				if (count > 0) {
+					//todo-0: this is new, need to test.
+					ret += cnst.BR;
+				}
+				ret += render.wrapHtml(value);// + cnst.BR;
+				count++;
 			});
 			ret += "</div>";
 			return ret;

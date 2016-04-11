@@ -59,5 +59,5 @@ var attachment = function() {
 	return _;
 }();
 
-// # sourceURL=attachment.js
+//# sourceURL=attachment.js
 

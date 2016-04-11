@@ -101,14 +101,33 @@ var render = function() {
 			if (showName && !showPath && node.name) {
 				headerText += "Name: " + node.name + " [uid=" + node.uid + "]";
 			}
-			
+
 			headerText = _.tag("div", {
 				"class" : "header-text"
 			}, headerText);
-			
+
 			return headerText;
 		},
-		
+
+		/*
+		 * This was part of the experiment to get google prettyPrint up and
+		 * running, but then I discovered https:// github.com/chjj/marked is
+		 * part of my bower already, and I will not try to use it instead of
+		 * PegDown? (whatever markdown I currently use) , but will put
+		 * prettyprinting of code on hold until i know it's not already built
+		 * into 'marked' api. /
+		 */
+		injectCodeFormatting : function(content) {
+			if (content.contains("[meta64.code]") && content.contains("[/meta64.code]")) {
+				// / /meta64.codeFormatDirty = true;
+				// / / content = content.replaceAll("[meta64.code]", "<pre
+				// / / class='prettyprint' lang-js>");
+				// / / content = content.replaceAll("[/meta64.code]",
+				// "</pre>");
+			}
+			return content;
+		},
+
 		/*
 		 * node: JSON of NodeInfo.java
 		 * 
@@ -116,7 +135,7 @@ var render = function() {
 		 */
 		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
 			var ret = _.getTopRightImageTag(node);
-			
+
 			/* todo-0: enable headerText when appropriate here */
 			ret += showHeader ? _.buildRowHeader(node, showPath, showName) : "";
 
@@ -135,20 +154,46 @@ var render = function() {
 					var jcrContent = props.renderProperty(contentProp);
 
 					if (jcrContent.length > 0) {
-						if (rowStyling) {
-							ret += _.tag("div", {
-								"class" : "jcr-content"
-							}, jcrContent);
+
+						// jcrContent = _.injectCodeFormatting(jcrContent);
+
+						/* alternate attribute way */
+						if (false) {
+							jcrContent = jcrContent.replaceAll("'", "{{quot}}");
+							ret += "<marked-element sanitize='true' markdown='" + jcrContent
+									+ "'><div class='markdown-html jcr-content'>";
+							ret += "</div></marked-element>";
 						} else {
-							ret += _.tag("div", {
-								"class" : "jcr-root-content"
-							},
-							// probably could "img.top.right" feature for this
-							// if we wanted to. oops.
-							"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-									+ jcrContent);
+							if (rowStyling) {
+								ret += "<marked-element sanitize='true'><div class='markdown-html jcr-content'>";
+								ret += _.tag("script", {
+									"type" : "text/markdown"
+								}, jcrContent);
+							} else {
+								ret += "<marked-element sanitize='true'><div class='markdown-html jcr-root-content'>";
+								ret += _.tag("script", {
+									"type" : "text/markdown"
+								},
+								// probably could "img.top.right" feature for
+								// this
+								// // if we wanted to. oops.
+								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+										+ jcrContent);
+							}
+							ret += "</div></marked-element>";
 						}
 					}
+
+					/*
+					 * if (jcrContent.length > 0) { if (rowStyling) { ret +=
+					 * _.tag("div", { "class" : "jcr-content" }, jcrContent); }
+					 * else { ret += _.tag("div", { "class" : "jcr-root-content" }, //
+					 * probably could "img.top.right" feature for this // if we
+					 * wanted to. oops. "<a
+					 * href='https://github.com/Clay-Ferguson/meta64'><img
+					 * src='/fork-me-on-github.png' class='corner-style'/></a>" +
+					 * jcrContent); } }
+					 */
 				}
 			}
 
@@ -169,7 +214,7 @@ var render = function() {
 			}
 
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-			
+
 			/*
 			 * If this is a comment node, but not by the current user (because
 			 * they cannot reply to themselves) then add a reply button, so they
@@ -203,12 +248,12 @@ var render = function() {
 					ret += addCommentDiv;
 				}
 			}
-			
+
 			var tags = props.getNodePropertyVal(jcrCnst.TAGS, node);
 			if (tags) {
 				ret += _.tag("div", {
 					"class" : "tags-content"
-				}, "Tags: "+tags);
+				}, "Tags: " + tags);
 			}
 
 			return ret;
@@ -227,7 +272,10 @@ var render = function() {
 			var canMoveUp = index > 0 && rowCount > 1;
 			var canMoveDown = index < count - 1;
 
-			var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
+			var isRep = node.name.startsWith("rep:") || /*
+														 * meta64.currentNodeData.
+														 * bug?
+														 */node.path.contains("/rep:");
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
@@ -299,9 +347,9 @@ var render = function() {
 
 		centeredButtonBar : function(buttons, classes) {
 			classes = classes || "";
-			
+
 			return _.tag("div", {
-				"class" : "horizontal center-justified layout "+classes
+				"class" : "horizontal center-justified layout " + classes
 			}, buttons);
 		},
 
@@ -311,20 +359,20 @@ var render = function() {
 			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";
 
 			var buttonCount = 0;
-			
+
 			/* Construct Open Button */
 			if (_.nodeHasChildren(node.uid)) {
 				buttonCount++;
-								
-//				openButton = _.tag("paper-icon-button", //
-//				{
-//					"class" : "highlight-button",
-//					"raised" : "raised",
-//					"icon" : "folder-open",
-//					"onClick" : "nav.openNode('" + node.uid + "');"//
-//				}, //
-//				"");
-				
+
+				// openButton = _.tag("paper-icon-button", //
+				// {
+				// "class" : "highlight-button",
+				// "raised" : "raised",
+				// "icon" : "folder-open",
+				// "onClick" : "nav.openNode('" + node.uid + "');"//
+				// }, //
+				// "");
+
 				openButton = _.tag("paper-button", //
 				{
 					"class" : "highlight-button",
@@ -347,31 +395,30 @@ var render = function() {
 
 				console.log("      nodeId " + node.uid + " selected=" + selected);
 				buttonCount++;
-				
-//				selButton = _.tag("paper-button", //
-//				{
-//					"class" : "custom-toggle",
-//					"toggles" : "toggles",
-//					"raised" : "raised",
-//					"id" : node.uid + "_sel",//
-//					"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
-//					"active" : selected
-//				}, "Sel");
-				
+
+				// selButton = _.tag("paper-button", //
+				// {
+				// "class" : "custom-toggle",
+				// "toggles" : "toggles",
+				// "raised" : "raised",
+				// "id" : node.uid + "_sel",//
+				// "onClick" : "nav.toggleNodeSel('" + node.uid + "');",
+				// "active" : selected
+				// }, "Sel");
+
 				var css = selected ? //
-						{
-						"id" : node.uid + "_sel",//
-						"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
-						"checked" : "checked"
-					} : //
-					{
-						"id" : node.uid + "_sel",//
-						"onClick" : "nav.toggleNodeSel('" + node.uid + "');"
-					}
-					;
-				
+				{
+					"id" : node.uid + "_sel",//
+					"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
+					"checked" : "checked"
+				} : //
+				{
+					"id" : node.uid + "_sel",//
+					"onClick" : "nav.toggleNodeSel('" + node.uid + "');"
+				};
+
 				selButton = _.tag("paper-checkbox", css, "");
-				
+
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
 					buttonCount++;
@@ -448,13 +495,13 @@ var render = function() {
 			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
 					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
-			//todo-0: can now to back to just returning val here.
+			// todo-0: can now to back to just returning val here.
 			var ret = {};
-						
+
 			if (allButtons.length > 0) {
 				ret.val = _.makeHorizontalFieldSet(allButtons);
 			} else {
-				ret.val =  "";
+				ret.val = "";
 			}
 			return ret;
 		},
@@ -504,13 +551,13 @@ var render = function() {
 
 		formatPath : function(node) {
 			var path = node.path;
-			var shortPath = path.length < 50 ? path : path.substring(0, 40)+"...";
-			
+			var shortPath = path.length < 50 ? path : path.substring(0, 40) + "...";
+
 			var noRootPath = shortPath;
 			if (noRootPath.startsWith("/root")) {
 				noRootPath = noRootPath.substring(0, 5);
 			}
-			
+
 			var ret = meta64.isAdminUser ? shortPath : noRootPath;
 			ret += " [" + node.primaryTypeName + "]";
 			return ret;
@@ -618,8 +665,8 @@ var render = function() {
 				/* Construct Create Subnode Button */
 				var focusNode = meta64.getHighlightedNode();
 				var selected = focusNode && focusNode.uid === uid;
-				//var rowHeader = _.buildRowHeader(data.node, true, true);
-				
+				// var rowHeader = _.buildRowHeader(data.node, true, true);
+
 				if (editNodeButton) {
 					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}

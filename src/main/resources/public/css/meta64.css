@@ -152,6 +152,8 @@ tr td div p {
 }
 
 .jcr-content {
+	margin-top: 10px;
+	margin-bottom: 10px;
 	margin-left: 1em;
 	/* we limit page width of text content, because text that goes to wide 
 		becomes difficult to read.
@@ -160,6 +162,8 @@ tr td div p {
 }
 
 .jcr-root-content {
+	margin-top: 8px;
+	margin-bottom: 10px;
 	margin-left: 1em;
 	/* we limit page width of text content, because text that goes to wide 
 		becomes difficult to read.

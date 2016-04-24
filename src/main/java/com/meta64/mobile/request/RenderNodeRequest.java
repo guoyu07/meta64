@@ -8,8 +8,8 @@ public class RenderNodeRequest {
 	private String nodeId;
 
 	/*
-	 * holds number of levels to move up the parent chain from 'nodeId' before
-	 * rendering, or zero to render at nodeId itself
+	 * holds number of levels to move up the parent chain from 'nodeId' before rendering, or zero to
+	 * render at nodeId itself
 	 */
 	private int upLevel;
 	private boolean renderParentIfLeaf;

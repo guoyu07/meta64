@@ -59,8 +59,7 @@ public class MailSender implements TransportListener {
 		props.put("mail.host", mailHost);
 
 		/*
-		 * how did I end up with 'put' instead of 'setProperty' here?
-		 * Cut-n-paste from somewhere
+		 * how did I end up with 'put' instead of 'setProperty' here? Cut-n-paste from somewhere
 		 */
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", mailPort);
@@ -116,10 +115,9 @@ public class MailSender implements TransportListener {
 		success = false;
 
 		/*
-		 * important: while inside this 'sendMessage' method, the
-		 * 'messageDelivered' callback will get called if the send is
-		 * successful, so we can return the value below, even though we do not
-		 * set it in this method
+		 * important: while inside this 'sendMessage' method, the 'messageDelivered' callback will
+		 * get called if the send is successful, so we can return the value below, even though we do
+		 * not set it in this method
 		 */
 		int timeRemaining = TIMEOUT;
 		waiting = true;

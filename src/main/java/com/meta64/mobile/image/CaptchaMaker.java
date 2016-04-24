@@ -13,10 +13,9 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 /**
- * Implements the captcha image as seen on the Signup Page. I would normally use
- * some existing framework for something like this but I wrote this a long time
- * ago and it works well, so I always kept it. It's just too simple for me to
- * have found fault with.
+ * Implements the captcha image as seen on the Signup Page. I would normally use some existing
+ * framework for something like this but I wrote this a long time ago and it works well, so I always
+ * kept it. It's just too simple for me to have found fault with.
  */
 public class CaptchaMaker {
 
@@ -57,21 +56,20 @@ public class CaptchaMaker {
 		g.setColor(Color.black);
 
 		/*
-		 * due to wierdness on various comptuers the rendering size of any given
-		 * font is not known and we must iterate to find the appropriate font to
-		 * match our image size
+		 * due to wierdness on various comptuers the rendering size of any given font is not known
+		 * and we must iterate to find the appropriate font to match our image size
 		 */
 		if (fontKnown != null) {
 			g.setFont(fontKnown);
-		} else {
+		}
+		else {
 			int fontPoints = 12;
 			while (fontPoints < 50) {
 				g.setFont(fontKnown = new Font("Courier New", Font.BOLD, fontPoints));
 
 				/*
-				 * if our font is big enough break out (+5 is just a hack cuz it
-				 * looks like there is always room for slightly bigger
-				 * characters
+				 * if our font is big enough break out (+5 is just a hack cuz it looks like there is
+				 * always room for slightly bigger characters
 				 */
 				if (g.getFontMetrics().getHeight() >= CAPTCHA_CHAR_SIZE + 7) {
 					break;
@@ -113,13 +111,11 @@ public class CaptchaMaker {
 			g.rotate(-angle, x, y);
 
 			/*
-			 * draw a line only once for every other character, and onec more at
-			 * end
+			 * draw a line only once for every other character, and onec more at end
 			 */
 			if (i % 2 == 0 || i == len - 1) {
 				/*
-				 * note lineIdx remainder controls back and forth tilt angle of
-				 * line
+				 * note lineIdx remainder controls back and forth tilt angle of line
 				 */
 				int delta = (lineIdx % 2 == 0) ? rand.nextInt(imgHeight) : -rand.nextInt(imgHeight);
 
@@ -133,7 +129,8 @@ public class CaptchaMaker {
 			BufferedImage scaledImage = ImageUtil.scaleImage(outBufferedImage, imgWidth);
 			tmp = new ByteArrayOutputStream();
 			ImageIO.write(scaledImage, "png", tmp);
-		} finally {
+		}
+		finally {
 			if (tmp != null) {
 				tmp.close();
 			}

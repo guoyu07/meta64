@@ -23,9 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility methods for changing access controls on nodes. This is: who can read
- * nodes, modify nodes, delete nodes, etc. Standard access privileges provided
- * by JCR specification.
+ * Utility methods for changing access controls on nodes. This is: who can read nodes, modify nodes,
+ * delete nodes, etc. Standard access privileges provided by JCR specification.
  * 
  * http://jackrabbit.apache.org/oak/docs/security/accesscontrol/editing.html
  * 
@@ -68,18 +67,14 @@ public class AccessControlUtil {
 	}
 
 	/*
-	 * I tried this as a replacement for my grantPrivileges (below) which works
-	 * perfectly but this new one doesn't work. Keeping it here anyway, and will
-	 * look into this later.
+	 * I tried this as a replacement for my grantPrivileges (below) which works perfectly but this
+	 * new one doesn't work. Keeping it here anyway, and will look into this later.
 	 */
-	public static boolean grantPrivileges_new(Session session, Node node, Principal principal,
-			List<String> privilegeNames) throws Exception {
-		return AccessControlUtils.allow(node, principal.getName(),
-				privilegeNames.toArray(new String[privilegeNames.size()]));
+	public static boolean grantPrivileges_new(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
+		return AccessControlUtils.allow(node, principal.getName(), privilegeNames.toArray(new String[privilegeNames.size()]));
 	}
 
-	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames)
-			throws Exception {
+	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
 		AccessControlList acl = getAccessControlList(session, node);
 
 		if (acl != null) {
@@ -88,7 +83,8 @@ public class AccessControlUtil {
 			acl.addAccessControlEntry(principal, privileges);
 			acMgr.setPolicy(node.getPath(), (AccessControlPolicy) acl);
 			return true;
-		} else {
+		}
+		else {
 			throw new Exception("Unable to find AccessControlList");
 		}
 	}
@@ -97,8 +93,8 @@ public class AccessControlUtil {
 		Set<String> ownerSet = new HashSet<String>();
 
 		/*
-		 * We walk up the tree util we get to the root, or find ownership on
-		 * node, or any of it's parents
+		 * We walk up the tree util we get to the root, or find ownership on node, or any of it's
+		 * parents
 		 */
 		try {
 			int sanityCheck = 0;
@@ -110,11 +106,13 @@ public class AccessControlUtil {
 
 				if (principals.size() == 0) {
 					node = node.getParent();
-				} else {
+				}
+				else {
 					break;
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// not an error, just reached root.
 		}
 
@@ -208,11 +206,9 @@ public class AccessControlUtil {
 	}
 
 	/*
-	 * search for removePolicy in commented code below for a better way to do
-	 * this
+	 * search for removePolicy in commented code below for a better way to do this
 	 */
-	public static boolean removeAclEntry(Session session, Node node, String principle, String privilege)
-			throws Exception {
+	public static boolean removeAclEntry(Session session, Node node, String principle, String privilege) throws Exception {
 		boolean policyChanged = false;
 		String path = node.getPath();
 
@@ -235,18 +231,15 @@ public class AccessControlUtil {
 								log.trace("    Found PRIVILEGE to remove: " + principle);
 
 								/*
-								 * we remove the entire 'ace' from the 'acl'
-								 * here. I don't know of a more find-grained way
-								 * to remove privileges than to remove entire
-								 * 'ace' which can have multiple privileges on
-								 * it. :(
+								 * we remove the entire 'ace' from the 'acl' here. I don't know of a
+								 * more find-grained way to remove privileges than to remove entire
+								 * 'ace' which can have multiple privileges on it. :(
 								 */
 								acl.removeAccessControlEntry(ace);
 								policyChanged = true;
 
 								/*
-								 * break out of privileges scanning, this entire
-								 * 'ace' is dead now
+								 * break out of privileges scanning, this entire 'ace' is dead now
 								 */
 								break;
 							}
@@ -273,7 +266,8 @@ public class AccessControlUtil {
 	public static String[] namesFromPrivileges(Privilege... privileges) {
 		if (privileges == null || privileges.length == 0) {
 			return new String[0];
-		} else {
+		}
+		else {
 			String[] names = new String[privileges.length];
 			for (int i = 0; i < privileges.length; i++) {
 				names[i] = privileges[i].getName();

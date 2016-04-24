@@ -1,7 +1,6 @@
 #!/bin/bash
 ./setenv.sh
 
-
 #
 # Trouble with Tidy: check for "- -" where "--" was needed.
 #

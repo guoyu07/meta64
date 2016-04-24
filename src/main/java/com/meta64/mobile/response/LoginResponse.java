@@ -14,10 +14,9 @@ public class LoginResponse extends OakResponseBase {
 	private String anonUserLandingPageNode;
 
 	/*
-	 * we can optionally send back something here to force the client to load
-	 * the specified node instead of whatever other node it would have loaded
-	 * for whatever series of reasons. This is a hard override for anything
-	 * else.
+	 * we can optionally send back something here to force the client to load the specified node
+	 * instead of whatever other node it would have loaded for whatever series of reasons. This is a
+	 * hard override for anything else.
 	 */
 	private String homeNodeOverride;
 

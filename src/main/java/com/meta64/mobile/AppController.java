@@ -102,32 +102,26 @@ import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
 /**
- * Primary Spring MVC controller. All application logic from the browser
- * connects directly to this controller which is the only controller.
- * Importantly the main SPA page is retrieved thru this controller, and the
- * binary attachments are also served up thru this interface.
+ * Primary Spring MVC controller. All application logic from the browser connects directly to this
+ * controller which is the only controller. Importantly the main SPA page is retrieved thru this
+ * controller, and the binary attachments are also served up thru this interface.
  * 
- * Note, it's critical to understand the OakSession AOP code or else this class
- * will be confusing regarding how the OAK transactions are managed and how
- * logging in is done.
+ * Note, it's critical to understand the OakSession AOP code or else this class will be confusing
+ * regarding how the OAK transactions are managed and how logging in is done.
  * 
- * This class has no documentation on the methods because it's a wrapper around
- * the service methods which is where the documentation can be found for each
- * operation in here. It's a better architecture to have all the AOP for any
- * given aspect be in one particular layer, because of how Spring AOP uses
- * Proxies. Things can get pretty ugly when you have various proxied objects
- * calling other proxies objects, so we have all the AOP for a service call in
- * this controller and then all the services are pure and simple Spring
- * Singletons.
+ * This class has no documentation on the methods because it's a wrapper around the service methods
+ * which is where the documentation can be found for each operation in here. It's a better
+ * architecture to have all the AOP for any given aspect be in one particular layer, because of how
+ * Spring AOP uses Proxies. Things can get pretty ugly when you have various proxied objects calling
+ * other proxies objects, so we have all the AOP for a service call in this controller and then all
+ * the services are pure and simple Spring Singletons.
  * 
- * There's a lot of boiler-plate code in here, but it's just required. This is
- * probably the only code in the system that looks 'redundant' (non-DRY), but
- * this is because we want certain things in certain layers (abstraction related
- * and for loose-coupling).
+ * There's a lot of boiler-plate code in here, but it's just required. This is probably the only
+ * code in the system that looks 'redundant' (non-DRY), but this is because we want certain things
+ * in certain layers (abstraction related and for loose-coupling).
  * 
- * TODO: need to get all "program logic" out of this layer (there is a tiny bit
- * of it in here), because it doesn't belong here. Should all be contained in
- * service layer.
+ * TODO: need to get all "program logic" out of this layer (there is a tiny bit of it in here),
+ * because it doesn't belong here. Should all be contained in service layer.
  */
 @Controller
 public class AppController {
@@ -189,14 +183,13 @@ public class AppController {
 	}
 
 	/*
-	 * This is the actual app page loading request, for his SPA (Single Page
-	 * Application) this is the request to load the page.
+	 * This is the actual app page loading request, for his SPA (Single Page Application) this is
+	 * the request to load the page.
 	 * 
-	 * ID is optional url parameter that user can specify to access a specific
-	 * node in the repository by uuid.
+	 * ID is optional url parameter that user can specify to access a specific node in the
+	 * repository by uuid.
 	 * 
-	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of
-	 * "/index.html"
+	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of "/index.html"
 	 */
 	@RequestMapping("/")
 	public String mobile(@RequestParam(value = "id", required = false) String id, //
@@ -260,13 +253,12 @@ public class AppController {
 		/*
 		 * DO NOT DELETE:
 		 * 
-		 * We are defining this method with a 'session' parameter, because
-		 * Spring will automatically autowire that correctly, but here is
-		 * another possible way to do it:
+		 * We are defining this method with a 'session' parameter, because Spring will automatically
+		 * autowire that correctly, but here is another possible way to do it:
 		 * 
 		 * ServletRequestAttributes attr = (ServletRequestAttributes)
-		 * RequestContextHolder.currentRequestAttributes(); HttpSession session
-		 * = attr.getRequest().getSession();
+		 * RequestContextHolder.currentRequestAttributes(); HttpSession session =
+		 * attr.getRequest().getSession();
 		 */
 
 		session.invalidate();
@@ -299,8 +291,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/getNodePrivileges", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req)
-			throws Exception {
+	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) throws Exception {
 		logRequest("getNodePrivileges", req);
 		GetNodePrivilegesResponse res = new GetNodePrivilegesResponse();
 		checkHttpSession();
@@ -320,8 +311,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/removePrivilege", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody RemovePrivilegeRequest req)
-			throws Exception {
+	public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody RemovePrivilegeRequest req) throws Exception {
 		logRequest("removePrivilege", req);
 		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
 		checkHttpSession();
@@ -354,10 +344,12 @@ public class AppController {
 			// workspace object
 			// which specifically documents that the saving on the session is
 			// not needed.
-		} else if (fileName.toLowerCase().endsWith(".zip")) {
+		}
+		else if (fileName.toLowerCase().endsWith(".zip")) {
 			importExportService.importFromZip(null, req, res);
 			ThreadLocals.getJcrSession().save();
-		} else {
+		}
+		else {
 			throw new Exception("Unable to import from file with unknown extension: " + fileName);
 		}
 		return res;
@@ -365,8 +357,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req)
-			throws Exception {
+	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) throws Exception {
 		logRequest("setNodePosition", req);
 		SetNodePositionResponse res = new SetNodePositionResponse();
 		checkHttpSession();
@@ -375,8 +366,7 @@ public class AppController {
 	}
 
 	/*
-	 * http://stackoverflow.com/questions/5567905/jackrabbit-jcr-organisation-of
-	 * -text-content-data
+	 * http://stackoverflow.com/questions/5567905/jackrabbit-jcr-organisation-of -text-content-data
 	 */
 	@RequestMapping(value = API_PATH + "/createSubNode", method = RequestMethod.POST)
 	@OakSession
@@ -389,8 +379,7 @@ public class AppController {
 	}
 
 	/*
-	 * Inserts node 'inline' at the position specified in the
-	 * InsertNodeRequest.targetName
+	 * Inserts node 'inline' at the position specified in the InsertNodeRequest.targetName
 	 */
 	@RequestMapping(value = API_PATH + "/insertNode", method = RequestMethod.POST)
 	@OakSession
@@ -444,8 +433,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/deleteAttachment", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req)
-			throws Exception {
+	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req) throws Exception {
 		logRequest("deleteAttachment", req);
 		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
 		checkHttpSession();
@@ -455,8 +443,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/deleteProperty", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody DeletePropertyResponse deleteProperty(@RequestBody DeletePropertyRequest req)
-			throws Exception {
+	public @ResponseBody DeletePropertyResponse deleteProperty(@RequestBody DeletePropertyRequest req) throws Exception {
 		logRequest("deleteProperty", req);
 		DeletePropertyResponse res = new DeletePropertyResponse();
 		checkHttpSession();
@@ -477,8 +464,7 @@ public class AppController {
 	@Deprecated
 	@RequestMapping(value = API_PATH + "/makeNodeReferencable", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody MakeNodeReferencableResponse makeNodeReferencable(@RequestBody MakeNodeReferencableRequest req)
-			throws Exception {
+	public @ResponseBody MakeNodeReferencableResponse makeNodeReferencable(@RequestBody MakeNodeReferencableRequest req) throws Exception {
 		logRequest("makeNodeReferencable", req);
 		MakeNodeReferencableResponse res = new MakeNodeReferencableResponse();
 		checkHttpSession();
@@ -498,8 +484,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req)
-			throws Exception {
+	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) throws Exception {
 		logRequest("changePassword", req);
 		ChangePasswordResponse res = new ChangePasswordResponse();
 		checkHttpSession();
@@ -508,14 +493,14 @@ public class AppController {
 	}
 
 	/*
-	 * We could persist the real filename when uploaded, and then make the links
-	 * actually reference that filename on this type of path. Will have to add
-	 * to binary info property sent to client in JSON.
+	 * We could persist the real filename when uploaded, and then make the links actually reference
+	 * that filename on this type of path. Will have to add to binary info property sent to client
+	 * in JSON.
 	 */
 	@RequestMapping(value = API_PATH + "/bin/{fileName}", method = RequestMethod.GET)
 	@OakSession
-	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName,
-			@RequestParam("nodeId") String nodeId) throws Exception {
+	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName, @RequestParam("nodeId") String nodeId)
+			throws Exception {
 		logRequest("bin", null);
 		return attachmentService.getBinary(null, nodeId);
 	}
@@ -560,8 +545,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req)
-			throws Exception {
+	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req) throws Exception {
 		logRequest("getSharedNodes", req);
 		GetSharedNodesResponse res = new GetSharedNodesResponse();
 		checkHttpSession();
@@ -571,8 +555,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/saveUserPreferences", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SaveUserPreferencesResponse saveUserPreferences(@RequestBody SaveUserPreferencesRequest req)
-			throws Exception {
+	public @ResponseBody SaveUserPreferencesResponse saveUserPreferences(@RequestBody SaveUserPreferencesRequest req) throws Exception {
 		logRequest("saveUserPreferences", req);
 		SaveUserPreferencesResponse res = new SaveUserPreferencesResponse();
 		checkHttpSession();
@@ -602,7 +585,7 @@ public class AppController {
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}
-	
+
 	private static void logRequest(String url, Object req) throws Exception {
 		log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
 	}

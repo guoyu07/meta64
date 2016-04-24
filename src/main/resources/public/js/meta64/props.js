@@ -174,7 +174,6 @@ var props = function() {
 			var count = 0;
 			$.each(values, function(i, value) {
 				if (count > 0) {
-					//todo-0: this is new, need to test.
 					ret += cnst.BR;
 				}
 				ret += render.wrapHtml(value);// + cnst.BR;

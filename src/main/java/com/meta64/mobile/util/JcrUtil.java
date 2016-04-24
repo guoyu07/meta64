@@ -31,8 +31,8 @@ public class JcrUtil {
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
 
 	/*
-	 * These are properties we should never allow the client to send back as
-	 * part of a save operation.
+	 * These are properties we should never allow the client to send back as part of a save
+	 * operation.
 	 */
 	private static HashSet<String> nonSavableProperties = new HashSet<String>();
 
@@ -60,12 +60,10 @@ public class JcrUtil {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}
 
-	public static void checkWriteAuthorized(Node node, String userName) throws Exception {		
-		if (JcrPrincipal.ADMIN.equals(userName))
-			return;
-		
-		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY)))
-			throw new Exception("Access failed.");
+	public static void checkWriteAuthorized(Node node, String userName) throws Exception {
+		if (JcrPrincipal.ADMIN.equals(userName)) return;
+
+		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw new Exception("Access failed.");
 	}
 
 	public static boolean isUserAccountRoot(SessionContext sessionContext, Node node) throws Exception {
@@ -80,14 +78,14 @@ public class JcrUtil {
 	public static NodeType safeGetPrimaryNodeType(Node node) {
 		try {
 			return node.getPrimaryNodeType();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
 
 	/**
-	 * Wrapper around findNode that will return null if not found instead of
-	 * throwing exception
+	 * Wrapper around findNode that will return null if not found instead of throwing exception
 	 * 
 	 * @param session
 	 * @param id
@@ -96,20 +94,19 @@ public class JcrUtil {
 	public static Node safeFindNode(Session session, String id) {
 		try {
 			return findNode(session, id);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
 
 	/*
-	 * Returns the node that is below this node in the siblings list. If parent
-	 * node happens to already be available you can pass it in, but if you pass
-	 * a null parent instead that works too because it can just find the parent
-	 * easily from the node.
+	 * Returns the node that is below this node in the siblings list. If parent node happens to
+	 * already be available you can pass it in, but if you pass a null parent instead that works too
+	 * because it can just find the parent easily from the node.
 	 * 
-	 * Note: We don't support or expect to find multiple nodes of the same name
-	 * under any given parent even though that's technically supported by the
-	 * JCR (for some strange reason)
+	 * Note: We don't support or expect to find multiple nodes of the same name under any given
+	 * parent even though that's technically supported by the JCR (for some strange reason)
 	 */
 	public static Node getNodeBelow(Session session, Node parentNode, Node node) throws Exception {
 		Node ret = null;
@@ -134,7 +131,8 @@ public class JcrUtil {
 					foundNode = true;
 				}
 			}
-		} catch (NoSuchElementException ex) {
+		}
+		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
 		if (ret == null) {
@@ -144,10 +142,9 @@ public class JcrUtil {
 	}
 
 	/*
-	 * Currently there's a bug in the client code where it sends nulls for some
-	 * nonsavable types, so before even fixing the client I decided to just make
-	 * the server side block those. This is more secure to always have the
-	 * server allow misbehaving javascript for security reasons.
+	 * Currently there's a bug in the client code where it sends nulls for some nonsavable types, so
+	 * before even fixing the client I decided to just make the server side block those. This is
+	 * more secure to always have the server allow misbehaving javascript for security reasons.
 	 */
 	public static boolean isSavableProperty(String propertyName) {
 		return !nonSavableProperties.contains(propertyName);
@@ -164,9 +161,8 @@ public class JcrUtil {
 			}
 
 			/*
-			 * Because jackrabbit throws exceptions if you try to set a
-			 * single-valued property to multi-valued property without nulling
-			 * it out first, we have to do that check.
+			 * Because jackrabbit throws exceptions if you try to set a single-valued property to
+			 * multi-valued property without nulling it out first, we have to do that check.
 			 */
 			Property prop = JcrUtil.getProperty(node, property.getName());
 			if (prop != null && !prop.isMultiple()) {
@@ -177,9 +173,8 @@ public class JcrUtil {
 		/* else is single valued */
 		else {
 			/*
-			 * Because jackrabbit throws exceptions if you try to set a
-			 * multi-valued property to single-valued property without nulling
-			 * it out first, we have to do that check.
+			 * Because jackrabbit throws exceptions if you try to set a multi-valued property to
+			 * single-valued property without nulling it out first, we have to do that check.
 			 */
 			Property prop = JcrUtil.getProperty(node, property.getName());
 			if (prop != null && prop.isMultiple()) {
@@ -202,19 +197,18 @@ public class JcrUtil {
 		}
 	}
 
-	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent)
-			throws Exception {
+	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent) throws Exception {
 		return ensureNodeExists(session, parentPath, name, defaultContent, JcrConstants.NT_UNSTRUCTURED, true);
 	}
 
 	/*
-	 * Repository nodes that are shared will have ACL subnodes which will only
-	 * be visible if the user is in 'Advanced Editing' mode.
+	 * Repository nodes that are shared will have ACL subnodes which will only be visible if the
+	 * user is in 'Advanced Editing' mode.
 	 */
 	public static boolean hasDisplayableNodes(boolean isAdvancedEditingMode, Node node) throws Exception {
 		/*
-		 * If advanced editing mode is on, we want to consider the node to have
-		 * children if there Literally are any because they will all be visible.
+		 * If advanced editing mode is on, we want to consider the node to have children if there
+		 * Literally are any because they will all be visible.
 		 */
 		if (isAdvancedEditingMode) {
 			return node.hasNodes();
@@ -227,21 +221,21 @@ public class JcrUtil {
 					return true;
 				}
 			}
-		} catch (NoSuchElementException ex) {
+		}
+		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
 		return false;
 	}
 
 	public static boolean nodeVisibleInSimpleMode(Node node) throws Exception {
-		if (node == null)
-			return false;
+		if (node == null) return false;
 
 		String name = node.getName();
 
 		/*
-		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items
-		 * would imply same logic.
+		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply same
+		 * logic.
 		 */
 		if (name.startsWith("rep:")) {
 			return false;
@@ -256,11 +250,11 @@ public class JcrUtil {
 	}
 
 	/*
-	 * If name contains '/' then it's split and this method ends up creating all
-	 * the subnodes required to make the path exist,
+	 * If name contains '/' then it's split and this method ends up creating all the subnodes
+	 * required to make the path exist,
 	 */
-	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent,
-			String primaryTypeName, boolean saveImmediate) throws Exception {
+	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent, String primaryTypeName, boolean saveImmediate)
+			throws Exception {
 
 		if (!parentPath.endsWith("/")) {
 			parentPath += "/";
@@ -289,12 +283,12 @@ public class JcrUtil {
 			node = JcrUtil.getNodeByPath(session, parentPath + nameToken);
 
 			/*
-			 * if this node is found continue on, using it as current parent to
-			 * build on
+			 * if this node is found continue on, using it as current parent to build on
 			 */
 			if (node != null) {
 				parent = node;
-			} else {
+			}
+			else {
 				log.debug("Creating " + nameToken + " node, which didn't exist.");
 
 				parent = parent.addNode(nameToken, primaryTypeName);
@@ -302,7 +296,7 @@ public class JcrUtil {
 					throw new Exception("unable to create " + nameToken);
 				}
 				nodesCreated = true;
-				
+
 				parent.setProperty(JcrProp.CONTENT, "");
 			}
 			parentPath += nameToken + "/";
@@ -311,7 +305,7 @@ public class JcrUtil {
 		if (defaultContent != null) {
 			parent.setProperty(JcrProp.CONTENT, defaultContent);
 		}
-		
+
 		if (saveImmediate && nodesCreated) {
 			session.save();
 		}
@@ -321,7 +315,8 @@ public class JcrUtil {
 	public static Node getNodeByPath(Session session, String path) {
 		try {
 			return session.getNode(path);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// do nothing. Not error condition. Means allUsersRoot is not found,
 			// so will still be
 			// null.
@@ -358,19 +353,20 @@ public class JcrUtil {
 		try {
 			Property prop = node.getProperty(propName);
 			prop.remove();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// do nothing. property wasn't found.
 		}
 	}
 
 	/*
-	 * Gets property or returns null of no property by that name can be
-	 * retrieved
+	 * Gets property or returns null of no property by that name can be retrieved
 	 */
 	public static Property getProperty(Node node, String propName) {
 		try {
 			return node.getProperty(propName);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
@@ -385,7 +381,8 @@ public class JcrUtil {
 	public static String safeGetStringProp(Node node, String propName) {
 		try {
 			return getRequiredStringProp(node, propName);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return null;
 		}
 	}
@@ -400,7 +397,8 @@ public class JcrUtil {
 	public static boolean safeGetBooleanProp(Node node, String propName) {
 		try {
 			return getRequiredBooleanProp(node, propName);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
@@ -416,11 +414,10 @@ public class JcrUtil {
 	}
 
 	/*
-	 * I have decided 64bits of randomness is good enough, instead of 128, thus
-	 * we are dicing up the string to use every other character. If you want to
-	 * modify this method to return a full UUID that will not cause any
-	 * problems, other than default node names being the full string, which is
-	 * kind of long
+	 * I have decided 64bits of randomness is good enough, instead of 128, thus we are dicing up the
+	 * string to use every other character. If you want to modify this method to return a full UUID
+	 * that will not cause any problems, other than default node names being the full string, which
+	 * is kind of long
 	 */
 	public static String getGUID() throws Exception {
 		String uid = UUID.randomUUID().toString();
@@ -433,7 +430,8 @@ public class JcrUtil {
 			if (c == '-') {
 				i--;// account for the fact we jump by tow, and start just after
 					// dash.
-			} else {
+			}
+			else {
 				sb.append(c);
 			}
 		}

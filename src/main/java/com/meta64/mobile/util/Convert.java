@@ -35,7 +35,7 @@ import com.meta64.mobile.model.UserPreferences;
  * Converting objects from one type to another, and formatting.
  */
 public class Convert {
-	
+
 	public static final boolean serverMarkdown = true;
 
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
@@ -44,10 +44,9 @@ public class Convert {
 
 	public static String JsonStringify(Object obj) throws Exception {
 		/*
-		 * I haven't investigated the overhead of creating an ObjectMapper here,
-		 * instead of using an already created one or pooling pattern for them,
-		 * but I do know they aren't threadsafe, so just using a global one
-		 * would not be good.
+		 * I haven't investigated the overhead of creating an ObjectMapper here, instead of using an
+		 * already created one or pooling pattern for them, but I do know they aren't threadsafe, so
+		 * just using a global one would not be good.
 		 */
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -79,11 +78,9 @@ public class Convert {
 	}
 
 	/*
-	 * WARNING: skips the check for ordered children and just assigns false for
-	 * performance reasons
+	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node,
-			boolean htmlOnly) throws Exception {
+	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		long binVer = 0;
@@ -99,14 +96,15 @@ public class Convert {
 					imageSize = getImageSize(node);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// not an error. means node has no binary subnode.
 		}
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
-		//log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
+		// log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
 		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly);
 
@@ -115,14 +113,13 @@ public class Convert {
 		// log.debug("Node: "+node.getPath()+node.getName()+" type:
 		// "+primaryTypeName);
 
-		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes,
-				false, hasBinary, binaryIsImage, binVer, //
+		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
 				primaryTypeName);
 		return nodeInfo;
 	}
-	
+
 	public static long getBinaryVersion(Node node) throws Exception {
 		Property versionProperty = node.getProperty(JcrProp.BIN_VER);
 		if (versionProperty != null) {
@@ -170,13 +167,13 @@ public class Convert {
 			// log.debug(" PROP Name: " + p.getName());
 
 			/*
-			 * grab the content property, and don't put it in the return list
-			 * YET, because we will be sorting the list and THEN putting the
-			 * content at the top of that sorted list.
+			 * grab the content property, and don't put it in the return list YET, because we will
+			 * be sorting the list and THEN putting the content at the top of that sorted list.
 			 */
 			if (p.getName().equals(JcrProp.CONTENT)) {
 				contentPropInfo = propInfo;
-			} else {
+			}
+			else {
 				props.add(propInfo);
 			}
 		}
@@ -192,21 +189,20 @@ public class Convert {
 		return props;
 	}
 
-	public static PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly)
-			throws RepositoryException {
+	public static PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly) throws RepositoryException {
 		String value = null;
 		String htmlValue = null;
 		List<String> values = null;
 
 		/* multivalue */
 		if (prop.isMultiple()) {
-			log.trace(String.format("prop[%s] isMultiple", prop.getName()));
+			// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
 			values = new LinkedList<String>();
 
 			int valIdx = 0;
 			for (Value v : prop.getValues()) {
 				String strVal = formatValue(sessionContext, v, false);
-				log.trace(String.format("     val[%d]=%s", valIdx, strVal));
+				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
 				values.add(strVal);
 				valIdx++;
 			}
@@ -214,20 +210,23 @@ public class Convert {
 		/* else single value */
 		else {
 			if (prop.getName().equals(JcrProp.BIN_DATA)) {
-				log.trace(String.format("prop[%s] isBinary", prop.getName()));
+				// log.trace(String.format("prop[%s] isBinary", prop.getName()));
 				value = "[binary data]";
-			} else if (prop.getName().equals(JcrProp.CONTENT)) {
-				log.trace(String.format("prop[%s] isContent", prop.getName()));
+			}
+			else if (prop.getName().equals(JcrProp.CONTENT)) {
+				// log.trace(String.format("prop[%s] isContent", prop.getName()));
 				if (htmlOnly) {
 					htmlValue = formatValue(sessionContext, prop.getValue(), true);
 					value = "n/r";
-				} else {
+				}
+				else {
 					htmlValue = "n/r";
 					value = formatValue(sessionContext, prop.getValue(), false);
 				}
-			} else {
+			}
+			else {
 				value = formatValue(sessionContext, prop.getValue(), false);
-				log.trace(String.format("prop[%s]=%s", prop.getName(), value));
+				// log.trace(String.format("prop[%s]=%s", prop.getName(), value));
 			}
 		}
 		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, values);
@@ -238,22 +237,25 @@ public class Convert {
 		try {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
-			} else {
+			}
+			else {
 				if (convertToHtml && serverMarkdown) {
 					return getMarkdownProc().markdownToHtml(value.getString());
-				} else {
+				}
+				else {
 					return value.getString();
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return "";
 		}
 	}
 
 	/*
-	 * PegDownProcessor is not threadsafe, and also I don't want to create more
-	 * of them than necessary so we simply attach one to each thread, and the
-	 * thread-safety is no longer an issue.
+	 * PegDownProcessor is not threadsafe, and also I don't want to create more of them than
+	 * necessary so we simply attach one to each thread, and the thread-safety is no longer an
+	 * issue.
 	 */
 	public static PegDownProcessor getMarkdownProc() {
 		PegDownProcessor proc = ThreadLocals.getMarkdownProc();

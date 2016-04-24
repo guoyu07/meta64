@@ -28,14 +28,12 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Service for searching the repository. This searching is currently very basic,
- * and just grabs the first 100 results. Despite it being basic right now, it is
- * however EXTREMELY high performance and leverages the full and best search
- * performance that can be gotten out of Lucene, which beats any other
- * technology in the world in it's power.
+ * Service for searching the repository. This searching is currently very basic, and just grabs the
+ * first 100 results. Despite it being basic right now, it is however EXTREMELY high performance and
+ * leverages the full and best search performance that can be gotten out of Lucene, which beats any
+ * other technology in the world in it's power.
  * 
- * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev-
- * should-know/
+ * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev- should-know/
  */
 @Component
 @Scope("singleton")
@@ -52,13 +50,11 @@ public class NodeSearchService {
 	/*
 	 * Finds an exact property match under the specified node
 	 */
-	public Node findNodeByProperty(Session session, String parentPath, String propName, String propVal)
-			throws Exception {
+	public Node findNodeByProperty(Session session, String parentPath, String propName, String propVal) throws Exception {
 		QueryManager qm = session.getWorkspace().getQueryManager();
 
 		/*
-		 * Note: This is a bad way to lookup a value that's expected to be an
-		 * exact match!
+		 * Note: This is a bad way to lookup a value that's expected to be an exact match!
 		 */
 		StringBuilder queryStr = new StringBuilder();
 		queryStr.append("SELECT * from [nt:base] AS t WHERE ISDESCENDANTNODE([");
@@ -80,10 +76,8 @@ public class NodeSearchService {
 	}
 
 	/*
-	 * see also:
-	 * http://docs.jboss.org/jbossdna/0.7/manuals/reference/html/jcr-query-and-
-	 * search.html
-	 * https://wiki.magnolia-cms.com/display/WIKI/JCR+Query+Cheat+Sheet
+	 * see also: http://docs.jboss.org/jbossdna/0.7/manuals/reference/html/jcr-query-and-
+	 * search.html https://wiki.magnolia-cms.com/display/WIKI/JCR+Query+Cheat+Sheet
 	 */
 
 	// see DescendantSearchTest
@@ -117,10 +111,10 @@ public class NodeSearchService {
 
 			if (whereCount == 0) {
 				queryStr.append(" WHERE ");
-			} else
+			}
+			else
 			/*
-			 * To search ALL properties you can put 't.*' instead of
-			 * 't.[jcr:content]' below.
+			 * To search ALL properties you can put 't.*' instead of 't.[jcr:content]' below.
 			 */
 			if (whereCount > 0) {
 				queryStr.append(" AND ");
@@ -136,7 +130,7 @@ public class NodeSearchService {
 			 */
 			if (useContains) {
 				queryStr.append("contains(t.[");
-				queryStr.append(req.getSearchProp()); //JcrProp.CONTENT);
+				queryStr.append(req.getSearchProp()); // JcrProp.CONTENT);
 				queryStr.append("], '");
 				queryStr.append(escapeQueryString(searchText));
 				queryStr.append("')");
@@ -147,9 +141,10 @@ public class NodeSearchService {
 
 				if (searchAllProps) {
 					queryStr.append("*");
-				} else {
+				}
+				else {
 					queryStr.append("t.[");
-					queryStr.append(req.getSearchProp()); //JcrProp.CONTENT);
+					queryStr.append(req.getSearchProp()); // JcrProp.CONTENT);
 					queryStr.append("]");
 				}
 
@@ -183,12 +178,10 @@ public class NodeSearchService {
 	}
 
 	/*
-	 * Searches for all nodes having name=rep:policy, and returns a list of the
-	 * parent nodes of all those nodes, because those parent nodes are the
-	 * actual nodes being shared.
+	 * Searches for all nodes having name=rep:policy, and returns a list of the parent nodes of all
+	 * those nodes, because those parent nodes are the actual nodes being shared.
 	 */
-	public void getSharedNodes(Session session, GetSharedNodesRequest req, GetSharedNodesResponse res)
-			throws Exception {
+	public void getSharedNodes(Session session, GetSharedNodesRequest req, GetSharedNodesResponse res) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -216,10 +209,10 @@ public class NodeSearchService {
 
 		if (whereCount == 0) {
 			queryStr.append(" WHERE ");
-		} else
+		}
+		else
 		/*
-		 * To search ALL properties you can put 't.*' instead of
-		 * 't.[jcr:content]' below.
+		 * To search ALL properties you can put 't.*' instead of 't.[jcr:content]' below.
 		 */
 		if (whereCount > 0) {
 			queryStr.append(" AND ");
@@ -241,9 +234,8 @@ public class NodeSearchService {
 
 			String path = parentNode.getPath();
 			/*
-			 * If we encounter this user's root node, then ignore it. We don't
-			 * consider this a 'shared' node that the user ever needs to see as
-			 * shared.
+			 * If we encounter this user's root node, then ignore it. We don't consider this a
+			 * 'shared' node that the user ever needs to see as shared.
 			 */
 			if (path.equals(userRootPath)) {
 				continue;

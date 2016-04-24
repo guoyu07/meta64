@@ -8,7 +8,7 @@ public class NodeSearchRequest {
 	private String nodeId;
 
 	private String searchText;
-	
+
 	private String searchProp;
 
 	public String getNodeId() {

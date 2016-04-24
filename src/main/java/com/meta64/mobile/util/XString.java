@@ -37,13 +37,16 @@ public class XString {
 				sb.append(line);
 				sb.append("\n");
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			sb.setLength(0);
-		} finally {
+		}
+		finally {
 			if (in != null) {
 				try {
 					in.close();
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 				}
 			}
 		}

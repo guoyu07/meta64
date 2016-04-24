@@ -14,9 +14,8 @@ public class RenderNodeResponse extends OakResponseBase {
 	private List<NodeInfo> children;
 
 	/*
-	 * under certain situations the rendering request will be pointed to parent
-	 * node instead and we send back to the client 'true' here when that
-	 * happens.
+	 * under certain situations the rendering request will be pointed to parent node instead and we
+	 * send back to the client 'true' here when that happens.
 	 */
 	private boolean displayedParent;
 

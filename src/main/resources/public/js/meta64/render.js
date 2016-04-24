@@ -158,13 +158,10 @@ var render = function() {
 
 						if (meta64.serverMarkdown) {
 							if (rowStyling) {
-								// jcr-content (todo-0: put this class back)
 								ret += _.tag("div", {
 									"class" : "jcr-content"
 								}, jcrContent);
 							} else {
-								// jcr-root-content (todo-0: put this class
-								// back)
 								ret += _.tag("div", {
 									"class" : "jcr-root-content"
 								},

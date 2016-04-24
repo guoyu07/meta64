@@ -20,12 +20,11 @@ import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.util.DateUtil;
 
 /**
- * Wrapper for holding variables that we need to maintain server state of for a
- * session. Basic session state storage is all collected here.
+ * Wrapper for holding variables that we need to maintain server state of for a session. Basic
+ * session state storage is all collected here.
  * 
- * The ScopedProxyMode.TARGET_CLASS annotation allows this session bean to be
- * available on singletons or other beans that are not themselves session
- * scoped.
+ * The ScopedProxyMode.TARGET_CLASS annotation allows this session bean to be available on
+ * singletons or other beans that are not themselves session scoped.
  */
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -33,11 +32,10 @@ public class SessionContext {
 	private static final Logger log = LoggerFactory.getLogger(SessionContext.class);
 
 	/*
-	 * This lock ensures that only one server side function can be running at a
-	 * time for any give session. Although WebUtils.getSessionMutex is also
-	 * available for the same purpose we use our own lock here because we want a
-	 * ReentrantLock, rather than using a synchronized block, so we have the
-	 * full concurrency support provided by that ReentrantLock
+	 * This lock ensures that only one server side function can be running at a time for any give
+	 * session. Although WebUtils.getSessionMutex is also available for the same purpose we use our
+	 * own lock here because we want a ReentrantLock, rather than using a synchronized block, so we
+	 * have the full concurrency support provided by that ReentrantLock
 	 */
 	private ReentrantLock lock = new ReentrantLock();
 
@@ -53,11 +51,10 @@ public class SessionContext {
 	private UserPreferences userPreferences;
 
 	/*
-	 * For extreme scalability we 'could' hold a formatter in a blobal map where
-	 * there is basically one fomratter per timezone/DST combination, but until
-	 * we have hundreds of concurrent users this won't be an issue. Having one
-	 * date format per session should really never be a scalability issue but
-	 * there nonetheless *is* very slight wasted memory here.
+	 * For extreme scalability we 'could' hold a formatter in a blobal map where there is basically
+	 * one fomratter per timezone/DST combination, but until we have hundreds of concurrent users
+	 * this won't be an issue. Having one date format per session should really never be a
+	 * scalability issue but there nonetheless *is* very slight wasted memory here.
 	 */
 	private SimpleDateFormat dateFormat;
 
@@ -103,9 +100,8 @@ public class SessionContext {
 	}
 
 	/*
-	 * This can create nasty bugs. I should bet always getting user name from
-	 * the actual session object itself in all the logic... in most every case
-	 * except maybe login process.
+	 * This can create nasty bugs. I should bet always getting user name from the actual session
+	 * object itself in all the logic... in most every case except maybe login process.
 	 */
 	public String getUserName() {
 		return userName;

@@ -14,8 +14,7 @@ public class ResourceManager {
 	private boolean initialized;
 
 	private void init() {
-		if (initialized)
-			return;
+		if (initialized) return;
 		initialized = true;
 
 		// This is part of a work in progress.

@@ -29,8 +29,7 @@ public class AppFilter implements Filter {
 	private static final HashMap<String, Integer> uniqueIpHits = new HashMap<String, Integer>();
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
 		boolean initialSessionExisted = false;
 
@@ -39,7 +38,8 @@ public class AppFilter implements Filter {
 			HttpSession session = httpReq.getSession(false);
 			if (session == null) {
 				log.debug("******** NO SESSION.");
-			} else {
+			}
+			else {
 				initialSessionExisted = true;
 			}
 
@@ -54,7 +54,8 @@ public class AppFilter implements Filter {
 
 		try {
 			chain.doFilter(req, res);
-		} finally {
+		}
+		finally {
 			/* Set thread back to clean slate, for it's next cycle time in threadpool */
 			ThreadLocals.removeAll();
 		}
@@ -68,7 +69,8 @@ public class AppFilter implements Filter {
 
 			if (hitCount == null) {
 				uniqueIpHits.put(ip, 1);
-			} else {
+			}
+			else {
 				hitCount = hitCount.intValue() + 1;
 				uniqueIpHits.put(ip, hitCount);
 			}
@@ -76,33 +78,27 @@ public class AppFilter implements Filter {
 	}
 
 	/*
-	 * I found this code online and it is not fully tested, but according to my
-	 * research it is the best way you can try determining the source IP.
+	 * I found this code online and it is not fully tested, but according to my research it is the
+	 * best way you can try determining the source IP.
 	 */
 	public static String getClientIpAddr(HttpServletRequest request) {
 		String ip = request.getHeader("X-Forwarded-For");
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		ip = request.getHeader("Proxy-Client-IP");
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		ip = request.getHeader("WL-Proxy-Client-IP");
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		ip = request.getHeader("HTTP_CLIENT_IP");
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		ip = request.getRemoteAddr();
-		if (!unknownIp(ip))
-			return ip;
+		if (!unknownIp(ip)) return ip;
 
 		return "unknown";
 	}

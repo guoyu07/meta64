@@ -33,11 +33,10 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Service for rendering the content of a page. The actual page is not rendered
- * on the server side. What we are really doing here is generating a list of
- * POJOS that get converted to JSON and sent to the client. But regardless of
- * format this is the primary service for pulling content up for rendering the
- * pages on the client as the user browses around on the tree.
+ * Service for rendering the content of a page. The actual page is not rendered on the server side.
+ * What we are really doing here is generating a list of POJOS that get converted to JSON and sent
+ * to the client. But regardless of format this is the primary service for pulling content up for
+ * rendering the pages on the client as the user browses around on the tree.
  */
 @Component
 @Scope("singleton")
@@ -54,13 +53,11 @@ public class NodeRenderService {
 	private SessionContext sessionContext;
 
 	/*
-	 * This is the call that gets all the data to show on a page. Whenever user
-	 * is browsing to a new page, this method gets called once per page and
-	 * retrieves all the data for that page.
+	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
+	 * page, this method gets called once per page and retrieves all the data for that page.
 	 */
-	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix)
-			throws Exception {
-		
+	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix) throws Exception {
+
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -73,10 +70,9 @@ public class NodeRenderService {
 		Node node = JcrUtil.safeFindNode(session, targetId);
 
 		/*
-		 * if the node was a path type and was not found then try with the
-		 * "/root" prefix before giving up. We allow ID parameters to omit the
-		 * leading "/root" part of the path for shortening the path just for end
-		 * user convenience.
+		 * if the node was a path type and was not found then try with the "/root" prefix before
+		 * giving up. We allow ID parameters to omit the leading "/root" part of the path for
+		 * shortening the path just for end user convenience.
 		 */
 		if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
 			targetId = "/root" + targetId;
@@ -128,20 +124,21 @@ public class NodeRenderService {
 					children.add(Convert.convertToNodeInfo(sessionContext, session, n, true));
 
 					/*
-					 * Instead of crashing browser with too much load, just fail
-					 * a bit more gracefully when the limits of this application
-					 * are exceeded.
+					 * Instead of crashing browser with too much load, just fail a bit more
+					 * gracefully when the limits of this application are exceeded.
 					 */
 					if (++nodeCount > 1000) {
 						throw new Exception("Node has too many children (> 1000)");
 					}
 
 					log.trace("    node[" + nodeCount + "] path: " + n.getPath());
-				} else {
+				}
+				else {
 					log.trace("    MODE-REJECT node[" + nodeCount + "] path: " + n.getPath());
 				}
 			}
-		} catch (NoSuchElementException ex) {
+		}
+		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
 
@@ -171,9 +168,9 @@ public class NodeRenderService {
 	}
 
 	/*
-	 * There is a system defined way for admins to specify what node should be
-	 * displayed in the browser when a non-logged in user (i.e. anonymouse user)
-	 * is browsing the site, and this method retrieves that page data.
+	 * There is a system defined way for admins to specify what node should be displayed in the
+	 * browser when a non-logged in user (i.e. anonymouse user) is browsing the site, and this
+	 * method retrieves that page data.
 	 */
 	public void anonPageLoad(Session session, AnonPageLoadRequest req, AnonPageLoadResponse res) throws Exception {
 		if (session == null) {
@@ -185,7 +182,8 @@ public class NodeRenderService {
 			if (!req.isIgnoreUrl() && sessionContext.getUrlId() != null) {
 				id = sessionContext.getUrlId();
 				allowRootAutoPrefix = true;
-			} else {
+			}
+			else {
 				id = anonUserLandingPageNode;
 			}
 		}
@@ -195,14 +193,15 @@ public class NodeRenderService {
 			RenderNodeRequest renderNodeReq = new RenderNodeRequest();
 
 			/*
-			 * if user specified an ID= parameter on the url, we display that
-			 * immediately, or else we display the node that the admin has
-			 * configured to be the default landing page node.
+			 * if user specified an ID= parameter on the url, we display that immediately, or else
+			 * we display the node that the admin has configured to be the default landing page
+			 * node.
 			 */
 			renderNodeReq.setNodeId(id);
 			renderNode(session, renderNodeReq, renderNodeRes, allowRootAutoPrefix);
 			res.setRenderNodeResponse(renderNodeRes);
-		} else {
+		}
+		else {
 			res.setContent("No content available.");
 		}
 

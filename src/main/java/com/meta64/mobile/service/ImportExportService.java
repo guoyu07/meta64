@@ -37,8 +37,8 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Import and Export to and from XML files, as well as the special processing to
- * import the book War and Peace in it's special format.
+ * Import and Export to and from XML files, as well as the special processing to import the book War
+ * and Peace in it's special format.
  */
 @Component
 @Scope("singleton")
@@ -55,22 +55,21 @@ public class ImportExportService {
 	private String adminDataFolder;
 
 	/*
-	 * This will be made optional in the future, but for my purposes I don't
-	 * want the zip file name being the controller of the JCR names. I'd rather
-	 * just generate JCR names ad GUIDS, so I have to be able to map them
+	 * This will be made optional in the future, but for my purposes I don't want the zip file name
+	 * being the controller of the JCR names. I'd rather just generate JCR names ad GUIDS, so I have
+	 * to be able to map them
 	 */
 	private Map<String, String> zipToJcrNameMap = new HashMap<String, String>();
 
 	/*
-	 * Exports the node specified in the req. If the node specified is "/", or
-	 * the repository root, then we don't expect a filename, because we will
-	 * generate a timestamped one.
+	 * Exports the node specified in the req. If the node specified is "/", or the repository root,
+	 * then we don't expect a filename, because we will generate a timestamped one.
 	 */
 	public void exportToXml(Session session, ExportRequest req, ExportResponse res) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
@@ -84,7 +83,8 @@ public class ImportExportService {
 		if (nodeId.equals("/")) {
 			// exportEntireRepository(session);
 			throw new Exception("Backing up entire repository is not supported.");
-		} else {
+		}
+		else {
 			String fileName = req.getTargetFileName();
 			exportNodeToXMLFile(session, nodeId, fileName);
 			// exportNodeToFileSingleTextFile(session, nodeId, fileName);
@@ -94,17 +94,14 @@ public class ImportExportService {
 	}
 
 	/*
-	 * Unfortunately the Apache Oak fails with errors related to UUID any time
-	 * we try to import something at the root like "/jcr:system" (confirmed by
-	 * other users online also, this is not a mistake I'm making but a mistake
-	 * made by the Oak developers). As a second last ditch effort I tried to
-	 * backup one level down deeper (activities, nodeTypes, and versionStorage),
-	 * but that also results in exception getting thrown from inside Oak. Not my
-	 * fault. They just don't have this stuff working. I will leave this in
-	 * place to show what has been tried, but for now, it seems the only way to
-	 * backup a reposity is to back up the actual MongoDB files themselves,
-	 * which is not a tragedy, but is definitely "bad" because we cannot back up
-	 * in ASCII.
+	 * Unfortunately the Apache Oak fails with errors related to UUID any time we try to import
+	 * something at the root like "/jcr:system" (confirmed by other users online also, this is not a
+	 * mistake I'm making but a mistake made by the Oak developers). As a second last ditch effort I
+	 * tried to backup one level down deeper (activities, nodeTypes, and versionStorage), but that
+	 * also results in exception getting thrown from inside Oak. Not my fault. They just don't have
+	 * this stuff working. I will leave this in place to show what has been tried, but for now, it
+	 * seems the only way to backup a reposity is to back up the actual MongoDB files themselves,
+	 * which is not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
 	 */
 	private void exportEntireRepository(Session session) throws Exception {
 		long time = System.currentTimeMillis();
@@ -154,14 +151,15 @@ public class ImportExportService {
 			session.exportSystemView(exportNode.getPath(), output, false, false);
 
 			/*
-			 * Need to investigate whether there is any reason to ever give the
-			 * user the option to export as document view instead if system
-			 * view, and what are the advantages/disadvantages.
+			 * Need to investigate whether there is any reason to ever give the user the option to
+			 * export as document view instead if system view, and what are the
+			 * advantages/disadvantages.
 			 */
 			// session.exportDocumentView(exportNode.getPath(), output, true,
 			// false);
 			output.flush();
-		} finally {
+		}
+		finally {
 			if (output != null) {
 				output.close();
 			}
@@ -197,8 +195,7 @@ public class ImportExportService {
 	}
 
 	private void recurseNode(Node node, int level, StringBuilder content) throws Exception {
-		if (node == null)
-			return;
+		if (node == null) return;
 
 		NodeIterator nodeIter = node.getNodes();
 		int nodeCount = 0;
@@ -212,13 +209,13 @@ public class ImportExportService {
 
 				nodeCount++;
 			}
-		} catch (NoSuchElementException ex) {
+		}
+		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
 	}
 
-	private void appendContent(Node node, int level, String indent, int nodeCount, StringBuilder content)
-			throws Exception {
+	private void appendContent(Node node, int level, String indent, int nodeCount, StringBuilder content) throws Exception {
 		log.info(indent + "node[" + nodeCount + "] path: " + node.getPath());
 
 		Property contentProp = JcrUtil.getProperty(node, JcrProp.CONTENT);
@@ -239,7 +236,7 @@ public class ImportExportService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
@@ -276,7 +273,8 @@ public class ImportExportService {
 			// nodeId);
 			// importFromFileToNode(session, sourceFileName + "-meta64.xml",
 			// nodeId);
-		} else {
+		}
+		else {
 			importFromFileToNode(session, sourceFileName, nodeId);
 		}
 
@@ -301,26 +299,25 @@ public class ImportExportService {
 			in = new BufferedInputStream(new FileInputStream(fullFileName));
 
 			/*
-			 * This REPLACE_EXISTING option has the effect (in my own words) as
-			 * meaning that even if the some of the nodes have moved around
-			 * since they were first exported they will be updated 'in their
-			 * current place' as part of this import.
+			 * This REPLACE_EXISTING option has the effect (in my own words) as meaning that even if
+			 * the some of the nodes have moved around since they were first exported they will be
+			 * updated 'in their current place' as part of this import.
 			 * 
-			 * This UUID behavior is so interesting and powerful it really needs
-			 * to be an option specified at the user level that determines how
-			 * this should work.
+			 * This UUID behavior is so interesting and powerful it really needs to be an option
+			 * specified at the user level that determines how this should work.
 			 */
 			session.getWorkspace().importXML(importNode.getPath(), in,
 					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
 					ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
 
 			/*
-			 * since importXML is documented to close the inputstream we set it
-			 * to null here, because there's nothing left for us to do with it.
-			 * In the exception case we go ahead and try to close it.
+			 * since importXML is documented to close the inputstream we set it to null here,
+			 * because there's nothing left for us to do with it. In the exception case we go ahead
+			 * and try to close it.
 			 */
 			in = null;
-		} finally {
+		}
+		finally {
 			if (in != null) {
 				in.close();
 			}
@@ -331,7 +328,7 @@ public class ImportExportService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		if (!sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
@@ -363,7 +360,8 @@ public class ImportExportService {
 			while ((entry = zis.getNextEntry()) != null) {
 				importZipEntry(zis, entry, importNode, session);
 			}
-		} finally {
+		}
+		finally {
 			if (zis != null) {
 				zis.close();
 			}
@@ -372,25 +370,24 @@ public class ImportExportService {
 		res.setSuccess(true);
 	}
 
-	public void importZipEntry(ZipInputStream zis, ZipEntry zipEntry, Node importNode, Session session)
-			throws Exception {
+	public void importZipEntry(ZipInputStream zis, ZipEntry zipEntry, Node importNode, Session session) throws Exception {
 		String name = zipEntry.getName();
 
 		if (zipEntry.isDirectory()) {
 			/*
-			 * We are using an approach where we ignore folder entries in the
-			 * zip file, because folders have no actual content
+			 * We are using an approach where we ignore folder entries in the zip file, because
+			 * folders have no actual content
 			 */
 			// log.debug("ZIP D: " + name);
 			// ensureNodeExistsForZipFolder(importNode, name, session);
-		} else {
+		}
+		else {
 			log.debug("ZIP F: " + name);
 			importFileFromZip(zis, zipEntry, importNode, session);
 		}
 	}
 
-	private void importFileFromZip(ZipInputStream zis, ZipEntry zipEntry, Node importNode, Session session)
-			throws Exception {
+	private void importFileFromZip(ZipInputStream zis, ZipEntry zipEntry, Node importNode, Session session) throws Exception {
 		String name = zipEntry.getName();
 
 		StringBuilder buffer = new StringBuilder();
@@ -407,13 +404,11 @@ public class ImportExportService {
 		String val = buffer.toString();
 
 		/*
-		 * I had a special need to rip HTML tags out of the data I was
-		 * importing, so I'm commenting out this hack but leaving it in place so
-		 * show where and how you can do some processing of the data as it's
-		 * imported. Ideally of course this capability would be some kind of
-		 * "extension point" (Eclipse plugin terminology) in a production JCR
-		 * Browder for filteringinput data, or else this entire class could be
-		 * pluggable via inteface and IoC.
+		 * I had a special need to rip HTML tags out of the data I was importing, so I'm commenting
+		 * out this hack but leaving it in place so show where and how you can do some processing of
+		 * the data as it's imported. Ideally of course this capability would be some kind of
+		 * "extension point" (Eclipse plugin terminology) in a production JCR Browder for
+		 * filteringinput data, or else this entire class could be pluggable via inteface and IoC.
 		 */
 		// val = val.replace("<p>", "\n\n");
 		// val = val.replace("<br>", "\n");
@@ -432,9 +427,11 @@ public class ImportExportService {
 			token = t.nextToken();
 			if (token.equals("<")) {
 				inTag = true;
-			} else if (token.equals(">")) {
+			}
+			else if (token.equals(">")) {
 				inTag = false;
-			} else {
+			}
+			else {
 				if (!inTag) {
 					ret.append(token);
 				}
@@ -445,8 +442,7 @@ public class ImportExportService {
 	}
 
 	/*
-	 * Builds a node assuming root is a starting path, and 'path' is a ZipFile
-	 * folder name.
+	 * Builds a node assuming root is a starting path, and 'path' is a ZipFile folder name.
 	 * 
 	 * Revision: the path is not a file name path.
 	 */
@@ -459,8 +455,8 @@ public class ImportExportService {
 		for (String token : tokens) {
 
 			/*
-			 * This actually is assuming that the path is a file name, and we
-			 * ignore the file name part
+			 * This actually is assuming that the path is a file name, and we ignore the file name
+			 * part
 			 */
 			if (tokenIdx >= maxTokenIdx) {
 				break;
@@ -476,7 +472,8 @@ public class ImportExportService {
 			try {
 				// log.debug("Checking for path: " + curPath);
 				curNode = session.getNode(curPath);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				// log.debug("path not found, creating");
 				// not an error condition. Simply indicates note at curPath does
 				// not exist, so we
@@ -496,13 +493,13 @@ public class ImportExportService {
 		try {
 			Node newNode = node.addNode(jcrName, JcrConstants.NT_UNSTRUCTURED);
 			/*
-			 * Note we don't set content here, but instead set it in the method
-			 * that calls this one.
+			 * Note we don't set content here, but instead set it in the method that calls this one.
 			 */
 			// newNode.setProperty("jcr:content", content);
 			JcrUtil.timestampNewNode(session, newNode);
 			return newNode;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}

@@ -6,16 +6,14 @@ package com.meta64.mobile.config;
 public class JcrProp {
 
 	/*
-	 * "true" means any user can add subnode under the node that has this
-	 * property
+	 * "true" means any user can add subnode under the node that has this property
 	 */
 	public static final String PUBLIC_APPEND = "publicAppend";
 
 	/*
-	 * comment nodes are always 'admin owned' in terms of the true credentials,
-	 * but are flagged as who the comment was actually posted by using the
-	 * 'commentBy' property. This way that person can be allowed to edit the
-	 * content, but have no other privileges.
+	 * comment nodes are always 'admin owned' in terms of the true credentials, but are flagged as
+	 * who the comment was actually posted by using the 'commentBy' property. This way that person
+	 * can be allowed to edit the content, but have no other privileges.
 	 */
 	public static final String COMMENT_BY = "commentBy";
 
@@ -25,8 +23,8 @@ public class JcrProp {
 	public static final String USER_PREF_ADV_MODE = "advMode";
 
 	/*
-	 * Goes on node: Paths defined by: JcrUtil.getSystemOutbox(session) + GUID
-	 * (guid is unique per outbound email)
+	 * Goes on node: Paths defined by: JcrUtil.getSystemOutbox(session) + GUID (guid is unique per
+	 * outbound email)
 	 */
 	public static final String EMAIL_CONTENT = "jcr:content";
 	public static final String EMAIL_RECIP = "recip";
@@ -39,7 +37,7 @@ public class JcrProp {
 	public static final String PRIMARY_TYPE = "jcr:primaryType";
 	public static final String LAST_MODIFIED = "jcr:lastModified";
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
-	
+
 	public static final String DISABLE_INSERT = "disableInsert";
 
 	/*
@@ -58,10 +56,9 @@ public class JcrProp {
 	/*
 	 * I want to use jcr namespace for these since they exist and are known
 	 * 
-	 * I stopped using jcr:data, when I read docs online saying JCR does try to
-	 * index content in binaries, and until I can be sure it's not trying to
-	 * index images I will just turn off jcr:data, and use a proprietary
-	 * property not recognized by jcr
+	 * I stopped using jcr:data, when I read docs online saying JCR does try to index content in
+	 * binaries, and until I can be sure it's not trying to index images I will just turn off
+	 * jcr:data, and use a proprietary property not recognized by jcr
 	 */
 	public static final String BIN_DATA = "jcrData";
 	public static final String BIN_MIME = "jcr:mimeType";

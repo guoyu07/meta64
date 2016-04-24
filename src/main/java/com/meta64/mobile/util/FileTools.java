@@ -7,23 +7,20 @@ import java.io.FileWriter;
 public class FileTools {
 
 	public static boolean fileExists(String fileName) {
-		if (fileName == null || fileName.equals(""))
-			return false;
+		if (fileName == null || fileName.equals("")) return false;
 
 		return new File(fileName).isFile();
 	}
 
 	public static boolean dirExists(String fileName) {
-		if (fileName == null || fileName.equals(""))
-			return false;
+		if (fileName == null || fileName.equals("")) return false;
 
 		return new File(fileName).isDirectory();
 	}
 
 	public static boolean createDirectory(String dir) {
 		File file = new File(dir);
-		if (file.isDirectory())
-			return true;
+		if (file.isDirectory()) return true;
 		boolean success = file.mkdirs();
 		return success;
 	}
@@ -33,7 +30,8 @@ public class FileTools {
 		try {
 			out.write(content);
 			out.flush();
-		} finally {
+		}
+		finally {
 			if (out != null) {
 				out.close();
 			}

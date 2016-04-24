@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Primary object passed back to client to represent a 'node'. Client sees the
- * JSON version of this, in javascript.
+ * Primary object passed back to client to represent a 'node'. Client sees the JSON version of this,
+ * in javascript.
  */
 public class NodeInfo {
 	private static final Logger log = LoggerFactory.getLogger(NodeInfo.class);
@@ -30,9 +30,8 @@ public class NodeInfo {
 	public NodeInfo() {
 	}
 
-	public NodeInfo(String id, String path, String name, List<PropertyInfo> properties, boolean hasChildren,
-			boolean childrenOrdered, boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height,
-			String primaryTypeName) {
+	public NodeInfo(String id, String path, String name, List<PropertyInfo> properties, boolean hasChildren, boolean childrenOrdered, boolean hasBinary,
+			boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
 		this.id = id;
 		this.path = path;
 		this.name = name;

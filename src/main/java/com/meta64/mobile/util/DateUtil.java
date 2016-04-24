@@ -16,11 +16,10 @@ public class DateUtil {
 	private static final HashMap<String, String> zoneMap = new HashMap<String, String>();
 
 	/*
-	 * Date APIs have deprecated the use of short abbreviations for timezones,
-	 * but we preferr to still have them shown for at least United States
-	 * timezones, so we have to implement our own way of detecting the proper
-	 * one and also consider proper Daylight Savings Time value, which is of
-	 * course coming from the browser.
+	 * Date APIs have deprecated the use of short abbreviations for timezones, but we preferr to
+	 * still have them shown for at least United States timezones, so we have to implement our own
+	 * way of detecting the proper one and also consider proper Daylight Savings Time value, which
+	 * is of course coming from the browser.
 	 */
 	static {
 		zoneMap.put("-4S", "AST"); // ATLANTIC STANDARD TIME UTC - 4

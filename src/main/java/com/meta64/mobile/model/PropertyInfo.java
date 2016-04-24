@@ -7,18 +7,16 @@ public class PropertyInfo {
 	private String name;
 
 	/*
-	 * Only one of these will be non-null. The property is either multi-valued
-	 * or single valued
+	 * Only one of these will be non-null. The property is either multi-valued or single valued
 	 * 
-	 * Also the 'value' is the actual text stored in the DB, and is assumed to
-	 * be markdown for content nodes.
+	 * Also the 'value' is the actual text stored in the DB, and is assumed to be markdown for
+	 * content nodes.
 	 */
 	private String value;
 	private List<String> values;
 
 	/*
-	 * For content nodes, the htmlValue will be the output from converting from
-	 * markdown into HTML
+	 * For content nodes, the htmlValue will be the output from converting from markdown into HTML
 	 */
 	private String htmlValue;
 

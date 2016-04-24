@@ -1,7 +1,5 @@
 package com.meta64.mobile.service;
 
-import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -30,20 +28,20 @@ public class SystemService {
 	}
 
 	private static String getIpReport() {
-		return "Number of Unique IPs since startup: "+AppFilter.getUniqueIpHits().size();
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("Unique IPs During Run<br>");
-//		int count = 0;
-//		HashMap<String, Integer> map = AppFilter.getUniqueIpHits();
-//		synchronized (map) {
-//			for (String key : map.keySet()) {
-//				int hits = map.get(key);
-//				sb.append("IP=" + key + " hits=" + hits);
-//				sb.append("<br>");
-//				count++;
-//			}
-//		}
-//		sb.append("count=" + count + "<br>");
-//		return sb.toString();
+		return "Number of Unique IPs since startup: " + AppFilter.getUniqueIpHits().size();
+		// StringBuilder sb = new StringBuilder();
+		// sb.append("Unique IPs During Run<br>");
+		// int count = 0;
+		// HashMap<String, Integer> map = AppFilter.getUniqueIpHits();
+		// synchronized (map) {
+		// for (String key : map.keySet()) {
+		// int hits = map.get(key);
+		// sb.append("IP=" + key + " hits=" + hits);
+		// sb.append("<br>");
+		// count++;
+		// }
+		// }
+		// sb.append("count=" + count + "<br>");
+		// return sb.toString();
 	}
 }

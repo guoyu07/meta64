@@ -9,7 +9,7 @@ public class OakResponseBase {
 	public OakResponseBase() {
 		ThreadLocals.setResponse(this);
 	}
-	
+
 	public boolean isSuccess() {
 		return success;
 	}

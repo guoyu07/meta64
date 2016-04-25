@@ -1,26 +1,24 @@
 #!/bin/bash
-./setenv.sh
+source ./setenv.sh
 
 #
-# Trouble with Tidy: check for "- -" where "--" was needed.
+# Trouble with Tidy? Check for "- -" where "--" was needed.
 #
 
 export timestamp=`eval date +%Y-%m-%d-%s`
-export backupFolder=/ferguson/meta64Oak-private/auto-bak
+export backupFolder=$META64_BAK
 
-#todo this tidy stuff should be wrapped in a callable script for DRY.
-
-./run-tidy.sh /ferguson/meta64Oak/src/main/resources/templates index
-./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs main-tabs
-./run-tidy.sh /ferguson/meta64Oak/src/main/resources/public/elements/donate-panel donate-panel
+./run-tidy.sh $META64/src/main/resources/templates index
+./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
+./run-tidy.sh $META64/src/main/resources/public/elements/donate-panel donate-panel
 
 #copy the readme.md from project root to published location (landing-page.md) where the app will 
 #be able to pick it up at runtime.
-cp /ferguson/meta64Oak/readme.md /ferguson/meta64Oak/src/main/resources/static/landing-page.md
-cp /ferguson/meta64Oak/help.md /ferguson/meta64Oak/src/main/resources/static/help.md
+cp $META64/readme.md $META64/src/main/resources/static/landing-page.md
+cp $META64/help.md $META64/src/main/resources/static/help.md
 
 #go back to folder with this script in it. sort of 'home' for this script
-cd /ferguson/meta64Oak/build
+cd $META64/build
 
 cat ../src/main/resources/public/js/meta64/cnst.js > all.js
 cat ../src/main/resources/public/js/meta64/util.js >> all.js
@@ -63,23 +61,23 @@ java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/
 #java -jar google-compiler.jar --help
 read -p "Google compiler done."
 
-cd /ferguson/meta64Oak
+cd $META64
 ant -buildfile build.xml all
 
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
 mvn clean package -DskipTests=true
 
-cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar /run-root/com.meta64.mobile-0.0.1-SNAPSHOT.jar
+cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar $META64_RUN/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
-rm /ferguson/meta64Oak/build/all.js
-rm /ferguson/meta64Oak/build/*.sh~
-rm /ferguson/meta64Oak/src/main/resources/public/js/meta64.min.js
-rm /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs/main-tabs-out.html
-rm /ferguson/meta64Oak/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
-rm /ferguson/meta64Oak/src/main/resources/templates/index-20*.html
-rm /ferguson/meta64Oak/src/main/resources/static/*.md~
-rm /ferguson/meta64Oak/*.md~
+rm $META64/build/all.js
+rm $META64/build/*.sh~
+rm $META64/src/main/resources/public/js/meta64.min.js
+rm $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html
+rm $META64/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
+rm $META64/src/main/resources/templates/index-20*.html
+rm $META64/src/main/resources/static/*.md~
+rm $META64/*.md~
 
 read -p "All done."
 

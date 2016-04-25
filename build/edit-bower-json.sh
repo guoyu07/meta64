@@ -1,7 +1,7 @@
 #!/bin/bash
 ./setenv.sh
 
-cd /ferguson/meta64Oak/src/main/resources/public
+cd /home/clay/ferguson/meta64Oak/src/main/resources/public
 
 sudo gedit bower.json
 

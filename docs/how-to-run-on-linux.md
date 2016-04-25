@@ -12,8 +12,6 @@ In that config file everything is configured including the db location which def
     Sell script content for Linux:
     
     # nohup java -jar com.meta64.mobile-0.0.1-SNAPSHOT.jar --jcrAdminPassword=yourPasswordHere --spring.config.location=classpath:/application.properties,classpath:/application-test.properties &
-    
-* Note, the above is not the "best" way to start an app on linux, but is the simplest.
 
 ## Get your Process ID
 

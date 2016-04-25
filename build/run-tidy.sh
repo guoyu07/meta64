@@ -14,7 +14,7 @@ cd $tidyPath
 cp $tidyFileBase.html $backupFolder/$tidyFileBase-$timestamp.html
 
 #run tidy on the file, targeting the same file but with "-out" suffix on its name
-tidy -config /ferguson/meta64Oak/tidy-config.txt $tidyFileBase.html > $backupFolder/$tidyFileBase-out.html
+tidy -config $META64/tidy-config.txt $tidyFileBase.html > $backupFolder/$tidyFileBase-out.html
 
 #now copy the output file into the actual file (overwriting original file, which is backed up)
 #todo: I really need to check the return code from the 'tidy' command and check for sucess or fail.

@@ -12,8 +12,9 @@ export backupFolder=$META64_BAK
 ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
 ./run-tidy.sh $META64/src/main/resources/public/elements/donate-panel donate-panel
 
-#copy the readme.md from project root to published location (landing-page.md) where the app will 
-#be able to pick it up at runtime.
+#copy the readme.md from project root to published location (landing-page.md) where the app will
+#be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
+#only and always, is because GitHub looks in the root for readme.md at least
 cp $META64/readme.md $META64/src/main/resources/static/landing-page.md
 cp $META64/help.md $META64/src/main/resources/static/help.md
 
@@ -57,7 +58,7 @@ cat ../src/main/resources/public/js/meta64/panel/searchResultsPanel.js >> all.js
 cat ../src/main/resources/public/js/meta64/panel/timelineResultsPanel.js  >> all.js
 
 java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64.min.js" all.js
- 
+
 #java -jar google-compiler.jar --help
 read -p "Google compiler done."
 
@@ -80,5 +81,3 @@ rm $META64/src/main/resources/static/*.md~
 rm $META64/*.md~
 
 read -p "All done."
-
-

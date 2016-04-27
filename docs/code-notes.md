@@ -106,7 +106,3 @@ This is broken (by eclipse)
     // # sourceURL=renameNodePg.js
 
 I have no yet found a way to configure the eclipse to stop doing this, and it is a very serious problem. Only thing I know to do is eventually use ant text file replace feature to be able to fix it as part of the build process. Without having the sourceURL the stack traces for javascript errors are even more unhelpful than normal!
-
-
-
-

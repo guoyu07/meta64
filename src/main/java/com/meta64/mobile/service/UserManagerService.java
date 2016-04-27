@@ -180,7 +180,7 @@ public class UserManagerService {
 	}
 
 	/*
-	 * Processes last set of signup, which is validation of registration code. This means user has
+	 * Processes last step of signup, which is validation of registration code. This means user has
 	 * clicked the link they were sent during the signup email verification, and they are sending in
 	 * a signupCode that will turn on their account and actually create their account.
 	 */

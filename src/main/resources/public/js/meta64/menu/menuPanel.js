@@ -45,7 +45,7 @@ var menuPanel = function() {
 			_menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
 			_menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();") + // 
 			_menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();") + // 
-			//_menuItem("Import", "openImportPgButton", "edit.openImportPg();") +
+			_menuItem("Import", "openImportDlg", "(new ImportDlg()).open();") + //
 			_menuItem("Export", "openExportDlg", "(new ExportDlg()).open();"); //
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
 			

@@ -2,15 +2,6 @@ console.log("running module: edit.js");
 
 var edit = function() {
 
-	var _importResponse = function(res) {
-		if (util.checkSuccess("Import", res)) {
-			(new MessageDlg("Import Successful.")).open();
-			view.refreshTree(null, false);
-			meta64.selectTab("mainTabName");
-			view.scrollToSelectedNode();
-		}
-	}
-
 	var _insertBookResponse = function(res) {
 		console.log("insertBookResponse running.");
 
@@ -297,27 +288,6 @@ var edit = function() {
 			util.json("exportToXml", {
 				"nodeId" : "/"
 			}, _exportResponse);
-		},
-
-		openImportPg : function() {
-			(new ImportDlg()).open();
-		},
-
-		importNodes : function() {
-			var highlightNode = meta64.getHighlightedNode();
-			var sourceFileName = util.getInputVal("importTargetNodeName");
-
-			if (util.emptyString(sourceFileName)) {
-				(new MessageDlg("Please enter a name for the import file.")).open();
-				return;
-			}
-
-			if (highlightNode) {
-				util.json("import", {
-					"nodeId" : highlightNode.id,
-					"sourceFileName" : sourceFileName
-				}, _importResponse);
-			}
 		},
 
 		runEditNode : function(uid) {

@@ -475,7 +475,8 @@ var meta64 = function() {
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
 			util.setEnablement("navLoginButton", _.isAnonUser);
 			util.setEnablement("openSignupPgButton", _.isAnonUser);
-			util.setEnablement("openExportDlg", _.isAnonUser);
+			util.setEnablement("openExportDlg", _.isAdminUser);
+			util.setEnablement("openImportDlg", _.isAdminUser);
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			util.setEnablement("propsToggleButton", propsToggle);
@@ -508,7 +509,8 @@ var meta64 = function() {
 			util.setEnablement("refreshPageButton", !_.isAnonUser);
 			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null);
 
-			util.setVisibility("openExportDlg", _.isAnonUser);
+			util.setVisibility("openImportDlg", _.isAdminUser);
+			util.setVisibility("openExportDlg", _.isAdminUser);
 			util.setVisibility("navHomeButton", !_.isAnonUser);
 			util.setVisibility("editModeButton", allowEditMode);
 			util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());

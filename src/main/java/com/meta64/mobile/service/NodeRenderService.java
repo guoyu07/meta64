@@ -131,7 +131,7 @@ public class NodeRenderService {
 						throw new Exception("Node has too many children (> 1000)");
 					}
 
-					log.trace("    node[" + nodeCount + "] path: " + n.getPath());
+					//log.trace("    node[" + nodeCount + "] path: " + n.getPath());
 				}
 				else {
 					log.trace("    MODE-REJECT node[" + nodeCount + "] path: " + n.getPath());

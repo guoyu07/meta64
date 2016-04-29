@@ -31,8 +31,8 @@ public class AppServer {
 	}
 
 	/*
-	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possibible
-	 * and portabe to shart with other java developers and able to work just from calling this one
+	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possible
+	 * and portable to share with other java developers and able to work just from calling this one
 	 * static method.
 	 */
 	private static void hookEclipseShutdown(String[] args) {

@@ -20,20 +20,41 @@ util.inherit(Dialog, ExportDlg);
 ExportDlg.prototype.build = function() {
 	var header = render.makeDialogHeader("Export to XML");
 
-	var formControls = render.makeEditField("Export to File Name", "exportTargetNodeName");
+	var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");
 
-	var exportButton = this.makeButton("Export", "exportNodesButton");
+	var exportButton = this.makeButton("Export", "exportNodesButton", ExportDlg.prototype.exportNodes, this);
 	var backButton = this.makeCloseButton("Close", "cancelExportButton");
 	var buttonBar = render.centeredButtonBar(exportButton + backButton);
 
-	//This feature is currently disabled pending completion of some refactoring
-	//$("#"+this.id("exportNodesButton")).on("click", edit.exportNodes);
 	return header + formControls + buttonBar;
 }
 
-ExportDlg.prototype.init = function() {
-	
+ExportDlg.prototype.exportNodes = function() {
+	var highlightNode = meta64.getHighlightedNode();
+	var targetFileName = this.getInputVal("exportTargetNodeName");
+
+	if (util.emptyString(targetFileName)) {
+		(new MessageDlg("Please enter a name for the export file.")).open();
+		return;
+	}
+
+	if (highlightNode) {
+		util.json("exportToXml", {
+			"nodeId" : highlightNode.id,
+			"targetFileName" : targetFileName
+		}, ExportDlg.prototype.exportResponse);
+	}
 }
 
+ExportDlg.prototype.exportResponse = function(res) {
+	if (util.checkSuccess("Export", res)) {
+		(new MessageDlg("Export Successful.")).open();
+		meta64.selectTab("mainTabName");
+		view.scrollToSelectedNode();
+	}
+}
+
+ExportDlg.prototype.init = function() {
+}
 
 //# sourceURL=ExportDlg.js

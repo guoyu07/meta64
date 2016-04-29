@@ -2,14 +2,6 @@ console.log("running module: edit.js");
 
 var edit = function() {
 
-	var _exportResponse = function(res) {
-		if (util.checkSuccess("Export", res)) {
-			(new MessageDlg("Export Successful.")).open();
-			meta64.selectTab("mainTabName");
-			view.scrollToSelectedNode();
-		}
-	}
-
 	var _importResponse = function(res) {
 		if (util.checkSuccess("Import", res)) {
 			(new MessageDlg("Import Successful.")).open();
@@ -305,27 +297,6 @@ var edit = function() {
 			util.json("exportToXml", {
 				"nodeId" : "/"
 			}, _exportResponse);
-		},
-
-		openExportPg : function() {
-			(new ExportDlg()).open();
-		},
-
-		exportNodes : function() {
-			var highlightNode = meta64.getHighlightedNode();
-			var targetFileName = util.getInputVal("exportTargetNodeName");
-
-			if (util.emptyString(targetFileName)) {
-				(new MessageDlg("Please enter a name for the export file.")).open();
-				return;
-			}
-
-			if (highlightNode) {
-				util.json("exportToXml", {
-					"nodeId" : highlightNode.id,
-					"targetFileName" : targetFileName
-				}, _exportResponse);
-			}
 		},
 
 		openImportPg : function() {

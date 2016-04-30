@@ -473,15 +473,12 @@ var meta64 = function() {
 			var highlightNode = _.getHighlightedNode();
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
-			util.setEnablement("navLoginButton", _.isAnonUser);
 			util.setEnablement("openSignupPgButton", _.isAnonUser);
 			util.setEnablement("openExportDlg", _.isAdminUser);
 			util.setEnablement("openImportDlg", _.isAdminUser);
 
 			var propsToggle = _.currentNode && !_.isAnonUser;
 			util.setEnablement("propsToggleButton", propsToggle);
-
-			util.setEnablement("deletePropertyButton", !_.isAnonUser);
 
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
@@ -519,8 +516,6 @@ var meta64 = function() {
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);
 			util.setVisibility("navLogoutButton", !_.isAnonUser);
 			util.setVisibility("openSignupPgButton", _.isAnonUser);
-			util.setVisibility("mainMenuSearchButton", !_.isAnonUser && highlightNode != null);
-			util.setVisibility("mainMenuTimelineButton", !_.isAnonUser && highlightNode != null);
 
 			Polymer.dom.flush(); // <---- is this needed ? todo-3
 			Polymer.updateStyles();
@@ -563,14 +558,12 @@ var meta64 = function() {
 			if (res.renderNodeResponse) {
 
 				util.setVisibility("mainNodeContent", true);
-				util.setVisibility("mainNodeStatusBar", true);
 
 				render.renderPageFromData(res.renderNodeResponse);
 
 				_.refreshAllGuiEnablement();
 			} else {
 				util.setVisibility("mainNodeContent", false);
-				util.setVisibility("mainNodeStatusBar", false);
 
 				console.log("setting listview to: " + res.content);
 				util.setHtmlEnhanced("listView", res.content);

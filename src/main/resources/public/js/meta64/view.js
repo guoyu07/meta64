@@ -17,13 +17,6 @@ var view = function() {
 			if (meta64.editMode) {
 				statusLine += " Selections: " + util.getPropertyCount(meta64.selectedNodes);
 			}
-
-			var visible = statusLine.length > 0;
-			util.setVisibility("mainNodeStatusBar", visible);
-
-			if (visible) {
-				util.setHtmlEnhanced("mainNodeStatusBar", statusLine);
-			}
 		},
 
 		/*

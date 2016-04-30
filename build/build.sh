@@ -15,8 +15,8 @@ export backupFolder=$META64_BAK
 #copy the readme.md from project root to published location (landing-page.md) where the app will
 #be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
 #only and always, is because GitHub looks in the root for readme.md at least
-cp $META64/readme.md $META64/src/main/resources/static/landing-page.md
-cp $META64/help.md $META64/src/main/resources/static/help.md
+cp $META64/readme.md $META64/src/main/resources/public/landing-page.md
+cp $META64/help.md $META64/src/main/resources/public/help.md
 
 #go back to folder with this script in it. sort of 'home' for this script
 cd $META64/build
@@ -38,7 +38,6 @@ cat ../src/main/resources/public/js/meta64/view.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/base/Dialog.js >> all.js
 cat ../src/main/resources/public/js/meta64/menu/menuPanel.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ConfirmDlg.js >> all.js
-cat ../src/main/resources/public/js/meta64/dlg/DonateDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/MessageDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/LoginDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/SignupDlg.js >> all.js
@@ -80,7 +79,7 @@ rm -f $META64/src/main/resources/public/elements/donate-panel-out.html
 rm -f $META64/src/main/resources/public/elements/donate-panel-20*.html
 rm -f $META64/src/main/resources/templates/index-out.html
 rm -f $META64/src/main/resources/templates/index-20*.html
-rm -f $META64/src/main/resources/static/*.md~
+rm -f $META64/src/main/resources/public/*.md~
 rm -f $META64/*.md~
 
 read -p "All done."

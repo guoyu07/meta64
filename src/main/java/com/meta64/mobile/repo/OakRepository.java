@@ -152,10 +152,10 @@ public class OakRepository {
 		adminRunner.run((Session session) -> {
 
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
-			initPageNodeFromClasspath(session, landingPageNode, "classpath:/static/landing-page.md");
+			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/landing-page.md");
 
 			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, "Help Node");
-			initPageNodeFromClasspath(session, helpPageNode, "classpath:/static/help.md");
+			initPageNodeFromClasspath(session, helpPageNode, "classpath:/public/help.md");
 
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
@@ -271,7 +271,8 @@ public class OakRepository {
 		userParams.put(UserConstants.PARAM_ADMIN_ID, "admin");
 		userParams.put(UserConstants.PARAM_OMIT_ADMIN_PW, false);
 
-		securityParams = ConfigurationParameters.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
+		securityParams = ConfigurationParameters
+				.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
 		securityProvider = new SecurityProviderImpl(securityParams);
 		return securityProvider;
 	}

@@ -24,7 +24,7 @@ public class ResourceManager {
 		// PathMatchingResourcePatternResolver();
 		// try {
 		// Resource[] resources =
-		// resolver.getResources("classpath*:/static/**/*.*");
+		// resolver.getResources("classpath*:/public/**/*.*");
 		// for (Resource res : resources) {
 		// System.out.println("Resource: URI: " + res.getURI() + " URL: " +
 		// res.getURL());

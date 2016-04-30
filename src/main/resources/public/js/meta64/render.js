@@ -131,12 +131,11 @@ var render = function() {
 		/*
 		 * node: JSON of NodeInfo.java
 		 * 
-		 * todo-0: rowHeader is always true so remove the param
 		 */
 		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
 			var ret = _.getTopRightImageTag(node);
 
-			/* todo-0: enable headerText when appropriate here */
+			/* todo-2: enable headerText when appropriate here */
 			ret += showHeader ? _.buildRowHeader(node, showPath, showName) : "";
 
 			if (meta64.showProperties) {
@@ -165,16 +164,18 @@ var render = function() {
 								ret += _.tag("div", {
 									"class" : "jcr-root-content"
 								},
-								// probably could "img.top.right" feature for
-								// this
-								// // if we wanted to. oops.
+								// probably could
+								// "img.top.right" feature for
+								// this if we wanted to. oops.
 								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
 										+ jcrContent);
 							}
-						} 
+						}
 						/*
-						 * I spend hours trying to get marked-element to work. At this point I will have to blame google
-						 * code, i'm 99.999% certain it's their bug and not mine.
+						 * I spent hours trying to get marked-element to work.
+						 * Unsuccessful still, so I just have serverMarkdown
+						 * flag that I can set to true, and turn this
+						 * experimental feature off for now.
 						 */
 						else {
 							// jcrContent = _.injectCodeFormatting(jcrContent);
@@ -188,19 +189,17 @@ var render = function() {
 							// + "'><div class='markdown-html jcr-content'>";
 							// ret += "</div></marked-element>";
 							if (rowStyling) {
-								// jcr-content (todo-0: put this class back)
 								ret += "<marked-element sanitize='true'><div class='markdown-html'>";
 								ret += _.tag("script", {
 									"type" : "text/markdown"
 								}, jcrContent);
 							} else {
-								// jcr-root-content (todo-0: put this class
-								// back)
 								ret += "<marked-element sanitize='true'><div class='markdown-html'>";
 								ret += _.tag("script", {
 									"type" : "text/markdown"
 								},
-								// probably could "img.top.right" feature for
+								// probably could
+								// "img.top.right" feature for
 								// this
 								// // if we wanted to. oops.
 								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
@@ -326,10 +325,10 @@ var render = function() {
 				"id" : cssId,
 				"style" : bkgStyle
 			},// 
-			buttonBarHtmlRet.val + _.tag("div", //
+			buttonBarHtmlRet + _.tag("div", //
 			{
 				"id" : uid + "_content"
-			}, _.renderNodeContent(node, true, true, true, true, !buttonBarHtmlRet.headerShown)));
+			}, _.renderNodeContent(node, true, true, true, true, true)));
 		},
 
 		showNodeUrl : function() {
@@ -521,15 +520,7 @@ var render = function() {
 			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
 					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
-			// todo-0: can now to back to just returning val here.
-			var ret = {};
-
-			if (allButtons.length > 0) {
-				ret.val = _.makeHorizontalFieldSet(allButtons);
-			} else {
-				ret.val = "";
-			}
-			return ret;
+			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons) : "";
 		},
 
 		makeDialogHeader : function(text) {

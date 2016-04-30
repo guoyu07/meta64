@@ -1,4 +1,4 @@
-package com.meta64.mobile;
+package com.meta64.mobile.util;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;

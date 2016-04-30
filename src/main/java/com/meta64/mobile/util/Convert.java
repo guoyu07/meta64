@@ -80,7 +80,8 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly) throws Exception {
+	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node,
+			boolean htmlOnly) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		long binVer = 0;
@@ -113,7 +114,8 @@ public class Convert {
 		// log.debug("Node: "+node.getPath()+node.getName()+" type:
 		// "+primaryTypeName);
 
-		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
+		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes,
+				false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
 				primaryTypeName);
@@ -189,7 +191,8 @@ public class Convert {
 		return props;
 	}
 
-	public static PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly) throws RepositoryException {
+	public static PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly)
+			throws RepositoryException {
 		String value = null;
 		String htmlValue = null;
 		List<String> values = null;
@@ -262,7 +265,7 @@ public class Convert {
 		if (proc == null) {
 			/*
 			 * todo-1: consider replacing serverside markdown with this:
-			 * https://github.com/chjj/marked.
+			 * https://github.com/chjj/marked. (work in progress. "marked" is not working for me)
 			 */
 			proc = new PegDownProcessor();
 			ThreadLocals.setMarkdownProc(proc);

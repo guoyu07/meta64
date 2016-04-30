@@ -17,8 +17,11 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
 
-/*
+/**
  * This is a "Background Thread" which saves user settings for all users (who are logged in)
+ * 
+ * todo-1: this was a bad idea because it won't be compatible with load-balancers. It holds state on
+ * the one node. Not good. What do I loose if I take this away ? check into it.
  */
 @Component
 @Scope("singleton")

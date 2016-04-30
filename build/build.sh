@@ -71,13 +71,16 @@ mvn clean package -DskipTests=true
 
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar $META64_RUN/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
-rm $META64/build/all.js
-rm $META64/build/*.sh~
-rm $META64/src/main/resources/public/js/meta64.min.js
-rm $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html
-rm $META64/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
-rm $META64/src/main/resources/templates/index-20*.html
-rm $META64/src/main/resources/static/*.md~
-rm $META64/*.md~
+rm -f $META64/build/all.js
+rm -f $META64/build/*.sh~
+rm -f $META64/src/main/resources/public/js/meta64.min.js
+rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html
+rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
+rm -f $META64/src/main/resources/public/elements/donate-panel-out.html
+rm -f $META64/src/main/resources/public/elements/donate-panel-20*.html
+rm -f $META64/src/main/resources/templates/index-out.html
+rm -f $META64/src/main/resources/templates/index-20*.html
+rm -f $META64/src/main/resources/static/*.md~
+rm -f $META64/*.md~
 
 read -p "All done."

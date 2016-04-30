@@ -1,4 +1,4 @@
-package com.meta64.mobile.annotate;
+package com.meta64.mobile.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

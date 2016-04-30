@@ -1,8 +1,10 @@
-## Meta64: Open-Source Portal and Content Repository
-Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb with Google Polymer-based front-end. The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing of markdown), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
+## Meta64: Open-Source CMS/Portal
+Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb back-end (on Java SpringBoot), with Google Polymer-based front-end. The meta64.com website itself is running an instance of the meta64 portal software. In other words, this is not just documentation *about* meta64, but it *actually is* a meta64 node that you are now viewing.
+
+The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
 ## Technology Stack
-* Client: Google Polymer (Web Components), HTML, CSS, Javascript, Ajax
+* Web App: Google Polymer (Web Components), JavaScript, JQuery, JSON/Ajax
 * Server: Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb, Tomcat Embedded 
 
 ## Links
@@ -83,39 +85,40 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Single Page Application (SPA)
 * JavaScript+HTML+CSS Client
 * Google Polymer (Web Components)
-* MongoDB
-* Apache Oak JCR
+* MongoDB (actual data storage format)
+* Apache Jackrabbit Oak (for JCR interface)
 * Spring MVC (SpringBoot)
 * App is "Mobile First", meaning a primary objective is to run well on mobile
 * Using Google Closure Compiler for JS Minification
 * Pure Java on Server
 * Spring Java-only configuration with Annotations, and no XML configs.
 * Server-Side JavaScript Markdown (using 'org.pegdown' API) renders pages 
-* Built using Maven
-* Launches from a single "uber jar" containing Tomcat embedded and pre-configured
+* Built using Maven+Bower
+* Launches from a single SpringBoot "uber jar" containing Tomcat embedded and pre-configured
 
 ## Apache Jackrabbit Oak
-
-Other than SpringBoot, the main dependency needed for running/building meta64 is JackrabbitOak. This project is currently being hosted here:
+Other than SpringBoot, the main dependency needed for running/building meta64 is Jackrabbit Oak. This project is currently being hosted here:
 
 https://github.com/apache/jackrabbit-oak   
 https://jackrabbit.apache.org/oak/docs/index.html
+
+Jackrabbit Oak is an Adobe-sponsored Open Source project for creating the best world class JCR implementation. It is extremely high performance and hugely scalable largely due to Lucene as the search technology in use, and also because of MongoDB. As with any "NoSQL" the primary concern is indeed performance and scalability so the ACID transactions of an RDBMS are sacrificed for the "eventually consistent" model offered by a NoSQL approach.
 
 ## Technical Notes
 * To build the app use maven.
 * You need to understand 'spring boot'
 * See application-*.properties files for configurations.
 * Pre-requisites: Java VM installed on machine, and MongoDB server up and running, with a database named 'meta64'
-* Currently uses default storage location for MongoDb (Windows -> c:\data\db)
+* Currently uses default storage location for MongoDb
 * Once app is up and running go here: http://localhost:8083 (8083 port is currently the DEV profile port)     
 * Refer to the 'docs' folder of the project for additional technical documentation.
 
 ## About the Developer
-Meta64 is a FOSS project created by Clay Ferguson. I'm a 48 yr old Java Developer located in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java on Web Apps. Feel free to get in touch with me here:
+Meta64 is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a 48 yr old Java Developer living in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java, and primarily on Web Apps. 
 
 **linkedin.com:** http://www.linkedin.com/in/wclayf  
 **GitHub:** https://github.com/Clay-Ferguson  
 **email:** wclayf@gmail.com  
 
-###.
+
 

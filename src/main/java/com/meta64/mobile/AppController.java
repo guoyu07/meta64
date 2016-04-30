@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.meta64.mobile.annotate.OakSession;
+import com.meta64.mobile.aspect.OakSession;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.image.CaptchaMaker;
 import com.meta64.mobile.request.AddPrivilegeRequest;

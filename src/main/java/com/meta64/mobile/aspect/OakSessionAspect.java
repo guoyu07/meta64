@@ -54,7 +54,7 @@ public class OakSessionAspect {
 	@Autowired
 	private OakRepository oak;
 
-	@Around("@annotation(com.meta64.mobile.annotate.OakSession)")
+	@Around("@annotation(com.meta64.mobile.aspect.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
@@ -118,7 +118,8 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) throws Exception {
+	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext)
+			throws Exception {
 		Object[] args = joinPoint.getArgs();
 		String userName = JcrPrincipal.ANONYMOUS;
 		String password = JcrPrincipal.ANONYMOUS;
@@ -164,7 +165,8 @@ public class OakSessionAspect {
 		}
 
 		try {
-			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
+			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials()
+					: new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;
 		}

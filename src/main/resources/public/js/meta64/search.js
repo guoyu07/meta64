@@ -55,6 +55,17 @@ var srch = function() {
 			srch.searchResults.searchResults.length : 0;
 		},
 
+		searchTabActivated : function() {
+			/*
+			 * If a logged in user clicks the search tab, and no search results
+			 * are currently displaying, then go ahead and open up the search
+			 * dialog.
+			 */
+			if (_.numSearchResults() == 0 && !meta64.isAnonUser) {
+				(new SearchDlg()).open();
+			}
+		},
+
 		searchNodesResponse : function(res) {
 			_.searchResults = res;
 			var content = searchResultsPanel.build();
@@ -83,7 +94,7 @@ var srch = function() {
 				"searchText" : "",
 				"modSortDesc" : true,
 				"searchProp" : "jcr:content" // should have no effect, for
-												// timeline?
+			// timeline?
 			}, _.timelineResponse);
 		},
 
@@ -193,4 +204,4 @@ var srch = function() {
 	return _;
 }();
 
-//# sourceURL=search.js
+// # sourceURL=search.js

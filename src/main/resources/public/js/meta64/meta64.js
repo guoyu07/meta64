@@ -1,8 +1,9 @@
 console.log("running module: meta64.js");
 
 /**
- * Main Application instance, and central root level object for all code, although each module generally contributes one
- * singleton variable to the global scope, with a name usually identical to that file.
+ * Main Application instance, and central root level object for all code,
+ * although each module generally contributes one singleton variable to the
+ * global scope, with a name usually identical to that file.
  */
 var meta64 = function() {
 
@@ -10,7 +11,7 @@ var meta64 = function() {
 	var curUrlPath = window.location.pathname + window.location.search;
 
 	var _ = {
-			
+
 		serverMarkdown : true,
 
 		/* used as a kind of 'sequence' in the app, when unique vals a needed */
@@ -18,7 +19,7 @@ var meta64 = function() {
 
 		/* name of currently logged in user */
 		userName : "anonymous",
-		
+
 		/* screen capabilities */
 		deviceWidth : 0,
 		deviceHeight : 0,
@@ -43,7 +44,7 @@ var meta64 = function() {
 		 * tree view window we need to refresh data from the server
 		 */
 		treeDirty : false,
-		
+
 		/*
 		 * maps node.uid values to NodeInfo.java objects
 		 * 
@@ -225,7 +226,7 @@ var meta64 = function() {
 		refresh : function() {
 			_.goToMainPage(true, true);
 		},
-		
+
 		goToMainPage : function(rerender, forceServerRefresh) {
 
 			if (forceServerRefresh) {
@@ -283,7 +284,7 @@ var meta64 = function() {
 		},
 
 		popup : function() {
-			alert("popup function: "+menuPanel.domId);
+			alert("popup function: " + menuPanel.domId);
 			render.buildPage(menuPanel);
 			$("#" + menuPanel.domId).popup("open");
 		},
@@ -495,8 +496,9 @@ var meta64 = function() {
 			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);
-			
-			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null && highlightNode.hasBinary);
+
+			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null
+					&& highlightNode.hasBinary);
 			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("searchDlgButton", !_.isAnonUser && highlightNode != null);
@@ -652,6 +654,11 @@ var meta64 = function() {
 			console.log("initApp running.");
 			appInitialized = true;
 
+			var tabs = util.poly("mainIronPages");
+			tabs.addEventListener("iron-select", function() {
+				_.tabChangeEvent(tabs.selected);
+			});
+
 			_.initConstants();
 			_.displaySignupMessage();
 
@@ -712,6 +719,12 @@ var meta64 = function() {
 			_.refreshAllGuiEnablement();
 		},
 
+		tabChangeEvent : function(tabName) {
+			if (tabName=="searchTabName") {
+				srch.searchTabActivated();
+			}
+		},
+		
 		displaySignupMessage : function() {
 			var signupResponse = $("#signupCodeResponse").text();
 			if (signupResponse === "ok") {
@@ -754,4 +767,4 @@ var meta64 = function() {
 	return _;
 }();
 
-//# sourceURL=meta64.js
+// # sourceURL=meta64.js

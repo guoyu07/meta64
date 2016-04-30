@@ -154,7 +154,7 @@
             <iron-ajax id="ironAjax"></iron-ajax>
             <paper-drawer-panel id="paperDrawerPanel">
                 <!-- Left Side Panel -->
-                <paper-scroll-header-panel drawer="drawer"
+                <paper-scroll-header-panel id="mainLhsMenuPanel" drawer="drawer"
                                            fixed="fixed">
                     <!--
                         commenting until I learn to style this in polymer                        
@@ -175,7 +175,7 @@
                         <!--
                                 when implemented this button will toggle visibility of left-side menu  
                                 -->
-                        <paper-icon-button icon="menu"></paper-icon-button>
+                        <paper-icon-button icon="menu" onClick="nav.toggleMainMenu();"></paper-icon-button>
                         <span id="headerAppName"
                               class="app-name title">Meta64</span>
                         <paper-button id="navPublicHomeButton"

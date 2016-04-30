@@ -15,8 +15,7 @@ export backupFolder=$META64_BAK
 #copy the readme.md from project root to published location (landing-page.md) where the app will
 #be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
 #only and always, is because GitHub looks in the root for readme.md at least
-cp $META64/readme.md $META64/src/main/resources/public/landing-page.md
-cp $META64/help.md $META64/src/main/resources/public/help.md
+cp $META64/readme.md $META64/src/main/resources/public/doc/landing-page.md
 
 #go back to folder with this script in it. sort of 'home' for this script
 cd $META64/build

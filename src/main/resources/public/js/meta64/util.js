@@ -371,6 +371,10 @@ var util = function() {
 			return e;
 		},
 
+		poly : function(id) {
+			return _.polyElm(id).node;
+		},
+		
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not
 		 * found. Do not prefix with "#"

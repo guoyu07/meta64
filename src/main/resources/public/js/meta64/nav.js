@@ -182,6 +182,12 @@ var nav = function() {
 
 		navPublicHome : function() {
 			meta64.loadAnonPageHome(true);
+		},
+		
+		toggleMainMenu : function() {
+			//This hides the menu alright, but the empty space is still there. Maybe display=none will work, but this is
+			//not an important feature so i'm just moving on and can come back to this in the future.
+			//util.setVisibility("mainLhsMenuPanel", false);
 		}
 	};
 

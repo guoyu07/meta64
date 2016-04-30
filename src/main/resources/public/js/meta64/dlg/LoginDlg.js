@@ -11,19 +11,18 @@ var LoginDlg = function() {
 }
 
 // more boilerplate for inheritance
-LoginDlg.prototype.constructor = LoginDlg;
-util.inherit(Dialog, LoginDlg);
+var LoginDlg_ = util.inherit(Dialog, LoginDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-LoginDlg.prototype.build = function() {
+LoginDlg_.build = function() {
 	var header = render.makeDialogHeader("Login");
 
 	var formControls = this.makeEditField("User", "userName") + //
 	this.makePasswordField("Password", "password");
 
-	var loginButton = this.makeButton("Login", "loginButton", LoginDlg.prototype.login, this);
+	var loginButton = this.makeButton("Login", "loginButton", LoginDlg_.login, this);
 	var backButton = this.makeCloseButton("Close", "cancelLoginButton");
 	var buttonBar = render.centeredButtonBar(loginButton + backButton);
 
@@ -53,11 +52,11 @@ LoginDlg.prototype.build = function() {
 	return content;
 }
 
-LoginDlg.prototype.init = function() {
+LoginDlg_.init = function() {
 	this.populateFromCookies();
 }
 
-LoginDlg.prototype.populateFromCookies = function() {
+LoginDlg_.populateFromCookies = function() {
 	var usr = $.cookie(cnst.COOKIE_LOGIN_USR);
 	var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
 
@@ -69,7 +68,7 @@ LoginDlg.prototype.populateFromCookies = function() {
 	}
 }
 
-LoginDlg.prototype.login = function() {
+LoginDlg_.login = function() {
 
 	this.cancel();
 	
@@ -83,12 +82,9 @@ LoginDlg.prototype.login = function() {
 		"dst" : util.daylightSavingsTime
 	});
 
-	var This = this;
+	var thiz = this;
 	ironRes.completes.then(function() {
-		console.log("this: "+util.printObject(this));
-		console.log("This: "+util.printObject(This));
-		
-		user.loginResponse(ironRes.response, usr, pwd, null, This);
+		user.loginResponse(ironRes.response, usr, pwd, null, thiz);
 	});
 }
 

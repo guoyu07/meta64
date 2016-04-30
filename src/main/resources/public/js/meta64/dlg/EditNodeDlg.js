@@ -13,21 +13,20 @@ var EditNodeDlg = function() {
 }
 
 // more boilerplate for inheritance
-EditNodeDlg.prototype.constructor = EditNodeDlg;
-util.inherit(Dialog, EditNodeDlg);
+var EditNodeDlg_ = util.inherit(Dialog, EditNodeDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-EditNodeDlg.prototype.build = function() {
+EditNodeDlg_.build = function() {
 	var header = render.makeDialogHeader("Edit Node");
 
-	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg.prototype.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg.prototype.addProperty,
+	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg_.saveNode, this);
+	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg_.addProperty,
 			this);
 	var addTagsPropertyButton = this.makeButton("Add Tags Property", "addTagsPropertyButton",
-			EditNodeDlg.prototype.addTagsProperty, this);
-	// this split works afaik,but I don't want it in front of users yet.
+			EditNodeDlg_.addTagsProperty, this);
+	// this split works afaik, but I don't want it enabled yet.
 	// var splitContentButton = this.makeButton("Split Content",
 	// "splitContentButton", "edit.splitContent();");
 	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
@@ -51,7 +50,7 @@ EditNodeDlg.prototype.build = function() {
  * property editor dialog box.
  * 
  */
-EditNodeDlg.prototype.populateEditNodePg = function() {
+EditNodeDlg_.populateEditNodePg = function() {
 
 	/* display the node path at the top of the edit page */
 	view.initEditPathDisplayById(this.id("editNodePathDisplay"));
@@ -72,7 +71,6 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 		// Iterate PropertyInfo.java objects
 		/*
 		 * Warning each iterator loop has its own 'this'
-		 * 
 		 */
 		$.each(editOrderedProps, function(index, prop) {
 
@@ -149,17 +147,17 @@ EditNodeDlg.prototype.populateEditNodePg = function() {
 	 */
 	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
 
-	var tagsPropExists = props.getNodePropertyVal("tags", edit.editNode)!=null;
-	//console.log("hasTagsProp: " + tagsProp);
+	var tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
+	// console.log("hasTagsProp: " + tagsProp);
 	util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsPropExists);
 }
 
-EditNodeDlg.prototype.addProperty = function() {
+EditNodeDlg_.addProperty = function() {
 	this.editPropertyDlgInst = new EditPropertyDlg(this);
 	this.editPropertyDlgInst.open();
 }
 
-EditNodeDlg.prototype.addTagsProperty = function() {
+EditNodeDlg_.addTagsProperty = function() {
 	if (props.getNodePropertyVal(edit.editNode, "tags")) {
 		return;
 	}
@@ -169,18 +167,18 @@ EditNodeDlg.prototype.addTagsProperty = function() {
 		propertyName : "tags",
 		propertyValue : ""
 	};
-	util.json("saveProperty", postData, EditNodeDlg.prototype.addTagsPropertyResponse, this);
+	util.json("saveProperty", postData, EditNodeDlg_.addTagsPropertyResponse, this);
 }
 
 /* Warning: don't confuse with EditPropertyDlg */
-EditNodeDlg.prototype.addTagsPropertyResponse = function(res) {
+EditNodeDlg_.addTagsPropertyResponse = function(res) {
 	if (util.checkSuccess("Add Tags Property", res)) {
 		this.savePropertyResponse(res);
 	}
 }
 
 /* Warning: don't confuse with EditPropertyDlg */
-EditNodeDlg.prototype.savePropertyResponse = function(res) {
+EditNodeDlg_.savePropertyResponse = function(res) {
 	util.checkSuccess("Save properties", res);
 
 	edit.editNode.properties.push(res.propertySaved);
@@ -196,11 +194,10 @@ EditNodeDlg.prototype.savePropertyResponse = function(res) {
  * Note: fieldId parameter is already dialog-specific and doesn't need id()
  * wrapper function
  */
-EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
+EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 	var buttonBar = "";
 
-	var clearButton = render.tag("paper-button", //
-	{
+	var clearButton = render.tag("paper-button", {
 		"raised" : "raised",
 		"onClick" : "meta64.getObjectByGuid(" + this.guid + ").clearProperty('" + fieldId + "');" //
 	}, //
@@ -214,7 +211,7 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 		 * For now we just go with the design where the actual content property
 		 * cannot be deleted. User can leave content blank but not delete it.
 		 */
-		deleteButton = render.tag("paper-button", //
+		deleteButton = render.tag("paper-button", 
 		{
 			"raised" : "raised",
 			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');" //
@@ -225,7 +222,7 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 		 * I don't think it really makes sense to allow a jcr:content property
 		 * to be multivalued. I may be wrong but this is my current assumption
 		 */
-		addMultiButton = render.tag("paper-button", //
+		addMultiButton = render.tag("paper-button", 
 		{
 			"raised" : "raised",
 			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
@@ -243,7 +240,7 @@ EditNodeDlg.prototype.makePropertyEditButtonBar = function(prop, fieldId) {
 	return buttonBar;
 }
 
-EditNodeDlg.prototype.addSubProperty = function(fieldId) {
+EditNodeDlg_.addSubProperty = function(fieldId) {
 	var prop = meta64.fieldIdToPropMap[fieldId];
 
 	var isMulti = util.isObject(prop.values);
@@ -271,14 +268,14 @@ EditNodeDlg.prototype.addSubProperty = function(fieldId) {
  * Deletes the property of the specified name on the node being edited, but
  * first gets confirmation from user
  */
-EditNodeDlg.prototype.deleteProperty = function(propName) {
+EditNodeDlg_.deleteProperty = function(propName) {
 	var _this = this;
 	(new ConfirmDlg("Confirm Delete", "Delete the Property: " + propName, "Yes, delete.", function() {
 		_this.deletePropertyImmediate(propName);
 	})).open();
 }
 
-EditNodeDlg.prototype.deletePropertyImmediate = function(propName) {
+EditNodeDlg_.deletePropertyImmediate = function(propName) {
 
 	var ironRes = util.json("deleteProperty", {
 		"nodeId" : edit.editNode.id,
@@ -293,7 +290,7 @@ EditNodeDlg.prototype.deletePropertyImmediate = function(propName) {
 	});
 }
 
-EditNodeDlg.prototype.deletePropertyResponse = function(res, propertyToDelete) {
+EditNodeDlg_.deletePropertyResponse = function(res, propertyToDelete) {
 
 	if (util.checkSuccess("Delete property", res)) {
 
@@ -310,7 +307,7 @@ EditNodeDlg.prototype.deletePropertyResponse = function(res, propertyToDelete) {
 	}
 }
 
-EditNodeDlg.prototype.clearProperty = function(fieldId) {
+EditNodeDlg_.clearProperty = function(fieldId) {
 	util.setInputVal(this.id(fieldId), "");
 
 	/* scan for all multi-value property fields and clear them */
@@ -327,7 +324,7 @@ EditNodeDlg.prototype.clearProperty = function(fieldId) {
  * for now just let server side choke on invalid things. It has enough security
  * and validation to at least protect itself from any kind of damage.
  */
-EditNodeDlg.prototype.saveNode = function() {
+EditNodeDlg_.saveNode = function() {
 
 	/*
 	 * If editing an unsaved node it's time to run the insertNode, or
@@ -347,7 +344,7 @@ EditNodeDlg.prototype.saveNode = function() {
 	}
 }
 
-EditNodeDlg.prototype.saveNewNode = function(newNodeName) {
+EditNodeDlg_.saveNewNode = function(newNodeName) {
 	if (!newNodeName) {
 		newNodeName = util.getInputVal(this.id("newNodeNameId"));
 	}
@@ -377,8 +374,8 @@ EditNodeDlg.prototype.saveNewNode = function(newNodeName) {
 	}
 }
 
-EditNodeDlg.prototype.saveExistingNode = function() {
-	console.log("**************** saveExistingNode");
+EditNodeDlg_.saveExistingNode = function() {
+	console.log("saveExistingNode");
 	var propertiesList = [];
 	var counter = 0;
 	var changeCount = 0;
@@ -472,8 +469,8 @@ EditNodeDlg.prototype.saveExistingNode = function() {
 	}
 }
 
-EditNodeDlg.prototype.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
-	console.log("************* Making Multi Editor: Property multi-type: name=" + prop.name + " count="
+EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
+	console.log("Making Multi Editor: Property multi-type: name=" + prop.name + " count="
 			+ prop.values.length);
 	var fields = '';
 
@@ -513,7 +510,7 @@ EditNodeDlg.prototype.makeMultiPropEditor = function(fieldId, prop, isReadOnlyPr
 	return fields;
 }
 
-EditNodeDlg.prototype.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
+EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
 	console.log("Property single-type: " + prop.name);
 
 	var field = '';
@@ -542,9 +539,9 @@ EditNodeDlg.prototype.makeSinglePropEditor = function(fieldId, prop, isReadOnlyP
 	return field;
 }
 
-EditNodeDlg.prototype.init = function() {
+EditNodeDlg_.init = function() {
 	console.log("EditNodeDlg.init");
 	this.populateEditNodePg();
 }
 
-//# sourceURL=EditNodeDlg.js
+// # sourceURL=EditNodeDlg.js

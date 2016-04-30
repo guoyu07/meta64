@@ -11,20 +11,19 @@ var SearchDlg = function() {
 }
 
 // more boilerplate for inheritance
-SearchDlg.prototype.constructor = SearchDlg;
-util.inherit(Dialog, SearchDlg);
+var SearchDlg_ = util.inherit(Dialog, SearchDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-SearchDlg.prototype.build = function() {
+SearchDlg_.build = function() {
 	var header = render.makeDialogHeader("Search");
 
 	var instructions = "<p>Enter some text to find. All sub-nodes under the selected node are included in the search.</p>";
 	var formControls = this.makeEditField("Search", "searchText");
 
-	var searchButton = this.makeCloseButton("Search", "searchNodesButton", SearchDlg.prototype.searchNodes, this);
-	var searchTagsButton = this.makeCloseButton("Search Tags", "searchTagsButton", SearchDlg.prototype.searchTags, this);
+	var searchButton = this.makeCloseButton("Search", "searchNodesButton", SearchDlg_.searchNodes, this);
+	var searchTagsButton = this.makeCloseButton("Search Tags", "searchTagsButton", SearchDlg_.searchTags, this);
 	var backButton = this.makeCloseButton("Close", "cancelSearchButton");
 	var buttonBar = render.centeredButtonBar(searchButton + searchTagsButton + backButton);
 
@@ -33,15 +32,15 @@ SearchDlg.prototype.build = function() {
 	return content;
 }
 
-SearchDlg.prototype.searchNodes = function() {
+SearchDlg_.searchNodes = function() {
 	return this.searchProperty("jcr:content");
 }
 
-SearchDlg.prototype.searchTags = function() {
+SearchDlg_.searchTags = function() {
 	return this.searchProperty(jcrCnst.TAGS);
 }
 
-SearchDlg.prototype.searchProperty = function(searchProp) {
+SearchDlg_.searchProperty = function(searchProp) {
 	if (!util.ajaxReady("searchNodes")) {
 		return;
 	}
@@ -68,7 +67,7 @@ SearchDlg.prototype.searchProperty = function(searchProp) {
 	}, srch.searchNodesResponse);
 }
 
-SearchDlg.prototype.init = function() {
+SearchDlg_.init = function() {
 	util.delayedFocus(this.id("searchText"));
 }
 

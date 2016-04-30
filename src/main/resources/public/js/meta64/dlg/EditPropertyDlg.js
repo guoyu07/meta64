@@ -16,16 +16,15 @@ var EditPropertyDlg = function(editNodeDlg) {
 }
 
 // more boilerplate for inheritance
-EditPropertyDlg.prototype.constructor = EditPropertyDlg;
-util.inherit(Dialog, EditPropertyDlg);
+var EditPropertyDlg_ = util.inherit(Dialog, EditPropertyDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-EditPropertyDlg.prototype.build = function() {
+EditPropertyDlg_.build = function() {
 	var header = render.makeDialogHeader("Edit Node Property");
 
-	var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", EditPropertyDlg.prototype.saveProperty,
+	var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", EditPropertyDlg_.saveProperty,
 			this);
 	var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
 
@@ -38,7 +37,7 @@ EditPropertyDlg.prototype.build = function() {
 	return header + internalMainContent + buttonBar;
 }
 
-EditPropertyDlg.prototype.populatePropertyEdit = function() {
+EditPropertyDlg_.populatePropertyEdit = function() {
 	var field = '';
 
 	/* Property Name Field */
@@ -71,7 +70,7 @@ EditPropertyDlg.prototype.populatePropertyEdit = function() {
 	util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
 }
 
-EditPropertyDlg.prototype.saveProperty = function() {
+EditPropertyDlg_.saveProperty = function() {
 	var propertyNameData = util.getInputVal(this.id("addPropertyNameTextContent"));
 	var propertyValueData = util.getInputVal(this.id("addPropertyValueTextContent"));
 
@@ -80,11 +79,11 @@ EditPropertyDlg.prototype.saveProperty = function() {
 		propertyName : propertyNameData,
 		propertyValue : propertyValueData
 	};
-	util.json("saveProperty", postData, EditPropertyDlg.prototype.savePropertyResponse, this);
+	util.json("saveProperty", postData, EditPropertyDlg_.savePropertyResponse, this);
 }
 
 /* Warning: don't confuse with EditNodeDlg */
-EditPropertyDlg.prototype.savePropertyResponse = function(res) {
+EditPropertyDlg_.savePropertyResponse = function(res) {
 	util.checkSuccess("Save properties", res);
 
 	edit.editNode.properties.push(res.propertySaved);
@@ -96,7 +95,7 @@ EditPropertyDlg.prototype.savePropertyResponse = function(res) {
 	this.editNodeDlg.populateEditNodePg();
 }
 
-EditPropertyDlg.prototype.init = function() {
+EditPropertyDlg_.init = function() {
 	this.populatePropertyEdit();
 }
 

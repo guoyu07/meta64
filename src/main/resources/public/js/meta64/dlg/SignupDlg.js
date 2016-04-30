@@ -11,13 +11,12 @@ var SignupDlg = function() {
 }
 
 // more boilerplate for inheritance
-SignupDlg.prototype.constructor = SignupDlg;
-util.inherit(Dialog, SignupDlg);
+var SignupDlg_ = util.inherit(Dialog, SignupDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-SignupDlg.prototype.build = function() {
+SignupDlg_.build = function() {
 	var header = render.makeDialogHeader(BRANDING_TITLE + " Signup");
 
 	var formControls = //
@@ -38,9 +37,9 @@ SignupDlg.prototype.build = function() {
 	}, //
 	"", false));
 
-	var signupButton = this.makeButton("Signup", "signupButton", SignupDlg.prototype.signup, this);
+	var signupButton = this.makeButton("Signup", "signupButton", SignupDlg_.signup, this);
 	var newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",
-			SignupDlg.prototype.tryAnotherCaptcha, this);
+			SignupDlg_.tryAnotherCaptcha, this);
 	var backButton = this.makeCloseButton("Close", "cancelSignupButton");
 
 	var buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
@@ -54,7 +53,7 @@ SignupDlg.prototype.build = function() {
 	 */
 }
 
-SignupDlg.prototype.signup = function() {
+SignupDlg_.signup = function() {
 	var userName = this.getInputVal("signupUserName");
 	var password = this.getInputVal("signupPassword");
 	var email = this.getInputVal("signupEmail");
@@ -71,10 +70,10 @@ SignupDlg.prototype.signup = function() {
 		"password" : password,
 		"email" : email,
 		"captcha" : captcha
-	}, SignupDlg.prototype.signupResponse, this);
+	}, SignupDlg_.signupResponse, this);
 }
 
-SignupDlg.prototype.signupResponse = function(res) {
+SignupDlg_.signupResponse = function(res) {
 	if (util.checkSuccess("Signup new user", res)) {
 		var loginDlg = new LoginDlg();
 		loginDlg.populateFromCookies();
@@ -86,7 +85,7 @@ SignupDlg.prototype.signupResponse = function(res) {
 	}
 }
 
-SignupDlg.prototype.tryAnotherCaptcha = function() {
+SignupDlg_.tryAnotherCaptcha = function() {
 
 	var n = util.currentTimeMillis();
 
@@ -98,11 +97,11 @@ SignupDlg.prototype.tryAnotherCaptcha = function() {
 	$("#" + this.id("captchaImage")).attr("src", src);
 }
 
-SignupDlg.prototype.pageInitSignupPg = function() {
+SignupDlg_.pageInitSignupPg = function() {
 	this.tryAnotherCaptcha();
 }
 
-SignupDlg.prototype.init = function() {
+SignupDlg_.init = function() {
 	this.pageInitSignupPg();
 	util.delayedFocus("#" + this.id("signupUserName"));
 }

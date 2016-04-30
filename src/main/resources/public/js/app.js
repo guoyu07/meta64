@@ -1,3 +1,5 @@
+"use strict";
+
 //var onresize = window.onresize; 
 //window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 
@@ -23,21 +25,17 @@ function windowResize() {
 }
 
 addEvent(window, "resize", windowResize);
+	
+// This is our template element in index.html
+var app = document.querySelector('#app');
 
-(function(document) {
-	'use strict';
+// Listen for template bound event to know when bindings
+// have resolved and content has been stamped to the page
+app.addEventListener('dom-change', function() {
+	console.log('app ready event!');
+});
 
-	// This is our template element in index.html
-	var app = document.querySelector('#app');
+window.addEventListener('polymer-ready', function(e) {
+	console.log('polymer-ready event!');
+});
 
-	// Listen for template bound event to know when bindings
-	// have resolved and content has been stamped to the page
-	app.addEventListener('dom-change', function() {
-		console.log('Our app is ready to rock!');
-	});
-
-	window.addEventListener('polymer-ready', function(e) {
-		console.log('polymer-ready event!');
-	});
-
-})(document);

@@ -8,13 +8,12 @@ var ChangePasswordDlg = function() {
 }
 
 // more boilerplate for inheritance
-ChangePasswordDlg.prototype.constructor = ChangePasswordDlg;
-util.inherit(Dialog, ChangePasswordDlg);
+var ChangePasswordDlg_ = util.inherit(Dialog, ChangePasswordDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-ChangePasswordDlg.prototype.build = function() {
+ChangePasswordDlg_.build = function() {
 	var header = render.makeDialogHeader("Change Password");
 
 	var formControls = this.makePasswordField("Password", "changePassword1") + //
@@ -29,7 +28,7 @@ ChangePasswordDlg.prototype.build = function() {
 	return header + formControls + buttonBar;
 }
 
-ChangePasswordDlg.prototype.init = function() {
+ChangePasswordDlg_.init = function() {
 	//util.delayedFocus("#changePassword1");
 }
 

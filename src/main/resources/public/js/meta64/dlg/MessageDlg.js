@@ -16,13 +16,12 @@ var MessageDlg = function(message, title) {
 }
 
 // more boilerplate for inheritance
-MessageDlg.prototype.constructor = MessageDlg;
-util.inherit(Dialog, MessageDlg);
+var MessageDlg_ = util.inherit(Dialog, MessageDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-MessageDlg.prototype.build = function() {
+MessageDlg_.build = function() {
 	var content = "<h2>" + this.title + "</h2>" + //
 	"<p>" + this.message + "</p>";
 

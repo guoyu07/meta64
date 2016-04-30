@@ -7,13 +7,12 @@ var UploadFromFileDlg = function() {
 }
 
 // more boilerplate for inheritance
-UploadFromFileDlg.prototype.constructor = UploadFromFileDlg;
-util.inherit(Dialog, UploadFromFileDlg);
+var UploadFromFileDlg_ = util.inherit(Dialog, UploadFromFileDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-UploadFromFileDlg.prototype.build = function() {
+UploadFromFileDlg_.build = function() {
 	var header = render.makeDialogHeader("Upload File Attachment");
 
 	var uploadPathDisplay = render.tag("div", {//
@@ -63,7 +62,7 @@ UploadFromFileDlg.prototype.build = function() {
 		"id" : this.id("uploadFieldContainer")
 	}, "<p>Upload from your computer</p>" + form);
 
-	var uploadButton = this.makeCloseButton("Upload", "uploadButton", UploadFromFileDlg.prototype.uploadFileNow, this);
+	var uploadButton = this.makeCloseButton("Upload", "uploadButton", UploadFromFileDlg_.uploadFileNow, this);
 	var backButton = this.makeCloseButton("Close", "closeUploadButton");
 
 	var buttonBar = render.centeredButtonBar(uploadButton + backButton);
@@ -71,7 +70,7 @@ UploadFromFileDlg.prototype.build = function() {
 	return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
 }
 
-UploadFromFileDlg.prototype.uploadFileNow = function() {
+UploadFromFileDlg_.uploadFileNow = function() {
 
 	/* Upload form has hidden input element for nodeId parameter */
 	$("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
@@ -100,7 +99,7 @@ UploadFromFileDlg.prototype.uploadFileNow = function() {
 	});
 }
 
-UploadFromFileDlg.prototype.init = function() {
+UploadFromFileDlg_.init = function() {
 	/* display the node path at the top of the edit page */
 	$("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }

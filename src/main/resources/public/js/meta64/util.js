@@ -5,7 +5,7 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
-	
+
 	Array.prototype.clone = function() {
 		return this.slice(0);
 	};
@@ -90,8 +90,16 @@ var util = function() {
 
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
+		/*
+		 * Sets up an inheritance relationship so that child inherits from
+		 * parent, and then returns the prototype of the child so that methods
+		 * can be added to it, which will behave like member functions in
+		 * classic OOP with inheritance hierarchies.
+		 */
 		inherit : function(parent, child) {
+			child.prototype.constructor = child;
 			child.prototype = Object.create(parent.prototype);
+			return child.prototype;
 		},
 
 		/*
@@ -100,7 +108,8 @@ var util = function() {
 		 * 
 		 * callbackPayload is passed to callback as its last parameter
 		 * 
-		 * todo-3: this method got too long. Need to not inline these function definitions
+		 * todo-3: this method got too long. Need to not inline these function
+		 * definitions
 		 */
 		json : function(postName, postData, callback, callbackThis, callbackPayload) {
 
@@ -486,7 +495,7 @@ var util = function() {
 			// Not sure yet, if these two are required.
 			Polymer.dom.flush();
 			Polymer.updateStyles();
-			
+
 			return elm;
 		},
 
@@ -622,5 +631,5 @@ var util = function() {
 	return _;
 }();
 
-//# sourceURL=util.js
+// # sourceURL=util.js
 

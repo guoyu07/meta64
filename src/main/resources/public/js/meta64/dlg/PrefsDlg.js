@@ -11,13 +11,12 @@ var PrefsDlg = function() {
 }
 
 // more boilerplate for inheritance
-PrefsDlg.prototype.constructor = PrefsDlg;
-util.inherit(Dialog, PrefsDlg);
+var PrefsDlg_ = util.inherit(Dialog, PrefsDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-PrefsDlg.prototype.build = function() {
+PrefsDlg_.build = function() {
 	var header = render.makeDialogHeader("Account Peferences");
 
 	var radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
@@ -33,7 +32,7 @@ PrefsDlg.prototype.build = function() {
 	var legend = "<legend>Edit Mode:</legend>";
 	var radioBar = render.makeHorzControlGroup(legend + formControls);
 
-	var saveButton = this.makeCloseButton("Save", "savePreferencesButton", PrefsDlg.prototype.savePreferences, this);
+	var saveButton = this.makeCloseButton("Save", "savePreferencesButton", PrefsDlg_.savePreferences, this);
 	var backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
 
 	var buttonBar = render.centeredButtonBar(saveButton + backButton);
@@ -48,17 +47,17 @@ PrefsDlg.prototype.build = function() {
 	return header + radioBar + buttonBar + closeAccountButtonBarDiv;
 }
 
-PrefsDlg.prototype.savePreferences = function() {
+PrefsDlg_.savePreferences = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
 	meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE : meta64.MODE_ADVANCED;
 	util.json("saveUserPreferences", {
 		"userPreferences" : {
 			"advancedMode" : meta64.editModeOption === meta64.MODE_ADVANCED
 		}
-	}, PrefsDlg.prototype.savePreferencesResponse, this);
+	}, PrefsDlg_.savePreferencesResponse, this);
 }
 
-PrefsDlg.prototype.savePreferencesResponse = function(res) {
+PrefsDlg_.savePreferencesResponse = function(res) {
 	if (util.checkSuccess("Saving Preferences", res)) {
 		meta64.selectTab("mainTabName");
 		meta64.refresh();
@@ -67,7 +66,7 @@ PrefsDlg.prototype.savePreferencesResponse = function(res) {
 	}
 }
 
-PrefsDlg.prototype.init = function() {
+PrefsDlg_.init = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
 	polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this.id("editModeAdvanced"));
 	Polymer.dom.flush();

@@ -11,25 +11,24 @@ var ExportDlg = function() {
 }
 
 // more boilerplate for inheritance
-ExportDlg.prototype.constructor = ExportDlg;
-util.inherit(Dialog, ExportDlg);
+var ExportDlg_ = util.inherit(Dialog, ExportDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-ExportDlg.prototype.build = function() {
+ExportDlg_.build = function() {
 	var header = render.makeDialogHeader("Export to XML");
 
 	var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");
 
-	var exportButton = this.makeButton("Export", "exportNodesButton", ExportDlg.prototype.exportNodes, this);
+	var exportButton = this.makeButton("Export", "exportNodesButton", ExportDlg_.exportNodes, this);
 	var backButton = this.makeCloseButton("Close", "cancelExportButton");
 	var buttonBar = render.centeredButtonBar(exportButton + backButton);
 
 	return header + formControls + buttonBar;
 }
 
-ExportDlg.prototype.exportNodes = function() {
+ExportDlg_.exportNodes = function() {
 	var highlightNode = meta64.getHighlightedNode();
 	var targetFileName = this.getInputVal("exportTargetNodeName");
 
@@ -42,11 +41,11 @@ ExportDlg.prototype.exportNodes = function() {
 		util.json("exportToXml", {
 			"nodeId" : highlightNode.id,
 			"targetFileName" : targetFileName
-		}, ExportDlg.prototype.exportResponse);
+		}, ExportDlg_.exportResponse);
 	}
 }
 
-ExportDlg.prototype.exportResponse = function(res) {
+ExportDlg_.exportResponse = function(res) {
 	if (util.checkSuccess("Export", res)) {
 		(new MessageDlg("Export Successful.")).open();
 		meta64.selectTab("mainTabName");
@@ -54,7 +53,7 @@ ExportDlg.prototype.exportResponse = function(res) {
 	}
 }
 
-ExportDlg.prototype.init = function() {
+ExportDlg_.init = function() {
 }
 
 //# sourceURL=ExportDlg.js

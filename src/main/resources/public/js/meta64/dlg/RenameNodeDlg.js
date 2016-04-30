@@ -11,27 +11,26 @@ var RenameNodeDlg = function() {
 }
 
 // more boilerplate for inheritance
-RenameNodeDlg.prototype.constructor = RenameNodeDlg;
-util.inherit(Dialog, RenameNodeDlg);
+var RenameNodeDlg_ = util.inherit(Dialog, RenameNodeDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-RenameNodeDlg.prototype.build = function() {
+RenameNodeDlg_.build = function() {
 	var header = render.makeDialogHeader("Rename Node");
 
 	var curNodeNameDisplay = "<h3 id='"+this.id("curNodeNameDisplay")+"'></h3>";
 
 	var formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
-	var renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", RenameNodeDlg.prototype.renameNode, this);
+	var renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", RenameNodeDlg_.renameNode, this);
 	var backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
 	var buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
 
 	return header + curNodeNameDisplay + formControls + buttonBar;
 }
 
-RenameNodeDlg.prototype.renameNode = function() {
+RenameNodeDlg_.renameNode = function() {
 	var newName = this.getInputVal("newNodeNameEditField");
 
 	if (util.emptyString(newName)) {
@@ -62,7 +61,7 @@ RenameNodeDlg.prototype.renameNode = function() {
 	});
 }
 
-RenameNodeDlg.prototype.renameNodeResponse = function(res, renamingPageRoot) {
+RenameNodeDlg_.renameNodeResponse = function(res, renamingPageRoot) {
 	if (util.checkSuccess("Rename node", res)) {
 		if (renamingPageRoot) {
 			view.refreshTree(res.newId, true);
@@ -73,7 +72,7 @@ RenameNodeDlg.prototype.renameNodeResponse = function(res, renamingPageRoot) {
 	}
 }
 
-RenameNodeDlg.prototype.init = function() {
+RenameNodeDlg_.init = function() {
 	var highlightNode = meta64.getHighlightedNode();
 	if (!highlightNode) {
 		return;

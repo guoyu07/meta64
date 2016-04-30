@@ -11,17 +11,16 @@ var SharingDlg = function() {
 }
 
 // more boilerplate for inheritance
-SharingDlg.prototype.constructor = SharingDlg;
-util.inherit(Dialog, SharingDlg);
+var SharingDlg_ = util.inherit(Dialog, SharingDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-SharingDlg.prototype.build = function() {
+SharingDlg_.build = function() {
 	var header = render.makeDialogHeader("Node Sharing");
 
-	var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton", SharingDlg.prototype.shareNodeToPersonPg, this);
-	var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", SharingDlg.prototype.shareNodeToPublic, this);
+	var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton", SharingDlg_.shareNodeToPersonPg, this);
+	var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", SharingDl_.shareNodeToPublic, this);
 	var backButton = this.makeCloseButton("Close", "closeSharingButton");
 	
 	var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
@@ -35,7 +34,7 @@ SharingDlg.prototype.build = function() {
 	return header + internalMainContent + buttonBar;
 }
 
-SharingDlg.prototype.init = function() {
+SharingDlg_.init = function() {
 	this.reload();
 }
 
@@ -43,14 +42,14 @@ SharingDlg.prototype.init = function() {
  * Gets privileges from server and displays in GUI also. Assumes gui is
  * already at correct page.
  */
-SharingDlg.prototype.reload = function() {
+SharingDlg_.reload = function() {
 	console.log("Loading node sharing info.");
 
 	util.json("getNodePrivileges", {
 		"nodeId" : share.sharingNode.id,
 		"includeAcl" : true,
 		"includeOwners" : true
-	}, SharingDlg.prototype.getNodePrivilegesResponse, this);
+	}, SharingDlg_.getNodePrivilegesResponse, this);
 }
 
 /*
@@ -60,7 +59,7 @@ SharingDlg.prototype.reload = function() {
  * 
  * res.aclEntries = list of AccessControlEntryInfo.java json objects
  */
-SharingDlg.prototype.getNodePrivilegesResponse = function(res) {
+SharingDlg_.getNodePrivilegesResponse = function(res) {
 	this.populateSharingPg(res);
 }
 
@@ -68,7 +67,7 @@ SharingDlg.prototype.getNodePrivilegesResponse = function(res) {
  * Processes the response gotten back from the server containing ACL
  * info so we can populate the sharing page in the gui
  */
-SharingDlg.prototype.populateSharingPg = function(res) {
+SharingDlg_.populateSharingPg = function(res) {
 
 	var html = "";
 	var This = this;
@@ -99,7 +98,7 @@ SharingDlg.prototype.populateSharingPg = function(res) {
 	$("#"+this.id("allowPublicCommenting")).bind("change", this.publicCommentingChanged);
 }
 
-SharingDlg.prototype.removePrivilege = function(principal, privilege) {
+SharingDlg_.removePrivilege = function(principal, privilege) {
 	/*
 	 * Trigger going to server at next main page refresh
 	 */
@@ -109,19 +108,19 @@ SharingDlg.prototype.removePrivilege = function(principal, privilege) {
 		"nodeId" : share.sharingNode.id,
 		"principal" : principal,
 		"privilege" : privilege
-	}, SharingDlg.prototype.removePrivilegeResponse, this);
+	}, SharingDlg_.removePrivilegeResponse, this);
 }
 
-SharingDlg.prototype.removePrivilegeResponse = function(res) {
+SharingDlg_.removePrivilegeResponse = function(res) {
 
 	util.json("getNodePrivileges", {
 		"nodeId" : share.sharingNode.path,
 		"includeAcl" : true,
 		"includeOwners" : true
-	}, SharingDlg.prototype.getNodePrivilegesResponse, this);
+	}, SharingDlg_.getNodePrivilegesResponse, this);
 }
 
-SharingDlg.prototype.renderAclPrivileges = function(principal, aclEntry) {
+SharingDlg_.renderAclPrivileges = function(principal, aclEntry) {
 	var ret = "";
 	var thiz = this;
 	$.each(aclEntry.privileges, function(index, privilege) {
@@ -140,11 +139,11 @@ SharingDlg.prototype.renderAclPrivileges = function(principal, aclEntry) {
 	return ret;
 }
 
-SharingDlg.prototype.shareNodeToPersonPg = function() {
+SharingDlg_.shareNodeToPersonPg = function() {
 	(new ShareToPersonDlg()).open();
 }
 
-SharingDlg.prototype.shareNodeToPublic = function() {
+SharingDlg_.shareNodeToPublic = function() {
 	console.log("Sharing node to public.");
 
 	/*
@@ -162,7 +161,7 @@ SharingDlg.prototype.shareNodeToPublic = function() {
 		"nodeId" : share.sharingNode.id,
 		"principal" : "everyone",
 		"privileges" : [ "read" ]
-	}, SharingDlg.prototype.reload, this);
+	}, SharingDlg_.reload, this);
 }
 
 //# sourceURL=SharingDlg.js

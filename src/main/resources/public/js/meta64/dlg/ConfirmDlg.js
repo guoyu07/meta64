@@ -15,13 +15,12 @@ var ConfirmDlg = function(title, message, buttonText, callback) {
 }
 
 // more boilerplate for inheritance
-ConfirmDlg.prototype.constructor = ConfirmDlg;
-util.inherit(Dialog, ConfirmDlg);
+var ConfirmDlg_ = util.inherit(Dialog, ConfirmDlg);
 
 /*
  * Returns a string that is the HTML content of the dialog
  */
-ConfirmDlg.prototype.build = function() {
+ConfirmDlg_.build = function() {
 	var content = "<h2 id='" + this.id("ConfirmDlgTitle") + "'></h2>" + //
 	"<p id='" + this.id("ConfirmDlgMessage") + "'></p>";
 
@@ -32,7 +31,7 @@ ConfirmDlg.prototype.build = function() {
 	return content;
 }
 
-ConfirmDlg.prototype.init = function() {
+ConfirmDlg_.init = function() {
 	this.setHtml(this.title, "ConfirmDlgTitle");
 	this.setHtml(this.message, "ConfirmDlgMessage");
 	this.setHtml(this.buttonText, "ConfirmDlgYesButton");

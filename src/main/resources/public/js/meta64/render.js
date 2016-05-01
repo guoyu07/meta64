@@ -10,8 +10,7 @@ var render = function() {
 	 */
 	function _getEmptyPagePrompt() {
 		/* Construct Create Subnode Button */
-		var createSubNodeButton = _.tag("paper-button", //
-		{
+		var createSubNodeButton = _.tag("paper-button", {
 			"raised" : "raised",
 			"onClick" : "edit.createSubNode();"
 		}, "Create Content");
@@ -109,20 +108,38 @@ var render = function() {
 			return headerText;
 		},
 
+		/*
+		 * Pegdown markdown processor will create <code> blocks and the class if provided, so in order to get google prettifier to 
+		 * process it the rest of the way (when we call prettyPrint() for the whole page) we now run another stage of transformation
+		 * to get the <pre> tag put in with 'prettyprint' etc.
+		 */
 		injectCodeFormatting : function(content) {
-			meta64.codeFormatDirty = true;
-			
-			//todo-1: this is a horrible hack, but I haven't found a better way to get prettyprinting of pegdown (markdown) codeblocks
-			//working yet.
+
+			// example markdown:
+			// ```js
+			// var x = 10;
+			// var y = "test";
+			// ```
 			//
-			//usage in the markdown:
-			//```lang-js
-			//  var x = 10;
-			//  var y = "test";
-			//```
-			//
-			content = content.replaceAll("<code class=\"lang-js\">", "<pre class='prettyprint' lang-js>");
-			content = content.replaceAll("</code>", "</pre>");
+			if (content.contains("<code")) {
+				meta64.codeFormatDirty = true;
+				content = _.encodeLanguages(content);
+				content = content.replaceAll("</code>", "</pre>");
+			}
+
+			return content;
+		},
+
+		encodeLanguages : function(content) {
+			//todo-1: need to provide some way of having these configurable in a properties file somewhere, and fill out
+			//a lot more file types.
+			var langs = [ "js", "html", "htm", "css" ];
+			for (var i = 0; i < langs.length; i++) {
+				content = content.replaceAll("<code class=\"" + langs[i] + "\">", //
+				"<?prettify lang=" + langs[i] + "?><pre class='prettyprint'>");
+			}
+			content = content.replaceAll("<code>", "<pre class='prettyprint'>");
+
 			return content;
 		},
 

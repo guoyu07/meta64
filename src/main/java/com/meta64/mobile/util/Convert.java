@@ -15,6 +15,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.security.AccessControlEntry;
 import javax.jcr.security.Privilege;
 
+import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +244,9 @@ public class Convert {
 			}
 			else {
 				if (convertToHtml && serverMarkdown) {
+					// todo-0 (work in progress here)
 					return getMarkdownProc().markdownToHtml(value.getString());
+					// return value.getString();
 				}
 				else {
 					return value.getString();
@@ -263,11 +266,7 @@ public class Convert {
 	public static PegDownProcessor getMarkdownProc() {
 		PegDownProcessor proc = ThreadLocals.getMarkdownProc();
 		if (proc == null) {
-			/*
-			 * todo-1: consider replacing serverside markdown with this:
-			 * https://github.com/chjj/marked. (work in progress. "marked" is not working for me)
-			 */
-			proc = new PegDownProcessor();
+			proc = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS);
 			ThreadLocals.setMarkdownProc(proc);
 		}
 		return proc;

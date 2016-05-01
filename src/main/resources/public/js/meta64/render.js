@@ -109,22 +109,20 @@ var render = function() {
 			return headerText;
 		},
 
-		/*
-		 * This was part of the experiment to get google prettyPrint up and
-		 * running, but then I discovered https:// github.com/chjj/marked is
-		 * part of my bower already, and I will not try to use it instead of
-		 * PegDown? (whatever markdown I currently use) , but will put
-		 * prettyprinting of code on hold until i know it's not already built
-		 * into 'marked' api. /
-		 */
 		injectCodeFormatting : function(content) {
-			if (content.contains("[meta64.code]") && content.contains("[/meta64.code]")) {
-				// / /meta64.codeFormatDirty = true;
-				// / / content = content.replaceAll("[meta64.code]", "<pre
-				// / / class='prettyprint' lang-js>");
-				// / / content = content.replaceAll("[/meta64.code]",
-				// "</pre>");
-			}
+			meta64.codeFormatDirty = true;
+			
+			//todo-1: this is a horrible hack, but I haven't found a better way to get prettyprinting of pegdown (markdown) codeblocks
+			//working yet.
+			//
+			//usage in the markdown:
+			//```lang-js
+			//  var x = 10;
+			//  var y = "test";
+			//```
+			//
+			content = content.replaceAll("<code class=\"lang-js\">", "<pre class='prettyprint' lang-js>");
+			content = content.replaceAll("</code>", "</pre>");
 			return content;
 		},
 
@@ -156,6 +154,8 @@ var render = function() {
 					if (jcrContent.length > 0) {
 
 						if (meta64.serverMarkdown) {
+							jcrContent = _.injectCodeFormatting(jcrContent);
+
 							if (rowStyling) {
 								ret += _.tag("div", {
 									"class" : "jcr-content"
@@ -178,7 +178,6 @@ var render = function() {
 						 * experimental feature off for now.
 						 */
 						else {
-							// jcrContent = _.injectCodeFormatting(jcrContent);
 
 							/* alternate attribute way */
 							// jcrContent = jcrContent.replaceAll("'",
@@ -605,6 +604,7 @@ var render = function() {
 		 * if there is one to scroll to
 		 */
 		renderPageFromData : function(data) {
+			meta64.codeFormatDirty = false;
 			console.log("render.renderPageFromData()");
 
 			var newData = false;
@@ -735,6 +735,10 @@ var render = function() {
 			}
 
 			util.setHtmlEnhanced("listView", output);
+
+			if (meta64.codeFormatDirty) {
+				prettyPrint();
+			}
 
 			/*
 			 * TODO-3: Instead of calling screenSizeChange here immediately, it

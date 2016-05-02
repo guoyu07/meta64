@@ -55,6 +55,9 @@ var meta64 = function() {
 		 * 'hashCode' on Java objects.
 		 */
 		uidToNodeMap : {},
+		
+		/* Maps from the DOM ID to the editor javascript instance (Ace Editor instance) */
+		aceEditorsById : {},
 
 		/*
 		 * maps node.id values to NodeInfo.java objects

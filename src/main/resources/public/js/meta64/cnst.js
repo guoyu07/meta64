@@ -13,7 +13,12 @@ var cnst = function() {
 		BR : "<div class='vert-space'></div>",
 		INSERT_ATTACHMENT : "{{insert-attachment}}",
 		NEW_ON_TOOLBAR : true,
-		INS_ON_TOOLBAR : true
+		INS_ON_TOOLBAR : true,
+		
+		/* Set to false for now. Not quite ready to go live with the ace editor option quite yet, because there are
+		 * issues with it trying to escape html (" -> &quot;) as well as not properly preserving newline characters.
+		 */
+		USE_ACE_EDITOR : false
 	};
 
 	console.log("Module ready: cnst.js");

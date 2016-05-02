@@ -140,7 +140,14 @@
         <link rel="stylesheet"
               href="/js/google-code-prettify/prettify.css" />
         <link rel="stylesheet"
-              href="/js/google-code-prettify/desert.css" />
+              href="/js/google-code-prettify/desert.css" />  
+              
+        <!-- todo-0: include this file in my build -->
+        <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>      
+              
+        <!-- Was trying to get Ace Editor working. Needed require.js during that experimentation.
+        <script src="/js/require.js" type="text/javascript"></script>
+        -->
     </head>
     <body unresolved="unresolved"
           class="fullbleed layout vertical">
@@ -216,6 +223,32 @@
     {{html.scripts}} 
     <script>/* 
 <![CDATA[*/
+         
+      // Tell RequireJS where ace is located
+      /*
+         require.config({
+        	 //baseUrl: window.location.protocol + "//" + window.location.host
+             //+ window.location.pathname.split("/").slice(0, -1).join("/"),
+             
+             paths: {
+                 'ace': '/js/ace'
+             }
+         });
+
+         // Load the ace module
+         require(['ace/ace'], function(ace) {
+        	 console.log("Ace loaded!");
+        	 if (ace) {
+        		 console.log("Ace successful, not null");
+        	 }
+             // Set up the editor
+             //var editor = ace.edit('editor');
+             //editor.setTheme('ace/theme/monokai');
+             //editor.getSession().setMode('ace/mode/javascript');
+             // etc...
+         });
+     */
+     
                 addEventListener('WebComponentsReady', function() {
                                 meta64.initApp();
                 });

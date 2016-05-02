@@ -29,7 +29,7 @@ There are just a few key concepts to know for a basic understanding of what JCR 
 * Each user owns a part of the tree and all subnodes under that make up their "account root".
 * Node text and attachments can be edited (like on a Wiki)
 * Markdown is used to do formatting of the nodes when displayed.
-* Each node can be shared by its owner to the public or to specific users or groups.
+* Each node can be shared by its owner to the public or to specific users.
 * Nodes can be created, edited, moved, and deleted just like in a file system.
 * Any type of binary content can be uploaded onto nodes, and attached images show up as part of the page.
 * Each node can be referenced by direct-linking to it on the URL, so users can publish their own pages with specific urls.
@@ -38,7 +38,7 @@ There are just a few key concepts to know for a basic understanding of what JCR 
 ## Source Code
 The code is "Open Source" (and on GitHub) but still pre-alpha prototype currently, meaning it's not considered production ready, but does follow architectural best practices. The project is currently being managed and developed by Clay Ferguson (author of this document). I'm actively developing meta64 nearly every day, and looking for other interested developers to join the effort. 
 
-## Current Features
+## List of Features
 
 * Basic JCR Browsing capability 
 * Login/Logout
@@ -49,7 +49,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Node editing (plain text/markdown)
 * Orderable child nodes ("move up" and "move down" supported)
 * Creating Subnodes or Inline nodes
-* Full Text Search (by Lucene)
+* Full Text Search and/or Tag-based searches (by Lucene)
 * Timeline feature: Reverse Chronological list of any tree branch.
 * Deleting Nodes
 * Moving nodes to new locations (supports multi-select)
@@ -92,7 +92,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Using Google Closure Compiler for JS Minification
 * Pure Java on Server
 * Spring Java-only configuration with Annotations, and no XML configs.
-* Server-Side JavaScript Markdown (using 'org.pegdown' API) renders pages 
+* Markdown support provided by PegDown, and Google Code Prettifier
 * Built using Maven+Bower
 * Launches from a single SpringBoot "uber jar" containing Tomcat embedded and pre-configured
 

@@ -56,6 +56,19 @@ var util = function() {
 		}
 	}
 
+	if (typeof String.prototype.unencodeHtml != 'function') {
+		String.prototype.unencodeHtml = function() {
+			if (!this.contains("&"))
+				return this;
+
+			return this.replaceAll('&amp;', '&')//
+			.replaceAll('&gt;', '>')//
+			.replaceAll('&lt;', '<')//
+			.replaceAll('&quot;', '"')//
+			.replaceAll('&#39;', "'");
+		}
+	}
+
 	if (typeof String.prototype.escapeForAttrib != 'function') {
 		String.prototype.escapeForAttrib = function() {
 			return this.replaceAll("\"", "&quot;");
@@ -374,7 +387,7 @@ var util = function() {
 		poly : function(id) {
 			return _.polyElm(id).node;
 		},
-		
+
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not
 		 * found. Do not prefix with "#"

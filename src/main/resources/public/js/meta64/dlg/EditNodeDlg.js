@@ -3,7 +3,6 @@ console.log("running module: EditNodeDlg.js");
 /*
  * Editor Dialog (Edits Nodes)
  * 
- * 
  */
 var EditNodeDlg = function() {
 	// boiler plate for inheritance
@@ -22,8 +21,7 @@ EditNodeDlg_.build = function() {
 	var header = render.makeDialogHeader("Edit Node");
 
 	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg_.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg_.addProperty,
-			this);
+	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg_.addProperty, this);
 	var addTagsPropertyButton = this.makeButton("Add Tags Property", "addTagsPropertyButton",
 			EditNodeDlg_.addTagsProperty, this);
 	// this split works afaik, but I don't want it enabled yet.
@@ -67,6 +65,8 @@ EditNodeDlg_.populateEditNodePg = function() {
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
 		var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
+
+		var aceFields = [];
 
 		// Iterate PropertyInfo.java objects
 		/*
@@ -112,7 +112,7 @@ EditNodeDlg_.populateEditNodePg = function() {
 			if (isMulti) {
 				field += _this.makeMultiPropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
 			} else {
-				field += _this.makeSinglePropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
+				field += _this.makeSinglePropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp, aceFields);
 			}
 
 			fields += render.tag("div", {
@@ -122,15 +122,39 @@ EditNodeDlg_.populateEditNodePg = function() {
 		});
 	} //
 	else {
-		var field = render.tag("paper-textarea", {
-			"id" : this.id("newNodeNameId"),
-			"label" : "New Node Name"
-		}, '', true);
+		if (cnst.USE_ACE_EDITOR) {
+			var aceFieldId = this.id("newNodeNameId");
 
-		fields += render.tag("div", {}, field);
+			fields += render.tag("div", {
+				"id" : aceFieldId,
+				"class" : "ace-edit-panel",
+				"html" : "true"
+			}, '', true);
+
+			aceFields.push({
+				id : aceFieldId,
+				val : ""
+			});
+		} else {
+			var field = render.tag("paper-textarea", {
+				"id" : this.id("newNodeNameId"),
+				"label" : "New Node Name"
+			}, '', true);
+
+			// todo-0: I can remove this div now ?
+			fields += render.tag("div", {}, field);
+		}
 	}
 
 	util.setHtmlEnhanced(this.id("propertyEditFieldContainer"), fields);
+
+	if (cnst.USE_ACE_EDITOR) {
+		for (var i = 0; i < aceFields.length; i++) {
+			var editor = ace.edit(aceFields[i].id);
+			editor.setValue(aceFields[i].val.unencodeHtml());
+			meta64.aceEditorsById[aceFields[i].id] = editor;
+		}
+	}
 
 	var instr = edit.editingUnsavedNode ? //
 	"You may leave this field blank and a unique ID will be assigned. You only need to provide a name if you want this node to have a more meaningful URL."
@@ -211,8 +235,7 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 		 * For now we just go with the design where the actual content property
 		 * cannot be deleted. User can leave content blank but not delete it.
 		 */
-		deleteButton = render.tag("paper-button", 
-		{
+		deleteButton = render.tag("paper-button", {
 			"raised" : "raised",
 			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');" //
 		}, //
@@ -222,8 +245,7 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 		 * I don't think it really makes sense to allow a jcr:content property
 		 * to be multivalued. I may be wrong but this is my current assumption
 		 */
-		addMultiButton = render.tag("paper-button", 
-		{
+		addMultiButton = render.tag("paper-button", {
 			"raised" : "raised",
 			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
 		}, //
@@ -308,13 +330,30 @@ EditNodeDlg_.deletePropertyResponse = function(res, propertyToDelete) {
 }
 
 EditNodeDlg_.clearProperty = function(fieldId) {
-	util.setInputVal(this.id(fieldId), "");
+	if (!cnst.USE_ACE_EDITOR) {
+		util.setInputVal(this.id(fieldId), "");
+	} else {
+		var editor = meta64.aceEditorsById[this.id(fieldId)];
+		if (editor) {
+			editor.setValue("");
+		}
+	}
 
 	/* scan for all multi-value property fields and clear them */
 	var counter = 0;
 	while (counter < 1000) {
-		if (!util.setInputVal(this.id(fieldId + "_subProp" + counter), "")) {
-			break;
+		if (!cnst.USE_ACE_EDITOR) {
+			if (!util.setInputVal(this.id(fieldId + "_subProp" + counter), "")) {
+				break;
+			}
+		} else {
+			var editor = meta64.aceEditorsById[this.id(fieldId + "_subProp" + counter)];
+			if (editor) {
+				editor.setValue("");
+			}
+			else {
+				break;
+			}
 		}
 		counter++;
 	}
@@ -333,6 +372,8 @@ EditNodeDlg_.saveNode = function() {
 	 */
 	if (edit.editingUnsavedNode) {
 		console.log("saveNewNode.");
+
+		// todo-0: need to make this compatible with Ace Editor.
 		this.saveNewNode();
 	}
 	/*
@@ -399,7 +440,18 @@ EditNodeDlg_.saveExistingNode = function() {
 				console.log("Element exists: " + fieldId);
 
 				var prop = meta64.fieldIdToPropMap[fieldId];
-				var propVal = util.getTextAreaValById(fieldId);
+
+				var propVal;
+
+				if (cnst.USE_ACE_EDITOR) {
+					var editor = meta64.aceEditorsById[fieldId];
+					if (!editor)
+						throw "Unable to find Ace Editor for ID: " + fieldId;
+					propVal = editor.getValue();
+					alert("Setting[" + propVal + "]");
+				} else {
+					propVal = util.getTextAreaValById(fieldId);
+				}
 
 				console.log("prop name: " + prop.name);
 
@@ -431,7 +483,17 @@ EditNodeDlg_.saveExistingNode = function() {
 					if (util.elementExists(subPropId)) {
 						console.log("Element subprop exists: " + subPropId);
 
-						var propVal = util.getTextAreaValById(subPropId);
+						var propVal;
+						if (cnst.USE_ACE_EDITOR) {
+							var editor = meta64.aceEditorsById[subPropId];
+							if (!editor)
+								throw "Unable to find Ace Editor for subProp ID: " + subPropId;
+							propVal = editor.getValue();
+							alert("Setting[" + propVal + "]");
+						} else {
+							propVal = util.getTextAreaValById(subPropId);
+						}
+
 						console.log("prop: " + prop.name + " val[" + subPropIdx + "]=" + propVal);
 						propVals.push(propVal);
 					} else {
@@ -470,8 +532,7 @@ EditNodeDlg_.saveExistingNode = function() {
 }
 
 EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
-	console.log("Making Multi Editor: Property multi-type: name=" + prop.name + " count="
-			+ prop.values.length);
+	console.log("Making Multi Editor: Property multi-type: name=" + prop.name + " count=" + prop.values.length);
 	var fields = '';
 
 	var propList = prop.values;
@@ -510,7 +571,7 @@ EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBin
 	return fields;
 }
 
-EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
+EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp, aceFields) {
 	console.log("Property single-type: " + prop.name);
 
 	var field = '';
@@ -530,11 +591,26 @@ EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBi
 			"value" : propValStr
 		}, '', true);
 	} else {
-		field += render.tag("paper-textarea", {
-			"id" : this.id(fieldId),
-			"label" : label,
-			"value" : propValStr
-		}, '', true);
+		if (!cnst.USE_ACE_EDITOR) {
+			field += render.tag("paper-textarea", {
+				"id" : this.id(fieldId),
+				"label" : label,
+				"value" : propValStr
+			}, '', true);
+		} else {
+			var aceFieldId = this.id(fieldId);
+
+			field += render.tag("div", {
+				"id" : aceFieldId,
+				"class" : "ace-edit-panel",
+				"html" : "true"
+			}, '', true);
+
+			aceFields.push({
+				id : aceFieldId,
+				val : propValStr
+			});
+		}
 	}
 	return field;
 }

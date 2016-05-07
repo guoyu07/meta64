@@ -15,10 +15,14 @@ var UploadFromUrlDlg_ = util.inherit(Dialog, UploadFromUrlDlg);
 UploadFromUrlDlg_.build = function() {
 	var header = this.makeHeader("Upload File Attachment");
 
-	var uploadPathDisplay = render.tag("div", {//
-		"id" : this.id("uploadPathDisplay"),
-		"class" : "path-display-in-editor"
-	}, "");
+	var uploadPathDisplay = "";
+
+	if (cnst.SHOW_PATH_IN_DLGS) {
+		uploadPathDisplay += render.tag("div", {//
+			"id" : this.id("uploadPathDisplay"),
+			"class" : "path-display-in-editor"
+		}, "");
+	}
 
 	var uploadFieldContainer = "";
 	var uploadFromUrlDiv = "";
@@ -60,4 +64,4 @@ UploadFromUrlDlg_.init = function() {
 	$("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }
 
-//# sourceURL=UploadFromUrlDlg.js
+// # sourceURL=UploadFromUrlDlg.js

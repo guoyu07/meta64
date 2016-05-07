@@ -15,19 +15,22 @@ var UploadFromFileDlg_ = util.inherit(Dialog, UploadFromFileDlg);
 UploadFromFileDlg_.build = function() {
 	var header = this.makeHeader("Upload File Attachment");
 
-	var uploadPathDisplay = render.tag("div", {//
-		"id" : this.id("uploadPathDisplay"),
-		"class" : "path-display-in-editor"
-	}, "");
+	var uploadPathDisplay = "";
+
+	if (cnst.SHOW_PATH_IN_DLGS) {
+		uploadPathDisplay += render.tag("div", {//
+			"id" : this.id("uploadPathDisplay"),
+			"class" : "path-display-in-editor"
+		}, "");
+	}
 
 	var uploadFieldContainer = "";
 
 	var formFields = "";
 
 	/*
-	 * For now I just hard-code in 7 edit fields, but we could theoretically
-	 * make this dynamic so user can click 'add' button and add new ones one at
-	 * a time. Just not taking the time to do that yet.
+	 * For now I just hard-code in 7 edit fields, but we could theoretically make this dynamic so user can click 'add'
+	 * button and add new ones one at a time. Just not taking the time to do that yet.
 	 */
 	for (var i = 0; i < 7; i++) {
 		var input = render.tag("input", {
@@ -48,8 +51,8 @@ UploadFromFileDlg_.build = function() {
 	}, "", true);
 
 	/*
-	 * According to some online posts I should have needed data-ajax="false" on
-	 * this form but it is working as is without that.
+	 * According to some online posts I should have needed data-ajax="false" on this form but it is working as is
+	 * without that.
 	 */
 	var form = render.tag("form", {
 		"id" : this.id("uploadForm"),
@@ -76,9 +79,8 @@ UploadFromFileDlg_.uploadFileNow = function() {
 	$("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
 
 	/*
-	 * This is the only place we do something differently from the normal
-	 * 'util.json()' calls to the server, because this is highly specialized
-	 * here for form uploading, and is different from normal ajax calls.
+	 * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
+	 * this is highly specialized here for form uploading, and is different from normal ajax calls.
 	 */
 	var prms = $.ajax({
 		url : postTargetUrl + "upload",
@@ -104,4 +106,4 @@ UploadFromFileDlg_.init = function() {
 	$("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }
 
-//# sourceURL=UploadFromFileDlg.js
+// # sourceURL=UploadFromFileDlg.js

@@ -6,7 +6,7 @@ console.log("running module: ConfirmDlg.js");
 var ConfirmDlg = function(title, message, buttonText, callback) {
 	// boiler plate for inheritance
 	Dialog.call(this);
-	
+
 	this.domId = "ConfirmDlg";
 	this.title = title;
 	this.message = message;
@@ -21,10 +21,13 @@ var ConfirmDlg_ = util.inherit(Dialog, ConfirmDlg);
  * Returns a string that is the HTML content of the dialog
  */
 ConfirmDlg_.build = function() {
-	var content = "<h2 id='" + this.id("ConfirmDlgTitle") + "'></h2>" + //
-	"<p id='" + this.id("ConfirmDlgMessage") + "'></p>";
+	var content = this.makeHeader("", "ConfirmDlgTitle") + //
+	render.tag("p", {
+		id : this.id("ConfirmDlgMessage")
+	});
 
-	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
+	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton",
+			this.callback)
 			+ this.makeCloseButton("No", "ConfirmDlgNoButton");
 	content += render.centeredButtonBar(buttons);
 
@@ -37,4 +40,4 @@ ConfirmDlg_.init = function() {
 	this.setHtml(this.buttonText, "ConfirmDlgYesButton");
 }
 
-//# sourceURL=ConfirmDlg.js
+// # sourceURL=ConfirmDlg.js

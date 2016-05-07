@@ -17,7 +17,11 @@ var cnst = function() {
 		
 		/* This works, but I'm not sure I want it for ALL editing. Still thinking about design here, before I turn this on.
 		 */
-		USE_ACE_EDITOR : false
+		USE_ACE_EDITOR : false,
+		
+		/* showing path on rows just wastes space for ordinary users. Not really needed */
+		SHOW_PATH_ON_ROWS : false,
+		SHOW_PATH_IN_DLGS : false
 	};
 
 	console.log("Module ready: cnst.js");

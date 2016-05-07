@@ -9,10 +9,11 @@ var EditPropertyDlg = function(editNodeDlg) {
 	Dialog.call(this);
 	this.editNodeDlg = editNodeDlg;
 	this.domId = "EditPropertyDlg";
-	if (this.editNodeDlg.domId!="EditNodeDlg") {
+	if (this.editNodeDlg.domId != "EditNodeDlg") {
 		console.log("error: incorrect object for EditNodeDlg");
 	}
-	//console.log("***************** printKeys.this.EditNodeDlg(in property editor constructorconstructor): "+util.printKeys(editNodeDlg));
+	// console.log("***************** printKeys.this.EditNodeDlg(in property
+	// editor constructorconstructor): "+util.printKeys(editNodeDlg));
 }
 
 // more boilerplate for inheritance
@@ -24,15 +25,19 @@ var EditPropertyDlg_ = util.inherit(Dialog, EditPropertyDlg);
 EditPropertyDlg_.build = function() {
 	var header = this.makeHeader("Edit Node Property");
 
-	var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", EditPropertyDlg_.saveProperty,
-			this);
+	var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", EditPropertyDlg_.saveProperty, this);
 	var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
 
 	var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
 
-	var internalMainContent = "<div id='" + this.id("editPropertyPathDisplay")
-			+ "' class='path-display-in-editor'></div>" + //
-			"<div id='" + this.id("addPropertyFieldContainer") + "'></div>";
+	var internalMainContent = "";
+
+	if (cnst.SHOW_PATH_IN_DLGS) {
+		internalMainContent += "<div id='" + this.id("editPropertyPathDisplay")
+				+ "' class='path-display-in-editor'></div>";
+	}
+
+	internalMainContent += "<div id='" + this.id("addPropertyFieldContainer") + "'></div>";
 
 	return header + internalMainContent + buttonBar;
 }
@@ -63,7 +68,7 @@ EditPropertyDlg_.populatePropertyEdit = function() {
 			"label" : "Value"
 		}, "", true);
 	}
-	
+
 	/* display the node path at the top of the edit page */
 	view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
 
@@ -88,8 +93,8 @@ EditPropertyDlg_.savePropertyResponse = function(res) {
 
 	edit.editNode.properties.push(res.propertySaved);
 	meta64.treeDirty = true;
-	
-	if (this.editNodeDlg.domId!="EditNodeDlg") {
+
+	if (this.editNodeDlg.domId != "EditNodeDlg") {
 		console.log("error: incorrect object for EditNodeDlg");
 	}
 	this.editNodeDlg.populateEditNodePg();
@@ -99,4 +104,4 @@ EditPropertyDlg_.init = function() {
 	this.populatePropertyEdit();
 }
 
-//# sourceURL=EditPropertyDlg.js
+// # sourceURL=EditPropertyDlg.js

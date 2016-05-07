@@ -20,25 +20,43 @@ var EditNodeDlg_ = util.inherit(Dialog, EditNodeDlg);
 EditNodeDlg_.build = function() {
 	var header = this.makeHeader("Edit Node");
 
-	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", EditNodeDlg_.saveNode, this);
-	var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", EditNodeDlg_.addProperty, this);
-	var addTagsPropertyButton = this.makeButton("Add Tags Property", "addTagsPropertyButton",
-			EditNodeDlg_.addTagsProperty, this);
+	var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton",
+			EditNodeDlg_.saveNode, this);
+	var addPropertyButton = this.makeButton("Add Property",
+			"addPropertyButton", EditNodeDlg_.addProperty, this);
+	var addTagsPropertyButton = this.makeButton("Add Tags Property",
+			"addTagsPropertyButton", EditNodeDlg_.addTagsProperty, this);
 	// this split works afaik, but I don't want it enabled yet.
 	// var splitContentButton = this.makeButton("Split Content",
 	// "splitContentButton", "edit.splitContent();");
-	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
+	var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton",
+			"edit.cancelEdit();", this);
 
-	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton
-	/* + splitContentButton */+ cancelEditButton, "buttons");
+	var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton
+			+ addTagsPropertyButton
+			/* + splitContentButton */+ cancelEditButton, "buttons");
 
 	var width = window.innerWidth * 0.6;
 	var height = window.innerHeight * 0.4;
 
-	var internalMainContent = "<div id='" + this.id("editNodePathDisplay") + "' class='path-display-in-editor'></div>" + //
-	"<div id='" + this.id("editNodeInstructions") + "'></div>" + //
-	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
-			+ this.id("propertyEditFieldContainer") + "'>Loading...</div>";
+	var internalMainContent = "";
+
+	if (cnst.SHOW_PATH_IN_DLGS) {
+		internalMainContent += render.tag("div", {
+			id : this.id("editNodePathDisplay"),
+			class : "path-display-in-editor"
+		});
+	}
+
+	internalMainContent += render.tag("div", {
+		id : this.id("editNodeInstructions")
+	})
+			+ render.tag("div", {
+				id : this.id("propertyEditFieldContainer"),
+				// todo-0: create CSS class for this.
+				style : "width:" + width + "px;height:" + height
+						+ "px;overflow:scroll;border:4px solid lightGray;"
+			}, "Loading...");
 
 	return header + internalMainContent + buttonBar;
 }
@@ -64,7 +82,8 @@ EditNodeDlg_.populateEditNodePg = function() {
 
 		/* iterator function will have the wrong 'this' so we save the right one */
 		var _this = this;
-		var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
+		var editOrderedProps = props
+				.getPropertiesInEditingOrder(edit.editNode.properties);
 
 		var aceFields = [];
 
@@ -84,7 +103,8 @@ EditNodeDlg_.populateEditNodePg = function() {
 			}
 
 			var fieldId = _this.id("editNodeTextContent" + counter);
-			console.log("Creating edit field " + fieldId + " for property " + prop.name);
+			console.log("Creating edit field " + fieldId + " for property "
+					+ prop.name);
 
 			meta64.fieldIdToPropMap[fieldId] = prop;
 
@@ -110,9 +130,11 @@ EditNodeDlg_.populateEditNodePg = function() {
 			var field = buttonBar;
 
 			if (isMulti) {
-				field += _this.makeMultiPropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp);
+				field += _this.makeMultiPropEditor(fieldId, prop,
+						isReadOnlyProp, isBinaryProp);
 			} else {
-				field += _this.makeSinglePropEditor(fieldId, prop, isReadOnlyProp, isBinaryProp, aceFields);
+				field += _this.makeSinglePropEditor(fieldId, prop,
+						isReadOnlyProp, isBinaryProp, aceFields);
 			}
 
 			fields += render.tag("div", {
@@ -169,7 +191,8 @@ EditNodeDlg_.populateEditNodePg = function() {
 	 * client side. We need a genuine node already saved on the server before we
 	 * allow any property editing to happen.
 	 */
-	util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
+	util.setVisibility("#" + this.id("addPropertyButton"),
+			!edit.editingUnsavedNode);
 
 	var tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
 	// console.log("hasTagsProp: " + tagsProp);
@@ -191,7 +214,8 @@ EditNodeDlg_.addTagsProperty = function() {
 		propertyName : "tags",
 		propertyValue : ""
 	};
-	util.json("saveProperty", postData, EditNodeDlg_.addTagsPropertyResponse, this);
+	util.json("saveProperty", postData, EditNodeDlg_.addTagsPropertyResponse,
+			this);
 }
 
 /* Warning: don't confuse with EditPropertyDlg */
@@ -223,7 +247,8 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 
 	var clearButton = render.tag("paper-button", {
 		"raised" : "raised",
-		"onClick" : "meta64.getObjectByGuid(" + this.guid + ").clearProperty('" + fieldId + "');" //
+		"onClick" : "meta64.getObjectByGuid(" + this.guid + ").clearProperty('"
+				+ fieldId + "');" //
 	}, //
 	"Clear");
 
@@ -237,7 +262,8 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 		 */
 		deleteButton = render.tag("paper-button", {
 			"raised" : "raised",
-			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');" //
+			"onClick" : "meta64.getObjectByGuid(" + this.guid
+					+ ").deleteProperty('" + prop.name + "');" //
 		}, //
 		"Del");
 
@@ -247,14 +273,16 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 		 */
 		addMultiButton = render.tag("paper-button", {
 			"raised" : "raised",
-			"onClick" : "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
+			"onClick" : "meta64.getObjectByGuid(" + this.guid
+					+ ").addSubProperty('" + fieldId + "');" //
 		}, //
 		"Add Multi");
 	}
 
 	var allButtons = addMultiButton + clearButton + deleteButton;
 	if (allButtons.length > 0) {
-		buttonBar = render.makeHorizontalFieldSet(allButtons, "property-edit-button-bar");
+		buttonBar = render.makeHorizontalFieldSet(allButtons,
+				"property-edit-button-bar");
 	} else {
 		buttonBar = "";
 	}
@@ -292,9 +320,10 @@ EditNodeDlg_.addSubProperty = function(fieldId) {
  */
 EditNodeDlg_.deleteProperty = function(propName) {
 	var _this = this;
-	(new ConfirmDlg("Confirm Delete", "Delete the Property: " + propName, "Yes, delete.", function() {
-		_this.deletePropertyImmediate(propName);
-	})).open();
+	(new ConfirmDlg("Confirm Delete", "Delete the Property: " + propName,
+			"Yes, delete.", function() {
+				_this.deletePropertyImmediate(propName);
+			})).open();
 }
 
 EditNodeDlg_.deletePropertyImmediate = function(propName) {
@@ -347,11 +376,11 @@ EditNodeDlg_.clearProperty = function(fieldId) {
 				break;
 			}
 		} else {
-			var editor = meta64.aceEditorsById[this.id(fieldId + "_subProp" + counter)];
+			var editor = meta64.aceEditorsById[this.id(fieldId + "_subProp"
+					+ counter)];
 			if (editor) {
 				editor.setValue("");
-			}
-			else {
+			} else {
 				break;
 			}
 		}
@@ -460,7 +489,8 @@ EditNodeDlg_.saveExistingNode = function() {
 					alert("multi prop not handled: fieldId=" + fieldId);
 				} //
 				else if (propVal !== prop.value) {
-					console.log("Prop change: " + fieldId + " newVal=" + propVal);
+					console.log("Prop change: " + fieldId + " newVal="
+							+ propVal);
 					propertiesList.push({
 						"name" : prop.name,
 						"value" : propVal
@@ -471,7 +501,8 @@ EditNodeDlg_.saveExistingNode = function() {
 					console.log("Prop didn't change: " + fieldId);
 				}
 			} else {
-				console.log("Element doesn't exist: " + fieldId + " trying subprops");
+				console.log("Element doesn't exist: " + fieldId
+						+ " trying subprops");
 				var subPropIdx = 0;
 				var propVals = [];
 				var prop = meta64.fieldIdToPropMap[fieldId];
@@ -487,17 +518,20 @@ EditNodeDlg_.saveExistingNode = function() {
 						if (cnst.USE_ACE_EDITOR) {
 							var editor = meta64.aceEditorsById[subPropId];
 							if (!editor)
-								throw "Unable to find Ace Editor for subProp ID: " + subPropId;
+								throw "Unable to find Ace Editor for subProp ID: "
+										+ subPropId;
 							propVal = editor.getValue();
 							alert("Setting[" + propVal + "]");
 						} else {
 							propVal = util.getTextAreaValById(subPropId);
 						}
 
-						console.log("prop: " + prop.name + " val[" + subPropIdx + "]=" + propVal);
+						console.log("prop: " + prop.name + " val[" + subPropIdx
+								+ "]=" + propVal);
 						propVals.push(propVal);
 					} else {
-						console.log("Element subprop does not exist: " + subPropId);
+						console.log("Element subprop does not exist: "
+								+ subPropId);
 						break;
 					}
 					subPropIdx++;
@@ -531,8 +565,10 @@ EditNodeDlg_.saveExistingNode = function() {
 	}
 }
 
-EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp) {
-	console.log("Making Multi Editor: Property multi-type: name=" + prop.name + " count=" + prop.values.length);
+EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp,
+		isBinaryProp) {
+	console.log("Making Multi Editor: Property multi-type: name=" + prop.name
+			+ " count=" + prop.values.length);
 	var fields = '';
 
 	var propList = prop.values;
@@ -571,7 +607,8 @@ EditNodeDlg_.makeMultiPropEditor = function(fieldId, prop, isReadOnlyProp, isBin
 	return fields;
 }
 
-EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp, isBinaryProp, aceFields) {
+EditNodeDlg_.makeSinglePropEditor = function(fieldId, prop, isReadOnlyProp,
+		isBinaryProp, aceFields) {
 	console.log("Property single-type: " + prop.name);
 
 	var field = '';

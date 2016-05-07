@@ -115,6 +115,8 @@ var view = function() {
 		initEditPathDisplayById : function(domId) {
 			var node = edit.editNode;
 			var e = $("#"+domId);
+			if (!e) return;
+			
 			if (edit.editingUnsavedNode) {
 				e.html("");
 				e.hide();

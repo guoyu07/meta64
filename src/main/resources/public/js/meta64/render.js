@@ -67,8 +67,13 @@ var render = function() {
 		buildRowHeader : function(node, showPath, showName) {
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
-			var headerText = "<div class='path-display'>Path: "
-					+ _.formatPath(node) + "</div>";
+			var headerText = "";
+
+			if (cnst.SHOW_PATH_ON_ROWS) {
+				headerText += "<div class='path-display'>Path: "
+						+ _.formatPath(node) + "</div>";
+			}
+			
 			headerText += "<div>";
 
 			if (commentBy) {
@@ -296,8 +301,7 @@ var render = function() {
 				var publicAppend = props.getNodePropertyVal(
 						jcrCnst.PUBLIC_APPEND, node);
 				if (publicAppend && commentBy != meta64.userName) {
-					var addCommentButton = _.tag("a", 
-					{
+					var addCommentButton = _.tag("a", {
 						"onClick" : "edit.replyToComment('" + node.uid + "');" //
 					}, //
 					"Add Comment");
@@ -353,16 +357,14 @@ var render = function() {
 
 			var cssId = uid + "_row";
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
-			return _.tag("div", 
-			{
+			return _.tag("div", {
 				"class" : "node-table-row"
 						+ (selected ? " active-row" : " inactive-row"),
 				"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
 				"id" : cssId,
 				"style" : bkgStyle
 			},// 
-			buttonBarHtmlRet + _.tag("div", 
-			{
+			buttonBarHtmlRet + _.tag("div", {
 				"id" : uid + "_content"
 			}, _.renderNodeContent(node, true, true, true, true, true)));
 		},
@@ -436,8 +438,7 @@ var render = function() {
 				// }, //
 				// "");
 
-				openButton = _.tag("paper-button", 
-				{
+				openButton = _.tag("paper-button", {
 					"class" : "highlight-button",
 					"raised" : "raised",
 					"onClick" : "nav.openNode('" + node.uid + "');"//
@@ -470,8 +471,7 @@ var render = function() {
 				// "active" : selected
 				// }, "Sel");
 
-				var css = selected ? 
-				{
+				var css = selected ? {
 					"id" : node.uid + "_sel",//
 					"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
 					"checked" : "checked"
@@ -486,8 +486,7 @@ var render = function() {
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
 					buttonCount++;
-					createSubNodeButton = _.tag("paper-button", 
-					{
+					createSubNodeButton = _.tag("paper-button", {
 						"id" : "addNodeButtonId" + node.uid,
 						"raised" : "raised",
 						"onClick" : "edit.createSubNode('" + node.uid + "');"
@@ -497,8 +496,7 @@ var render = function() {
 				if (cnst.INS_ON_TOOLBAR) {
 					buttonCount++;
 					/* Construct Create Subnode Button */
-					insertNodeButton = _.tag("paper-button", 
-					{
+					insertNodeButton = _.tag("paper-button", {
 						"id" : "insertNodeButtonId" + node.uid,
 						"raised" : "raised",
 						"onClick" : "edit.insertNode('" + node.uid + "');"
@@ -713,8 +711,7 @@ var render = function() {
 				if (edit.isEditAllowed(data.node)) {
 
 					/* Construct Create Subnode Button */
-					editNodeButton = _.tag("paper-button", 
-					{
+					editNodeButton = _.tag("paper-button", {
 						"raised" : "raised",
 						"onClick" : "edit.runEditNode('" + uid + "');"
 					}, "Edit");
@@ -729,8 +726,7 @@ var render = function() {
 					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}
 
-				var content = _.tag("div", 
-				{
+				var content = _.tag("div", {
 					"class" : (selected ? "mainNodeContentStyle active-row"
 							: "mainNodeContentStyle inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');",

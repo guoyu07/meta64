@@ -244,9 +244,7 @@ public class Convert {
 			}
 			else {
 				if (convertToHtml && serverMarkdown) {
-					// todo-0 (work in progress here)
 					return getMarkdownProc().markdownToHtml(value.getString());
-					// return value.getString();
 				}
 				else {
 					return value.getString();

@@ -17,7 +17,7 @@ var ShareToPersonDlg_ = util.inherit(Dialog, ShareToPersonDlg);
  * Returns a string that is the HTML content of the dialog
  */
 ShareToPersonDlg_.build = function() {
-	var header = render.makeDialogHeader("Share Node to Person");
+	var header = this.makeHeader("Share Node to Person");
 
 	var formControls = this.makeEditField("User to Share With", "shareToUserName");
 	var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", ShareToPersonDlg_.shareNodeToPerson, this);

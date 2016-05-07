@@ -17,7 +17,7 @@ var SearchDlg_ = util.inherit(Dialog, SearchDlg);
  * Returns a string that is the HTML content of the dialog
  */
 SearchDlg_.build = function() {
-	var header = render.makeDialogHeader("Search");
+	var header = this.makeHeader("Search");
 
 	var instructions = "<p>Enter some text to find. All sub-nodes under the selected node are included in the search.</p>";
 	var formControls = this.makeEditField("Search", "searchText");

@@ -17,7 +17,7 @@ var ImportDlg_ = util.inherit(Dialog, ImportDlg);
  * Returns a string that is the HTML content of the dialog
  */
 ImportDlg_.build = function() {
-	var header = render.makeDialogHeader("Import from XML");
+	var header = this.makeHeader("Import from XML");
 
 	var formControls = this.makeEditField("Import Target Node Name", "importTargetNodeName");
 

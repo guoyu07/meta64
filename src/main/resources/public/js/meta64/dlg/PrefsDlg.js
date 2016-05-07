@@ -17,7 +17,7 @@ var PrefsDlg_ = util.inherit(Dialog, PrefsDlg);
  * Returns a string that is the HTML content of the dialog
  */
 PrefsDlg_.build = function() {
-	var header = render.makeDialogHeader("Account Peferences");
+	var header = this.makeHeader("Account Peferences");
 
 	var radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
 	this.makeRadioButton("Advanced", "editModeAdvanced");

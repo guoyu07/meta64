@@ -17,7 +17,7 @@ var SharingDlg_ = util.inherit(Dialog, SharingDlg);
  * Returns a string that is the HTML content of the dialog
  */
 SharingDlg_.build = function() {
-	var header = render.makeDialogHeader("Node Sharing");
+	var header = this.makeHeader("Node Sharing");
 
 	var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton", SharingDlg_.shareNodeToPersonPg, this);
 	var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", SharingDl_.shareNodeToPublic, this);

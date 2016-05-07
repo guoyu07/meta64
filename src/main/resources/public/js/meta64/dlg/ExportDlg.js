@@ -17,7 +17,7 @@ var ExportDlg_ = util.inherit(Dialog, ExportDlg);
  * Returns a string that is the HTML content of the dialog
  */
 ExportDlg_.build = function() {
-	var header = render.makeDialogHeader("Export to XML");
+	var header = this.makeHeader("Export to XML");
 
 	var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");
 

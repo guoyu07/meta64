@@ -17,7 +17,7 @@ var SignupDlg_ = util.inherit(Dialog, SignupDlg);
  * Returns a string that is the HTML content of the dialog
  */
 SignupDlg_.build = function() {
-	var header = render.makeDialogHeader(BRANDING_TITLE + " Signup");
+	var header = this.makeHeader(BRANDING_TITLE + " Signup");
 
 	var formControls = //
 	this.makeEditField("User", "signupUserName") + //

@@ -13,7 +13,7 @@ var UploadFromFileDlg_ = util.inherit(Dialog, UploadFromFileDlg);
  * Returns a string that is the HTML content of the dialog
  */
 UploadFromFileDlg_.build = function() {
-	var header = render.makeDialogHeader("Upload File Attachment");
+	var header = this.makeHeader("Upload File Attachment");
 
 	var uploadPathDisplay = render.tag("div", {//
 		"id" : this.id("uploadPathDisplay"),

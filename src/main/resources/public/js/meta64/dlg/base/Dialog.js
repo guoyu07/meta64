@@ -165,6 +165,19 @@ Dialog_.makeRadioButton = function(label, id) {
 	}, label);
 }
 
+Dialog_.makeHeader : function(text, id) {
+	var attrs = {
+		"class" : "dialog-header"
+	};
+	
+	//add id if one was provided
+	if (id) {
+		attrs.id = this.id(id);
+	}
+	
+	return _.tag("h2", attrs, text);
+}
+
 Dialog_.focus = function(id) {
 	if (!id.startsWith("#")) {
 		id = "#" + id;

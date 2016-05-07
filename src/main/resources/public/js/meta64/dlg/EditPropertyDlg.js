@@ -22,7 +22,7 @@ var EditPropertyDlg_ = util.inherit(Dialog, EditPropertyDlg);
  * Returns a string that is the HTML content of the dialog
  */
 EditPropertyDlg_.build = function() {
-	var header = render.makeDialogHeader("Edit Node Property");
+	var header = this.makeHeader("Edit Node Property");
 
 	var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", EditPropertyDlg_.saveProperty,
 			this);

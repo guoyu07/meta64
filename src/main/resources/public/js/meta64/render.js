@@ -563,12 +563,6 @@ var render = function() {
 					: "";
 		},
 
-		makeDialogHeader : function(text) {
-			return _.tag("h2", {
-				"class" : "dialog-header"
-			}, text);
-		},
-
 		makeHorizontalFieldSet : function(content, extraClasses) {
 
 			/* Now build entire control bar */

@@ -17,7 +17,7 @@ var LoginDlg_ = util.inherit(Dialog, LoginDlg);
  * Returns a string that is the HTML content of the dialog
  */
 LoginDlg_.build = function() {
-	var header = render.makeDialogHeader("Login");
+	var header = this.makeHeader("Login");
 
 	var formControls = this.makeEditField("User", "userName") + //
 	this.makePasswordField("Password", "password");

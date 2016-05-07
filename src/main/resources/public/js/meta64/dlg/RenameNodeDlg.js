@@ -17,7 +17,7 @@ var RenameNodeDlg_ = util.inherit(Dialog, RenameNodeDlg);
  * Returns a string that is the HTML content of the dialog
  */
 RenameNodeDlg_.build = function() {
-	var header = render.makeDialogHeader("Rename Node");
+	var header = this.makeHeader("Rename Node");
 
 	var curNodeNameDisplay = "<h3 id='"+this.id("curNodeNameDisplay")+"'></h3>";
 

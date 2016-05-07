@@ -1,12 +1,10 @@
 console.log("running module: UploadFromFileDlg.js");
 
 var UploadFromFileDlg = function() {
-	// boiler plate for inheritance
 	Dialog.call(this);
 	this.domId = "UploadFromFileDlg";
 }
 
-// more boilerplate for inheritance
 var UploadFromFileDlg_ = util.inherit(Dialog, UploadFromFileDlg);
 
 /*

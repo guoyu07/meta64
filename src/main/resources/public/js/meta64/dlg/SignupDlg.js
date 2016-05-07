@@ -1,16 +1,10 @@
 console.log("running module: SignupDlg.js");
 
-/*
- * Class constructor
- */
 var SignupDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-
+	Dialog.call(this);=
 	this.domId = "SignupDlg";
 }
 
-// more boilerplate for inheritance
 var SignupDlg_ = util.inherit(Dialog, SignupDlg);
 
 /*

@@ -1,16 +1,10 @@
 console.log("running module: ExportDlg.js");
 
-/*
- * Class constructor
- */
 var ExportDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-	
+	Dialog.call(this);	
 	this.domId = "ExportDlg";
 }
 
-// more boilerplate for inheritance
 var ExportDlg_ = util.inherit(Dialog, ExportDlg);
 
 /*

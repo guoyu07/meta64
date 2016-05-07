@@ -1,13 +1,11 @@
 console.log("running module: ChangePasswordDlg.js");
 
 var ChangePasswordDlg = function() {
-	// boiler plate for inheritance
 	Dialog.call(this);
 	
 	this.domId = "ChangePasswordDlg";
 }
 
-// more boilerplate for inheritance
 var ChangePasswordDlg_ = util.inherit(Dialog, ChangePasswordDlg);
 
 /*

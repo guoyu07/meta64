@@ -5,7 +5,6 @@ console.log("running module: EditPropertyDlg.js");
  * 
  */
 var EditPropertyDlg = function(editNodeDlg) {
-	// boiler plate for inheritance
 	Dialog.call(this);
 	this.editNodeDlg = editNodeDlg;
 	this.domId = "EditPropertyDlg";
@@ -16,7 +15,6 @@ var EditPropertyDlg = function(editNodeDlg) {
 	// editor constructorconstructor): "+util.printKeys(editNodeDlg));
 }
 
-// more boilerplate for inheritance
 var EditPropertyDlg_ = util.inherit(Dialog, EditPropertyDlg);
 
 /*

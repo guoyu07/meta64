@@ -1,10 +1,6 @@
 console.log("running module: ConfirmDlg.js");
 
-/*
- * Class constructor
- */
 var ConfirmDlg = function(title, message, buttonText, callback) {
-	// boiler plate for inheritance
 	Dialog.call(this);
 
 	this.domId = "ConfirmDlg";
@@ -14,7 +10,6 @@ var ConfirmDlg = function(title, message, buttonText, callback) {
 	this.callback = callback;
 }
 
-// more boilerplate for inheritance
 var ConfirmDlg_ = util.inherit(Dialog, ConfirmDlg);
 
 /*

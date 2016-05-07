@@ -1,16 +1,10 @@
 console.log("running module: SearchDlg.js");
 
-/*
- * Class constructor
- */
 var SearchDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-	
+	Dialog.call(this);	
 	this.domId = "SearchDlg";
 }
 
-// more boilerplate for inheritance
 var SearchDlg_ = util.inherit(Dialog, SearchDlg);
 
 /*

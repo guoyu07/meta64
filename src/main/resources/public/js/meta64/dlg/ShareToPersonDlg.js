@@ -1,16 +1,10 @@
 console.log("running module: ShareToPersonDlg.js");
 
-/*
- * Class constructor
- */
 var ShareToPersonDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-	
+	Dialog.call(this);	
 	this.domId = "ShareToPersonDlg";
 }
 
-// more boilerplate for inheritance
 var ShareToPersonDlg_ = util.inherit(Dialog, ShareToPersonDlg);
 
 /*

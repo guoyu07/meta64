@@ -1,16 +1,10 @@
 console.log("running module: RenameNodeDlg.js");
 
-/*
- * Class constructor
- */
 var RenameNodeDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-	
+	Dialog.call(this);	
 	this.domId = "RenameNodeDlg";
 }
 
-// more boilerplate for inheritance
 var RenameNodeDlg_ = util.inherit(Dialog, RenameNodeDlg);
 
 /*

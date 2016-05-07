@@ -1,16 +1,10 @@
 console.log("running module: PrefsDlg.js");
 
-/*
- * Class constructor
- */
 var PrefsDlg = function() {
-	// boiler plate for inheritance
 	Dialog.call(this);
-
 	this.domId = "PrefsDlg";
 }
 
-// more boilerplate for inheritance
 var PrefsDlg_ = util.inherit(Dialog, PrefsDlg);
 
 /*

@@ -1,16 +1,10 @@
 console.log("running module: ImportDlg.js");
 
-/*
- * Class constructor
- */
 var ImportDlg = function() {
-	// boiler plate for inheritance
-	Dialog.call(this);
-	
+	Dialog.call(this);	
 	this.domId = "ImportDlg";
 }
 
-// more boilerplate for inheritance
 var ImportDlg_ = util.inherit(Dialog, ImportDlg);
 
 /*

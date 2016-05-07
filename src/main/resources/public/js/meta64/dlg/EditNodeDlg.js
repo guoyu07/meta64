@@ -5,13 +5,10 @@ console.log("running module: EditNodeDlg.js");
  * 
  */
 var EditNodeDlg = function() {
-	// boiler plate for inheritance
 	Dialog.call(this);
-
 	this.domId = "EditNodeDlg";
 }
 
-// more boilerplate for inheritance
 var EditNodeDlg_ = util.inherit(Dialog, EditNodeDlg);
 
 /*

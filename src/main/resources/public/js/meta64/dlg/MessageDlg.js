@@ -1,10 +1,6 @@
 console.log("running module: MessageDlg.js");
 
-/*
- * Class constructor
- */
 var MessageDlg = function(message, title) {
-	// boiler plate for inheritance
 	Dialog.call(this);
 
 	this.domId = "MessageDlg";
@@ -15,7 +11,6 @@ var MessageDlg = function(message, title) {
 	this.title = title;
 }
 
-// more boilerplate for inheritance
 var MessageDlg_ = util.inherit(Dialog, MessageDlg);
 
 /*

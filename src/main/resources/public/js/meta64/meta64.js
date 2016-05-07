@@ -1,9 +1,8 @@
 console.log("running module: meta64.js");
 
 /**
- * Main Application instance, and central root level object for all code,
- * although each module generally contributes one singleton variable to the
- * global scope, with a name usually identical to that file.
+ * Main Application instance, and central root level object for all code, although each module generally contributes one
+ * singleton variable to the global scope, with a name usually identical to that file.
  */
 var meta64 = function() {
 
@@ -40,22 +39,20 @@ var meta64 = function() {
 		anonUserLandingPageNode : null,
 
 		/*
-		 * signals that data has changed and the next time we go to the main
-		 * tree view window we need to refresh data from the server
+		 * signals that data has changed and the next time we go to the main tree view window we need to refresh data
+		 * from the server
 		 */
 		treeDirty : false,
 
 		/*
 		 * maps node.uid values to NodeInfo.java objects
 		 * 
-		 * The only contract about uid values is that they are unique insofar as
-		 * any one of them always maps to the same node. Limited lifetime
-		 * however. The server is simply numbering nodes sequentially. Actually
-		 * represents the 'instance' of a model object. Very similar to a
-		 * 'hashCode' on Java objects.
+		 * The only contract about uid values is that they are unique insofar as any one of them always maps to the same
+		 * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
+		 * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
 		 */
 		uidToNodeMap : {},
-		
+
 		/* Maps from the DOM ID to the editor javascript instance (Ace Editor instance) */
 		aceEditorsById : {},
 
@@ -68,20 +65,17 @@ var meta64 = function() {
 		nextUid : 1,
 
 		/*
-		 * maps node 'identifier' (assigned at server) to uid value which is a
-		 * value based off local sequence, and uses nextUid as the counter.
+		 * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
+		 * nextUid as the counter.
 		 */
 		identToUidMap : {},
 
 		/*
-		 * Under any given node, there can be one active 'selected' node that
-		 * has the highlighting, and will be scrolled to whenever the page with
-		 * that child is visited, and parentUidToFocusNodeMap holds the map of
-		 * "parent uid to selected node (NodeInfo object)", where the key is the
-		 * parent node uid, and the value is the currently selected node within
-		 * that parent. Note this 'selection state' is only significant on the
-		 * client, and only for being able to scroll to the node during
-		 * navigating around on the tree.
+		 * Under any given node, there can be one active 'selected' node that has the highlighting, and will be scrolled
+		 * to whenever the page with that child is visited, and parentUidToFocusNodeMap holds the map of "parent uid to
+		 * selected node (NodeInfo object)", where the key is the parent node uid, and the value is the currently
+		 * selected node within that parent. Note this 'selection state' is only significant on the client, and only for
+		 * being able to scroll to the node during navigating around on the tree.
 		 */
 		parentUidToFocusNodeMap : {},
 
@@ -98,14 +92,12 @@ var meta64 = function() {
 		editModeOption : "simple",
 
 		/*
-		 * toggled by button, and holds if we are going to show properties or
-		 * not on each node in the main view
+		 * toggled by button, and holds if we are going to show properties or not on each node in the main view
 		 */
 		showProperties : false,
 
 		/*
-		 * List of node prefixes to flag nodes to not allow to be shown in the
-		 * page in simple mode
+		 * List of node prefixes to flag nodes to not allow to be shown in the page in simple mode
 		 */
 		simpleModeNodePrefixBlackList : {
 			"rep:" : true
@@ -118,14 +110,13 @@ var meta64 = function() {
 		binaryPropertyList : {},
 
 		/*
-		 * Property fields are generated dynamically and this maps the DOM IDs
-		 * of each field to the property object it edits.
+		 * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
+		 * edits.
 		 */
 		fieldIdToPropMap : {},
 
 		/*
-		 * maps all node uids to true if selected, otherwise the property should
-		 * be deleted (not existing)
+		 * maps all node uids to true if selected, otherwise the property should be deleted (not existing)
 		 */
 		selectedNodes : {},
 
@@ -133,8 +124,7 @@ var meta64 = function() {
 		currentNodeData : null,
 
 		/*
-		 * all variables derivable from currentNodeData, but stored directly for
-		 * simpler code/access
+		 * all variables derivable from currentNodeData, but stored directly for simpler code/access
 		 */
 		currentNode : null,
 		currentNodeUid : null,
@@ -151,8 +141,8 @@ var meta64 = function() {
 		},
 
 		/*
-		 * Creates a 'guid' on this object, and makes dataObjMap able to look up
-		 * the object using that guid in the future.
+		 * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
+		 * future.
 		 */
 		registerDataObject : function(data) {
 			if (!data.guid) {
@@ -170,19 +160,16 @@ var meta64 = function() {
 		},
 
 		/*
-		 * If callback is a string, it will be interpreted as a script to run,
-		 * or if it's a function object that will be the function to run.
+		 * If callback is a string, it will be interpreted as a script to run, or if it's a function object that will be
+		 * the function to run.
 		 * 
-		 * Whenever we are building an onClick string, and we have the actual
-		 * function, rather than the name of the function (i.e. we have the
-		 * function object and not a string representation we hande that by
-		 * assigning a guid to the function object, and then encode a call to
-		 * run that guid by calling runCallback. There is a level of indirection
-		 * here, but this is the simplest approach when we need to be able to
-		 * map from a string to a function.
+		 * Whenever we are building an onClick string, and we have the actual function, rather than the name of the
+		 * function (i.e. we have the function object and not a string representation we hande that by assigning a guid
+		 * to the function object, and then encode a call to run that guid by calling runCallback. There is a level of
+		 * indirection here, but this is the simplest approach when we need to be able to map from a string to a
+		 * function.
 		 * 
-		 * ctx=context, which is the 'this' to call with if we have a function,
-		 * and have a 'this' context to bind to it.
+		 * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
 		 */
 		encodeOnClick : function(callback, ctx) {
 			if (typeof callback == "string") {
@@ -245,9 +232,8 @@ var meta64 = function() {
 				_.refreshAllGuiEnablement();
 			}
 			/*
-			 * If not re-rendering page (either from server, or from local data,
-			 * then we just need to litterally switch page into visible, and
-			 * scroll to node)
+			 * If not re-rendering page (either from server, or from local data, then we just need to litterally switch
+			 * page into visible, and scroll to node)
 			 */
 			else {
 				view.scrollToSelectedNode();
@@ -260,14 +246,11 @@ var meta64 = function() {
 		},
 
 		/*
-		 * If data (if provided) must be the instance data for the current
-		 * instance of the dialog, and all the dialog methods are of course
-		 * singletons that accept this data parameter for any opterations.
-		 * (oldschool way of doing OOP with 'this' being first parameter
-		 * always).
+		 * If data (if provided) must be the instance data for the current instance of the dialog, and all the dialog
+		 * methods are of course singletons that accept this data parameter for any opterations. (oldschool way of doing
+		 * OOP with 'this' being first parameter always).
 		 * 
-		 * Note: each data instance is required to have a guid numberic
-		 * property, unique to it.
+		 * Note: each data instance is required to have a guid numberic property, unique to it.
 		 * 
 		 */
 		changePage : function(pg, data) {
@@ -355,8 +338,6 @@ var meta64 = function() {
 
 		updateNodeInfoResponse : function(res, node) {
 			var ownerBuf = '';
-			// console.log("****** updateNodeInfoResponse: " +
-			// JSON.stringify(res));
 			var mine = false;
 
 			if (res.owners) {
@@ -370,7 +351,6 @@ var meta64 = function() {
 					}
 
 					ownerBuf += owner;
-					// console.log("ownerbuf: "+ownerBuf);
 				});
 			}
 
@@ -430,9 +410,8 @@ var meta64 = function() {
 		},
 
 		/*
-		 * Important: We want this to be the only method that can set values on
-		 * 'parentUidToFocusNodeMap', and always setting that value should go
-		 * thru this function.
+		 * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
+		 * setting that value should go thru this function.
 		 */
 		highlightNode : function(node, scroll) {
 			if (!node)
@@ -467,8 +446,8 @@ var meta64 = function() {
 		},
 
 		/*
-		 * Really need to use pub/sub event to broadcast enablement, and let
-		 * each component do this independently and decouple
+		 * Really need to use pub/sub event to broadcast enablement, and let each component do this independently and
+		 * decouple
 		 */
 		refreshAllGuiEnablement : function() {
 
@@ -588,8 +567,8 @@ var meta64 = function() {
 		},
 
 		/*
-		 * updates client side maps and client-side identifier for new node, so
-		 * that this node is 'recognized' by client side code
+		 * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
+		 * side code
 		 */
 		initNode : function(node) {
 			if (!node) {
@@ -597,18 +576,16 @@ var meta64 = function() {
 				return;
 			}
 			/*
-			 * assign a property for detecting this node type, I'll do this
-			 * instead of using some kind of custom JS prototype-related
-			 * approach
+			 * assign a property for detecting this node type, I'll do this instead of using some kind of custom JS
+			 * prototype-related approach
 			 */
 			node.uid = util.getUidForId(_.identToUidMap, node.id);
 			node.properties = props.getPropertiesInEditingOrder(node.properties);
 
 			/*
-			 * For these two properties that are accessed frequently we go ahead
-			 * and lookup the properties in the property array, and assign them
-			 * directly as node object properties so to improve performance, and
-			 * also simplify code.
+			 * For these two properties that are accessed frequently we go ahead and lookup the properties in the
+			 * property array, and assign them directly as node object properties so to improve performance, and also
+			 * simplify code.
 			 */
 			node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
@@ -666,9 +643,8 @@ var meta64 = function() {
 			_.displaySignupMessage();
 
 			/*
-			 * todo-3: how does orientationchange need to work for polymer?
-			 * Polymer disabled $(window).on("orientationchange",
-			 * _.orientationHandler);
+			 * todo-3: how does orientationchange need to work for polymer? Polymer disabled
+			 * $(window).on("orientationchange", _.orientationHandler);
 			 */
 
 			$(window).bind("beforeunload", function() {
@@ -676,11 +652,9 @@ var meta64 = function() {
 			});
 
 			/*
-			 * I thought this was a good idea, but actually it destroys the
-			 * session, when the user is entering an "id=\my\path" type of url
-			 * to open a specific node. Need to rethink this. Basically for now
-			 * I'm thinking going to a different url shouldn't blow up the
-			 * session, which is what 'logout' does.
+			 * I thought this was a good idea, but actually it destroys the session, when the user is entering an
+			 * "id=\my\path" type of url to open a specific node. Need to rethink this. Basically for now I'm thinking
+			 * going to a different url shouldn't blow up the session, which is what 'logout' does.
 			 * 
 			 * $(window).on("unload", function() { user.logout(false); });
 			 */
@@ -689,29 +663,24 @@ var meta64 = function() {
 			_.deviceHeight = $(window).height();
 
 			/*
-			 * This call checks the server to see if we have a session already,
-			 * and gets back the login information from the session, and then
-			 * renders page content, after that.
+			 * This call checks the server to see if we have a session already, and gets back the login information from
+			 * the session, and then renders page content, after that.
 			 */
 			user.refreshLogin();
 
 			/*
-			 * Check for screen size in a timer. We don't want to monitor actual
-			 * screen resize events because if a user is expanding a window we
-			 * basically want to limit the CPU and chaos that would ensue if we
-			 * tried to adjust things every time it changes. So we throttle back
-			 * to only reorganizing the screen once per second. This timer is a
-			 * throttle sort of. Yes I know how to listen for events. No I'm not
-			 * doing it wrong here. This timer is correct in this case and
-			 * behaves superior to events.
+			 * Check for screen size in a timer. We don't want to monitor actual screen resize events because if a user
+			 * is expanding a window we basically want to limit the CPU and chaos that would ensue if we tried to adjust
+			 * things every time it changes. So we throttle back to only reorganizing the screen once per second. This
+			 * timer is a throttle sort of. Yes I know how to listen for events. No I'm not doing it wrong here. This
+			 * timer is correct in this case and behaves superior to events.
 			 */
 			/*
 			 * Polymer->disable
 			 * 
 			 * setInterval(function() { var width = $(window).width();
 			 * 
-			 * if (width != _.deviceWidth) { // console.log("Screen width
-			 * changed: " + width);
+			 * if (width != _.deviceWidth) { // console.log("Screen width changed: " + width);
 			 * 
 			 * _.deviceWidth = width; _.deviceHeight = $(window).height();
 			 * 
@@ -723,11 +692,11 @@ var meta64 = function() {
 		},
 
 		tabChangeEvent : function(tabName) {
-			if (tabName=="searchTabName") {
+			if (tabName == "searchTabName") {
 				srch.searchTabActivated();
 			}
 		},
-		
+
 		displaySignupMessage : function() {
 			var signupResponse = $("#signupCodeResponse").text();
 			if (signupResponse === "ok") {

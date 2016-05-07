@@ -56,14 +56,6 @@ var edit = function() {
 		}
 	}
 
-	//todo-2 (should be a dead method now)
-	var _makeNodeReferencableResponse = function(res) {
-		if (util.checkSuccess("Make node referencable", res)) {
-			(new MessageDlg("This node is now referencable, and can be accessed by unique ID")).open();
-		}
-		view.refreshTree(null, false);
-	}
-
 	var _splitContentResponse = function(res) {
 		if (util.checkSuccess("Split content", res)) {
 			view.refreshTree(null, false);
@@ -197,13 +189,6 @@ var edit = function() {
 			 * offscreen out of view, so we scroll it back into view every time
 			 */
 			view.scrollToSelectedNode();
-		},
-
-		//todo-2 (should be a dead function now)
-		makeNodeReferencable : function() {
-			util.json("makeNodeReferencable", {
-				"nodeId" : _.editNode.id
-			}, _makeNodeReferencableResponse);
 		},
 
 		splitContent : function() {

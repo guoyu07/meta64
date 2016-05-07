@@ -22,7 +22,6 @@ import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.CreateSubNodeRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.InsertNodeRequest;
-import com.meta64.mobile.request.MakeNodeReferencableRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
@@ -30,7 +29,6 @@ import com.meta64.mobile.request.SplitNodeRequest;
 import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.InsertNodeResponse;
-import com.meta64.mobile.response.MakeNodeReferencableResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
@@ -220,37 +218,6 @@ public class NodeEditService {
 		PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), null, null);
 		res.setPropertySaved(propertySaved);
 		res.setSuccess(true);
-	}
-
-	/*
-	 * Turns on the mixin MIX_REFERENCABLE which makes the JCR automatically create a UUID for the
-	 * node which is a unique key that can be used to address the node, and will be completely
-	 * unique.
-	 * 
-	 * todo-2: method no longer needed. functionality added to 'renameNode'.
-	 * 
-	 * WARNING: before deleting this method review MIX_REFERENCABLE docs once more and check if
-	 * there is still any value in having this something that can be set directly via API call or
-	 * not?
-	 */
-	@Deprecated
-	public void makeNodeReferencable(Session session, MakeNodeReferencableRequest req, MakeNodeReferencableResponse res) throws Exception {
-		if (session == null) {
-			session = ThreadLocals.getJcrSession();
-		}
-		String nodeId = req.getNodeId();
-		Node node = JcrUtil.findNode(session, nodeId);
-		JcrUtil.checkWriteAuthorized(node, session.getUserID());
-		if (node != null) {
-			/*
-			 * if node already has uuid then we can do nothing here, we just silently return success
-			 */
-			if (!node.hasProperty(JcrProp.UUID)) {
-				node.addMixin(JcrConstants.MIX_REFERENCEABLE);
-				session.save();
-			}
-			res.setSuccess(true);
-		}
 	}
 
 	/*

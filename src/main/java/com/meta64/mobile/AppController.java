@@ -41,7 +41,6 @@ import com.meta64.mobile.request.InsertBookRequest;
 import com.meta64.mobile.request.InsertNodeRequest;
 import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.LogoutRequest;
-import com.meta64.mobile.request.MakeNodeReferencableRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
@@ -72,7 +71,6 @@ import com.meta64.mobile.response.InsertBookResponse;
 import com.meta64.mobile.response.InsertNodeResponse;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.LogoutResponse;
-import com.meta64.mobile.response.MakeNodeReferencableResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
@@ -458,17 +456,6 @@ public class AppController {
 		SaveNodeResponse res = new SaveNodeResponse();
 		checkHttpSession();
 		nodeEditService.saveNode(null, req, res);
-		return res;
-	}
-
-	@Deprecated
-	@RequestMapping(value = API_PATH + "/makeNodeReferencable", method = RequestMethod.POST)
-	@OakSession
-	public @ResponseBody MakeNodeReferencableResponse makeNodeReferencable(@RequestBody MakeNodeReferencableRequest req) throws Exception {
-		logRequest("makeNodeReferencable", req);
-		MakeNodeReferencableResponse res = new MakeNodeReferencableResponse();
-		checkHttpSession();
-		nodeEditService.makeNodeReferencable(null, req, res);
 		return res;
 	}
 

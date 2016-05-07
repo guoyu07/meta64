@@ -67,16 +67,21 @@ var render = function() {
 		buildRowHeader : function(node, showPath, showName) {
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
-			var headerText = "<div class='path-display'>Path: " + _.formatPath(node) + "</div>";
+			var headerText = "<div class='path-display'>Path: "
+					+ _.formatPath(node) + "</div>";
 			headerText += "<div>";
 
 			if (commentBy) {
-				var clazz = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
-				headerText += "<span class='" + clazz + "'>Comment By: " + commentBy + "</span>";
+				var clazz = (commentBy === meta64.userName) ? "created-by-me"
+						: "created-by-other";
+				headerText += "<span class='" + clazz + "'>Comment By: "
+						+ commentBy + "</span>";
 			} //
 			else if (node.createdBy) {
-				var clazz = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
-				headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
+				var clazz = (node.createdBy === meta64.userName) ? "created-by-me"
+						: "created-by-other";
+				headerText += "<span class='" + clazz + "'>Created By: "
+						+ node.createdBy + "</span>";
 			}
 
 			headerText += "<span id='ownerDisplay" + node.uid + "'></span>";
@@ -109,9 +114,11 @@ var render = function() {
 		},
 
 		/*
-		 * Pegdown markdown processor will create <code> blocks and the class if provided, so in order to get google prettifier to 
-		 * process it the rest of the way (when we call prettyPrint() for the whole page) we now run another stage of transformation
-		 * to get the <pre> tag put in with 'prettyprint' etc.
+		 * Pegdown markdown processor will create <code> blocks and the class if
+		 * provided, so in order to get google prettifier to process it the rest
+		 * of the way (when we call prettyPrint() for the whole page) we now run
+		 * another stage of transformation to get the <pre> tag put in with
+		 * 'prettyprint' etc.
 		 */
 		injectCodeFormatting : function(content) {
 
@@ -131,11 +138,13 @@ var render = function() {
 		},
 
 		encodeLanguages : function(content) {
-			//todo-1: need to provide some way of having these configurable in a properties file somewhere, and fill out
-			//a lot more file types.
+			// todo-1: need to provide some way of having these configurable in
+			// a properties file somewhere, and fill out
+			// a lot more file types.
 			var langs = [ "js", "html", "htm", "css" ];
 			for (var i = 0; i < langs.length; i++) {
-				content = content.replaceAll("<code class=\"" + langs[i] + "\">", //
+				content = content.replaceAll("<code class=\"" + langs[i]
+						+ "\">", //
 				"<?prettify lang=" + langs[i] + "?><pre class='prettyprint'>");
 			}
 			content = content.replaceAll("<code>", "<pre class='prettyprint'>");
@@ -147,7 +156,8 @@ var render = function() {
 		 * node: JSON of NodeInfo.java
 		 * 
 		 */
-		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
+		renderNodeContent : function(node, showPath, showName, renderBinary,
+				rowStyling, showHeader) {
 			var ret = _.getTopRightImageTag(node);
 
 			/* todo-2: enable headerText when appropriate here */
@@ -178,14 +188,17 @@ var render = function() {
 									"class" : "jcr-content"
 								}, jcrContent);
 							} else {
-								ret += _.tag("div", {
-									"class" : "jcr-root-content"
-								},
-								// probably could
-								// "img.top.right" feature for
-								// this if we wanted to. oops.
-								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-										+ jcrContent);
+								ret += _
+										.tag(
+												"div",
+												{
+													"class" : "jcr-root-content"
+												},
+												// probably could
+												// "img.top.right" feature for
+												// this if we wanted to. oops.
+												"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+														+ jcrContent);
 							}
 						}
 						/*
@@ -211,15 +224,18 @@ var render = function() {
 								}, jcrContent);
 							} else {
 								ret += "<marked-element sanitize='true'><div class='markdown-html'>";
-								ret += _.tag("script", {
-									"type" : "text/markdown"
-								},
-								// probably could
-								// "img.top.right" feature for
-								// this
-								// // if we wanted to. oops.
-								"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-										+ jcrContent);
+								ret += _
+										.tag(
+												"script",
+												{
+													"type" : "text/markdown"
+												},
+												// probably could
+												// "img.top.right" feature for
+												// this
+												// // if we wanted to. oops.
+												"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
+														+ jcrContent);
 							}
 							ret += "</div></marked-element>";
 						}
@@ -277,9 +293,10 @@ var render = function() {
 			 * to "Add Comment" to our own content.
 			 */
 			else {
-				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
+				var publicAppend = props.getNodePropertyVal(
+						jcrCnst.PUBLIC_APPEND, node);
 				if (publicAppend && commentBy != meta64.userName) {
-					var addCommentButton = _.tag("a", //
+					var addCommentButton = _.tag("a", 
 					{
 						"onClick" : "edit.replyToComment('" + node.uid + "');" //
 					}, //
@@ -317,7 +334,8 @@ var render = function() {
 														 * meta64.currentNodeData.
 														 * bug?
 														 */node.path.contains("/rep:");
-			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
+			var editingAllowed = (meta64.isAdminUser || !isRep)
+					&& !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
 			/*
@@ -329,19 +347,21 @@ var render = function() {
 			var focusNode = meta64.getHighlightedNode();
 			var selected = (focusNode && focusNode.uid === uid);
 
-			var buttonBarHtmlRet = _.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
+			var buttonBarHtmlRet = _.makeRowButtonBarHtml(node, canMoveUp,
+					canMoveDown, editingAllowed);
 			var bkgStyle = _.getNodeBkgImageStyle(node);
 
 			var cssId = uid + "_row";
 			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
-			return _.tag("div", //
+			return _.tag("div", 
 			{
-				"class" : "node-table-row" + (selected ? " active-row" : " inactive-row"),
+				"class" : "node-table-row"
+						+ (selected ? " active-row" : " inactive-row"),
 				"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
 				"id" : cssId,
 				"style" : bkgStyle
 			},// 
-			buttonBarHtmlRet + _.tag("div", //
+			buttonBarHtmlRet + _.tag("div", 
 			{
 				"id" : uid + "_content"
 			}, _.renderNodeContent(node, true, true, true, true, true)));
@@ -359,7 +379,8 @@ var render = function() {
 			var message = "URL using path: <br>" + url;
 			var uuid = props.getNodePropertyVal("jcr:uuid", node);
 			if (uuid) {
-				message += "<p>URL for UUID: <br>" + window.location.origin + "?id=" + uuid;
+				message += "<p>URL for UUID: <br>" + window.location.origin
+						+ "?id=" + uuid;
 			}
 
 			(new MessageDlg(message, "URL of Node")).open();
@@ -394,7 +415,8 @@ var render = function() {
 			}, buttons);
 		},
 
-		makeRowButtonBarHtml : function(node, canMoveUp, canMoveDown, editingAllowed) {
+		makeRowButtonBarHtml : function(node, canMoveUp, canMoveDown,
+				editingAllowed) {
 
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
 			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";
@@ -414,7 +436,7 @@ var render = function() {
 				// }, //
 				// "");
 
-				openButton = _.tag("paper-button", //
+				openButton = _.tag("paper-button", 
 				{
 					"class" : "highlight-button",
 					"raised" : "raised",
@@ -434,7 +456,8 @@ var render = function() {
 
 				var selected = meta64.selectedNodes[node.uid] ? true : false;
 
-				console.log("      nodeId " + node.uid + " selected=" + selected);
+				console.log("      nodeId " + node.uid + " selected="
+						+ selected);
 				buttonCount++;
 
 				// selButton = _.tag("paper-button", //
@@ -447,7 +470,7 @@ var render = function() {
 				// "active" : selected
 				// }, "Sel");
 
-				var css = selected ? //
+				var css = selected ? 
 				{
 					"id" : node.uid + "_sel",//
 					"onClick" : "nav.toggleNodeSel('" + node.uid + "');",
@@ -463,7 +486,7 @@ var render = function() {
 				if (cnst.NEW_ON_TOOLBAR) {
 					/* Construct Create Subnode Button */
 					buttonCount++;
-					createSubNodeButton = _.tag("paper-button", //
+					createSubNodeButton = _.tag("paper-button", 
 					{
 						"id" : "addNodeButtonId" + node.uid,
 						"raised" : "raised",
@@ -474,7 +497,7 @@ var render = function() {
 				if (cnst.INS_ON_TOOLBAR) {
 					buttonCount++;
 					/* Construct Create Subnode Button */
-					insertNodeButton = _.tag("paper-button", //
+					insertNodeButton = _.tag("paper-button", 
 					{
 						"id" : "insertNodeButtonId" + node.uid,
 						"raised" : "raised",
@@ -497,8 +520,7 @@ var render = function() {
 					if (canMoveUp) {
 						buttonCount++;
 						/* Construct Create Subnode Button */
-						moveNodeUpButton = _.tag("paper-button", //
-						{
+						moveNodeUpButton = _.tag("paper-button", {
 							"raised" : "raised",
 							"onClick" : "edit.moveNodeUp('" + node.uid + "');"
 						}, "Up");
@@ -507,10 +529,10 @@ var render = function() {
 					if (canMoveDown) {
 						buttonCount++;
 						/* Construct Create Subnode Button */
-						moveNodeDownButton = _.tag("paper-button", //
-						{
+						moveNodeDownButton = _.tag("paper-button", {
 							"raised" : "raised",
-							"onClick" : "edit.moveNodeDown('" + node.uid + "');"
+							"onClick" : "edit.moveNodeDown('" + node.uid
+									+ "');"
 						}, "Dn");
 					}
 				}
@@ -533,10 +555,12 @@ var render = function() {
 			// "for" : "addNodeButtonId" + uid
 			// }, "ADDS a new node inside the current node, as a child of it.");
 
-			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
-					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
+			var allButtons = selButton + openButton + insertNodeButton
+					+ insertNodeTooltip + createSubNodeButton + addNodeTooltip
+					+ editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
-			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons) : "";
+			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons)
+					: "";
 		},
 
 		makeDialogHeader : function(text) {
@@ -550,7 +574,8 @@ var render = function() {
 			/* Now build entire control bar */
 			return _.tag("div", //
 			{
-				"class" : "horizontal layout" + (extraClasses ? (" " + extraClasses) : "")
+				"class" : "horizontal layout"
+						+ (extraClasses ? (" " + extraClasses) : "")
 			}, content, true);
 		},
 
@@ -584,7 +609,9 @@ var render = function() {
 
 		formatPath : function(node) {
 			var path = node.path;
-			var shortPath = path.length < 50 ? path : path.substring(0, 40) + "...";
+			path = path.replaceAll("/", " / ");
+			var shortPath = path.length < 50 ? path : path.substring(0, 40)
+					+ "...";
 
 			var noRootPath = shortPath;
 			if (noRootPath.startsWith("/root")) {
@@ -658,10 +685,12 @@ var render = function() {
 				meta64.setCurrentNodeData(data);
 			}
 
-			var propCount = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
+			var propCount = meta64.currentNode.properties ? meta64.currentNode.properties.length
+					: 0;
 
 			if (_debug) {
-				console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
+				console.log("RENDER NODE: " + data.node.id + " propCount="
+						+ propCount);
 			}
 
 			var output = '';
@@ -672,7 +701,8 @@ var render = function() {
 			 * is always the node displayed at the to of the page above all the
 			 * other nodes which are its child nodes.
 			 */
-			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false, true);
+			var mainNodeContent = _.renderNodeContent(data.node, true, true,
+					true, false, true);
 
 			// console.log("mainNodeContent: "+mainNodeContent);
 			if (mainNodeContent.length > 0) {
@@ -689,7 +719,7 @@ var render = function() {
 				if (edit.isEditAllowed(data.node)) {
 
 					/* Construct Create Subnode Button */
-					editNodeButton = _.tag("paper-button", //
+					editNodeButton = _.tag("paper-button", 
 					{
 						"raised" : "raised",
 						"onClick" : "edit.runEditNode('" + uid + "');"
@@ -705,9 +735,10 @@ var render = function() {
 					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
 				}
 
-				var content = _.tag("div", //
+				var content = _.tag("div", 
 				{
-					"class" : (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
+					"class" : (selected ? "mainNodeContentStyle active-row"
+							: "mainNodeContentStyle inactive-row"),
 					"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');",
 					"id" : cssId
 				},// 
@@ -737,7 +768,8 @@ var render = function() {
 
 				for (var i = 0; i < data.children.length; i++) {
 					var node = data.children[i];
-					var row = _.generateRow(i, node, newData, childCount, rowCount);
+					var row = _.generateRow(i, node, newData, childCount,
+							rowCount);
 					if (row.length != 0) {
 						output += row;
 						rowCount++;
@@ -793,7 +825,8 @@ var render = function() {
 		},
 
 		getUrlForNodeAttachment : function(node) {
-			return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
+			return postTargetUrl + "bin/file-name?nodeId="
+					+ encodeURIComponent(node.path) + "&ver=" + node.binVer;
 		},
 
 		/* see also: makeImageTag() */

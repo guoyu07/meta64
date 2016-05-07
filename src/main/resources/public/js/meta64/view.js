@@ -120,7 +120,10 @@ var view = function() {
 				e.hide();
 			} else {
 				var pathDisplay = "Path: " + render.formatPath(node);
-				pathDisplay += "<br>ID: " + node.id;
+				
+				//todo-2: Do we really need ID in addition to Path here?
+				//pathDisplay += "<br>ID: " + node.id;
+				
 				if (node.lastModified) {
 					pathDisplay += "<br>Mod: " + node.lastModified;
 				}

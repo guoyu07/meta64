@@ -29,7 +29,7 @@ ChangePasswordDlg_.build = function() {
 }
 
 ChangePasswordDlg_.init = function() {
-	//util.delayedFocus("#changePassword1");
+	this.focus("changePassword1");
 }
 
 //# sourceURL=ChangePasswordDlg.js

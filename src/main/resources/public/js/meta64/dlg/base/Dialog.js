@@ -22,8 +22,9 @@ var Dialog = function() {
 }
 
 Dialog.prototype.constructor = Dialog;
+var Dialog_ = Dialog.prototype;
 
-Dialog.prototype.open = function() {
+Dialog_.open = function() {
 
 	/*
 	 * get container where all dialogs are created (true polymer dialogs)
@@ -48,26 +49,20 @@ Dialog.prototype.open = function() {
 	// node.setAttribute("modal", "modal");
 	node.setAttribute("id", id);
 	modalsContainer.node.appendChild(node);
-	
-	//todo-3: this was an experiment. do it correctly now.
+
+	// todo-3: this was an experiment. do it correctly now.
 	node.style.border = "3px solid gray";
 
 	Polymer.dom.flush(); // <---- is this needed ? todo
 	Polymer.updateStyles();
 
-	// try {
 	var content = this.build();
 	util.setHtmlEnhanced(id, content);
 	this.built = true;
 
 	if (this.init) {
-		console.log("init() for dialog domId=" + this.domId);
 		this.init();
-		console.log("init() complete for dialog domId=" + this.domId);
 	}
-	// } catch (ex) {
-	// (console.error || console.log).call(console, ex.stack || ex);
-	// }
 	console.log("Showing dialog: " + id);
 
 	/* now open and display polymer dialog we just created */
@@ -79,7 +74,7 @@ Dialog.prototype.open = function() {
 }
 
 /* todo: need to cleanup the registered IDs that are in maps for this dialog */
-Dialog.prototype.cancel = function() {
+Dialog_.cancel = function() {
 	var polyElm = util.polyElm(this.id(this.domId));
 	polyElm.node.cancel();
 }
@@ -88,7 +83,7 @@ Dialog.prototype.cancel = function() {
  * Helper method to get the true id that is specific to this dialog (i.e. guid
  * suffix appended)
  */
-Dialog.prototype.id = function(id) {
+Dialog_.id = function(id) {
 	if (id == null)
 		return null;
 
@@ -99,21 +94,22 @@ Dialog.prototype.id = function(id) {
 	return id + "_dlgId" + this.data.guid;
 }
 
-Dialog.prototype.makePasswordField = function(text, id) {
+Dialog_.makePasswordField = function(text, id) {
 	return render.makePasswordField(text, this.id(id));
 }
 
-Dialog.prototype.makeEditField = function(fieldName, id) {
+Dialog_.makeEditField = function(fieldName, id) {
+	id = this.id(id);
 	return render.tag("paper-input", {
-		"name" : this.id(id),
+		"name" : id,
 		"label" : fieldName,
-		"id" : this.id(id)
+		"id" : id
 	}, "", true);
 }
 
 // todo: there's a makeButton (and other similar methods) that don't have the
 // encodeCallback capability yet
-Dialog.prototype.makeButton = function(text, id, callback, ctx) {
+Dialog_.makeButton = function(text, id, callback, ctx) {
 	var attribs = {
 		"raised" : "raised",
 		"id" : this.id(id)
@@ -126,11 +122,11 @@ Dialog.prototype.makeButton = function(text, id, callback, ctx) {
 	return render.tag("paper-button", attribs, text, true);
 }
 
-Dialog.prototype.makeCloseButton = function(text, id, callback, ctx) {
+Dialog_.makeCloseButton = function(text, id, callback, ctx) {
 
 	var attribs = {
 		"raised" : "raised",
-		//warning: this dialog-confirm is required (logic fails without)
+		// warning: this dialog-confirm is required (logic fails without)
 		"dialog-confirm" : "dialog-confirm",
 		"id" : this.id(id)
 	};
@@ -142,31 +138,41 @@ Dialog.prototype.makeCloseButton = function(text, id, callback, ctx) {
 	return render.tag("paper-button", attribs, text, true);
 }
 
-Dialog.prototype.bindEnterKey = function(id, callback) {
+Dialog_.bindEnterKey = function(id, callback) {
 	util.bindEnterKey(this.id(id), callback);
 }
 
-Dialog.prototype.setInputVal = function(id, val) {
+Dialog_.setInputVal = function(id, val) {
 	if (!val) {
 		val = "";
 	}
 	util.setInputVal(this.id(id), val);
 }
 
-Dialog.prototype.getInputVal = function(id) {
+Dialog_.getInputVal = function(id) {
 	return util.getInputVal(this.id(id)).trim();
 }
 
-Dialog.prototype.setHtml = function(text, id) {
+Dialog_.setHtml = function(text, id) {
 	util.setHtml(this.id(id), text);
 }
 
-Dialog.prototype.makeRadioButton = function(label, id) {
-	return render.tag("paper-radio-button", //
-	{
-		"id" : this.id(id),
-		"name" : this.id(id)
+Dialog_.makeRadioButton = function(label, id) {
+	id = this.id(id);
+	return render.tag("paper-radio-button", {
+		"id" : id,
+		"name" : id
 	}, label);
 }
 
-//# sourceURL=Dialog.js
+Dialog_.focus = function(id) {
+	if (!id.startsWith("#")) {
+		id = "#" + id;
+	}
+	id = this.id(id);
+	setTimeout(function() {
+		$(id).focus();
+	}, 1000);
+}
+
+// # sourceURL=Dialog.js

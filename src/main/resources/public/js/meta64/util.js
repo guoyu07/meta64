@@ -291,6 +291,12 @@ var util = function() {
 
 		/* set focus to element by id (id must start with #) */
 		delayedFocus : function(id) {
+			/* so user sees the focus fast we try at .5 seconds */
+			setTimeout(function() {
+				$(id).focus();
+			}, 500);
+			
+			/* we try again a full second later. Normally not required, but never undesirable */
 			setTimeout(function() {
 				$(id).focus();
 			}, 1000);

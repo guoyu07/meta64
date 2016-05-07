@@ -17,12 +17,11 @@ var MessageDlg_ = util.inherit(Dialog, MessageDlg);
  * Returns a string that is the HTML content of the dialog
  */
 MessageDlg_.build = function() {
-	var content = "<h2>" + this.title + "</h2>" + //
-	"<p>" + this.message + "</p>";
+	var content = this.makeHeader(this.title) + "<p>" + this.message + "</p>";
 
 	content += render.centeredButtonBar(this.makeCloseButton("Ok", "messageDlgOkButton"));
 
 	return content;
 }
 
-//# sourceURL=MessageDlg.js
+// # sourceURL=MessageDlg.js

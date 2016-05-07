@@ -11,8 +11,6 @@ var EditPropertyDlg = function(editNodeDlg) {
 	if (this.editNodeDlg.domId != "EditNodeDlg") {
 		console.log("error: incorrect object for EditNodeDlg");
 	}
-	// console.log("***************** printKeys.this.EditNodeDlg(in property
-	// editor constructorconstructor): "+util.printKeys(editNodeDlg));
 }
 
 var EditPropertyDlg_ = util.inherit(Dialog, EditPropertyDlg);

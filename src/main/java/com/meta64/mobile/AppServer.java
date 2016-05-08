@@ -3,13 +3,10 @@ package com.meta64.mobile;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import com.meta64.mobile.repo.OakRepository;
 
 /**
  * Standard SpringBoot entry point. Starts up entire application, which will run an instance of
@@ -31,6 +28,8 @@ public class AppServer {
 		enableScheduling = true;
 		SpringApplication.run(AppServer.class, args);
 		hookEclipseShutdown(args);
+		
+		//Note: See SpringContextUtil.java for more code that runs at startup time.
 	}
 
 	/*

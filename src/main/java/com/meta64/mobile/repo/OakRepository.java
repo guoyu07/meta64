@@ -286,13 +286,13 @@ public class OakRepository {
 		synchronized (lock) {
 
 			if (executor != null) {
-				log.debug("Shutting down Oak Executor");
+				log.info("Shutting down Oak Executor");
 				executor.shutdown();
 
-				log.debug("Awaiting executor shutdown");
+				log.info("Awaiting executor shutdown");
 				try {
 					executor.awaitTermination(5, TimeUnit.MINUTES);
-					log.debug("Executor shutdown completed ok.");
+					log.info("Executor shutdown completed ok.");
 				}
 				catch (InterruptedException ex) {
 					log.error("Executor failed to shutdown gracefully.", ex);
@@ -302,29 +302,32 @@ public class OakRepository {
 			}
 
 			if (nodeStore != null) {
-				log.debug("disposing nodeStore.");
+				log.info("disposing nodeStore.");
 				nodeStore.dispose();
 				nodeStore = null;
 			}
 
 			if (indexProvider != null) {
-				log.debug("Closing indexProvider.");
+				log.info("Closing indexProvider.");
 				indexProvider.close();
 				indexProvider = null;
 			}
 
 			if (repository != null) {
-				log.debug("Shutting down repository.");
+				log.info("Shutting down repository.");
 				((RepositoryImpl) repository).shutdown();
 				repository = null;
 			}
 
 			if (db != null) {
+				log.info("Closing mongo.");
 				if (db.getMongo() != null) {
 					db.getMongo().close();
 				}
 				db = null;
 			}
+			
+			log.info("OakRepository close complete.");
 		}
 	}
 

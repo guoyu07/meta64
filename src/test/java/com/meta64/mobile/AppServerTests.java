@@ -2,9 +2,6 @@ package com.meta64.mobile;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.jcr.Session;
 
 import org.junit.AfterClass;
@@ -15,31 +12,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
-import com.meta64.mobile.request.AddPrivilegeRequest;
-import com.meta64.mobile.request.CreateSubNodeRequest;
-import com.meta64.mobile.request.GetNodePrivilegesRequest;
-import com.meta64.mobile.request.LoginRequest;
-import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.SignupRequest;
-import com.meta64.mobile.response.AddPrivilegeResponse;
-import com.meta64.mobile.response.CreateSubNodeResponse;
-import com.meta64.mobile.response.GetNodePrivilegesResponse;
-import com.meta64.mobile.response.LoginResponse;
-import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ThreadLocals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AppServer.class)
 @WebAppConfiguration
+@TestPropertySource({"classpath:application.properties", "classpath:application-dev.properties", "file:/home/clay/ferguson/meta64Oak-private/test.properties"})
 public class AppServerTests {
 
 	private static final String fakeCaptcha = "nocaptcha";
@@ -86,7 +74,6 @@ public class AppServerTests {
 	 */
 	@Test
 	public void contextLoads() throws Exception {
-		System.out.println("contextLoads test running.");
 
 		// we must save on a static variable to have the @AfterClass able to
 		// run. Autowiring a static won't work
@@ -101,7 +88,7 @@ public class AppServerTests {
 			/*
 			 * Signup a new user
 			 */
-			String userName = "wclayf2";
+			String userName = "wclayf4";
 			signupReq.setUserName(userName);
 			signupReq.setPassword(userName);
 			signupReq.setEmail("wclayf@gmail.com");

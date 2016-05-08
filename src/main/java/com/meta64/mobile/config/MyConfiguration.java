@@ -9,13 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 //todo-0: don't checkin dev file hardcoded here, bc this will break production
 @Configuration
-
-/*
- * IMPORTANT: I added this @PropertySource here to run JUnit testing. This is not the ideal place and has to be commented out 
- * in order to be able to run the app normally. todo-0, fix this. Do it the right way. Can I add this annotation directoy onto the Junit class? 
- * 
- */
-//@PropertySource({"classpath:application.properties", "classpath:application-dev.properties", "file:/home/clay/ferguson/meta64Oak-private/test.properties"})
 public class MyConfiguration extends WebMvcConfigurerAdapter {
 
 	// @Override

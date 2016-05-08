@@ -326,8 +326,6 @@ public class OakRepository {
 				}
 				db = null;
 			}
-			
-			log.info("OakRepository close complete.");
 		}
 	}
 

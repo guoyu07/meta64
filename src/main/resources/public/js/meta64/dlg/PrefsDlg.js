@@ -43,7 +43,8 @@ PrefsDlg_.build = function() {
 
 PrefsDlg_.savePreferences = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
-	meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE : meta64.MODE_ADVANCED;
+	meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
+			: meta64.MODE_ADVANCED;
 	util.json("saveUserPreferences", {
 		"userPreferences" : {
 			"advancedMode" : meta64.editModeOption === meta64.MODE_ADVANCED
@@ -55,14 +56,15 @@ PrefsDlg_.savePreferencesResponse = function(res) {
 	if (util.checkSuccess("Saving Preferences", res)) {
 		meta64.selectTab("mainTabName");
 		meta64.refresh();
-		//todo-2: try and maintain scroll position ? this is going to be async, so watch out.
-		//view.scrollToSelectedNode();
+		// todo-2: try and maintain scroll position ? this is going to be async, so watch out.
+		// view.scrollToSelectedNode();
 	}
 }
 
 PrefsDlg_.init = function() {
 	var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
-	polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this.id("editModeAdvanced"));
+	polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
+			.id("editModeAdvanced"));
 	Polymer.dom.flush();
 }
 

@@ -93,9 +93,8 @@ var util = function() {
 	}
 
 	/*
-	 * We use this variable to determine if we are waiting for an ajax call, but
-	 * the server also enforces that each session is only allowed one concurrent
-	 * call and simultaneous calls would just "queue up".
+	 * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
+	 * session is only allowed one concurrent call and simultaneous calls would just "queue up".
 	 */
 	var _ajaxCounter = 0;
 
@@ -104,10 +103,9 @@ var util = function() {
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
 		/*
-		 * Sets up an inheritance relationship so that child inherits from
-		 * parent, and then returns the prototype of the child so that methods
-		 * can be added to it, which will behave like member functions in
-		 * classic OOP with inheritance hierarchies.
+		 * Sets up an inheritance relationship so that child inherits from parent, and then returns the prototype of the
+		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
+		 * inheritance hierarchies.
 		 */
 		inherit : function(parent, child) {
 			child.prototype.constructor = child;
@@ -116,13 +114,12 @@ var util = function() {
 		},
 
 		/*
-		 * If the callback function needs a 'this' context for the call, then
-		 * pass the 'this' in the callbackThis parameter.
+		 * If the callback function needs a 'this' context for the call, then pass the 'this' in the callbackThis
+		 * parameter.
 		 * 
 		 * callbackPayload is passed to callback as its last parameter
 		 * 
-		 * todo-3: this method got too long. Need to not inline these function
-		 * definitions
+		 * todo-3: this method got too long. Need to not inline these function definitions
 		 */
 		json : function(postName, postData, callback, callbackThis, callbackPayload) {
 
@@ -170,24 +167,19 @@ var util = function() {
 			/**
 			 * Notes
 			 * <p>
-			 * If using then function: promise.then(successFunction,
-			 * failFunction);
+			 * If using then function: promise.then(successFunction, failFunction);
 			 * <p>
-			 * I think the way these parameters get passed into done/fail
-			 * functions, is because there are resolve/reject methods getting
-			 * called with the parameters. Basically the parameters passed to
-			 * 'resolve' get distributed to all the waiting methods just like as
-			 * if they were subscribing in a pub/sub model. So the 'promise'
+			 * I think the way these parameters get passed into done/fail functions, is because there are resolve/reject
+			 * methods getting called with the parameters. Basically the parameters passed to 'resolve' get distributed
+			 * to all the waiting methods just like as if they were subscribing in a pub/sub model. So the 'promise'
 			 * pattern is sort of a pub/sub model in a way
 			 * <p>
-			 * The reason to return a 'promise.promise()' method is so no other
-			 * code can call resolve/reject but can only react to a
-			 * done/fail/complete.
+			 * The reason to return a 'promise.promise()' method is so no other code can call resolve/reject but can
+			 * only react to a done/fail/complete.
 			 * <p>
-			 * deferred.when(promise1, promise2) creates a new promise that
-			 * becomes 'resolved' only when all promises are resolved. It's a
-			 * big "and condition" of resolvement, and if any of the promises
-			 * passed to it end up failing, it fails this "ANDed" one also.
+			 * deferred.when(promise1, promise2) creates a new promise that becomes 'resolved' only when all promises
+			 * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
+			 * failing, it fails this "ANDed" one also.
 			 */
 			ironRequest.completes.then(//
 
@@ -202,9 +194,8 @@ var util = function() {
 
 					if (typeof callback == "function") {
 						/*
-						 * This is ugly because it covers all four cases based
-						 * on two booleans, but it's still the simplest way to
-						 * do this
+						 * This is ugly because it covers all four cases based on two booleans, but it's still the
+						 * simplest way to do this
 						 */
 						if (callbackPayload) {
 							if (callbackThis) {
@@ -257,10 +248,8 @@ var util = function() {
 					/*
 					 * this catch block should also fail silently
 					 * 
-					 * This was showing "classCastException" when I threw a
-					 * regular "Exception" from server so for now I'm just
-					 * turning this off since its' not displaying the correct
-					 * message.
+					 * This was showing "classCastException" when I threw a regular "Exception" from server so for now
+					 * I'm just turning this off since its' not displaying the correct message.
 					 */
 					// try {
 					// msg += "Response: " +
@@ -295,7 +284,7 @@ var util = function() {
 			setTimeout(function() {
 				$(id).focus();
 			}, 500);
-			
+
 			/* we try again a full second later. Normally not required, but never undesirable */
 			setTimeout(function() {
 				$(id).focus();
@@ -303,11 +292,9 @@ var util = function() {
 		},
 
 		/*
-		 * We could have put this logic inside the json method itself, but I can
-		 * forsee cases where we don't want a message to appear when the json
-		 * response returns success==false, so we will have to call checkSuccess
-		 * inside every response method instead, if we want that response to
-		 * print a message to the user when fail happens.
+		 * We could have put this logic inside the json method itself, but I can forsee cases where we don't want a
+		 * message to appear when the json response returns success==false, so we will have to call checkSuccess inside
+		 * every response method instead, if we want that response to print a message to the user when fail happens.
 		 * 
 		 * requires: res.success res.message
 		 */
@@ -334,8 +321,8 @@ var util = function() {
 		},
 
 		/*
-		 * We have to be able to map any identifier to a uid, that will be
-		 * repeatable, so we have to use a local 'hashset-type' implementation
+		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
+		 * 'hashset-type' implementation
 		 */
 		getUidForId : function(map, id) {
 			/* look for uid in map */
@@ -370,8 +357,7 @@ var util = function() {
 		},
 
 		/*
-		 * Gets the RAW DOM element and displays an error message if it's not
-		 * found. Do not prefix with "#"
+		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
 		domElm : function(id) {
 			if (id.startsWith("#")) {
@@ -395,8 +381,7 @@ var util = function() {
 		},
 
 		/*
-		 * Gets the RAW DOM element and displays an error message if it's not
-		 * found. Do not prefix with "#"
+		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
 		polyElm : function(id) {
 
@@ -482,11 +467,9 @@ var util = function() {
 		},
 
 		/*
-		 * Removed oldClass from element and replaces with newClass, and if
-		 * oldClass is not present it simply adds newClass. If old class
-		 * existed, in the list of classes, then the new class will now be at
-		 * that position. If old class didn't exist, then new Class is added at
-		 * end of class list.
+		 * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
+		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
+		 * old class didn't exist, then new Class is added at end of class list.
 		 */
 		changeOrAddClass : function(elm, oldClass, newClass) {
 			var elm = $(elm);
@@ -545,8 +528,7 @@ var util = function() {
 		},
 
 		/*
-		 * iterates over an object creating a string containing it's keys and
-		 * values
+		 * iterates over an object creating a string containing it's keys and values
 		 */
 		printObject : function(obj) {
 			if (!obj) {
@@ -594,8 +576,7 @@ var util = function() {
 		/*
 		 * Makes eleId enabled based on vis flag
 		 * 
-		 * eleId can be a DOM element or the ID of a dom element, with or
-		 * without leading #
+		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
 		setEnablement : function(elmId, enable) {
 
@@ -623,8 +604,7 @@ var util = function() {
 		/*
 		 * Makes eleId visible based on vis flag
 		 * 
-		 * eleId can be a DOM element or the ID of a dom element, with or
-		 * without leading #
+		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
 		setVisibility : function(elmId, vis) {
 
@@ -654,5 +634,5 @@ var util = function() {
 	return _;
 }();
 
-// # sourceURL=util.js
+//# sourceURL=util.js
 

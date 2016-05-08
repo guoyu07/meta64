@@ -188,4 +188,4 @@ Dialog_.focus = function(id) {
 	}, 1000);
 }
 
-// # sourceURL=Dialog.js
+//# sourceURL=Dialog.js

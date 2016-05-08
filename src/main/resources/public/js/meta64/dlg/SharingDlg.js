@@ -1,7 +1,7 @@
 console.log("running module: SharingDlg.js");
 
 var SharingDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "SharingDlg";
 }
 
@@ -13,17 +13,20 @@ var SharingDlg_ = util.inherit(Dialog, SharingDlg);
 SharingDlg_.build = function() {
 	var header = this.makeHeader("Node Sharing");
 
-	var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton", SharingDlg_.shareNodeToPersonPg, this);
-	var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", SharingDl_.shareNodeToPublic, this);
+	var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
+			SharingDlg_.shareNodeToPersonPg, this);
+	var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", SharingDl_.shareNodeToPublic,
+			this);
 	var backButton = this.makeCloseButton("Close", "closeSharingButton");
-	
+
 	var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
 
 	var width = window.innerWidth * 0.6;
 	var height = window.innerHeight * 0.4;
-	
-	var internalMainContent = "<div id='"+this.id("shareNodeNameDisplay")+"'></div>" + //
-	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"+this.id("sharingListFieldContainer")+"'></div>";
+
+	var internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
+	"<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
+			+ this.id("sharingListFieldContainer") + "'></div>";
 
 	return header + internalMainContent + buttonBar;
 }
@@ -33,8 +36,7 @@ SharingDlg_.init = function() {
 }
 
 /*
- * Gets privileges from server and displays in GUI also. Assumes gui is
- * already at correct page.
+ * Gets privileges from server and displays in GUI also. Assumes gui is already at correct page.
  */
 SharingDlg_.reload = function() {
 	console.log("Loading node sharing info.");
@@ -58,8 +60,7 @@ SharingDlg_.getNodePrivilegesResponse = function(res) {
 }
 
 /*
- * Processes the response gotten back from the server containing ACL
- * info so we can populate the sharing page in the gui
+ * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
  */
 SharingDlg_.populateSharingPg = function(res) {
 
@@ -86,10 +87,10 @@ SharingDlg_.populateSharingPg = function(res) {
 
 	util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
 
-	util.setCheckboxVal("#"+this.id(allowPublicCommenting), res.publicAppend);
-	
-	//todo: this binding may not work. untested.
-	$("#"+this.id("allowPublicCommenting")).bind("change", this.publicCommentingChanged);
+	util.setCheckboxVal("#" + this.id(allowPublicCommenting), res.publicAppend);
+
+	// todo: this binding may not work. untested.
+	$("#" + this.id("allowPublicCommenting")).bind("change", this.publicCommentingChanged);
 }
 
 SharingDlg_.removePrivilege = function(principal, privilege) {
@@ -120,7 +121,8 @@ SharingDlg_.renderAclPrivileges = function(principal, aclEntry) {
 	$.each(aclEntry.privileges, function(index, privilege) {
 
 		var removeButton = thiz.makeButton("Remove", "removePrivButton", //
-				"meta64.getObjectByGuid("+thiz.guid+").removePrivilege('" + principal + "', '" + privilege.privilegeName + "');");
+		"meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
+				+ "');");
 
 		var row = render.makeHorizontalFieldSet(removeButton);
 
@@ -146,10 +148,9 @@ SharingDlg_.shareNodeToPublic = function() {
 	meta64.treeDirty = true;
 
 	/*
-	 * Add privilege and then reload share nodes dialog from scratch
-	 * doing another callback to server
+	 * Add privilege and then reload share nodes dialog from scratch doing another callback to server
 	 * 
-	 * TODO: this additional call can be avoided as an optimization 
+	 * TODO: this additional call can be avoided as an optimization
 	 */
 	util.json("addPrivilege", {
 		"nodeId" : share.sharingNode.id,

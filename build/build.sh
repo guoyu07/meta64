@@ -10,7 +10,6 @@ export backupFolder=$META64_BAK
 
 ./run-tidy.sh $META64/src/main/resources/templates index
 ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
-./run-tidy.sh $META64/src/main/resources/public/elements/donate-panel donate-panel
 
 #copy the readme.md from project root to published location (landing-page.md) where the app will
 #be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
@@ -74,8 +73,6 @@ rm -f $META64/build/*.sh~
 rm -f $META64/src/main/resources/public/js/meta64.min.js
 rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html
 rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
-rm -f $META64/src/main/resources/public/elements/donate-panel-out.html
-rm -f $META64/src/main/resources/public/elements/donate-panel-20*.html
 rm -f $META64/src/main/resources/templates/index-out.html
 rm -f $META64/src/main/resources/templates/index-20*.html
 rm -f $META64/src/main/resources/public/*.md~

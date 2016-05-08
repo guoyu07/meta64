@@ -22,8 +22,7 @@ var share = function() {
 		},
 
 		/*
-		 * Handles 'Sharing' button on a specific node, from button bar above
-		 * node display in edit mode
+		 * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
 		 */
 		editNodeSharing : function() {
 			var node = meta64.getHighlightedNode();

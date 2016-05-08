@@ -1,7 +1,7 @@
 console.log("running module: LoginDlg.js");
 
 var LoginDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "LoginDlg";
 }
 
@@ -23,8 +23,7 @@ LoginDlg_.build = function() {
 	/*
 	 * Social Login Buttons
 	 * 
-	 * See server controller. Implementation is about 95% complete, but
-	 * not yet fully complete!
+	 * See server controller. Implementation is about 95% complete, but not yet fully complete!
 	 */
 	var twitterButton = this.makeButton("Twitter", "twitterLoginButton", "user.twitterLogin();");
 	var socialButtonBar = render.makeHorzControlGroup(twitterButton);
@@ -35,8 +34,7 @@ LoginDlg_.build = function() {
 
 	var mainContent = form;
 	/*
-	 * commenting twitter login during polymer conversion + divider +
-	 * socialButtonBar
+	 * commenting twitter login during polymer conversion + divider + socialButtonBar
 	 */
 
 	var content = header + mainContent;
@@ -65,7 +63,7 @@ LoginDlg_.populateFromCookies = function() {
 LoginDlg_.login = function() {
 
 	this.cancel();
-	
+
 	var usr = this.getInputVal("userName");
 	var pwd = this.getInputVal("password");
 

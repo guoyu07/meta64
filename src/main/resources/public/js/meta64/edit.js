@@ -21,17 +21,15 @@ var edit = function() {
 	var _initNodeEditResponse = function(res) {
 		if (util.checkSuccess("Editing node", res)) {
 			var node = res.nodeInfo;
-						
+
 			var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
-			&& !props.isNonOwnedNode(node);
-					
-			
+					&& !props.isNonOwnedNode(node);
+
 			if (editingAllowed) {
 				/*
-				 * Server will have sent us back the raw text content, that
-				 * should be markdown instead of any HTML, so that we can
-				 * display this and save.
+				 * Server will have sent us back the raw text content, that should be markdown instead of any HTML, so
+				 * that we can display this and save.
 				 */
 				_.editNode = res.nodeInfo;
 
@@ -66,30 +64,27 @@ var edit = function() {
 
 	var _ = {
 		/*
-		 * Node ID array of nodes that are ready to be moved when user clicks
-		 * 'Finish Moving'
+		 * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
 		 */
 		nodesToMove : null,
 
 		parentOfNewNode : null,
 
 		/*
-		 * indicates editor is displaying a node that is not yet saved on the
-		 * server
+		 * indicates editor is displaying a node that is not yet saved on the server
 		 */
 		editingUnsavedNode : false,
 
 		/*
-		 * node (NodeInfo.java) that is being created under when new node is
-		 * created
+		 * node (NodeInfo.java) that is being created under when new node is created
 		 */
 		sendNotificationPendingSave : false,
 
 		/*
 		 * Node being edited
 		 * 
-		 * todo-2: this and several other variables can now be moved into the
-		 * dialog class? Is that good or bad coupling/responsibility?
+		 * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
+		 * coupling/responsibility?
 		 */
 		editNode : null,
 
@@ -99,11 +94,9 @@ var edit = function() {
 		/*
 		 * type=NodeInfo.java
 		 * 
-		 * When inserting a new node, this holds the node that was clicked on at
-		 * the time the insert was requested, and is sent to server for ordinal
-		 * position assignment of new node. Also if this var is null, it
-		 * indicates we are creating in a 'create under parent' mode, versus
-		 * non-null meaning 'insert inline' type of insert.
+		 * When inserting a new node, this holds the node that was clicked on at the time the insert was requested, and
+		 * is sent to server for ordinal position assignment of new node. Also if this var is null, it indicates we are
+		 * creating in a 'create under parent' mode, versus non-null meaning 'insert inline' type of insert.
 		 * 
 		 */
 		nodeInsertTarget : null,
@@ -111,19 +104,18 @@ var edit = function() {
 		/* returns true if we can 'try to' insert under 'node' or false if not */
 		isEditAllowed : function(node) {
 			return meta64.editMode && node.path != "/" &&
-					/*
-					 * Check that if we have a commentBy property we are the
-					 * commenter, before allowing edit button also.
-					 */
-					!props.isNonOwnedCommentNode(node) && //
-					!props.isNonOwnedNode(node);
+			/*
+			 * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
+			 */
+			!props.isNonOwnedCommentNode(node) && //
+			!props.isNonOwnedNode(node);
 		},
-		
+
 		/* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
 		isInsertAllowed : function(node) {
-			return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node)==null;
+			return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
 		},
-		
+
 		startEditingNewNode : function() {
 			_.editingUnsavedNode = false;
 			_.editNode = null;
@@ -132,20 +124,16 @@ var edit = function() {
 		},
 
 		/*
-		 * called to display editor that will come up BEFORE any node is saved
-		 * onto the server, so that the first time any save is performed we will
-		 * have the correct node name, at least.
+		 * called to display editor that will come up BEFORE any node is saved onto the server, so that the first time
+		 * any save is performed we will have the correct node name, at least.
 		 * 
-		 * This version is no longer being used, and currently this means
-		 * 'editingUnsavedNode' is not currently ever triggered. The new
-		 * approach now that we have the ability to 'rename' nodes is to just
-		 * create one with a random name an let user start editing right away
-		 * and then rename the node IF a custom node name is needed.
+		 * This version is no longer being used, and currently this means 'editingUnsavedNode' is not currently ever
+		 * triggered. The new approach now that we have the ability to 'rename' nodes is to just create one with a
+		 * random name an let user start editing right away and then rename the node IF a custom node name is needed.
 		 * 
-		 * What this means is if we call this function
-		 * (startEditingNewNodeWithName) instead of 'startEditingNewNode()' that
-		 * will cause the GUI to always prompt for the node name before creating
-		 * the node. This was the original functionality and still works.
+		 * What this means is if we call this function (startEditingNewNodeWithName) instead of 'startEditingNewNode()'
+		 * that will cause the GUI to always prompt for the node name before creating the node. This was the original
+		 * functionality and still works.
 		 */
 		startEditingNewNodeWithName : function() {
 			_.editingUnsavedNode = true;
@@ -184,9 +172,8 @@ var edit = function() {
 			render.renderPageFromData();
 
 			/*
-			 * Since edit mode turns on lots of buttons, the location of the
-			 * node we are viewing can change so much it goes completely
-			 * offscreen out of view, so we scroll it back into view every time
+			 * Since edit mode turns on lots of buttons, the location of the node we are viewing can change so much it
+			 * goes completely offscreen out of view, so we scroll it back into view every time
 			 */
 			view.scrollToSelectedNode();
 		},
@@ -246,8 +233,7 @@ var edit = function() {
 		},
 
 		/*
-		 * Returns the node above the specified node or null if node is itself
-		 * the top node
+		 * Returns the node above the specified node or null if node is itself the top node
 		 */
 		getNodeAbove : function(node) {
 			var ordinal = meta64.getOrdinalOfNode(node);
@@ -257,8 +243,7 @@ var edit = function() {
 		},
 
 		/*
-		 * Returns the node below the specified node or null if node is itself
-		 * the bottom node
+		 * Returns the node below the specified node or null if node is itself the bottom node
 		 */
 		getNodeBelow : function(node) {
 			var ordinal = meta64.getOrdinalOfNode(node);
@@ -298,9 +283,8 @@ var edit = function() {
 			}
 
 			/*
-			 * We get the node selected for the insert position by using the uid
-			 * if one was passed in or using the currently highlighted node if
-			 * no uid was passed.
+			 * We get the node selected for the insert position by using the uid if one was passed in or using the
+			 * currently highlighted node if no uid was passed.
 			 */
 			var node = null;
 			if (!uid) {
@@ -324,8 +308,7 @@ var edit = function() {
 			}
 
 			/*
-			 * this indicates we are NOT inserting inline. An inline insert
-			 * would always have a target.
+			 * this indicates we are NOT inserting inline. An inline insert would always have a target.
 			 */
 			_.nodeInsertTarget = null;
 			_.startEditingNewNode();
@@ -337,8 +320,7 @@ var edit = function() {
 
 		createSubNode : function(uid) {
 			/*
-			 * If no uid provided we deafult to creating a node under the
-			 * currently viewed node (parent of current page)
+			 * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page)
 			 */
 			if (!uid) {
 				_.parentOfNewNode = meta64.currentNode;
@@ -351,8 +333,7 @@ var edit = function() {
 			}
 
 			/*
-			 * this indicates we are NOT inserting inline. An inline insert
-			 * would always have a target.
+			 * this indicates we are NOT inserting inline. An inline insert would always have a target.
 			 */
 			_.nodeInsertTarget = null;
 			_.startEditingNewNode();
@@ -362,19 +343,17 @@ var edit = function() {
 			meta64.clearSelectedNodes();
 
 			/*
-			 * We could write code that only scans for all the "SEL" buttons and
-			 * updates the state of them, but for now we take the simple
-			 * approach and just re-render the page. There is no call to the
-			 * server, so this is actually very efficient.
+			 * We could write code that only scans for all the "SEL" buttons and updates the state of them, but for now
+			 * we take the simple approach and just re-render the page. There is no call to the server, so this is
+			 * actually very efficient.
 			 */
 			render.renderPageFromData();
 			meta64.selectTab("mainTabName");
 		},
 
 		/*
-		 * Delete the single node identified by 'uid' parameter if uid parameter
-		 * is passed, and if uid parameter is not passed then use the node
-		 * selections for multiple selections on the page.
+		 * Delete the single node identified by 'uid' parameter if uid parameter is passed, and if uid parameter is not
+		 * passed then use the node selections for multiple selections on the page.
 		 */
 		deleteSelNodes : function() {
 			var selNodesArray = meta64.getSelectedNodeIdsArray();
@@ -422,10 +401,9 @@ var edit = function() {
 						var highlightNode = meta64.getHighlightedNode();
 
 						/*
-						 * For now, we will just cram the nodes onto the end of
-						 * the children of the currently selected page. Later on
-						 * we can get more specific about allowing precise
-						 * destination location for moved nodes.
+						 * For now, we will just cram the nodes onto the end of the children of the currently selected
+						 * page. Later on we can get more specific about allowing precise destination location for moved
+						 * nodes.
 						 */
 						util.json("moveNodes", {
 							"targetNodeId" : highlightNode.id,

@@ -1,7 +1,7 @@
 console.log("running module: SignupDlg.js");
 
 var SignupDlg = function() {
-	Dialog.call(this);=
+	Dialog.call(this);
 	this.domId = "SignupDlg";
 }
 
@@ -41,9 +41,8 @@ SignupDlg_.build = function() {
 	return header + formControls + captchaImage + buttonBar;
 
 	/*
-	 * $("#" + _.domId + "-main").css({ "backgroundImage" :
-	 * "url(/ibm-702-bright.jpg);" "background-repeat" : "no-repeat;",
-	 * "background-size" : "100% auto" });
+	 * $("#" + _.domId + "-main").css({ "backgroundImage" : "url(/ibm-702-bright.jpg);" "background-repeat" :
+	 * "no-repeat;", "background-size" : "100% auto" });
 	 */
 }
 
@@ -84,8 +83,8 @@ SignupDlg_.tryAnotherCaptcha = function() {
 	var n = util.currentTimeMillis();
 
 	/*
-	 * embed a time parameter just to thwart browser caching, and ensure server
-	 * and browser will never return the same image twice.
+	 * embed a time parameter just to thwart browser caching, and ensure server and browser will never return the same
+	 * image twice.
 	 */
 	var src = postTargetUrl + "captcha?t=" + n;
 	$("#" + this.id("captchaImage")).attr("src", src);

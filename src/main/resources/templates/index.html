@@ -140,13 +140,13 @@
         <link rel="stylesheet"
               href="/js/google-code-prettify/prettify.css" />
         <link rel="stylesheet"
-              href="/js/google-code-prettify/desert.css" />  
-              
+              href="/js/google-code-prettify/desert.css" />
         <!-- The ace.js is the same as here:
         <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>      
         -->
-        <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script> 
-        
+        <script src="/js/ace/ace.js"
+                type="text/javascript"
+                charset="utf-8"></script>
         <!-- Was trying to get Ace Editor working. Needed require.js during that experimentation.
         <script src="/js/require.js" type="text/javascript"></script>
         -->
@@ -163,7 +163,8 @@
             <iron-ajax id="ironAjax"></iron-ajax>
             <paper-drawer-panel id="paperDrawerPanel">
                 <!-- Left Side Panel -->
-                <paper-scroll-header-panel id="mainLhsMenuPanel" drawer="drawer"
+                <paper-scroll-header-panel id="mainLhsMenuPanel"
+                                           drawer="drawer"
                                            fixed="fixed">
                     <!--
                         commenting until I learn to style this in polymer                        
@@ -184,7 +185,8 @@
                         <!--
                                 when implemented this button will toggle visibility of left-side menu  
                                 -->
-                        <paper-icon-button icon="menu" onClick="nav.toggleMainMenu();"></paper-icon-button>
+                        <paper-icon-button icon="menu"
+                                           onClick="nav.toggleMainMenu();"></paper-icon-button>
                         <span id="headerAppName"
                               class="app-name title">Meta64</span>
                         <paper-button id="navPublicHomeButton"
@@ -229,7 +231,7 @@
       // Tell RequireJS where ace is located
       /*
          require.config({
-        	 //baseUrl: window.location.protocol + "//" + window.location.host
+                 //baseUrl: window.location.protocol + "//" + window.location.host
              //+ window.location.pathname.split("/").slice(0, -1).join("/"),
              
              paths: {
@@ -239,10 +241,10 @@
 
          // Load the ace module
          require(['ace/ace'], function(ace) {
-        	 console.log("Ace loaded!");
-        	 if (ace) {
-        		 console.log("Ace successful, not null");
-        	 }
+                 console.log("Ace loaded!");
+                 if (ace) {
+                         console.log("Ace successful, not null");
+                 }
              // Set up the editor
              //var editor = ace.edit('editor');
              //editor.setTheme('ace/theme/monokai');

@@ -264,17 +264,6 @@ var meta64 = function() {
 			paperTabs.select(pg.tabId);
 		},
 
-		/* for now this is alias of changePage */
-		openDialog : function(pg) {
-			return _.changePage(pg);
-		},
-
-		popup : function() {
-			alert("popup function: " + menuPanel.domId);
-			render.buildPage(menuPanel);
-			$("#" + menuPanel.domId).popup("open");
-		},
-
 		isNodeBlackListed : function(node) {
 			if (!_.inSimpleMode())
 				return false;
@@ -393,10 +382,7 @@ var meta64 = function() {
 		},
 
 		getHighlightedNode : function() {
-			// console.log("getHighlightedNode looking up: " +
-			// _.currentNodeUid);
 			var ret = _.parentUidToFocusNodeMap[_.currentNodeUid];
-			// console.log(" found it: " + (ret ? true : false));
 			return ret;
 		},
 
@@ -590,7 +576,6 @@ var meta64 = function() {
 			node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 			node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
 
-			// console.log("******* initNode uid=" + node.uid);
 			_.uidToNodeMap[node.uid] = node;
 			_.idToNodeMap[node.id] = node;
 		},
@@ -739,4 +724,4 @@ var meta64 = function() {
 	return _;
 }();
 
-// # sourceURL=meta64.js
+//# sourceURL=meta64.js

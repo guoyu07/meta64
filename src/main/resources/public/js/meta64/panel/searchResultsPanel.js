@@ -10,7 +10,7 @@ var searchResultsPanel = function() {
 		build : function() {
 			var header = "<h2 id='searchPageTitle'></h2>";
 			var mainContent = "<div id='searchResultsView'></div>";
-			return header + mainContent; 
+			return header + mainContent;
 		},
 
 		init : function() {

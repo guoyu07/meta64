@@ -1,8 +1,8 @@
 console.log("running module: search.js");
 
 /*
- * todo-3: try to rename to 'search', but remember you had inexpliable problems
- * the first time you tried to use 'search' as the var name.
+ * todo-3: try to rename to 'search', but remember you had inexpliable problems the first time you tried to use 'search'
+ * as the var name.
  */
 var srch = function() {
 
@@ -14,37 +14,32 @@ var srch = function() {
 		timelinePageTitle : "Timeline",
 
 		/*
-		 * Holds the NodeSearchResponse.java JSON, or null if no search has been
-		 * done.
+		 * Holds the NodeSearchResponse.java JSON, or null if no search has been done.
 		 */
 		searchResults : null,
 
 		/*
-		 * Holds the NodeSearchResponse.java JSON, or null if no timeline has
-		 * been done.
+		 * Holds the NodeSearchResponse.java JSON, or null if no timeline has been done.
 		 */
 		timelineResults : null,
 
 		/*
-		 * Will be the last row clicked on (NodeInfo.java object) and having the
-		 * red highlight bar
+		 * Will be the last row clicked on (NodeInfo.java object) and having the red highlight bar
 		 */
 		highlightRowNode : null,
 
 		/*
-		 * maps node 'identifier' (assigned at server) to uid value which is a
-		 * value based off local sequence, and uses nextUid as the counter.
+		 * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
+		 * nextUid as the counter.
 		 */
 		identToUidMap : {},
 
 		/*
 		 * maps node.uid values to the NodeInfo.java objects
 		 * 
-		 * The only contract about uid values is that they are unique insofar as
-		 * any one of them always maps to the same node. Limited lifetime
-		 * however. The server is simply numbering nodes sequentially. Actually
-		 * represents the 'instance' of a model object. Very similar to a
-		 * 'hashCode' on Java objects.
+		 * The only contract about uid values is that they are unique insofar as any one of them always maps to the same
+		 * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
+		 * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
 		 */
 		uidToNodeMap : {},
 
@@ -57,9 +52,8 @@ var srch = function() {
 
 		searchTabActivated : function() {
 			/*
-			 * If a logged in user clicks the search tab, and no search results
-			 * are currently displaying, then go ahead and open up the search
-			 * dialog.
+			 * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
+			 * and open up the search dialog.
 			 */
 			if (_.numSearchResults() == 0 && !meta64.isAnonUser) {
 				(new SearchDlg()).open();
@@ -108,9 +102,8 @@ var srch = function() {
 			var childCount = data.searchResults.length;
 
 			/*
-			 * Number of rows that have actually made it onto the page to far.
-			 * Note: some nodes get filtered out on the client side for various
-			 * reasons.
+			 * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on the
+			 * client side for various reasons.
 			 */
 			var rowCount = 0;
 
@@ -144,15 +137,13 @@ var srch = function() {
 			console.log("buttonBarHtml=" + buttonBarHtml);
 			var content = render.renderNodeContent(node, true, true, true, true, true);
 
-			return render.tag("div", //
-			{
+			return render.tag("div", {
 				"class" : "node-table-row inactive-row",
 				"onClick" : "srch.clickOnSearchResultRow(this, '" + uid + "');", //
 				"id" : cssId
 			},// 
 			buttonBarHtml//
-					+ render.tag("div", //
-					{
+					+ render.tag("div", {
 						"id" : uid + "_srch_content"
 					}, content));
 		},
@@ -172,8 +163,7 @@ var srch = function() {
 
 		clickSearchNode : function(uid) {
 			/*
-			 * update highlight node to point to the node clicked on, just to
-			 * persist it for later
+			 * update highlight node to point to the node clicked on, just to persist it for later
 			 */
 			srch.highlightRowNode = srch.uidToNodeMap[uid];
 			view.refreshTree(srch.highlightRowNode.id, true);

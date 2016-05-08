@@ -4,7 +4,7 @@ var menuPanel = function() {
 
 	function _makeTopLevelMenu(title, content) {
 		return render.tag("paper-submenu", {
-			"class" : "meta64-menu-heading" 
+			"class" : "meta64-menu-heading"
 		}, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
 		_makeSecondLevelList(content), true);
 	}
@@ -48,13 +48,13 @@ var menuPanel = function() {
 			_menuItem("Import", "openImportDlg", "(new ImportDlg()).open();") + //
 			_menuItem("Export", "openExportDlg", "(new ExportDlg()).open();"); //
 			var editMenu = _makeTopLevelMenu("Edit", editMenuItems);
-			
+
 			var attachmentMenuItems = //
 			_menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadFromFileDlg();") + //
 			_menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadFromUrlDlg();") + //
-			_menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");	
+			_menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");
 			var attachmentMenu = _makeTopLevelMenu("Attachments", attachmentMenuItems);
-			
+
 			var sharingMenuItems = //
 			_menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + // 
 			_menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");

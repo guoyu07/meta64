@@ -3,10 +3,13 @@ package com.meta64.mobile;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.meta64.mobile.repo.OakRepository;
 
 /**
  * Standard SpringBoot entry point. Starts up entire application, which will run an instance of
@@ -19,7 +22,7 @@ public class AppServer {
 
 	private static boolean shuttingDown;
 	private static boolean enableScheduling;
-
+	
 	public static void main(String[] args) {
 		/*
 		 * If we are running AppServer then enableScheduling, otherwise we may be running some

@@ -1,7 +1,7 @@
 console.log("running module: ImportDlg.js");
 
 var ImportDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "ImportDlg";
 }
 

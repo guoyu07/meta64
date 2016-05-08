@@ -21,8 +21,7 @@ ConfirmDlg_.build = function() {
 		id : this.id("ConfirmDlgMessage")
 	});
 
-	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton",
-			this.callback)
+	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
 			+ this.makeCloseButton("No", "ConfirmDlgNoButton");
 	content += render.centeredButtonBar(buttons);
 
@@ -35,4 +34,4 @@ ConfirmDlg_.init = function() {
 	this.setHtml(this.buttonText, "ConfirmDlgYesButton");
 }
 
-// # sourceURL=ConfirmDlg.js
+//# sourceURL=ConfirmDlg.js

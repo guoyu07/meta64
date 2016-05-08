@@ -21,7 +21,7 @@ var jcrCnst = function() {
 		UUID : "jcr:uuid",
 		LAST_MODIFIED : "jcr:lastModified",
 		LAST_MODIFIED_BY : "jcr:lastModifiedBy",
-		
+
 		DISABLE_INSERT : "disableInsert",
 
 		USER : "user",

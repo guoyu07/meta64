@@ -1,7 +1,7 @@
 console.log("running module: RenameNodeDlg.js");
 
 var RenameNodeDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "RenameNodeDlg";
 }
 
@@ -13,7 +13,7 @@ var RenameNodeDlg_ = util.inherit(Dialog, RenameNodeDlg);
 RenameNodeDlg_.build = function() {
 	var header = this.makeHeader("Rename Node");
 
-	var curNodeNameDisplay = "<h3 id='"+this.id("curNodeNameDisplay")+"'></h3>";
+	var curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
 
 	var formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
@@ -49,7 +49,7 @@ RenameNodeDlg_.renameNode = function() {
 	});
 
 	var This = this;
-	
+
 	ironRes.completes.then(function() {
 		This.renameNodeResponse(ironRes.response, renamingRootNode);
 	});
@@ -62,7 +62,7 @@ RenameNodeDlg_.renameNodeResponse = function(res, renamingPageRoot) {
 		} else {
 			view.refreshTree(null, false, res.newId);
 		}
-		//meta64.selectTab("mainTabName");
+		// meta64.selectTab("mainTabName");
 	}
 }
 
@@ -71,8 +71,7 @@ RenameNodeDlg_.init = function() {
 	if (!highlightNode) {
 		return;
 	}
-	$("#"+this.id("curNodeNameDisplay")).html("Path: " + highlightNode.path + "<br/>Name: " + highlightNode.name);
+	$("#" + this.id("curNodeNameDisplay")).html("Path: " + highlightNode.path + "<br/>Name: " + highlightNode.name);
 }
-
 
 //# sourceURL=RenameNodeDlg.js

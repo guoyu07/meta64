@@ -2,7 +2,7 @@ console.log("running module: ChangePasswordDlg.js");
 
 var ChangePasswordDlg = function() {
 	Dialog.call(this);
-	
+
 	this.domId = "ChangePasswordDlg";
 }
 

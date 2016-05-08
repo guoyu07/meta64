@@ -1,7 +1,7 @@
 console.log("running module: ExportDlg.js");
 
 var ExportDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "ExportDlg";
 }
 

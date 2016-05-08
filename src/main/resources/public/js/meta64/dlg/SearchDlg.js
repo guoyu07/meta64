@@ -1,7 +1,7 @@
 console.log("running module: SearchDlg.js");
 
 var SearchDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "SearchDlg";
 }
 
@@ -39,14 +39,14 @@ SearchDlg_.searchProperty = function(searchProp) {
 		return;
 	}
 
-	//until i get better validation
+	// until i get better validation
 	var node = meta64.getHighlightedNode();
 	if (!node) {
 		(new MessageDlg("No node is selected to search under.")).open();
 		return;
 	}
 
-	//until better validation
+	// until better validation
 	var searchText = this.getInputVal("searchText");
 	if (util.emptyString(searchText)) {
 		(new MessageDlg("Enter search text.")).open();

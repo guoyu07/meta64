@@ -20,8 +20,8 @@ var view = function() {
 		},
 
 		/*
-		 * newId is optional parameter which, if supplied, should be the id we
-		 * scroll to when finally done with the render.
+		 * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
+		 * render.
 		 */
 		refreshTreeResponse : function(res, targetId, renderParentIfLeaf, newId) {
 
@@ -31,8 +31,7 @@ var view = function() {
 				meta64.highlightRowById(newId, true);
 			} else {
 				/*
-				 * TODO-3: Why wasn't this just based on targetId ? This if
-				 * condition is too confusing.
+				 * TODO-3: Why wasn't this just based on targetId ? This if condition is too confusing.
 				 */
 				if (targetId && renderParentIfLeaf && res.displayedParent) {
 					meta64.highlightRowById(targetId, true);
@@ -44,8 +43,7 @@ var view = function() {
 		},
 
 		/*
-		 * newId is optional and if specified makes the page scroll to and
-		 * highlight that node upon re-rendering.
+		 * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
 		 */
 		refreshTree : function(nodeId, renderParentIfLeaf, newId) {
 			if (!nodeId) {
@@ -65,12 +63,10 @@ var view = function() {
 		},
 
 		/*
-		 * todo-3: this scrolling is slightly imperfect. sometimes the code
-		 * switches to a tab, which triggers scrollToTop, and then some other
-		 * code scrolls to a specific location a fraction of a second later. the
-		 * 'pending' boolean here is a crutch for now to help visual appeal
-		 * (i.e. stop if from scrolling to one place and then scrolling to a
-		 * different place a fraction of a second later)
+		 * todo-3: this scrolling is slightly imperfect. sometimes the code switches to a tab, which triggers
+		 * scrollToTop, and then some other code scrolls to a specific location a fraction of a second later. the
+		 * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
+		 * and then scrolling to a different place a fraction of a second later)
 		 */
 		scrollToSelectedNode : function() {
 			scrollToSelNodePending = true;
@@ -79,14 +75,14 @@ var view = function() {
 				scrollToSelNodePending = false;
 
 				var elm = nav.getSelectedPolyElement();
-				if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
+				if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
 					elm.node.scrollIntoView();
 				}
 				// If we couldn't find a selected node on this page, scroll to
 				// top instead.
 				else {
 					elm = util.polyElm("mainPaperTabs");
-					if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
+					if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
 						elm.node.scrollIntoView();
 					}
 				}
@@ -94,8 +90,7 @@ var view = function() {
 		},
 
 		/*
-		 * todo-3: The following was in a polymer example (can I use this?):
-		 * app.$.headerPanelMain.scrollToTop(true);
+		 * todo-3: The following was in a polymer example (can I use this?): app.$.headerPanelMain.scrollToTop(true);
 		 */
 		scrollToTop : function() {
 			if (scrollToSelNodePending)
@@ -106,7 +101,7 @@ var view = function() {
 					return;
 
 				var elm = util.polyElm("mainPaperTabs");
-				if (elm && elm.node && typeof elm.node.scrollIntoView =='function') {
+				if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
 					elm.node.scrollIntoView();
 				}
 			}, 1000);
@@ -114,18 +109,19 @@ var view = function() {
 
 		initEditPathDisplayById : function(domId) {
 			var node = edit.editNode;
-			var e = $("#"+domId);
-			if (!e) return;
-			
+			var e = $("#" + domId);
+			if (!e)
+				return;
+
 			if (edit.editingUnsavedNode) {
 				e.html("");
 				e.hide();
 			} else {
 				var pathDisplay = "Path: " + render.formatPath(node);
-				
-				//todo-2: Do we really need ID in addition to Path here?
-				//pathDisplay += "<br>ID: " + node.id;
-				
+
+				// todo-2: Do we really need ID in addition to Path here?
+				// pathDisplay += "<br>ID: " + node.id;
+
 				if (node.lastModified) {
 					pathDisplay += "<br>Mod: " + node.lastModified;
 				}

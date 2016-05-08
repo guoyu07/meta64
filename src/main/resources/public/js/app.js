@@ -1,7 +1,7 @@
 "use strict";
 
-//var onresize = window.onresize; 
-//window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
+// var onresize = window.onresize;
+// window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 
 var addEvent = function(object, type, callback) {
 	if (object == null || typeof (object) == 'undefined')
@@ -16,16 +16,15 @@ var addEvent = function(object, type, callback) {
 };
 
 /*
- * WARNING: This is called in realtime while user is resizing so always throttle
- * back any processing so that you don't do any actual processing in here unless
- * you want it VERY live, because it is.
+ * WARNING: This is called in realtime while user is resizing so always throttle back any processing so that you don't
+ * do any actual processing in here unless you want it VERY live, because it is.
  */
 function windowResize() {
-	//console.log("WindowResize: w=" + window.innerWidth + " h=" + window.innerHeight);
+	// console.log("WindowResize: w=" + window.innerWidth + " h=" + window.innerHeight);
 }
 
 addEvent(window, "resize", windowResize);
-	
+
 // This is our template element in index.html
 var app = document.querySelector('#app');
 
@@ -38,4 +37,3 @@ app.addEventListener('dom-change', function() {
 window.addEventListener('polymer-ready', function(e) {
 	console.log('polymer-ready event!');
 });
-

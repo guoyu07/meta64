@@ -35,7 +35,7 @@ var attachment = function() {
 
 		deleteAttachment : function() {
 			var node = meta64.getHighlightedNode();
-			
+
 			if (node) {
 				(new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
 						function() {

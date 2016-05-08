@@ -30,7 +30,7 @@ var nav = function() {
 		navUpLevel : function() {
 
 			if (!_.parentVisibleToUser()) {
-				// alert("Already at root. Can't go up.");
+				// Already at root. Can't go up.
 				return;
 			}
 
@@ -45,8 +45,7 @@ var nav = function() {
 		},
 
 		/*
-		 * turn of row selection DOM element of whatever row is currently
-		 * selected
+		 * turn of row selection DOM element of whatever row is currently selected
 		 */
 		getSelectedDomElement : function() {
 
@@ -71,8 +70,7 @@ var nav = function() {
 		},
 
 		/*
-		 * turn of row selection DOM element of whatever row is currently
-		 * selected
+		 * turn of row selection DOM element of whatever row is currently selected
 		 */
 		getSelectedPolyElement : function() {
 			try {
@@ -109,17 +107,15 @@ var nav = function() {
 			}
 
 			/*
-			 * sets which node is selected on this page (i.e. parent node of
-			 * this page being the 'key')
+			 * sets which node is selected on this page (i.e. parent node of this page being the 'key')
 			 */
 			meta64.highlightNode(node, false);
 
 			if (meta64.editMode) {
 
 				/*
-				 * if node.owner is currently null, that means we have not
-				 * retrieve the owner from the server yet, but if non-null it's
-				 * already displaying and we do nothing.
+				 * if node.owner is currently null, that means we have not retrieve the owner from the server yet, but
+				 * if non-null it's already displaying and we do nothing.
 				 */
 				if (!node.owner) {
 					console.log("calling updateNodeInfo");
@@ -143,10 +139,9 @@ var nav = function() {
 		},
 
 		/*
-		 * unfortunately we have to rely on onClick, because of the fact that
-		 * events to checkboxes don't appear to work in Polmer at all, and since
-		 * onClick runs BEFORE the state change is completed, that is the reason
-		 * for the silly looking async timer here.
+		 * unfortunately we have to rely on onClick, because of the fact that events to checkboxes don't appear to work
+		 * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
+		 * silly looking async timer here.
 		 */
 		toggleNodeSel : function(uid) {
 			var toggleButton = util.polyElm(uid + "_sel");
@@ -183,11 +178,12 @@ var nav = function() {
 		navPublicHome : function() {
 			meta64.loadAnonPageHome(true);
 		},
-		
+
 		toggleMainMenu : function() {
-			//This hides the menu alright, but the empty space is still there. Maybe display=none will work, but this is
-			//not an important feature so i'm just moving on and can come back to this in the future.
-			//util.setVisibility("mainLhsMenuPanel", false);
+			// This hides the menu alright, but the empty space is still there. Maybe display=none will work, but this
+			// is
+			// not an important feature so i'm just moving on and can come back to this in the future.
+			// util.setVisibility("mainLhsMenuPanel", false);
 		}
 	};
 

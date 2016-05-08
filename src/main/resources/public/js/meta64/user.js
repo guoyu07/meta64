@@ -61,9 +61,8 @@ var user = function() {
 			return;
 
 			/*
-			 * polymer Remove warning dialog to ask user about leaving the page
-			 * $(window).off("beforeunload"); window.location.href =
-			 * window.location.origin + "/twitterLogin";
+			 * polymer Remove warning dialog to ask user about leaving the page $(window).off("beforeunload");
+			 * window.location.href = window.location.origin + "/twitterLogin";
 			 */
 		},
 
@@ -97,8 +96,7 @@ var user = function() {
 			if (loginSessionReady === "true") {
 				console.log("    loginSessionReady = true");
 				/*
-				 * using blank credentials will cause server to look for a valid
-				 * session
+				 * using blank credentials will cause server to look for a valid session
 				 */
 				callUsr = "";
 				callPwd = "";
@@ -121,8 +119,7 @@ var user = function() {
 				console.log("cookieUser=" + usr + " usingCookies = " + usingCookies);
 
 				/*
-				 * empyt credentials causes server to try to log in with any
-				 * active session credentials.
+				 * empyt credentials causes server to try to log in with any active session credentials.
 				 */
 				callUsr = usr ? usr : "";
 				callPwd = pwd ? pwd : "";
@@ -220,8 +217,8 @@ var user = function() {
 					(new MessageDlg("Cookie login failed.")).open();
 
 					/*
-					 * blow away failed cookie credentials and reload page,
-					 * should result in brand new page load as anon user.
+					 * blow away failed cookie credentials and reload page, should result in brand new page load as anon
+					 * user.
 					 */
 					$.removeCookie(cnst.COOKIE_LOGIN_USR);
 					$.removeCookie(cnst.COOKIE_LOGIN_PWD);

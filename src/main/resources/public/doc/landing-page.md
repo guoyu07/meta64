@@ -4,8 +4,8 @@ Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) bu
 The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
 ## Technology Stack
-* Web App: Google Polymer (Web Components), JavaScript, JQuery, JSON/Ajax
-* Server: Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb, Tomcat Embedded 
+* Web App: Google Polymer (Web Components), JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
+* Server: Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb, Tomcat Embedded
 
 ## Links
 [GitHub Main Page](https://github.com/Clay-Ferguson/meta64)   
@@ -29,18 +29,18 @@ There are just a few key concepts to know for a basic understanding of what JCR 
 * Each user owns a part of the tree and all subnodes under that make up their "account root".
 * Node text and attachments can be edited (like on a Wiki)
 * Markdown is used to do formatting of the nodes when displayed.
-* Each node can be shared by its owner to the public or to specific users or groups.
+* Each node can be shared by its owner to the public or to specific users.
 * Nodes can be created, edited, moved, and deleted just like in a file system.
 * Any type of binary content can be uploaded onto nodes, and attached images show up as part of the page.
 * Each node can be referenced by direct-linking to it on the URL, so users can publish their own pages with specific urls.
 * Essentially meta64 itself is a kind of tree-structured wiki, or just a tree of editable, sharable content, just like you see on social media, but completely general purpose.
 
 ## Source Code
-The code is "Open Source" (and on GitHub) but still pre-alpha prototype currently, meaning it's not considered production ready, but does follow architectural best practices. The project is currently being managed and developed by Clay Ferguson (author of this document). I'm actively developing meta64 nearly every day, and looking for other interested developers to join the effort. 
+The code is "Open Source" (and on GitHub) but still pre-alpha prototype currently, meaning it's not considered production ready, but does follow architectural best practices. The project is currently being managed and developed by Clay Ferguson (author of this document). I'm actively developing meta64 nearly every day, and looking for other interested developers to join the effort.
 
-## Current Features
+## List of Features
 
-* Basic JCR Browsing capability 
+* Basic JCR Browsing capability
 * Login/Logout
 * Auto-login using Cookies
 * Signup new users (including captcha, and password)
@@ -49,7 +49,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Node editing (plain text/markdown)
 * Orderable child nodes ("move up" and "move down" supported)
 * Creating Subnodes or Inline nodes
-* Full Text Search (by Lucene)
+* Full Text Search and/or Tag-based searches (by Lucene)
 * Timeline feature: Reverse Chronological list of any tree branch.
 * Deleting Nodes
 * Moving nodes to new locations (supports multi-select)
@@ -82,19 +82,24 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * For future planned features see file: **/docs/bugs-and-todos.md**
 
 ## Technology Stack and APIs
+
 * Single Page Application (SPA)
-* JavaScript+HTML+CSS Client
-* Google Polymer (Web Components)
-* MongoDB (actual data storage format)
-* Apache Jackrabbit Oak (for JCR interface)
-* Spring MVC (SpringBoot)
+* JavaScript/HTML/CSS Client
+* JSON-Ajax for Server Communication
+* Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
+* MongoDB as Data Storage (https://www.mongodb.com)
+* Apache Jackrabbit Oak, for JCR interface (https://jackrabbit.apache.org/oak/)
+* Spring MVC, SpringBoot (http://projects.spring.io/spring-boot/)
 * App is "Mobile First", meaning a primary objective is to run well on mobile
-* Using Google Closure Compiler for JS Minification
-* Pure Java on Server
-* Spring Java-only configuration with Annotations, and no XML configs.
-* Server-Side JavaScript Markdown (using 'org.pegdown' API) renders pages 
-* Built using Maven+Bower
+* Using Google Closure Compiler for JS Minification (https://developers.google.com/closure/compiler/)
+* Pure Java on Server (https://www.oracle.com/java/index.html)
+* Markdown support provided by PegDown (https://github.com/sirthias/pegdown)
+* Google Code Prettifier (https://github.com/google/code-prettify)
+* Ace Editor for code editing (https://ace.c9.io/#nav=about)
+* Built using Maven (https://maven.apache.org/)
+* Bower Package Manager (http://bower.io/)
 * Launches from a single SpringBoot "uber jar" containing Tomcat embedded and pre-configured
+* Spring Java-only configuration with Annotations, and no XML configs.
 
 ## Apache Jackrabbit Oak
 Other than SpringBoot, the main dependency needed for running/building meta64 is Jackrabbit Oak. This project is currently being hosted here:
@@ -114,11 +119,8 @@ Jackrabbit Oak is an Adobe-sponsored Open Source project for creating the best w
 * Refer to the 'docs' folder of the project for additional technical documentation.
 
 ## About the Developer
-Meta64 is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a 48 yr old Java Developer living in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java, and primarily on Web Apps. 
+Meta64 is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a 48 yr old Java Developer living in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java, and primarily on Web Apps.
 
 **linkedin.com:** http://www.linkedin.com/in/wclayf  
 **GitHub:** https://github.com/Clay-Ferguson  
 **email:** wclayf@gmail.com  
-
-
-

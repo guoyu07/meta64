@@ -151,6 +151,10 @@ public class OakRepository {
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
 
+			/* todo-1: need to make all these markdown files able to be specified in a properties file, and also need to 
+			 * make the DB aware of time stamp so it can just check timestamp of file to determine if it needs to be loaded
+			 * into DB or is already up to date
+			 */
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
 
@@ -173,13 +177,14 @@ public class OakRepository {
 		return getRepository().login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
 	}
 
-	private void init() throws Exception {
+	public void init() throws Exception {
 		if (initialized) return;
 
 		synchronized (lock) {
 			if (initialized) return;
 
 			try {
+				log.info("Initializing repository: "+mongoDbName+" host="+mongoDbHost+" port="+mongoDbPort);
 				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
 				nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
 

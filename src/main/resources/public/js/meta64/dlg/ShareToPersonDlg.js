@@ -1,7 +1,7 @@
 console.log("running module: ShareToPersonDlg.js");
 
 var ShareToPersonDlg = function() {
-	Dialog.call(this);	
+	Dialog.call(this);
 	this.domId = "ShareToPersonDlg";
 }
 
@@ -14,11 +14,13 @@ ShareToPersonDlg_.build = function() {
 	var header = this.makeHeader("Share Node to Person");
 
 	var formControls = this.makeEditField("User to Share With", "shareToUserName");
-	var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", ShareToPersonDlg_.shareNodeToPerson, this);
+	var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", ShareToPersonDlg_.shareNodeToPerson,
+			this);
 	var backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
 	var buttonBar = render.centeredButtonBar(shareButton + backButton);
 
-	return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls + buttonBar;
+	return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
+			+ buttonBar;
 }
 
 ShareToPersonDlg_.shareNodeToPerson = function() {

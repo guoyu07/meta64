@@ -88,7 +88,7 @@ public class AppServerTests {
 			/*
 			 * Signup a new user
 			 */
-			String userName = "wclayf4";
+			String userName = "wclayf";
 			signupReq.setUserName(userName);
 			signupReq.setPassword(userName);
 			signupReq.setEmail("wclayf@gmail.com");
@@ -174,21 +174,5 @@ public class AppServerTests {
 	}
 
 	public void shareNodeTest(String userName) throws Exception {
-	}
-
-	public String addNewUser(Session session) throws Exception {
-		SignupRequest req = new SignupRequest();
-
-		String userName = "wclayf" + System.currentTimeMillis();
-		req.setUserName(userName);
-		req.setPassword(req.getUserName());
-		req.setEmail("xxx");
-		req.setCaptcha(null);
-
-		SignupResponse res = new SignupResponse();
-		ThreadLocals.setResponse(res);
-
-		userManagerService.signup(req, res);
-		return userName;
 	}
 }

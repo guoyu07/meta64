@@ -709,7 +709,7 @@ var render = function() {
 			}
 
 			if (edit.isInsertAllowed(data.node)) {
-				if (output.length == 0 && !meta64.isAnonUser) {
+				if (/* output.length == 0 && ---this was a bug stoping new users from being able to create content! */ !meta64.isAnonUser) {
 					output = _getEmptyPagePrompt();
 				}
 			}

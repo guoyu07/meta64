@@ -218,7 +218,7 @@ public class AppController {
 	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) throws Exception {
 		logRequest("signup", req);
 		SignupResponse res = new SignupResponse();
-		userManagerService.signup(req, res);
+		userManagerService.signup(null, req, res, false);
 		return res;
 	}
 

@@ -689,6 +689,7 @@ var render = function() {
 			// console.log("rendering page controls.");
 			_.renderMainPageControls();
 
+			var rowCount = 0;
 			if (data.children) {
 				var childCount = data.children.length;
 				// console.log("childCount: " + childCount);
@@ -709,7 +710,7 @@ var render = function() {
 			}
 
 			if (edit.isInsertAllowed(data.node)) {
-				if (/* output.length == 0 && ---this was a bug stoping new users from being able to create content! */ !meta64.isAnonUser) {
+				if (rowCount==0 && !meta64.isAnonUser) {
 					output = _getEmptyPagePrompt();
 				}
 			}

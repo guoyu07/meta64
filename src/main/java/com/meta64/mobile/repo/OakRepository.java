@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -60,8 +61,8 @@ import com.mongodb.MongoTimeoutException;
 /**
  * Instance of a MonboDB-based Repository.
  * 
- * NOTE: Even inside this class always use getRepository() to ensure that the
- * init() has been called.
+ * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
+ * called.
  */
 @Component
 @Scope("singleton")
@@ -71,7 +72,7 @@ public class OakRepository {
 
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
-	
+
 	@Autowired
 	private UserManagerService userManagerService;
 
@@ -87,17 +88,16 @@ public class OakRepository {
 	private DB db;
 
 	/*
-	 * Because of the criticality of this variable, I am not using the Spring
-	 * getter to get it, but just using a private static. It's slightly safer
-	 * and better for the purpose of cleanup in the shutdown hook which is all
-	 * it's used for.
+	 * Because of the criticality of this variable, I am not using the Spring getter to get it, but
+	 * just using a private static. It's slightly safer and better for the purpose of cleanup in the
+	 * shutdown hook which is all it's used for.
 	 */
 	private static OakRepository instance;
 
 	/*
-	 * We only need this lock to protect against startup and/or shutdown
-	 * concurrency. Remember during debugging, etc the server process can be
-	 * shutdown (CTRL-C) even while it's in the startup phase.
+	 * We only need this lock to protect against startup and/or shutdown concurrency. Remember
+	 * during debugging, etc the server process can be shutdown (CTRL-C) even while it's in the
+	 * startup phase.
 	 */
 	private static final Object lock = new Object();
 
@@ -114,6 +114,9 @@ public class OakRepository {
 
 	@Value("${mongodb.name}")
 	private String mongoDbName;
+
+	@Value("${testUserAccounts}")
+	private String testUserAccounts;
 
 	/*
 	 * JCR Info
@@ -154,15 +157,17 @@ public class OakRepository {
 		adminRunner.run((Session session) -> {
 
 			/*
-			 * todo-1: need to make all these markdown files able to be
-			 * specified in a properties file, and also need to make the DB
-			 * aware of time stamp so it can just check timestamp of file to
-			 * determine if it needs to be loaded into DB or is already up to
-			 * date
+			 * todo-1: need to make all these markdown files able to be specified in a properties
+			 * file, and also need to make the DB aware of time stamp so it can just check timestamp
+			 * of file to determine if it needs to be loaded into DB or is already up to date
 			 */
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
 
+			/*
+			 * Once I verify import/export is working, I will move this help document into an actual
+			 * content tree, and composing the actual help info will be done by using the app.
+			 */
 			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, "Help Node");
 			initPageNodeFromClasspath(session, helpPageNode, "classpath:/public/doc/help.md");
 
@@ -183,12 +188,10 @@ public class OakRepository {
 	}
 
 	public void init() throws Exception {
-		if (initialized)
-			return;
+		if (initialized) return;
 
 		synchronized (lock) {
-			if (initialized)
-				return;
+			if (initialized) return;
 
 			try {
 				log.info("Initializing repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
@@ -198,8 +201,7 @@ public class OakRepository {
 				root = nodeStore.getRoot();
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown())
-					return;
+				if (AppServer.isShuttingDown()) return;
 
 				executor = Oak.defaultExecutorService();
 				oak = new Oak(nodeStore);
@@ -210,10 +212,9 @@ public class OakRepository {
 
 				if (indexingEnabled) {
 					/*
-					 * WARNING: Not all valid SQL will work with these lucene
-					 * queries. Namely the contains() method fails so always use
-					 * '=' operator for exact string matches or LIKE
-					 * %something%, instead of using the contains method.
+					 * WARNING: Not all valid SQL will work with these lucene queries. Namely the
+					 * contains() method fails so always use '=' operator for exact string matches
+					 * or LIKE %something%, instead of using the contains method.
 					 */
 					indexProvider = new LuceneIndexProvider();
 					indexProvider = indexProvider.with(getNodeAggregator());
@@ -228,21 +229,19 @@ public class OakRepository {
 				}
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown())
-					return;
+				if (AppServer.isShuttingDown()) return;
 
 				repository = jcr.createRepository();
 
 				log.debug("MongoDb connection ok.");
 
 				/* can shutdown during startup. */
-				if (AppServer.isShuttingDown())
-					return;
+				if (AppServer.isShuttingDown()) return;
 
 				/*
-				 * IMPORTANT: Do not move this line below this point. An
-				 * infinite loop of re-entry can occur into this method because
-				 * of calls to getRepository() always doing an init.
+				 * IMPORTANT: Do not move this line below this point. An infinite loop of re-entry
+				 * can occur into this method because of calls to getRepository() always doing an
+				 * init.
 				 */
 				initialized = true;
 
@@ -251,26 +250,48 @@ public class OakRepository {
 				createTestAccounts();
 
 				log.debug("Repository fully initialized.");
-			} catch (MongoTimeoutException e) {
-				log.error("********** Did you forget to start MongoDb Server? **********", e);
+			}
+			catch (MongoTimeoutException e) {
+				log.error("********** Is the MongoDb Server reachable ? **********", e);
 				throw e;
 			}
 		}
 	}
 
+	/*
+	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
+	 * nodes from user to user, etc) without first having to manually register users.
+	 */
 	private void createTestAccounts() throws Exception {
+		/*
+		 * The testUserAccounts is a comma delimited list of user account where each user account is
+		 * a colon-delimited list like username:password:email.
+		 * 
+		 * todo-1: could change the format of this info to JSON.
+		 */
+		final List<String> testUserAccountsList = XString.tokenize(testUserAccounts, ",", true);
+		if (testUserAccountsList == null) {
+			return;
+		}
+
 		adminRunner.run((Session session) -> {
-			//This commented code works perfectly to create a new user. I just don't have it turned on yet, until I make it
-			//silently fail when the user already exists of course.
-			String userName = "wclayf-test";
-			
-			SignupRequest signupReq = new SignupRequest();
-			signupReq.setUserName(userName);
-			signupReq.setPassword(userName);
-			signupReq.setEmail("wclayf@gmail.com");
-			
-			SignupResponse res = new SignupResponse();
-			userManagerService.signup(session, signupReq, res, true);
+			// This commented code works perfectly to create a new user. I just
+			// don't have it turned on yet, until I make it
+			// silently fail when the user already exists of course.
+			for (String accountInfo : testUserAccountsList) {
+				final List<String> accountInfoList = XString.tokenize(accountInfo, ",", true);
+				if (accountInfoList == null || accountInfoList.size() != 3) {
+					log.debug("Invalid User Info substring: " + accountInfo);
+					continue;
+				}
+				SignupRequest signupReq = new SignupRequest();
+				signupReq.setUserName(accountInfoList.get(0));
+				signupReq.setPassword(accountInfoList.get(1));
+				signupReq.setEmail(accountInfoList.get(2));
+
+				SignupResponse res = new SignupResponse();
+				userManagerService.signup(session, signupReq, res, true);
+			}
 		});
 	}
 
@@ -282,7 +303,8 @@ public class OakRepository {
 			AccessControlUtil.makeNodePublic(session, node);
 			node.setProperty(JcrProp.DISABLE_INSERT, "y");
 			session.save();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// IMPORTANT: don't rethrow from here, or this could blow up app
 			// initialization.
 			e.printStackTrace();
@@ -290,8 +312,7 @@ public class OakRepository {
 	}
 
 	/*
-	 * I don't fully understand what this aggregator is for. Need to research
-	 * this some.
+	 * I don't fully understand what this aggregator is for. Need to research this some.
 	 */
 	private static NodeAggregator getNodeAggregator() {
 		return new SimpleNodeAggregator().newRuleWithName(JcrConstants.NT_UNSTRUCTURED, //
@@ -303,8 +324,7 @@ public class OakRepository {
 		userParams.put(UserConstants.PARAM_ADMIN_ID, "admin");
 		userParams.put(UserConstants.PARAM_OMIT_ADMIN_PW, false);
 
-		securityParams = ConfigurationParameters
-				.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
+		securityParams = ConfigurationParameters.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
 		securityProvider = new SecurityProviderImpl(securityParams);
 		return securityProvider;
 	}
@@ -320,7 +340,8 @@ public class OakRepository {
 				try {
 					executor.awaitTermination(5, TimeUnit.MINUTES);
 					log.info("Executor shutdown completed ok.");
-				} catch (InterruptedException ex) {
+				}
+				catch (InterruptedException ex) {
 					log.error("Executor failed to shutdown gracefully.", ex);
 				}
 

@@ -200,7 +200,7 @@ public class UserManagerService {
 					password = encryptor.decrypt(password);
 					String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
 
-					initNewUser(session, userName, password, email, JcrPropVal.META64);
+					initNewUser(session, userName, password, email, JcrPropVal.META64, false);
 
 					/*
 					 * allow JavaScript to detect all it needs to detect which
@@ -224,9 +224,9 @@ public class UserManagerService {
 	 * 
 	 * oauthService == 'twitter' or 'meta64'
 	 */
-	public void initNewUser(Session session, String userName, String password, String email, String oauthService)
+	public void initNewUser(Session session, String userName, String password, String email, String oauthService, boolean automated)
 			throws Exception {
-		if (UserManagerUtil.createUser(session, userName, password)) {
+		if (UserManagerUtil.createUser(session, userName, password, automated)) {
 			UserManagerUtil.createUserRootNode(session, userName);
 
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
@@ -310,7 +310,7 @@ public class UserManagerService {
 			initiateSignup(userName, password, email, false);
 		}
 		else {
-			initNewUser(session, userName, password, email, JcrPropVal.META64);	
+			initNewUser(session, userName, password, email, JcrPropVal.META64, automated);	
 		}
 		
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));

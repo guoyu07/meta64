@@ -45,6 +45,8 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.request.SignupRequest;
+import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
@@ -137,12 +139,6 @@ public class OakRepository {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				/*
-				 * I know this tight coupling is going to be upsetting to some
-				 * developers, but this is a good design despite that. I don't
-				 * want a complex PUB/SUB or indirection to get in the way of
-				 * this working perfectly and being dead simple!
-				 */
 				AppServer.setShuttingDown(true);
 				instance.close();
 			}
@@ -266,15 +262,15 @@ public class OakRepository {
 		adminRunner.run((Session session) -> {
 			//This commented code works perfectly to create a new user. I just don't have it turned on yet, until I make it
 			//silently fail when the user already exists of course.
-//			String userName = "wclayf-test";
-//			
-//			SignupRequest signupReq = new SignupRequest();
-//			signupReq.setUserName(userName);
-//			signupReq.setPassword(userName);
-//			signupReq.setEmail("wclayf@gmail.com");
-//			
-//			SignupResponse res = new SignupResponse();
-//			userManagerService.signup(session, signupReq, res, true);
+			String userName = "wclayf-test";
+			
+			SignupRequest signupReq = new SignupRequest();
+			signupReq.setUserName(userName);
+			signupReq.setPassword(userName);
+			signupReq.setEmail("wclayf@gmail.com");
+			
+			SignupResponse res = new SignupResponse();
+			userManagerService.signup(session, signupReq, res, true);
 		});
 	}
 

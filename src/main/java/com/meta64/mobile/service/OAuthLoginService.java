@@ -27,6 +27,10 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ValContainer;
 
 /**
+ * IMPORTANT WARNING:
+ * I left this class in the code after developing it and using twitter logins experimentally for a short time, but the current app does 
+ * NOT call this service or ever use this oauth or twitter logins. I left it for when I eventually turn it back on.
+ * 
  * Service methods for processing user management functions. Login, logout, signup, user
  * preferences, and settings persisted per-user
  * 
@@ -96,7 +100,7 @@ public class OAuthLoginService {
 		adminRunner.run((Session session) -> {
 			if (!userManagerService.userExists(session, userName, JcrPropVal.TWITTER, passwordContainer)) {
 				String _password = JcrUtil.getGUID();
-				userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER);
+				userManagerService.initNewUser(session, userName, _password, null, JcrPropVal.TWITTER, false);
 				passwordContainer.setVal(_password);
 				log.debug("twitter user created and initialized.");
 			}

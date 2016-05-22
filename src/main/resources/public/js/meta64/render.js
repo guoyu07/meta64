@@ -143,6 +143,9 @@ var render = function() {
 		},
 
 		/*
+		 * This is the function that renders each node in the main window. The rendering in here is very central to the app
+		 * and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
+		 * 
 		 * node: JSON of NodeInfo.java
 		 * 
 		 */
@@ -220,6 +223,13 @@ var render = function() {
 							ret += "</div></marked-element>";
 						}
 					}
+					else {
+						ret += "<div>[No Content Text]</div>";
+						var properties = props.renderProperties(node.properties);
+						if (properties) {
+							ret += /* "<br>" + */properties;
+						}
+					}
 
 					/*
 					 * if (jcrContent.length > 0) { if (rowStyling) { ret += _.tag("div", { "class" : "jcr-content" },
@@ -228,6 +238,13 @@ var render = function() {
 					 * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
 					 * class='corner-style'/></a>" + jcrContent); } }
 					 */
+				}
+				else {
+					ret += "<div>[No Content Property]</div>";
+					var properties = props.renderProperties(node.properties);
+					if (properties) {
+						ret += /* "<br>" + */properties;
+					}
 				}
 			}
 

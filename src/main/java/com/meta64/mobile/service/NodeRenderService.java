@@ -47,6 +47,9 @@ public class NodeRenderService {
 	private String anonUserLandingPageNode;
 
 	@Autowired
+	private Convert convert;
+
+	@Autowired
 	private UserSettingsDaemon userSettingsDaemon;
 
 	@Autowired
@@ -104,7 +107,7 @@ public class NodeRenderService {
 			levelsUpRemaining--;
 		}
 
-		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, true);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
 		nodeInfo.setChildrenOrdered(ordered);
@@ -121,7 +124,7 @@ public class NodeRenderService {
 				// Filter on server now too
 				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
 
-					children.add(Convert.convertToNodeInfo(sessionContext, session, n, true));
+					children.add(convert.convertToNodeInfo(sessionContext, session, n, true));
 
 					/*
 					 * Instead of crashing browser with too much load, just fail a bit more
@@ -131,7 +134,7 @@ public class NodeRenderService {
 						throw new Exception("Node has too many children (> 1000)");
 					}
 
-					//log.trace("    node[" + nodeCount + "] path: " + n.getPath());
+					// log.trace(" node[" + nodeCount + "] path: " + n.getPath());
 				}
 				else {
 					log.trace("    MODE-REJECT node[" + nodeCount + "] path: " + n.getPath());
@@ -162,7 +165,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = Convert.convertToNodeInfo(sessionContext, session, node, false);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

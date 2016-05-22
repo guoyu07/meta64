@@ -45,6 +45,9 @@ public class NodeSearchService {
 	private static boolean searchAllProps = false;
 
 	@Autowired
+	private Convert convert;
+
+	@Autowired
 	private SessionContext sessionContext;
 
 	/*
@@ -168,7 +171,7 @@ public class NodeSearchService {
 		res.setSearchResults(searchResults);
 
 		while (nodes.hasNext()) {
-			searchResults.add(Convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true));
+			searchResults.add(convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true));
 			if (counter++ > MAX_NODES) {
 				break;
 			}
@@ -241,7 +244,7 @@ public class NodeSearchService {
 				continue;
 			}
 
-			searchResults.add(Convert.convertToNodeInfo(sessionContext, session, parentNode, true));
+			searchResults.add(convert.convertToNodeInfo(sessionContext, session, parentNode, true));
 			if (counter++ > MAX_NODES) {
 				break;
 			}

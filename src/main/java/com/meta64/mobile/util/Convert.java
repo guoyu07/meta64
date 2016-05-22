@@ -19,6 +19,8 @@ import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,7 +37,16 @@ import com.meta64.mobile.model.UserPreferences;
 /**
  * Converting objects from one type to another, and formatting.
  */
+@Component
+@Scope("singleton")
 public class Convert {
+
+	/*
+	 * We have to use full annotation here because we already have a different Value class in the
+	 * imports section
+	 */
+	@org.springframework.beans.factory.annotation.Value("${donateButton}")
+	private String donateButton;
 
 	public static final boolean serverMarkdown = true;
 
@@ -81,8 +92,7 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public static NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node,
-			boolean htmlOnly) throws Exception {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		long binVer = 0;
@@ -115,8 +125,7 @@ public class Convert {
 		// log.debug("Node: "+node.getPath()+node.getName()+" type:
 		// "+primaryTypeName);
 
-		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes,
-				false, hasBinary, binaryIsImage, binVer, //
+		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
 				primaryTypeName);
@@ -153,7 +162,7 @@ public class Convert {
 				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 	}
 
-	public static List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
+	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
 			boolean htmlOnly) throws RepositoryException {
 		List<PropertyInfo> props = null;
 		PropertyIterator iter = node.getProperties();
@@ -192,8 +201,7 @@ public class Convert {
 		return props;
 	}
 
-	public static PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly)
-			throws RepositoryException {
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly) throws RepositoryException {
 		String value = null;
 		String htmlValue = null;
 		List<String> values = null;
@@ -203,12 +211,12 @@ public class Convert {
 			// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
 			values = new LinkedList<String>();
 
-			int valIdx = 0;
+			// int valIdx = 0;
 			for (Value v : prop.getValues()) {
 				String strVal = formatValue(sessionContext, v, false);
 				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
 				values.add(strVal);
-				valIdx++;
+				// valIdx++;
 			}
 		}
 		/* else single value */
@@ -237,18 +245,27 @@ public class Convert {
 		return propInfo;
 	}
 
-	public static String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml) {
+	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml) {
 		try {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
 			}
 			else {
+				String ret = null;
+
 				if (convertToHtml && serverMarkdown) {
-					return getMarkdownProc().markdownToHtml(value.getString());
+					ret = getMarkdownProc().markdownToHtml(value.getString());
 				}
 				else {
-					return value.getString();
+					ret = value.getString();
 				}
+
+				// need this to go only on the renderable text. not the SAVED text.
+				if (convertToHtml) {
+					ret = ret.replace("{{donateButton}}", donateButton);
+				}
+
+				return ret;
 			}
 		}
 		catch (Exception e) {

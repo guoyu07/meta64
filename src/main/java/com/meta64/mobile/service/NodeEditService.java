@@ -48,6 +48,9 @@ public class NodeEditService {
 	private static final String SPLIT_TAG = "{split}";
 
 	@Autowired
+	private Convert convert;
+
+	@Autowired
 	private OakRepository oak;
 
 	@Autowired
@@ -96,7 +99,7 @@ public class NodeEditService {
 		}
 		session.save();
 
-		res.setNewNode(Convert.convertToNodeInfo(sessionContext, session, newNode, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true));
 		res.setSuccess(true);
 	}
 
@@ -126,7 +129,7 @@ public class NodeEditService {
 		}
 
 		session.save();
-		res.setNewNode(Convert.convertToNodeInfo(sessionContext, session, newNode, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true));
 		res.setSuccess(true);
 	}
 

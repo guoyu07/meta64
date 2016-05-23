@@ -126,6 +126,10 @@ var render = function() {
 
 			return content;
 		},
+		
+		injectSubstitutions : function(content) {
+			return content.replaceAll("{{locationOrigin}}", window.location.origin);
+		},
 
 		encodeLanguages : function(content) {
 			/*
@@ -172,6 +176,7 @@ var render = function() {
 
 						if (meta64.serverMarkdown) {
 							jcrContent = _.injectCodeFormatting(jcrContent);
+							jcrContent = _.injectSubstitutions(jcrContent);
 
 							if (rowStyling) {
 								ret += _.tag("div", {
@@ -240,7 +245,10 @@ var render = function() {
 					 */
 				}
 				else {
-					ret += "<div>[No Content Property]</div>";
+					if (node.path.trim()=="/") {
+						ret += "Root Node";
+					}
+					//ret += "<div>[No Content Property]</div>";
 					var properties = props.renderProperties(node.properties);
 					if (properties) {
 						ret += /* "<br>" + */properties;
@@ -322,6 +330,7 @@ var render = function() {
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
+			console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
 			/*
 			 * if not selected by being the new child, then we try to select based on if this node was the last one
 			 * clicked on for this page.
@@ -335,7 +344,6 @@ var render = function() {
 			var bkgStyle = _.getNodeBkgImageStyle(node);
 
 			var cssId = uid + "_row";
-			// console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 			return _.tag("div", {
 				"class" : "node-table-row" + (selected ? " active-row" : " inactive-row"),
 				"onClick" : "nav.clickOnNodeRow(this, '" + uid + "');", //
@@ -432,18 +440,8 @@ var render = function() {
 
 				var selected = meta64.selectedNodes[node.uid] ? true : false;
 
-				console.log("      nodeId " + node.uid + " selected=" + selected);
+				//console.log("      nodeId " + node.uid + " selected=" + selected);
 				buttonCount++;
-
-				// selButton = _.tag("paper-button", //
-				// {
-				// "class" : "custom-toggle",
-				// "toggles" : "toggles",
-				// "raised" : "raised",
-				// "id" : node.uid + "_sel",//
-				// "onClick" : "nav.toggleNodeSel('" + node.uid + "');",
-				// "active" : selected
-				// }, "Sel");
 
 				var css = selected ? {
 					"id" : node.uid + "_sel",//
@@ -525,7 +523,7 @@ var render = function() {
 			// "for" : "addNodeButtonId" + uid
 			// }, "ADDS a new node inside the current node, as a child of it.");
 
-			var allButtons = selButton + openButton + insertNodeButton + insertNodeTooltip + createSubNodeButton
+			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip  
 					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
 			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons) : "";
@@ -663,6 +661,7 @@ var render = function() {
 				var cssId = uid + "_row";
 				var buttonBar = "";
 				var editNodeButton = "";
+				var createSubNodeButton = "";
 
 				// console.log("data.node.path="+data.node.path);
 				// console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
@@ -671,6 +670,12 @@ var render = function() {
 				/* Add edit button if edit mode and this isn't the root */
 				if (edit.isEditAllowed(data.node)) {
 
+					createSubNodeButton = _.tag("paper-button", {
+						//"id" : "addNodeButtonId" + node.uid,
+						"raised" : "raised",
+						"onClick" : "edit.createSubNode('" + uid + "');"
+					}, "Add");
+					
 					/* Construct Create Subnode Button */
 					editNodeButton = _.tag("paper-button", {
 						"raised" : "raised",
@@ -684,7 +689,7 @@ var render = function() {
 				// var rowHeader = _.buildRowHeader(data.node, true, true);
 
 				if (editNodeButton) {
-					buttonBar = _.makeHorizontalFieldSet(editNodeButton);
+					buttonBar = _.makeHorizontalFieldSet(createSubNodeButton+editNodeButton);
 				}
 
 				var content = _.tag("div", {

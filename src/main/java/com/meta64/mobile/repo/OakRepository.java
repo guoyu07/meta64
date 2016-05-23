@@ -164,13 +164,6 @@ public class OakRepository {
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
 
-			/*
-			 * Once I verify import/export is working, I will move this help document into an actual
-			 * content tree, and composing the actual help info will be done by using the app.
-			 */
-			Node helpPageNode = JcrUtil.ensureNodeExists(session, "/", helpNode, "Help Node");
-			initPageNodeFromClasspath(session, helpPageNode, "classpath:/public/doc/help.md");
-
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");

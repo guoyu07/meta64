@@ -4,7 +4,10 @@ var nav = function() {
 	var _UID_ROWID_SUFFIX = "_row";
 
 	var _ = {
-
+		openMainMenuHelp : function() {
+			window.open(window.location.origin+"?id=/meta64/public/help", "_blank"); 
+		},
+			
 		displayingHome : function() {
 			if (meta64.isAnonUser) {
 				return meta64.currentNodeId === meta64.anonUserLandingPageNode;

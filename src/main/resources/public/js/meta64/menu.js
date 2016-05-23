@@ -83,7 +83,12 @@ var menuPanel = function() {
 			// edit.fullRepositoryExport();") + //
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
-			var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu;
+			var helpItems = //
+			_menuItem("Help on this Menu", "mainMenuHelp", "nav.openMainMenuHelp();");
+			var mainMenuHelp = _makeTopLevelMenu("Help/Docs", helpItems);
+
+			var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu
+					+ mainMenuHelp;
 			util.setHtmlEnhanced(_.domId, content);
 		},
 

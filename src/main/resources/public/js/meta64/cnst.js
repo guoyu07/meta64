@@ -21,8 +21,8 @@ var cnst = function() {
 		USE_ACE_EDITOR : false,
 
 		/* showing path on rows just wastes space for ordinary users. Not really needed */
-		SHOW_PATH_ON_ROWS : false,
-		SHOW_PATH_IN_DLGS : false
+		SHOW_PATH_ON_ROWS : true,
+		SHOW_PATH_IN_DLGS : true
 	};
 
 	console.log("Module ready: cnst.js");

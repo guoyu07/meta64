@@ -19,12 +19,6 @@ var user = function() {
 		window.location.href = window.location.origin;
 	}
 
-	var _changePasswordResponse = function(res) {
-		if (util.checkSuccess("Change password", res)) {
-			(new MessageDlg("Password changed successfully.")).open();
-		}
-	}
-
 	var _twitterLoginResponse = function(res) {
 		console.log("twitter Login response recieved.");
 	}
@@ -157,19 +151,6 @@ var user = function() {
 			}
 
 			util.json("logout", {}, _logoutResponse);
-		},
-
-		changePassword : function() {
-			var pwd1 = util.getInputVal("changePassword1").trim();
-			var pwd2 = util.getInputVal("changePassword2").trim();
-
-			if (pwd1 && pwd1.length >= 4 && pwd1 === pwd2) {
-				util.json("changePassword", {
-					"newPassword" : pwd1
-				}, _changePasswordResponse);
-			} else {
-				(new MessageDlg("Invalid password(s).")).open();
-			}
 		},
 
 		loginResponse : function(res, usr, pwd, usingCookies, loginDlg) {

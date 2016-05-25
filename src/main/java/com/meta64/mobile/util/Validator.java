@@ -14,12 +14,12 @@ public class Validator {
 	 */
 	public static void checkUserName(String text) throws Exception {
 		int len = text.length();
-		if (len < 5 || len > 100) throw new Exception("Username must be between 5 and 100 characters long.");
+		if (len < 3 || len > 100) throw new Exception("Username must be between 3 and 100 characters long.");
 
 		for (int i = 0; i < len; i++) {
 			char c = text.charAt(i);
 			if (!(Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == ' ')) {
-				throw new Exception("Username can contain only letters, digits, dashes, underscores, and spaces.");
+				throw new Exception("Username can contain only letters, digits, dashes, underscores, and spaces. invalid[" + text + "]");
 			}
 		}
 	}

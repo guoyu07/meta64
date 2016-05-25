@@ -272,7 +272,7 @@ public class OakRepository {
 			// don't have it turned on yet, until I make it
 			// silently fail when the user already exists of course.
 			for (String accountInfo : testUserAccountsList) {
-				final List<String> accountInfoList = XString.tokenize(accountInfo, ",", true);
+				final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
 				if (accountInfoList == null || accountInfoList.size() != 3) {
 					log.debug("Invalid User Info substring: " + accountInfo);
 					continue;

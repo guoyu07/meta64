@@ -18,12 +18,32 @@ ChangePasswordDlg_.build = function() {
 	this.makePasswordField("Repeat Password", "changePassword2");
 
 	var changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
-			"user.changePassword();");
+			ChangePasswordDlg_.changePassword, this);
 	var backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
 
 	var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
 
 	return header + formControls + buttonBar;
+}
+
+ChangePasswordDlg_.changePassword = function() {
+	var pwd1 = this.getInputVal("changePassword1").trim();
+	var pwd2 = this.getInputVal("changePassword2").trim();
+
+	debugger;
+	if (pwd1 && pwd1.length >= 4 && pwd1 === pwd2) {
+		util.json("changePassword", {
+			"newPassword" : pwd1
+		}, ChangePasswordDlg_.changePasswordResponse, this);
+	} else {
+		(new MessageDlg("Invalid password(s).")).open();
+	}
+},
+
+ChangePasswordDlg_.changePasswordResponse = function(res) {
+	if (util.checkSuccess("Change password", res)) {
+		(new MessageDlg("Password changed successfully.")).open();
+	}
 }
 
 ChangePasswordDlg_.init = function() {

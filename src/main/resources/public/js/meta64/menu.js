@@ -27,10 +27,6 @@ var menuPanel = function() {
 		return render.tag("paper-item", {
 			"id" : id,
 			"onclick" : onClick
-		/*
-		 * for now, I won't need this... (polymer conversion)
-		 */
-		// "toggles" : "true"
 		}, name, true);
 	}
 
@@ -84,7 +80,7 @@ var menuPanel = function() {
 			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
 
 			var helpItems = //
-			_menuItem("Help on this Menu", "mainMenuHelp", "nav.openMainMenuHelp();");
+			_menuItem("Main Menu Help", "mainMenuHelp", "nav.openMainMenuHelp();");
 			var mainMenuHelp = _makeTopLevelMenu("Help/Docs", helpItems);
 
 			var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu

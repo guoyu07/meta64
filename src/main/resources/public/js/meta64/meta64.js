@@ -460,7 +460,8 @@ var meta64 = function() {
 			util.setEnablement("finishMovingSelNodesButton", !_.isAnonUser && edit.nodesToMove != null);
 
 			util.setEnablement("changePasswordPgButton", !_.isAnonUser);
-			util.setEnablement("accountPreferencesPgButton", !_.isAnonUser);
+			util.setEnablement("accountPreferencesButton", !_.isAnonUser);
+			util.setEnablement("manageAccountButton", !_.isAnonUser);
 			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
 			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);

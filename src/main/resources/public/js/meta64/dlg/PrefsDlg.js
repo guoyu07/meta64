@@ -31,14 +31,7 @@ PrefsDlg_.build = function() {
 
 	var buttonBar = render.centeredButtonBar(saveButton + backButton);
 
-	var closeAccountButton = this.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
-
-	var closeAccountButtonBar = render.centeredButtonBar(closeAccountButton);
-	var closeAccountButtonBarDiv = render.tag("div", {
-		"class" : "close-account-bar"
-	}, closeAccountButtonBar);
-
-	return header + radioBar + buttonBar + closeAccountButtonBarDiv;
+	return header + radioBar + buttonBar;
 }
 
 PrefsDlg_.savePreferences = function() {

@@ -73,11 +73,12 @@ var menuPanel = function() {
 			 */
 			var myAccountItems = //
 			_menuItem("Change Password", "changePasswordPgButton", "(new ChangePasswordDlg()).open();") + // 
-			_menuItem("Preferences", "accountPreferencesPgButton", "(new PrefsDlg()).open();") + // 
+			_menuItem("Preferences", "accountPreferencesButton", "(new PrefsDlg()).open();") + // 
+			_menuItem("Manage Account", "manageAccountButton", "(new ManageAccountDlg()).open();") + // 
 			_menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", " edit.insertBookWarAndPeace();"); // 
 			// _menuItem("Full Repository Export", "fullRepositoryExport", "
 			// edit.fullRepositoryExport();") + //
-			var myAccountMenu = _makeTopLevelMenu("My Account", myAccountItems);
+			var myAccountMenu = _makeTopLevelMenu("Account", myAccountItems);
 
 			var helpItems = //
 			_menuItem("Main Menu Help", "mainMenuHelp", "nav.openMainMenuHelp();");

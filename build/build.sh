@@ -40,6 +40,7 @@ cat ../src/main/resources/public/js/meta64/dlg/MessageDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/LoginDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/SignupDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/PrefsDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ManageAccountDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ExportDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ImportDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/SearchDlg.js >> all.js

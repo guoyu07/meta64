@@ -5,6 +5,9 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
+	
+	var waitCounter = 0;
+	var pgrsDlg = null;
 
 	Array.prototype.clone = function() {
 		return this.slice(0);
@@ -113,6 +116,30 @@ var util = function() {
 			return child.prototype;
 		},
 
+		initProgressMonitor : function() {
+			setInterval(_.progressInterval, 1000);
+		},
+		
+		progressInterval : function() {
+			var isWaiting = _.isAjaxWaiting();
+			if (isWaiting) {
+				waitCounter++;
+				if (waitCounter >= 3) {
+					if (!pgrsDlg) {
+						pgrsDlg = new ProgressDlg();
+						pgrsDlg.open();
+					}
+				}
+			}
+			else {
+				waitCounter = 0;
+				if (pgrsDlg) {
+					pgrsDlg.cancel();
+					pgrsDlg = null;
+				}
+			}
+		},
+
 		/*
 		 * If the callback function needs a 'this' context for the call, then pass the 'this' in the callbackThis
 		 * parameter.
@@ -187,6 +214,8 @@ var util = function() {
 			function() {
 				try {
 					_ajaxCounter--;
+					_.progressInterval();
+					
 					if (logAjax) {
 						console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
 								+ JSON.stringify(ironRequest.response));
@@ -220,6 +249,7 @@ var util = function() {
 			function() {
 				try {
 					_ajaxCounter--;
+					_.progressInterval();
 					console.log("Error in util.json");
 
 					if (ironRequest.status == "403") {
@@ -634,5 +664,5 @@ var util = function() {
 	return _;
 }();
 
-//# sourceURL=util.js
+// # sourceURL=util.js
 

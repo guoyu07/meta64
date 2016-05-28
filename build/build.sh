@@ -36,6 +36,7 @@ cat ../src/main/resources/public/js/meta64/view.js >> all.js
 cat ../src/main/resources/public/js/meta64/menu.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/base/Dialog.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ConfirmDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ProgressDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/MessageDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/LoginDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/SignupDlg.js >> all.js

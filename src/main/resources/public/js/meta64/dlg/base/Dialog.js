@@ -165,9 +165,9 @@ Dialog_.makeRadioButton = function(label, id) {
 	}, label);
 }
 
-Dialog_.makeHeader = function(text, id) {
+Dialog_.makeHeader = function(text, id, centered) {
 	var attrs = {
-		"class" : "dialog-header"
+		"class" : "dialog-header " + (centered ?  "horizontal center-justified layout" : "")
 	};
 	
 	//add id if one was provided

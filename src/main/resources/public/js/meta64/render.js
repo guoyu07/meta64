@@ -330,7 +330,8 @@ var render = function() {
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
-			console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
+			//console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
+			
 			/*
 			 * if not selected by being the new child, then we try to select based on if this node was the last one
 			 * clicked on for this page.

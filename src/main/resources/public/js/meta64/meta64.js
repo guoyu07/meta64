@@ -675,6 +675,8 @@ var meta64 = function() {
 
 			_.updateMainMenuPanel();
 			_.refreshAllGuiEnablement();
+			
+			util.initProgressMonitor();
 		},
 
 		tabChangeEvent : function(tabName) {

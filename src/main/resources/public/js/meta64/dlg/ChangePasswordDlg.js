@@ -1,21 +1,33 @@
 console.log("running module: ChangePasswordDlg.js");
 
-var ChangePasswordDlg = function() {
+var ChangePasswordDlg = function(passCode) {
 	Dialog.call(this);
 
+	this.passCode = passCode;
 	this.domId = "ChangePasswordDlg";
 }
 
 var ChangePasswordDlg_ = util.inherit(Dialog, ChangePasswordDlg);
 
 /*
- * Returns a string that is the HTML content of the dialog
+ * Returns a string that is the HTML content of the dialog.
+ * 
+ * If the user is doing a "Reset Password" we will have a non-null passCode here, and we simply send this to the server
+ * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
+ * user.
+ * 
+ * todo-0: I do need to make a change where during the first page render we DO embed the name of the user attempting the
+ * password change so at least they have assurance what's happening, but this is icing on the cake.
  */
 ChangePasswordDlg_.build = function() {
-	var header = this.makeHeader("Change Password");
 
-	var formControls = this.makePasswordField("Password", "changePassword1") + //
-	this.makePasswordField("Repeat Password", "changePassword2");
+	var header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
+
+	var message = render.tag("p", {
+
+	}, "Enter your new password below...");
+
+	var formControls = this.makePasswordField("New Password", "changePassword1");
 
 	var changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
 			ChangePasswordDlg_.changePassword, this);
@@ -23,17 +35,16 @@ ChangePasswordDlg_.build = function() {
 
 	var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
 
-	return header + formControls + buttonBar;
+	return header + message + formControls + buttonBar;
 }
 
 ChangePasswordDlg_.changePassword = function() {
-	var pwd1 = this.getInputVal("changePassword1").trim();
-	var pwd2 = this.getInputVal("changePassword2").trim();
+	this.pwd = this.getInputVal("changePassword1").trim();
 
-	debugger;
-	if (pwd1 && pwd1.length >= 4 && pwd1 === pwd2) {
+	if (this.pwd && this.pwd.length >= 4) {
 		util.json("changePassword", {
-			"newPassword" : pwd1
+			"newPassword" : this.pwd,
+			"passCode" : this.passCode
 		}, ChangePasswordDlg_.changePasswordResponse, this);
 	} else {
 		(new MessageDlg("Invalid password(s).")).open();
@@ -42,7 +53,24 @@ ChangePasswordDlg_.changePassword = function() {
 
 ChangePasswordDlg_.changePasswordResponse = function(res) {
 	if (util.checkSuccess("Change password", res)) {
-		(new MessageDlg("Password changed successfully.")).open();
+
+		var msg = "Password changed successfully.";
+	
+		if (this.passCode) {
+			msg += "<p>You may now login in as " + res.user
+					+ " with your new password.";
+		}
+		
+		var thiz = this;
+		(new MessageDlg(msg, "Password Change", function() {
+			if (thiz.passCode) {
+				//this login call DOES work, but the reason we don't do this is because the URL still has the passCode on it and we
+				//want to direct the user to a url without that.
+				//user.login(null, res.user, thiz.pwd);
+				
+				window.location.href = window.location.origin;
+			}
+		})).open();
 	}
 }
 
@@ -50,4 +78,4 @@ ChangePasswordDlg_.init = function() {
 	this.focus("changePassword1");
 }
 
-//# sourceURL=ChangePasswordDlg.js
+// # sourceURL=ChangePasswordDlg.js

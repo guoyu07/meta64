@@ -32,6 +32,16 @@ public class UserManagerUtil {
 		return authorizable;
 	}
 
+	// public static boolean userExists(Session session, String userName) throws Exception {
+	// boolean ret = false;
+	// UserManager userManager = ((JackrabbitSession) session).getUserManager();
+	// Authorizable authorizable = userManager.getAuthorizable(userName);
+	// if (authorizable != null) {
+	// ret = true;
+	// }
+	// return ret;
+	// }
+
 	public static boolean createUser(Session session, String userName, String password, boolean automated) throws Exception {
 		boolean ret = false;
 		UserManager userManager = ((JackrabbitSession) session).getUserManager();

@@ -19,6 +19,7 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.LoginResponse;
@@ -118,8 +119,7 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext)
-			throws Exception {
+	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) throws Exception {
 		Object[] args = joinPoint.getArgs();
 		String userName = JcrPrincipal.ANONYMOUS;
 		String password = JcrPrincipal.ANONYMOUS;
@@ -146,6 +146,12 @@ public class OakSessionAspect {
 				return null;
 			}
 		}
+		else if (req instanceof ChangePasswordRequest && ((ChangePasswordRequest) req).getPassCode() != null) {
+			/*
+			 * we will have no session for user here, return null;
+			 */
+			return null;
+		}
 		else if (req instanceof SignupRequest) {
 			/*
 			 * we will have no session for user for signup request, so return null
@@ -165,8 +171,7 @@ public class OakSessionAspect {
 		}
 
 		try {
-			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials()
-					: new SimpleCredentials(userName, password.toCharArray());
+			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;
 		}

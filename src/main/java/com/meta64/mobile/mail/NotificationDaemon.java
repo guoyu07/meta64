@@ -91,6 +91,7 @@ public class NotificationDaemon {
 		MailSender mailSender = null;
 
 		try {
+			// todo-0: why am I not autowiring the mailSenderBean??
 			mailSender = SpringContextUtil.getApplicationContext().getBean(MailSender.class);
 			mailSender.init();
 

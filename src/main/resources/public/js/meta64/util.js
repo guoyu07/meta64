@@ -5,7 +5,7 @@ var util = function() {
 	var logAjax = false;
 	var timeoutMessageShown = false;
 	var offline = false;
-	
+
 	var waitCounter = 0;
 	var pgrsDlg = null;
 
@@ -106,6 +106,22 @@ var util = function() {
 		daylightSavingsTime : (new Date().dst()) ? true : false,
 
 		/*
+		 * This came from here:
+		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+		 */
+		getParameterByName : function(name, url) {
+			if (!url)
+				url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+			if (!results)
+				return null;
+			if (!results[2])
+				return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+
+		/*
 		 * Sets up an inheritance relationship so that child inherits from parent, and then returns the prototype of the
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
@@ -119,7 +135,7 @@ var util = function() {
 		initProgressMonitor : function() {
 			setInterval(_.progressInterval, 1000);
 		},
-		
+
 		progressInterval : function() {
 			var isWaiting = _.isAjaxWaiting();
 			if (isWaiting) {
@@ -130,8 +146,7 @@ var util = function() {
 						pgrsDlg.open();
 					}
 				}
-			}
-			else {
+			} else {
 				waitCounter = 0;
 				if (pgrsDlg) {
 					pgrsDlg.cancel();
@@ -215,7 +230,7 @@ var util = function() {
 				try {
 					_ajaxCounter--;
 					_.progressInterval();
-					
+
 					if (logAjax) {
 						console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
 								+ JSON.stringify(ironRequest.response));
@@ -241,7 +256,7 @@ var util = function() {
 						}
 					}
 				} catch (ex) {
-					throw "Failed handling result of: " + postName;
+					throw "Failed handling result of: " + postName + " ex=" + ex;
 				}
 
 			},

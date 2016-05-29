@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 /**
  * Keeping this for future reference.
  */
-//todo-0: don't checkin dev file hardcoded here, bc this will break production
+// todo-1: don't checkin dev file hardcoded here, bc this will break production
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
 

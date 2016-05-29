@@ -46,6 +46,7 @@ cat ../src/main/resources/public/js/meta64/dlg/ExportDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ImportDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/SearchDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ChangePasswordDlg.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/ResetPasswordDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/UploadFromFileDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/UploadFromUrlDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/EditNodeDlg.js >> all.js

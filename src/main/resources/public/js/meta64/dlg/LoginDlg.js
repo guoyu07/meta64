@@ -17,8 +17,9 @@ LoginDlg_.build = function() {
 	this.makePasswordField("Password", "password");
 
 	var loginButton = this.makeButton("Login", "loginButton", LoginDlg_.login, this);
+	var resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", LoginDlg_.resetPassword, this);
 	var backButton = this.makeCloseButton("Close", "cancelLoginButton");
-	var buttonBar = render.centeredButtonBar(loginButton + backButton);
+	var buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
 
 	/*
 	 * Social Login Buttons
@@ -62,22 +63,23 @@ LoginDlg_.populateFromCookies = function() {
 
 LoginDlg_.login = function() {
 
-	this.cancel();
-
 	var usr = this.getInputVal("userName");
 	var pwd = this.getInputVal("password");
 
-	var ironRes = util.json("login", {
-		"userName" : usr,
-		"password" : pwd,
-		"tzOffset" : new Date().getTimezoneOffset(),
-		"dst" : util.daylightSavingsTime
-	});
-
-	var thiz = this;
-	ironRes.completes.then(function() {
-		user.loginResponse(ironRes.response, usr, pwd, null, thiz);
-	});
+	user.login(this, usr, pwd);
 }
 
-//# sourceURL=LoginDlg.js
+LoginDlg_.resetPassword = function() {
+	var thiz = this;
+	var usr = this.getInputVal("userName");
+	
+	(new ConfirmDlg("Confirm Reset Password",
+			"Reset your password ?<p>You'll still be able to login with your old password until the new one is set.",
+			"Yes, reset.", function() {
+				thiz.cancel();
+				(new ResetPasswordDlg(usr)).open();
+			})).open();
+
+}
+
+// # sourceURL=LoginDlg.js

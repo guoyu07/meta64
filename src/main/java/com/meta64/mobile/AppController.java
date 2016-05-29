@@ -46,6 +46,7 @@ import com.meta64.mobile.request.NodeSearchRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
+import com.meta64.mobile.request.ResetPasswordRequest;
 import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
@@ -76,6 +77,7 @@ import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
+import com.meta64.mobile.response.ResetPasswordResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
@@ -187,17 +189,25 @@ public class AppController {
 	 * ID is optional url parameter that user can specify to access a specific node in the
 	 * repository by uuid.
 	 * 
+	 * passCode is an auth code for a password reset
+	 * 
 	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of "/index.html"
 	 */
 	@RequestMapping("/")
 	public String mobile(@RequestParam(value = "id", required = false) String id, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
+			// @RequestParam(value = "passCode", required = false) String passCode, //
 			Model model) throws Exception {
 		logRequest("mobile", null);
+
+		// model.addAttribute("passCode", "testworks!");
 
 		if (signupCode != null) {
 			userManagerService.processSignupCode(signupCode, model);
 		}
+		// else if (passCode != null) {
+		// model.addAttribute("passCode", passCode);
+		// }
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 
@@ -476,6 +486,16 @@ public class AppController {
 		ChangePasswordResponse res = new ChangePasswordResponse();
 		checkHttpSession();
 		userManagerService.changePassword(req, res);
+		return res;
+	}
+
+	@RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest req) throws Exception {
+		logRequest("resetPassword", req);
+		ResetPasswordResponse res = new ResetPasswordResponse();
+		checkHttpSession();
+		userManagerService.resetPassword(req, res);
 		return res;
 	}
 

@@ -153,6 +153,19 @@ var user = function() {
 			util.json("logout", {}, _logoutResponse);
 		},
 
+		login : function(loginDlg, usr, pwd) {
+			var ironRes = util.json("login", {
+				"userName" : usr,
+				"password" : pwd,
+				"tzOffset" : new Date().getTimezoneOffset(),
+				"dst" : util.daylightSavingsTime
+			});
+
+			ironRes.completes.then(function() {
+				_.loginResponse(ironRes.response, usr, pwd, null, loginDlg);
+			});
+		},
+		
 		loginResponse : function(res, usr, pwd, usingCookies, loginDlg) {
 			if (util.checkSuccess("Login", res)) {
 				console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);

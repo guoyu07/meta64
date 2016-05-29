@@ -675,8 +675,19 @@ var meta64 = function() {
 
 			_.updateMainMenuPanel();
 			_.refreshAllGuiEnablement();
-			
+
 			util.initProgressMonitor();
+
+			_.processUrlParams();
+		},
+
+		processUrlParams : function() {
+			var passCode = util.getParameterByName("passCode");
+			if (passCode) {
+				setTimeout(function() {
+					(new ChangePasswordDlg(passCode)).open();
+				}, 100);
+			}
 		},
 
 		tabChangeEvent : function(tabName) {
@@ -727,4 +738,4 @@ var meta64 = function() {
 	return _;
 }();
 
-//# sourceURL=meta64.js
+// # sourceURL=meta64.js

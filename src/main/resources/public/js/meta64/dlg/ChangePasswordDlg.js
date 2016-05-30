@@ -15,9 +15,6 @@ var ChangePasswordDlg_ = util.inherit(Dialog, ChangePasswordDlg);
  * If the user is doing a "Reset Password" we will have a non-null passCode here, and we simply send this to the server
  * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
  * user.
- * 
- * todo-0: I do need to make a change where during the first page render we DO embed the name of the user attempting the
- * password change so at least they have assurance what's happening, but this is icing on the cake.
  */
 ChangePasswordDlg_.build = function() {
 

@@ -307,7 +307,7 @@ public class UserManagerService {
 				throw new Exception("Wrong captcha text.");
 			}
 
-			initiateSignup(userName, password, email, false);
+			initiateSignup(userName, password, email);
 		}
 		else {
 			initNewUser(session, userName, password, email, JcrPropVal.META64, automated);
@@ -320,29 +320,24 @@ public class UserManagerService {
 	/*
 	 * Adds user to the JCR list of pending accounts and they will stay in pending status until
 	 * their signupCode has been used to validate their email address.
-	 * 
-	 * todo-0: i think i'll never need to call with automated=true (remove param)
 	 */
-	public void initiateSignup(String userName, String password, String email, boolean automated) throws Exception {
+	public void initiateSignup(String userName, String password, String email) throws Exception {
 
 		String signupCode = JcrUtil.getGUID();
 		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
 		String content = null;
 
-		if (!automated) {
-			/*
-			 * We print this out so we can use it in DEV mode when no email support may be
-			 * configured
-			 */
-			log.debug("Signup URL: " + signupLink);
+		/*
+		 * We print this out so we can use it in DEV mode when no email support may be configured
+		 */
+		log.debug("Signup URL: " + signupLink);
 
-			content = "Confirmation for new meta64 account: " + userName + //
-					"<p>\nGo to this page to complete signup: <br>\n" + signupLink;
-		}
+		content = "Confirmation for new meta64 account: " + userName + //
+				"<p>\nGo to this page to complete signup: <br>\n" + signupLink;
 
 		addPendingSignupNode(userName, password, email, signupCode);
 
-		if (!automated && !StringUtils.isEmpty(mailHost)) {
+		if (!StringUtils.isEmpty(mailHost)) {
 			outboxMgr.queueEmail(email, "Meta64 Account Signup Confirmation", content);
 		}
 	}
@@ -514,16 +509,16 @@ public class UserManagerService {
 		String userName = null;
 
 		try {
-			// todo-0: validate that passcode as a long time value is not before current time,
-			// because that would mean it's expired. The passCode also serves as a time value that
-			// is the expiration date for itself!
+			long passCodeTime = Long.valueOf(passCode);
+			if (new Date().getTime() > passCodeTime) {
+				throw new Exception("Password Reset auth code has expired.");
+			}
 
 			/* search for the node with passCode property */
 			Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.USER_PREFERENCES, //
 					JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, passCode);
 
 			if (node != null) {
-
 				/*
 				 * it's a bit ugly that the JCR content is the property that holds the user, but
 				 * originally this node was not one where I realized I would be looking up names
@@ -575,15 +570,17 @@ public class UserManagerService {
 
 			/*
 			 * if we make it to here the user and email are both correct, and we can initiate the
-			 * password reset. We use the current time plus some random value up to one hour into
-			 * the future to serve as the unguessable auth code AND the expire time for it. Later we
-			 * can create a deamon processor that cleans up expired authCodes, but for now we just
-			 * need to HAVE the auth code.
+			 * password reset. We pick some random time between 1 and 2 days from now into the
+			 * future to serve as the unguessable auth code AND the expire time for it. Later we can
+			 * create a deamon processor that cleans up expired authCodes, but for now we just need
+			 * to HAVE the auth code.
 			 * 
 			 * User will be emailed this code and we will perform reset when we see it, and the user
 			 * has entered new password we can use.
 			 */
-			long authCode = new Date().getTime() + rand.nextInt(60 * 60 * 1000);
+			int oneDayMillis = 60 * 60 * 1000;
+			long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
+
 			node.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
 			session.save();
 

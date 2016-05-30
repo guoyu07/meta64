@@ -22,7 +22,7 @@ ProgressDlg_.build = function() {
 	});
 
 	var barContainer = render.tag("div", {
-		"style" : "width:300px; margin:24px;",
+		"style" : "width:280px; margin:24px;",
 		"class" : "horizontal center-justified layout"
 	}, progressBar);
 	

@@ -78,4 +78,4 @@ ChangePasswordDlg_.init = function() {
 	this.focus("changePassword1");
 }
 
-// # sourceURL=ChangePasswordDlg.js
+//# sourceURL=ChangePasswordDlg.js

@@ -57,4 +57,4 @@ ResetPasswordDlg_.init = function() {
 	}
 }
 
-// # sourceURL=ChangePasswordDlg.js
+//# sourceURL=ChangePasswordDlg.js

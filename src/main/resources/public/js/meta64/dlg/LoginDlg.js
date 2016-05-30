@@ -82,4 +82,4 @@ LoginDlg_.resetPassword = function() {
 
 }
 
-// # sourceURL=LoginDlg.js
+//# sourceURL=LoginDlg.js

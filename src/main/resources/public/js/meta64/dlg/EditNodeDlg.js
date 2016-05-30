@@ -365,7 +365,6 @@ EditNodeDlg_.clearProperty = function(fieldId) {
  * itself from any kind of damage.
  */
 EditNodeDlg_.saveNode = function() {
-
 	/*
 	 * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
 	 * server, and will initiate further editing like for properties, etc.
@@ -523,7 +522,7 @@ EditNodeDlg_.saveExistingNode = function() {
 			sendNotification : edit.sendNotificationPendingSave
 		};
 		console.log("running saveNode()");
-		util.json("saveNode", postData, edit.saveNodeResponse);
+		util.json("saveNode", postData, edit.saveNodeResponse, null, {savedId : edit.editNode.id});
 		edit.sendNotificationPendingSave = false;
 	} else {
 		console.log("nothing chaged. Nothing to save.");

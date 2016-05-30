@@ -157,11 +157,10 @@ var edit = function() {
 			}
 		},
 
-		saveNodeResponse : function(res) {
+		saveNodeResponse : function(res, payload) {
 			if (util.checkSuccess("Save node", res)) {
-				view.refreshTree(null, false);
+				view.refreshTree(null, false, payload.savedId);
 				meta64.selectTab("mainTabName");
-				view.scrollToSelectedNode();
 			}
 		},
 

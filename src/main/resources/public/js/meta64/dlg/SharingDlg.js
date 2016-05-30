@@ -39,7 +39,6 @@ SharingDlg_.init = function() {
  * Gets privileges from server and displays in GUI also. Assumes gui is already at correct page.
  */
 SharingDlg_.reload = function() {
-	debugger;
 	console.log("Loading node sharing info.");
 
 	util.json("getNodePrivileges", {
@@ -57,7 +56,6 @@ SharingDlg_.reload = function() {
  * res.aclEntries = list of AccessControlEntryInfo.java json objects
  */
 SharingDlg_.getNodePrivilegesResponse = function(res) {
-	debugger;
 	this.populateSharingPg(res);
 }
 
@@ -65,7 +63,6 @@ SharingDlg_.getNodePrivilegesResponse = function(res) {
  * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
  */
 SharingDlg_.populateSharingPg = function(res) {
-	debugger;
 	var html = "";
 	var This = this;
 

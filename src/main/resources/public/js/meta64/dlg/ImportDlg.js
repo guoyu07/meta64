@@ -23,7 +23,6 @@ ImportDlg_.build = function() {
 }
 
 ImportDlg_.importNodes = function() {
-	debugger;
 	var highlightNode = meta64.getHighlightedNode();
 	var sourceFileName = this.getInputVal("importTargetNodeName");
 

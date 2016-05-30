@@ -239,7 +239,8 @@ var util = function() {
 					if (typeof callback == "function") {
 						/*
 						 * This is ugly because it covers all four cases based on two booleans, but it's still the
-						 * simplest way to do this
+						 * simplest way to do this. We have a callback function that may or may not specify a 'this' 
+						 * and always calls with the 'reponse' param and optionally a callbackPayload param.
 						 */
 						if (callbackPayload) {
 							if (callbackThis) {

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * Implements and processes the sending of emails.
  */
 @Component
-@Scope("prototype")
+@Scope("singleton")
 public class MailSender implements TransportListener {
 
 	private static final Logger log = LoggerFactory.getLogger(MailSender.class);
@@ -50,29 +50,50 @@ public class MailSender implements TransportListener {
 	private Session mailSession;
 	private Transport transport;
 
+	/*
+	 * This method can and should be called before sending mails, close() method should be called
+	 * after mail is sent
+	 */
 	public void init() throws Exception {
 
-		log.debug("Creating mail sender.");
+		if (props == null) {
+			log.debug("Initializing mail sender.");
 
-		props = new Properties();
-		props.put("mail.transport.protocol", "smtp");
-		props.put("mail.host", mailHost);
+			props = new Properties();
+			props.put("mail.transport.protocol", "smtp");
+			props.put("mail.host", mailHost);
 
-		/*
-		 * how did I end up with 'put' instead of 'setProperty' here? Cut-n-paste from somewhere
-		 */
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", mailPort);
+			/*
+			 * how did I end up with 'put' instead of 'setProperty' here? Cut-n-paste from somewhere
+			 */
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.port", mailPort);
 
-		props.put("mail.user", mailUser);
-		props.put("mail.password", mailPassword);
+			props.put("mail.user", mailUser);
+			props.put("mail.password", mailPassword);
+		}
 
-		mailSession = Session.getDefaultInstance(props, null);
-		mailSession.setDebug(debug);
+		/* close any existing mail transport */
+		close();
+
+		if (mailSession == null) {
+			mailSession = Session.getDefaultInstance(props, null);
+			mailSession.setDebug(debug);
+		}
 
 		transport = mailSession.getTransport("smtp");
 		transport.addTransportListener(this);
 		transport.connect(mailHost, mailUser, mailPassword);
+	}
+
+	public void close() throws Exception {
+		if (transport != null) {
+			success = false;
+			waiting = false;
+
+			transport.close();
+			transport = null;
+		}
 	}
 
 	public boolean isBusy() {
@@ -135,13 +156,6 @@ public class MailSender implements TransportListener {
 		}
 
 		return success;
-	}
-
-	public void close() throws Exception {
-		if (transport != null) {
-			transport.close();
-			transport = null;
-		}
 	}
 
 	@Override

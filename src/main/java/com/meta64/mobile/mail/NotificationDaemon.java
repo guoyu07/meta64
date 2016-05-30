@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 
@@ -40,6 +39,9 @@ public class NotificationDaemon {
 
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
+
+	@Autowired
+	private MailSender mailSender;
 
 	@Value("${mail.host}")
 	public String mailHost;
@@ -88,11 +90,9 @@ public class NotificationDaemon {
 
 	private void sendAllMail(Session session, List<Node> nodes) throws Exception {
 
-		MailSender mailSender = null;
+		boolean sessionDirty = false;
 
 		try {
-			// todo-0: why am I not autowiring the mailSenderBean??
-			mailSender = SpringContextUtil.getApplicationContext().getBean(MailSender.class);
 			mailSender.init();
 
 			for (Node node : nodes) {
@@ -103,23 +103,32 @@ public class NotificationDaemon {
 
 				if (mailSender.sendMail(email, content, subject)) {
 					node.remove();
-					session.save();
+					sessionDirty = true;
 				}
 			}
 		}
 		finally {
-			if (mailSender != null) {
-				try {
-					log.debug("Closing mail sender after sending some mail(s).");
-					mailSender.close();
-					mailSender = null;
+			try {
+				if (sessionDirty) {
+					session.save();
 				}
-				catch (Exception e) {
-					log.debug("Failed closing mail sender object.", e);
-					/*
-					 * DO NOT rethrow. Don't want to blow up the daemon thread
-					 */
-				}
+			}
+			catch (Exception e) {
+				log.debug("Failed persisting mail node changes.", e);
+				/*
+				 * DO NOT rethrow. Don't want to blow up the daemon thread
+				 */
+			}
+
+			try {
+				log.debug("Closing mail sender after sending some mail(s).");
+				mailSender.close();
+			}
+			catch (Exception e) {
+				log.debug("Failed closing mail sender object.", e);
+				/*
+				 * DO NOT rethrow. Don't want to blow up the daemon thread
+				 */
 			}
 		}
 	}

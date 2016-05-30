@@ -350,7 +350,7 @@ public class UserManagerService {
 		adminRunner.run((Session session) -> {
 
 			try {
-				Node checkNode = session.getNode("/" + JcrName.SIGNUP + "/" + userName);
+				session.getNode("/" + JcrName.SIGNUP + "/" + userName);
 				throw new Exception("User name is already pending signup.");
 			}
 			catch (Exception e) {
@@ -381,8 +381,7 @@ public class UserManagerService {
 	}
 
 	public void setDefaultUserPreferences(Node prefsNode) throws Exception {
-		/* for polymer conversion, defaulting to true for now */
-		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, true);
+		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
 	}
 
 	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {

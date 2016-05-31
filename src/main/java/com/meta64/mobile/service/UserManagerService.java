@@ -545,6 +545,12 @@ public class UserManagerService {
 			String user = req.getUser();
 			String email = req.getEmail();
 
+			if (!UserManagerUtil.isNormalUserName(user)) {
+				res.setMessage("User name is illegal.");
+				res.setSuccess(false);
+				return;
+			}
+
 			Authorizable auth = UserManagerUtil.getUser(session, user);
 			if (auth == null) {
 				res.setMessage("User does not exist.");
@@ -552,14 +558,14 @@ public class UserManagerService {
 				return;
 			}
 
-			Node node = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" + user);
-			if (node == null) {
-				res.setMessage("Database user info is missing.");
+			Node userPrefsNode = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" + user);
+			if (userPrefsNode == null) {
+				res.setMessage("User info is missing.");
 				res.setSuccess(false);
 				return;
 			}
 
-			String nodeEmail = node.getProperty("email").getString();
+			String nodeEmail = userPrefsNode.getProperty("email").getString();
 			if (nodeEmail == null || !nodeEmail.equals(email)) {
 				res.setMessage("Wrong user name and/or email.");
 				res.setSuccess(false);
@@ -579,7 +585,7 @@ public class UserManagerService {
 			int oneDayMillis = 60 * 60 * 1000;
 			long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
 
-			node.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
+			userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
 			session.save();
 
 			String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);

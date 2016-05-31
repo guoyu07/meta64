@@ -200,14 +200,9 @@ public class AppController {
 			Model model) throws Exception {
 		logRequest("mobile", null);
 
-		// model.addAttribute("passCode", "testworks!");
-
 		if (signupCode != null) {
 			userManagerService.processSignupCode(signupCode, model);
 		}
-		// else if (passCode != null) {
-		// model.addAttribute("passCode", passCode);
-		// }
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 

@@ -26,6 +26,11 @@ import com.meta64.mobile.util.JcrUtil;
 public class UserManagerUtil {
 	private static final Logger log = LoggerFactory.getLogger(UserManagerUtil.class);
 
+	public static boolean isNormalUserName(String userName) {
+		userName = userName.trim();
+		return !userName.equalsIgnoreCase("admin") && !userName.equalsIgnoreCase("everyone");
+	}
+
 	public static Authorizable getUser(Session session, String userName) throws Exception {
 		UserManager userManager = ((JackrabbitSession) session).getUserManager();
 		Authorizable authorizable = userManager.getAuthorizable(userName);

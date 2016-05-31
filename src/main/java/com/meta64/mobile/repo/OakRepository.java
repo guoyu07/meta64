@@ -259,8 +259,8 @@ public class OakRepository {
 	 */
 	private void createTestAccounts() throws Exception {
 		/*
-		 * The testUserAccounts is a comma delimited list of user account where each user account is
-		 * a colon-delimited list like username:password:email.
+		 * The testUserAccounts is a comma delimited list of user accounts where each user account
+		 * is a colon-delimited list like username:password:email.
 		 * 
 		 * todo-1: could change the format of this info to JSON.
 		 */

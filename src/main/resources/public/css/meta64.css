@@ -98,6 +98,10 @@ tr td div p {
 	margin-left: 10px;
 }
 
+.dialog-message {
+	width: 400px;
+}
+
 .dialog-header {
 	/* for now i'll go with dialog headers that are just basic H2 style
 	background: lightGray;

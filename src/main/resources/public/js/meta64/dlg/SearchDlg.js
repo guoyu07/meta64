@@ -13,7 +13,7 @@ var SearchDlg_ = util.inherit(Dialog, SearchDlg);
 SearchDlg_.build = function() {
 	var header = this.makeHeader("Search");
 
-	var instructions = "<p>Enter some text to find. All sub-nodes under the selected node are included in the search.</p>";
+	var instructions = this.makeMessageArea("Enter some text to find. All sub-nodes under the selected node are included in the search.");
 	var formControls = this.makeEditField("Search", "searchText");
 
 	var searchButton = this.makeCloseButton("Search", "searchNodesButton", SearchDlg_.searchNodes, this);

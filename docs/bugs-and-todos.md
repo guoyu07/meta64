@@ -2,7 +2,6 @@
 * We have serval places in the code where we do something like delete nodes, etc, and we are going back to the server to refresh the page, when really the client-side has enough information to refresh the page without going back to server, but it takes additional work. Waiting for the feature set to become more stable before attacking these kinds of performance optimizations.
 
 # TODO
-* Need to implement "forgot my password", and reset password without sending actual password to user, but instead a limited duration (like 5minutes) random code that can be used to login and change password.
 * need 'delete account' capability where user can leave meta64, and have all their data deleted from the server.
 * after changing edit mode (simple/advanced) need to refresh entire page from server
 * on search results screen, need a button to directly edit a node from there.

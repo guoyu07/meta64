@@ -376,8 +376,7 @@ public class UserManagerService {
 	 * Get node that contains all preferences for this user, as properties on it.
 	 */
 	public static Node getPrefsNodeForSessionUser(Session session, String userName) throws Exception {
-		return JcrUtil.ensureNodeExists(session, "/" + JcrName.USER_PREFERENCES + "/", userName, //
-				"User: " + userName);
+		return JcrUtil.ensureNodeExists(session, "/" + JcrName.USER_PREFERENCES + "/", userName, userName);
 	}
 
 	public void setDefaultUserPreferences(Node prefsNode) throws Exception {

@@ -107,6 +107,12 @@ Dialog_.makeEditField = function(fieldName, id) {
 	}, "", true);
 }
 
+Dialog_.makeMessageArea = function(message) {
+	return render.tag("p", {
+		"class" : "dialog-message"
+	}, message);
+}
+
 // todo: there's a makeButton (and other similar methods) that don't have the
 // encodeCallback capability yet
 Dialog_.makeButton = function(text, id, callback, ctx) {

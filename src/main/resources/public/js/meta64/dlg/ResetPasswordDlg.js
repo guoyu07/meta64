@@ -15,8 +15,7 @@ var ResetPasswordDlg_ = util.inherit(Dialog, ResetPasswordDlg);
 ResetPasswordDlg_.build = function() {
 	var header = this.makeHeader("Reset Password");
 
-	var message = render.tag("p", {},
-			"Enter your user name and email address and a change-password link will be sent to you");
+	var message = this.makeMessageArea("Enter your user name and email address and a change-password link will be sent to you");
 
 	var formControls = this.makeEditField("User", "userName") + //
 	this.makeEditField("Email Address", "emailAddress");

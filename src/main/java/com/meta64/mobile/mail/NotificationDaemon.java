@@ -121,7 +121,7 @@ public class NotificationDaemon {
 			}
 
 			try {
-				log.debug("Closing mail sender after sending some mail(s).");
+				log.debug("Closing mail sender after mail cycle.");
 				mailSender.close();
 			}
 			catch (Exception e) {

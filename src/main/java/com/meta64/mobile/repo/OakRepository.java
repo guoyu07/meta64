@@ -270,9 +270,6 @@ public class OakRepository {
 		}
 
 		adminRunner.run((Session session) -> {
-			// This commented code works perfectly to create a new user. I just
-			// don't have it turned on yet, until I make it
-			// silently fail when the user already exists of course.
 			for (String accountInfo : testUserAccountsList) {
 				final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
 				if (accountInfoList == null || accountInfoList.size() != 3) {

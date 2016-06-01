@@ -8,12 +8,7 @@ var render = function() {
 	 * want to give them some instructions and the ability to add content.
 	 */
 	function _getEmptyPagePrompt() {
-		var createSubNodeButton = _.tag("paper-button", {
-			"raised" : "raised",
-			"onClick" : "edit.createSubNode();"
-		}, "Create Content");
-
-		return createSubNodeButton;
+		return "<p>There are no subnodes under this parent. Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
 	}
 
 	function _renderBinary(node) {
@@ -126,7 +121,7 @@ var render = function() {
 
 			return content;
 		},
-		
+
 		injectSubstitutions : function(content) {
 			return content.replaceAll("{{locationOrigin}}", window.location.origin);
 		},
@@ -147,8 +142,8 @@ var render = function() {
 		},
 
 		/*
-		 * This is the function that renders each node in the main window. The rendering in here is very central to the app
-		 * and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
+		 * This is the function that renders each node in the main window. The rendering in here is very central to the
+		 * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
 		 * 
 		 * node: JSON of NodeInfo.java
 		 * 
@@ -227,8 +222,7 @@ var render = function() {
 							}
 							ret += "</div></marked-element>";
 						}
-					}
-					else {
+					} else {
 						ret += "<div>[No Content Text]</div>";
 						var properties = props.renderProperties(node.properties);
 						if (properties) {
@@ -243,12 +237,11 @@ var render = function() {
 					 * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
 					 * class='corner-style'/></a>" + jcrContent); } }
 					 */
-				}
-				else {
-					if (node.path.trim()=="/") {
+				} else {
+					if (node.path.trim() == "/") {
 						ret += "Root Node";
 					}
-					//ret += "<div>[No Content Property]</div>";
+					// ret += "<div>[No Content Property]</div>";
 					var properties = props.renderProperties(node.properties);
 					if (properties) {
 						ret += /* "<br>" + */properties;
@@ -330,8 +323,8 @@ var render = function() {
 			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
 
-			//console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
-			
+			// console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
+
 			/*
 			 * if not selected by being the new child, then we try to select based on if this node was the last one
 			 * clicked on for this page.
@@ -441,7 +434,7 @@ var render = function() {
 
 				var selected = meta64.selectedNodes[node.uid] ? true : false;
 
-				//console.log("      nodeId " + node.uid + " selected=" + selected);
+				// console.log(" nodeId " + node.uid + " selected=" + selected);
 				buttonCount++;
 
 				var css = selected ? {
@@ -524,7 +517,7 @@ var render = function() {
 			// "for" : "addNodeButtonId" + uid
 			// }, "ADDS a new node inside the current node, as a child of it.");
 
-			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip  
+			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
 					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
 
 			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons) : "";
@@ -546,8 +539,7 @@ var render = function() {
 		},
 
 		makeRadioButton : function(label, id) {
-			return _.tag("paper-radio-button", 
-			{
+			return _.tag("paper-radio-button", {
 				"id" : id,
 				"name" : id
 			}, label);
@@ -568,7 +560,7 @@ var render = function() {
 
 		formatPath : function(node) {
 			var path = node.path;
-			
+
 			/* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
 			path = path.replaceAll("/", " / ");
 			var shortPath = path.length < 50 ? path : path.substring(0, 40) + "...";
@@ -656,7 +648,7 @@ var render = function() {
 			 */
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false, true);
 
-			// console.log("mainNodeContent: "+mainNodeContent);
+			console.log("mainNodeContent: "+mainNodeContent);
 			if (mainNodeContent.length > 0) {
 				var uid = data.node.uid;
 				var cssId = uid + "_row";
@@ -668,15 +660,17 @@ var render = function() {
 				// console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
 				// console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
-				/* Add edit button if edit mode and this isn't the root */
-				if (edit.isEditAllowed(data.node)) {
-
+				if (meta64.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
 					createSubNodeButton = _.tag("paper-button", {
-						//"id" : "addNodeButtonId" + node.uid,
+						// "id" : "addNodeButtonId" + node.uid,
 						"raised" : "raised",
 						"onClick" : "edit.createSubNode('" + uid + "');"
 					}, "Add");
-					
+				}
+
+				/* Add edit button if edit mode and this isn't the root */
+				if (edit.isEditAllowed(data.node)) {
+
 					/* Construct Create Subnode Button */
 					editNodeButton = _.tag("paper-button", {
 						"raised" : "raised",
@@ -689,8 +683,8 @@ var render = function() {
 				var selected = focusNode && focusNode.uid === uid;
 				// var rowHeader = _.buildRowHeader(data.node, true, true);
 
-				if (editNodeButton) {
-					buttonBar = _.makeHorizontalFieldSet(createSubNodeButton+editNodeButton);
+				if (createSubNodeButton || editNodeButton) {
+					buttonBar = _.makeHorizontalFieldSet(createSubNodeButton + editNodeButton);
 				}
 
 				var content = _.tag("div", {
@@ -733,7 +727,7 @@ var render = function() {
 			}
 
 			if (edit.isInsertAllowed(data.node)) {
-				if (rowCount==0 && !meta64.isAnonUser) {
+				if (rowCount == 0 && !meta64.isAnonUser) {
 					output = _getEmptyPagePrompt();
 				}
 			}

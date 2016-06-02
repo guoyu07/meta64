@@ -23,8 +23,14 @@ var edit = function() {
 			var node = res.nodeInfo;
 
 			var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
-			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
-					&& !props.isNonOwnedNode(node);
+
+			/* if this is a comment node and we are the commenter */
+			var editingAllowed = props.isOwnedCommentNode(node);
+
+			if (!editingAllowed) {
+				editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
+				&& !props.isNonOwnedNode(node);
+			}
 
 			if (editingAllowed) {
 				/*
@@ -36,7 +42,7 @@ var edit = function() {
 				_.editNodeDlgInst = new EditNodeDlg();
 				_.editNodeDlgInst.open();
 			} else {
-				(new MessageDlg("Edit not allowed.")).open();
+				(new MessageDlg("You cannot edit nodes that you don't own.")).open();
 			}
 		}
 	}
@@ -107,8 +113,8 @@ var edit = function() {
 			/*
 			 * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
 			 */
-			!props.isNonOwnedCommentNode(node) && //
-			!props.isNonOwnedNode(node);
+			(!props.isNonOwnedCommentNode(node) || props.isOwnedCommentNode(node)) //
+			&& !props.isNonOwnedNode(node);
 		},
 
 		/* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
@@ -117,6 +123,7 @@ var edit = function() {
 		},
 
 		startEditingNewNode : function() {
+			debugger;
 			_.editingUnsavedNode = false;
 			_.editNode = null;
 			_.editNodeDlgInst = new EditNodeDlg();

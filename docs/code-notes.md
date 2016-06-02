@@ -10,11 +10,11 @@ The AJAX calls to the server are all done using JSON POSTs that get JSON back in
 
 Each JS file has a variable that is creates and returns as a function. This is done for scoping primarily. Since JS has no concept of classes and scopes (outside functions) we use this pattern which is also a widely used pattern for JS code. So when you see something like 'render.doSomething()' you know right away this is a method in the 'render.js' file, without having to do any searching. Also the general need for hiding variables into the 'most localized' scope you can is accomplished this way, and is the best practice.
 
-## Underscore (_)
+## Underscore ( _ )
 
-A underscore variable in the JS should generally be interpreted at "this". In other words an underscore (_) at the front of a varible or as a scoping variable, means that the variable is referencing the current JS file that it's in. The convention would mean that for example, in a class named 'util.js' if you see something like "_.myVar or _.myFunction" those will be the same as "util.myVar or util.myFunction". So the underscore itself is the scoping variable that is the near equivalent of 'this' in Java or C++. Since JS is a functional language more than an OOP one, we use this name convention. I think this is a common convention used by JS developers also, to have underscore mean something similar to 'this'.
+A underscore variable in the JS should generally be interpreted at "this". In other words an underscore ( _ ) at the front of a varible or as a scoping variable, means that the variable is referencing the current JS file that it's in. The convention would mean that for example, in a class named 'util.js' if you see something like "_.myVar or _.myFunction" those will be the same as "util.myVar or util.myFunction". So the underscore itself is the scoping variable that is the near equivalent of 'this' in Java or C++. Since JS is a functional language more than an OOP one, we use this name convention. I think this is a common convention used by JS developers also, to have underscore mean something similar to 'this'.
 
-## Markdown 
+## Markdown
 
 Meta64 allows markdown text to be entered into content fields and renders them using standard markdown syntax. The markdown formatter api we use is PageDown.
 
@@ -53,9 +53,9 @@ To this... (in index.html)
 
 Commands to run MongoDb (on Windows)
 
-	 Windows: 
+	 Windows:
 	 mongod --dbpath c:\mongodb-data\db --port 27017
-	 
+
 Use CTRL-C to terminate the app gracefully.
 
 ## Running the Meta64 Server (on Windows)
@@ -65,26 +65,26 @@ Use CTRL-C to terminate the app gracefully.
     Example Windows BAT file to run Server:
     set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_55
     set PATH=%JAVA_HOME%\bin;%PATH%
-    java -jar com.meta64.mobile-0.0.1-SNAPSHOT.jar 
+    java -jar com.meta64.mobile-0.0.1-SNAPSHOT.jar
     	 --jcrAdminPassword=yourPasswordHere
-       --spring.config.location=classpath:/application.properties, 
+       --spring.config.location=classpath:/application.properties,
     	   classpath:/application-test.properties
-       --mail.user=name@someserver.com 
-       --mail.password=youremailserverpassword 
+       --mail.user=name@someserver.com
+       --mail.password=youremailserverpassword
        --mail.host=somehost.someserver.net
        --aeskey=9999999999999999
-    
+
 ## Hosts File
 The configuration properties are set to use meta64-dev.com as the host name for TEST and DEV profiles, which is not a real domain name, and so you need to modify your 'hosts file' to add the following line:
 
     127.0.0.1 meta64-dev.com
-    
+
 Note: On Windows this file is located in: **c:\Windows\System32\drivers\etc\hosts**. Also remember you need to run your text editor as administrative user in order to be able to edit that file. Do this with right click notepad.exe, and choosing "Run as Administator".  
 
-Note: On Ubuntu: 
+Note: On Ubuntu:
 
 	sudo gedit /etc/hosts    
-    
+
 ## Encryption Key Config
 
 For temporarily storing passwords before the user is created in the repository the following key needs to be supplied:

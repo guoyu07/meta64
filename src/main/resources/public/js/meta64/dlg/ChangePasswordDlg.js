@@ -54,8 +54,8 @@ ChangePasswordDlg_.changePasswordResponse = function(res) {
 		var msg = "Password changed successfully.";
 	
 		if (this.passCode) {
-			msg += "<p>You may now login in as " + res.user
-					+ " with your new password.";
+			msg += "<p>You may now login as <b>" + res.user
+					+ "</b> with your new password.";
 		}
 		
 		var thiz = this;

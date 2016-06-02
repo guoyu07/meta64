@@ -49,12 +49,12 @@ var menuPanel = function() {
 			_menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadFromFileDlg();") + //
 			_menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadFromUrlDlg();") + //
 			_menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");
-			var attachmentMenu = _makeTopLevelMenu("Attachments", attachmentMenuItems);
+			var attachmentMenu = _makeTopLevelMenu("Attach", attachmentMenuItems);
 
 			var sharingMenuItems = //
 			_menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + // 
 			_menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");
-			var sharingMenu = _makeTopLevelMenu("Sharing", sharingMenuItems);
+			var sharingMenu = _makeTopLevelMenu("Share", sharingMenuItems);
 
 			var searchMenuItems = //
 			_menuItem("Text Search", "searchDlgButton", "(new SearchDlg()).open();") + // 
@@ -66,7 +66,7 @@ var menuPanel = function() {
 			_menuItem("Refresh", "refreshPageButton", "meta64.refresh();") + // 
 			_menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + // 
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
-			var viewOptionsMenu = _makeTopLevelMenu("View Options", viewOptionsMenuItems);
+			var viewOptionsMenu = _makeTopLevelMenu("View", viewOptionsMenuItems);
 
 			/*
 			 * whatever is commented is only commented for polymer conversion

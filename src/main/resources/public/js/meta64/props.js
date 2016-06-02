@@ -144,13 +144,18 @@ var props = function() {
 		},
 
 		/*
-		 * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
+		 * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
 		 * etc. on the GUI.
 		 */
 		isNonOwnedCommentNode : function(node) {
 			var commentBy = _.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 			return commentBy != null && commentBy != meta64.userName;
 		},
+		
+		isOwnedCommentNode : function(node) {
+			var commentBy = _.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+			return commentBy != null && commentBy == meta64.userName;
+		},		
 
 		/*
 		 * Returns string representation of property value, even if multiple properties

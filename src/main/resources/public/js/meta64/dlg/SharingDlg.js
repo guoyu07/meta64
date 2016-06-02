@@ -73,24 +73,47 @@ SharingDlg_.populateSharingPg = function(res) {
 		}, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
 	});
 
-	/* todo: use actual polymer paper-checkbox here */
-	html += render.tag("input", {
-		"type" : "checkbox",
+	var thiz = this;
+	var publicAppendAttrs = {
+		"onClick" : "meta64.getObjectByGuid(" + thiz.guid + ").publicCommentingChanged();",
 		"name" : "allowPublicCommenting",
 		"id" : this.id("allowPublicCommenting")
-	}, "", false);
+	};
+
+	if (res.publicAppend) {
+		publicAppendAttrs.checked = "checked";
+	}
+
+	/* todo: use actual polymer paper-checkbox here */
+	html += render.tag("paper-checkbox", publicAppendAttrs, "", false);
 
 	html += render.tag("label", {
 		"for" : this.id("allowPublicCommenting")
 	}, "Allow public commenting under this node.", true);
 
 	util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
+},
 
-	util.setCheckboxVal("#" + this.id(allowPublicCommenting), res.publicAppend);
+SharingDlg_.publicCommentingChanged = function() {
 
-	// todo: this binding may not work. untested.
-	$("#" + this.id("allowPublicCommenting")).bind("change", this.publicCommentingChanged);
-}
+	/*
+	 * Using onClick on the element AND this timeout is the only hack I could find to get get what amounts to a state
+	 * change listener on a paper-checkbox. The documented on-change listener simply doesn't work and appears to be
+	 * simply a bug in google code AFAIK.
+	 */
+	var thiz = this;
+	setTimeout(function() {
+		var polyElm = util.polyElm(thiz.id("allowPublicCommenting"));
+
+		meta64.treeDirty = true;
+
+		util.json("addPrivilege", {
+			"nodeId" : share.sharingNode.id,
+			"publicAppend" : polyElm.node.checked ? "true" : "false"
+		});
+
+	}, 250);
+},
 
 SharingDlg_.removePrivilege = function(principal, privilege) {
 	/*

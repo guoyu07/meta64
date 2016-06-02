@@ -8,7 +8,7 @@ var render = function() {
 	 * want to give them some instructions and the ability to add content.
 	 */
 	function _getEmptyPagePrompt() {
-		return "<p>There are no subnodes under this parent. Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
+		return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
 	}
 
 	function _renderBinary(node) {
@@ -149,6 +149,7 @@ var render = function() {
 		 * 
 		 */
 		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
+			debugger;
 			var ret = _.getTopRightImageTag(node);
 
 			/* todo-2: enable headerText when appropriate here */
@@ -271,7 +272,9 @@ var render = function() {
 			 * a reply button, so they can reply to some other use.
 			 */
 			if (commentBy && commentBy != meta64.userName) {
-				var replyButton = _.tag("a", {
+				var replyButton = _.tag("paper-button", {
+					//"class" : "highlight-button add-comment-button",
+					"raised" : "raised",
 					"onClick" : "edit.replyToComment('" + node.uid + "');" //
 				}, //
 				"Reply");
@@ -285,11 +288,14 @@ var render = function() {
 			else {
 				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 				if (publicAppend && commentBy != meta64.userName) {
-					var addCommentButton = _.tag("a", {
-						"onClick" : "edit.replyToComment('" + node.uid + "');" //
+
+					var addCommentButton = _.tag("paper-button", {
+						"class" : "highlight-button add-comment-button",
+						"raised" : "raised",
+						"onClick" : "edit.replyToComment('" + node.uid + "');"//
 					}, //
 					"Add Comment");
-
+					
 					var addCommentDiv = _.tag("div", {}, addCommentButton);
 					ret += addCommentDiv;
 				}
@@ -320,9 +326,13 @@ var render = function() {
 			var isRep = node.name.startsWith("rep:") || /*
 														 * meta64.currentNodeData. bug?
 														 */node.path.contains("/rep:");
-			var editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
+			
+			var editingAllowed = props.isOwnedCommentNode(node);
+			if (!editingAllowed) {
+				editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
 					&& !props.isNonOwnedNode(node);
-
+			}
+			
 			// console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
 
 			/*
@@ -398,6 +408,7 @@ var render = function() {
 
 		makeRowButtonBarHtml : function(node, canMoveUp, canMoveDown, editingAllowed) {
 
+			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
 			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";
 
@@ -449,7 +460,7 @@ var render = function() {
 
 				selButton = _.tag("paper-checkbox", css, "");
 
-				if (cnst.NEW_ON_TOOLBAR) {
+				if (cnst.NEW_ON_TOOLBAR && !commentBy) {
 					/* Construct Create Subnode Button */
 					buttonCount++;
 					createSubNodeButton = _.tag("paper-button", {
@@ -459,7 +470,7 @@ var render = function() {
 					}, "Add");
 				}
 
-				if (cnst.INS_ON_TOOLBAR) {
+				if (cnst.INS_ON_TOOLBAR && !commentBy) {
 					buttonCount++;
 					/* Construct Create Subnode Button */
 					insertNodeButton = _.tag("paper-button", {
@@ -479,7 +490,7 @@ var render = function() {
 					"onClick" : "edit.runEditNode('" + node.uid + "');"
 				}, "Edit");
 
-				if (meta64.currentNode.childrenOrdered) {
+				if (meta64.currentNode.childrenOrdered && !commentBy) {
 
 					if (canMoveUp) {
 						buttonCount++;
@@ -504,7 +515,7 @@ var render = function() {
 			/*
 			 * i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment.
 			 * 
-			 * However tooltops ALWAYS cause problems. Mystery for now.
+			 * However tooltips ALWAYS cause problems. Mystery for now.
 			 */
 			var insertNodeTooltip = "";
 			// _.tag("paper-tooltip", {

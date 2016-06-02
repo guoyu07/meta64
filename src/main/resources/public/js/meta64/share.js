@@ -10,17 +10,6 @@ var share = function() {
 
 		sharingNode : null,
 
-		publicCommentingChanged : function() {
-			var publicAppend = $("#allowPublicCommenting").is(":checked");
-
-			meta64.treeDirty = true;
-
-			util.json("addPrivilege", {
-				"nodeId" : _.sharingNode.id,
-				"publicAppend" : publicAppend ? "true" : "false"
-			});
-		},
-
 		/*
 		 * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
 		 */

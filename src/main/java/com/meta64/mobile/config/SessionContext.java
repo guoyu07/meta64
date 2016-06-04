@@ -6,6 +6,7 @@ import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,8 @@ public class SessionContext {
 
 	@Autowired
 	private OakRepository oak;
+
+	private HttpSession httpSessionToInvalidate;
 
 	public SessionContext() {
 		log.trace(String.format("Creating Session object hashCode[%d]", hashCode()));
@@ -173,5 +176,13 @@ public class SessionContext {
 
 	public void setUserPreferences(UserPreferences userPreferences) {
 		this.userPreferences = userPreferences;
+	}
+
+	public HttpSession getHttpSessionToInvalidate() {
+		return httpSessionToInvalidate;
+	}
+
+	public void setHttpSessionToInvalidate(HttpSession httpSessionToInvalidate) {
+		this.httpSessionToInvalidate = httpSessionToInvalidate;
 	}
 }

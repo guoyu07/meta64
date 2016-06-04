@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.meta64.mobile.aspect.OakSession;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
@@ -239,11 +240,15 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/closeAccount", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req) throws Exception {
+	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req, HttpSession session) throws Exception {
 		logRequest("closeAccount", req);
 		CloseAccountResponse res = new CloseAccountResponse();
 		checkHttpSession();
 		userManagerService.closeAccount(req, res);
+		SessionContext sessionContext = (SessionContext) SpringContextUtil.getBean(SessionContext.class);
+		if (sessionContext != null) {
+			sessionContext.setHttpSessionToInvalidate(session);
+		}
 		return res;
 	}
 

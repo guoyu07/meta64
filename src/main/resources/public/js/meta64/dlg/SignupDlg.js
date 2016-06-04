@@ -68,13 +68,14 @@ SignupDlg_.signup = function() {
 
 SignupDlg_.signupResponse = function(res) {
 	if (util.checkSuccess("Signup new user", res)) {
-		var loginDlg = new LoginDlg();
-		loginDlg.populateFromCookies();
-		loginDlg.open();
+
+		/* close the signup dialog */
+		this.cancel();
 
 		(new MessageDlg(
-				"User Information Accepted. \n\nCheck your email for signup confirmation. (Can take up to 1 minute)"))
-				.open();
+				"User Information Accepted.<p/>Check your email for signup confirmation.",
+				"Signup"
+				)).open();
 	}
 }
 

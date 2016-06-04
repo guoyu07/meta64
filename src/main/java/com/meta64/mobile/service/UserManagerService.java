@@ -177,6 +177,7 @@ public class UserManagerService {
 			if (allUsersRoot != null) {
 				allUsersRoot.remove();
 			}
+
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 			if (prefsNode != null) {
 				prefsNode.remove();
@@ -545,12 +546,14 @@ public class UserManagerService {
 			String user = req.getUser();
 			String email = req.getEmail();
 
+			/* make sure username itself is acceptalbe */
 			if (!UserManagerUtil.isNormalUserName(user)) {
 				res.setMessage("User name is illegal.");
 				res.setSuccess(false);
 				return;
 			}
 
+			/* make sure the user name does exist */
 			Authorizable auth = UserManagerUtil.getUser(session, user);
 			if (auth == null) {
 				res.setMessage("User does not exist.");
@@ -558,6 +561,7 @@ public class UserManagerService {
 				return;
 			}
 
+			/* lookup preferences node for this user */
 			Node userPrefsNode = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" + user);
 			if (userPrefsNode == null) {
 				res.setMessage("User info is missing.");
@@ -565,6 +569,13 @@ public class UserManagerService {
 				return;
 			}
 
+			/*
+			 * IMPORTANT!
+			 * 
+			 * verify that the email address provides IS A MATCH to the email address for this user!
+			 * Important step here because without this check anyone would be able to completely
+			 * hijack anyone else's account simply by issuing a password change to that account!
+			 */
 			String nodeEmail = userPrefsNode.getProperty("email").getString();
 			if (nodeEmail == null || !nodeEmail.equals(email)) {
 				res.setMessage("Wrong user name and/or email.");

@@ -659,7 +659,8 @@ var render = function() {
 			 */
 			var mainNodeContent = _.renderNodeContent(data.node, true, true, true, false, true);
 
-			console.log("mainNodeContent: "+mainNodeContent);
+			//console.log("mainNodeContent: "+mainNodeContent);
+			
 			if (mainNodeContent.length > 0) {
 				var uid = data.node.uid;
 				var cssId = uid + "_row";

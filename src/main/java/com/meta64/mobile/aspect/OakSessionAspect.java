@@ -112,7 +112,14 @@ public class OakSessionAspect {
 			ThreadLocals.setResponse(null);
 
 			if (sessionContext != null) {
-				sessionContext.getLock().unlock();
+				if (sessionContext.getLock() != null) {
+					sessionContext.getLock().unlock();
+				}
+
+				if (sessionContext.getHttpSessionToInvalidate() != null) {
+					sessionContext.getHttpSessionToInvalidate().invalidate();
+					sessionContext.setHttpSessionToInvalidate(null);
+				}
 			}
 		}
 		return ret;

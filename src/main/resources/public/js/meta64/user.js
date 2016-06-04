@@ -120,22 +120,27 @@ var user = function() {
 			}
 
 			console.log("refreshLogin with name: " + callUsr);
+			debugger;
+			if (!callUsr) {
+				meta64.loadAnonPageHome(false);
+			} else {
 
-			var ironRes = util.json("login", {
-				"userName" : callUsr,
-				"password" : callPwd,
-				"tzOffset" : new Date().getTimezoneOffset(),
-				"dst" : util.daylightSavingsTime
-			});
+				var ironRes = util.json("login", {
+					"userName" : callUsr,
+					"password" : callPwd,
+					"tzOffset" : new Date().getTimezoneOffset(),
+					"dst" : util.daylightSavingsTime
+				});
 
-			ironRes.completes.then(function() {
+				ironRes.completes.then(function() {
 
-				if (usingCookies) {
-					user.loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
-				} else {
-					_refreshLoginResponse(ironRes.response);
-				}
-			});
+					if (usingCookies) {
+						_.loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
+					} else {
+						_refreshLoginResponse(ironRes.response);
+					}
+				});
+			}
 		},
 
 		logout : function(updateLoginStateCookie) {
@@ -147,7 +152,7 @@ var user = function() {
 			$(window).off("beforeunload");
 
 			if (updateLoginStateCookie) {
-				user.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+				_.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
 			}
 
 			util.json("logout", {}, _logoutResponse);
@@ -165,22 +170,28 @@ var user = function() {
 				_.loginResponse(ironRes.response, usr, pwd, null, loginDlg);
 			});
 		},
-		
+
+		deleteAllUserCookies : function() {
+			$.removeCookie(cnst.COOKIE_LOGIN_USR);
+			$.removeCookie(cnst.COOKIE_LOGIN_PWD);
+			$.removeCookie(cnst.COOKIE_LOGIN_STATE);
+		},
+
 		loginResponse : function(res, usr, pwd, usingCookies, loginDlg) {
 			if (util.checkSuccess("Login", res)) {
 				console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
 				if (usr != "anonymous") {
-					user.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
-					user.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
-					user.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
+					_.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
+					_.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
+					_.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
 				}
 
 				if (loginDlg) {
 					loginDlg.cancel();
 				}
 
-				user.setStateVarsUsingLoginResponse(res);
+				_.setStateVarsUsingLoginResponse(res);
 
 				if (res.userPreferences.lastNode) {
 					console.log("lastNode: " + res.userPreferences.lastNode);
@@ -205,7 +216,7 @@ var user = function() {
 				}
 
 				view.refreshTree(id, false);
-				user.setTitleUsingLoginResponse(res);
+				_.setTitleUsingLoginResponse(res);
 			} else {
 				if (usingCookies) {
 					(new MessageDlg("Cookie login failed.")).open();

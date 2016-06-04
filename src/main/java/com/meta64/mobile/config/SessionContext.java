@@ -82,6 +82,10 @@ public class SessionContext {
 		return JcrPrincipal.ADMIN.equalsIgnoreCase(userName);
 	}
 
+	public boolean isTestAccount() {
+		return oak.isTestAccountName(userName);
+	}
+
 	public String formatTime(Date date) {
 
 		/* If we have a short timezone abbreviation display timezone with it */

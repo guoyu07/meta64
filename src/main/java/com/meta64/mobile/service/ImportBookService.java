@@ -16,6 +16,7 @@ import com.meta64.mobile.response.InsertBookResponse;
 import com.meta64.mobile.util.ImportWarAndPeace;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
+import com.meta64.mobile.util.VarUtil;
 
 @Component
 @Scope("singleton")
@@ -29,7 +30,7 @@ public class ImportBookService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		if (!sessionContext.isAdmin()) {
+		if (!sessionContext.isAdmin() && !sessionContext.isTestAccount()) {
 			throw new Exception("insertBook is an admin-only feature.");
 		}
 
@@ -43,7 +44,7 @@ public class ImportBookService {
 		// String name = req.getBookName();
 
 		ImportWarAndPeace iwap = SpringContextUtil.getApplicationContext().getBean(ImportWarAndPeace.class);
-		iwap.importBook(session, "classpath:war-and-peace.txt", node);
+		iwap.importBook(session, "classpath:war-and-peace.txt", node, VarUtil.safeBooleanVal(req.getTruncated()) ? 2 : Integer.MAX_VALUE);
 
 		session.save();
 		res.setSuccess(true);

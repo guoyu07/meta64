@@ -4,6 +4,9 @@ public class InsertBookRequest {
 	private String nodeId;
 	private String bookName;
 
+	/* set to true to only insert a portion of the entire book */
+	private Boolean truncated;
+
 	public String getNodeId() {
 		return nodeId;
 	}
@@ -18,5 +21,13 @@ public class InsertBookRequest {
 
 	public void setBookName(String bookName) {
 		this.bookName = bookName;
+	}
+
+	public Boolean getTruncated() {
+		return truncated;
+	}
+
+	public void setTruncated(Boolean truncated) {
+		this.truncated = truncated;
 	}
 }

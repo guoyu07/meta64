@@ -24,6 +24,18 @@ var user = function() {
 	}
 
 	var _ = {
+		/*
+		 * for testing purposes, I want to allow certain users additional privileges. A bit of a hack because it will go
+		 * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
+		 * use these names
+		 */
+		isTestUserAccount : function() {
+			return meta64.userName.toLowerCase() === "adam" || //
+			meta64.userName.toLowerCase() === "bob" || //
+			meta64.userName.toLowerCase() === "cory" || //
+			meta64.userName.toLowerCase() === "dan";
+		},
+
 		setTitleUsingLoginResponse : function(res) {
 			var title = BRANDING_TITLE;
 			if (!meta64.isAnonUser) {

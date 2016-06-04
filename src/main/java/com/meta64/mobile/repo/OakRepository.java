@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -93,6 +94,8 @@ public class OakRepository {
 	 * shutdown hook which is all it's used for.
 	 */
 	private static OakRepository instance;
+
+	private HashSet<String> testAccountNames = new HashSet<String>();
 
 	/*
 	 * We only need this lock to protect against startup and/or shutdown concurrency. Remember
@@ -276,13 +279,22 @@ public class OakRepository {
 					log.debug("Invalid User Info substring: " + accountInfo);
 					continue;
 				}
+
+				String userName = accountInfoList.get(0);
+
 				SignupRequest signupReq = new SignupRequest();
-				signupReq.setUserName(accountInfoList.get(0));
+				signupReq.setUserName(userName);
 				signupReq.setPassword(accountInfoList.get(1));
 				signupReq.setEmail(accountInfoList.get(2));
 
 				SignupResponse res = new SignupResponse();
 				userManagerService.signup(session, signupReq, res, true);
+
+				/*
+				 * keep track of these names, because some API methods need to know if a given
+				 * account is a test account
+				 */
+				testAccountNames.add(userName);
 			}
 		});
 	}
@@ -386,5 +398,9 @@ public class OakRepository {
 
 	public void setHelpNode(String helpNode) {
 		this.helpNode = helpNode;
+	}
+
+	public boolean isTestAccountName(String userName) {
+		return testAccountNames.contains(userName);
 	}
 }

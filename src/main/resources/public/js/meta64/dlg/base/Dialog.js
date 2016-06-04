@@ -41,12 +41,10 @@ Dialog_.open = function() {
 	 */
 	var node = document.createElement("paper-dialog");
 
-	/*
-	 * Unfortunately Google Polymer totally hangs if you try to open a dialog on
-	 * top of another dialog if they are modal so we have to do without the
-	 * modal flag until google fixes this.
-	 */
-	// node.setAttribute("modal", "modal");
+	//NOTE: This works, but is an example of what NOT to do actually. Instead always
+	//set these properties on the 'polyElm.node' below.
+	//node.setAttribute("with-backdrop", "with-backdrop");
+	
 	node.setAttribute("id", id);
 	modalsContainer.node.appendChild(node);
 
@@ -67,6 +65,7 @@ Dialog_.open = function() {
 
 	/* now open and display polymer dialog we just created */
 	var polyElm = util.polyElm(id);
+	polyElm.node.modal = true;
 	polyElm.node.refit();
 	polyElm.node.constrain();
 	polyElm.node.center();
@@ -107,10 +106,14 @@ Dialog_.makeEditField = function(fieldName, id) {
 	}, "", true);
 }
 
-Dialog_.makeMessageArea = function(message) {
-	return render.tag("p", {
+Dialog_.makeMessageArea = function(message, id) {
+	var attrs = {
 		"class" : "dialog-message"
-	}, message);
+	};
+	if (id) {
+		attrs.id = this.id(id);
+	}
+	return render.tag("p", attrs, message);
 }
 
 // todo: there's a makeButton (and other similar methods) that don't have the

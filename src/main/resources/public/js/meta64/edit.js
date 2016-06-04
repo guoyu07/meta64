@@ -394,7 +394,8 @@ var edit = function() {
 						// No longer need
 						// or want any selections.
 						(new MessageDlg(
-								"Ok, ready to move nodes. To finish moving, go select the target location, then click 'Finish Moving'"))
+								"Identified nodes to move.<p/>To actually move these nodes, browse to the target location, then click 'Finish Moving'<p/>"+
+								"The nodes will then be moved to the end of the list of subnodes under the target node. (i.e. The target you select will become the new parent of the nodes)"))
 								.open();
 						meta64.refreshAllGuiEnablement();
 					})).open();
@@ -421,7 +422,7 @@ var edit = function() {
 
 		insertBookWarAndPeace : function() {
 
-			(new ConfirmDlg("Confirm", "Insert book War and Peace?", "Yes, insert book.", function() {
+			(new ConfirmDlg("Confirm", "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!", "Yes, insert book.", function() {
 
 				/* inserting under whatever node user has focused */
 				var node = meta64.getHighlightedNode();
@@ -431,7 +432,8 @@ var edit = function() {
 				} else {
 					util.json("insertBook", {
 						"nodeId" : node.id,
-						"bookName" : "War and Peace"
+						"bookName" : "War and Peace",
+						"truncated" : user.isTestUserAccount()
 					}, _insertBookResponse);
 				}
 			})).open();

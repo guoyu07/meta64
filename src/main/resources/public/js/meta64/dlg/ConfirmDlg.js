@@ -16,10 +16,7 @@ var ConfirmDlg_ = util.inherit(Dialog, ConfirmDlg);
  * Returns a string that is the HTML content of the dialog
  */
 ConfirmDlg_.build = function() {
-	var content = this.makeHeader("", "ConfirmDlgTitle") + //
-	render.tag("p", {
-		id : this.id("ConfirmDlgMessage")
-	});
+	var content = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
 
 	var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
 			+ this.makeCloseButton("No", "ConfirmDlgNoButton");

@@ -462,7 +462,7 @@ var meta64 = function() {
 			util.setEnablement("changePasswordPgButton", !_.isAnonUser);
 			util.setEnablement("accountPreferencesButton", !_.isAnonUser);
 			util.setEnablement("manageAccountButton", !_.isAnonUser);
-			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser);
+			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount());
 			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);
 
@@ -482,7 +482,7 @@ var meta64 = function() {
 			util.setVisibility("navHomeButton", !_.isAnonUser);
 			util.setVisibility("editModeButton", allowEditMode);
 			util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser);
+			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount());
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);
 			util.setVisibility("navLogoutButton", !_.isAnonUser);

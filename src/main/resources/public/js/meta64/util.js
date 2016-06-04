@@ -48,7 +48,7 @@ var util = function() {
 			return this.indexOf(str) != -1;
 		};
 	}
-
+	
 	function escapeRegExp(string) {
 		return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 	}

@@ -23,6 +23,8 @@ public class ImportWarAndPeace {
 	private static final Logger log = LoggerFactory.getLogger(ImportWarAndPeace.class);
 
 	private int maxLines = Integer.MAX_VALUE;
+	private int maxBooks = Integer.MAX_VALUE;
+
 	private boolean debug = false;
 	private Node root;
 	private Node curBook;
@@ -36,9 +38,10 @@ public class ImportWarAndPeace {
 	private boolean halt;
 	private Session session;
 
-	public void importBook(Session session, String resourceName, Node root) throws Exception {
+	public void importBook(Session session, String resourceName, Node root, int maxBooks) throws Exception {
 		this.root = root;
 		this.session = session;
+		this.maxBooks = maxBooks;
 		Resource resource = SpringContextUtil.getApplicationContext().getResource(resourceName);
 		InputStream is = resource.getInputStream();
 		BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -79,6 +82,7 @@ public class ImportWarAndPeace {
 				if (processBook(line)) {
 					continue;
 				}
+				if (globalBook > maxBooks) break;
 
 				/* keep appending each line to the current paragraph */
 				if (paragraph.length() > 0) {
@@ -147,6 +151,7 @@ public class ImportWarAndPeace {
 	private boolean processBook(String line) throws Exception {
 		if (line.startsWith("BOOK ") || anyEpilogue(line)) {
 			globalBook++;
+			if (globalBook > maxBooks) return false;
 			addParagraph();
 
 			curBook = root.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);

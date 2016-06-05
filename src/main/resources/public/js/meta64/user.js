@@ -132,7 +132,7 @@ var user = function() {
 			}
 
 			console.log("refreshLogin with name: " + callUsr);
-			debugger;
+			
 			if (!callUsr) {
 				meta64.loadAnonPageHome(false);
 			} else {

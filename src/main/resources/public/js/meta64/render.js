@@ -149,7 +149,6 @@ var render = function() {
 		 * 
 		 */
 		renderNodeContent : function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
-			debugger;
 			var ret = _.getTopRightImageTag(node);
 
 			/* todo-2: enable headerText when appropriate here */
@@ -265,42 +264,6 @@ var render = function() {
 				}
 			}
 
-			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-
-			/*
-			 * If this is a comment node, but not by the current user (because they cannot reply to themselves) then add
-			 * a reply button, so they can reply to some other use.
-			 */
-			if (commentBy && commentBy != meta64.userName) {
-				var replyButton = _.tag("paper-button", {
-					//"class" : "highlight-button add-comment-button",
-					"raised" : "raised",
-					"onClick" : "edit.replyToComment('" + node.uid + "');" //
-				}, //
-				"Reply");
-				ret += replyButton;
-			}
-			/*
-			 * Otherwise check if this is a publicly appendable node and show a button that does same as above but is
-			 * labeled "Add Comment" instead of "Reply". Note the check against userName, makes sure the button doesn't
-			 * show up on nodes we own, so we never are asked to "Add Comment" to our own content.
-			 */
-			else {
-				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
-				if (publicAppend && commentBy != meta64.userName) {
-
-					var addCommentButton = _.tag("paper-button", {
-						"class" : "highlight-button add-comment-button",
-						"raised" : "raised",
-						"onClick" : "edit.replyToComment('" + node.uid + "');"//
-					}, //
-					"Add Comment");
-					
-					var addCommentDiv = _.tag("div", {}, addCommentButton);
-					ret += addCommentDiv;
-				}
-			}
-
 			var tags = props.getNodePropertyVal(jcrCnst.TAGS, node);
 			if (tags) {
 				ret += _.tag("div", {
@@ -365,7 +328,9 @@ var render = function() {
 				(new MessageDlg("You must first click on a node.")).open();
 				return;
 			}
-			var url = window.location.origin + "?id=" + node.path;
+			
+			var path = node.path.stripIfStartsWith("/root");
+			var url = window.location.origin + "?id=" + path;
 			meta64.selectTab("mainTabName");
 
 			var message = "URL using path: <br>" + url;
@@ -405,27 +370,43 @@ var render = function() {
 				"class" : "horizontal center-justified layout " + classes
 			}, buttons);
 		},
+		
+		buttonBar : function(buttons, classes) {
+			classes = classes || "";
+
+			return _.tag("div", {
+				"class" : "horizontal left-justified layout " + classes
+			}, buttons);
+		},
 
 		makeRowButtonBarHtml : function(node, canMoveUp, canMoveDown, editingAllowed) {
 
+			var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 			var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+			var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
+			
 			var openButton = selButton = createSubNodeButton = editNodeButton = //
-			moveNodeUpButton = moveNodeDownButton = insertNodeButton = "";
+			moveNodeUpButton = moveNodeDownButton = insertNodeButton = replyButton = "";
 
+			/*
+			 * Show Reply button if this is a publicly appendable node and not created by current user,
+			 * or having been added as comment by current user
+			 */
+			console.log("**************** nodeId " + node.uid);
+			 
+			if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
+				replyButton = _.tag("paper-button", {
+					"raised" : "raised",
+					"onClick" : "edit.replyToComment('" + node.uid + "');" //
+				}, //
+				"Reply");
+			}
+			
 			var buttonCount = 0;
 
 			/* Construct Open Button */
 			if (_.nodeHasChildren(node.uid)) {
 				buttonCount++;
-
-				// openButton = _.tag("paper-icon-button", //
-				// {
-				// "class" : "highlight-button",
-				// "raised" : "raised",
-				// "icon" : "folder-open",
-				// "onClick" : "nav.openNode('" + node.uid + "');"//
-				// }, //
-				// "");
 
 				openButton = _.tag("paper-button", {
 					"class" : "highlight-button",
@@ -529,7 +510,7 @@ var render = function() {
 			// }, "ADDS a new node inside the current node, as a child of it.");
 
 			var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
-					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton;
+					+ addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton + replyButton;
 
 			return allButtons.length > 0 ? _.makeHorizontalFieldSet(allButtons) : "";
 		},
@@ -667,11 +648,29 @@ var render = function() {
 				var buttonBar = "";
 				var editNodeButton = "";
 				var createSubNodeButton = "";
+				var replyButton = "";
 
 				// console.log("data.node.path="+data.node.path);
 				// console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
 				// console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
+				var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
+				var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
+				var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
+
+				/*
+				 * Show Reply button if this is a publicly appendable node and not created by current user,
+				 * or having been added as comment by current user
+				 */
+				 
+				if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
+					replyButton = _.tag("paper-button", {
+						"raised" : "raised",
+						"onClick" : "edit.replyToComment('" + data.node.uid + "');" //
+					}, //
+					"Reply");
+				}
+				
 				if (meta64.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
 					createSubNodeButton = _.tag("paper-button", {
 						// "id" : "addNodeButtonId" + node.uid,
@@ -695,8 +694,8 @@ var render = function() {
 				var selected = focusNode && focusNode.uid === uid;
 				// var rowHeader = _.buildRowHeader(data.node, true, true);
 
-				if (createSubNodeButton || editNodeButton) {
-					buttonBar = _.makeHorizontalFieldSet(createSubNodeButton + editNodeButton);
+				if (createSubNodeButton || editNodeButton || replyButton) {
+					buttonBar = _.makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
 				}
 
 				var content = _.tag("div", {

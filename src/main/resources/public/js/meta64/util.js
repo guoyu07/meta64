@@ -42,6 +42,15 @@ var util = function() {
 			return this.indexOf(str) === 0;
 		};
 	}
+	
+	if (typeof String.prototype.stripIfStartsWith != 'function') {
+		String.prototype.stripIfStartsWith = function(str) {
+			if (this.startsWith(str)) {
+				return this.substring(str.length);
+			}
+			return this;
+		};
+	}
 
 	if (typeof String.prototype.contains != 'function') {
 		String.prototype.contains = function(str) {

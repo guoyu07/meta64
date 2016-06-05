@@ -14,6 +14,7 @@ RenameNodeDlg_.build = function() {
 	var header = this.makeHeader("Rename Node");
 
 	var curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
+	var curNodePathDisplay = "<h4 class='path-display' id='" + this.id("curNodePathDisplay") + "'></h4>";
 
 	var formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
@@ -21,7 +22,7 @@ RenameNodeDlg_.build = function() {
 	var backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
 	var buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
 
-	return header + curNodeNameDisplay + formControls + buttonBar;
+	return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
 }
 
 RenameNodeDlg_.renameNode = function() {
@@ -71,7 +72,8 @@ RenameNodeDlg_.init = function() {
 	if (!highlightNode) {
 		return;
 	}
-	$("#" + this.id("curNodeNameDisplay")).html("Path: " + highlightNode.path + "<br/>Name: " + highlightNode.name);
+	$("#" + this.id("curNodeNameDisplay")).html("Name: " + highlightNode.name);
+	$("#" + this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
 }
 
 //# sourceURL=RenameNodeDlg.js

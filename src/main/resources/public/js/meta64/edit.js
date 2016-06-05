@@ -123,7 +123,6 @@ var edit = function() {
 		},
 
 		startEditingNewNode : function() {
-			debugger;
 			_.editingUnsavedNode = false;
 			_.editNode = null;
 			_.editNodeDlgInst = new EditNodeDlg();

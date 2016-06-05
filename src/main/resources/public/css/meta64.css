@@ -129,6 +129,8 @@ tr td div p {
 
 .path-display {
 	margin-bottom: 4px;
+	overflow-x: auto;
+	white-space: nowrap;
 }
 
 .captcha-image {
@@ -189,8 +191,11 @@ tr td div p {
 	/* we limit page width of text content, because text that goes to wide 
 		becomes difficult to read.
 	*/
+	
+	/*
 	padding-top: 8px;
 	padding-bottom: 8px;
+	*/
 	max-width: 800px;
 	background: lightGray;
 }
@@ -245,6 +250,8 @@ tr td div p {
 
 .path-display-in-editor {
 	font-weight: bold;
+	overflow-x: auto;
+	white-space: nowrap;
 }
 
 .node-table-row {

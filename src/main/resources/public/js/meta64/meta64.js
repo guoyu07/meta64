@@ -440,6 +440,7 @@ var meta64 = function() {
 			/* multiple select nodes */
 			var selNodeCount = util.getPropertyCount(_.selectedNodes);
 			var highlightNode = _.getHighlightedNode();
+			var selNodeIsMine = highlightNode!=null && highlightNode.createdBy === meta64.userName;
 
 			util.setEnablement("navLogoutButton", !_.isAnonUser);
 			util.setEnablement("openSignupPgButton", _.isAnonUser);
@@ -452,24 +453,24 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("upLevelButton", _.currentNode && nav.parentVisibleToUser());
-			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
-			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0);
+			util.setEnablement("upLevelButton", _.currentNode && nav.parentVisibleToUser() && selNodeIsMine);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0 && selNodeIsMine);
+			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0 && selNodeIsMine);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);
-			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0);
-			util.setEnablement("finishMovingSelNodesButton", !_.isAnonUser && edit.nodesToMove != null);
+			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0 && selNodeIsMine);
+			util.setEnablement("finishMovingSelNodesButton", !_.isAnonUser && edit.nodesToMove != null && selNodeIsMine);
 
 			util.setEnablement("changePasswordPgButton", !_.isAnonUser);
 			util.setEnablement("accountPreferencesButton", !_.isAnonUser);
 			util.setEnablement("manageAccountButton", !_.isAnonUser);
-			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount());
-			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null);
+			util.setEnablement("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount() && selNodeIsMine);
+			util.setEnablement("uploadFromFileButton", !_.isAnonUser && highlightNode != null && selNodeIsMine);
+			util.setEnablement("uploadFromUrlButton", !_.isAnonUser && highlightNode != null && selNodeIsMine);
 
 			util.setEnablement("deleteAttachmentsButton", !_.isAnonUser && highlightNode != null
-					&& highlightNode.hasBinary);
-			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null);
-			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null);
+					&& highlightNode.hasBinary && selNodeIsMine);
+			util.setEnablement("editNodeSharingButton", !_.isAnonUser && highlightNode != null && selNodeIsMine);
+			util.setEnablement("renameNodePgButton", !_.isAnonUser && highlightNode != null && selNodeIsMine);
 			util.setEnablement("searchDlgButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("timelineButton", !_.isAnonUser && highlightNode != null);
 			util.setEnablement("showServerInfoButton", _.isAdminUser);
@@ -477,12 +478,12 @@ var meta64 = function() {
 			util.setEnablement("refreshPageButton", !_.isAnonUser);
 			util.setEnablement("findSharedNodesButton", !_.isAnonUser && highlightNode != null);
 
-			util.setVisibility("openImportDlg", _.isAdminUser);
-			util.setVisibility("openExportDlg", _.isAdminUser);
+			util.setVisibility("openImportDlg", _.isAdminUser && selNodeIsMine);
+			util.setVisibility("openExportDlg", _.isAdminUser && selNodeIsMine);
 			util.setVisibility("navHomeButton", !_.isAnonUser);
 			util.setVisibility("editModeButton", allowEditMode);
 			util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount());
+			util.setVisibility("insertBookWarAndPeaceButton", _.isAdminUser || user.isTestUserAccount() && selNodeIsMine);
 			util.setVisibility("propsToggleButton", !_.isAnonUser);
 			util.setVisibility("openLoginDlgButton", _.isAnonUser);
 			util.setVisibility("navLogoutButton", !_.isAnonUser);

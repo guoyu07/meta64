@@ -391,9 +391,7 @@ var render = function() {
 			/*
 			 * Show Reply button if this is a publicly appendable node and not created by current user,
 			 * or having been added as comment by current user
-			 */
-			console.log("**************** nodeId " + node.uid);
-			 
+			 */			 
 			if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
 				replyButton = _.tag("paper-button", {
 					"raised" : "raised",

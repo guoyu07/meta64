@@ -453,7 +453,7 @@ var meta64 = function() {
 			var allowEditMode = _.currentNode && !_.isAnonUser;
 
 			util.setEnablement("editModeButton", allowEditMode);
-			util.setEnablement("upLevelButton", _.currentNode && nav.parentVisibleToUser() && selNodeIsMine);
+			util.setEnablement("upLevelButton", _.currentNode && nav.parentVisibleToUser());
 			util.setEnablement("moveSelNodesButton", !_.isAnonUser && selNodeCount > 0 && selNodeIsMine);
 			util.setEnablement("deleteSelNodesButton", !_.isAnonUser && selNodeCount > 0 && selNodeIsMine);
 			util.setEnablement("clearSelectionsButton", !_.isAnonUser && selNodeCount > 0);

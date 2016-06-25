@@ -8,6 +8,15 @@ source ./setenv.sh
 export timestamp=`eval date +%Y-%m-%d-%s`
 export backupFolder=$META64_BAK
 
+#To install typescript compiler (tsc) run these commands:
+#    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+#    sudo apt-get install -y nodejs
+#    sudo apt-get install -y build-essential
+#    npm install -g typescript
+cd $META64/src/main/resources/public/js/meta64
+tsc --sourceMap
+read -p "TypeScript compiler done."
+
 ./run-tidy.sh $META64/src/main/resources/templates index
 ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
 

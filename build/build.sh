@@ -13,12 +13,13 @@ find $META64/src/main/resources/public/js/meta64 -name "*.js" -type f -delete
 find $META64/src/main/resources/public/js/meta64 -name "*.map" -type f -delete
 echo "Old JS files deleted."
 
-#To install typescript compiler (tsc) run these commands:
+# To install typescript compiler (tsc) run these commands:
 #    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 #    sudo apt-get install -y nodejs
 #    sudo apt-get install -y build-essential
 #    npm install -g typescript
 
+# cd $META64/src/main/resources/public/ts
 cd $META64/src/main/ts
 tsc
 if [ $? -eq 0 ]

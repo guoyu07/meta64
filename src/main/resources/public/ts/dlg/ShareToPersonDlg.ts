@@ -1,26 +1,41 @@
+
 console.log("running module: ShareToPersonDlg.js");
-var ShareToPersonDlg = function () {
+
+var ShareToPersonDlg = function() {
     Dialog.call(this);
     this.domId = "ShareToPersonDlg";
-};
+}
+
 var ShareToPersonDlg_ = util.inherit(Dialog, ShareToPersonDlg);
-ShareToPersonDlg_.build = function () {
+
+/*
+ * Returns a string that is the HTML content of the dialog
+ */
+ShareToPersonDlg_.build = function() {
     debugger;
     var header = this.makeHeader("Share Node to Person");
+
     var formControls = this.makeEditField("User to Share With", "shareToUserName");
-    var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", ShareToPersonDlg_.shareNodeToPerson, this);
+    var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", ShareToPersonDlg_.shareNodeToPerson,
+        this);
     var backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
     var buttonBar = render.centeredButtonBar(shareButton + backButton);
+
     return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
         + buttonBar;
-};
-ShareToPersonDlg_.shareNodeToPerson = function () {
+}
+
+ShareToPersonDlg_.shareNodeToPerson = function() {
     debugger;
     var targetUser = this.getInputVal("shareToUserName");
     if (!targetUser) {
         (new MessageDlg("Please enter a username")).open();
         return;
     }
+
+	/*
+	 * Trigger going to server at next main page refresh
+	 */
     meta64.treeDirty = true;
     var thiz = this;
     util.json("addPrivilege", {
@@ -28,13 +43,14 @@ ShareToPersonDlg_.shareNodeToPerson = function () {
         "principal": targetUser,
         "privileges": ["read", "write", "addChildren", "nodeTypeManagement"]
     }, thiz.reloadFromShareWithPerson);
-};
-ShareToPersonDlg_.reloadFromShareWithPerson = function (res) {
+}
+
+ShareToPersonDlg_.reloadFromShareWithPerson = function(res) {
     if (util.checkSuccess("Share Node with Person", res)) {
         debugger;
         (new SharingDlg()).open();
     }
-};
-ShareToPersonDlg_.init = function () {
-};
-//# sourceMappingURL=ShareToPersonDlg.js.map
+}
+
+ShareToPersonDlg_.init = function() {
+}

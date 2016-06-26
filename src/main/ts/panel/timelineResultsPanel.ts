@@ -24,5 +24,3 @@ var timelineResultsPanel = function() {
     console.log("Module ready: timelineResultsPanel.js");
     return _;
 } ();
-
-//# sourceURL=timelineResultsPanel.js

@@ -196,5 +196,3 @@ var srch = function() {
     console.log("Module ready: search.js");
     return _;
 } ();
-
-//# sourceURL=search.js

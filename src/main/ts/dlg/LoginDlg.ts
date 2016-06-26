@@ -90,5 +90,3 @@ LoginDlg_.resetPassword = function() {
         })).open();
 
 }
-
-//# sourceURL=LoginDlg.js

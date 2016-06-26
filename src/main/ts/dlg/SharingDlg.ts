@@ -181,5 +181,3 @@ SharingDlg_.shareNodeToPublic = function() {
         "privileges": ["read"]
     }, SharingDlg_.reload, this);
 }
-
-//# sourceURL=SharingDlg.js

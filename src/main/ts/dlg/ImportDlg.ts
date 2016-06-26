@@ -51,5 +51,3 @@ ImportDlg_.importResponse = function(res) {
 
 ImportDlg_.init = function() {
 }
-
-//# sourceURL=ImportDlg.js

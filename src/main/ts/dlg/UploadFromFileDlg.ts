@@ -106,5 +106,3 @@ UploadFromFileDlg_.init = function() {
     /* display the node path at the top of the edit page */
     $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
 }
-
-//# sourceURL=UploadFromFileDlg.js

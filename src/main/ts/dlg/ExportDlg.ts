@@ -50,5 +50,3 @@ ExportDlg_.exportResponse = function(res) {
 
 ExportDlg_.init = function() {
 }
-
-//# sourceURL=ExportDlg.js

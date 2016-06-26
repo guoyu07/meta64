@@ -65,5 +65,3 @@ SearchDlg_.searchProperty = function(searchProp) {
 SearchDlg_.init = function() {
 	util.delayedFocus(this.id("searchText"));
 }
-
-//# sourceURL=SearchDlg.js

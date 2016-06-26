@@ -61,5 +61,3 @@ PrefsDlg_.init = function() {
 			.id("editModeAdvanced"));
 	Polymer.dom.flush();
 }
-
-//# sourceURL=PrefsDlg.js

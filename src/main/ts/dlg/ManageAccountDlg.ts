@@ -26,5 +26,3 @@ ManageAccountDlg_.build = function() {
 
 	return header + buttonBar + bottomButtonBarDiv;
 }
-
-//# sourceURL=ManageAccountDlg.js

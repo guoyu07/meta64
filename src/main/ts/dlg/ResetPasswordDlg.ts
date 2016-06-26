@@ -56,5 +56,3 @@ ResetPasswordDlg_.init = function() {
 		this.setInputVal("userName", this.user);
 	}
 }
-
-//# sourceURL=ChangePasswordDlg.js

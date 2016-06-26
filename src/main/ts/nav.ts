@@ -197,5 +197,3 @@ var nav = function() {
 	console.log("Module ready: nav.js");
 	return _;
 }();
-
-// # sourceURL=nav.js

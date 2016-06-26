@@ -28,5 +28,3 @@ MessageDlg_.build = function() {
 
 	return content;
 }
-
-//# sourceURL=MessageDlg.js

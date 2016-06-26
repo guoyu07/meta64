@@ -644,5 +644,3 @@ EditNodeDlg_.init = function() {
 	console.log("EditNodeDlg.init");
 	this.populateEditNodePg();
 }
-
-// # sourceURL=EditNodeDlg.js

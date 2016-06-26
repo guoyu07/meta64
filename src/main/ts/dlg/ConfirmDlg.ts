@@ -30,5 +30,3 @@ ConfirmDlg_.init = function() {
     this.setHtml(this.message, "ConfirmDlgMessage");
     this.setHtml(this.buttonText, "ConfirmDlgYesButton");
 }
-
-//# sourceURL=ConfirmDlg.js

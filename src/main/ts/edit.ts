@@ -2,7 +2,6 @@ console.log("running module: edit.js");
 
 var edit = function() {
 
-
     var _insertBookResponse = function(res) {
         console.log("insertBookResponse running.");
 
@@ -445,5 +444,3 @@ var edit = function() {
     console.log("Module ready: edit.js");
     return _;
 } ();
-
-//# sourceURL=edit.js

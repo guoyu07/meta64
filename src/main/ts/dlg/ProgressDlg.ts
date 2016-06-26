@@ -29,5 +29,3 @@ ProgressDlg_.build = function() {
 
 	return header + barContainer;
 }
-
-//# sourceURL=ProgressDlg.js

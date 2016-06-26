@@ -41,5 +41,3 @@ var jcrCnst = function() {
     console.log("Module ready: jcrCnst.js");
     return _;
 } ();
-
-//# sourceURL=jcrCnst.js

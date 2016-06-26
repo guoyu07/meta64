@@ -98,5 +98,3 @@ var menuPanel = function() {
 	console.log("Module ready: menuPanel.js");
 	return _;
 }();
-
-//# sourceURL=menuPanel.js

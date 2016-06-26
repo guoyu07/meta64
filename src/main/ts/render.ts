@@ -1014,5 +1014,3 @@ var render = function() {
     console.log("Module ready: render.js");
     return _;
 } ();
-
-// # sourceUrl=render.js

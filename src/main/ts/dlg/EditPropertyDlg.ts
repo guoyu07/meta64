@@ -100,5 +100,3 @@ EditPropertyDlg_.savePropertyResponse = function(res) {
 EditPropertyDlg_.init = function() {
 	this.populatePropertyEdit();
 }
-
-//# sourceURL=EditPropertyDlg.js

@@ -76,5 +76,3 @@ RenameNodeDlg_.init = function() {
 	$("#" + this.id("curNodeNameDisplay")).html("Name: " + highlightNode.name);
 	$("#" + this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
 }
-
-//# sourceURL=RenameNodeDlg.js

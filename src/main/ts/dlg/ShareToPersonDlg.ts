@@ -51,5 +51,3 @@ ShareToPersonDlg_.reloadFromShareWithPerson = function(res) {
 
 ShareToPersonDlg_.init = function() {
 }
-
-//# sourceURL=ShareToPersonDlg.js

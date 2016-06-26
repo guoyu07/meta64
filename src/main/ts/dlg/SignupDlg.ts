@@ -102,5 +102,3 @@ SignupDlg_.init = function() {
     this.pageInitSignupPg();
     util.delayedFocus("#" + this.id("signupUserName"));
 }
-
-//# sourceURL=SignupDlg.js

@@ -733,5 +733,3 @@ var meta64 = function() {
     console.log("Module ready: meta64.js");
     return _;
 } ();
-
-//# sourceURL=meta64.js

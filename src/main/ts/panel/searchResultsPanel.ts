@@ -24,5 +24,3 @@ var searchResultsPanel = function() {
     console.log("Module ready: searchResultsPanel.js");
     return _;
 } ();
-
-//# sourceURL=searchResultsPanel.js

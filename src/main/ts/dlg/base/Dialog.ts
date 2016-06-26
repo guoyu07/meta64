@@ -197,5 +197,3 @@ Dialog_.focus = function(id) {
         $(id).focus();
     }, 1000);
 }
-
-//# sourceURL=Dialog.js

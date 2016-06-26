@@ -83,7 +83,6 @@ java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/
 read -p "Google compiler done."
 
 cd $META64
-ant -buildfile build.xml all
 
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc

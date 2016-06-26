@@ -59,5 +59,3 @@ var attachment = function() {
 	console.log("Module ready: attachment.js");
 	return _;
 }();
-
-//# sourceURL=attachment.js

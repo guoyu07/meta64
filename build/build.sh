@@ -19,8 +19,7 @@ echo "Old JS files deleted."
 #    sudo apt-get install -y build-essential
 #    npm install -g typescript
 
-# cd $META64/src/main/resources/public/ts
-cd $META64/src/main/ts
+cd $META64/src/main/resources/public/ts
 tsc
 if [ $? -eq 0 ]
 then

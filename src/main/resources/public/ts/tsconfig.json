@@ -14,7 +14,7 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "outDir": "../resources/public/js/meta64",
+        "outDir": "../js/meta64",
         "sourceMap": true,
         "noEmitOnError": true
     },

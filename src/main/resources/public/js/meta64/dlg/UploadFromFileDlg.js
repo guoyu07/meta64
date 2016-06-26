@@ -45,14 +45,19 @@ UploadFromFileDlg_.build = function () {
 };
 UploadFromFileDlg_.uploadFileNow = function () {
     $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
+    var data = new FormData();
+    var thiz = this;
+    var filesObj = $("#" + this.id("uploadForm"))[0];
+    $.each(filesObj.files, function (i, file) {
+        data.append(thiz.id("file-" + i), file);
+    });
     var prms = $.ajax({
         url: postTargetUrl + "upload",
-        type: "POST",
-        data: new FormData($("#" + this.id("uploadForm"))[0]),
-        enctype: 'multipart/form-data',
-        processData: false,
+        data: data,
+        cache: false,
         contentType: false,
-        cache: false
+        processData: false,
+        type: 'POST',
     });
     prms.done(function () {
         meta64.refresh();

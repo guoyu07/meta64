@@ -135,7 +135,6 @@ var srch = function() {
             var cssId = uid + _UID_ROWID_SUFFIX;
             // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
-            //deleting this line because _makeButtonBarHtml is gone... ??? todo-0
             var buttonBarHtml = _.makeButtonBarHtml("" + uid);
 
             console.log("buttonBarHtml=" + buttonBarHtml);

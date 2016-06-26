@@ -410,7 +410,6 @@ EditNodeDlg_.clearProperty = function(fieldId) {
  * itself from any kind of damage.
  */
 EditNodeDlg_.saveNode = function() {
-	debugger;
 	/*
 	 * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
 	 * server, and will initiate further editing like for properties, etc.

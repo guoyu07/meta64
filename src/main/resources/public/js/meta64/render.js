@@ -18,7 +18,7 @@ var render = function () {
         }
     }
     var _ = {
-        buildPage: function (pg, data) {
+        buidPage: function (pg, data) {
             console.log("buildPage: pg.domId=" + pg.domId);
             if (!pg.built || data) {
                 pg.build(data);
@@ -588,11 +588,10 @@ var render = function () {
         makeButton: function (text, id, callback) {
             var attribs = {
                 "raised": "raised",
-                "id": id,
-                "onClick": null
+                "id": id
             };
             if (callback != undefined) {
-                attribs.onClick = callback;
+                attribs["onClick"] = callback;
             }
             return _.tag("paper-button", attribs, text, true);
         },

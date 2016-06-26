@@ -170,7 +170,7 @@ var user = function () {
                     (new MessageDlg("Cookie login failed.")).open();
                     $.removeCookie(cnst.COOKIE_LOGIN_USR);
                     $.removeCookie(cnst.COOKIE_LOGIN_PWD);
-                    $.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+                    _.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
                     location.reload();
                 }
             }

@@ -1,18 +1,10 @@
 
 console.log("running module: util.js");
 
-//todo-0 (is this hack even safe for now?)
+//todo-0: need to find the DefinitelyTyped file for Polymer.
 declare var Polymer;
-declare var $;
-
-// interface Array<T> {
-//    remove(o: T): Array<T>;
-// }
-//
-// Array.prototype.remove = function (o) {
-//     // code to remove "o"
-//     return this;
-// }
+/// <reference path="./tyepdefs/jquery.d.ts" />
+/// <reference path="./tyepdefs/jquery.cookie.d.ts" />
 
 function escapeRegExp(string) {
     return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -30,7 +22,7 @@ interface _HasSelect {
 interface Array<T> {
 				clone(): Array<T>;
 				indexOfItemByProp(propName, propVal): number;
-				arrayMoveItem(fromIndex, toIndex): Array<T>;
+				arrayMoveItem(fromIndex, toIndex): void;
 				indexOfObject(obj: any): number;
 };
 
@@ -52,7 +44,7 @@ Array.prototype.indexOfItemByProp = function(propName, propVal) {
 a value from this function! todo-0
 */
 Array.prototype.arrayMoveItem = function(fromIndex, toIndex) {
-    return this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
+    this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
 };
 
 if (typeof Array.prototype.indexOfObject != 'function') {
@@ -71,16 +63,14 @@ if (typeof Array.prototype.indexOfObject != 'function') {
 ///////////////////////////////////////////////////////////////////////////////
 
 interface Date {
-				stdTimezoneOffset(): Date;
+				stdTimezoneOffset(): number;
 				dst(): boolean;
 };
 
 Date.prototype.stdTimezoneOffset = function() {
     var jan = new Date(this.getFullYear(), 0, 1);
     var jul = new Date(this.getFullYear(), 6, 1);
-    /* this might be a bug fix! I didn't have the new Date() here for a long time and was returning
-    just the result of max! test this. todo-0 */
-    return new Date(Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()));
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
 }
 
 Date.prototype.dst = function() {
@@ -99,7 +89,6 @@ interface String {
     unencodeHtml(): string;
     escapeForAttrib(): string;
 }
-
 
 if (typeof String.prototype.startsWith != 'function') {
     String.prototype.startsWith = function(str) {
@@ -534,10 +523,6 @@ var util = function() {
             return e;
         },
 
-        setCheckboxVal: function(id, val) {
-            $(id).prop("checked", val).checkboxradio("refresh");
-        },
-
         isObject: function(obj) {
             return obj && obj.length != 0;
         },
@@ -594,9 +579,9 @@ var util = function() {
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
         changeOrAddClass: function(elm, oldClass, newClass) {
-            var elm = $(elm);
-            elm.toggleClass(oldClass, false);
-            elm.toggleClass(newClass, true);
+            var elmement = $(elm);
+            elmement.toggleClass(oldClass, false);
+            elmement.toggleClass(newClass, true);
         },
 
 		/*

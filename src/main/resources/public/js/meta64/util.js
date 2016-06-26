@@ -16,7 +16,7 @@ Array.prototype.indexOfItemByProp = function (propName, propVal) {
     return -1;
 };
 Array.prototype.arrayMoveItem = function (fromIndex, toIndex) {
-    return this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
+    this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
 };
 if (typeof Array.prototype.indexOfObject != 'function') {
     Array.prototype.indexOfObject = function (obj) {
@@ -32,7 +32,7 @@ if (typeof Array.prototype.indexOfObject != 'function') {
 Date.prototype.stdTimezoneOffset = function () {
     var jan = new Date(this.getFullYear(), 0, 1);
     var jul = new Date(this.getFullYear(), 6, 1);
-    return new Date(Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset()));
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
 };
 Date.prototype.dst = function () {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
@@ -315,9 +315,6 @@ var util = function () {
             }
             return e;
         },
-        setCheckboxVal: function (id, val) {
-            $(id).prop("checked", val).checkboxradio("refresh");
-        },
         isObject: function (obj) {
             return obj && obj.length != 0;
         },
@@ -360,9 +357,9 @@ var util = function () {
             return false;
         },
         changeOrAddClass: function (elm, oldClass, newClass) {
-            var elm = $(elm);
-            elm.toggleClass(oldClass, false);
-            elm.toggleClass(newClass, true);
+            var elmement = $(elm);
+            elmement.toggleClass(oldClass, false);
+            elmement.toggleClass(newClass, true);
         },
         verifyType: function (obj, type, msg) {
             if (typeof obj !== type) {

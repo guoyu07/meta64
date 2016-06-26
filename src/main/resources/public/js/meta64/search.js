@@ -69,7 +69,7 @@ var srch = function () {
             var uid = node.uid;
             console.log("renderSearchResult: " + uid);
             var cssId = uid + _UID_ROWID_SUFFIX;
-            var buttonBarHtml = "";
+            var buttonBarHtml = _.makeButtonBarHtml("" + uid);
             console.log("buttonBarHtml=" + buttonBarHtml);
             var content = render.renderNodeContent(node, true, true, true, true, true);
             return render.tag("div", {
@@ -81,11 +81,11 @@ var srch = function () {
                     "id": uid + "_srch_content"
                 }, content));
         },
-        makeBttonBarHtml: function (uid) {
+        makeButtonBarHtml: function (uid) {
             var gotoButton = render.makeButton("Go to Node", uid, "srch.clickSearchNode('" + uid + "');");
             return render.makeHorizontalFieldSet(gotoButton);
         },
-        clickOnSeachResultRow: function (rowElm, uid) {
+        clickOnSearchResultRow: function (rowElm, uid) {
             _.unhighlightRow();
             _.highlightRowNode = _.uidToNodeMap[uid];
             util.changeOrAddClass(rowElm, "inactive-row", "active-row");

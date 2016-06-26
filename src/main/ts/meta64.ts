@@ -688,8 +688,7 @@ var meta64 = function() {
 
         tabChangeEvent: function(tabName) {
             if (tabName == "searchTabName") {
-                //did I delete this method or what? //todo-0
-                //srch.searchTabActivated();
+                srch.searchTabActivated();
             }
         },
 

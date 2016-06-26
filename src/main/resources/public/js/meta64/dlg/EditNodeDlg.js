@@ -244,7 +244,6 @@ EditNodeDlg_.clearProperty = function (fieldId) {
     }
 };
 EditNodeDlg_.saveNode = function () {
-    debugger;
     if (edit.editingUnsavedNode) {
         console.log("saveNewNode.");
         this.saveNewNode();

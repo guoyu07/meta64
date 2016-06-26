@@ -8,14 +8,25 @@ source ./setenv.sh
 export timestamp=`eval date +%Y-%m-%d-%s`
 export backupFolder=$META64_BAK
 
+#Delete old JS files and MAP files. We also have jsconfig.json set to not emit on error
+find $META64/src/main/resources/public/js/meta64 -name "*.js" -type f -delete
+find $META64/src/main/resources/public/js/meta64 -name "*.map" -type f -delete
+echo "Old JS files deleted."
+
 #To install typescript compiler (tsc) run these commands:
 #    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 #    sudo apt-get install -y nodejs
 #    sudo apt-get install -y build-essential
 #    npm install -g typescript
-cd $META64/src/main/resources/public/js/meta64
-tsc --sourceMap
-read -p "TypeScript compiler done."
+
+cd $META64/src/main/ts
+tsc
+if [ $? -eq 0 ]
+then
+  read -p "TypeScript generating successful."
+else
+  read -p "FAIL. TypeScript compiler reported ERRORS."
+fi
 
 ./run-tidy.sh $META64/src/main/resources/templates index
 ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
@@ -81,6 +92,8 @@ mvn clean package -DskipTests=true
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar $META64_RUN/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
 rm -f $META64/build/all.js
+read -p "Check that all.js is deleted, here. I'm seeing it stay around and don't know why."
+
 rm -f $META64/build/*.sh~
 rm -f $META64/src/main/resources/public/js/meta64.min.js
 rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html

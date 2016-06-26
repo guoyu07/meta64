@@ -22,6 +22,7 @@ var Dialog = function() {
 }
 
 Dialog.prototype.constructor = Dialog;
+
 var Dialog_ = Dialog.prototype;
 
 Dialog_.open = function() {

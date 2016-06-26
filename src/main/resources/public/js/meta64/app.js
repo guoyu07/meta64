@@ -22,3 +22,4 @@ app.addEventListener('dom-change', function () {
 window.addEventListener('polymer-ready', function (e) {
     console.log('polymer-ready event!');
 });
+//# sourceMappingURL=app.js.map

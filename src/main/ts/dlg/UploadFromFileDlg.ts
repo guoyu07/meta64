@@ -81,14 +81,33 @@ UploadFromFileDlg_.uploadFileNow = function() {
 	 * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
 	 * this is highly specialized here for form uploading, and is different from normal ajax calls.
 	 */
+
+    //My original implementation that TypeScript finds errors in...
+    // var prms = $.ajax({
+    //     url: postTargetUrl + "upload",
+    //     type: "POST",
+    //     data: new FormData($("#" + this.id("uploadForm"))[0]),
+    //     enctype: 'multipart/form-data',
+    //     processData: false,
+    //     contentType: false,
+    //     cache: false
+    // });
+
+    /* Main changes from above: 1) needed HTMLInputElement cast and 2) got rid of enctype. */
+    var data = new FormData();
+    var thiz = this;
+    var filesObj = $("#" + this.id("uploadForm"))[0];
+    $.each((<HTMLInputElement>filesObj).files, function(i, file) {
+        data.append(thiz.id("file-" + i), file);
+    });
+
     var prms = $.ajax({
         url: postTargetUrl + "upload",
-        type: "POST",
-        data: new FormData($("#" + this.id("uploadForm"))[0]),
-        enctype: 'multipart/form-data',
-        processData: false,
+        data: data,
+        cache: false,
         contentType: false,
-        cache: false
+        processData: false,
+        type: 'POST',
     });
 
     prms.done(function() {

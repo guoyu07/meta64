@@ -1,7 +1,7 @@
 console.log("running module: render.js");
 
 declare var postTargetUrl;
-declare var $;
+//declare var $;
 declare var prettyPrint;
 
 var render = function() {

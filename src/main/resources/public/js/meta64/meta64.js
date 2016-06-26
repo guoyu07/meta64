@@ -432,7 +432,7 @@ var meta64 = function () {
         },
         tabChangeEvent: function (tabName) {
             if (tabName == "searchTabName") {
-				srch.searchTabActivated();
+                srch.searchTabActivated();
             }
         },
         displaySignupMessage: function () {

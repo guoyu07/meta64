@@ -23,7 +23,6 @@ Dialog_.open = function () {
     }
     console.log("Showing dialog: " + id);
     var polyElm = util.polyElm(id);
-    polyElm.node.modal = true;
     polyElm.node.refit();
     polyElm.node.constrain();
     polyElm.node.center();

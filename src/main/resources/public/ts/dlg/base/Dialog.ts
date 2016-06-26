@@ -66,7 +66,14 @@ Dialog_.open = function() {
 
     /* now open and display polymer dialog we just created */
     var polyElm = util.polyElm(id);
-    polyElm.node.modal = true;
+
+    //After the TypeScript conversion I noticed having a modal flag will cause
+    //an infinite loop (completely hang) Chrome browser, but this issue is most likely
+    //not related to TypeScript at all, but i'm just mention TS just in case, because
+    //that's when I noticed it. Dialogs are fine but not a dialog on top of another dialog, which is
+    //the case where it hangs if model=true
+    //polyElm.node.modal = true;
+
     polyElm.node.refit();
     polyElm.node.constrain();
     polyElm.node.center();

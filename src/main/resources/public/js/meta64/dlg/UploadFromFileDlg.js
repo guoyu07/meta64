@@ -45,12 +45,7 @@ UploadFromFileDlg_.build = function () {
 };
 UploadFromFileDlg_.uploadFileNow = function () {
     $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
-    var data = new FormData();
-    var thiz = this;
-    var filesObj = $("#" + this.id("uploadForm"))[0];
-    $.each(filesObj.files, function (i, file) {
-        data.append(thiz.id("file-" + i), file);
-    });
+    var data = new FormData(($("#" + this.id("uploadForm"))[0]));
     var prms = $.ajax({
         url: postTargetUrl + "upload",
         data: data,

@@ -52,7 +52,7 @@ UploadFromFileDlg_.uploadFileNow = function () {
         cache: false,
         contentType: false,
         processData: false,
-        type: 'POST',
+        type: 'POST'
     });
     prms.done(function () {
         meta64.refresh();

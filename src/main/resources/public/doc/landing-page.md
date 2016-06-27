@@ -4,8 +4,12 @@ Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) bu
 
 The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
+## News: Recent Changes 
+
+All JavaScript is now in the form of TypeScript! This is a major advancement for the application, and allows perfect type-safety in all JavaScript so that even so much as a misspelled variable name will get detected at build time rather than runtime! Already is having a massive positive impact on quality.
+
 ## Technology Stack
-* Web App: Google Polymer (Web Components), JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
+* Web App: Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
 * Server: Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb, Tomcat Embedded
 
 ## Links
@@ -86,6 +90,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 
 * Single Page Application (SPA)
 * JavaScript/HTML/CSS Client
+* All JavaScript, coded as TypeScript
 * JSON-Ajax for Server Communication
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)

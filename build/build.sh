@@ -28,6 +28,7 @@ else
   read -p "FAIL. TypeScript compiler reported ERRORS."
 fi
 
+cd $META64/build
 ./run-tidy.sh $META64/src/main/resources/templates index
 ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
 
@@ -91,8 +92,6 @@ mvn clean package -DskipTests=true
 cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar $META64_RUN/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
 rm -f $META64/build/all.js
-read -p "Check that all.js is deleted, here. I'm seeing it stay around and don't know why."
-
 rm -f $META64/build/*.sh~
 rm -f $META64/src/main/resources/public/js/meta64.min.js
 rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html

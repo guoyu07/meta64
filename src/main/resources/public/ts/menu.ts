@@ -66,6 +66,7 @@ var menuPanel = function() {
 			_menuItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + //
 			_menuItem("Refresh", "refreshPageButton", "meta64.refresh();") + //
 			_menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + //
+			//todo-0: bug: server info menu item is showing up (although correctly disabled) for non-admin users.
 			_menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();"); //
 			var viewOptionsMenu = _makeTopLevelMenu("View", viewOptionsMenuItems);
 

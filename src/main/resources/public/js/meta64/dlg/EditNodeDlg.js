@@ -52,13 +52,7 @@ EditNodeDlg_.populateEditNodePg = function () {
             var isMulti = prop.values && prop.values.length > 0;
             var isReadOnlyProp = render.isReadOnlyProperty(prop.name);
             var isBinaryProp = render.isBinaryProperty(prop.name);
-            var propEntry = {
-                id: fieldId,
-                "property": prop,
-                "multi": isMulti,
-                "readOnly": isReadOnlyProp,
-                "binary": isBinaryProp
-            };
+            var propEntry = new PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
             _this.fieldIdToPropMap[fieldId] = propEntry;
             _this.propEntries.push(propEntry);
             var buttonBar = "";
@@ -365,10 +359,7 @@ EditNodeDlg_.makeMultiPropEditor = function (propEntry) {
         propValStr = propVal.escapeForAttrib();
         var label = (i == 0 ? propEntry.property.name : "*") + "." + i;
         console.log("Creating textarea with id=" + id);
-        var subProp = {
-            "id": id,
-            "val": propVal
-        };
+        var subProp = new SubProp(id, propVal);
         propEntry.subProps.push(subProp);
         if (propEntry.binary || propEntry.readOnly) {
             fields += render.tag("paper-textarea", {

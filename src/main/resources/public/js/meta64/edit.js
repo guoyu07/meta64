@@ -51,7 +51,7 @@ var edit = function () {
         }
     };
     var _ = {
-        showReadOnlyProperties: false,
+        showReadOnlyProperties: true,
         nodesToMove: null,
         parentOfNewNode: null,
         editingUnsavedNode: false,

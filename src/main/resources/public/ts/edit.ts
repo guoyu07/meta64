@@ -69,7 +69,7 @@ var edit = function() {
     }
 
     var _ = {
-        showReadOnlyProperties: false,
+        showReadOnlyProperties: true,
 		/*
 		 * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
 		 */

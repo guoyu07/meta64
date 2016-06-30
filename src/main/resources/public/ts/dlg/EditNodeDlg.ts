@@ -16,19 +16,7 @@ var EditNodeDlg = function() {
 	 * edits.
 	 */
     this.fieldIdToPropMap = {};
-
-	/*
-	 * This will hold an array of objects each having properties as follows:
-	 *
-	 * id : (same id fieldIdToPropMap uses)
-	 *
-	 * property : (same prop from fieldIdToPropMap also)
-	 *
-	 * multi, readOnly, binary (booleans)
-	 *
-	 * subProps array of objects each with {id, value) which is the multi-values content.
-	 */
-    this.propEntries = [];
+    this.propEntries = new Array<PropEntry>();
 }
 
 var EditNodeDlg_ = util.inherit(Dialog, EditNodeDlg);
@@ -88,11 +76,10 @@ EditNodeDlg_.populateEditNodePg = function() {
 
     /* clear this map to get rid of old properties */
     this.fieldIdToPropMap = {};
-    this.propEntries = []; // <------------ new
+    this.propEntries = new Array<PropEntry>();
 
     /* editNode will be null if this is a new node being created */
     if (edit.editNode) {
-
         console.log("Editing existing node.");
 
         /* iterator function will have the wrong 'this' so we save the right one */
@@ -122,7 +109,7 @@ EditNodeDlg_.populateEditNodePg = function() {
             var isReadOnlyProp = render.isReadOnlyProperty(prop.name);
             var isBinaryProp = render.isBinaryProperty(prop.name);
 
-            let propEntry:PropEntry = new PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
+            let propEntry: PropEntry = new PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
 
             _this.fieldIdToPropMap[fieldId] = propEntry;
             _this.propEntries.push(propEntry);
@@ -176,13 +163,14 @@ EditNodeDlg_.populateEditNodePg = function() {
         }
     }
 
-    var toggleReadonlyVisButton = render.tag("paper-button", {
-        "raised": "raised",
-        "onClick": "meta64.getObjectByGuid(" + this.guid + ").toggleShowReadOnly();" //
-    }, //
-        (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
-
-    fields += toggleReadonlyVisButton;
+    //I'm not quite ready to add this button yet.
+    // var toggleReadonlyVisButton = render.tag("paper-button", {
+    //     "raised": "raised",
+    //     "onClick": "meta64.getObjectByGuid(" + this.guid + ").toggleShowReadOnly();" //
+    // }, //
+    //     (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
+    //
+    // fields += toggleReadonlyVisButton;
 
     util.setHtmlEnhanced(this.id("propertyEditFieldContainer"), fields);
 
@@ -238,14 +226,12 @@ EditNodeDlg_.addTagsProperty = function() {
     util.json("saveProperty", postData, EditNodeDlg_.addTagsPropertyResponse, this);
 }
 
-/* Warning: don't confuse with EditPropertyDlg */
 EditNodeDlg_.addTagsPropertyResponse = function(res) {
     if (util.checkSuccess("Add Tags Property", res)) {
         this.savePropertyResponse(res);
     }
 }
 
-/* Warning: don't confuse with EditPropertyDlg */
 EditNodeDlg_.savePropertyResponse = function(res) {
     util.checkSuccess("Save properties", res);
 
@@ -288,11 +274,14 @@ EditNodeDlg_.makePropertyEditButtonBar = function(prop, fieldId) {
 		 * I don't think it really makes sense to allow a jcr:content property to be multivalued. I may be wrong but
 		 * this is my current assumption
 		 */
-        addMultiButton = render.tag("paper-button", {
-            "raised": "raised",
-            "onClick": "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
-        }, //
-            "Add Multi");
+        //todo-0: There's a bug in editing multiple-valued properties, and so i'm just turning it off for now
+        //while i complete testing of the rest of the app.
+        //
+        // addMultiButton = render.tag("paper-button", {
+        //     "raised": "raised",
+        //     "onClick": "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
+        // }, //
+        //     "Add Multi");
     }
 
     var allButtons = addMultiButton + clearButton + deleteButton;
@@ -323,7 +312,7 @@ EditNodeDlg_.addSubProperty = function(fieldId) {
 	 * TODO-3: for performance we could do something simpler than 'populateEditNodePg' here, but for now we just
 	 * rerendering the entire edit page.
 	 */
-    prop.values.push('');
+    prop.values.push("");
 
     this.populateEditNodePg();
 }
@@ -542,7 +531,7 @@ EditNodeDlg_.saveExistingNode = function() {
     }
 }
 
-EditNodeDlg_.makeMultiPropEditor = function(propEntry:PropEntry) {
+EditNodeDlg_.makeMultiPropEditor = function(propEntry: PropEntry) {
     console.log("Making Multi Editor: Property multi-type: name=" + propEntry.property.name + " count="
         + propEntry.property.values.length);
     var fields = "";
@@ -566,7 +555,7 @@ EditNodeDlg_.makeMultiPropEditor = function(propEntry:PropEntry) {
 
         console.log("Creating textarea with id=" + id);
 
-        let subProp:SubProp = new SubProp(id, propVal);
+        let subProp: SubProp = new SubProp(id, propVal);
         propEntry.subProps.push(subProp);
 
         if (propEntry.binary || propEntry.readOnly) {

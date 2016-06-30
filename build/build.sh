@@ -45,6 +45,7 @@ cd $META64/build
 # output file with them in which case the google-compiler (Closure) wil no longer be needed.
 # http://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
 cat ../src/main/resources/public/js/meta64/cnst.js > all.js
+cat ../src/main/resources/public/js/meta64/models.js >> all.js
 cat ../src/main/resources/public/js/meta64/util.js >> all.js
 cat ../src/main/resources/public/js/meta64/jcrCnst.js >> all.js
 cat ../src/main/resources/public/js/meta64/attachment.js >> all.js

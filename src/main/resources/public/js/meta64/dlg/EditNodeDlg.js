@@ -3,7 +3,7 @@ var EditNodeDlg = function () {
     Dialog.call(this);
     this.domId = "EditNodeDlg";
     this.fieldIdToPropMap = {};
-    this.propEntries = [];
+    this.propEntries = new Array();
 };
 var EditNodeDlg_ = util.inherit(Dialog, EditNodeDlg);
 EditNodeDlg_.build = function () {
@@ -36,7 +36,7 @@ EditNodeDlg_.populateEditNodePg = function () {
     var fields = "";
     var counter = 0;
     this.fieldIdToPropMap = {};
-    this.propEntries = [];
+    this.propEntries = new Array();
     if (edit.editNode) {
         console.log("Editing existing node.");
         var _this = this;
@@ -94,11 +94,6 @@ EditNodeDlg_.populateEditNodePg = function () {
             fields += render.tag("div", {}, field);
         }
     }
-    var toggleReadonlyVisButton = render.tag("paper-button", {
-        "raised": "raised",
-        "onClick": "meta64.getObjectByGuid(" + this.guid + ").toggleShowReadOnly();"
-    }, (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
-    fields += toggleReadonlyVisButton;
     util.setHtmlEnhanced(this.id("propertyEditFieldContainer"), fields);
     if (cnst.USE_ACE_EDITOR) {
         for (var i = 0; i < aceFields.length; i++) {
@@ -160,10 +155,6 @@ EditNodeDlg_.makePropertyEditButtonBar = function (prop, fieldId) {
             "raised": "raised",
             "onClick": "meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');"
         }, "Del");
-        addMultiButton = render.tag("paper-button", {
-            "raised": "raised",
-            "onClick": "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');"
-        }, "Add Multi");
     }
     var allButtons = addMultiButton + clearButton + deleteButton;
     if (allButtons.length > 0) {
@@ -182,7 +173,7 @@ EditNodeDlg_.addSubProperty = function (fieldId) {
         prop.values.push(prop.value);
         prop.value = null;
     }
-    prop.values.push('');
+    prop.values.push("");
     this.populateEditNodePg();
 };
 EditNodeDlg_.deleteProperty = function (propName) {

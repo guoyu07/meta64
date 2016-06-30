@@ -7,16 +7,13 @@ console.log("running module: ConfirmDlg.js");
 var ConfirmDlg = (function (_super) {
     __extends(ConfirmDlg, _super);
     function ConfirmDlg(title, message, buttonText, callback) {
-        _super.call(this);
+        _super.call(this, "ConfirmDlg");
         this.title = title;
         this.message = message;
         this.buttonText = buttonText;
         this.callback = callback;
-        this.domId = "ConfirmDlg";
-        debugger;
     }
     ConfirmDlg.prototype.build = function () {
-        debugger;
         var content = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
         var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
             + this.makeCloseButton("No", "ConfirmDlgNoButton");

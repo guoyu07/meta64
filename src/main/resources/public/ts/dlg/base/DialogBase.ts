@@ -1,4 +1,4 @@
-console.log("running module: Dialog.js");
+console.log("running module: DialogBase.js");
 
 /*
  * Base class for all dialog boxes.
@@ -10,13 +10,13 @@ console.log("running module: Dialog.js");
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-class DialogBase {
+abstract class DialogBase {
 
     data: any;
-    domId: string;
     built: boolean;
+    guid:string;
 
-    constructor() {
+    constructor(protected domId:string) {
         this.data = {};
 
         /*
@@ -30,10 +30,7 @@ class DialogBase {
     init(): void {
     }
 
-    /* todo-0: need to learn how to make this abstract in TypeScript */
-    build(): string {
-        return "";
-    }
+    abstract build(): string;
 
     open(): void {
 
@@ -192,7 +189,7 @@ class DialogBase {
         }, label);
     }
 
-    makeHeader(text: string, id: string, centered?: boolean): string {
+    makeHeader(text: string, id?: string, centered?: boolean): string {
         var attrs = {
             "class": "dialog-header " + (centered ? "horizontal center-justified layout" : "")
         };

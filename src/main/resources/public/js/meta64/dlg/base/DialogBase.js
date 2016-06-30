@@ -1,14 +1,12 @@
-console.log("running module: Dialog.js");
+console.log("running module: DialogBase.js");
 var DialogBase = (function () {
-    function DialogBase() {
+    function DialogBase(domId) {
+        this.domId = domId;
         this.data = {};
         meta64.registerDataObject(this);
         meta64.registerDataObject(this.data);
     }
     DialogBase.prototype.init = function () {
-    };
-    DialogBase.prototype.build = function () {
-        return "";
     };
     DialogBase.prototype.open = function () {
         var modalsContainer = util.polyElm("modalsContainer");

@@ -1,32 +1,37 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 console.log("running module: ChangePasswordDlg.js");
-var ChangePasswordDlg = function (passCode) {
-    Dialog.call(this);
-    this.passCode = passCode;
-    this.domId = "ChangePasswordDlg";
-};
-var ChangePasswordDlg_ = util.inherit(Dialog, ChangePasswordDlg);
-ChangePasswordDlg_.build = function () {
-    var header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
-    var message = render.tag("p", {}, "Enter your new password below...");
-    var formControls = this.makePasswordField("New Password", "changePassword1");
-    var changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton", ChangePasswordDlg_.changePassword, this);
-    var backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
-    var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
-    return header + message + formControls + buttonBar;
-};
-ChangePasswordDlg_.changePassword = function () {
-    this.pwd = this.getInputVal("changePassword1").trim();
-    if (this.pwd && this.pwd.length >= 4) {
-        util.json("changePassword", {
-            "newPassword": this.pwd,
-            "passCode": this.passCode
-        }, ChangePasswordDlg_.changePasswordResponse, this);
+var ChangePasswordDlg = (function (_super) {
+    __extends(ChangePasswordDlg, _super);
+    function ChangePasswordDlg(passCode) {
+        _super.call(this, "ChangePasswordDlg");
+        this.passCode = passCode;
     }
-    else {
-        (new MessageDlg("Invalid password(s).")).open();
-    }
-},
-    ChangePasswordDlg_.changePasswordResponse = function (res) {
+    ChangePasswordDlg.prototype.build = function () {
+        var header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
+        var message = render.tag("p", {}, "Enter your new password below...");
+        var formControls = this.makePasswordField("New Password", "changePassword1");
+        var changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton", this.changePassword, this);
+        var backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
+        var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
+        return header + message + formControls + buttonBar;
+    };
+    ChangePasswordDlg.prototype.changePassword = function () {
+        this.pwd = this.getInputVal("changePassword1").trim();
+        if (this.pwd && this.pwd.length >= 4) {
+            util.json("changePassword", {
+                "newPassword": this.pwd,
+                "passCode": this.passCode
+            }, this.changePasswordResponse, this);
+        }
+        else {
+            (new MessageDlg("Invalid password(s).")).open();
+        }
+    };
+    ChangePasswordDlg.prototype.changePasswordResponse = function (res) {
         if (util.checkSuccess("Change password", res)) {
             var msg = "Password changed successfully.";
             if (this.passCode) {
@@ -41,7 +46,9 @@ ChangePasswordDlg_.changePassword = function () {
             })).open();
         }
     };
-ChangePasswordDlg_.init = function () {
-    this.focus("changePassword1");
-};
+    ChangePasswordDlg.prototype.init = function () {
+        this.focus("changePassword1");
+    };
+    return ChangePasswordDlg;
+}(DialogBase));
 //# sourceMappingURL=ChangePasswordDlg.js.map

@@ -2,7 +2,6 @@ console.log("running module: jcrCnst.js");
 
 var jcrCnst = function() {
 
-
     var _ = {
         COMMENT_BY: "commentBy",
         PUBLIC_APPEND: "publicAppend",

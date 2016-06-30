@@ -61,6 +61,7 @@ cat ../src/main/resources/public/js/meta64/user.js >> all.js
 cat ../src/main/resources/public/js/meta64/view.js >> all.js
 cat ../src/main/resources/public/js/meta64/menu.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/base/Dialog.js >> all.js
+cat ../src/main/resources/public/js/meta64/dlg/base/DialogBase.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ConfirmDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/ProgressDlg.js >> all.js
 cat ../src/main/resources/public/js/meta64/dlg/MessageDlg.js >> all.js

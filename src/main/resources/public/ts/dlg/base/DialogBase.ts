@@ -121,7 +121,7 @@ abstract class DialogBase {
         }, "", true);
     }
 
-    makeMessageArea(message: string, id: string): string {
+    makeMessageArea(message: string, id?: string): string {
         var attrs = {
             "class": "dialog-message"
         };
@@ -133,7 +133,7 @@ abstract class DialogBase {
 
     // todo: there's a makeButton (and other similar methods) that don't have the
     // encodeCallback capability yet
-    makeButton(text: string, id: string, callback: any, ctx: any): string {
+    makeButton(text: string, id: string, callback: any, ctx?: any): string {
         var attribs = {
             "raised": "raised",
             "id": this.id(id)

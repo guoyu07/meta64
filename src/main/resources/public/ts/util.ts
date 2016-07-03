@@ -14,6 +14,10 @@ interface _HasSelect {
     select?: any;
 }
 
+interface _HasRoot {
+    root?: any;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Array prototype
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,21 +140,21 @@ if (typeof String.prototype.escapeForAttrib != 'function') {
     }
 }
 
-var util = function() {
+class Util {
 
-    var logAjax = false;
-    var timeoutMessageShown = false;
-    var offline = false;
+    logAjax:boolean = false;
+    timeoutMessageShown:boolean = false;
+    offline:boolean = false;
 
-    var waitCounter = 0;
-    var pgrsDlg = null;
+    waitCounter:number = 0;
+    pgrsDlg:any = null;
 
     //this blows the hell up, not sure why.
     //	Object.prototype.toJson = function() {
     //		return JSON.stringify(this, null, 4);
     //	};
 
-    var assertNotNull = function(varName) {
+    assertNotNull(varName) {
         if (typeof eval(varName) === 'undefined') {
             (new MessageDlg("Variable not found: " + varName)).open()
         }
@@ -160,21 +164,20 @@ var util = function() {
 	 * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
 	 * session is only allowed one concurrent call and simultaneous calls would just "queue up".
 	 */
-    var _ajaxCounter = 0;
+    _ajaxCounter:number = 0;
 
-    var _ = {
 
-        daylightSavingsTime: (new Date().dst()) ? true : false,
+        daylightSavingsTime:boolean= (new Date().dst()) ? true : false;
 
-        toJson: function(obj) {
+        toJson(obj) {
             return JSON.stringify(obj, null, 4);
-        },
+        }
 
 		/*
 		 * This came from here:
 		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 		 */
-        getParameterByName: function(name?: any, url?: any) {
+        getParameterByName(name?: any, url?: any) {
             if (!url)
                 url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -184,41 +187,41 @@ var util = function() {
             if (!results[2])
                 return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
+        }
 
 		/*
 		 * Sets up an inheritance relationship so that child inherits from parent, and then returns the prototype of the
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
 		 */
-        inherit: function(parent, child) {
+        inherit(parent, child) {
             child.prototype.constructor = child;
             child.prototype = Object.create(parent.prototype);
             return child.prototype;
-        },
+        }
 
-        initProgressMonitor: function() {
-            setInterval(_.progressInterval, 1000);
-        },
+        initProgressMonitor() {
+            setInterval(this.progressInterval, 1000);
+        }
 
-        progressInterval: function() {
-            var isWaiting = _.isAjaxWaiting();
+        progressInterval() {
+            var isWaiting = this.isAjaxWaiting();
             if (isWaiting) {
-                waitCounter++;
-                if (waitCounter >= 3) {
-                    if (!pgrsDlg) {
-                        pgrsDlg = new ProgressDlg();
-                        pgrsDlg.open();
+                this.waitCounter++;
+                if (this.waitCounter >= 3) {
+                    if (!this.pgrsDlg) {
+                        this.pgrsDlg = new ProgressDlg();
+                        this.pgrsDlg.open();
                     }
                 }
             } else {
-                waitCounter = 0;
-                if (pgrsDlg) {
-                    pgrsDlg.cancel();
-                    pgrsDlg = null;
+                this.waitCounter = 0;
+                if (this.pgrsDlg) {
+                    this.pgrsDlg.cancel();
+                    this.pgrsDlg = null;
                 }
             }
-        },
+        }
 
 		/*
 		 * If the callback function needs a 'this' context for the call, then pass the 'this' in the callbackThis
@@ -228,24 +231,30 @@ var util = function() {
 		 *
 		 * todo-3: this method got too long. Need to not inline these function definitions
 		 */
-        json: function(postName?: any, postData?: any, callback?: any, callbackThis?: any, callbackPayload?: any) {
+        json(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) {
+
+            if (callbackThis===window) {
+                console.log("PROBABLE BUG: json call for "+postName+" used global 'window' as 'this', which is almost never going to be correct.");
+            }
 
             var ironAjax;
             var ironRequest;
+            var thiz = this;
 
             try {
-                if (offline) {
+                if (this.offline) {
                     console.log("offline: ignoring call for " + postName);
                     return;
                 }
 
-                if (logAjax) {
+                if (this.logAjax) {
                     console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
                 }
 
                 /* Do not delete, research this way... */
                 // var ironAjax = this.$$("#myIronAjax");
-                ironAjax = Polymer.dom(this.root).querySelector("#ironAjax");
+                //todo-0: I had to force 'this.root' to be acceptable using interface, why?? is this correct?
+                ironAjax = Polymer.dom((<_HasRoot>this).root).querySelector("#ironAjax");
 
                 ironAjax.url = postTargetUrl + postName;
                 ironAjax.verbose = true;
@@ -265,7 +274,7 @@ var util = function() {
                 ironAjax.debounceDuration = "300"; // debounce-duration (is
                 // prop)
 
-                _ajaxCounter++;
+                this._ajaxCounter++;
                 ironRequest = ironAjax.generateRequest();
             } catch (ex) {
                 throw "Failed starting request: " + postName;
@@ -293,10 +302,10 @@ var util = function() {
                 // Handle Success
                 function() {
                     try {
-                        _ajaxCounter--;
-                        _.progressInterval();
+                        thiz._ajaxCounter--;
+                        thiz.progressInterval();
 
-                        if (logAjax) {
+                        if (thiz.logAjax) {
                             console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
                                 + JSON.stringify(ironRequest.response));
                         }
@@ -329,16 +338,16 @@ var util = function() {
                 // Handle Fail
                 function() {
                     try {
-                        _ajaxCounter--;
-                        _.progressInterval();
+                        thiz._ajaxCounter--;
+                        thiz.progressInterval();
                         console.log("Error in util.json");
 
                         if (ironRequest.status == "403") {
                             console.log("Not logged in detected in util.");
-                            offline = true;
+                            thiz.offline = true;
 
-                            if (!timeoutMessageShown) {
-                                timeoutMessageShown = true;
+                            if (!thiz.timeoutMessageShown) {
+                                thiz.timeoutMessageShown = true;
                                 (new MessageDlg("Session timed out. Page will refresh.")).open();
                             }
 
@@ -375,22 +384,22 @@ var util = function() {
                 });
 
             return ironRequest;
-        },
+        }
 
-        ajaxReady: function(requestName) {
-            if (_ajaxCounter > 0) {
+        ajaxReady(requestName) {
+            if (this._ajaxCounter > 0) {
                 console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
                 return false;
             }
             return true;
-        },
+        }
 
-        isAjaxWaiting: function() {
-            return _ajaxCounter > 0;
-        },
+        isAjaxWaiting() {
+            return this._ajaxCounter > 0;
+        }
 
         /* set focus to element by id (id must start with #) */
-        delayedFocus: function(id) {
+        delayedFocus(id) {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
                 $(id).focus();
@@ -400,7 +409,7 @@ var util = function() {
             setTimeout(function() {
                 $(id).focus();
             }, 1000);
-        },
+        }
 
 		/*
 		 * We could have put this logic inside the json method itself, but I can forsee cases where we don't want a
@@ -409,15 +418,15 @@ var util = function() {
 		 *
 		 * requires: res.success res.message
 		 */
-        checkSuccess: function(opFriendlyName, res) {
+        checkSuccess(opFriendlyName, res) {
             if (!res.success) {
                 (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
             }
             return res.success;
-        },
+        }
 
         /* adds all array objects to obj as a set */
-        addAll: function(obj, a) {
+        addAll(obj, a) {
             for (var i = 0; i < a.length; i++) {
                 if (!a[i]) {
                     console.error("null element in addAll at idx=" + i);
@@ -425,17 +434,17 @@ var util = function() {
                     obj[a[i]] = true;
                 }
             }
-        },
+        }
 
-        nullOrUndef: function(obj) {
+        nullOrUndef(obj) {
             return obj === null || obj === undefined;
-        },
+        }
 
 		/*
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        getUidForId: function(map, id) {
+        getUidForId(map, id) {
             /* look for uid in map */
             var uid = map[id];
 
@@ -445,9 +454,9 @@ var util = function() {
                 map[id] = uid;
             }
             return uid;
-        },
+        }
 
-        elementExists: function(id) {
+        elementExists(id) {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -459,18 +468,18 @@ var util = function() {
 
             var e = document.getElementById(id);
             return e != null;
-        },
+        }
 
         /* Takes textarea dom Id (# optional) and returns its value */
-        getTextAreaValById: function(id) {
-            var domElm: HTMLElement = _.domElm(id);
+        getTextAreaValById(id) {
+            var domElm: HTMLElement = this.domElm(id);
             return (<HTMLInputElement>domElm).value;
-        },
+        }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        domElm: function(id) {
+        domElm(id) {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -485,16 +494,16 @@ var util = function() {
                 console.log("domElm Error. Required element id not found: " + id);
             }
             return e;
-        },
+        }
 
-        poly: function(id) {
-            return _.polyElm(id).node;
-        },
+        poly(id) {
+            return this.polyElm(id).node;
+        }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        polyElm: function(id) {
+        polyElm(id) {
 
             if (id.startsWith("#")) {
                 id = id.substring(1);
@@ -510,98 +519,98 @@ var util = function() {
             }
 
             return Polymer.dom(e);
-        },
+        }
 
 		/*
 		 * Gets the element and displays an error message if it's not found
 		 */
-        getRequiredElement: function(id) {
+        getRequiredElement(id) {
             var e = $(id);
             if (e == null) {
                 console.log("getRequiredElement. Required element id not found: " + id);
             }
             return e;
-        },
+        }
 
-        isObject: function(obj) {
+        isObject(obj) {
             return obj && obj.length != 0;
-        },
+        }
 
-        currentTimeMillis: function() {
+        currentTimeMillis() {
             return new Date().getMilliseconds();
-        },
+        }
 
-        emptyString: function(val) {
+        emptyString(val) {
             return !val || val.length == 0;
-        },
+        }
 
-        getInputVal: function(id) {
-            return _.polyElm(id).node.value;
-        },
+        getInputVal(id) {
+            return this.polyElm(id).node.value;
+        }
 
         /* returns true if element was found, or false if element not found */
-        setInputVal: function(id, val) {
+        setInputVal(id, val) {
             if (val == null) {
                 val = "";
             }
-            var elm = _.polyElm(id);
+            var elm = this.polyElm(id);
             if (elm) {
                 elm.node.value = val;
             }
             return elm != null;
-        },
+        }
 
-        bindEnterKey: function(id, func) {
-            _.bindKey(id, func, 13);
-        },
+        bindEnterKey(id, func) {
+            this.bindKey(id, func, 13);
+        }
 
-        bindKey: function(id, func, keyCode) {
+        bindKey(id, func, keyCode) {
             $(id).keypress(function(e) {
                 if (e.which == keyCode) { // 13==enter key code
                     func();
                     return false;
                 }
             });
-        },
+        }
 
-        anyEmpty: function(p1?: any, p2?: any, p3?: any, p4?: any) {
+        anyEmpty(p1?: any, p2?: any, p3?: any, p4?: any) {
             for (var i = 0; i < arguments.length; i++) {
                 var val = arguments[i];
                 if (!val || val.length == 0)
                     return true;
             }
             return false;
-        },
+        }
 
 		/*
 		 * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
 		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
-        changeOrAddClass: function(elm, oldClass, newClass) {
+        changeOrAddClass(elm, oldClass, newClass) {
             var elmement = $(elm);
             elmement.toggleClass(oldClass, false);
             elmement.toggleClass(newClass, true);
-        },
+        }
 
 		/*
 		 * displays message (msg) of object is not of specified type
 		 */
-        verifyType: function(obj, type, msg) {
+        verifyType(obj, type, msg) {
             if (typeof obj !== type) {
                 (new MessageDlg(msg)).open();
                 return false;
             }
             return true;
-        },
+        }
 
         /* sets html and returns DOM element */
-        setHtmlEnhanced: function(id, content) {
+        setHtmlEnhanced(id, content) {
             if (content == null) {
                 content = "";
             }
 
-            var elm = _.domElm(id);
+            var elm = this.domElm(id);
             var polyElm = Polymer.dom(elm);
             polyElm.node.innerHTML = content;
 
@@ -610,19 +619,19 @@ var util = function() {
             Polymer.updateStyles();
 
             return elm;
-        },
+        }
 
-        setHtml: function(id, content) {
+        setHtml(id, content) {
             if (content == null) {
                 content = "";
             }
 
-            var elm = _.domElm(id);
+            var elm = this.domElm(id);
             var polyElm = Polymer.dom(elm);
             polyElm.node.innerHTML = content;
-        },
+        }
 
-        getPropertyCount: function(obj) {
+        getPropertyCount(obj) {
             var count = 0;
             var prop;
 
@@ -632,12 +641,12 @@ var util = function() {
                 }
             }
             return count;
-        },
+        }
 
 		/*
 		 * iterates over an object creating a string containing it's keys and values
 		 */
-        printObject: function(obj) {
+        printObject(obj) {
             if (!obj) {
                 return "null";
             }
@@ -659,10 +668,10 @@ var util = function() {
                 return "err";
             }
             return val;
-        },
+        }
 
         /* iterates over an object creating a string containing it's keys */
-        printKeys: function(obj) {
+        printKeys(obj) {
             if (!obj)
                 return "null";
 
@@ -678,18 +687,18 @@ var util = function() {
                 val += k;
             });
             return val;
-        },
+        }
 
 		/*
 		 * Makes eleId enabled based on vis flag
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setEnablement: function(elmId, enable) {
+        setEnablement(elmId, enable) {
 
             var domElm = null;
             if (typeof elmId == "string") {
-                domElm = _.domElm(elmId);
+                domElm = this.domElm(elmId);
             } else {
                 domElm = elmId;
             }
@@ -706,18 +715,18 @@ var util = function() {
                 // console.log("Disabling element: " + elmId);
                 domElm.disabled = false;
             }
-        },
+        }
 
 		/*
 		 * Makes eleId visible based on vis flag
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setVisibility: function(elmId, vis) {
+        setVisibility(elmId, vis) {
 
             var domElm = null;
             if (typeof elmId == "string") {
-                domElm = _.domElm(elmId);
+                domElm = this.domElm(elmId);
             } else {
                 domElm = elmId;
             }
@@ -735,8 +744,8 @@ var util = function() {
                 domElm.style.display = 'none';
             }
         }
-    };
+    }
 
-    console.log("Module ready: util.js");
-    return _;
-} ();
+    if (!window["util"]) {
+        var util: Util = new Util();
+    }

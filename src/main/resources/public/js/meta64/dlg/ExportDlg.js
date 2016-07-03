@@ -28,7 +28,7 @@ var ExportDlg = (function (_super) {
             util.json("exportToXml", {
                 "nodeId": highlightNode.id,
                 "targetFileName": targetFileName
-            }, this.exportResponse);
+            }, this.exportResponse, this);
         }
     };
     ExportDlg.prototype.exportResponse = function (res) {

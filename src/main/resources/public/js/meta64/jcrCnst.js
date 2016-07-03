@@ -1,33 +1,35 @@
 console.log("running module: jcrCnst.js");
-var jcrCnst = function () {
-    var _ = {
-        COMMENT_BY: "commentBy",
-        PUBLIC_APPEND: "publicAppend",
-        PRIMARY_TYPE: "jcr:primaryType",
-        POLICY: "rep:policy",
-        MIXIN_TYPES: "jcr:mixinTypes",
-        EMAIL_CONTENT: "jcr:content",
-        EMAIL_RECIP: "recip",
-        EMAIL_SUBJECT: "subject",
-        CREATED: "jcr:created",
-        CREATED_BY: "jcr:createdBy",
-        CONTENT: "jcr:content",
-        TAGS: "tags",
-        UUID: "jcr:uuid",
-        LAST_MODIFIED: "jcr:lastModified",
-        LAST_MODIFIED_BY: "jcr:lastModifiedBy",
-        DISABLE_INSERT: "disableInsert",
-        USER: "user",
-        PWD: "pwd",
-        EMAIL: "email",
-        CODE: "code",
-        BIN_VER: "binVer",
-        BIN_DATA: "jcrData",
-        BIN_MIME: "jcr:mimeType",
-        IMG_WIDTH: "imgWidth",
-        IMG_HEIGHT: "imgHeight"
-    };
-    console.log("Module ready: jcrCnst.js");
-    return _;
-}();
+var JcrCnst = (function () {
+    function JcrCnst() {
+        this.COMMENT_BY = "commentBy";
+        this.PUBLIC_APPEND = "publicAppend";
+        this.PRIMARY_TYPE = "jcr:primaryType";
+        this.POLICY = "rep:policy";
+        this.MIXIN_TYPES = "jcr:mixinTypes";
+        this.EMAIL_CONTENT = "jcr:content";
+        this.EMAIL_RECIP = "recip";
+        this.EMAIL_SUBJECT = "subject";
+        this.CREATED = "jcr:created";
+        this.CREATED_BY = "jcr:createdBy";
+        this.CONTENT = "jcr:content";
+        this.TAGS = "tags";
+        this.UUID = "jcr:uuid";
+        this.LAST_MODIFIED = "jcr:lastModified";
+        this.LAST_MODIFIED_BY = "jcr:lastModifiedBy";
+        this.DISABLE_INSERT = "disableInsert";
+        this.USER = "user";
+        this.PWD = "pwd";
+        this.EMAIL = "email";
+        this.CODE = "code";
+        this.BIN_VER = "binVer";
+        this.BIN_DATA = "jcrData";
+        this.BIN_MIME = "jcr:mimeType";
+        this.IMG_WIDTH = "imgWidth";
+        this.IMG_HEIGHT = "imgHeight";
+    }
+    return JcrCnst;
+}());
+if (!window["jcrCnst"]) {
+    var jcrCnst = new JcrCnst();
+}
 //# sourceMappingURL=jcrCnst.js.map

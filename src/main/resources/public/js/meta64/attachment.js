@@ -1,45 +1,48 @@
 console.log("running module: attachment.js");
-var attachment = function () {
-    var _ = {
-        uploadNode: null,
-        openUploadFromFileDlg: function () {
-            var node = meta64.getHighlightedNode();
-            if (!node) {
-                _.uploadNode = null;
-                (new MessageDlg("No node is selected.")).open();
-                return;
-            }
-            _.uploadNode = node;
-            (new UploadFromFileDlg()).open();
-        },
-        openUploadFromUrlDlg: function () {
-            var node = meta64.getHighlightedNode();
-            if (!node) {
-                _.uploadNode = null;
-                (new MessageDlg("No node is selected.")).open();
-                return;
-            }
-            _.uploadNode = node;
-            (new UploadFromUrlDlg()).open();
-        },
-        deleteAttachment: function () {
-            var node = meta64.getHighlightedNode();
-            if (node) {
-                (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.", function () {
-                    util.json("deleteAttachment", {
-                        "nodeId": node.id
-                    }, _.deleteAttachmentResponse, null, node.uid);
-                })).open();
-            }
-        },
-        deleteAttachmentResponse: function (res, uid) {
-            if (util.checkSuccess("Delete attachment", res)) {
-                meta64.removeBinaryByUid(uid);
-                meta64.goToMainPage(true);
-            }
+var Attachment = (function () {
+    function Attachment() {
+        this.uploadNode = null;
+    }
+    Attachment.prototype.openUploadFromFileDlg = function () {
+        var node = meta64.getHighlightedNode();
+        if (!node) {
+            this.uploadNode = null;
+            (new MessageDlg("No node is selected.")).open();
+            return;
+        }
+        this.uploadNode = node;
+        (new UploadFromFileDlg()).open();
+    };
+    Attachment.prototype.openUploadFromUrlDlg = function () {
+        var node = meta64.getHighlightedNode();
+        if (!node) {
+            this.uploadNode = null;
+            (new MessageDlg("No node is selected.")).open();
+            return;
+        }
+        this.uploadNode = node;
+        (new UploadFromUrlDlg()).open();
+    };
+    Attachment.prototype.deleteAttachment = function () {
+        var node = meta64.getHighlightedNode();
+        var thiz = this;
+        if (node) {
+            (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.", function () {
+                util.json("deleteAttachment", {
+                    "nodeId": node.id
+                }, thiz.deleteAttachmentResponse, thiz, node.uid);
+            })).open();
         }
     };
-    console.log("Module ready: attachment.js");
-    return _;
-}();
+    Attachment.prototype.deleteAttachmentResponse = function (res, uid) {
+        if (util.checkSuccess("Delete attachment", res)) {
+            meta64.removeBinaryByUid(uid);
+            meta64.goToMainPage(true);
+        }
+    };
+    return Attachment;
+}());
+if (!window["attachment"]) {
+    var attachment = new Attachment();
+}
 //# sourceMappingURL=attachment.js.map

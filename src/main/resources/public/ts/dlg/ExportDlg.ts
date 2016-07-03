@@ -34,7 +34,7 @@ class ExportDlg extends DialogBase {
             util.json("exportToXml", {
                 "nodeId": highlightNode.id,
                 "targetFileName": targetFileName
-            }, this.exportResponse);
+            }, this.exportResponse, this);
         }
     }
 

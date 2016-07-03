@@ -48,10 +48,10 @@ class RenameNodeDlg extends DialogBase {
             "newName": newName
         });
 
-        var This = this;
+        var thiz = this;
 
         ironRes.completes.then(function() {
-            This.renameNodeResponse(ironRes.response, renamingRootNode);
+            thiz.renameNodeResponse(ironRes.response, renamingRootNode);
         });
     }
 

@@ -15,6 +15,8 @@ class EditNodeDlg extends DialogBase {
 
     constructor() {
         super("EditNodeDlg");
+        debugger;
+
         /*
          * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
          * edits.
@@ -70,6 +72,7 @@ class EditNodeDlg extends DialogBase {
      *
      */
     populateEditNodePg() {
+      debugger;
         /* display the node path at the top of the edit page */
         view.initEditPathDisplayById(this.id("editNodePathDisplay"));
 
@@ -434,12 +437,12 @@ class EditNodeDlg extends DialogBase {
                 "parentId": edit.parentOfNewNode.id,
                 "targetName": edit.nodeInsertTarget.name,
                 "newNodeName": newNodeName
-            }, edit.insertNodeResponse);
+            }, edit.insertNodeResponse, edit);
         } else {
             util.json("createSubNode", {
                 "nodeId": edit.parentOfNewNode.id,
                 "newNodeName": newNodeName
-            }, edit.createSubNodeResponse);
+            }, edit.createSubNodeResponse, edit);
         }
     }
 
@@ -524,7 +527,7 @@ class EditNodeDlg extends DialogBase {
             };
             console.log("calling saveNode(). PostData=" + util.toJson(postData));
 
-            util.json("saveNode", postData, edit.saveNodeResponse, null, {
+            util.json("saveNode", postData, edit.saveNodeResponse, edit, {
                 savedId: edit.editNode.id
             });
             edit.sendNotificationPendingSave = false;
@@ -623,6 +626,7 @@ class EditNodeDlg extends DialogBase {
     }
 
     init(): void {
+        debugger;
         console.log("EditNodeDlg.init");
         this.populateEditNodePg();
     }

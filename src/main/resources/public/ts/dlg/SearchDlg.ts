@@ -58,7 +58,7 @@ class SearchDlg extends DialogBase {
             "searchText": searchText,
             "modSortDesc": false,
             "searchProp": searchProp
-        }, srch.searchNodesResponse);
+        }, srch.searchNodesResponse, srch);
     }
 
     init(): any {

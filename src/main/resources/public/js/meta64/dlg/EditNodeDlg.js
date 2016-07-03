@@ -10,6 +10,7 @@ var EditNodeDlg = (function (_super) {
         _super.call(this, "EditNodeDlg");
         this.fieldIdToPropMap = {};
         this.propEntries = new Array();
+        debugger;
         this.fieldIdToPropMap = {};
         this.propEntries = new Array();
     }
@@ -39,6 +40,7 @@ var EditNodeDlg = (function (_super) {
         return header + internalMainContent + buttonBar;
     };
     EditNodeDlg.prototype.populateEditNodePg = function () {
+        debugger;
         view.initEditPathDisplayById(this.id("editNodePathDisplay"));
         var fields = "";
         var counter = 0;
@@ -259,13 +261,13 @@ var EditNodeDlg = (function (_super) {
                 "parentId": edit.parentOfNewNode.id,
                 "targetName": edit.nodeInsertTarget.name,
                 "newNodeName": newNodeName
-            }, edit.insertNodeResponse);
+            }, edit.insertNodeResponse, edit);
         }
         else {
             util.json("createSubNode", {
                 "nodeId": edit.parentOfNewNode.id,
                 "newNodeName": newNodeName
-            }, edit.createSubNodeResponse);
+            }, edit.createSubNodeResponse, edit);
         }
     };
     EditNodeDlg.prototype.saveExistingNode = function () {
@@ -330,7 +332,7 @@ var EditNodeDlg = (function (_super) {
                 sendNotification: edit.sendNotificationPendingSave
             };
             console.log("calling saveNode(). PostData=" + util.toJson(postData));
-            util.json("saveNode", postData, edit.saveNodeResponse, null, {
+            util.json("saveNode", postData, edit.saveNodeResponse, edit, {
                 savedId: edit.editNode.id
             });
             edit.sendNotificationPendingSave = false;
@@ -419,6 +421,7 @@ var EditNodeDlg = (function (_super) {
         return field;
     };
     EditNodeDlg.prototype.init = function () {
+        debugger;
         console.log("EditNodeDlg.init");
         this.populateEditNodePg();
     };

@@ -1,42 +1,41 @@
 console.log("running module: jcrCnst.js");
 
-var jcrCnst = function() {
+class JcrCnst {
 
-    var _ = {
-        COMMENT_BY: "commentBy",
-        PUBLIC_APPEND: "publicAppend",
-        PRIMARY_TYPE: "jcr:primaryType",
-        POLICY: "rep:policy",
+    COMMENT_BY: string = "commentBy";
+    PUBLIC_APPEND: string = "publicAppend";
+    PRIMARY_TYPE: string = "jcr:primaryType";
+    POLICY: string = "rep:policy";
 
-        MIXIN_TYPES: "jcr:mixinTypes",
+    MIXIN_TYPES: string = "jcr:mixinTypes";
 
-        EMAIL_CONTENT: "jcr:content",
-        EMAIL_RECIP: "recip",
-        EMAIL_SUBJECT: "subject",
+    EMAIL_CONTENT: string = "jcr:content";
+    EMAIL_RECIP: string = "recip";
+    EMAIL_SUBJECT: string = "subject";
 
-        CREATED: "jcr:created",
-        CREATED_BY: "jcr:createdBy",
-        CONTENT: "jcr:content",
-        TAGS: "tags",
-        UUID: "jcr:uuid",
-        LAST_MODIFIED: "jcr:lastModified",
-        LAST_MODIFIED_BY: "jcr:lastModifiedBy",
+    CREATED: string = "jcr:created";
+    CREATED_BY: string = "jcr:createdBy";
+    CONTENT: string = "jcr:content";
+    TAGS: string = "tags";
+    UUID: string = "jcr:uuid";
+    LAST_MODIFIED: string = "jcr:lastModified";
+    LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
 
-        DISABLE_INSERT: "disableInsert",
+    DISABLE_INSERT: string = "disableInsert";
 
-        USER: "user",
-        PWD: "pwd",
-        EMAIL: "email",
-        CODE: "code",
+    USER: string = "user";
+    PWD: string = "pwd";
+    EMAIL: string = "email";
+    CODE: string = "code";
 
-        BIN_VER: "binVer",
-        BIN_DATA: "jcrData",
-        BIN_MIME: "jcr:mimeType",
+    BIN_VER: string = "binVer";
+    BIN_DATA: string = "jcrData";
+    BIN_MIME: string = "jcr:mimeType";
 
-        IMG_WIDTH: "imgWidth",
-        IMG_HEIGHT: "imgHeight"
-    };
+    IMG_WIDTH: string = "imgWidth";
+    IMG_HEIGHT: string = "imgHeight";
+}
 
-    console.log("Module ready: jcrCnst.js");
-    return _;
-} ();
+if (!window["jcrCnst"]) {
+    var jcrCnst: JcrCnst = new JcrCnst();
+}

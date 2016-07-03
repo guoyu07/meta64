@@ -34,7 +34,7 @@ class ImportDlg extends DialogBase {
             util.json("import", {
                 "nodeId": highlightNode.id,
                 "sourceFileName": sourceFileName
-            }, this.importResponse);
+            }, this.importResponse, this);
         }
     }
 

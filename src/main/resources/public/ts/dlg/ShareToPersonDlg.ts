@@ -38,7 +38,7 @@ class ShareToPersonDlg extends DialogBase {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,
             "privileges": ["read", "write", "addChildren", "nodeTypeManagement"]
-        }, thiz.reloadFromShareWithPerson);
+        }, thiz.reloadFromShareWithPerson, thiz);
     }
 
     reloadFromShareWithPerson(res: any): void {

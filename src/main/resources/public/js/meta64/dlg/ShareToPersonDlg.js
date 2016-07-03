@@ -30,7 +30,7 @@ var ShareToPersonDlg = (function (_super) {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,
             "privileges": ["read", "write", "addChildren", "nodeTypeManagement"]
-        }, thiz.reloadFromShareWithPerson);
+        }, thiz.reloadFromShareWithPerson, thiz);
     };
     ShareToPersonDlg.prototype.reloadFromShareWithPerson = function (res) {
         if (util.checkSuccess("Share Node with Person", res)) {

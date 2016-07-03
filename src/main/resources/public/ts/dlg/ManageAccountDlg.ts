@@ -1,6 +1,9 @@
 
 console.log("running module: ManageAccountDlg.js");
 
+//import _prefs from "../prefs";
+//let prefs = _prefs;
+
 class ManageAccountDlg extends DialogBase {
 
     constructor() {

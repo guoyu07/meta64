@@ -28,7 +28,7 @@ var ImportDlg = (function (_super) {
             util.json("import", {
                 "nodeId": highlightNode.id,
                 "sourceFileName": sourceFileName
-            }, this.importResponse);
+            }, this.importResponse, this);
         }
     };
     ImportDlg.prototype.importResponse = function (res) {

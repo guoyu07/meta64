@@ -1,31 +1,33 @@
 console.log("running module: user.js");
-var share = function () {
-    var _findSharedNodesResponse = function (res) {
+var Share = (function () {
+    function Share() {
+        this.sharingNode = null;
+    }
+    Share.prototype._findSharedNodesResponse = function (res) {
         srch.searchNodesResponse(res);
     };
-    var _ = {
-        sharingNode: null,
-        editNodeSharing: function () {
-            var node = meta64.getHighlightedNode();
-            if (!node) {
-                (new MessageDlg("No node is selected.")).open();
-                return;
-            }
-            _.sharingNode = node;
-            (new SharingDlg()).open();
-        },
-        findSharedNodes: function () {
-            var focusNode = meta64.getHighlightedNode();
-            if (focusNode == null) {
-                return;
-            }
-            srch.searchPageTitle = "Shared Nodes";
-            util.json("getSharedNodes", {
-                "nodeId": focusNode.id
-            }, _findSharedNodesResponse);
+    Share.prototype.editNodeSharing = function () {
+        var node = meta64.getHighlightedNode();
+        if (!node) {
+            (new MessageDlg("No node is selected.")).open();
+            return;
         }
+        this.sharingNode = node;
+        (new SharingDlg()).open();
     };
-    console.log("Module ready: share.js");
-    return _;
-}();
+    Share.prototype.findSharedNodes = function () {
+        var focusNode = meta64.getHighlightedNode();
+        if (focusNode == null) {
+            return;
+        }
+        srch.searchPageTitle = "Shared Nodes";
+        util.json("getSharedNodes", {
+            "nodeId": focusNode.id
+        }, this._findSharedNodesResponse, this);
+    };
+    return Share;
+}());
+if (!window["share"]) {
+    var share = new Share();
+}
 //# sourceMappingURL=share.js.map

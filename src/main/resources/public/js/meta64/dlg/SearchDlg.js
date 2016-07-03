@@ -46,7 +46,7 @@ var SearchDlg = (function (_super) {
             "searchText": searchText,
             "modSortDesc": false,
             "searchProp": searchProp
-        }, srch.searchNodesResponse);
+        }, srch.searchNodesResponse, srch);
     };
     SearchDlg.prototype.init = function () {
         util.delayedFocus(this.id("searchText"));

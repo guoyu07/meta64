@@ -36,9 +36,9 @@ var RenameNodeDlg = (function (_super) {
             "nodeId": highlightNode.id,
             "newName": newName
         });
-        var This = this;
+        var thiz = this;
         ironRes.completes.then(function () {
-            This.renameNodeResponse(ironRes.response, renamingRootNode);
+            thiz.renameNodeResponse(ironRes.response, renamingRootNode);
         });
     };
     RenameNodeDlg.prototype.renameNodeResponse = function (res, renamingPageRoot) {

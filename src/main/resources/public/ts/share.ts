@@ -1,9 +1,9 @@
 
-console.log("running module: user.js");
+console.log("running module: share.js");
 
 class Share {
 
-    _findSharedNodesResponse(res) {
+    _findSharedNodesResponse=(res)  => {
         srch.searchNodesResponse(res);
     }
 
@@ -12,7 +12,7 @@ class Share {
     /*
      * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
      */
-    editNodeSharing() {
+    editNodeSharing=()  => {
         var node = meta64.getHighlightedNode();
 
         if (!node) {
@@ -23,7 +23,7 @@ class Share {
         (new SharingDlg()).open();
     }
 
-    findSharedNodes() {
+    findSharedNodes=()  => {
         var focusNode = meta64.getHighlightedNode();
         if (focusNode == null) {
             return;
@@ -39,4 +39,4 @@ class Share {
 
 if (!window["share"]) {
     var share: Share = new Share();
-}	
+}

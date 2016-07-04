@@ -5,7 +5,7 @@ class View {
 
     scrollToSelNodePending: boolean = false;
 
-    updateStatusBar() {
+    updateStatusBar = () => {
         if (!meta64.currentNodeData)
             return;
         var statusLine = "";
@@ -23,7 +23,7 @@ class View {
      * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
      * render.
      */
-    refreshTreeResponse(res?: any, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
+    refreshTreeResponse = (res?: any, targetId?: any, renderParentIfLeaf?: any, newId?: any) => {
 
         render.renderPageFromData(res);
 
@@ -45,7 +45,7 @@ class View {
     /*
      * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
      */
-    refreshTree(nodeId?: any, renderParentIfLeaf?: any, newId?: any) {
+    refreshTree = (nodeId?: any, renderParentIfLeaf?: any, newId?: any) => {
         if (!nodeId) {
             nodeId = meta64.currentNodeId;
         }
@@ -69,7 +69,7 @@ class View {
      * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
      * and then scrolling to a different place a fraction of a second later)
      */
-    scrollToSelectedNode() {
+    scrollToSelectedNode = () => {
         this.scrollToSelNodePending = true;
         var thiz = this;
         setTimeout(function() {
@@ -93,7 +93,7 @@ class View {
     /*
      * todo-3: The following was in a polymer example (can I use this?): app.$.headerPanelMain.scrollToTop(true);
      */
-    scrollToTop() {
+    scrollToTop = () => {
         if (this.scrollToSelNodePending)
             return;
         var thiz = this;
@@ -108,7 +108,7 @@ class View {
         }, 1000);
     }
 
-    initEditPathDisplayById(domId) {
+    initEditPathDisplayById = (domId) => {
         var node = edit.editNode;
         var e = $("#" + domId);
         if (!e)
@@ -131,7 +131,7 @@ class View {
         }
     }
 
-    showServerInfo() {
+    showServerInfo = () => {
         var ironRes = util.json("getServerInfo", {});
 
         ironRes.completes.then(function() {

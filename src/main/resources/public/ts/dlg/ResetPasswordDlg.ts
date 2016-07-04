@@ -10,7 +10,7 @@ class ResetPasswordDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Reset Password");
 
         var message = this.makeMessageArea("Enter your user name and email address and a change-password link will be sent to you");
@@ -27,7 +27,7 @@ class ResetPasswordDlg extends DialogBase {
         return header + message + formControls + buttonBar;
     }
 
-    resetPassword(): void {
+    resetPassword = (): void => {
 
         var userName = this.getInputVal("userName").trim();
         var emailAddress = this.getInputVal("emailAddress").trim();
@@ -42,13 +42,13 @@ class ResetPasswordDlg extends DialogBase {
         }
     }
 
-    resetPasswordResponse(res: any): void {
+    resetPasswordResponse = (res: any): void => {
         if (util.checkSuccess("Reset password", res)) {
             (new MessageDlg("Password reset email was sent. Check your inbox.")).open();
         }
     }
 
-    init(): void {
+    init = (): void => {
         if (this.user) {
             this.setInputVal("userName", this.user);
         }

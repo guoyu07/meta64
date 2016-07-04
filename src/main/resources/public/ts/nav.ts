@@ -4,11 +4,11 @@ console.log("running module: nav.js");
 class Nav {
     _UID_ROWID_SUFFIX: string = "_row";
 
-    openMainMenuHelp() {
+    openMainMenuHelp = () => {
         window.open(window.location.origin + "?id=/meta64/public/help", "_blank");
     }
 
-    displayingHome() {
+    displayingHome = () => {
         if (meta64.isAnonUser) {
             return meta64.currentNodeId === meta64.anonUserLandingPageNode;
         } else {
@@ -16,11 +16,11 @@ class Nav {
         }
     }
 
-    parentVisibleToUser() {
+    parentVisibleToUser = () => {
         return !this.displayingHome();
     }
 
-    upLevelResponse(res, id) {
+    upLevelResponse = (res, id) => {
         if (!res || !res.node) {
             (new MessageDlg("No data is visible to you above this node.")).open();
         } else {
@@ -30,7 +30,7 @@ class Nav {
         }
     }
 
-    navUpLevel() {
+    navUpLevel = () => {
 
         if (!this.parentVisibleToUser()) {
             // Already at root. Can't go up.
@@ -51,7 +51,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedDomElement() {
+    getSelectedDomElement = () => {
 
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {
@@ -76,7 +76,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedPolyElement() {
+    getSelectedPolyElement = () => {
         try {
             var currentSelNode = meta64.getHighlightedNode();
             if (currentSelNode) {
@@ -102,7 +102,7 @@ class Nav {
         return null;
     }
 
-    clickOnNodeRow(rowElm, uid) {
+    clickOnNodeRow = (rowElm, uid) => {
 
         var node = meta64.uidToNodeMap[uid];
         if (!node) {
@@ -129,7 +129,7 @@ class Nav {
         meta64.refreshAllGuiEnablement();
     }
 
-    openNode(uid) {
+    openNode = (uid) => {
 
         var node = meta64.uidToNodeMap[uid];
 
@@ -147,7 +147,7 @@ class Nav {
      * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
      * silly looking async timer here.
      */
-    toggleNodeSel(uid) {
+    toggleNodeSel = (uid) => {
         var toggleButton = util.polyElm(uid + "_sel");
         setTimeout(function() {
             if (toggleButton.node.checked) {
@@ -161,14 +161,14 @@ class Nav {
         }, 500);
     }
 
-    navHomeResponse(res) {
+    navHomeResponse = (res) => {
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();
         meta64.refreshAllGuiEnablement();
     }
 
-    navHome() {
+    navHome = () => {
         if (meta64.isAnonUser) {
             meta64.loadAnonPageHome(true);
             // window.location.href = window.location.origin;
@@ -179,11 +179,11 @@ class Nav {
         }
     }
 
-    navPublicHome() {
+    navPublicHome = () => {
         meta64.loadAnonPageHome(true);
     }
 
-    toggleMainMenu() {
+    toggleMainMenu = () => {
         //var paperDrawerPanel = util.polyElm("paperDrawerPanel");
 
         /*

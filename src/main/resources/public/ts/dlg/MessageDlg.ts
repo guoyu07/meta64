@@ -17,7 +17,7 @@ class MessageDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var content = this.makeHeader(this.title) + "<p>" + this.message + "</p>";
         content += render.centeredButtonBar(this.makeCloseButton("Ok", "messageDlgOkButton", this.callback));
         return content;

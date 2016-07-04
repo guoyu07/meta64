@@ -9,7 +9,7 @@ class ExportDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Export to XML");
 
         var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");
@@ -21,7 +21,7 @@ class ExportDlg extends DialogBase {
         return header + formControls + buttonBar;
     }
 
-    exportNodes(): void {
+    exportNodes = (): void => {
         var highlightNode = meta64.getHighlightedNode();
         var targetFileName = this.getInputVal("exportTargetNodeName");
 
@@ -38,7 +38,7 @@ class ExportDlg extends DialogBase {
         }
     }
 
-    exportResponse(res: any): void {
+    exportResponse = (res: any): void => {
         if (util.checkSuccess("Export", res)) {
             (new MessageDlg("Export Successful.")).open();
             meta64.selectTab("mainTabName");

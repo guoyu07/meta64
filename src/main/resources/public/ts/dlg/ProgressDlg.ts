@@ -9,7 +9,7 @@ class ProgressDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Processing Request", "", true);
 
         var progressBar = render.tag("paper-progress", {

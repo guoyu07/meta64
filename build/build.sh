@@ -11,7 +11,10 @@ export backupFolder=$META64_BAK
 #Delete old JS files and MAP files. We also have jsconfig.json set to not emit on error
 #find $META64/src/main/resources/public/js/meta64 -name "*.js" -type f -delete
 #find $META64/src/main/resources/public/js/meta64 -name "*.map" -type f -delete
-#echo "Old JS files deleted."
+
+rm $META64/src/main/resources/public/js/meta64-app.js
+rm $META64/src/main/resources/public/js/meta64-app.min.js
+echo "Old JS files deleted."
 
 # To install typescript compiler (tsc) run these commands:
 #    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -

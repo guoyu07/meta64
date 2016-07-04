@@ -1,5 +1,6 @@
 
 console.log("running module: UploadFromFileDlg.js");
+//import { cnst } from "../cnst";
 
 class UploadFromFileDlg extends DialogBase {
 
@@ -10,7 +11,7 @@ class UploadFromFileDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Upload File Attachment");
 
         var uploadPathDisplay = "";
@@ -71,7 +72,7 @@ class UploadFromFileDlg extends DialogBase {
         return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
     }
 
-    uploadFileNow(): void {
+    uploadFileNow = (): void => {
 
         /* Upload form has hidden input element for nodeId parameter */
         $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
@@ -101,7 +102,7 @@ class UploadFromFileDlg extends DialogBase {
         });
     }
 
-    init(): void {
+    init = (): void => {
         /* display the node path at the top of the edit page */
         $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
     }

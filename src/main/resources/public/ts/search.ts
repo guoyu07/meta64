@@ -6,7 +6,6 @@ console.log("running module: search.js");
  * as the var name.
  */
 class Srch {
-
     _UID_ROWID_SUFFIX: string = "_srch_row";
 
     searchNodes: any = null;
@@ -43,14 +42,14 @@ class Srch {
      */
     uidToNodeMap: any ={};
 
-    numSearchResults() {
+    numSearchResults=()  => {
         return srch.searchResults != null && //
             srch.searchResults.searchResults != null && //
             srch.searchResults.searchResults.length != null ? //
             srch.searchResults.searchResults.length : 0;
     }
 
-    searchTabActivated() {
+    searchTabActivated=() =>  {
         /*
          * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
          * and open up the search dialog.
@@ -60,7 +59,7 @@ class Srch {
         }
     }
 
-    searchNodesResponse(res) {
+    searchNodesResponse=(res) =>  {
         this.searchResults = res;
         var content = searchResultsPanel.build();
         util.setHtmlEnhanced("searchResultsPanel", content);
@@ -68,7 +67,7 @@ class Srch {
         meta64.changePage(searchResultsPanel);
     }
 
-    timelineResponse(res) {
+    timelineResponse=(res) =>  {
         this.timelineResults = res;
         var content = timelineResultsPanel.build();
         util.setHtmlEnhanced("timelineResultsPanel", content);
@@ -76,7 +75,7 @@ class Srch {
         meta64.changePage(timelineResultsPanel);
     }
 
-    timeline() {
+    timeline=() =>  {
         var node = meta64.getHighlightedNode();
         if (!node) {
             (new MessageDlg("No node is selected to 'timeline' under.")).open();
@@ -92,12 +91,12 @@ class Srch {
         }, this.timelineResponse);
     }
 
-    initSearchNode(node) {
+    initSearchNode=(node) =>  {
         node.uid = util.getUidForId(this.identToUidMap, node.id);
         this.uidToNodeMap[node.uid] = node;
     }
 
-    populateSearchResultsPage(data, viewName) {
+    populateSearchResultsPage=(data, viewName)  => {
         var output = '';
         var childCount = data.searchResults.length;
 
@@ -126,7 +125,7 @@ class Srch {
      *
      * node is a NodeInfo.java JSON
      */
-    renderSearchResultAsListItem(node, index, count, rowCount) {
+    renderSearchResultAsListItem=(node, index, count, rowCount) =>  {
 
         var uid = node.uid;
         console.log("renderSearchResult: " + uid);
@@ -150,19 +149,19 @@ class Srch {
             }, content));
     }
 
-    makeButtonBarHtml(uid) {
+    makeButtonBarHtml=(uid) =>  {
         var gotoButton = render.makeButton("Go to Node", uid, "srch.clickSearchNode('" + uid + "');");
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
-    clickOnSearchResultRow(rowElm, uid) {
+    clickOnSearchResultRow=(rowElm, uid)  => {
         this.unhighlightRow();
         this.highlightRowNode = this.uidToNodeMap[uid];
 
         util.changeOrAddClass(rowElm, "inactive-row", "active-row");
     }
 
-    clickSearchNode(uid) {
+    clickSearchNode=(uid)  => {
         /*
          * update highlight node to point to the node clicked on, just to persist it for later
          */
@@ -174,7 +173,7 @@ class Srch {
     /*
      * turn of row selection styling of whatever row is currently selected
      */
-    unhighlightRow() {
+    unhighlightRow=() =>  {
 
         if (!this.highlightRowNode) {
             return;

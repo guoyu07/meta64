@@ -9,7 +9,7 @@ class RenameNodeDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Rename Node");
 
         var curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
@@ -24,7 +24,7 @@ class RenameNodeDlg extends DialogBase {
         return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
     }
 
-    renameNode(): void {
+    renameNode = (): void => {
         var newName = this.getInputVal("newNodeNameEditField");
 
         if (util.emptyString(newName)) {
@@ -55,7 +55,7 @@ class RenameNodeDlg extends DialogBase {
         });
     }
 
-    renameNodeResponse(res: any, renamingPageRoot: boolean): void {
+    renameNodeResponse = (res: any, renamingPageRoot: boolean): void => {
         if (util.checkSuccess("Rename node", res)) {
             if (renamingPageRoot) {
                 view.refreshTree(res.newId, true);
@@ -66,7 +66,7 @@ class RenameNodeDlg extends DialogBase {
         }
     }
 
-    init(): void {
+    init = (): void => {
         var highlightNode = meta64.getHighlightedNode();
         if (!highlightNode) {
             return;

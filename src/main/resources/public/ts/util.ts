@@ -155,7 +155,7 @@ class Util {
     //		return JSON.stringify(this, null, 4);
     //	};
 
-    assertNotNull(varName) {
+    assertNotNull=(varName) =>  {
         if (typeof eval(varName) === 'undefined') {
             (new MessageDlg("Variable not found: " + varName)).open()
         }
@@ -170,7 +170,7 @@ class Util {
 
         daylightSavingsTime:boolean= (new Date().dst()) ? true : false;
 
-        toJson(obj) {
+        toJson=(obj)  => {
             return JSON.stringify(obj, null, 4);
         }
 
@@ -178,7 +178,7 @@ class Util {
 		 * This came from here:
 		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 		 */
-        getParameterByName(name?: any, url?: any) {
+        getParameterByName=(name?: any, url?: any)  => {
             if (!url)
                 url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -195,13 +195,13 @@ class Util {
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
 		 */
-        inherit(parent, child) {
+        inherit=(parent, child)  => {
             child.prototype.constructor = child;
             child.prototype = Object.create(parent.prototype);
             return child.prototype;
         }
 
-        initProgressMonitor() {
+        initProgressMonitor=() =>  {
             setInterval(this.progressInterval, 1000);
         }
 
@@ -232,7 +232,7 @@ class Util {
 		 *
 		 * todo-3: this method got too long. Need to not inline these function definitions
 		 */
-        json(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) {
+        json=(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) =>  {
 
             if (callbackThis===window) {
                 console.log("PROBABLE BUG: json call for "+postName+" used global 'window' as 'this', which is almost never going to be correct.");
@@ -387,7 +387,7 @@ class Util {
             return ironRequest;
         }
 
-        ajaxReady(requestName) {
+        ajaxReady=(requestName)  => {
             if (this._ajaxCounter > 0) {
                 console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
                 return false;
@@ -395,12 +395,12 @@ class Util {
             return true;
         }
 
-        isAjaxWaiting() {
+        isAjaxWaiting=()  => {
             return this._ajaxCounter > 0;
         }
 
         /* set focus to element by id (id must start with #) */
-        delayedFocus(id) {
+        delayedFocus=(id)  => {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
                 $(id).focus();
@@ -419,7 +419,7 @@ class Util {
 		 *
 		 * requires: res.success res.message
 		 */
-        checkSuccess(opFriendlyName, res) {
+        checkSuccess=(opFriendlyName, res)  => {
             if (!res.success) {
                 (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
             }
@@ -427,7 +427,7 @@ class Util {
         }
 
         /* adds all array objects to obj as a set */
-        addAll(obj, a) {
+        addAll=(obj, a)  => {
             for (var i = 0; i < a.length; i++) {
                 if (!a[i]) {
                     console.error("null element in addAll at idx=" + i);
@@ -437,7 +437,7 @@ class Util {
             }
         }
 
-        nullOrUndef(obj) {
+        nullOrUndef=(obj)  => {
             return obj === null || obj === undefined;
         }
 
@@ -445,7 +445,7 @@ class Util {
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        getUidForId(map, id) {
+        getUidForId=(map, id)  => {
             /* look for uid in map */
             var uid = map[id];
 
@@ -457,7 +457,7 @@ class Util {
             return uid;
         }
 
-        elementExists(id) {
+        elementExists=(id) =>  {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -472,7 +472,7 @@ class Util {
         }
 
         /* Takes textarea dom Id (# optional) and returns its value */
-        getTextAreaValById(id) {
+        getTextAreaValById=(id)  => {
             var domElm: HTMLElement = this.domElm(id);
             return (<HTMLInputElement>domElm).value;
         }
@@ -480,7 +480,7 @@ class Util {
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        domElm(id) {
+        domElm=(id)  => {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -497,14 +497,14 @@ class Util {
             return e;
         }
 
-        poly(id) {
+        poly=(id)  => {
             return this.polyElm(id).node;
         }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        polyElm(id) {
+        polyElm=(id) =>  {
 
             if (id.startsWith("#")) {
                 id = id.substring(1);
@@ -525,7 +525,7 @@ class Util {
 		/*
 		 * Gets the element and displays an error message if it's not found
 		 */
-        getRequiredElement(id) {
+        getRequiredElement=(id)  => {
             var e = $(id);
             if (e == null) {
                 console.log("getRequiredElement. Required element id not found: " + id);
@@ -533,24 +533,24 @@ class Util {
             return e;
         }
 
-        isObject(obj) {
+        isObject=(obj)  => {
             return obj && obj.length != 0;
         }
 
-        currentTimeMillis() {
+        currentTimeMillis=() =>  {
             return new Date().getMilliseconds();
         }
 
-        emptyString(val) {
+        emptyString=(val) =>  {
             return !val || val.length == 0;
         }
 
-        getInputVal(id) {
+        getInputVal=(id) =>  {
             return this.polyElm(id).node.value;
         }
 
         /* returns true if element was found, or false if element not found */
-        setInputVal(id, val) {
+        setInputVal=(id, val)  => {
             if (val == null) {
                 val = "";
             }
@@ -561,11 +561,11 @@ class Util {
             return elm != null;
         }
 
-        bindEnterKey(id, func) {
+        bindEnterKey=(id, func)  => {
             this.bindKey(id, func, 13);
         }
 
-        bindKey(id, func, keyCode) {
+        bindKey=(id, func, keyCode) =>  {
             $(id).keypress(function(e) {
                 if (e.which == keyCode) { // 13==enter key code
                     func();
@@ -574,21 +574,12 @@ class Util {
             });
         }
 
-        anyEmpty(p1?: any, p2?: any, p3?: any, p4?: any) {
-            for (var i = 0; i < arguments.length; i++) {
-                var val = arguments[i];
-                if (!val || val.length == 0)
-                    return true;
-            }
-            return false;
-        }
-
 		/*
 		 * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
 		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
-        changeOrAddClass(elm, oldClass, newClass) {
+        changeOrAddClass=(elm, oldClass, newClass)  => {
             var elmement = $(elm);
             elmement.toggleClass(oldClass, false);
             elmement.toggleClass(newClass, true);
@@ -597,7 +588,7 @@ class Util {
 		/*
 		 * displays message (msg) of object is not of specified type
 		 */
-        verifyType(obj, type, msg) {
+        verifyType=(obj, type, msg)  => {
             if (typeof obj !== type) {
                 (new MessageDlg(msg)).open();
                 return false;
@@ -606,7 +597,7 @@ class Util {
         }
 
         /* sets html and returns DOM element */
-        setHtmlEnhanced(id, content) {
+        setHtmlEnhanced=(id, content)  => {
             if (content == null) {
                 content = "";
             }
@@ -622,7 +613,7 @@ class Util {
             return elm;
         }
 
-        setHtml(id, content) {
+        setHtml=(id, content)  => {
             if (content == null) {
                 content = "";
             }
@@ -632,7 +623,7 @@ class Util {
             polyElm.node.innerHTML = content;
         }
 
-        getPropertyCount(obj) {
+        getPropertyCount=(obj)  => {
             var count = 0;
             var prop;
 
@@ -647,7 +638,7 @@ class Util {
 		/*
 		 * iterates over an object creating a string containing it's keys and values
 		 */
-        printObject(obj) {
+        printObject=(obj) =>  {
             if (!obj) {
                 return "null";
             }
@@ -672,7 +663,7 @@ class Util {
         }
 
         /* iterates over an object creating a string containing it's keys */
-        printKeys(obj) {
+        printKeys=(obj)  => {
             if (!obj)
                 return "null";
 
@@ -695,7 +686,7 @@ class Util {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setEnablement(elmId, enable) {
+        setEnablement=(elmId, enable)  => {
 
             var domElm = null;
             if (typeof elmId == "string") {
@@ -723,7 +714,7 @@ class Util {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setVisibility(elmId, vis) {
+        setVisibility=(elmId, vis)  => {
 
             var domElm = null;
             if (typeof elmId == "string") {

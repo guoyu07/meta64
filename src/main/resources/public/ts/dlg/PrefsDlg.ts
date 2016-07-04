@@ -9,7 +9,7 @@ class PrefsDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Account Peferences");
 
         var radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
@@ -33,7 +33,7 @@ class PrefsDlg extends DialogBase {
         return header + radioBar + buttonBar;
     }
 
-    savePreferences(): void {
+    savePreferences = (): void => {
         var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
         meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
@@ -44,7 +44,7 @@ class PrefsDlg extends DialogBase {
         }, this.savePreferencesResponse, this);
     }
 
-    savePreferencesResponse(res: any): void {
+    savePreferencesResponse = (res: any): void => {
         if (util.checkSuccess("Saving Preferences", res)) {
             meta64.selectTab("mainTabName");
             meta64.refresh();
@@ -53,7 +53,7 @@ class PrefsDlg extends DialogBase {
         }
     }
 
-    init(): void {
+    init = (): void => {
         var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
         polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
             .id("editModeAdvanced"));

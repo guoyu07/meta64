@@ -1,9 +1,10 @@
 console.log("running module: user.js");
+//import { cnst } from "./cnst";
 
 class User {
 
     // res is JSON response object from server.
-    _refreshLoginResponse(res) {
+    _refreshLoginResponse=(res) =>  {
         console.log("refreshLoginResponse");
 
         if (res.success) {
@@ -14,12 +15,12 @@ class User {
         meta64.loadAnonPageHome(false);
     }
 
-    _logoutResponse(res) {
+    _logoutResponse=(res) =>  {
         /* reloads browser with the query parameters stripped off the path */
         window.location.href = window.location.origin;
     }
 
-    _twitterLoginResponse(res) {
+    _twitterLoginResponse=(res) =>  {
         console.log("twitter Login response recieved.");
     }
 
@@ -28,14 +29,14 @@ class User {
      * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
      * use these names
      */
-    isTestUserAccount() {
+    isTestUserAccount=()  => {
         return meta64.userName.toLowerCase() === "adam" || //
             meta64.userName.toLowerCase() === "bob" || //
             meta64.userName.toLowerCase() === "cory" || //
             meta64.userName.toLowerCase() === "dan";
     }
 
-    setTitleUsingLoginResponse(res) {
+    setTitleUsingLoginResponse=(res) =>  {
         var title = BRANDING_TITLE;
         if (!meta64.isAnonUser) {
             title += " - " + res.userName;
@@ -45,7 +46,7 @@ class User {
     }
 
     /* TODO-3: move this into meta64 module */
-    setStateVarsUsingLoginResponse(res) {
+    setStateVarsUsingLoginResponse=(res)  => {
         if (res.rootNode) {
             meta64.homeNodeId = res.rootNode.id;
             meta64.homeNodePath = res.rootNode.path;
@@ -61,7 +62,7 @@ class User {
         console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
     }
 
-    twitterLogin() {
+    twitterLogin=() =>  {
         (new MessageDlg("not yet implemented.")).open();
         return;
 
@@ -71,12 +72,12 @@ class User {
          */
     }
 
-    openSignupPg() {
+    openSignupPg=() =>  {
         (new SignupDlg()).open();
     }
 
     /* Write a cookie that expires in a year for all paths */
-    writeCookie(name, val) {
+    writeCookie=(name, val)  => {
         $.cookie(name, val, {
             expires: 365,
             path: '/'
@@ -86,13 +87,13 @@ class User {
     /*
      * This method is ugly. It is the button that can be login *or* logout.
      */
-    openLoginPg() {
+    openLoginPg=() =>  {
         var loginDlg = new LoginDlg();
         loginDlg.populateFromCookies();
         loginDlg.open();
     }
 
-    refreshLogin() {
+    refreshLogin=() =>  {
 
         console.log("refreshLogin.");
         var thiz = this;
@@ -155,7 +156,7 @@ class User {
         }
     }
 
-    logout(updateLoginStateCookie) {
+    logout=(updateLoginStateCookie)  => {
         if (meta64.isAnonUser) {
             return;
         }
@@ -170,7 +171,7 @@ class User {
         util.json("logout", {}, this._logoutResponse, this);
     }
 
-    login(loginDlg, usr, pwd) {
+    login=(loginDlg, usr, pwd) =>  {
         var thiz = this;
         var ironRes = util.json("login", {
             "userName": usr,
@@ -184,13 +185,13 @@ class User {
         });
     }
 
-    deleteAllUserCookies() {
+    deleteAllUserCookies=() =>  {
         $.removeCookie(cnst.COOKIE_LOGIN_USR);
         $.removeCookie(cnst.COOKIE_LOGIN_PWD);
         $.removeCookie(cnst.COOKIE_LOGIN_STATE);
     }
 
-    loginResponse(res?: any, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any) {
+    loginResponse=(res?: any, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any)  => {
         if (util.checkSuccess("Login", res)) {
             console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 

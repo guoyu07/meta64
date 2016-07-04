@@ -3,28 +3,28 @@ console.log("running module: menuPanel.js");
 
 class MenuPanel {
 
-    _makeTopLevelMenu(title: string, content: string): string {
+    _makeTopLevelMenu = (title: string, content: string): string => {
         return render.tag("paper-submenu", {
             "class": "meta64-menu-heading"
         }, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
             this._makeSecondLevelList(content), true);
     }
 
-    _makeSecondLevelList(content: string): string {
+    _makeSecondLevelList = (content: string): string => {
         return render.tag("paper-menu", {
             "class": "menu-content my-menu-section",
             "multi": "multi"
         }, content, true);
     }
 
-    _menuItem(name: string, id: string, onClick: any): string {
+    _menuItem = (name: string, id: string, onClick: any): string => {
         return render.tag("paper-item", {
             "id": id,
             "onclick": onClick
         }, name, true);
     }
 
-    _menuToggleItem(name: string, id: string, onClick: any): string {
+    _menuToggleItem = (name: string, id: string, onClick: any): string => {
         return render.tag("paper-item", {
             "id": id,
             "onclick": onClick
@@ -33,7 +33,7 @@ class MenuPanel {
 
     domId: string = "mainNavBar";
 
-    build(): void {
+    build = (): void => {
 
         var editMenuItems = //
             this._menuItem("Move", "moveSelNodesButton", "edit.moveSelNodes();") + //
@@ -87,11 +87,11 @@ class MenuPanel {
 
         var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu
             + mainMenuHelp;
-            
+
         util.setHtmlEnhanced(this.domId, content);
     }
 
-    init(): void {
+    init = (): void => {
         meta64.refreshAllGuiEnablement();
     }
 }

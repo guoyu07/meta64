@@ -1,6 +1,6 @@
 
 console.log("running module: EditPropertyDlg.js");
-
+//import { cnst } from "../cnst";
 /*
  * Property Editor Dialog (Edits Node Properties)
  */
@@ -15,7 +15,7 @@ class EditPropertyDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Edit Node Property");
 
         var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty, this);
@@ -35,7 +35,7 @@ class EditPropertyDlg extends DialogBase {
         return header + internalMainContent + buttonBar;
     }
 
-    populatePropertyEdit(): void {
+    populatePropertyEdit = (): void => {
         var field = '';
 
         /* Property Name Field */
@@ -68,7 +68,7 @@ class EditPropertyDlg extends DialogBase {
         util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
     }
 
-    saveProperty(): void {
+    saveProperty = (): void => {
         var propertyNameData = util.getInputVal(this.id("addPropertyNameTextContent"));
         var propertyValueData = util.getInputVal(this.id("addPropertyValueTextContent"));
 
@@ -81,7 +81,7 @@ class EditPropertyDlg extends DialogBase {
     }
 
     /* Warning: don't confuse with EditNodeDlg */
-    savePropertyResponse(res: any): void {
+    savePropertyResponse = (res: any): void => {
         util.checkSuccess("Save properties", res);
 
         edit.editNode.properties.push(res.propertySaved);
@@ -93,7 +93,7 @@ class EditPropertyDlg extends DialogBase {
         this.editNodeDlg.populateEditNodePg();
     }
 
-    init(): void {
+    init = (): void => {
         this.populatePropertyEdit();
     }
 }

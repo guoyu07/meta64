@@ -12,7 +12,7 @@ class SignupDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader(BRANDING_TITLE + " Signup");
 
         var formControls = //
@@ -48,14 +48,19 @@ class SignupDlg extends DialogBase {
          */
     }
 
-    signup(): void {
+    signup = (): void => {
         var userName = this.getInputVal("signupUserName");
         var password = this.getInputVal("signupPassword");
         var email = this.getInputVal("signupEmail");
         var captcha = this.getInputVal("signupCaptcha");
 
+
+
         /* no real validation yet, other than non-empty */
-        if (util.anyEmpty(userName, password, email, captcha)) {
+        if (!userName || userName.length == 0 || //
+            !password || password.length == 0 || //
+            !email || email.length == 0 || //
+            !captcha || captcha.length == 0) {
             (new MessageDlg("Sorry, you cannot leave any fields blank.")).open();
             return;
         }
@@ -68,7 +73,7 @@ class SignupDlg extends DialogBase {
         }, this.signupResponse, this);
     }
 
-    signupResponse(res: any): void {
+    signupResponse = (res: any): void => {
         if (util.checkSuccess("Signup new user", res)) {
 
             /* close the signup dialog */
@@ -81,7 +86,7 @@ class SignupDlg extends DialogBase {
         }
     }
 
-    tryAnotherCaptcha(): void {
+    tryAnotherCaptcha = (): void => {
 
         var n = util.currentTimeMillis();
 
@@ -93,11 +98,11 @@ class SignupDlg extends DialogBase {
         $("#" + this.id("captchaImage")).attr("src", src);
     }
 
-    pageInitSignupPg(): void {
+    pageInitSignupPg = (): void => {
         this.tryAnotherCaptcha();
     }
 
-    init(): void {
+    init = (): void => {
         this.pageInitSignupPg();
         util.delayedFocus("#" + this.id("signupUserName"));
     }

@@ -10,7 +10,7 @@ class SearchDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Search");
 
         var instructions = this.makeMessageArea("Enter some text to find. All sub-nodes under the selected node are included in the search.");
@@ -26,15 +26,15 @@ class SearchDlg extends DialogBase {
         return content;
     }
 
-    searchNodes(): void {
+    searchNodes = (): void => {
         return this.searchProperty("jcr:content");
     }
 
-    searchTags(): void {
+    searchTags = (): void => {
         return this.searchProperty(jcrCnst.TAGS);
     }
 
-    searchProperty(searchProp: any) {
+    searchProperty = (searchProp: any) => {
         if (!util.ajaxReady("searchNodes")) {
             return;
         }
@@ -61,7 +61,7 @@ class SearchDlg extends DialogBase {
         }, srch.searchNodesResponse, srch);
     }
 
-    init(): any {
+    init = (): void => {
         util.delayedFocus(this.id("searchText"));
     }
 }

@@ -1,11 +1,13 @@
 console.log("running module: props.js");
 
+//import { cnst } from "./cnst";
+
 class Props {
 
     /*
      * Toggles display of properties in the gui.
      */
-    propsToggle() {
+    propsToggle = () => {
         meta64.showProperties = meta64.showProperties ? false : true;
         // setDataIconUsingId("#editModeButton", editMode ? "edit" :
         // "forbidden");
@@ -20,7 +22,7 @@ class Props {
         meta64.selectTab("mainTabName");
     }
 
-    deletePropertyFromLocalData(propertyName) {
+    deletePropertyFromLocalData = (propertyName) => {
         for (var i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
@@ -34,7 +36,7 @@ class Props {
      * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
      * node and puts it on the top, and then does same for 'jctCnst.TAGS'
      */
-    getPropertiesInEditingOrder(props) {
+    getPropertiesInEditingOrder = (props) => {
         var propsNew = props.clone();
         var targetIdx = 0;
 
@@ -56,7 +58,7 @@ class Props {
      *
      * todo-3: I can do much better in this method, I just haven't had time to clean it up. this method is ugly.
      */
-    renderProperties(properties) {
+    renderProperties = (properties) => {
         if (properties) {
             var ret = "<table class='property-text'>";
             var propCount = 0;
@@ -108,7 +110,7 @@ class Props {
      * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
      * (PropertyInfo.java) with name matching propertyName, else null.
      */
-    getNodeProperty(propertyName, node) {
+    getNodeProperty = (propertyName, node) => {
         if (!node || !node.properties)
             return null;
 
@@ -121,7 +123,7 @@ class Props {
         return null;
     }
 
-    getNodePropertyVal(propertyName, node) {
+    getNodePropertyVal = (propertyName, node) => {
         var prop = this.getNodeProperty(propertyName, node);
         return prop ? prop.value : null;
     }
@@ -130,7 +132,7 @@ class Props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedNode(node) {
+    isNonOwnedNode = (node) => {
         var createdBy = this.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 
         // if we don't know who owns this node assume the admin owns it.
@@ -146,12 +148,12 @@ class Props {
      * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedCommentNode(node) {
+    isNonOwnedCommentNode = (node) => {
         var commentBy = this.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy != meta64.userName;
     }
 
-    isOwnedCommentNode(node) {
+    isOwnedCommentNode = (node) => {
         var commentBy = this.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy == meta64.userName;
     }
@@ -159,7 +161,7 @@ class Props {
     /*
      * Returns string representation of property value, even if multiple properties
      */
-    renderProperty(property) {
+    renderProperty = (property) => {
         if (!property.values) {
             if (!property.value || property.value.length == 0) {
                 return "";
@@ -171,7 +173,7 @@ class Props {
         }
     }
 
-    renderPropertyValues(values) {
+    renderPropertyValues = (values) => {
         var ret = "<div>";
         var count = 0;
         $.each(values, function(i, value) {

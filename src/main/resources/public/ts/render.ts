@@ -3,6 +3,10 @@ console.log("running module: render.js");
 declare var postTargetUrl;
 declare var prettyPrint;
 
+//&&&& I think just by importing cnst, now ALL other 'modules' have to be imported?? WTF. this should now be how they designed it.
+
+//import { cnst } from "./cnst";
+
 class Render {
     _debug: boolean = false;
 
@@ -10,11 +14,11 @@ class Render {
 	 * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
 	 * want to give them some instructions and the ability to add content.
 	 */
-    _getEmptyPagePrompt() {
+    _getEmptyPagePrompt = () => {
         return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
     }
 
-    _renderBinary(node) {
+    _renderBinary = (node) => {
 		/*
 		 * If this is an image render the image directly onto the page as a visible image
 		 */
@@ -42,7 +46,7 @@ class Render {
      *
      * If 'data' is provided, this is the instance data for the dialog
      */
-    buidPage(pg, data) {
+    buidPage = (pg, data) => {
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -55,7 +59,7 @@ class Render {
         }
     }
 
-    buildRowHeader(node, showPath, showName) {
+    buildRowHeader = (node, showPath, showName) => {
         var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
         var headerText = "";
@@ -107,7 +111,7 @@ class Render {
      * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
      * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
      */
-    injectCodeFormatting(content) {
+    injectCodeFormatting = (content) => {
 
         // example markdown:
         // ```js
@@ -124,11 +128,11 @@ class Render {
         return content;
     }
 
-    injectSubstitutions(content) {
+    injectSubstitutions = (content) => {
         return content.replaceAll("{{locationOrigin}}", window.location.origin);
     }
 
-    encodeLanguages(content) {
+    encodeLanguages = (content) => {
         /*
          * todo-1: need to provide some way of having these language types configurable in a properties file
          * somewhere, and fill out a lot more file types.
@@ -150,7 +154,7 @@ class Render {
      * node: JSON of NodeInfo.java
      *
      */
-    renderNodeContent(node, showPath, showName, renderBinary, rowStyling, showHeader) {
+    renderNodeContent = (node, showPath, showName, renderBinary, rowStyling, showHeader) => {
         var ret: string = this.getTopRightImageTag(node);
 
         /* todo-2: enable headerText when appropriate here */
@@ -282,7 +286,7 @@ class Render {
      *
      * node is a NodeInfo.java JSON
      */
-    renderNodeAsListItem(node, index, count, rowCount) {
+    renderNodeAsListItem = (node, index, count, rowCount) => {
 
         var uid = node.uid;
         var canMoveUp = index > 0 && rowCount > 1;
@@ -324,7 +328,7 @@ class Render {
             }, this.renderNodeContent(node, true, true, true, true, true)));
     }
 
-    showNodeUrl() {
+    showNodeUrl = () => {
         var node = meta64.getHighlightedNode();
         if (!node) {
             (new MessageDlg("You must first click on a node.")).open();
@@ -344,7 +348,7 @@ class Render {
         (new MessageDlg(message, "URL of Node")).open();
     }
 
-    getTopRightImageTag(node) {
+    getTopRightImageTag = (node) => {
         var topRightImg = props.getNodePropertyVal('img.top.right', node);
         var topRightImgTag = "";
         if (topRightImg) {
@@ -356,7 +360,7 @@ class Render {
         return topRightImgTag;
     }
 
-    getNodeBkgImageStyle(node) {
+    getNodeBkgImageStyle = (node) => {
         var bkgImg = props.getNodePropertyVal('img.node.bkg', node);
         var bkgImgStyle = "";
         if (bkgImg) {
@@ -365,7 +369,7 @@ class Render {
         return bkgImgStyle;
     }
 
-    centeredButtonBar(buttons?: any, classes?: any) {
+    centeredButtonBar = (buttons?: any, classes?: any) => {
         classes = classes || "";
 
         return this.tag("div", {
@@ -373,7 +377,7 @@ class Render {
         }, buttons);
     }
 
-    buttonBar(buttons, classes) {
+    buttonBar = (buttons, classes) => {
         classes = classes || "";
 
         return this.tag("div", {
@@ -381,7 +385,7 @@ class Render {
         }, buttons);
     }
 
-    makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed) {
+    makeRowButtonBarHtml = (node, canMoveUp, canMoveDown, editingAllowed) => {
 
         var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
         var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -520,7 +524,7 @@ class Render {
         return allButtons.length > 0 ? this.makeHorizontalFieldSet(allButtons) : "";
     }
 
-    makeHorizontalFieldSet(content?: string, extraClasses?: string) {
+    makeHorizontalFieldSet = (content?: string, extraClasses?: string) => {
 
         /* Now build entire control bar */
         return this.tag("div", //
@@ -529,13 +533,13 @@ class Render {
             }, content, true);
     }
 
-    makeHorzControlGroup(content) {
+    makeHorzControlGroup = (content) => {
         return this.tag("div", {
             "class": "horizontal layout"
         }, content, true);
     }
 
-    makeRadioButton(label, id) {
+    makeRadioButton = (label, id) => {
         return this.tag("paper-radio-button", {
             "id": id,
             "name": id
@@ -545,7 +549,7 @@ class Render {
     /*
      * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
      */
-    nodeHasChildren(uid) {
+    nodeHasChildren = (uid) => {
         var node = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("Unknown nodeId in nodeHasChildren: " + uid);
@@ -555,7 +559,7 @@ class Render {
         }
     }
 
-    formatPath(node) {
+    formatPath = (node) => {
         var path = node.path;
 
         /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -572,7 +576,7 @@ class Render {
         return ret;
     }
 
-    wrapHtml(text) {
+    wrapHtml = (text) => {
         return "<div>" + text + "</div>";
     }
 
@@ -580,7 +584,7 @@ class Render {
      * Each page can show buttons at the top of it (not main header buttons but additional buttons just for that
      * page only, and this generates that content for that entire control bar.
      */
-    renderMainPageControls() {
+    renderMainPageControls = () => {
         var html = '';
 
         var hasContent = html.length > 0;
@@ -594,7 +598,7 @@ class Render {
     /*
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
-    renderPageFromData(data?: any) {
+    renderPageFromData = (data?: any) => {
         meta64.codeFormatDirty = false;
         console.log("render.renderPageFromData()");
 
@@ -768,7 +772,7 @@ class Render {
         }
     }
 
-    generateRow(i, node, newData, childCount, rowCount) {
+    generateRow = (i, node, newData, childCount, rowCount) => {
 
         if (meta64.isNodeBlackListed(node))
             return "";
@@ -787,12 +791,12 @@ class Render {
         return row;
     }
 
-    getUrlForNodeAttachment(node) {
+    getUrlForNodeAttachment = (node) => {
         return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
     }
 
     /* see also: makeImageTag() */
-    adjustImageSize(node) {
+    adjustImageSize = (node) => {
 
         var elm = $("#" + node.imgId);
         if (elm) {
@@ -841,7 +845,7 @@ class Render {
     }
 
     /* see also: adjustImageSize() */
-    makeImageTag(node) {
+    makeImageTag = (node) => {
         var src = this.getUrlForNodeAttachment(node);
         node.imgId = "imgUid_" + node.uid;
 
@@ -896,7 +900,7 @@ class Render {
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
      * content is non-null
      */
-    tag(tag?: any, attributes?: any, content?: any, closeTag?: any) {
+    tag = (tag?: any, attributes?: any, content?: any, closeTag?: any) => {
 
         /* default parameter values */
         if (typeof (closeTag) === 'undefined')
@@ -932,7 +936,7 @@ class Render {
         return ret;
     }
 
-    makeTextArea(fieldName, fieldId) {
+    makeTextArea = (fieldName, fieldId) => {
         return this.tag("paper-textarea", {
             "name": fieldId,
             "label": fieldName,
@@ -940,7 +944,7 @@ class Render {
         }, "", true);
     }
 
-    makeEditField(fieldName, fieldId) {
+    makeEditField = (fieldName, fieldId) => {
         return this.tag("paper-input", {
             "name": fieldId,
             "label": fieldName,
@@ -948,7 +952,7 @@ class Render {
         }, "", true);
     }
 
-    makePasswordField(fieldName, fieldId) {
+    makePasswordField = (fieldName, fieldId) => {
         return this.tag("paper-input", {
             "type": "password",
             "name": fieldId,
@@ -957,7 +961,7 @@ class Render {
         }, "", true);
     }
 
-    makeButton(text, id, callback) {
+    makeButton = (text, id, callback) => {
         var attribs = {
             "raised": "raised",
             "id": id
@@ -973,7 +977,7 @@ class Render {
     /*
      * domId is id of dialog being closed.
      */
-    makeBackButton(text, id, domId, callback) {
+    makeBackButton = (text, id, domId, callback) => {
 
         if (callback === undefined) {
             callback = "";
@@ -986,21 +990,21 @@ class Render {
         }, text, true);
     }
 
-    allowPropertyToDisplay(propName) {
+    allowPropertyToDisplay = (propName) => {
         if (!meta64.inSimpleMode())
             return true;
         return meta64.simpleModePropertyBlackList[propName] == null;
     }
 
-    isReadOnlyProperty(propName) {
+    isReadOnlyProperty = (propName) => {
         return meta64.readOnlyPropertyList[propName];
     }
 
-    isBinaryProperty(propName) {
+    isBinaryProperty = (propName) => {
         return meta64.binaryPropertyList[propName];
     }
 
-    sanitizePropertyName(propName: any) {
+    sanitizePropertyName = (propName: any) => {
         if (meta64.editModeOption === "simple") {
             return propName === jcrCnst.CONTENT ? "Content" : propName;
         } else {

@@ -10,13 +10,13 @@ console.log("running module: DialogBase.js");
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-abstract class DialogBase {
+class DialogBase {
 
     data: any;
     built: boolean;
-    guid:string;
+    guid: string;
 
-    constructor(protected domId:string) {
+    constructor(protected domId: string) {
         this.data = {};
 
         /*
@@ -27,12 +27,14 @@ abstract class DialogBase {
         meta64.registerDataObject(this.data);
     }
 
-    init(): void {
+    init = (): void => {
     }
 
-    abstract build(): string;
+    build = (): string => {
+        return ""
+    };
 
-    open(): void {
+    open = (): void => {
 
         /*
          * get container where all dialogs are created (true polymer dialogs)
@@ -88,7 +90,7 @@ abstract class DialogBase {
     }
 
     /* todo: need to cleanup the registered IDs that are in maps for this dialog */
-    cancel(): void {
+    cancel = (): void => {
         var polyElm = util.polyElm(this.id(this.domId));
         polyElm.node.cancel();
     }
@@ -97,7 +99,7 @@ abstract class DialogBase {
      * Helper method to get the true id that is specific to this dialog (i.e. guid
      * suffix appended)
      */
-    id(id): string {
+    id = (id): string => {
         if (id == null)
             return null;
 
@@ -108,11 +110,11 @@ abstract class DialogBase {
         return id + "_dlgId" + this.data.guid;
     }
 
-    makePasswordField(text: string, id: string): string {
+    makePasswordField = (text: string, id: string): string => {
         return render.makePasswordField(text, this.id(id));
     }
 
-    makeEditField(fieldName: string, id: string) {
+    makeEditField = (fieldName: string, id: string) => {
         id = this.id(id);
         return render.tag("paper-input", {
             "name": id,
@@ -121,7 +123,7 @@ abstract class DialogBase {
         }, "", true);
     }
 
-    makeMessageArea(message: string, id?: string): string {
+    makeMessageArea = (message: string, id?: string): string => {
         var attrs = {
             "class": "dialog-message"
         };
@@ -133,7 +135,7 @@ abstract class DialogBase {
 
     // todo: there's a makeButton (and other similar methods) that don't have the
     // encodeCallback capability yet
-    makeButton(text: string, id: string, callback: any, ctx?: any): string {
+    makeButton = (text: string, id: string, callback: any, ctx?: any): string => {
         var attribs = {
             "raised": "raised",
             "id": this.id(id)
@@ -146,7 +148,7 @@ abstract class DialogBase {
         return render.tag("paper-button", attribs, text, true);
     }
 
-    makeCloseButton(text: string, id: string, callback?: any, ctx?: any): string {
+    makeCloseButton = (text: string, id: string, callback?: any, ctx?: any): string => {
 
         var attribs = {
             "raised": "raised",
@@ -162,26 +164,26 @@ abstract class DialogBase {
         return render.tag("paper-button", attribs, text, true);
     }
 
-    bindEnterKey(id: string, callback: any): void {
+    bindEnterKey = (id: string, callback: any): void => {
         util.bindEnterKey(this.id(id), callback);
     }
 
-    setInputVal(id: string, val: string): void {
+    setInputVal = (id: string, val: string): void => {
         if (!val) {
             val = "";
         }
         util.setInputVal(this.id(id), val);
     }
 
-    getInputVal(id: string): string {
+    getInputVal = (id: string): string => {
         return util.getInputVal(this.id(id)).trim();
     }
 
-    setHtml(text: string, id: string): void {
+    setHtml = (text: string, id: string): void => {
         util.setHtml(this.id(id), text);
     }
 
-    makeRadioButton(label: string, id: string): string {
+    makeRadioButton = (label: string, id: string): string => {
         id = this.id(id);
         return render.tag("paper-radio-button", {
             "id": id,
@@ -189,7 +191,7 @@ abstract class DialogBase {
         }, label);
     }
 
-    makeHeader(text: string, id?: string, centered?: boolean): string {
+    makeHeader = (text: string, id?: string, centered?: boolean): string => {
         var attrs = {
             "class": "dialog-header " + (centered ? "horizontal center-justified layout" : "")
         };
@@ -202,7 +204,7 @@ abstract class DialogBase {
         return render.tag("h2", attrs, text);
     }
 
-    focus(id: string): void {
+    focus = (id: string): void => {
         if (!id.startsWith("#")) {
             id = "#" + id;
         }

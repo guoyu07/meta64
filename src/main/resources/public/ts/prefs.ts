@@ -3,7 +3,7 @@ console.log("running module: prefs.js");
 
 class Prefs {
 
-    closeAccountResponse(): void {
+    closeAccountResponse = (): void => {
         /* Remove warning dialog to ask user about leaving the page */
         $(window).off("beforeunload");
 
@@ -11,7 +11,7 @@ class Prefs {
         window.location.href = window.location.origin;
     }
 
-    closeAccount(): void {
+    closeAccount = (): void => {
         //todo-0: see if there's a better way to do thiz.
         var thiz: Prefs = this;
 

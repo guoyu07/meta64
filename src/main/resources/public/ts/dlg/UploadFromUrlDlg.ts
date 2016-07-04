@@ -1,5 +1,6 @@
 
 console.log("running module: UploadFromUrlDlg.js");
+//import { cnst } from "../cnst";
 
 class UploadFromUrlDlg extends DialogBase {
 
@@ -10,7 +11,7 @@ class UploadFromUrlDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Upload File Attachment");
 
         var uploadPathDisplay = "";
@@ -37,7 +38,7 @@ class UploadFromUrlDlg extends DialogBase {
         return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
     }
 
-    uploadFileNow(): void {
+    uploadFileNow = (): void => {
         var sourceUrl = this.getInputVal("uploadFromUrl");
 
         /* if uploading from URL */
@@ -49,13 +50,13 @@ class UploadFromUrlDlg extends DialogBase {
         }
     }
 
-    uploadFromUrlResponse(res: any): void {
+    uploadFromUrlResponse = (res: any): void => {
         if (util.checkSuccess("Upload from URL", res)) {
             meta64.refresh();
         }
     }
 
-    init(): void {
+    init = (): void => {
         util.setInputVal(this.id("uploadFromUrl"), "");
 
         /* display the node path at the top of the edit page */

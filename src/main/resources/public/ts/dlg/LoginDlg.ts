@@ -2,8 +2,7 @@ console.log("running module: LoginDlg.js");
 
 /// <reference path="./tyepdefs/jquery/jquery.d.ts" />
 
-//import { cnst2 } from "../cnst";
-
+//import { cnst } from "../cnst";
 
 /*
 Note: The jquery cookie looks for jquery d.ts in the relative location ""../jquery" so beware if your
@@ -19,7 +18,7 @@ class LoginDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Login");
 
         var formControls = this.makeEditField("User", "userName") + //
@@ -54,11 +53,11 @@ class LoginDlg extends DialogBase {
         return content;
     }
 
-    init(): void {
+    init = (): void => {
         this.populateFromCookies();
     }
 
-    populateFromCookies(): void {
+    populateFromCookies = (): void => {
         var usr = $.cookie(cnst.COOKIE_LOGIN_USR);
         var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
 
@@ -70,7 +69,7 @@ class LoginDlg extends DialogBase {
         }
     }
 
-    login(): void {
+    login = (): void => {
 
         var usr = this.getInputVal("userName");
         var pwd = this.getInputVal("password");
@@ -78,7 +77,7 @@ class LoginDlg extends DialogBase {
         user.login(this, usr, pwd);
     }
 
-    resetPassword(): any {
+    resetPassword = (): any => {
         var thiz = this;
         var usr = this.getInputVal("userName");
 

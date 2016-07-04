@@ -10,7 +10,7 @@ class SharingDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Node Sharing");
 
         var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
@@ -31,14 +31,14 @@ class SharingDlg extends DialogBase {
         return header + internalMainContent + buttonBar;
     }
 
-    init(): void {
+    init = (): void => {
         this.reload();
     }
 
     /*
      * Gets privileges from server and displays in GUI also. Assumes gui is already at correct page.
      */
-    reload(): void {
+    reload = (): void => {
         console.log("Loading node sharing info.");
 
         util.json("getNodePrivileges", {
@@ -55,14 +55,14 @@ class SharingDlg extends DialogBase {
      *
      * res.aclEntries = list of AccessControlEntryInfo.java json objects
      */
-    getNodePrivilegesResponse(res: any): void {
+    getNodePrivilegesResponse = (res: any): void => {
         this.populateSharingPg(res);
     }
 
     /*
      * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
      */
-    populateSharingPg(res: any): void {
+    populateSharingPg = (res: any): void => {
         var html = "";
         var This = this;
 
@@ -94,7 +94,7 @@ class SharingDlg extends DialogBase {
         util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
     }
 
-    publicCommentingChanged(): void {
+    publicCommentingChanged = (): void => {
 
         /*
          * Using onClick on the element AND this timeout is the only hack I could find to get get what amounts to a state
@@ -115,7 +115,7 @@ class SharingDlg extends DialogBase {
         }, 250);
     }
 
-    removePrivilege(principal: any, privilege: any): void {
+    removePrivilege = (principal: any, privilege: any): void => {
         /*
          * Trigger going to server at next main page refresh
          */
@@ -128,7 +128,7 @@ class SharingDlg extends DialogBase {
         }, this.removePrivilegeResponse, this);
     }
 
-    removePrivilegeResponse(res: any): void {
+    removePrivilegeResponse = (res: any): void => {
 
         util.json("getNodePrivileges", {
             "nodeId": share.sharingNode.path,
@@ -137,7 +137,7 @@ class SharingDlg extends DialogBase {
         }, this.getNodePrivilegesResponse, this);
     }
 
-    renderAclPrivileges(principal: any, aclEntry: any): string {
+    renderAclPrivileges = (principal: any, aclEntry: any): string => {
         var ret = "";
         var thiz = this;
         $.each(aclEntry.privileges, function(index, privilege) {
@@ -157,11 +157,11 @@ class SharingDlg extends DialogBase {
         return ret;
     }
 
-    shareNodeToPersonPg(): void {
+    shareNodeToPersonPg = (): void => {
         (new ShareToPersonDlg()).open();
     }
 
-    shareNodeToPublic(): void {
+    shareNodeToPublic = (): void => {
         console.log("Sharing node to public.");
 
         /*

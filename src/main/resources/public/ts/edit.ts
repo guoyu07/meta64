@@ -2,7 +2,7 @@ console.log("running module: edit.js");
 
 class Edit {
 
-    _insertBookResponse(res: any): void {
+    _insertBookResponse = (res: any): void => {
         console.log("insertBookResponse running.");
 
         util.checkSuccess("Insert Book", res);
@@ -11,14 +11,14 @@ class Edit {
         view.scrollToSelectedNode();
     }
 
-    _deleteNodesResponse(res: any): void {
+    _deleteNodesResponse = (res: any): void => {
         if (util.checkSuccess("Delete node", res)) {
             meta64.clearSelectedNodes();
             view.refreshTree(null, false);
         }
     }
 
-    _initNodeEditResponse(res: any): void {
+    _initNodeEditResponse = (res: any): void => {
         if (util.checkSuccess("Editing node", res)) {
             var node = res.nodeInfo;
 
@@ -46,20 +46,20 @@ class Edit {
         }
     }
 
-    _moveNodesResponse(res: any): void {
+    _moveNodesResponse = (res: any): void => {
         if (util.checkSuccess("Move nodes", res)) {
             this.nodesToMove = null; // reset
             view.refreshTree(null, false);
         }
     }
 
-    _setNodePositionResponse(res: void): void {
+    _setNodePositionResponse = (res: void): void => {
         if (util.checkSuccess("Change node position", res)) {
             meta64.refresh();
         }
     }
 
-    _splitContentResponse(res: any): void {
+    _splitContentResponse = (res: any): void => {
         if (util.checkSuccess("Split content", res)) {
             view.refreshTree(null, false);
             meta64.selectTab("mainTabName");
@@ -107,7 +107,7 @@ class Edit {
     nodeInsertTarget: any = null;
 
     /* returns true if we can 'try to' insert under 'node' or false if not */
-    isEditAllowed(node: any): boolean {
+    isEditAllowed = (node: any): boolean => {
         return meta64.editMode && node.path != "/" &&
             /*
              * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
@@ -117,14 +117,13 @@ class Edit {
     }
 
     /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
-    isInsertAllowed(node: any): boolean {
+    isInsertAllowed = (node: any): boolean => {
         return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
     }
 
-    startEditingNewNode(): void {
+    startEditingNewNode = (): void => {
         this.editingUnsavedNode = false;
         this.editNode = null;
-        debugger;
         this.editNodeDlgInst = new EditNodeDlg();
         this.editNodeDlgInst.saveNewNode("");
     }
@@ -141,15 +140,14 @@ class Edit {
      * that will cause the GUI to always prompt for the node name before creating the node. This was the original
      * functionality and still works.
      */
-    startEditingNewNodeWithName(): void {
+    startEditingNewNodeWithName = (): void => {
         this.editingUnsavedNode = true;
         this.editNode = null;
-        debugger;
         this.editNodeDlgInst = new EditNodeDlg();
         this.editNodeDlgInst.open();
     }
 
-    insertNodeResponse(res: any): void {
+    insertNodeResponse = (res: any): void => {
         if (util.checkSuccess("Insert node", res)) {
             meta64.initNode(res.newNode);
             meta64.highlightNode(res.newNode, true);
@@ -157,21 +155,21 @@ class Edit {
         }
     }
 
-    createSubNodeResponse(res: any): void {
+    createSubNodeResponse = (res: any): void => {
         if (util.checkSuccess("Create subnode", res)) {
             meta64.initNode(res.newNode);
             this.runEditNode(res.newNode.uid);
         }
     }
 
-    saveNodeResponse(res: any, payload: any): void {
+    saveNodeResponse = (res: any, payload: any): void => {
         if (util.checkSuccess("Save node", res)) {
             view.refreshTree(null, false, payload.savedId);
             meta64.selectTab("mainTabName");
         }
     }
 
-    editMode(): void {
+    editMode = (): void => {
         meta64.editMode = meta64.editMode ? false : true;
         // todo-3: really edit mode button needs to be some kind of button
         // that can show an on/off state.
@@ -184,7 +182,7 @@ class Edit {
         view.scrollToSelectedNode();
     }
 
-    splitContent(): void {
+    splitContent = (): void => {
         let nodeBelow: NodeInfo = this.getNodeBelow(this.editNode);
         util.json("splitNode", {
             "nodeId": this.editNode.id,
@@ -192,7 +190,7 @@ class Edit {
         }, this._splitContentResponse, this);
     }
 
-    cancelEdit(): void {
+    cancelEdit = (): void => {
 
         if (meta64.treeDirty) {
             meta64.goToMainPage(true);
@@ -202,7 +200,7 @@ class Edit {
         }
     }
 
-    moveNodeUp(uid: any): void {
+    moveNodeUp = (uid: any): void => {
         var node = meta64.uidToNodeMap[uid];
         if (node) {
             var nodeAbove = this.getNodeAbove(node);
@@ -220,7 +218,7 @@ class Edit {
         }
     }
 
-    moveNodeDown(uid: any): void {
+    moveNodeDown = (uid: any): void => {
         var node = meta64.uidToNodeMap[uid];
         if (node) {
             var nodeBelow = this.getNodeBelow(node);
@@ -241,7 +239,7 @@ class Edit {
     /*
      * Returns the node above the specified node or null if node is itself the top node
      */
-    getNodeAbove(node): any {
+    getNodeAbove = (node): any => {
         var ordinal = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)
             return null;
@@ -251,7 +249,7 @@ class Edit {
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
-    getNodeBelow(node: any): NodeInfo {
+    getNodeBelow = (node: any): NodeInfo => {
         var ordinal = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
         if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -266,7 +264,7 @@ class Edit {
     //     }, this._exportResponse, this);
     // },
 
-    runEditNode(uid: any): void {
+    runEditNode = (uid: any): void => {
         var node = meta64.uidToNodeMap[uid];
         if (!node) {
             this.editNode = null;
@@ -280,7 +278,7 @@ class Edit {
         }, this._initNodeEditResponse, this);
     }
 
-    insertNode(uid: any): void {
+    insertNode = (uid: any): void => {
 
         this.parentOfNewNode = meta64.currentNode;
         if (!this.parentOfNewNode) {
@@ -305,7 +303,7 @@ class Edit {
         }
     }
 
-    createSubNodeUnderHighlight(): void {
+    createSubNodeUnderHighlight = (): void => {
 
         this.parentOfNewNode = meta64.getHighlightedNode();
         if (!this.parentOfNewNode) {
@@ -320,11 +318,11 @@ class Edit {
         this.startEditingNewNode();
     }
 
-    replyToComment(uid: any): void {
+    replyToComment = (uid: any): void => {
         this.createSubNode(uid);
     }
 
-    createSubNode(uid: any): void {
+    createSubNode = (uid: any): void => {
         /*
          * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page)
          */
@@ -345,7 +343,7 @@ class Edit {
         this.startEditingNewNode();
     }
 
-    clearSelections(): void {
+    clearSelections = (): void => {
         meta64.clearSelectedNodes();
 
         /*
@@ -361,7 +359,7 @@ class Edit {
      * Delete the single node identified by 'uid' parameter if uid parameter is passed, and if uid parameter is not
      * passed then use the node selections for multiple selections on the page.
      */
-    deleteSelNodes(): void {
+    deleteSelNodes = (): void => {
         var selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             (new MessageDlg("You have not selected any nodes. Select nodes to delete first.")).open();
@@ -377,7 +375,7 @@ class Edit {
             })).open();
     }
 
-    moveSelNodes(): void {
+    moveSelNodes = (): void => {
 
         var selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
@@ -403,7 +401,7 @@ class Edit {
             })).open();
     }
 
-    finishMovingSelNodes(): void {
+    finishMovingSelNodes = (): void => {
         let thiz = this;
         (new ConfirmDlg("Confirm Move", "Move " + thiz.nodesToMove.length + " node(s) to selected location ?",
             "Yes, move.", function() {
@@ -423,7 +421,7 @@ class Edit {
             })).open();
     }
 
-    insertBookWarAndPeace(): void {
+    insertBookWarAndPeace = (): void => {
 
         let thiz = this;
         (new ConfirmDlg("Confirm", "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!", "Yes, insert book.", function() {

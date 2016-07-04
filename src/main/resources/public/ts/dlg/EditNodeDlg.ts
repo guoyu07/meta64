@@ -2,6 +2,7 @@
 console.log("running module: EditNodeDlg.js");
 
 declare var ace;
+//import { cnst } from "../cnst";
 
 /*
  * Editor Dialog (Edits Nodes)
@@ -15,7 +16,6 @@ class EditNodeDlg extends DialogBase {
 
     constructor() {
         super("EditNodeDlg");
-        debugger;
 
         /*
          * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
@@ -28,7 +28,7 @@ class EditNodeDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Edit Node");
 
         var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode, this);
@@ -71,8 +71,7 @@ class EditNodeDlg extends DialogBase {
      * Generates all the HTML edit fields and puts them into the DOM model of the property editor dialog box.
      *
      */
-    populateEditNodePg() {
-      debugger;
+    populateEditNodePg = () => {
         /* display the node path at the top of the edit page */
         view.initEditPathDisplayById(this.id("editNodePathDisplay"));
 
@@ -88,7 +87,7 @@ class EditNodeDlg extends DialogBase {
             console.log("Editing existing node.");
 
             /* iterator function will have the wrong 'this' so we save the right one */
-            var _this = this;
+            var thiz = this;
             var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
 
             var aceFields = [];
@@ -107,7 +106,7 @@ class EditNodeDlg extends DialogBase {
                     return;
                 }
 
-                var fieldId = _this.id("editNodeTextContent" + index);
+                var fieldId = thiz.id("editNodeTextContent" + index);
                 console.log("Creating edit field " + fieldId + " for property " + prop.name);
 
                 var isMulti = prop.values && prop.values.length > 0;
@@ -116,20 +115,20 @@ class EditNodeDlg extends DialogBase {
 
                 let propEntry: PropEntry = new PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
 
-                _this.fieldIdToPropMap[fieldId] = propEntry;
-                _this.propEntries.push(propEntry);
+                thiz.fieldIdToPropMap[fieldId] = propEntry;
+                thiz.propEntries.push(propEntry);
 
                 var buttonBar = "";
                 if (!isReadOnlyProp && !isBinaryProp) {
-                    buttonBar = _this.makePropertyEditButtonBar(prop, fieldId);
+                    buttonBar = thiz.makePropertyEditButtonBar(prop, fieldId);
                 }
 
                 var field = buttonBar;
 
                 if (isMulti) {
-                    field += _this.makeMultiPropEditor(propEntry);
+                    field += thiz.makeMultiPropEditor(propEntry);
                 } else {
-                    field += _this.makeSinglePropEditor(propEntry, aceFields);
+                    field += thiz.makeSinglePropEditor(propEntry, aceFields);
                 }
 
                 fields += render.tag("div", {
@@ -206,19 +205,19 @@ class EditNodeDlg extends DialogBase {
         util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsPropExists);
     }
 
-    toggleShowReadOnly(): void {
+    toggleShowReadOnly = (): void => {
         // alert("not yet implemented.");
         // see saveExistingNode for how to iterate all properties, although I wonder why I didn't just use a map/set of
         // properties elements
         // instead so I don't need to parse any DOM or domIds inorder to iterate over the list of them????
     }
 
-    addProperty(): void {
+    addProperty = (): void => {
         this.editPropertyDlgInst = new EditPropertyDlg(this);
         this.editPropertyDlgInst.open();
     }
 
-    addTagsProperty(): void {
+    addTagsProperty = (): void => {
         if (props.getNodePropertyVal(edit.editNode, "tags")) {
             return;
         }
@@ -231,13 +230,13 @@ class EditNodeDlg extends DialogBase {
         util.json("saveProperty", postData, this.addTagsPropertyResponse, this);
     }
 
-    addTagsPropertyResponse(res: any): void {
+    addTagsPropertyResponse = (res: any): void => {
         if (util.checkSuccess("Add Tags Property", res)) {
             this.savePropertyResponse(res);
         }
     }
 
-    savePropertyResponse(res: any): void {
+    savePropertyResponse = (res: any): void => {
         util.checkSuccess("Save properties", res);
 
         edit.editNode.properties.push(res.propertySaved);
@@ -252,7 +251,7 @@ class EditNodeDlg extends DialogBase {
     /*
      * Note: fieldId parameter is already dialog-specific and doesn't need id() wrapper function
      */
-    makePropertyEditButtonBar(prop: any, fieldId: string): string {
+    makePropertyEditButtonBar = (prop: any, fieldId: string): string => {
         var buttonBar = "";
 
         var clearButton = render.tag("paper-button", {
@@ -299,7 +298,7 @@ class EditNodeDlg extends DialogBase {
         return buttonBar;
     }
 
-    addSubProperty(fieldId: string): void {
+    addSubProperty = (fieldId: string): void => {
         var prop = this.fieldIdToPropMap[fieldId].property;
 
         var isMulti = util.isObject(prop.values);
@@ -325,29 +324,29 @@ class EditNodeDlg extends DialogBase {
     /*
      * Deletes the property of the specified name on the node being edited, but first gets confirmation from user
      */
-    deleteProperty(propName: string) {
-        var _this = this;
+    deleteProperty = (propName: string) => {
+        var thiz = this;
         (new ConfirmDlg("Confirm Delete", "Delete the Property: " + propName, "Yes, delete.", function() {
-            _this.deletePropertyImmediate(propName);
+            thiz.deletePropertyImmediate(propName);
         })).open();
     }
 
-    deletePropertyImmediate(propName: string) {
+    deletePropertyImmediate = (propName: string) => {
 
         var ironRes = util.json("deleteProperty", {
             "nodeId": edit.editNode.id,
             "propName": propName
         });
 
-        var _this = this;
+        var thiz = this;
 
         ironRes.completes.then(function() {
             // not sure if 'this' will be correct here (using _this until I check)
-            _this.deletePropertyResponse(ironRes.response, propName);
+            thiz.deletePropertyResponse(ironRes.response, propName);
         });
     }
 
-    deletePropertyResponse(res: any, propertyToDelete: any) {
+    deletePropertyResponse = (res: any, propertyToDelete: any) => {
 
         if (util.checkSuccess("Delete property", res)) {
 
@@ -364,7 +363,7 @@ class EditNodeDlg extends DialogBase {
         }
     }
 
-    clearProperty(fieldId: string): void {
+    clearProperty = (fieldId: string): void => {
         if (!cnst.USE_ACE_EDITOR) {
             util.setInputVal(this.id(fieldId), "");
         } else {
@@ -397,7 +396,7 @@ class EditNodeDlg extends DialogBase {
      * for now just let server side choke on invalid things. It has enough security and validation to at least protect
      * itself from any kind of damage.
      */
-    saveNode(): void {
+    saveNode = (): void => {
         /*
          * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
          * server, and will initiate further editing like for properties, etc.
@@ -417,7 +416,7 @@ class EditNodeDlg extends DialogBase {
         }
     }
 
-    saveNewNode(newNodeName?: string): void {
+    saveNewNode = (newNodeName?: string): void => {
         if (!newNodeName) {
             newNodeName = util.getInputVal(this.id("newNodeNameId"));
         }
@@ -446,12 +445,12 @@ class EditNodeDlg extends DialogBase {
         }
     }
 
-    saveExistingNode(): void {
+    saveExistingNode = (): void => {
         console.log("saveExistingNode");
 
         /* holds list of properties to send to server. Each one having name+value properties */
         var propertiesList = [];
-        var _this = this;
+        var thiz = this;
 
         $.each(this.propEntries, function(index: number, prop: any) {
 
@@ -536,7 +535,7 @@ class EditNodeDlg extends DialogBase {
         }
     }
 
-    makeMultiPropEditor(propEntry: PropEntry): string {
+    makeMultiPropEditor = (propEntry: PropEntry): string => {
         console.log("Making Multi Editor: Property multi-type: name=" + propEntry.property.name + " count="
             + propEntry.property.values.length);
         var fields = "";
@@ -582,7 +581,7 @@ class EditNodeDlg extends DialogBase {
         return fields;
     }
 
-    makeSinglePropEditor(propEntry: any, aceFields: any): string {
+    makeSinglePropEditor = (propEntry: any, aceFields: any): string => {
         console.log("Property single-type: " + propEntry.property.name);
 
         var field = "";
@@ -625,8 +624,7 @@ class EditNodeDlg extends DialogBase {
         return field;
     }
 
-    init(): void {
-        debugger;
+    init = (): void => {
         console.log("EditNodeDlg.init");
         this.populateEditNodePg();
     }

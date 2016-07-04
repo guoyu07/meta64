@@ -9,7 +9,7 @@ class ImportDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Import from XML");
 
         var formControls = this.makeEditField("Import Target Node Name", "importTargetNodeName");
@@ -21,7 +21,7 @@ class ImportDlg extends DialogBase {
         return header + formControls + buttonBar;
     }
 
-    importNodes(): void {
+    importNodes = (): void => {
         var highlightNode = meta64.getHighlightedNode();
         var sourceFileName = this.getInputVal("importTargetNodeName");
 
@@ -38,7 +38,7 @@ class ImportDlg extends DialogBase {
         }
     }
 
-    importResponse(res: any): void {
+    importResponse = (res: any): void => {
         if (util.checkSuccess("Import", res)) {
             (new MessageDlg("Import Successful.")).open();
             view.refreshTree(null, false);

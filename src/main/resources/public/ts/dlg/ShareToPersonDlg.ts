@@ -9,7 +9,7 @@ class ShareToPersonDlg extends DialogBase {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build(): string {
+    build = (): string => {
         var header = this.makeHeader("Share Node to Person");
 
         var formControls = this.makeEditField("User to Share With", "shareToUserName");
@@ -22,7 +22,7 @@ class ShareToPersonDlg extends DialogBase {
             + buttonBar;
     }
 
-    shareNodeToPerson(): void {
+    shareNodeToPerson = (): void => {
         var targetUser = this.getInputVal("shareToUserName");
         if (!targetUser) {
             (new MessageDlg("Please enter a username")).open();
@@ -41,7 +41,7 @@ class ShareToPersonDlg extends DialogBase {
         }, thiz.reloadFromShareWithPerson, thiz);
     }
 
-    reloadFromShareWithPerson(res: any): void {
+    reloadFromShareWithPerson = (res: any): void => {
         if (util.checkSuccess("Share Node with Person", res)) {
             (new SharingDlg()).open();
         }

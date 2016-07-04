@@ -15,7 +15,7 @@ class ChangePasswordDlg extends DialogBase {
      * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
      * user.
      */
-    build(): string {
+    build = (): string => {
 
         var header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
 
@@ -34,7 +34,7 @@ class ChangePasswordDlg extends DialogBase {
         return header + message + formControls + buttonBar;
     }
 
-    changePassword(): void {
+    changePassword = (): void => {
         this.pwd = this.getInputVal("changePassword1").trim();
 
         if (this.pwd && this.pwd.length >= 4) {
@@ -47,7 +47,7 @@ class ChangePasswordDlg extends DialogBase {
         }
     }
 
-    changePasswordResponse(res: any) {
+    changePasswordResponse = (res: any) => {
         if (util.checkSuccess("Change password", res)) {
 
             var msg = "Password changed successfully.";
@@ -70,7 +70,7 @@ class ChangePasswordDlg extends DialogBase {
         }
     }
 
-    init() {
+    init = (): void => {
         this.focus("changePassword1");
     }
 }

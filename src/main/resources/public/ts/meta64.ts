@@ -128,7 +128,7 @@ class Meta64 {
     /* Maps from guid to Data Object */
     dataObjMap: any = {};
 
-    updateMainMenuPanel() {
+    updateMainMenuPanel = () => {
         console.log("building main menu panel");
         menuPanel.build();
         menuPanel.init();
@@ -138,14 +138,14 @@ class Meta64 {
      * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
      * future.
      */
-    registerDataObject(data) {
+    registerDataObject = (data) => {
         if (!data.guid) {
             data.guid = ++this.nextGuid;
             this.dataObjMap[data.guid] = data;
         }
     }
 
-    getObjectByGuid(guid) {
+    getObjectByGuid = (guid) => {
         var ret = this.dataObjMap[guid];
         if (!ret) {
             console.log("data object not found: guid=" + guid);
@@ -165,7 +165,7 @@ class Meta64 {
      *
      * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
      */
-    encodeOnClick(callback, ctx) {
+    encodeOnClick = (callback, ctx) => {
         if (typeof callback == "string") {
             return callback;
         } //
@@ -181,7 +181,7 @@ class Meta64 {
         }
     }
 
-    runCallback(guid, ctx) {
+    runCallback = (guid, ctx) => {
         var dataObj = this.getObjectByGuid(guid);
 
         // if this is an object, we expect it to have a 'callback' property
@@ -203,15 +203,15 @@ class Meta64 {
         }
     }
 
-    inSimpleMode() {
+    inSimpleMode = () => {
         return this.editModeOption === this.MODE_SIMPLE;
     }
 
-    refresh() {
+    refresh = () => {
         this.goToMainPage(true, true);
     }
 
-    goToMainPage(rerender?: boolean, forceServerRefresh?: boolean) {
+    goToMainPage = (rerender?: boolean, forceServerRefresh?: boolean) => {
 
         if (forceServerRefresh) {
             this.treeDirty = true;
@@ -234,7 +234,7 @@ class Meta64 {
         }
     }
 
-    selectTab(pageName) {
+    selectTab = (pageName) => {
         var ironPages = document.querySelector("#mainIronPages");
         (<_HasSelect>ironPages).select(pageName);
     }
@@ -247,7 +247,7 @@ class Meta64 {
      * Note: each data instance is required to have a guid numberic property, unique to it.
      *
      */
-    changePage(pg?: any, data?: any) {
+    changePage = (pg?: any, data?: any) => {
         if (typeof pg.tabId === 'undefined') {
             console.log("oops, wrong object type passed to changePage function.");
             return null;
@@ -258,7 +258,7 @@ class Meta64 {
         (<_HasSelect>paperTabs).select(pg.tabId);
     }
 
-    isNodeBlackListed(node) {
+    isNodeBlackListed = (node) => {
         if (!this.inSimpleMode())
             return false;
 
@@ -272,7 +272,7 @@ class Meta64 {
         return false;
     }
 
-    getSelectedNodeUidsArray() {
+    getSelectedNodeUidsArray = () => {
         var selArray = [], idx = 0, uid;
 
         for (uid in this.selectedNodes) {
@@ -283,7 +283,7 @@ class Meta64 {
         return selArray;
     }
 
-    getSelectedNodeIdsArray() {
+    getSelectedNodeIdsArray = () => {
         var selArray = [], idx = 0, uid;
 
         if (!this.selectedNodes) {
@@ -306,7 +306,7 @@ class Meta64 {
     }
 
     /* Gets selected nodes as NodeInfo.java objects array */
-    getSelectedNodesArray() {
+    getSelectedNodesArray = () => {
         var selArray = [], idx = 0, uid;
         for (uid in this.selectedNodes) {
             if (this.selectedNodes.hasOwnProperty(uid)) {
@@ -316,11 +316,11 @@ class Meta64 {
         return selArray;
     }
 
-    clearSelectedNodes() {
+    clearSelectedNodes = () => {
         this.selectedNodes = {};
     }
 
-    updateNodeInfoResponse(res, node) {
+    updateNodeInfoResponse = (res, node) => {
         var ownerBuf = '';
         var mine = false;
 
@@ -350,7 +350,7 @@ class Meta64 {
         }
     }
 
-    updateNodeInfo(node) {
+    updateNodeInfo = (node) => {
         var ironRes = util.json("getNodePrivileges", {
             "nodeId": node.id,
             "includeAcl": false,
@@ -364,11 +364,11 @@ class Meta64 {
     }
 
     /* Returns the node with the given node.id value */
-    getNodeFromId(id) {
+    getNodeFromId = (id) => {
         return this.idToNodeMap[id];
     }
 
-    getPathOfUid(uid) {
+    getPathOfUid = (uid) => {
         var node = this.uidToNodeMap[uid];
         if (!node) {
             return "[path error. invalid uid: " + uid + "]";
@@ -377,12 +377,12 @@ class Meta64 {
         }
     }
 
-    getHighlightedNode() {
+    getHighlightedNode = () => {
         var ret = this.parentUidToFocusNodeMap[this.currentNodeUid];
         return ret;
     }
 
-    highlightRowById(id, scroll) {
+    highlightRowById = (id, scroll) => {
         var node = this.getNodeFromId(id);
         if (node) {
             this.highlightNode(node, scroll);
@@ -395,7 +395,7 @@ class Meta64 {
      * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
      * setting that value should go thru this function.
      */
-    highlightNode(node, scroll) {
+    highlightNode = (node, scroll) => {
         if (!node)
             return;
 
@@ -431,7 +431,7 @@ class Meta64 {
      * Really need to use pub/sub event to broadcast enablement, and let each component do this independently and
      * decouple
      */
-    refreshAllGuiEnablement() {
+    refreshAllGuiEnablement = () => {
 
         /* multiple select nodes */
         var selNodeCount = util.getPropertyCount(this.selectedNodes);
@@ -489,7 +489,7 @@ class Meta64 {
         Polymer.updateStyles();
     }
 
-    getSingleSelectedNode() {
+    getSingleSelectedNode = () => {
         var uid;
         for (uid in this.selectedNodes) {
             if (this.selectedNodes.hasOwnProperty(uid)) {
@@ -501,7 +501,7 @@ class Meta64 {
     }
 
     /* node = NodeInfo.java object */
-    getOrdinalOfNode(node) {
+    getOrdinalOfNode = (node) => {
         if (!this.currentNodeData || !this.currentNodeData.children)
             return -1;
 
@@ -513,7 +513,7 @@ class Meta64 {
         return -1;
     }
 
-    setCurrentNodeData(data) {
+    setCurrentNodeData = (data) => {
         this.currentNodeData = data;
         this.currentNode = data.node;
         this.currentNodeUid = data.node.uid;
@@ -521,7 +521,7 @@ class Meta64 {
         this.currentNodePath = data.node.path;
     }
 
-    anonPageLoadResponse(res) {
+    anonPageLoadResponse = (res) => {
 
         if (res.renderNodeResponse) {
 
@@ -539,7 +539,7 @@ class Meta64 {
         render.renderMainPageControls();
     }
 
-    removeBinaryByUid(uid) {
+    removeBinaryByUid = (uid) => {
         for (var i = 0; i < this.currentNodeData.children.length; i++) {
             var node = this.currentNodeData.children[i];
             if (node.uid === uid) {
@@ -553,7 +553,7 @@ class Meta64 {
      * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
      * side code
      */
-    initNode(node) {
+    initNode = (node) => {
         if (!node) {
             console.log("initNode has null node");
             return;
@@ -577,7 +577,7 @@ class Meta64 {
         this.idToNodeMap[node.id] = node;
     }
 
-    initConstants() {
+    initConstants = () => {
         util.addAll(this.simpleModePropertyBlackList, [ //
             jcrCnst.MIXIN_TYPES, //
             jcrCnst.PRIMARY_TYPE, //
@@ -609,10 +609,10 @@ class Meta64 {
         util.addAll(this.binaryPropertyList, [jcrCnst.BIN_DATA]);
     }
 
-/* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
+    /* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
     initApp = () => {
-      console.log("initApp running.");
-      
+        console.log("initApp running.");
+
         if (this.appInitialized)
             return;
 
@@ -680,7 +680,7 @@ class Meta64 {
         this.processUrlParams();
     }
 
-    processUrlParams() {
+    processUrlParams = () => {
         var passCode = util.getParameterByName("passCode");
         if (passCode) {
             setTimeout(function() {
@@ -689,20 +689,20 @@ class Meta64 {
         }
     }
 
-    tabChangeEvent(tabName) {
+    tabChangeEvent = (tabName) => {
         if (tabName == "searchTabName") {
             srch.searchTabActivated();
         }
     }
 
-    displaySignupMessage() {
+    displaySignupMessage = () => {
         var signupResponse = $("#signupCodeResponse").text();
         if (signupResponse === "ok") {
             (new MessageDlg("Signup complete. You may now login.")).open();
         }
     }
 
-    screenSizeChange() {
+    screenSizeChange = () => {
         if (this.currentNodeData) {
 
             if (meta64.currentNode.imgId) {
@@ -718,7 +718,7 @@ class Meta64 {
     }
 
     /* Don't need this method yet, and haven't tested to see if works */
-    orientationHandler(event) {
+    orientationHandler = (event) => {
         // if (event.orientation) {
         // if (event.orientation === 'portrait') {
         // } else if (event.orientation === 'landscape') {
@@ -726,7 +726,7 @@ class Meta64 {
         // }
     }
 
-    loadAnonPageHome(ignoreUrl) {
+    loadAnonPageHome = (ignoreUrl) => {
         util.json("anonPageLoad", {
             "ignoreUrl": ignoreUrl
         }, this.anonPageLoadResponse, this);

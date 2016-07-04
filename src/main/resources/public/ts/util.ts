@@ -3,6 +3,7 @@ console.log("running module: util.js");
 
 //todo-0: need to find the DefinitelyTyped file for Polymer.
 declare var Polymer;
+declare var $; //<-------------this was a wildass guess.
 /// <reference path="./tyepdefs/jquery.d.ts" />
 /// <reference path="./tyepdefs/jquery.cookie.d.ts" />
 
@@ -204,7 +205,7 @@ class Util {
             setInterval(this.progressInterval, 1000);
         }
 
-        progressInterval() {
+        progressInterval = () => {
             var isWaiting = this.isAjaxWaiting();
             if (isWaiting) {
                 this.waitCounter++;

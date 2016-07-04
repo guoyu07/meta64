@@ -1,5 +1,8 @@
 "use strict";
 
+/// <reference path="./tyepdefs/jquery.d.ts" />
+/// <reference path="./tyepdefs/jquery.cookie.d.ts" />
+
 // var onresize = window.onresize;
 // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 

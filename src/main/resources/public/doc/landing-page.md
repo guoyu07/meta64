@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-All JavaScript is now in the form of TypeScript! This is a major advancement for the application, and allows perfect type-safety in all JavaScript so that even so much as a misspelled variable name will get detected at build time rather than runtime! Already is having a massive positive impact on quality.
+All JavaScript is now in the form of TypeScript! This is a major advancement for the application, and allows perfect type-safety in all JavaScript.
 
 ## Technology Stack
 * Web App: Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown

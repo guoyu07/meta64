@@ -1,7 +1,9 @@
-
 console.log("running module: LoginDlg.js");
 
 /// <reference path="./tyepdefs/jquery/jquery.d.ts" />
+
+//import { cnst2 } from "../cnst";
+
 
 /*
 Note: The jquery cookie looks for jquery d.ts in the relative location ""../jquery" so beware if your

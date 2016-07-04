@@ -6,7 +6,7 @@ class Attachment {
     /* Node being uploaded to */
     uploadNode: any = null;
 
-    openUploadFromFileDlg() :void{
+    openUploadFromFileDlg(): void {
         var node = meta64.getHighlightedNode();
 
         if (!node) {
@@ -19,7 +19,7 @@ class Attachment {
         (new UploadFromFileDlg()).open();
     }
 
-    openUploadFromUrlDlg() :void{
+    openUploadFromUrlDlg(): void {
         var node = meta64.getHighlightedNode();
 
         if (!node) {
@@ -32,7 +32,7 @@ class Attachment {
         (new UploadFromUrlDlg()).open();
     }
 
-    deleteAttachment() :void {
+    deleteAttachment(): void {
         var node = meta64.getHighlightedNode();
         var thiz: Attachment = this;
         if (node) {
@@ -45,7 +45,7 @@ class Attachment {
         }
     }
 
-    deleteAttachmentResponse(res: any, uid: any)  :void{
+    deleteAttachmentResponse(res: any, uid: any): void {
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.

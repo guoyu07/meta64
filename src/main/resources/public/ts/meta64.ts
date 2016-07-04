@@ -609,11 +609,13 @@ class Meta64 {
         util.addAll(this.binaryPropertyList, [jcrCnst.BIN_DATA]);
     }
 
-    initApp() {
+/* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
+    initApp = () => {
+      console.log("initApp running.");
+      
         if (this.appInitialized)
             return;
 
-        console.log("initApp running.");
         this.appInitialized = true;
 
         var tabs = util.poly("mainIronPages");

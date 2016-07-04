@@ -21,6 +21,5 @@ var searchResultsPanel = function() {
         }
     };
 
-    console.log("Module ready: searchResultsPanel.js");
     return _;
 } ();

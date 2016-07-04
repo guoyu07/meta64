@@ -134,6 +134,7 @@
         var postTargetUrl = window.location.origin + "/mobile/api/";
         /*]]>
 */</script>
+        <script src="/js/systemjs/system.js"></script>
         <script type="text/javascript"
                 src="{{jqueryJs}}"></script>
         <script type="text/javascript"
@@ -225,10 +226,37 @@
             </paper-drawer-panel>
         </template>
     </dom-module>
-    <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
-    {{html.scripts}} 
+    <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->  
     <script>/* 
 <![CDATA[*/
+		var webComponentsReady = false;
+       		addEventListener("WebComponentsReady", function() {
+         		webComponentsReady = true;
+ 		});    
+ 		
+         	//todo-0: this code is not production ready
+           // set our baseURL reference path
+        SystemJS.config({
+             baseURL: '/js'
+        });
+
+           //todo-0: need to get this from the properties (see html.scripts above)
+           //SystemJS.import("meta64-app.js");
+           
+           System.import( "{{html.mainModule}}" ).then(function(m) {
+        	   
+        	   console.log("Adding WebComponentsReady event listener.");
+        	   
+        	   var webComponentsReadyTimer = setInterval(function() {
+        	   
+                   if (webComponentsReady) {
+                	   clearTimeout(webComponentsReadyTimer);
+                	   meta64.initApp();
+                   }
+           		    
+        	   }, 100);
+           });
+         
          
       // Tell RequireJS where ace is located
       /*
@@ -254,10 +282,7 @@
              // etc...
          });
      */
-     
-                addEventListener('WebComponentsReady', function() {
-                        meta64.initApp();
-                });
+        
                         
          /*]]>
 */</script></body>

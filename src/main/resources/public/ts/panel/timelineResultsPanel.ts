@@ -21,6 +21,5 @@ var timelineResultsPanel = function() {
         }
     };
 
-    console.log("Module ready: timelineResultsPanel.js");
     return _;
 } ();

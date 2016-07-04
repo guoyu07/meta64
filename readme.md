@@ -4,6 +4,10 @@ Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) bu
 
 The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
+## ****** IMPORTANT WARNING **** (July.4,2016)
+I'm converting to TypeScript MODULEs currently, and just realized I checked in a bunch of TS files where the 'this' variable is
+not going to be correct at runtime. I probably will be using the "Instance Arrow Functions" to make it correct, but i'm not sure. If you are downloading the current code beware it's broken right now in that way. Will be fixed by July5th.
+
 ## News: Recent Changes 
 
 All JavaScript is now in the form of TypeScript! This is a major advancement for the application, and allows perfect type-safety in all JavaScript.

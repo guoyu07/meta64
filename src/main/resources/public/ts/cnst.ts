@@ -4,6 +4,9 @@ declare var cookiePrefix;
 
 //todo-0: typescript will now let us just do this: const var='value';
 class Cnst {
+    constructor(varName:string) {
+        alert("creating cnst varName ="+varName);
+    }
     ANON: string = "anonymous";
     COOKIE_LOGIN_USR: string = cookiePrefix + "loginUsr";
     COOKIE_LOGIN_PWD: string = cookiePrefix + "loginPwd";
@@ -28,5 +31,7 @@ class Cnst {
 }
 
 if (!window["cnst"]) {
-    var cnst: Cnst = new Cnst();
+    var cnst: Cnst = new Cnst("cnst");
 }
+
+//export var cnst2: Cnst = new Cnst("cnst2");

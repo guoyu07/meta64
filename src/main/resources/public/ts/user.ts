@@ -4,7 +4,7 @@ namespace m64 {
     export namespace user {
 
         // res is JSON response object from server.
-        let _refreshLoginResponse = (res) => {
+        let _refreshLoginResponse = function(res) {
             console.log("refreshLoginResponse");
 
             if (res.success) {
@@ -15,12 +15,12 @@ namespace m64 {
             meta64.loadAnonPageHome(false);
         }
 
-        let _logoutResponse = (res) => {
+        let _logoutResponse = function(res) {
             /* reloads browser with the query parameters stripped off the path */
             window.location.href = window.location.origin;
         }
 
-        let _twitterLoginResponse = (res) => {
+        let _twitterLoginResponse = function(res) {
             console.log("twitter Login response recieved.");
         }
 
@@ -29,14 +29,14 @@ namespace m64 {
          * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
          * use these names
          */
-        export let isTestUserAccount = () => {
+        export let isTestUserAccount = function() {
             return meta64.userName.toLowerCase() === "adam" || //
                 meta64.userName.toLowerCase() === "bob" || //
                 meta64.userName.toLowerCase() === "cory" || //
                 meta64.userName.toLowerCase() === "dan";
         }
 
-        export let setTitleUsingLoginResponse = (res) => {
+        export let setTitleUsingLoginResponse = function(res) {
             var title = BRANDING_TITLE;
             if (!meta64.isAnonUser) {
                 title += " - " + res.userName;
@@ -46,7 +46,7 @@ namespace m64 {
         }
 
         /* TODO-3: move this into meta64 module */
-        export let setStateVarsUsingLoginResponse = (res) => {
+        export let setStateVarsUsingLoginResponse = function(res) {
             if (res.rootNode) {
                 meta64.homeNodeId = res.rootNode.id;
                 meta64.homeNodePath = res.rootNode.path;
@@ -62,7 +62,7 @@ namespace m64 {
             console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
         }
 
-        export let twitterLogin = () => {
+        export let twitterLogin = function() {
             (new MessageDlg("not yet implemented.")).open();
             return;
 
@@ -72,12 +72,12 @@ namespace m64 {
              */
         }
 
-        export let openSignupPg = () => {
+        export let openSignupPg = function() {
             (new SignupDlg()).open();
         }
 
         /* Write a cookie that expires in a year for all paths */
-        export let writeCookie = (name, val) => {
+        export let writeCookie = function(name, val) {
             $.cookie(name, val, {
                 expires: 365,
                 path: '/'
@@ -87,13 +87,13 @@ namespace m64 {
         /*
          * This method is ugly. It is the button that can be login *or* logout.
          */
-        export let openLoginPg = () => {
+        export let openLoginPg = function() {
             var loginDlg = new LoginDlg();
             loginDlg.populateFromCookies();
             loginDlg.open();
         }
 
-        export let refreshLogin = () => {
+        export let refreshLogin = function() {
 
             console.log("refreshLogin.");
 
@@ -155,7 +155,7 @@ namespace m64 {
             }
         }
 
-        export let logout = (updateLoginStateCookie) => {
+        export let logout = function(updateLoginStateCookie) {
             if (meta64.isAnonUser) {
                 return;
             }
@@ -170,7 +170,7 @@ namespace m64 {
             util.json("logout", {}, _logoutResponse);
         }
 
-        export let login = (loginDlg, usr, pwd) => {
+        export let login = function(loginDlg, usr, pwd) {
             var ironRes = util.json("login", {
                 "userName": usr,
                 "password": pwd,
@@ -183,13 +183,13 @@ namespace m64 {
             });
         }
 
-        export let deleteAllUserCookies = () => {
+        export let deleteAllUserCookies = function() {
             $.removeCookie(cnst.COOKIE_LOGIN_USR);
             $.removeCookie(cnst.COOKIE_LOGIN_PWD);
             $.removeCookie(cnst.COOKIE_LOGIN_STATE);
         }
 
-        export let loginResponse = (res?: any, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any) => {
+        export let loginResponse = function(res?: any, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any) {
             if (util.checkSuccess("Login", res)) {
                 console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 

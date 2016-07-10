@@ -6,7 +6,7 @@ namespace m64 {
         /*
          * Toggles display of properties in the gui.
          */
-        export let propsToggle = () => {
+        export let propsToggle = function() {
             meta64.showProperties = meta64.showProperties ? false : true;
             // setDataIconUsingId("#editModeButton", editMode ? "edit" :
             // "forbidden");
@@ -21,7 +21,7 @@ namespace m64 {
             meta64.selectTab("mainTabName");
         }
 
-        export let deletePropertyFromLocalData = (propertyName) => {
+        export let deletePropertyFromLocalData = function(propertyName) {
             for (var i = 0; i < edit.editNode.properties.length; i++) {
                 if (propertyName === edit.editNode.properties[i].name) {
                     // splice is how you delete array elements in js.
@@ -35,7 +35,7 @@ namespace m64 {
          * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
          * node and puts it on the top, and then does same for 'jctCnst.TAGS'
          */
-        export let getPropertiesInEditingOrder = (props) => {
+        export let getPropertiesInEditingOrder = function(props) {
             var propsNew = props.clone();
             var targetIdx = 0;
 
@@ -57,7 +57,7 @@ namespace m64 {
          *
          * todo-3: I can do much better in this method, I just haven't had time to clean it up. this method is ugly.
          */
-        export let renderProperties = (properties) => {
+        export let renderProperties = function(properties) {
             if (properties) {
                 var ret = "<table class='property-text'>";
                 var propCount = 0;
@@ -109,7 +109,7 @@ namespace m64 {
          * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
          * (PropertyInfo.java) with name matching propertyName, else null.
          */
-        export let getNodeProperty = (propertyName, node) => {
+        export let getNodeProperty = function(propertyName, node) {
             if (!node || !node.properties)
                 return null;
 
@@ -122,7 +122,7 @@ namespace m64 {
             return null;
         }
 
-        export let getNodePropertyVal = (propertyName, node) => {
+        export let getNodePropertyVal = function(propertyName, node) {
             var prop = getNodeProperty(propertyName, node);
             return prop ? prop.value : null;
         }
@@ -131,7 +131,7 @@ namespace m64 {
          * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
          * etc. on the GUI.
          */
-        export let isNonOwnedNode = (node) => {
+        export let isNonOwnedNode = function(node) {
             var createdBy = getNodePropertyVal(jcrCnst.CREATED_BY, node);
 
             // if we don't know who owns this node assume the admin owns it.
@@ -147,12 +147,12 @@ namespace m64 {
          * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
          * etc. on the GUI.
          */
-        export let isNonOwnedCommentNode = (node) => {
+        export let isNonOwnedCommentNode = function(node) {
             var commentBy = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
             return commentBy != null && commentBy != meta64.userName;
         }
 
-        export let isOwnedCommentNode = (node) => {
+        export let isOwnedCommentNode = function(node) {
             var commentBy = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
             return commentBy != null && commentBy == meta64.userName;
         }
@@ -160,7 +160,7 @@ namespace m64 {
         /*
          * Returns string representation of property value, even if multiple properties
          */
-        export let renderProperty = (property) => {
+        export let renderProperty = function(property) {
             if (!property.values) {
                 if (!property.value || property.value.length == 0) {
                     return "";
@@ -172,7 +172,7 @@ namespace m64 {
             }
         }
 
-        export let renderPropertyValues = (values) => {
+        export let renderPropertyValues = function(values) {
             var ret = "<div>";
             var count = 0;
             $.each(values, function(i, value) {

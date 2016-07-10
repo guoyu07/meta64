@@ -151,7 +151,7 @@ namespace m64 {
         //		return JSON.stringify(this, null, 4);
         //	};
 
-        export let assertNotNull = (varName) => {
+        export let assertNotNull = function(varName) {
             if (typeof eval(varName) === 'undefined') {
                 (new MessageDlg("Variable not found: " + varName)).open()
             }
@@ -166,7 +166,7 @@ namespace m64 {
 
         export let daylightSavingsTime: boolean = (new Date().dst()) ? true : false;
 
-        export let toJson = (obj) => {
+        export let toJson = function(obj) {
             return JSON.stringify(obj, null, 4);
         }
 
@@ -174,7 +174,7 @@ namespace m64 {
 		 * This came from here:
 		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 		 */
-        export let getParameterByName = (name?: any, url?: any) => {
+        export let getParameterByName = function(name?: any, url?: any) {
             if (!url)
                 url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -191,17 +191,17 @@ namespace m64 {
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
 		 */
-        export let inherit = (parent, child) => {
+        export let inherit = function(parent, child) {
             child.prototype.constructor = child;
             child.prototype = Object.create(parent.prototype);
             return child.prototype;
         }
 
-        export let initProgressMonitor = () => {
+        export let initProgressMonitor = function() {
             setInterval(progressInterval, 1000);
         }
 
-        export let progressInterval = () => {
+        export let progressInterval = function() {
             var isWaiting = isAjaxWaiting();
             if (isWaiting) {
                 waitCounter++;
@@ -274,7 +274,6 @@ namespace m64 {
                 _ajaxCounter++;
                 ironRequest = ironAjax.generateRequest();
             } catch (ex) {
-                debugger;
                 console.log("Failed starting request: " + postName);
                 throw ex;
             }
@@ -384,7 +383,7 @@ namespace m64 {
             return ironRequest;
         }
 
-        export let ajaxReady = (requestName) => {
+        export let ajaxReady = function(requestName) {
             if (_ajaxCounter > 0) {
                 console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
                 return false;
@@ -392,12 +391,12 @@ namespace m64 {
             return true;
         }
 
-        export let isAjaxWaiting = () => {
+        export let isAjaxWaiting = function() {
             return _ajaxCounter > 0;
         }
 
         /* set focus to element by id (id must start with #) */
-        export let delayedFocus = (id) => {
+        export let delayedFocus = function(id) {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
                 $(id).focus();
@@ -416,7 +415,7 @@ namespace m64 {
 		 *
 		 * requires: res.success res.message
 		 */
-        export let checkSuccess = (opFriendlyName, res) => {
+        export let checkSuccess = function(opFriendlyName, res) {
             if (!res.success) {
                 (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
             }
@@ -424,7 +423,7 @@ namespace m64 {
         }
 
         /* adds all array objects to obj as a set */
-        export let addAll = (obj, a) => {
+        export let addAll = function(obj, a) {
             for (var i = 0; i < a.length; i++) {
                 if (!a[i]) {
                     console.error("null element in addAll at idx=" + i);
@@ -434,7 +433,7 @@ namespace m64 {
             }
         }
 
-        export let nullOrUndef = (obj) => {
+        export let nullOrUndef = function(obj) {
             return obj === null || obj === undefined;
         }
 
@@ -442,7 +441,7 @@ namespace m64 {
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        export let getUidForId = (map, id) => {
+        export let getUidForId = function(map, id) {
             /* look for uid in map */
             var uid = map[id];
 
@@ -454,7 +453,7 @@ namespace m64 {
             return uid;
         }
 
-        export let elementExists = (id) => {
+        export let elementExists = function(id) {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -469,7 +468,7 @@ namespace m64 {
         }
 
         /* Takes textarea dom Id (# optional) and returns its value */
-        export let getTextAreaValById = (id) => {
+        export let getTextAreaValById = function(id) {
             var de: HTMLElement = domElm(id);
             return (<HTMLInputElement>de).value;
         }
@@ -477,7 +476,7 @@ namespace m64 {
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        export let domElm = (id) => {
+        export let domElm = function(id) {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -494,7 +493,7 @@ namespace m64 {
             return e;
         }
 
-        export let poly = (id) => {
+        export let poly = function(id) {
             return polyElm(id).node;
         }
 
@@ -527,7 +526,7 @@ namespace m64 {
 		/*
 		 * Gets the element and displays an error message if it's not found
 		 */
-        export let getRequiredElement = (id) => {
+        export let getRequiredElement = function(id) {
             var e = $(id);
             if (e == null) {
                 console.log("getRequiredElement. Required element id not found: " + id);
@@ -535,24 +534,24 @@ namespace m64 {
             return e;
         }
 
-        export let isObject = (obj) => {
+        export let isObject = function(obj) {
             return obj && obj.length != 0;
         }
 
-        export let currentTimeMillis = () => {
+        export let currentTimeMillis = function() {
             return new Date().getMilliseconds();
         }
 
-        export let emptyString = (val) => {
+        export let emptyString = function(val) {
             return !val || val.length == 0;
         }
 
-        export let getInputVal = (id) => {
+        export let getInputVal = function(id) {
             return polyElm(id).node.value;
         }
 
         /* returns true if element was found, or false if element not found */
-        export let setInputVal = (id, val) => {
+        export let setInputVal = function(id, val) {
             if (val == null) {
                 val = "";
             }
@@ -563,11 +562,11 @@ namespace m64 {
             return elm != null;
         }
 
-        export let bindEnterKey = (id, func) => {
+        export let bindEnterKey = function(id, func) {
             bindKey(id, func, 13);
         }
 
-        export let bindKey = (id, func, keyCode) => {
+        export let bindKey = function(id, func, keyCode) {
             $(id).keypress(function(e) {
                 if (e.which == keyCode) { // 13==enter key code
                     func();
@@ -581,7 +580,7 @@ namespace m64 {
 		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
-        export let changeOrAddClass = (elm, oldClass, newClass) => {
+        export let changeOrAddClass = function(elm, oldClass, newClass) {
             var elmement = $(elm);
             elmement.toggleClass(oldClass, false);
             elmement.toggleClass(newClass, true);
@@ -590,7 +589,7 @@ namespace m64 {
 		/*
 		 * displays message (msg) of object is not of specified type
 		 */
-        export let verifyType = (obj, type, msg) => {
+        export let verifyType = function(obj, type, msg) {
             if (typeof obj !== type) {
                 (new MessageDlg(msg)).open();
                 return false;
@@ -599,7 +598,7 @@ namespace m64 {
         }
 
         /* sets html and returns DOM element */
-        export let setHtmlEnhanced = (id, content) => {
+        export let setHtmlEnhanced = function(id, content) {
             if (content == null) {
                 content = "";
             }
@@ -615,7 +614,7 @@ namespace m64 {
             return elm;
         }
 
-        export let setHtml = (id, content) => {
+        export let setHtml = function(id, content) {
             if (content == null) {
                 content = "";
             }
@@ -625,7 +624,7 @@ namespace m64 {
             polyElm.node.innerHTML = content;
         }
 
-        export let getPropertyCount = (obj) => {
+        export let getPropertyCount = function(obj) {
             var count = 0;
             var prop;
 
@@ -640,7 +639,7 @@ namespace m64 {
 		/*
 		 * iterates over an object creating a string containing it's keys and values
 		 */
-        export let printObject = (obj) => {
+        export let printObject = function(obj) {
             if (!obj) {
                 return "null";
             }
@@ -665,7 +664,7 @@ namespace m64 {
         }
 
         /* iterates over an object creating a string containing it's keys */
-        export let printKeys = (obj) => {
+        export let printKeys = function(obj) {
             if (!obj)
                 return "null";
 
@@ -688,7 +687,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setEnablement = (elmId, enable) => {
+        export let setEnablement = function(elmId, enable) {
 
             var elm = null;
             if (typeof elmId == "string") {
@@ -716,7 +715,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setVisibility = (elmId, vis) => {
+        export let setVisibility = function(elmId, vis) {
 
             var elm = null;
             if (typeof elmId == "string") {

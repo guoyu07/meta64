@@ -11,11 +11,11 @@ namespace m64 {
          * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
          * want to give them some instructions and the ability to add content.
          */
-        let _getEmptyPagePrompt = () => {
+        let _getEmptyPagePrompt = function() {
             return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
         }
 
-        let _renderBinary = (node) => {
+        let _renderBinary = function(node) {
             /*
              * If this is an image render the image directly onto the page as a visible image
              */
@@ -43,7 +43,7 @@ namespace m64 {
          *
          * If 'data' is provided, this is the instance data for the dialog
          */
-        export let buidPage = (pg, data) => {
+        export let buidPage = function(pg, data) {
             console.log("buildPage: pg.domId=" + pg.domId);
 
             if (!pg.built || data) {
@@ -56,7 +56,7 @@ namespace m64 {
             }
         }
 
-        export let buildRowHeader = (node, showPath, showName) => {
+        export let buildRowHeader = function(node, showPath, showName) {
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
             var headerText = "";
@@ -108,7 +108,7 @@ namespace m64 {
          * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
          * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
          */
-        export let injectCodeFormatting = (content) => {
+        export let injectCodeFormatting = function(content) {
 
             // example markdown:
             // ```js
@@ -125,11 +125,11 @@ namespace m64 {
             return content;
         }
 
-        export let injectSubstitutions = (content) => {
+        export let injectSubstitutions = function(content) {
             return content.replaceAll("{{locationOrigin}}", window.location.origin);
         }
 
-        export let encodeLanguages = (content) => {
+        export let encodeLanguages = function(content) {
             /*
              * todo-1: need to provide some way of having these language types configurable in a properties file
              * somewhere, and fill out a lot more file types.
@@ -151,7 +151,7 @@ namespace m64 {
          * node: JSON of NodeInfo.java
          *
          */
-        export let renderNodeContent = (node, showPath, showName, renderBinary, rowStyling, showHeader) => {
+        export let renderNodeContent = function(node, showPath, showName, renderBinary, rowStyling, showHeader) {
             var ret: string = getTopRightImageTag(node);
 
             /* todo-2: enable headerText when appropriate here */
@@ -283,7 +283,7 @@ namespace m64 {
          *
          * node is a NodeInfo.java JSON
          */
-        export let renderNodeAsListItem = (node, index, count, rowCount) => {
+        export let renderNodeAsListItem = function(node, index, count, rowCount) {
 
             var uid = node.uid;
             var canMoveUp = index > 0 && rowCount > 1;
@@ -325,7 +325,7 @@ namespace m64 {
                 }, renderNodeContent(node, true, true, true, true, true)));
         }
 
-        export let showNodeUrl = () => {
+        export let showNodeUrl = function() {
             var node = meta64.getHighlightedNode();
             if (!node) {
                 (new MessageDlg("You must first click on a node.")).open();
@@ -345,7 +345,7 @@ namespace m64 {
             (new MessageDlg(message, "URL of Node")).open();
         }
 
-        export let getTopRightImageTag = (node) => {
+        export let getTopRightImageTag = function(node) {
             var topRightImg = props.getNodePropertyVal('img.top.right', node);
             var topRightImgTag = "";
             if (topRightImg) {
@@ -357,7 +357,7 @@ namespace m64 {
             return topRightImgTag;
         }
 
-        export let getNodeBkgImageStyle = (node) => {
+        export let getNodeBkgImageStyle = function(node) {
             var bkgImg = props.getNodePropertyVal('img.node.bkg', node);
             var bkgImgStyle = "";
             if (bkgImg) {
@@ -366,7 +366,7 @@ namespace m64 {
             return bkgImgStyle;
         }
 
-        export let centeredButtonBar = (buttons?: any, classes?: any) => {
+        export let centeredButtonBar = function(buttons?: any, classes?: any) {
             classes = classes || "";
 
             return tag("div", {
@@ -374,7 +374,7 @@ namespace m64 {
             }, buttons);
         }
 
-        export let buttonBar = (buttons, classes) => {
+        export let buttonBar = function(buttons, classes) {
             classes = classes || "";
 
             return tag("div", {
@@ -382,7 +382,7 @@ namespace m64 {
             }, buttons);
         }
 
-        export let makeRowButtonBarHtml = (node, canMoveUp, canMoveDown, editingAllowed) => {
+        export let makeRowButtonBarHtml = function(node, canMoveUp, canMoveDown, editingAllowed) {
 
             var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -521,7 +521,7 @@ namespace m64 {
             return allButtons.length > 0 ? makeHorizontalFieldSet(allButtons) : "";
         }
 
-        export let makeHorizontalFieldSet = (content?: string, extraClasses?: string) => {
+        export let makeHorizontalFieldSet = function(content?: string, extraClasses?: string) {
 
             /* Now build entire control bar */
             return tag("div", //
@@ -530,13 +530,13 @@ namespace m64 {
                 }, content, true);
         }
 
-        export let makeHorzControlGroup = (content) => {
+        export let makeHorzControlGroup = function(content) {
             return tag("div", {
                 "class": "horizontal layout"
             }, content, true);
         }
 
-        export let makeRadioButton = (label, id) => {
+        export let makeRadioButton = function(label, id) {
             return tag("paper-radio-button", {
                 "id": id,
                 "name": id
@@ -546,7 +546,7 @@ namespace m64 {
         /*
          * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
          */
-        export let nodeHasChildren = (uid) => {
+        export let nodeHasChildren = function(uid) {
             var node = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("Unknown nodeId in nodeHasChildren: " + uid);
@@ -556,7 +556,7 @@ namespace m64 {
             }
         }
 
-        export let formatPath = (node) => {
+        export let formatPath = function(node) {
             var path = node.path;
 
             /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -573,7 +573,7 @@ namespace m64 {
             return ret;
         }
 
-        export let wrapHtml = (text) => {
+        export let wrapHtml = function(text) {
             return "<div>" + text + "</div>";
         }
 
@@ -581,7 +581,7 @@ namespace m64 {
          * Each page can show buttons at the top of it (not main header buttons but additional buttons just for that
          * page only, and this generates that content for that entire control bar.
          */
-        export let renderMainPageControls = () => {
+        export let renderMainPageControls = function() {
             var html = '';
 
             var hasContent = html.length > 0;
@@ -595,7 +595,7 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = (data?: any) => {
+        export let renderPageFromData = function(data?: any) {
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
@@ -769,7 +769,7 @@ namespace m64 {
             }
         }
 
-        export let generateRow = (i, node, newData, childCount, rowCount) => {
+        export let generateRow = function(i, node, newData, childCount, rowCount) {
 
             if (meta64.isNodeBlackListed(node))
                 return "";
@@ -788,12 +788,12 @@ namespace m64 {
             return row;
         }
 
-        export let getUrlForNodeAttachment = (node) => {
+        export let getUrlForNodeAttachment = function(node) {
             return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
         }
 
         /* see also: makeImageTag() */
-        export let adjustImageSize = (node) => {
+        export let adjustImageSize = function(node) {
 
             var elm = $("#" + node.imgId);
             if (elm) {
@@ -842,7 +842,7 @@ namespace m64 {
         }
 
         /* see also: adjustImageSize() */
-        export let makeImageTag = (node) => {
+        export let makeImageTag = function(node) {
             var src = getUrlForNodeAttachment(node);
             node.imgId = "imgUid_" + node.uid;
 
@@ -897,7 +897,7 @@ namespace m64 {
          * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
          * content is non-null
          */
-        export let tag = (tag?: any, attributes?: any, content?: any, closeTag?: any) => {
+        export let tag = function(tag?: any, attributes?: any, content?: any, closeTag?: any) {
 
             /* default parameter values */
             if (typeof (closeTag) === 'undefined')
@@ -933,7 +933,7 @@ namespace m64 {
             return ret;
         }
 
-        export let makeTextArea = (fieldName, fieldId) => {
+        export let makeTextArea = function(fieldName, fieldId) {
             return tag("paper-textarea", {
                 "name": fieldId,
                 "label": fieldName,
@@ -941,7 +941,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeEditField = (fieldName, fieldId) => {
+        export let makeEditField = function(fieldName, fieldId) {
             return tag("paper-input", {
                 "name": fieldId,
                 "label": fieldName,
@@ -949,7 +949,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makePasswordField = (fieldName, fieldId) => {
+        export let makePasswordField = function(fieldName, fieldId) {
             return tag("paper-input", {
                 "type": "password",
                 "name": fieldId,
@@ -958,7 +958,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeButton = (text, id, callback) => {
+        export let makeButton = function(text, id, callback) {
             var attribs = {
                 "raised": "raised",
                 "id": id
@@ -974,7 +974,7 @@ namespace m64 {
         /*
          * domId is id of dialog being closed.
          */
-        export let makeBackButton = (text, id, domId, callback) => {
+        export let makeBackButton = function(text, id, domId, callback) {
 
             if (callback === undefined) {
                 callback = "";
@@ -987,21 +987,21 @@ namespace m64 {
             }, text, true);
         }
 
-        export let allowPropertyToDisplay = (propName) => {
+        export let allowPropertyToDisplay = function(propName) {
             if (!meta64.inSimpleMode())
                 return true;
             return meta64.simpleModePropertyBlackList[propName] == null;
         }
 
-        export let isReadOnlyProperty = (propName) => {
+        export let isReadOnlyProperty = function(propName) {
             return meta64.readOnlyPropertyList[propName];
         }
 
-        export let isBinaryProperty = (propName) => {
+        export let isBinaryProperty = function(propName) {
             return meta64.binaryPropertyList[propName];
         }
 
-        export let sanitizePropertyName = (propName: any) => {
+        export let sanitizePropertyName = function(propName: any) {
             if (meta64.editModeOption === "simple") {
                 return propName === jcrCnst.CONTENT ? "Content" : propName;
             } else {

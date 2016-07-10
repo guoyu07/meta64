@@ -129,7 +129,7 @@ namespace m64 {
         /* Maps from guid to Data Object */
         export let dataObjMap: any = {};
 
-        export let updateMainMenuPanel = () => {
+        export let updateMainMenuPanel = function() {
             console.log("building main menu panel");
             menuPanel.build();
             menuPanel.init();
@@ -139,14 +139,14 @@ namespace m64 {
          * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
          * future.
          */
-        export let registerDataObject = (data) => {
+        export let registerDataObject = function(data) {
             if (!data.guid) {
                 data.guid = ++nextGuid;
                 dataObjMap[data.guid] = data;
             }
         }
 
-        export let getObjectByGuid = (guid) => {
+        export let getObjectByGuid = function(guid) {
             var ret = dataObjMap[guid];
             if (!ret) {
                 console.log("data object not found: guid=" + guid);
@@ -166,7 +166,7 @@ namespace m64 {
          *
          * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
          */
-        export let encodeOnClick = (callback, ctx) => {
+        export let encodeOnClick = function(callback, ctx) {
             if (typeof callback == "string") {
                 return callback;
             } //
@@ -182,7 +182,7 @@ namespace m64 {
             }
         }
 
-        export let runCallback = (guid, ctx) => {
+        export let runCallback = function(guid, ctx) {
             var dataObj = getObjectByGuid(guid);
 
             // if this is an object, we expect it to have a 'callback' property
@@ -204,15 +204,15 @@ namespace m64 {
             }
         }
 
-        export let inSimpleMode = () => {
+        export let inSimpleMode = function() {
             return editModeOption === MODE_SIMPLE;
         }
 
-        export let refresh = () => {
+        export let refresh = function() {
             goToMainPage(true, true);
         }
 
-        export let goToMainPage = (rerender?: boolean, forceServerRefresh?: boolean) => {
+        export let goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean) {
 
             if (forceServerRefresh) {
                 treeDirty = true;
@@ -235,7 +235,7 @@ namespace m64 {
             }
         }
 
-        export let selectTab = (pageName) => {
+        export let selectTab = function(pageName) {
             var ironPages = document.querySelector("#mainIronPages");
             (<_HasSelect>ironPages).select(pageName);
         }
@@ -248,7 +248,7 @@ namespace m64 {
          * Note: each data instance is required to have a guid numberic property, unique to it.
          *
          */
-        export let changePage = (pg?: any, data?: any) => {
+        export let changePage = function(pg?: any, data?: any) {
             if (typeof pg.tabId === 'undefined') {
                 console.log("oops, wrong object type passed to changePage function.");
                 return null;
@@ -259,7 +259,7 @@ namespace m64 {
             (<_HasSelect>paperTabs).select(pg.tabId);
         }
 
-        export let isNodeBlackListed = (node) => {
+        export let isNodeBlackListed = function(node) {
             if (!inSimpleMode())
                 return false;
 
@@ -273,7 +273,7 @@ namespace m64 {
             return false;
         }
 
-        export let getSelectedNodeUidsArray = () => {
+        export let getSelectedNodeUidsArray = function() {
             var selArray = [], idx = 0, uid;
 
             for (uid in selectedNodes) {
@@ -284,7 +284,7 @@ namespace m64 {
             return selArray;
         }
 
-        export let getSelectedNodeIdsArray = () => {
+        export let getSelectedNodeIdsArray = function() {
             var selArray = [], idx = 0, uid;
 
             if (!selectedNodes) {
@@ -307,7 +307,7 @@ namespace m64 {
         }
 
         /* Gets selected nodes as NodeInfo.java objects array */
-        export let getSelectedNodesArray = () => {
+        export let getSelectedNodesArray = function() {
             var selArray = [], idx = 0, uid;
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
@@ -317,11 +317,11 @@ namespace m64 {
             return selArray;
         }
 
-        export let clearSelectedNodes = () => {
+        export let clearSelectedNodes = function() {
             selectedNodes = {};
         }
 
-        export let updateNodeInfoResponse = (res, node) => {
+        export let updateNodeInfoResponse = function(res, node) {
             var ownerBuf = '';
             var mine = false;
 
@@ -351,7 +351,7 @@ namespace m64 {
             }
         }
 
-        export let updateNodeInfo = (node) => {
+        export let updateNodeInfo = function(node) {
             var ironRes = util.json("getNodePrivileges", {
                 "nodeId": node.id,
                 "includeAcl": false,
@@ -364,11 +364,11 @@ namespace m64 {
         }
 
         /* Returns the node with the given node.id value */
-        export let getNodeFromId = (id) => {
+        export let getNodeFromId = function(id) {
             return idToNodeMap[id];
         }
 
-        export let getPathOfUid = (uid) => {
+        export let getPathOfUid = function(uid) {
             var node = uidToNodeMap[uid];
             if (!node) {
                 return "[path error. invalid uid: " + uid + "]";
@@ -377,12 +377,12 @@ namespace m64 {
             }
         }
 
-        export let getHighlightedNode = () => {
+        export let getHighlightedNode = function() {
             var ret = parentUidToFocusNodeMap[currentNodeUid];
             return ret;
         }
 
-        export let highlightRowById = (id, scroll) => {
+        export let highlightRowById = function(id, scroll) {
             var node = getNodeFromId(id);
             if (node) {
                 highlightNode(node, scroll);
@@ -395,7 +395,7 @@ namespace m64 {
          * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
          * setting that value should go thru this function.
          */
-        export let highlightNode = (node, scroll) => {
+        export let highlightNode = function(node, scroll) {
             if (!node)
                 return;
 
@@ -431,7 +431,7 @@ namespace m64 {
          * Really need to use pub/sub event to broadcast enablement, and let each component do this independently and
          * decouple
          */
-        export let refreshAllGuiEnablement = () => {
+        export let refreshAllGuiEnablement = function() {
 
             /* multiple select nodes */
             var selNodeCount = util.getPropertyCount(selectedNodes);
@@ -489,7 +489,7 @@ namespace m64 {
             Polymer.updateStyles();
         }
 
-        export let getSingleSelectedNode = () => {
+        export let getSingleSelectedNode = function() {
             var uid;
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
@@ -501,7 +501,7 @@ namespace m64 {
         }
 
         /* node = NodeInfo.java object */
-        export let getOrdinalOfNode = (node) => {
+        export let getOrdinalOfNode = function(node) {
             if (!currentNodeData || !currentNodeData.children)
                 return -1;
 
@@ -513,7 +513,7 @@ namespace m64 {
             return -1;
         }
 
-        export let setCurrentNodeData = (data) => {
+        export let setCurrentNodeData = function(data) {
             currentNodeData = data;
             currentNode = data.node;
             currentNodeUid = data.node.uid;
@@ -521,7 +521,7 @@ namespace m64 {
             currentNodePath = data.node.path;
         }
 
-        export let anonPageLoadResponse = (res) => {
+        export let anonPageLoadResponse = function(res) {
 
             if (res.renderNodeResponse) {
 
@@ -539,7 +539,7 @@ namespace m64 {
             render.renderMainPageControls();
         }
 
-        export let removeBinaryByUid = (uid) => {
+        export let removeBinaryByUid = function(uid) {
             for (var i = 0; i < currentNodeData.children.length; i++) {
                 var node = currentNodeData.children[i];
                 if (node.uid === uid) {
@@ -553,7 +553,7 @@ namespace m64 {
          * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
          * side code
          */
-        export let initNode = (node) => {
+        export let initNode = function(node) {
             if (!node) {
                 console.log("initNode has null node");
                 return;
@@ -577,7 +577,7 @@ namespace m64 {
             idToNodeMap[node.id] = node;
         }
 
-        export let initConstants = () => {
+        export let initConstants = function() {
             util.addAll(simpleModePropertyBlackList, [ //
                 jcrCnst.MIXIN_TYPES, //
                 jcrCnst.PRIMARY_TYPE, //
@@ -610,7 +610,7 @@ namespace m64 {
         }
 
         /* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
-        export let initApp = () => {
+        export let initApp = function() {
             console.log("initApp running.");
 
             if (appInitialized)
@@ -679,7 +679,7 @@ namespace m64 {
             processUrlParams();
         }
 
-        export let processUrlParams = () => {
+        export let processUrlParams = function() {
             var passCode = util.getParameterByName("passCode");
             if (passCode) {
                 setTimeout(function() {
@@ -688,20 +688,20 @@ namespace m64 {
             }
         }
 
-        export let tabChangeEvent = (tabName) => {
+        export let tabChangeEvent = function(tabName) {
             if (tabName == "searchTabName") {
                 srch.searchTabActivated();
             }
         }
 
-        export let displaySignupMessage = () => {
+        export let displaySignupMessage = function() {
             var signupResponse = $("#signupCodeResponse").text();
             if (signupResponse === "ok") {
                 (new MessageDlg("Signup complete. You may now login.")).open();
             }
         }
 
-        export let screenSizeChange = () => {
+        export let screenSizeChange = function() {
             if (currentNodeData) {
 
                 if (meta64.currentNode.imgId) {
@@ -717,7 +717,7 @@ namespace m64 {
         }
 
         /* Don't need this method yet, and haven't tested to see if works */
-        export let orientationHandler = (event) => {
+        export let orientationHandler = function(event) {
             // if (event.orientation) {
             // if (event.orientation === 'portrait') {
             // } else if (event.orientation === 'landscape') {
@@ -725,7 +725,7 @@ namespace m64 {
             // }
         }
 
-        export let loadAnonPageHome = (ignoreUrl) => {
+        export let loadAnonPageHome = function(ignoreUrl) {
             util.json("anonPageLoad", {
                 "ignoreUrl": ignoreUrl
             }, anonPageLoadResponse);

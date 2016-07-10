@@ -3,7 +3,7 @@ console.log("running module: edit.js");
 namespace m64 {
     export namespace edit {
 
-        let _insertBookResponse = (res: any): void => {
+        let _insertBookResponse = function(res: any): void {
             console.log("insertBookResponse running.");
 
             util.checkSuccess("Insert Book", res);
@@ -12,14 +12,14 @@ namespace m64 {
             view.scrollToSelectedNode();
         }
 
-        let _deleteNodesResponse = (res: any): void => {
+        let _deleteNodesResponse = function(res: any): void {
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
                 view.refreshTree(null, false);
             }
         }
 
-        let _initNodeEditResponse = (res: any): void => {
+        let _initNodeEditResponse = function(res: any): void {
             if (util.checkSuccess("Editing node", res)) {
                 var node = res.nodeInfo;
 
@@ -47,20 +47,20 @@ namespace m64 {
             }
         }
 
-        let _moveNodesResponse = (res: any): void => {
+        let _moveNodesResponse = function(res: any): void {
             if (util.checkSuccess("Move nodes", res)) {
                 nodesToMove = null; // reset
                 view.refreshTree(null, false);
             }
         }
 
-        let _setNodePositionResponse = (res: void): void => {
+        let _setNodePositionResponse = function(res: void): void {
             if (util.checkSuccess("Change node position", res)) {
                 meta64.refresh();
             }
         }
 
-        let _splitContentResponse = (res: any): void => {
+        let _splitContentResponse = function(res: any): void {
             if (util.checkSuccess("Split content", res)) {
                 view.refreshTree(null, false);
                 meta64.selectTab("mainTabName");
@@ -108,7 +108,7 @@ namespace m64 {
         export let nodeInsertTarget: any = null;
 
         /* returns true if we can 'try to' insert under 'node' or false if not */
-        export let isEditAllowed = (node: any): boolean => {
+        export let isEditAllowed = function(node: any): boolean {
             return meta64.editMode && node.path != "/" &&
                 /*
                  * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
@@ -118,11 +118,11 @@ namespace m64 {
         }
 
         /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
-        export let isInsertAllowed = (node: any): boolean => {
+        export let isInsertAllowed = function(node: any): boolean {
             return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
         }
 
-        export let startEditingNewNode = (): void => {
+        export let startEditingNewNode = function(): void {
             editingUnsavedNode = false;
             editNode = null;
             editNodeDlgInst = new EditNodeDlg();
@@ -141,14 +141,14 @@ namespace m64 {
          * that will cause the GUI to always prompt for the node name before creating the node. This was the original
          * functionality and still works.
          */
-        export let startEditingNewNodeWithName = (): void => {
+        export let startEditingNewNodeWithName = function(): void {
             editingUnsavedNode = true;
             editNode = null;
             editNodeDlgInst = new EditNodeDlg();
             editNodeDlgInst.open();
         }
 
-        export let insertNodeResponse = (res: any): void => {
+        export let insertNodeResponse = function(res: any): void {
             if (util.checkSuccess("Insert node", res)) {
                 meta64.initNode(res.newNode);
                 meta64.highlightNode(res.newNode, true);
@@ -156,21 +156,21 @@ namespace m64 {
             }
         }
 
-        export let createSubNodeResponse = (res: any): void => {
+        export let createSubNodeResponse = function(res: any): void {
             if (util.checkSuccess("Create subnode", res)) {
                 meta64.initNode(res.newNode);
                 runEditNode(res.newNode.uid);
             }
         }
 
-        export let saveNodeResponse = (res: any, payload: any): void => {
+        export let saveNodeResponse = function(res: any, payload: any): void {
             if (util.checkSuccess("Save node", res)) {
                 view.refreshTree(null, false, payload.savedId);
                 meta64.selectTab("mainTabName");
             }
         }
 
-        export let editMode = (): void => {
+        export let editMode = function(): void {
             meta64.editMode = meta64.editMode ? false : true;
             // todo-3: really edit mode button needs to be some kind of button
             // that can show an on/off state.
@@ -183,7 +183,7 @@ namespace m64 {
             view.scrollToSelectedNode();
         }
 
-        export let splitContent = (): void => {
+        export let splitContent = function(): void {
             let nodeBelow: NodeInfo = getNodeBelow(editNode);
             util.json("splitNode", {
                 "nodeId": editNode.id,
@@ -191,7 +191,7 @@ namespace m64 {
             }, _splitContentResponse);
         }
 
-        export let cancelEdit = (): void => {
+        export let cancelEdit = function(): void {
 
             if (meta64.treeDirty) {
                 meta64.goToMainPage(true);
@@ -201,7 +201,7 @@ namespace m64 {
             }
         }
 
-        export let moveNodeUp = (uid: any): void => {
+        export let moveNodeUp = function(uid: any): void {
             var node = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeAbove = getNodeAbove(node);
@@ -219,7 +219,7 @@ namespace m64 {
             }
         }
 
-        export let moveNodeDown = (uid: any): void => {
+        export let moveNodeDown = function(uid: any): void {
             var node = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeBelow = getNodeBelow(node);
@@ -240,7 +240,7 @@ namespace m64 {
         /*
          * Returns the node above the specified node or null if node is itself the top node
          */
-        export let getNodeAbove = (node): any => {
+        export let getNodeAbove = function(node): any {
             var ordinal = meta64.getOrdinalOfNode(node);
             if (ordinal <= 0)
                 return null;
@@ -250,7 +250,7 @@ namespace m64 {
         /*
          * Returns the node below the specified node or null if node is itself the bottom node
          */
-        export let getNodeBelow = (node: any): NodeInfo => {
+        export let getNodeBelow = function(node: any): NodeInfo {
             var ordinal = meta64.getOrdinalOfNode(node);
             console.log("ordinal = " + ordinal);
             if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -265,7 +265,7 @@ namespace m64 {
         //     }, this._exportResponse, this);
         // },
 
-        export let runEditNode = (uid: any): void => {
+        export let runEditNode = function(uid: any): void {
             var node = meta64.uidToNodeMap[uid];
             if (!node) {
                 editNode = null;
@@ -279,7 +279,7 @@ namespace m64 {
             }, _initNodeEditResponse);
         }
 
-        export let insertNode = (uid: any): void => {
+        export let insertNode = function(uid: any): void {
 
             parentOfNewNode = meta64.currentNode;
             if (!parentOfNewNode) {
@@ -304,7 +304,7 @@ namespace m64 {
             }
         }
 
-        export let createSubNodeUnderHighlight = (): void => {
+        export let createSubNodeUnderHighlight = function(): void {
 
             parentOfNewNode = meta64.getHighlightedNode();
             if (!parentOfNewNode) {
@@ -319,11 +319,11 @@ namespace m64 {
             startEditingNewNode();
         }
 
-        export let replyToComment = (uid: any): void => {
+        export let replyToComment = function(uid: any): void {
             createSubNode(uid);
         }
 
-        export let createSubNode = (uid: any): void => {
+        export let createSubNode = function(uid: any): void {
             /*
              * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page)
              */
@@ -344,7 +344,7 @@ namespace m64 {
             startEditingNewNode();
         }
 
-        export let clearSelections = (): void => {
+        export let clearSelections = function(): void {
             meta64.clearSelectedNodes();
 
             /*
@@ -360,7 +360,7 @@ namespace m64 {
          * Delete the single node identified by 'uid' parameter if uid parameter is passed, and if uid parameter is not
          * passed then use the node selections for multiple selections on the page.
          */
-        export let deleteSelNodes = (): void => {
+        export let deleteSelNodes = function(): void {
             var selNodesArray = meta64.getSelectedNodeIdsArray();
             if (!selNodesArray || selNodesArray.length == 0) {
                 (new MessageDlg("You have not selected any nodes. Select nodes to delete first.")).open();
@@ -375,7 +375,7 @@ namespace m64 {
                 })).open();
         }
 
-        export let moveSelNodes = (): void => {
+        export let moveSelNodes = function(): void {
 
             var selNodesArray = meta64.getSelectedNodeIdsArray();
             if (!selNodesArray || selNodesArray.length == 0) {
@@ -400,7 +400,7 @@ namespace m64 {
                 })).open();
         }
 
-        export let finishMovingSelNodes = (): void => {
+        export let finishMovingSelNodes = function(): void {
             (new ConfirmDlg("Confirm Move", "Move " + nodesToMove.length + " node(s) to selected location ?",
                 "Yes, move.", function() {
 
@@ -419,7 +419,7 @@ namespace m64 {
                 })).open();
         }
 
-        export let insertBookWarAndPeace = (): void => {
+        export let insertBookWarAndPeace = function(): void {
             (new ConfirmDlg("Confirm", "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!", "Yes, insert book.", function() {
 
                 /* inserting under whatever node user has focused */

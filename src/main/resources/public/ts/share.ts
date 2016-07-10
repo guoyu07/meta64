@@ -3,7 +3,7 @@ console.log("running module: share.js");
 namespace m64 {
     export namespace share {
 
-        let _findSharedNodesResponse = (res) => {
+        let _findSharedNodesResponse = function(res) {
             srch.searchNodesResponse(res);
         }
 
@@ -12,7 +12,7 @@ namespace m64 {
         /*
          * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
          */
-        export let editNodeSharing = () => {
+        export let editNodeSharing = function() {
             var node = meta64.getHighlightedNode();
 
             if (!node) {
@@ -23,7 +23,7 @@ namespace m64 {
             (new SharingDlg()).open();
         }
 
-        export let findSharedNodes = () => {
+        export let findSharedNodes = function() {
             var focusNode = meta64.getHighlightedNode();
             if (focusNode == null) {
                 return;

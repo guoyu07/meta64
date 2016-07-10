@@ -3,28 +3,28 @@ console.log("running module: menuPanel.js");
 namespace m64 {
     export namespace menuPanel {
 
-        let _makeTopLevelMenu = (title: string, content: string): string => {
+        let _makeTopLevelMenu = function(title: string, content: string): string {
             return render.tag("paper-submenu", {
                 "class": "meta64-menu-heading"
             }, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
                 _makeSecondLevelList(content), true);
         }
 
-        let _makeSecondLevelList = (content: string): string => {
+        let _makeSecondLevelList = function(content: string): string {
             return render.tag("paper-menu", {
                 "class": "menu-content my-menu-section",
                 "multi": "multi"
             }, content, true);
         }
 
-        let _menuItem = (name: string, id: string, onClick: any): string => {
+        let _menuItem = function(name: string, id: string, onClick: any): string {
             return render.tag("paper-item", {
                 "id": id,
                 "onclick": onClick
             }, name, true);
         }
 
-        let _menuToggleItem = (name: string, id: string, onClick: any): string => {
+        let _menuToggleItem = function(name: string, id: string, onClick: any): string {
             return render.tag("paper-item", {
                 "id": id,
                 "onclick": onClick
@@ -33,7 +33,7 @@ namespace m64 {
 
         let domId: string = "mainNavBar";
 
-        export let build = (): void => {
+        export let build = function(): void {
 
             var editMenuItems = //
                 _menuItem("Move", "moveSelNodesButton", "m64.edit.moveSelNodes();") + //
@@ -91,7 +91,7 @@ namespace m64 {
             util.setHtmlEnhanced(domId, content);
         }
 
-        export let init = (): void => {
+        export let init = function(): void {
             meta64.refreshAllGuiEnablement();
         }
     }

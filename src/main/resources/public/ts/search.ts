@@ -42,14 +42,14 @@ namespace m64 {
          */
         export let uidToNodeMap: any = {};
 
-        export let numSearchResults = () => {
+        export let numSearchResults = function() {
             return srch.searchResults != null && //
                 srch.searchResults.searchResults != null && //
                 srch.searchResults.searchResults.length != null ? //
                 srch.searchResults.searchResults.length : 0;
         }
 
-        export let searchTabActivated = () => {
+        export let searchTabActivated = function() {
             /*
              * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
              * and open up the search dialog.
@@ -59,7 +59,7 @@ namespace m64 {
             }
         }
 
-        export let searchNodesResponse = (res) => {
+        export let searchNodesResponse = function(res) {
             searchResults = res;
             let searchResultsPanel = new SearchResultsPanel();
             var content = searchResultsPanel.build();
@@ -68,7 +68,7 @@ namespace m64 {
             meta64.changePage(searchResultsPanel);
         }
 
-        export let timelineResponse = (res) => {
+        export let timelineResponse = function(res) {
             timelineResults = res;
             let timelineResultsPanel = new TimelineResultsPanel();
             var content = timelineResultsPanel.build();
@@ -77,7 +77,7 @@ namespace m64 {
             meta64.changePage(timelineResultsPanel);
         }
 
-        export let timeline = () => {
+        export let timeline = function() {
             var node = meta64.getHighlightedNode();
             if (!node) {
                 (new MessageDlg("No node is selected to 'timeline' under.")).open();
@@ -93,12 +93,12 @@ namespace m64 {
             }, timelineResponse);
         }
 
-        export let initSearchNode = (node) => {
+        export let initSearchNode = function(node) {
             node.uid = util.getUidForId(identToUidMap, node.id);
             uidToNodeMap[node.uid] = node;
         }
 
-        export let populateSearchResultsPage = (data, viewName) => {
+        export let populateSearchResultsPage = function(data, viewName) {
             var output = '';
             var childCount = data.searchResults.length;
 
@@ -126,7 +126,7 @@ namespace m64 {
          *
          * node is a NodeInfo.java JSON
          */
-        export let renderSearchResultAsListItem = (node, index, count, rowCount) => {
+        export let renderSearchResultAsListItem = function(node, index, count, rowCount) {
 
             var uid = node.uid;
             console.log("renderSearchResult: " + uid);
@@ -150,19 +150,19 @@ namespace m64 {
                 }, content));
         }
 
-        export let makeButtonBarHtml = (uid) => {
+        export let makeButtonBarHtml = function(uid) {
             var gotoButton = render.makeButton("Go to Node", uid, "m64.srch.clickSearchNode('" + uid + "');");
             return render.makeHorizontalFieldSet(gotoButton);
         }
 
-        export let clickOnSearchResultRow = (rowElm, uid) => {
+        export let clickOnSearchResultRow = function(rowElm, uid) {
             unhighlightRow();
             highlightRowNode = uidToNodeMap[uid];
 
             util.changeOrAddClass(rowElm, "inactive-row", "active-row");
         }
 
-        export let clickSearchNode = (uid) => {
+        export let clickSearchNode = function(uid) {
             /*
              * update highlight node to point to the node clicked on, just to persist it for later
              */
@@ -174,7 +174,7 @@ namespace m64 {
         /*
          * turn of row selection styling of whatever row is currently selected
          */
-        export let unhighlightRow = () => {
+        export let unhighlightRow = function() {
 
             if (!highlightRowNode) {
                 return;

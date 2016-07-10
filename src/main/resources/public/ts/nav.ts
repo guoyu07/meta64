@@ -4,11 +4,11 @@ namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
-        export let openMainMenuHelp = () => {
+        export let openMainMenuHelp = function() {
             window.open(window.location.origin + "?id=/meta64/public/help", "_blank");
         }
 
-        export let displayingHome = () => {
+        export let displayingHome = function() {
             if (meta64.isAnonUser) {
                 return meta64.currentNodeId === meta64.anonUserLandingPageNode;
             } else {
@@ -16,11 +16,11 @@ namespace m64 {
             }
         }
 
-        export let parentVisibleToUser = () => {
+        export let parentVisibleToUser = function() {
             return !displayingHome();
         }
 
-        export let upLevelResponse = (res, id) => {
+        export let upLevelResponse = function(res, id) {
             if (!res || !res.node) {
                 (new MessageDlg("No data is visible to you above this node.")).open();
             } else {
@@ -30,7 +30,7 @@ namespace m64 {
             }
         }
 
-        export let navUpLevel = () => {
+        export let navUpLevel = function() {
 
             if (!parentVisibleToUser()) {
                 // Already at root. Can't go up.
@@ -50,7 +50,7 @@ namespace m64 {
         /*
          * turn of row selection DOM element of whatever row is currently selected
          */
-        export let getSelectedDomElement = () => {
+        export let getSelectedDomElement = function() {
 
             var currentSelNode = meta64.getHighlightedNode();
             if (currentSelNode) {
@@ -75,7 +75,7 @@ namespace m64 {
         /*
          * turn of row selection DOM element of whatever row is currently selected
          */
-        export let getSelectedPolyElement = () => {
+        export let getSelectedPolyElement = function() {
             try {
                 var currentSelNode = meta64.getHighlightedNode();
                 if (currentSelNode) {
@@ -101,7 +101,7 @@ namespace m64 {
             return null;
         }
 
-        export let clickOnNodeRow = (rowElm, uid) => {
+        export let clickOnNodeRow = function(rowElm, uid) {
 
             var node = meta64.uidToNodeMap[uid];
             if (!node) {
@@ -128,7 +128,7 @@ namespace m64 {
             meta64.refreshAllGuiEnablement();
         }
 
-        export let openNode = (uid) => {
+        export let openNode = function(uid) {
 
             var node = meta64.uidToNodeMap[uid];
 
@@ -146,7 +146,7 @@ namespace m64 {
          * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
          * silly looking async timer here.
          */
-        export let toggleNodeSel = (uid) => {
+        export let toggleNodeSel = function(uid) {
             var toggleButton = util.polyElm(uid + "_sel");
             setTimeout(function() {
                 if (toggleButton.node.checked) {
@@ -160,14 +160,14 @@ namespace m64 {
             }, 500);
         }
 
-        export let navHomeResponse = (res) => {
+        export let navHomeResponse = function(res) {
             meta64.clearSelectedNodes();
             render.renderPageFromData(res);
             view.scrollToTop();
             meta64.refreshAllGuiEnablement();
         }
 
-        export let navHome = () => {
+        export let navHome = function() {
             if (meta64.isAnonUser) {
                 meta64.loadAnonPageHome(true);
                 // window.location.href = window.location.origin;
@@ -178,11 +178,11 @@ namespace m64 {
             }
         }
 
-        export let navPublicHome = () => {
+        export let navPublicHome = function() {
             meta64.loadAnonPageHome(true);
         }
 
-        export let toggleMainMenu = () => {
+        export let toggleMainMenu = function() {
             //var paperDrawerPanel = util.polyElm("paperDrawerPanel");
 
             /*

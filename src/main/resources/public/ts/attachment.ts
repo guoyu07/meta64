@@ -5,7 +5,7 @@ namespace m64 {
         /* Node being uploaded to */
         export let uploadNode: any = null;
 
-        export let openUploadFromFileDlg = (): void => {
+        export let openUploadFromFileDlg = function(): void {
             var node = meta64.getHighlightedNode();
             console.log("running m64.namespace version!");
             if (!node) {
@@ -18,7 +18,7 @@ namespace m64 {
             (new UploadFromFileDlg()).open();
         }
 
-        export let openUploadFromUrlDlg = (): void => {
+        export let openUploadFromUrlDlg = function(): void {
             var node = meta64.getHighlightedNode();
 
             if (!node) {
@@ -31,7 +31,7 @@ namespace m64 {
             (new UploadFromUrlDlg()).open();
         }
 
-        export let deleteAttachment = (): void => {
+        export let deleteAttachment = function(): void {
             var node = meta64.getHighlightedNode();
             //var thiz: Attachment = this;
             if (node) {
@@ -44,7 +44,7 @@ namespace m64 {
             }
         }
 
-        export let deleteAttachmentResponse = (res: any, uid: any): void => {
+        export let deleteAttachmentResponse = function(res: any, uid: any): void {
             if (util.checkSuccess("Delete attachment", res)) {
                 meta64.removeBinaryByUid(uid);
                 // force re-render from local data.

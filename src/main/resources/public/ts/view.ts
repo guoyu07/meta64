@@ -5,7 +5,7 @@ namespace m64 {
 
         export let scrollToSelNodePending: boolean = false;
 
-        export let updateStatusBar = () => {
+        export let updateStatusBar = function() {
             if (!meta64.currentNodeData)
                 return;
             var statusLine = "";
@@ -23,7 +23,7 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = (res?: any, targetId?: any, renderParentIfLeaf?: any, newId?: any) => {
+        export let refreshTreeResponse = function(res?: any, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
 
             render.renderPageFromData(res);
 
@@ -45,7 +45,7 @@ namespace m64 {
         /*
          * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
          */
-        export let refreshTree = (nodeId?: any, renderParentIfLeaf?: any, newId?: any) => {
+        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any) {
             if (!nodeId) {
                 nodeId = meta64.currentNodeId;
             }
@@ -68,7 +68,7 @@ namespace m64 {
          * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
          * and then scrolling to a different place a fraction of a second later)
          */
-        export let scrollToSelectedNode = () => {
+        export let scrollToSelectedNode = function() {
             scrollToSelNodePending = true;
 
             setTimeout(function() {
@@ -92,7 +92,7 @@ namespace m64 {
         /*
          * todo-3: The following was in a polymer example (can I use this?): app.$.headerPanelMain.scrollToTop(true);
          */
-        export let scrollToTop = () => {
+        export let scrollToTop = function() {
             if (scrollToSelNodePending)
                 return;
 
@@ -107,7 +107,7 @@ namespace m64 {
             }, 1000);
         }
 
-        export let initEditPathDisplayById = (domId) => {
+        export let initEditPathDisplayById = function(domId) {
             var node = edit.editNode;
             var e = $("#" + domId);
             if (!e)
@@ -130,7 +130,7 @@ namespace m64 {
             }
         }
 
-        export let showServerInfo = () => {
+        export let showServerInfo = function() {
             var ironRes = util.json("getServerInfo", {});
 
             ironRes.completes.then(function() {

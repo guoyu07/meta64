@@ -1,4 +1,3 @@
-
 console.log("running module: util.js");
 
 //todo-0: need to find the DefinitelyTyped file for Polymer.
@@ -13,10 +12,6 @@ function escapeRegExp(string) {
 
 interface _HasSelect {
     select?: any;
-}
-
-interface _HasRoot {
-    root?: any;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,36 +136,37 @@ if (typeof String.prototype.escapeForAttrib != 'function') {
     }
 }
 
-class Util {
+namespace m64 {
+    export namespace util {
 
-    logAjax:boolean = false;
-    timeoutMessageShown:boolean = false;
-    offline:boolean = false;
+        export let logAjax: boolean = true;
+        export let timeoutMessageShown: boolean = false;
+        export let offline: boolean = false;
 
-    waitCounter:number = 0;
-    pgrsDlg:any = null;
+        export let waitCounter: number = 0;
+        export let pgrsDlg: any = null;
 
-    //this blows the hell up, not sure why.
-    //	Object.prototype.toJson = function() {
-    //		return JSON.stringify(this, null, 4);
-    //	};
+        //this blows the hell up, not sure why.
+        //	Object.prototype.toJson = function() {
+        //		return JSON.stringify(this, null, 4);
+        //	};
 
-    assertNotNull=(varName) =>  {
-        if (typeof eval(varName) === 'undefined') {
-            (new MessageDlg("Variable not found: " + varName)).open()
+        export let assertNotNull = (varName) => {
+            if (typeof eval(varName) === 'undefined') {
+                (new MessageDlg("Variable not found: " + varName)).open()
+            }
         }
-    }
 
-	/*
-	 * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
-	 * session is only allowed one concurrent call and simultaneous calls would just "queue up".
-	 */
-    _ajaxCounter:number = 0;
+        /*
+         * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
+         * session is only allowed one concurrent call and simultaneous calls would just "queue up".
+         */
+        let _ajaxCounter: number = 0;
 
 
-        daylightSavingsTime:boolean= (new Date().dst()) ? true : false;
+        export let daylightSavingsTime: boolean = (new Date().dst()) ? true : false;
 
-        toJson=(obj)  => {
+        export let toJson = (obj) => {
             return JSON.stringify(obj, null, 4);
         }
 
@@ -178,7 +174,7 @@ class Util {
 		 * This came from here:
 		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 		 */
-        getParameterByName=(name?: any, url?: any)  => {
+        export let getParameterByName = (name?: any, url?: any) => {
             if (!url)
                 url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -195,31 +191,31 @@ class Util {
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
 		 */
-        inherit=(parent, child)  => {
+        export let inherit = (parent, child) => {
             child.prototype.constructor = child;
             child.prototype = Object.create(parent.prototype);
             return child.prototype;
         }
 
-        initProgressMonitor=() =>  {
-            setInterval(this.progressInterval, 1000);
+        export let initProgressMonitor = () => {
+            setInterval(progressInterval, 1000);
         }
 
-        progressInterval = () => {
-            var isWaiting = this.isAjaxWaiting();
+        export let progressInterval = () => {
+            var isWaiting = isAjaxWaiting();
             if (isWaiting) {
-                this.waitCounter++;
-                if (this.waitCounter >= 3) {
-                    if (!this.pgrsDlg) {
-                        this.pgrsDlg = new ProgressDlg();
-                        this.pgrsDlg.open();
+                waitCounter++;
+                if (waitCounter >= 3) {
+                    if (!pgrsDlg) {
+                        pgrsDlg = new ProgressDlg();
+                        pgrsDlg.open();
                     }
                 }
             } else {
-                this.waitCounter = 0;
-                if (this.pgrsDlg) {
-                    this.pgrsDlg.cancel();
-                    this.pgrsDlg = null;
+                waitCounter = 0;
+                if (pgrsDlg) {
+                    pgrsDlg.cancel();
+                    pgrsDlg = null;
                 }
             }
         }
@@ -232,30 +228,30 @@ class Util {
 		 *
 		 * todo-3: this method got too long. Need to not inline these function definitions
 		 */
-        json=(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) =>  {
+        export let json = function(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) {
 
-            if (callbackThis===window) {
-                console.log("PROBABLE BUG: json call for "+postName+" used global 'window' as 'this', which is almost never going to be correct.");
+            if (callbackThis === window) {
+                console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
             }
 
             var ironAjax;
             var ironRequest;
-            var thiz = this;
 
             try {
-                if (this.offline) {
+                if (offline) {
                     console.log("offline: ignoring call for " + postName);
                     return;
                 }
 
-                if (this.logAjax) {
+                if (logAjax) {
                     console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
                 }
 
                 /* Do not delete, research this way... */
                 // var ironAjax = this.$$("#myIronAjax");
-                //todo-0: I had to force 'this.root' to be acceptable using interface, why?? is this correct?
-                ironAjax = Polymer.dom((<_HasRoot>this).root).querySelector("#ironAjax");
+                //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
+
+                ironAjax = polyElmNode("ironAjax");
 
                 ironAjax.url = postTargetUrl + postName;
                 ironAjax.verbose = true;
@@ -275,10 +271,12 @@ class Util {
                 ironAjax.debounceDuration = "300"; // debounce-duration (is
                 // prop)
 
-                this._ajaxCounter++;
+                _ajaxCounter++;
                 ironRequest = ironAjax.generateRequest();
             } catch (ex) {
-                throw "Failed starting request: " + postName;
+                debugger;
+                console.log("Failed starting request: " + postName);
+                throw ex;
             }
 
 			/**
@@ -303,10 +301,10 @@ class Util {
                 // Handle Success
                 function() {
                     try {
-                        thiz._ajaxCounter--;
-                        thiz.progressInterval();
+                        _ajaxCounter--;
+                        progressInterval();
 
-                        if (thiz.logAjax) {
+                        if (logAjax) {
                             console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
                                 + JSON.stringify(ironRequest.response));
                         }
@@ -339,16 +337,16 @@ class Util {
                 // Handle Fail
                 function() {
                     try {
-                        thiz._ajaxCounter--;
-                        thiz.progressInterval();
+                        _ajaxCounter--;
+                        progressInterval();
                         console.log("Error in util.json");
 
                         if (ironRequest.status == "403") {
                             console.log("Not logged in detected in util.");
-                            thiz.offline = true;
+                            offline = true;
 
-                            if (!thiz.timeoutMessageShown) {
-                                thiz.timeoutMessageShown = true;
+                            if (!timeoutMessageShown) {
+                                timeoutMessageShown = true;
                                 (new MessageDlg("Session timed out. Page will refresh.")).open();
                             }
 
@@ -381,26 +379,25 @@ class Util {
                     } catch (ex) {
                         throw "Failed processing server-side fail of: " + postName;
                     }
-
                 });
 
             return ironRequest;
         }
 
-        ajaxReady=(requestName)  => {
-            if (this._ajaxCounter > 0) {
+        export let ajaxReady = (requestName) => {
+            if (_ajaxCounter > 0) {
                 console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
                 return false;
             }
             return true;
         }
 
-        isAjaxWaiting=()  => {
-            return this._ajaxCounter > 0;
+        export let isAjaxWaiting = () => {
+            return _ajaxCounter > 0;
         }
 
         /* set focus to element by id (id must start with #) */
-        delayedFocus=(id)  => {
+        export let delayedFocus = (id) => {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
                 $(id).focus();
@@ -419,7 +416,7 @@ class Util {
 		 *
 		 * requires: res.success res.message
 		 */
-        checkSuccess=(opFriendlyName, res)  => {
+        export let checkSuccess = (opFriendlyName, res) => {
             if (!res.success) {
                 (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
             }
@@ -427,7 +424,7 @@ class Util {
         }
 
         /* adds all array objects to obj as a set */
-        addAll=(obj, a)  => {
+        export let addAll = (obj, a) => {
             for (var i = 0; i < a.length; i++) {
                 if (!a[i]) {
                     console.error("null element in addAll at idx=" + i);
@@ -437,7 +434,7 @@ class Util {
             }
         }
 
-        nullOrUndef=(obj)  => {
+        export let nullOrUndef = (obj) => {
             return obj === null || obj === undefined;
         }
 
@@ -445,7 +442,7 @@ class Util {
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        getUidForId=(map, id)  => {
+        export let getUidForId = (map, id) => {
             /* look for uid in map */
             var uid = map[id];
 
@@ -457,7 +454,7 @@ class Util {
             return uid;
         }
 
-        elementExists=(id) =>  {
+        export let elementExists = (id) => {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -472,15 +469,15 @@ class Util {
         }
 
         /* Takes textarea dom Id (# optional) and returns its value */
-        getTextAreaValById=(id)  => {
-            var domElm: HTMLElement = this.domElm(id);
-            return (<HTMLInputElement>domElm).value;
+        export let getTextAreaValById = (id) => {
+            var de: HTMLElement = domElm(id);
+            return (<HTMLInputElement>de).value;
         }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        domElm=(id)  => {
+        export let domElm = (id) => {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -497,14 +494,14 @@ class Util {
             return e;
         }
 
-        poly=(id)  => {
-            return this.polyElm(id).node;
+        export let poly = (id) => {
+            return polyElm(id).node;
         }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        polyElm=(id) =>  {
+        export let polyElm = function(id) {
 
             if (id.startsWith("#")) {
                 id = id.substring(1);
@@ -522,10 +519,15 @@ class Util {
             return Polymer.dom(e);
         }
 
+        export let polyElmNode = function(id) {
+            var e = polyElm(id);
+            return e.node;
+        }
+
 		/*
 		 * Gets the element and displays an error message if it's not found
 		 */
-        getRequiredElement=(id)  => {
+        export let getRequiredElement = (id) => {
             var e = $(id);
             if (e == null) {
                 console.log("getRequiredElement. Required element id not found: " + id);
@@ -533,39 +535,39 @@ class Util {
             return e;
         }
 
-        isObject=(obj)  => {
+        export let isObject = (obj) => {
             return obj && obj.length != 0;
         }
 
-        currentTimeMillis=() =>  {
+        export let currentTimeMillis = () => {
             return new Date().getMilliseconds();
         }
 
-        emptyString=(val) =>  {
+        export let emptyString = (val) => {
             return !val || val.length == 0;
         }
 
-        getInputVal=(id) =>  {
-            return this.polyElm(id).node.value;
+        export let getInputVal = (id) => {
+            return polyElm(id).node.value;
         }
 
         /* returns true if element was found, or false if element not found */
-        setInputVal=(id, val)  => {
+        export let setInputVal = (id, val) => {
             if (val == null) {
                 val = "";
             }
-            var elm = this.polyElm(id);
+            var elm = polyElm(id);
             if (elm) {
                 elm.node.value = val;
             }
             return elm != null;
         }
 
-        bindEnterKey=(id, func)  => {
-            this.bindKey(id, func, 13);
+        export let bindEnterKey = (id, func) => {
+            bindKey(id, func, 13);
         }
 
-        bindKey=(id, func, keyCode) =>  {
+        export let bindKey = (id, func, keyCode) => {
             $(id).keypress(function(e) {
                 if (e.which == keyCode) { // 13==enter key code
                     func();
@@ -579,7 +581,7 @@ class Util {
 		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
-        changeOrAddClass=(elm, oldClass, newClass)  => {
+        export let changeOrAddClass = (elm, oldClass, newClass) => {
             var elmement = $(elm);
             elmement.toggleClass(oldClass, false);
             elmement.toggleClass(newClass, true);
@@ -588,7 +590,7 @@ class Util {
 		/*
 		 * displays message (msg) of object is not of specified type
 		 */
-        verifyType=(obj, type, msg)  => {
+        export let verifyType = (obj, type, msg) => {
             if (typeof obj !== type) {
                 (new MessageDlg(msg)).open();
                 return false;
@@ -597,12 +599,12 @@ class Util {
         }
 
         /* sets html and returns DOM element */
-        setHtmlEnhanced=(id, content)  => {
+        export let setHtmlEnhanced = (id, content) => {
             if (content == null) {
                 content = "";
             }
 
-            var elm = this.domElm(id);
+            var elm = domElm(id);
             var polyElm = Polymer.dom(elm);
             polyElm.node.innerHTML = content;
 
@@ -613,17 +615,17 @@ class Util {
             return elm;
         }
 
-        setHtml=(id, content)  => {
+        export let setHtml = (id, content) => {
             if (content == null) {
                 content = "";
             }
 
-            var elm = this.domElm(id);
+            var elm = domElm(id);
             var polyElm = Polymer.dom(elm);
             polyElm.node.innerHTML = content;
         }
 
-        getPropertyCount=(obj)  => {
+        export let getPropertyCount = (obj) => {
             var count = 0;
             var prop;
 
@@ -638,7 +640,7 @@ class Util {
 		/*
 		 * iterates over an object creating a string containing it's keys and values
 		 */
-        printObject=(obj) =>  {
+        export let printObject = (obj) => {
             if (!obj) {
                 return "null";
             }
@@ -663,7 +665,7 @@ class Util {
         }
 
         /* iterates over an object creating a string containing it's keys */
-        printKeys=(obj)  => {
+        export let printKeys = (obj) => {
             if (!obj)
                 return "null";
 
@@ -686,26 +688,26 @@ class Util {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setEnablement=(elmId, enable)  => {
+        export let setEnablement = (elmId, enable) => {
 
-            var domElm = null;
+            var elm = null;
             if (typeof elmId == "string") {
-                domElm = this.domElm(elmId);
+                elm = domElm(elmId);
             } else {
-                domElm = elmId;
+                elm = elmId;
             }
 
-            if (domElm == null) {
+            if (elm == null) {
                 console.log("setVisibility couldn't find item: " + elmId);
                 return;
             }
 
             if (!enable) {
                 // console.log("Enabling element: " + elmId);
-                domElm.disabled = true;
+                elm.disabled = true;
             } else {
                 // console.log("Disabling element: " + elmId);
-                domElm.disabled = false;
+                elm.disabled = false;
             }
         }
 
@@ -714,30 +716,27 @@ class Util {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        setVisibility=(elmId, vis)  => {
+        export let setVisibility = (elmId, vis) => {
 
-            var domElm = null;
+            var elm = null;
             if (typeof elmId == "string") {
-                domElm = this.domElm(elmId);
+                elm = domElm(elmId);
             } else {
-                domElm = elmId;
+                elm = elmId;
             }
 
-            if (domElm == null) {
+            if (elm == null) {
                 console.log("setVisibility couldn't find item: " + elmId);
                 return;
             }
 
             if (vis) {
                 // console.log("Showing element: " + elmId);
-                domElm.style.display = 'block';
+                elm.style.display = 'block';
             } else {
                 // console.log("hiding element: " + elmId);
-                domElm.style.display = 'none';
+                elm.style.display = 'none';
             }
         }
     }
-
-    if (!window["util"]) {
-        var util: Util = new Util();
-    }
+}

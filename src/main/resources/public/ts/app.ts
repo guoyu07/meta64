@@ -3,6 +3,8 @@
 /// <reference path="./tyepdefs/jquery.d.ts" />
 /// <reference path="./tyepdefs/jquery.cookie.d.ts" />
 
+console.log("running app.js");
+
 // var onresize = window.onresize;
 // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 

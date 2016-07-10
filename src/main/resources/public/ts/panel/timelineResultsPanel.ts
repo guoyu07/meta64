@@ -1,25 +1,21 @@
-
 console.log("running module: timelineResultsPanel.js");
 
-var timelineResultsPanel = function() {
+namespace m64 {
+    export class TimelineResultsPanel {
 
+        domId: string = "timelineResultsPanel";
+        tabId: string = "timelineTabName";
+        visible: boolean = false;
 
-    var _ = {
-        domId: "timelineResultsPanel",
-        tabId: "timelineTabName",
-        visible: false,
-
-        build: function() {
+        build = () => {
             var header = "<h2 id='timelinePageTitle'></h2>";
             var mainContent = "<div id='timelineView'></div>";
             return header + mainContent;
-        },
+        }
 
-        init: function() {
+        init = () => {
             $("#timelinePageTitle").html(srch.timelinePageTitle);
             srch.populateSearchResultsPage(srch.timelineResults, "timelineView");
         }
-    };
-
-    return _;
-} ();
+    }
+}

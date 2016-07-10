@@ -1,25 +1,21 @@
-
 console.log("running module: searchResultsPanel.js");
 
+namespace m64 {
+    export class SearchResultsPanel {
 
-var searchResultsPanel = function() {
+        domId: string = "searchResultsPanel";
+        tabId: string = "searchTabName";
+        visible: boolean = false;
 
-    var _ = {
-        domId: "searchResultsPanel",
-        tabId: "searchTabName",
-        visible: false,
-
-        build: function() {
+        build = () => {
             var header = "<h2 id='searchPageTitle'></h2>";
             var mainContent = "<div id='searchResultsView'></div>";
             return header + mainContent;
-        },
+        };
 
-        init: function() {
+        init = () => {
             $("#searchPageTitle").html(srch.searchPageTitle);
             srch.populateSearchResultsPage(srch.searchResults, "searchResultsView");
         }
-    };
-
-    return _;
-} ();
+    }
+}

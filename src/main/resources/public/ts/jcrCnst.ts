@@ -1,41 +1,39 @@
 console.log("running module: jcrCnst.js");
 
-class JcrCnst {
+namespace m64 {
+    export namespace jcrCnst {
 
-    COMMENT_BY: string = "commentBy";
-    PUBLIC_APPEND: string = "publicAppend";
-    PRIMARY_TYPE: string = "jcr:primaryType";
-    POLICY: string = "rep:policy";
+        export let COMMENT_BY: string = "commentBy";
+        export let PUBLIC_APPEND: string = "publicAppend";
+        export let PRIMARY_TYPE: string = "jcr:primaryType";
+        export let POLICY: string = "rep:policy";
 
-    MIXIN_TYPES: string = "jcr:mixinTypes";
+        export let MIXIN_TYPES: string = "jcr:mixinTypes";
 
-    EMAIL_CONTENT: string = "jcr:content";
-    EMAIL_RECIP: string = "recip";
-    EMAIL_SUBJECT: string = "subject";
+        export let EMAIL_CONTENT: string = "jcr:content";
+        export let EMAIL_RECIP: string = "recip";
+        export let EMAIL_SUBJECT: string = "subject";
 
-    CREATED: string = "jcr:created";
-    CREATED_BY: string = "jcr:createdBy";
-    CONTENT: string = "jcr:content";
-    TAGS: string = "tags";
-    UUID: string = "jcr:uuid";
-    LAST_MODIFIED: string = "jcr:lastModified";
-    LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
+        export let CREATED: string = "jcr:created";
+        export let CREATED_BY: string = "jcr:createdBy";
+        export let CONTENT: string = "jcr:content";
+        export let TAGS: string = "tags";
+        export let UUID: string = "jcr:uuid";
+        export let LAST_MODIFIED: string = "jcr:lastModified";
+        export let LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
 
-    DISABLE_INSERT: string = "disableInsert";
+        export let DISABLE_INSERT: string = "disableInsert";
 
-    USER: string = "user";
-    PWD: string = "pwd";
-    EMAIL: string = "email";
-    CODE: string = "code";
+        export let USER: string = "user";
+        export let PWD: string = "pwd";
+        export let EMAIL: string = "email";
+        export let CODE: string = "code";
 
-    BIN_VER: string = "binVer";
-    BIN_DATA: string = "jcrData";
-    BIN_MIME: string = "jcr:mimeType";
+        export let BIN_VER: string = "binVer";
+        export let BIN_DATA: string = "jcrData";
+        export let BIN_MIME: string = "jcr:mimeType";
 
-    IMG_WIDTH: string = "imgWidth";
-    IMG_HEIGHT: string = "imgHeight";
-}
-
-if (!window["jcrCnst"]) {
-    var jcrCnst: JcrCnst = new JcrCnst();
+        export let IMG_WIDTH: string = "imgWidth";
+        export let IMG_HEIGHT: string = "imgHeight";
+    }
 }

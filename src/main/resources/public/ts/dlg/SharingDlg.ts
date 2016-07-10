@@ -1,183 +1,184 @@
-
 console.log("running module: SharingDlg.js");
 
-class SharingDlg extends DialogBase {
+namespace m64 {
+    export class SharingDlg extends DialogBase {
 
-    constructor() {
-        super("SharingDlg");
-    }
-
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    build = (): string => {
-        var header = this.makeHeader("Node Sharing");
-
-        var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
-            this.shareNodeToPersonPg, this);
-        var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic,
-            this);
-        var backButton = this.makeCloseButton("Close", "closeSharingButton");
-
-        var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
-
-        var width = window.innerWidth * 0.6;
-        var height = window.innerHeight * 0.4;
-
-        var internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
-            "<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
-            + this.id("sharingListFieldContainer") + "'></div>";
-
-        return header + internalMainContent + buttonBar;
-    }
-
-    init = (): void => {
-        this.reload();
-    }
-
-    /*
-     * Gets privileges from server and displays in GUI also. Assumes gui is already at correct page.
-     */
-    reload = (): void => {
-        console.log("Loading node sharing info.");
-
-        util.json("getNodePrivileges", {
-            "nodeId": share.sharingNode.id,
-            "includeAcl": true,
-            "includeOwners": true
-        }, this.getNodePrivilegesResponse, this);
-    }
-
-    /*
-     * Handles getNodePrivileges response.
-     *
-     * res=json of GetNodePrivilegesResponse.java
-     *
-     * res.aclEntries = list of AccessControlEntryInfo.java json objects
-     */
-    getNodePrivilegesResponse = (res: any): void => {
-        this.populateSharingPg(res);
-    }
-
-    /*
-     * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
-     */
-    populateSharingPg = (res: any): void => {
-        var html = "";
-        var This = this;
-
-        $.each(res.aclEntries, function(index, aclEntry) {
-            html += "<h4>User: " + aclEntry.principalName + "</h4>";
-            html += render.tag("div", {
-                "class": "privilege-list"
-            }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
-        });
-
-        var thiz = this;
-        var publicAppendAttrs = {
-            "onClick": "meta64.getObjectByGuid(" + thiz.guid + ").publicCommentingChanged();",
-            "name": "allowPublicCommenting",
-            "id": this.id("allowPublicCommenting")
-        };
-
-        if (res.publicAppend) {
-            publicAppendAttrs["checked"] = "checked";
+        constructor() {
+            super("SharingDlg");
         }
 
-        /* todo: use actual polymer paper-checkbox here */
-        html += render.tag("paper-checkbox", publicAppendAttrs, "", false);
+        /*
+         * Returns a string that is the HTML content of the dialog
+         */
+        build = (): string => {
+            var header = this.makeHeader("Node Sharing");
 
-        html += render.tag("label", {
-            "for": this.id("allowPublicCommenting")
-        }, "Allow public commenting under this node.", true);
+            var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
+                this.shareNodeToPersonPg, this);
+            var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic,
+                this);
+            var backButton = this.makeCloseButton("Close", "closeSharingButton");
 
-        util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
-    }
+            var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
 
-    publicCommentingChanged = (): void => {
+            var width = window.innerWidth * 0.6;
+            var height = window.innerHeight * 0.4;
+
+            var internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
+                "<div style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
+                + this.id("sharingListFieldContainer") + "'></div>";
+
+            return header + internalMainContent + buttonBar;
+        }
+
+        init = (): void => {
+            this.reload();
+        }
 
         /*
-         * Using onClick on the element AND this timeout is the only hack I could find to get get what amounts to a state
-         * change listener on a paper-checkbox. The documented on-change listener simply doesn't work and appears to be
-         * simply a bug in google code AFAIK.
+         * Gets privileges from server and displays in GUI also. Assumes gui is already at correct page.
          */
-        var thiz = this;
-        setTimeout(function() {
-            var polyElm = util.polyElm(thiz.id("allowPublicCommenting"));
+        reload = (): void => {
+            console.log("Loading node sharing info.");
 
-            meta64.treeDirty = true;
-
-            util.json("addPrivilege", {
+            util.json("getNodePrivileges", {
                 "nodeId": share.sharingNode.id,
-                "publicAppend": polyElm.node.checked ? "true" : "false"
+                "includeAcl": true,
+                "includeOwners": true
+            }, this.getNodePrivilegesResponse, this);
+        }
+
+        /*
+         * Handles getNodePrivileges response.
+         *
+         * res=json of GetNodePrivilegesResponse.java
+         *
+         * res.aclEntries = list of AccessControlEntryInfo.java json objects
+         */
+        getNodePrivilegesResponse = (res: any): void => {
+            this.populateSharingPg(res);
+        }
+
+        /*
+         * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
+         */
+        populateSharingPg = (res: any): void => {
+            var html = "";
+            var This = this;
+
+            $.each(res.aclEntries, function(index, aclEntry) {
+                html += "<h4>User: " + aclEntry.principalName + "</h4>";
+                html += render.tag("div", {
+                    "class": "privilege-list"
+                }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
             });
 
-        }, 250);
-    }
+            var thiz = this;
+            var publicAppendAttrs = {
+                "onClick": "m64.meta64.getObjectByGuid(" + thiz.guid + ").publicCommentingChanged();",
+                "name": "allowPublicCommenting",
+                "id": this.id("allowPublicCommenting")
+            };
 
-    removePrivilege = (principal: any, privilege: any): void => {
-        /*
-         * Trigger going to server at next main page refresh
-         */
-        meta64.treeDirty = true;
+            if (res.publicAppend) {
+                publicAppendAttrs["checked"] = "checked";
+            }
 
-        util.json("removePrivilege", {
-            "nodeId": share.sharingNode.id,
-            "principal": principal,
-            "privilege": privilege
-        }, this.removePrivilegeResponse, this);
-    }
+            /* todo: use actual polymer paper-checkbox here */
+            html += render.tag("paper-checkbox", publicAppendAttrs, "", false);
 
-    removePrivilegeResponse = (res: any): void => {
+            html += render.tag("label", {
+                "for": this.id("allowPublicCommenting")
+            }, "Allow public commenting under this node.", true);
 
-        util.json("getNodePrivileges", {
-            "nodeId": share.sharingNode.path,
-            "includeAcl": true,
-            "includeOwners": true
-        }, this.getNodePrivilegesResponse, this);
-    }
+            util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
+        }
 
-    renderAclPrivileges = (principal: any, aclEntry: any): string => {
-        var ret = "";
-        var thiz = this;
-        $.each(aclEntry.privileges, function(index, privilege) {
+        publicCommentingChanged = (): void => {
 
-            var removeButton = thiz.makeButton("Remove", "removePrivButton", //
-                "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
-                + "');");
+            /*
+             * Using onClick on the element AND this timeout is the only hack I could find to get get what amounts to a state
+             * change listener on a paper-checkbox. The documented on-change listener simply doesn't work and appears to be
+             * simply a bug in google code AFAIK.
+             */
+            var thiz = this;
+            setTimeout(function() {
+                var polyElm = util.polyElm(thiz.id("allowPublicCommenting"));
 
-            var row = render.makeHorizontalFieldSet(removeButton);
+                meta64.treeDirty = true;
 
-            row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
+                util.json("addPrivilege", {
+                    "nodeId": share.sharingNode.id,
+                    "publicAppend": polyElm.node.checked ? "true" : "false"
+                });
 
-            ret += render.tag("div", {
-                "class": "privilege-entry"
-            }, row);
-        });
-        return ret;
-    }
+            }, 250);
+        }
 
-    shareNodeToPersonPg = (): void => {
-        (new ShareToPersonDlg()).open();
-    }
+        removePrivilege = (principal: any, privilege: any): void => {
+            /*
+             * Trigger going to server at next main page refresh
+             */
+            meta64.treeDirty = true;
 
-    shareNodeToPublic = (): void => {
-        console.log("Sharing node to public.");
+            util.json("removePrivilege", {
+                "nodeId": share.sharingNode.id,
+                "principal": principal,
+                "privilege": privilege
+            }, this.removePrivilegeResponse, this);
+        }
 
-        /*
-         * Trigger going to server at next main page refresh
-         */
-        meta64.treeDirty = true;
+        removePrivilegeResponse = (res: any): void => {
 
-        /*
-         * Add privilege and then reload share nodes dialog from scratch doing another callback to server
-         *
-         * TODO: this additional call can be avoided as an optimization
-         */
-        util.json("addPrivilege", {
-            "nodeId": share.sharingNode.id,
-            "principal": "everyone",
-            "privileges": ["read"]
-        }, this.reload, this);
+            util.json("getNodePrivileges", {
+                "nodeId": share.sharingNode.path,
+                "includeAcl": true,
+                "includeOwners": true
+            }, this.getNodePrivilegesResponse, this);
+        }
+
+        renderAclPrivileges = (principal: any, aclEntry: any): string => {
+            var ret = "";
+            var thiz = this;
+            $.each(aclEntry.privileges, function(index, privilege) {
+
+                var removeButton = thiz.makeButton("Remove", "removePrivButton", //
+                    "m64.meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
+                    + "');");
+
+                var row = render.makeHorizontalFieldSet(removeButton);
+
+                row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
+
+                ret += render.tag("div", {
+                    "class": "privilege-entry"
+                }, row);
+            });
+            return ret;
+        }
+
+        shareNodeToPersonPg = (): void => {
+            (new ShareToPersonDlg()).open();
+        }
+
+        shareNodeToPublic = (): void => {
+            console.log("Sharing node to public.");
+
+            /*
+             * Trigger going to server at next main page refresh
+             */
+            meta64.treeDirty = true;
+
+            /*
+             * Add privilege and then reload share nodes dialog from scratch doing another callback to server
+             *
+             * TODO: this additional call can be avoided as an optimization
+             */
+            util.json("addPrivilege", {
+                "nodeId": share.sharingNode.id,
+                "principal": "everyone",
+                "privileges": ["read"]
+            }, this.reload, this);
+        }
     }
 }

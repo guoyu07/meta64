@@ -1,195 +1,193 @@
-
 console.log("running module: search.js");
 
 /*
  * todo-3: try to rename to 'search', but remember you had inexpliable problems the first time you tried to use 'search'
  * as the var name.
  */
-class Srch {
-    _UID_ROWID_SUFFIX: string = "_srch_row";
+namespace m64 {
+    export namespace srch {
+        export let _UID_ROWID_SUFFIX: string = "_srch_row";
 
-    searchNodes: any = null;
-    searchPageTitle: string = "Search Results";
-    timelinePageTitle: string = "Timeline";
-
-    /*
-     * Holds the NodeSearchResponse.java JSON, or null if no search has been done.
-     */
-    searchResults: any = null;
-
-    /*
-     * Holds the NodeSearchResponse.java JSON, or null if no timeline has been done.
-     */
-    timelineResults: any = null;
-
-    /*
-     * Will be the last row clicked on (NodeInfo.java object) and having the red highlight bar
-     */
-    highlightRowNode: any = null;
-
-    /*
-     * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
-     * nextUid as the counter.
-     */
-    identToUidMap: any = {};
-
-    /*
-     * maps node.uid values to the NodeInfo.java objects
-     *
-     * The only contract about uid values is that they are unique insofar as any one of them always maps to the same
-     * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
-     * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
-     */
-    uidToNodeMap: any ={};
-
-    numSearchResults=()  => {
-        return srch.searchResults != null && //
-            srch.searchResults.searchResults != null && //
-            srch.searchResults.searchResults.length != null ? //
-            srch.searchResults.searchResults.length : 0;
-    }
-
-    searchTabActivated=() =>  {
-        /*
-         * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
-         * and open up the search dialog.
-         */
-        if (this.numSearchResults() == 0 && !meta64.isAnonUser) {
-            (new SearchDlg()).open();
-        }
-    }
-
-    searchNodesResponse=(res) =>  {
-        this.searchResults = res;
-        var content = searchResultsPanel.build();
-        util.setHtmlEnhanced("searchResultsPanel", content);
-        searchResultsPanel.init();
-        meta64.changePage(searchResultsPanel);
-    }
-
-    timelineResponse=(res) =>  {
-        this.timelineResults = res;
-        var content = timelineResultsPanel.build();
-        util.setHtmlEnhanced("timelineResultsPanel", content);
-        timelineResultsPanel.init();
-        meta64.changePage(timelineResultsPanel);
-    }
-
-    timeline=() =>  {
-        var node = meta64.getHighlightedNode();
-        if (!node) {
-            (new MessageDlg("No node is selected to 'timeline' under.")).open();
-            return;
-        }
-
-        util.json("nodeSearch", {
-            "nodeId": node.id,
-            "searchText": "",
-            "modSortDesc": true,
-            "searchProp": "jcr:content" // should have no effect, for
-            // timeline?
-        }, this.timelineResponse);
-    }
-
-    initSearchNode=(node) =>  {
-        node.uid = util.getUidForId(this.identToUidMap, node.id);
-        this.uidToNodeMap[node.uid] = node;
-    }
-
-    populateSearchResultsPage=(data, viewName)  => {
-        var output = '';
-        var childCount = data.searchResults.length;
+        export let searchNodes: any = null;
+        export let searchPageTitle: string = "Search Results";
+        export let timelinePageTitle: string = "Timeline";
 
         /*
-         * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on the
-         * client side for various reasons.
+         * Holds the NodeSearchResponse.java JSON, or null if no search has been done.
          */
-        var rowCount = 0;
+        export let searchResults: any = null;
 
-        var thiz = this;
-        $.each(data.searchResults, function(i, node) {
-            if (meta64.isNodeBlackListed(node))
+        /*
+         * Holds the NodeSearchResponse.java JSON, or null if no timeline has been done.
+         */
+        export let timelineResults: any = null;
+
+        /*
+         * Will be the last row clicked on (NodeInfo.java object) and having the red highlight bar
+         */
+        export let highlightRowNode: any = null;
+
+        /*
+         * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
+         * nextUid as the counter.
+         */
+        export let identToUidMap: any = {};
+
+        /*
+         * maps node.uid values to the NodeInfo.java objects
+         *
+         * The only contract about uid values is that they are unique insofar as any one of them always maps to the same
+         * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
+         * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
+         */
+        export let uidToNodeMap: any = {};
+
+        export let numSearchResults = () => {
+            return srch.searchResults != null && //
+                srch.searchResults.searchResults != null && //
+                srch.searchResults.searchResults.length != null ? //
+                srch.searchResults.searchResults.length : 0;
+        }
+
+        export let searchTabActivated = () => {
+            /*
+             * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
+             * and open up the search dialog.
+             */
+            if (numSearchResults() == 0 && !meta64.isAnonUser) {
+                (new SearchDlg()).open();
+            }
+        }
+
+        export let searchNodesResponse = (res) => {
+            searchResults = res;
+            let searchResultsPanel = new SearchResultsPanel();
+            var content = searchResultsPanel.build();
+            util.setHtmlEnhanced("searchResultsPanel", content);
+            searchResultsPanel.init();
+            meta64.changePage(searchResultsPanel);
+        }
+
+        export let timelineResponse = (res) => {
+            timelineResults = res;
+            let timelineResultsPanel = new TimelineResultsPanel();
+            var content = timelineResultsPanel.build();
+            util.setHtmlEnhanced("timelineResultsPanel", content);
+            timelineResultsPanel.init();
+            meta64.changePage(timelineResultsPanel);
+        }
+
+        export let timeline = () => {
+            var node = meta64.getHighlightedNode();
+            if (!node) {
+                (new MessageDlg("No node is selected to 'timeline' under.")).open();
                 return;
+            }
 
-            thiz.initSearchNode(node);
+            util.json("nodeSearch", {
+                "nodeId": node.id,
+                "searchText": "",
+                "modSortDesc": true,
+                "searchProp": "jcr:content" // should have no effect, for
+                // timeline?
+            }, timelineResponse);
+        }
 
-            rowCount++;
-            output += thiz.renderSearchResultAsListItem(node, i, childCount, rowCount);
-        });
+        export let initSearchNode = (node) => {
+            node.uid = util.getUidForId(identToUidMap, node.id);
+            uidToNodeMap[node.uid] = node;
+        }
 
-        util.setHtmlEnhanced(viewName, output);
-    }
+        export let populateSearchResultsPage = (data, viewName) => {
+            var output = '';
+            var childCount = data.searchResults.length;
 
-    /*
-     * Renders a single line of search results on the search results page.
-     *
-     * node is a NodeInfo.java JSON
-     */
-    renderSearchResultAsListItem=(node, index, count, rowCount) =>  {
+            /*
+             * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on the
+             * client side for various reasons.
+             */
+            var rowCount = 0;
 
-        var uid = node.uid;
-        console.log("renderSearchResult: " + uid);
+            $.each(data.searchResults, function(i, node) {
+                if (meta64.isNodeBlackListed(node))
+                    return;
 
-        var cssId = uid + this._UID_ROWID_SUFFIX;
-        // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
+                initSearchNode(node);
 
-        var buttonBarHtml = this.makeButtonBarHtml("" + uid);
+                rowCount++;
+                output += renderSearchResultAsListItem(node, i, childCount, rowCount);
+            });
 
-        console.log("buttonBarHtml=" + buttonBarHtml);
-        var content = render.renderNodeContent(node, true, true, true, true, true);
+            util.setHtmlEnhanced(viewName, output);
+        }
 
-        return render.tag("div", {
-            "class": "node-table-row inactive-row",
-            "onClick": "srch.clickOnSearchResultRow(this, '" + uid + "');", //
-            "id": cssId
-        },//
-            buttonBarHtml//
-            + render.tag("div", {
-                "id": uid + "_srch_content"
-            }, content));
-    }
-
-    makeButtonBarHtml=(uid) =>  {
-        var gotoButton = render.makeButton("Go to Node", uid, "srch.clickSearchNode('" + uid + "');");
-        return render.makeHorizontalFieldSet(gotoButton);
-    }
-
-    clickOnSearchResultRow=(rowElm, uid)  => {
-        this.unhighlightRow();
-        this.highlightRowNode = this.uidToNodeMap[uid];
-
-        util.changeOrAddClass(rowElm, "inactive-row", "active-row");
-    }
-
-    clickSearchNode=(uid)  => {
         /*
-         * update highlight node to point to the node clicked on, just to persist it for later
+         * Renders a single line of search results on the search results page.
+         *
+         * node is a NodeInfo.java JSON
          */
-        srch.highlightRowNode = srch.uidToNodeMap[uid];
-        view.refreshTree(srch.highlightRowNode.id, true);
-        meta64.selectTab("mainTabName");
-    }
+        export let renderSearchResultAsListItem = (node, index, count, rowCount) => {
 
-    /*
-     * turn of row selection styling of whatever row is currently selected
-     */
-    unhighlightRow=() =>  {
+            var uid = node.uid;
+            console.log("renderSearchResult: " + uid);
 
-        if (!this.highlightRowNode) {
-            return;
+            var cssId = uid + _UID_ROWID_SUFFIX;
+            // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
+
+            var buttonBarHtml = makeButtonBarHtml("" + uid);
+
+            console.log("buttonBarHtml=" + buttonBarHtml);
+            var content = render.renderNodeContent(node, true, true, true, true, true);
+
+            return render.tag("div", {
+                "class": "node-table-row inactive-row",
+                "onClick": "m64.srch.clickOnSearchResultRow(this, '" + uid + "');", //
+                "id": cssId
+            },//
+                buttonBarHtml//
+                + render.tag("div", {
+                    "id": uid + "_srch_content"
+                }, content));
         }
 
-        /* now make CSS id from node */
-        var nodeId = this.highlightRowNode.uid + this._UID_ROWID_SUFFIX;
+        export let makeButtonBarHtml = (uid) => {
+            var gotoButton = render.makeButton("Go to Node", uid, "m64.srch.clickSearchNode('" + uid + "');");
+            return render.makeHorizontalFieldSet(gotoButton);
+        }
 
-        var elm = util.domElm(nodeId);
-        if (elm) {
-            /* change class on element */
-            util.changeOrAddClass(elm, "active-row", "inactive-row");
+        export let clickOnSearchResultRow = (rowElm, uid) => {
+            unhighlightRow();
+            highlightRowNode = uidToNodeMap[uid];
+
+            util.changeOrAddClass(rowElm, "inactive-row", "active-row");
+        }
+
+        export let clickSearchNode = (uid) => {
+            /*
+             * update highlight node to point to the node clicked on, just to persist it for later
+             */
+            srch.highlightRowNode = srch.uidToNodeMap[uid];
+            view.refreshTree(srch.highlightRowNode.id, true);
+            meta64.selectTab("mainTabName");
+        }
+
+        /*
+         * turn of row selection styling of whatever row is currently selected
+         */
+        export let unhighlightRow = () => {
+
+            if (!highlightRowNode) {
+                return;
+            }
+
+            /* now make CSS id from node */
+            var nodeId = highlightRowNode.uid + _UID_ROWID_SUFFIX;
+
+            var elm = util.domElm(nodeId);
+            if (elm) {
+                /* change class on element */
+                util.changeOrAddClass(elm, "active-row", "inactive-row");
+            }
         }
     }
-}
-
-if (!window["srch"]) {
-    var srch: Srch = new Srch();
 }

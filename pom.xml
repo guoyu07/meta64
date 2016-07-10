@@ -139,6 +139,14 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>exec-maven-plugin</artifactId>
+		        <configuration>
+		          <executable>./build/compile-typescript.sh</executable>
+		          <workingDirectory>./build</workingDirectory>
+		        </configuration>
+		    </plugin>
 		</plugins>
 	</build>
 

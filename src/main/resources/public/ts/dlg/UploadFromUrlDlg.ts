@@ -1,65 +1,65 @@
-
 console.log("running module: UploadFromUrlDlg.js");
-//import { cnst } from "../cnst";
 
-class UploadFromUrlDlg extends DialogBase {
+namespace m64 {
+    export class UploadFromUrlDlg extends DialogBase {
 
-    constructor() {
-        super("UploadFromUrlDlg");
-    }
-
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    build = (): string => {
-        var header = this.makeHeader("Upload File Attachment");
-
-        var uploadPathDisplay = "";
-
-        if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += render.tag("div", {//
-                "id": this.id("uploadPathDisplay"),
-                "class": "path-display-in-editor"
-            }, "");
+        constructor() {
+            super("UploadFromUrlDlg");
         }
 
-        var uploadFieldContainer = "";
-        var uploadFromUrlDiv = "";
+        /*
+         * Returns a string that is the HTML content of the dialog
+         */
+        build = (): string => {
+            var header = this.makeHeader("Upload File Attachment");
 
-        var uploadFromUrlField = this.makeEditField("Upload From URL", "uploadFromUrl");
-        uploadFromUrlDiv = render.tag("div", {//
-        }, uploadFromUrlField);
+            var uploadPathDisplay = "";
 
-        var uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
-        var backButton = this.makeCloseButton("Close", "closeUploadButton");
+            if (cnst.SHOW_PATH_IN_DLGS) {
+                uploadPathDisplay += render.tag("div", {//
+                    "id": this.id("uploadPathDisplay"),
+                    "class": "path-display-in-editor"
+                }, "");
+            }
 
-        var buttonBar = render.centeredButtonBar(uploadButton + backButton);
+            var uploadFieldContainer = "";
+            var uploadFromUrlDiv = "";
 
-        return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
-    }
+            var uploadFromUrlField = this.makeEditField("Upload From URL", "uploadFromUrl");
+            uploadFromUrlDiv = render.tag("div", {//
+            }, uploadFromUrlField);
 
-    uploadFileNow = (): void => {
-        var sourceUrl = this.getInputVal("uploadFromUrl");
+            var uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
+            var backButton = this.makeCloseButton("Close", "closeUploadButton");
 
-        /* if uploading from URL */
-        if (sourceUrl) {
-            util.json("uploadFromUrl", {
-                "nodeId": attachment.uploadNode.id,
-                "sourceUrl": sourceUrl
-            }, this.uploadFromUrlResponse, this);
+            var buttonBar = render.centeredButtonBar(uploadButton + backButton);
+
+            return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
         }
-    }
 
-    uploadFromUrlResponse = (res: any): void => {
-        if (util.checkSuccess("Upload from URL", res)) {
-            meta64.refresh();
+        uploadFileNow = (): void => {
+            var sourceUrl = this.getInputVal("uploadFromUrl");
+
+            /* if uploading from URL */
+            if (sourceUrl) {
+                util.json("uploadFromUrl", {
+                    "nodeId": attachment.uploadNode.id,
+                    "sourceUrl": sourceUrl
+                }, this.uploadFromUrlResponse, this);
+            }
         }
-    }
 
-    init = (): void => {
-        util.setInputVal(this.id("uploadFromUrl"), "");
+        uploadFromUrlResponse = (res: any): void => {
+            if (util.checkSuccess("Upload from URL", res)) {
+                meta64.refresh();
+            }
+        }
 
-        /* display the node path at the top of the edit page */
-        $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
+        init = (): void => {
+            util.setInputVal(this.id("uploadFromUrl"), "");
+
+            /* display the node path at the top of the edit page */
+            $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
+        }
     }
 }

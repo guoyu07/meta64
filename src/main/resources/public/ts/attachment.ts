@@ -1,59 +1,55 @@
-
 console.log("running module: attachment.js");
 
-class Attachment {
+namespace m64 {
+    export namespace attachment {
+        /* Node being uploaded to */
+        export let uploadNode: any = null;
 
-    /* Node being uploaded to */
-    uploadNode: any = null;
+        export let openUploadFromFileDlg = (): void => {
+            var node = meta64.getHighlightedNode();
+            console.log("running m64.namespace version!");
+            if (!node) {
+                uploadNode = null;
+                (new MessageDlg("No node is selected.")).open();
+                return;
+            }
 
-    openUploadFromFileDlg = (): void => {
-        var node = meta64.getHighlightedNode();
-
-        if (!node) {
-            this.uploadNode = null;
-            (new MessageDlg("No node is selected.")).open();
-            return;
+            uploadNode = node;
+            (new UploadFromFileDlg()).open();
         }
 
-        this.uploadNode = node;
-        (new UploadFromFileDlg()).open();
-    }
+        export let openUploadFromUrlDlg = (): void => {
+            var node = meta64.getHighlightedNode();
 
-    openUploadFromUrlDlg = (): void => {
-        var node = meta64.getHighlightedNode();
+            if (!node) {
+                uploadNode = null;
+                (new MessageDlg("No node is selected.")).open();
+                return;
+            }
 
-        if (!node) {
-            this.uploadNode = null;
-            (new MessageDlg("No node is selected.")).open();
-            return;
+            uploadNode = node;
+            (new UploadFromUrlDlg()).open();
         }
 
-        this.uploadNode = node;
-        (new UploadFromUrlDlg()).open();
-    }
+        export let deleteAttachment = (): void => {
+            var node = meta64.getHighlightedNode();
+            //var thiz: Attachment = this;
+            if (node) {
+                (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
+                    function() {
+                        util.json("deleteAttachment", {
+                            "nodeId": node.id
+                        }, deleteAttachmentResponse, null, node.uid);
+                    })).open();
+            }
+        }
 
-    deleteAttachment = (): void => {
-        var node = meta64.getHighlightedNode();
-        var thiz: Attachment = this;
-        if (node) {
-            (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
-                function() {
-                    util.json("deleteAttachment", {
-                        "nodeId": node.id
-                    }, thiz.deleteAttachmentResponse, thiz, node.uid);
-                })).open();
+        export let deleteAttachmentResponse = (res: any, uid: any): void => {
+            if (util.checkSuccess("Delete attachment", res)) {
+                meta64.removeBinaryByUid(uid);
+                // force re-render from local data.
+                meta64.goToMainPage(true);
+            }
         }
     }
-
-    deleteAttachmentResponse = (res: any, uid: any): void => {
-        if (util.checkSuccess("Delete attachment", res)) {
-            meta64.removeBinaryByUid(uid);
-            // force re-render from local data.
-            meta64.goToMainPage(true);
-        }
-    }
-}
-
-if (!window["attachment"]) {
-    var attachment: Attachment = new Attachment();
 }

@@ -1,99 +1,100 @@
-
 console.log("running module: EditPropertyDlg.js");
-//import { cnst } from "../cnst";
+
 /*
  * Property Editor Dialog (Edits Node Properties)
  */
-class EditPropertyDlg extends DialogBase {
+namespace m64 {
+    export class EditPropertyDlg extends DialogBase {
 
-    private editNodeDlg: any;
+        private editNodeDlg: any;
 
-    constructor(editNodeDlg: any) {
-        super("EditPropertyDlg");
-    }
-
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    build = (): string => {
-        var header = this.makeHeader("Edit Node Property");
-
-        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty, this);
-        var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
-
-        var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
-
-        var internalMainContent = "";
-
-        if (cnst.SHOW_PATH_IN_DLGS) {
-            internalMainContent += "<div id='" + this.id("editPropertyPathDisplay")
-                + "' class='path-display-in-editor'></div>";
+        constructor(editNodeDlg: any) {
+            super("EditPropertyDlg");
         }
 
-        internalMainContent += "<div id='" + this.id("addPropertyFieldContainer") + "'></div>";
+        /*
+         * Returns a string that is the HTML content of the dialog
+         */
+        build = (): string => {
+            var header = this.makeHeader("Edit Node Property");
 
-        return header + internalMainContent + buttonBar;
-    }
+            var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty, this);
+            var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
 
-    populatePropertyEdit = (): void => {
-        var field = '';
+            var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
 
-        /* Property Name Field */
-        {
-            var fieldPropNameId = "addPropertyNameTextContent";
+            var internalMainContent = "";
 
-            field += render.tag("paper-textarea", {
-                "name": fieldPropNameId,
-                "id": this.id(fieldPropNameId),
-                "placeholder": "Enter property name",
-                "label": "Name"
-            }, "", true);
+            if (cnst.SHOW_PATH_IN_DLGS) {
+                internalMainContent += "<div id='" + this.id("editPropertyPathDisplay")
+                    + "' class='path-display-in-editor'></div>";
+            }
+
+            internalMainContent += "<div id='" + this.id("addPropertyFieldContainer") + "'></div>";
+
+            return header + internalMainContent + buttonBar;
         }
 
-        /* Property Value Field */
-        {
-            var fieldPropValueId = "addPropertyValueTextContent";
+        populatePropertyEdit = (): void => {
+            var field = '';
 
-            field += render.tag("paper-textarea", {
-                "name": fieldPropValueId,
-                "id": this.id(fieldPropValueId),
-                "placeholder": "Enter property text",
-                "label": "Value"
-            }, "", true);
+            /* Property Name Field */
+            {
+                var fieldPropNameId = "addPropertyNameTextContent";
+
+                field += render.tag("paper-textarea", {
+                    "name": fieldPropNameId,
+                    "id": this.id(fieldPropNameId),
+                    "placeholder": "Enter property name",
+                    "label": "Name"
+                }, "", true);
+            }
+
+            /* Property Value Field */
+            {
+                var fieldPropValueId = "addPropertyValueTextContent";
+
+                field += render.tag("paper-textarea", {
+                    "name": fieldPropValueId,
+                    "id": this.id(fieldPropValueId),
+                    "placeholder": "Enter property text",
+                    "label": "Value"
+                }, "", true);
+            }
+
+            /* display the node path at the top of the edit page */
+            view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
+
+            util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
         }
 
-        /* display the node path at the top of the edit page */
-        view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
+        saveProperty = (): void => {
+            var propertyNameData = util.getInputVal(this.id("addPropertyNameTextContent"));
+            var propertyValueData = util.getInputVal(this.id("addPropertyValueTextContent"));
 
-        util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
-    }
-
-    saveProperty = (): void => {
-        var propertyNameData = util.getInputVal(this.id("addPropertyNameTextContent"));
-        var propertyValueData = util.getInputVal(this.id("addPropertyValueTextContent"));
-
-        var postData = {
-            nodeId: edit.editNode.id,
-            propertyName: propertyNameData,
-            propertyValue: propertyValueData
-        };
-        util.json("saveProperty", postData, this.savePropertyResponse, this);
-    }
-
-    /* Warning: don't confuse with EditNodeDlg */
-    savePropertyResponse = (res: any): void => {
-        util.checkSuccess("Save properties", res);
-
-        edit.editNode.properties.push(res.propertySaved);
-        meta64.treeDirty = true;
-
-        if (this.editNodeDlg.domId != "EditNodeDlg") {
-            console.log("error: incorrect object for EditNodeDlg");
+            var postData = {
+                nodeId: edit.editNode.id,
+                propertyName: propertyNameData,
+                propertyValue: propertyValueData
+            };
+            util.json("saveProperty", postData, this.savePropertyResponse, this);
         }
-        this.editNodeDlg.populateEditNodePg();
-    }
 
-    init = (): void => {
-        this.populatePropertyEdit();
+        /* Warning: don't confuse with EditNodeDlg */
+        savePropertyResponse = (res: any): void => {
+            util.checkSuccess("Save properties", res);
+
+            edit.editNode.properties.push(res.propertySaved);
+            meta64.treeDirty = true;
+
+            if (this.editNodeDlg.domId != "EditNodeDlg") {
+                console.log("error: incorrect object for EditNodeDlg");
+            }
+            this.editNodeDlg.populateEditNodePg();
+        }
+
+        init = (): void => {
+            this.populatePropertyEdit();
+        }
     }
 }

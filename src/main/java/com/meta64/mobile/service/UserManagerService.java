@@ -23,7 +23,6 @@ import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.JcrPropVal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.RefInfo;
@@ -204,7 +203,7 @@ public class UserManagerService {
 					password = encryptor.decrypt(password);
 					String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
 
-					initNewUser(session, userName, password, email, JcrPropVal.META64, false);
+					initNewUser(session, userName, password, email, false);
 
 					/*
 					 * allow JavaScript to detect all it needs to detect which is to display a
@@ -224,12 +223,7 @@ public class UserManagerService {
 		});
 	}
 
-	/*
-	 * Email will not be null unless it's a Social Media oAuth signup.
-	 * 
-	 * oauthService == 'twitter' or 'meta64'
-	 */
-	public void initNewUser(Session session, String userName, String password, String email, String oauthService, boolean automated) throws Exception {
+	public void initNewUser(Session session, String userName, String password, String email, boolean automated) throws Exception {
 		if (UserManagerUtil.createUser(session, userName, password, automated)) {
 			UserManagerUtil.createUserRootNode(session, userName);
 
@@ -238,7 +232,6 @@ public class UserManagerService {
 				prefsNode.setProperty(JcrProp.EMAIL, email);
 			}
 
-			prefsNode.setProperty(JcrProp.AUTH_SERVICE, oauthService);
 			prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
 
 			setDefaultUserPreferences(prefsNode);
@@ -255,19 +248,15 @@ public class UserManagerService {
 		return ret.getVal();
 	}
 
-	/* Returns true if the user exists and matches the oauthServie */
-	public boolean userExists(Session session, String userName, String oauthService, ValContainer<String> passwordContainer) throws Exception {
+	public boolean userExists(Session session, String userName, ValContainer<String> passwordContainer) throws Exception {
 		Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" + userName);
 		if (prefsNode != null) {
-			String serviceProperty = JcrUtil.safeGetStringProp(prefsNode, JcrProp.AUTH_SERVICE);
-			if (oauthService.equals(serviceProperty)) {
-				if (passwordContainer != null) {
-					String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
-					password = encryptor.decrypt(password);
-					passwordContainer.setVal(password);
-				}
-				return true;
+			if (passwordContainer != null) {
+				String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
+				password = encryptor.decrypt(password);
+				passwordContainer.setVal(password);
 			}
+			return true;
 		}
 		return false;
 	}
@@ -311,7 +300,7 @@ public class UserManagerService {
 			initiateSignup(userName, password, email);
 		}
 		else {
-			initNewUser(session, userName, password, email, JcrPropVal.META64, automated);
+			initNewUser(session, userName, password, email, automated);
 		}
 
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));

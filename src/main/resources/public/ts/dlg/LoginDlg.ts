@@ -27,24 +27,11 @@ namespace m64 {
             var resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword, this);
             var backButton = this.makeCloseButton("Close", "cancelLoginButton");
             var buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
-
-            /*
-             * Social Login Buttons
-             *
-             * See server controller. Implementation is about 95% complete, but not yet fully complete!
-             */
-            var twitterButton = this.makeButton("Twitter", "twitterLoginButton", "m64.user.twitterLogin();");
-            var socialButtonBar = render.makeHorzControlGroup(twitterButton);
-
             var divider = "<div><h3>Or Login With...</h3></div>";
 
             var form = formControls + buttonBar;
 
             var mainContent = form;
-            /*
-             * commenting twitter login during polymer conversion + divider + socialButtonBar
-             */
-
             var content = header + mainContent;
 
             this.bindEnterKey("userName", user.login);

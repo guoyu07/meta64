@@ -50,7 +50,6 @@ public class JcrProp {
 	public static final String PWD = "pwd";
 	public static final String EMAIL = "email";
 	public static final String CODE = "code";
-	public static final String AUTH_SERVICE = "authsvc";
 
 	public static final String BIN_VER = "binVer";
 

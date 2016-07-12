@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.meta64.mobile.aspect.OakSession;
 import com.meta64.mobile.config.SessionContext;
@@ -94,7 +93,6 @@ import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
 import com.meta64.mobile.service.NodeSearchService;
-import com.meta64.mobile.service.OAuthLoginService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.Convert;
@@ -161,27 +159,7 @@ public class AppController {
 	private AclService aclService;
 
 	@Autowired
-	private OAuthLoginService oauthLoginService;
-
-	@Autowired
 	private SystemService systemService;
-
-	@RequestMapping(value = "/twitterLogin", method = RequestMethod.GET)
-	public ModelAndView twitterLogin(Model model) throws Exception {
-		logRequest("twitterLogin", null);
-		String url = oauthLoginService.twitterLogin();
-		return new ModelAndView("redirect:" + url);
-	}
-
-	@RequestMapping("/twitterAuth")
-	public String twitterCallback(//
-			@RequestParam(value = "oauth_token", required = true) String oauthToken, //
-			@RequestParam(value = "oauth_verifier", required = true) String oauthVerifier, //
-			Model model) throws Exception {
-		logRequest("twitterCallback", null);
-		oauthLoginService.twitterCallback(model, oauthToken, oauthVerifier);
-		return "index";
-	}
 
 	/*
 	 * This is the actual app page loading request, for his SPA (Single Page Application) this is

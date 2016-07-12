@@ -106,7 +106,6 @@ public class PreProcFilter implements Filter {
 			log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
 			if (uri.equals("/") || //
-					uri.equals("/twitterAuth") || //
 					uri.toLowerCase().contains(".html")) {
 				transform(req, res, chain);
 				return;

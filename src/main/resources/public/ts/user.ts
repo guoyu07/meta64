@@ -20,10 +20,6 @@ namespace m64 {
             window.location.href = window.location.origin;
         }
 
-        let _twitterLoginResponse = function(res) {
-            console.log("twitter Login response recieved.");
-        }
-
         /*
          * for testing purposes, I want to allow certain users additional privileges. A bit of a hack because it will go
          * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
@@ -60,16 +56,6 @@ namespace m64 {
             meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
 
             console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
-        }
-
-        export let twitterLogin = function() {
-            (new MessageDlg("not yet implemented.")).open();
-            return;
-
-            /*
-             * polymer Remove warning dialog to ask user about leaving the page $(window).off("beforeunload");
-             * window.location.href = window.location.origin + "/twitterLogin";
-             */
         }
 
         export let openSignupPg = function() {

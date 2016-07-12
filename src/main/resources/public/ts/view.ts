@@ -23,7 +23,7 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?: any, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
+        export let refreshTreeResponse = function(res?:RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
 
             render.renderPageFromData(res);
 

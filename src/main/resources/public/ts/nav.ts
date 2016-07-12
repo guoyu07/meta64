@@ -20,7 +20,7 @@ namespace m64 {
             return !displayingHome();
         }
 
-        export let upLevelResponse = function(res, id) {
+        export let upLevelResponse = function(res:RenderNodeResponse, id) {
             if (!res || !res.node) {
                 (new MessageDlg("No data is visible to you above this node.")).open();
             } else {
@@ -160,7 +160,7 @@ namespace m64 {
             }, 500);
         }
 
-        export let navHomeResponse = function(res) {
+        export let navHomeResponse = function(res:RenderNodeResponse) {
             meta64.clearSelectedNodes();
             render.renderPageFromData(res);
             view.scrollToTop();

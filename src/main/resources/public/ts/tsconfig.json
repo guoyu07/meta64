@@ -20,6 +20,7 @@
         "noEmitOnError": true
     },
     "files": [
+      "json-models.ts",
       "app.ts",
       "cnst.ts",
       "models.ts",
@@ -37,6 +38,7 @@
       "user.ts",
       "view.ts",
       "menu.ts",
+      "rest.ts",
       "./dlg/base/DialogBase.ts",
       "./dlg/ConfirmDlg.ts",
       "./dlg/ProgressDlg.ts",

@@ -43,12 +43,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mobile</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -130,24 +130,69 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
-
+		
+		<!--
+		For  info about this and what it's for and why it's commented out, look in file JavaToTypeScriptCodeGen.java
+		
+		<dependency>
+		 	<groupId>cz.habarta.typescript-generator</groupId>
+        	<artifactId>typescript-generator-core</artifactId>
+        	<version>1.10-SNAPSHOT</version>
+		</dependency>
+		-->
+		
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>exec-maven-plugin</artifactId>
-		        <configuration>
-		          <executable>./build/compile-typescript.sh</executable>
-		          <workingDirectory>./build</workingDirectory>
-		        </configuration>
-		    </plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<configuration>
+						<executable>./build/compile-typescript.sh</executable>
+						<workingDirectory>./build</workingDirectory>
+					</configuration>
+				</plugin>
+				
+				<!--
+				According to habarta documentation and examples the below should work... but it does not,
+				so instead of generating TypeScript, using this plugin I'm currently using my JavaToTypeScriptCodeGen.java
+				implementation which directly executes the Habarta core generator code.
+				
+				http://www.habarta.cz/typescript-generator/maven/typescript-generator-maven-plugin/plugin-info.html
+				maven goal: typescript-generator:generate
+				
+				<plugin>
+					<groupId>cz.habarta.typescript-generator</groupId>
+					<artifactId>typescript-generator-maven-plugin</artifactId>
+					<version>1.10-SNAPSHOT</version>
+					<executions>
+						<execution>
+							<id>generate</id>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+							<configuration>
+								<jsonLibrary>jackson2</jsonLibrary>
+								<classes>
+									<class>com.meta64.mobile.request.AddPrivilegeRequest</class>
+								</classes>
+								<outputFile>/home/clay/testout/test-pomgen.ts</outputFile>
+								<outputKind>global</outputKind>
+								<namespace>Rest</namespace>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				-->
+				
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>

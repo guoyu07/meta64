@@ -122,20 +122,16 @@ namespace m64 {
             if (!callUsr) {
                 meta64.loadAnonPageHome(false);
             } else {
-
-                var ironRes = util.json("login", {
+                var ironRes = rest.login({
                     "userName": callUsr,
                     "password": callPwd,
                     "tzOffset": new Date().getTimezoneOffset(),
                     "dst": util.daylightSavingsTime
-                });
-
-                ironRes.completes.then(function() {
-
+                }, function(res: json.LoginResponse) {
                     if (usingCookies) {
-                        loginResponse(ironRes.response, callUsr, callPwd, usingCookies);
+                        loginResponse(res, callUsr, callPwd, usingCookies);
                     } else {
-                        _refreshLoginResponse(ironRes.response);
+                        _refreshLoginResponse(res);
                     }
                 });
             }
@@ -157,15 +153,13 @@ namespace m64 {
         }
 
         export let login = function(loginDlg, usr, pwd) {
-            var ironRes = util.json("login", {
+            var ironRes = rest.login({
                 "userName": usr,
                 "password": pwd,
                 "tzOffset": new Date().getTimezoneOffset(),
                 "dst": util.daylightSavingsTime
-            });
-
-            ironRes.completes.then(function() {
-                loginResponse(ironRes.response, usr, pwd, null, loginDlg);
+            }, function(res : json.LoginResponse) {
+                loginResponse(res, usr, pwd, null, loginDlg);
             });
         }
 
@@ -175,7 +169,7 @@ namespace m64 {
             $.removeCookie(cnst.COOKIE_LOGIN_STATE);
         }
 
-        export let loginResponse = function(res?: any, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any) {
+        export let loginResponse = function(res?: json.LoginResponse, usr?: any, pwd?: any, usingCookies?: any, loginDlg?: any) {
             if (util.checkSuccess("Login", res)) {
                 console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 

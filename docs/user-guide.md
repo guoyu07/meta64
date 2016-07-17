@@ -1,3 +1,7 @@
+#These are just the beginnings of some notes I'll eventually put in a user guide. This file
+is not an actual user guide
+
+
 ## End User and Admin Info
 
 This document will currently just contain information about how to use the app from a high-level perspective. I haven't really written much yet as you can see.
@@ -20,4 +24,3 @@ Any node can optionally have the following which will always cause the specified
 
 To display an image:
 	![Eat Apple Pie] (https://upload.wikimedia.org/wikipedia/commons/4/4b/Apple_pie.jpg)
-

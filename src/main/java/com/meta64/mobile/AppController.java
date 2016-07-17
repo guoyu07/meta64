@@ -122,6 +122,7 @@ import com.meta64.mobile.util.VarUtil;
  * TODO: need to get all "program logic" out of this layer (there is a tiny bit of it in here),
  * because it doesn't belong here. Should all be contained in service layer.
  */
+
 @Controller
 public class AppController {
 	private static final Logger log = LoggerFactory.getLogger(AppController.class);

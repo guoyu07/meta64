@@ -10,10 +10,6 @@ The AJAX calls to the server are all done using JSON POSTs that get JSON back in
 
 Each JS file has a variable that is creates and returns as a function. This is done for scoping primarily. Since JS has no concept of classes and scopes (outside functions) we use this pattern which is also a widely used pattern for JS code. So when you see something like 'render.doSomething()' you know right away this is a method in the 'render.js' file, without having to do any searching. Also the general need for hiding variables into the 'most localized' scope you can is accomplished this way, and is the best practice.
 
-## Underscore ( _ )
-
-A underscore variable in the JS should generally be interpreted at "this". In other words an underscore ( _ ) at the front of a varible or as a scoping variable, means that the variable is referencing the current JS file that it's in. The convention would mean that for example, in a class named 'util.js' if you see something like "_.myVar or _.myFunction" those will be the same as "util.myVar or util.myFunction". So the underscore itself is the scoping variable that is the near equivalent of 'this' in Java or C++. Since JS is a functional language more than an OOP one, we use this name convention. I think this is a common convention used by JS developers also, to have underscore mean something similar to 'this'.
-
 ## Markdown
 
 Meta64 allows markdown text to be entered into content fields and renders them using standard markdown syntax. The markdown formatter api we use is PageDown.
@@ -25,7 +21,7 @@ http://daringfireball.net/projects/markdown/
 
 ## IMPORTANT!!! - JavaScript Caching Mechanism
 
-To understand how cache lifetime is managed for JS files see the following: *SpringMvcUtil.addJsFileNameProp*. In general the approach is to leave the JS files always the same, but to use a different URL parameter to be able to control which files are read from the browser cach v.s. downloaded new. Each JS url looks something like this:
+To understand how cache lifetime is managed for JS files see the following: *SpringMvcUtil.addJsFileNameProp*. In general the approach is to leave the JS files always the same, but to use a different URL parameter to be able to control which files are read from the browser cache v.s. downloaded new. Each JS url looks something like this:
 
     /js/meta64/util.js?ver=1
 
@@ -106,3 +102,12 @@ This is broken (by eclipse)
     // # sourceURL=renameNodePg.js
 
 I have no yet found a way to configure the eclipse to stop doing this, and it is a very serious problem. Only thing I know to do is eventually use ant text file replace feature to be able to fix it as part of the build process. Without having the sourceURL the stack traces for javascript errors are even more unhelpful than normal!
+
+## Public Commenting on Nodes
+
+* Sharing dialog allows you to specify "Public Commenting" for a node meaning that not only is the node visible to everyone but also everyone is allowed to add subnodes. Chaos will ensue and it shall be fun!
+
+* Here's how it's implemented: GUI checkbox turns it on by calling server addPrivilege with publicAppend=true, this simply causes a property to get set on the node like so:
+node.setProperty(JcrProp.PUBLIC_APPEND, true);
+
+* Actually at the time of this writing the checkbox isn't working, but you can manually add a node named publicAppend and set it to 'true'

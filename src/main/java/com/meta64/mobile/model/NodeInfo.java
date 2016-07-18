@@ -1,5 +1,6 @@
 package com.meta64.mobile.model;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -26,6 +27,15 @@ public class NodeInfo {
 
 	/* true if parent is "orderable" node */
 	private boolean childrenOrdered;
+
+	/*
+	 * These next four are set on Client Side only but I need to probably set them on server side
+	 * instead or else completely generate dynamically if based on properties.
+	 */
+	private String uid;
+	private String createdBy;
+	private Date lastModified;
+	private String imgId;
 
 	public NodeInfo() {
 	}
@@ -140,5 +150,37 @@ public class NodeInfo {
 
 	public void setPrimaryTypeName(String primaryTypeName) {
 		this.primaryTypeName = primaryTypeName;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	public String getImgId() {
+		return imgId;
+	}
+
+	public void setImgId(String imgId) {
+		this.imgId = imgId;
 	}
 }

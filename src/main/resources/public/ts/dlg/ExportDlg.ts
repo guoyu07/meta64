@@ -31,14 +31,14 @@ namespace m64 {
             }
 
             if (highlightNode) {
-                util.json("exportToXml", {
+                util.jsonG<json.ExportRequest, json.ExportResponse>("exportToXml", {
                     "nodeId": highlightNode.id,
                     "targetFileName": targetFileName
                 }, this.exportResponse, this);
             }
         }
 
-        exportResponse = (res: any): void => {
+        exportResponse = (res: json.ExportResponse): void => {
             if (util.checkSuccess("Export", res)) {
                 (new MessageDlg("Export Successful.")).open();
                 meta64.selectTab("mainTabName");

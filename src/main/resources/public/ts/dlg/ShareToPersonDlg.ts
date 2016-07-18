@@ -35,14 +35,15 @@ namespace m64 {
              */
             meta64.treeDirty = true;
             var thiz = this;
-            util.json("addPrivilege", {
+            util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": targetUser,
-                "privileges": ["read", "write", "addChildren", "nodeTypeManagement"]
+                "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],
+                "publicAppend" : false
             }, thiz.reloadFromShareWithPerson, thiz);
         }
 
-        reloadFromShareWithPerson = (res: any): void => {
+        reloadFromShareWithPerson = (res: json.AddPrivilegeResponse): void => {
             if (util.checkSuccess("Share Node with Person", res)) {
                 (new SharingDlg()).open();
             }

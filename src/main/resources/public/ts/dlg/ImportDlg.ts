@@ -31,14 +31,14 @@ namespace m64 {
             }
 
             if (highlightNode) {
-                util.json("import", {
+                util.jsonG<json.ImportRequest,json.ImportResponse>("import", {
                     "nodeId": highlightNode.id,
                     "sourceFileName": sourceFileName
                 }, this.importResponse, this);
             }
         }
 
-        importResponse = (res: any): void => {
+        importResponse = (res: json.ImportResponse): void => {
             if (util.checkSuccess("Import", res)) {
                 (new MessageDlg("Import Successful.")).open();
                 view.refreshTree(null, false);

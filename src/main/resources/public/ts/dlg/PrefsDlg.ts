@@ -37,14 +37,17 @@ namespace m64 {
             var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
             meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
                 : meta64.MODE_ADVANCED;
-            util.json("saveUserPreferences", {
+            util.jsonG<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
                 "userPreferences": {
-                    "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED
+                    "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
+
+                    /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
+                    "lastNode" : null
                 }
             }, this.savePreferencesResponse, this);
         }
 
-        savePreferencesResponse = (res: any): void => {
+        savePreferencesResponse = (res: json.SaveUserPreferencesResponse): void => {
             if (util.checkSuccess("Saving Preferences", res)) {
                 meta64.selectTab("mainTabName");
                 meta64.refresh();

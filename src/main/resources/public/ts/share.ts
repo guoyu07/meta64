@@ -3,7 +3,7 @@ console.log("running module: share.js");
 namespace m64 {
     export namespace share {
 
-        let _findSharedNodesResponse = function(res) {
+        let _findSharedNodesResponse = function(res: json.GetSharedNodesResponse) {
             srch.searchNodesResponse(res);
         }
 
@@ -31,7 +31,7 @@ namespace m64 {
 
             srch.searchPageTitle = "Shared Nodes";
 
-            util.json("getSharedNodes", {
+            util.jsonG<json.GetSharedNodesRequest, json.GetSharedNodesResponse>("getSharedNodes", {
                 "nodeId": focusNode.id
             }, _findSharedNodesResponse);
         }

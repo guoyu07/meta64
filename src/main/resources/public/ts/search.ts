@@ -59,7 +59,7 @@ namespace m64 {
             }
         }
 
-        export let searchNodesResponse = function(res) {
+        export let searchNodesResponse = function(res:json.NodeSearchResponse) {
             searchResults = res;
             let searchResultsPanel = new SearchResultsPanel();
             var content = searchResultsPanel.build();
@@ -68,7 +68,7 @@ namespace m64 {
             meta64.changePage(searchResultsPanel);
         }
 
-        export let timelineResponse = function(res) {
+        export let timelineResponse = function(res: json.NodeSearchResponse) {
             timelineResults = res;
             let timelineResultsPanel = new TimelineResultsPanel();
             var content = timelineResultsPanel.build();
@@ -84,7 +84,7 @@ namespace m64 {
                 return;
             }
 
-            util.json("nodeSearch", {
+            util.jsonG<json.NodeSearchRequest,json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": "",
                 "modSortDesc": true,

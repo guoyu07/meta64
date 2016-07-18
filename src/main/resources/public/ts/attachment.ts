@@ -37,14 +37,14 @@ namespace m64 {
             if (node) {
                 (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
                     function() {
-                        util.json("deleteAttachment", {
+                        util.jsonG<json.DeleteAttachmentRequest, json.DeleteAttachmentResponse>("deleteAttachment", {
                             "nodeId": node.id
                         }, deleteAttachmentResponse, null, node.uid);
                     })).open();
             }
         }
 
-        export let deleteAttachmentResponse = function(res: any, uid: any): void {
+        export let deleteAttachmentResponse = function(res: json.DeleteAttachmentResponse, uid: any): void {
             if (util.checkSuccess("Delete attachment", res)) {
                 meta64.removeBinaryByUid(uid);
                 // force re-render from local data.

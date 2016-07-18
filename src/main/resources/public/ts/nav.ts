@@ -20,7 +20,7 @@ namespace m64 {
             return !displayingHome();
         }
 
-        export let upLevelResponse = function(res:RenderNodeResponse, id) {
+        export let upLevelResponse = function(res: json.RenderNodeResponse, id) {
             if (!res || !res.node) {
                 (new MessageDlg("No data is visible to you above this node.")).open();
             } else {
@@ -37,12 +37,11 @@ namespace m64 {
                 return;
             }
 
-            var ironRes = util.json("renderNode", {
+            var ironRes = util.jsonG<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.currentNodeId,
-                "upLevel": 1
-            });
-
-            ironRes.completes.then(function() {
+                "upLevel": 1,
+                "renderParentIfLeaf": false
+            }, function(res: json.RenderNodeResponse) {
                 upLevelResponse(ironRes.response, meta64.currentNodeId);
             });
         }
@@ -160,7 +159,7 @@ namespace m64 {
             }, 500);
         }
 
-        export let navHomeResponse = function(res:RenderNodeResponse) {
+        export let navHomeResponse = function(res: json.RenderNodeResponse) {
             meta64.clearSelectedNodes();
             render.renderPageFromData(res);
             view.scrollToTop();
@@ -172,8 +171,10 @@ namespace m64 {
                 meta64.loadAnonPageHome(true);
                 // window.location.href = window.location.origin;
             } else {
-                util.json("renderNode", {
-                    "nodeId": meta64.homeNodeId
+                util.jsonG<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+                    "nodeId": meta64.homeNodeId,
+                    "upLevel": null,
+                    "renderParentIfLeaf": null
                 }, navHomeResponse);
             }
         }

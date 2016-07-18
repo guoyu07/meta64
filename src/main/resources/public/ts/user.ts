@@ -15,7 +15,7 @@ namespace m64 {
             meta64.loadAnonPageHome(false);
         }
 
-        let _logoutResponse = function(res) {
+        let _logoutResponse = function(res: json.LogoutResponse) {
             /* reloads browser with the query parameters stripped off the path */
             window.location.href = window.location.origin;
         }
@@ -122,7 +122,7 @@ namespace m64 {
             if (!callUsr) {
                 meta64.loadAnonPageHome(false);
             } else {
-                var ironRes = rest.login({
+              util.jsonG<json.LoginRequest,json.LoginResponse>("login", {
                     "userName": callUsr,
                     "password": callPwd,
                     "tzOffset": new Date().getTimezoneOffset(),
@@ -149,11 +149,11 @@ namespace m64 {
                 writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
             }
 
-            util.json("logout", {}, _logoutResponse);
+            util.jsonG<json.LogoutRequest, json.LogoutResponse>("logout", {}, _logoutResponse);
         }
 
         export let login = function(loginDlg, usr, pwd) {
-            var ironRes = rest.login({
+            util.jsonG<json.LoginRequest,json.LoginResponse>("login",{
                 "userName": usr,
                 "password": pwd,
                 "tzOffset": new Date().getTimezoneOffset(),

@@ -15,7 +15,7 @@ namespace m64 {
             return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
         }
 
-        let _renderBinary = function(node:NodeInfo) {
+        let _renderBinary = function(node:json.NodeInfo) {
             /*
              * If this is an image render the image directly onto the page as a visible image
              */
@@ -56,7 +56,7 @@ namespace m64 {
             }
         }
 
-        export let buildRowHeader = function(node:NodeInfo, showPath, showName) {
+        export let buildRowHeader = function(node:json.NodeInfo, showPath, showName) {
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
             var headerText = "";
@@ -148,7 +148,7 @@ namespace m64 {
          * This is the function that renders each node in the main window. The rendering in here is very central to the
          * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
          */
-        export let renderNodeContent = function(node:NodeInfo, showPath, showName, renderBinary, rowStyling, showHeader) {
+        export let renderNodeContent = function(node:json.NodeInfo, showPath, showName, renderBinary, rowStyling, showHeader) {
             var ret: string = getTopRightImageTag(node);
 
             /* todo-2: enable headerText when appropriate here */
@@ -280,7 +280,7 @@ namespace m64 {
          *
          * node is a NodeInfo.java JSON
          */
-        export let renderNodeAsListItem = function(node:NodeInfo, index:number, count:number, rowCount:number) {
+        export let renderNodeAsListItem = function(node:json.NodeInfo, index:number, count:number, rowCount:number) {
 
             var uid = node.uid;
             var canMoveUp = index > 0 && rowCount > 1;
@@ -342,7 +342,7 @@ namespace m64 {
             (new MessageDlg(message, "URL of Node")).open();
         }
 
-        export let getTopRightImageTag = function(node:NodeInfo) {
+        export let getTopRightImageTag = function(node:json.NodeInfo) {
             var topRightImg = props.getNodePropertyVal('img.top.right', node);
             var topRightImgTag = "";
             if (topRightImg) {
@@ -354,7 +354,7 @@ namespace m64 {
             return topRightImgTag;
         }
 
-        export let getNodeBkgImageStyle = function(node:NodeInfo) {
+        export let getNodeBkgImageStyle = function(node:json.NodeInfo) {
             var bkgImg = props.getNodePropertyVal('img.node.bkg', node);
             var bkgImgStyle = "";
             if (bkgImg) {
@@ -379,7 +379,7 @@ namespace m64 {
             }, buttons);
         }
 
-        export let makeRowButtonBarHtml = function(node:NodeInfo, canMoveUp:boolean, canMoveDown:boolean, editingAllowed:boolean) {
+        export let makeRowButtonBarHtml = function(node:json.NodeInfo, canMoveUp:boolean, canMoveDown:boolean, editingAllowed:boolean) {
 
             var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -553,7 +553,7 @@ namespace m64 {
             }
         }
 
-        export let formatPath = function(node:NodeInfo) {
+        export let formatPath = function(node:json.NodeInfo) {
             var path = node.path;
 
             /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -592,7 +592,7 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = function(data?:RenderNodeResponse) {
+        export let renderPageFromData = function(data?:json.RenderNodeResponse) {
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
@@ -765,7 +765,7 @@ namespace m64 {
             }
         }
 
-        export let generateRow = function(i:number, node:NodeInfo, newData:boolean, childCount:number, rowCount:number) {
+        export let generateRow = function(i:number, node:json.NodeInfo, newData:boolean, childCount:number, rowCount:number) {
 
             if (meta64.isNodeBlackListed(node))
                 return "";
@@ -784,12 +784,12 @@ namespace m64 {
             return row;
         }
 
-        export let getUrlForNodeAttachment = function(node:NodeInfo) {
+        export let getUrlForNodeAttachment = function(node:json.NodeInfo) {
             return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
         }
 
         /* see also: makeImageTag() */
-        export let adjustImageSize = function(node:NodeInfo) {
+        export let adjustImageSize = function(node:json.NodeInfo) {
 
             var elm = $("#" + node.imgId);
             if (elm) {
@@ -838,7 +838,7 @@ namespace m64 {
         }
 
         /* see also: adjustImageSize() */
-        export let makeImageTag = function(node:NodeInfo) {
+        export let makeImageTag = function(node:json.NodeInfo) {
             var src = getUrlForNodeAttachment(node);
             node.imgId = "imgUid_" + node.uid;
 

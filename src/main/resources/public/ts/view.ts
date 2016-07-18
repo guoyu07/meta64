@@ -23,7 +23,7 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?:RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
+        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
 
             render.renderPageFromData(res);
 
@@ -52,13 +52,12 @@ namespace m64 {
 
             console.log("Refreshing tree: nodeId=" + nodeId);
 
-            var ironRes = util.json("renderNode", {
+            util.jsonG<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": nodeId,
+                "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false
-            });
-
-            ironRes.completes.then(function() {
-                refreshTreeResponse(ironRes.response, nodeId, renderParentIfLeaf, newId);
+            }, function(res: json.RenderNodeResponse) {
+                refreshTreeResponse(res, nodeId, renderParentIfLeaf, newId);
             });
         }
 
@@ -131,10 +130,8 @@ namespace m64 {
         }
 
         export let showServerInfo = function() {
-            var ironRes = util.json("getServerInfo", {});
-
-            ironRes.completes.then(function() {
-                (new MessageDlg(ironRes.response.serverInfo)).open();
+            util.jsonG<json.GetServerInfoRequest, json.GetServerInfoResponse>("getServerInfo", {}, function(res: json.GetServerInfoResponse) {
+                (new MessageDlg(res.serverInfo)).open();
             });
         }
     }

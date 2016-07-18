@@ -3,7 +3,7 @@ console.log("running module: edit.js");
 namespace m64 {
     export namespace edit {
 
-        let _insertBookResponse = function(res: any): void {
+        let _insertBookResponse = function(res: json.InsertBookResponse): void {
             console.log("insertBookResponse running.");
 
             util.checkSuccess("Insert Book", res);
@@ -12,14 +12,14 @@ namespace m64 {
             view.scrollToSelectedNode();
         }
 
-        let _deleteNodesResponse = function(res: any): void {
+        let _deleteNodesResponse = function(res: json.DeleteNodesResponse): void {
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
                 view.refreshTree(null, false);
             }
         }
 
-        let _initNodeEditResponse = function(res: any): void {
+        let _initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
             if (util.checkSuccess("Editing node", res)) {
                 var node = res.nodeInfo;
 
@@ -47,20 +47,20 @@ namespace m64 {
             }
         }
 
-        let _moveNodesResponse = function(res: any): void {
+        let _moveNodesResponse = function(res: json.MoveNodesResponse): void {
             if (util.checkSuccess("Move nodes", res)) {
                 nodesToMove = null; // reset
                 view.refreshTree(null, false);
             }
         }
 
-        let _setNodePositionResponse = function(res: void): void {
+        let _setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
             if (util.checkSuccess("Change node position", res)) {
                 meta64.refresh();
             }
         }
 
-        let _splitContentResponse = function(res: any): void {
+        let _splitContentResponse = function(res: json.SplitNodeResponse): void {
             if (util.checkSuccess("Split content", res)) {
                 view.refreshTree(null, false);
                 meta64.selectTab("mainTabName");
@@ -148,7 +148,7 @@ namespace m64 {
             editNodeDlgInst.open();
         }
 
-        export let insertNodeResponse = function(res: any): void {
+        export let insertNodeResponse = function(res: json.InsertNodeResponse): void {
             if (util.checkSuccess("Insert node", res)) {
                 meta64.initNode(res.newNode);
                 meta64.highlightNode(res.newNode, true);
@@ -156,14 +156,14 @@ namespace m64 {
             }
         }
 
-        export let createSubNodeResponse = function(res: any): void {
+        export let createSubNodeResponse = function(res: json.CreateSubNodeResponse): void {
             if (util.checkSuccess("Create subnode", res)) {
                 meta64.initNode(res.newNode);
                 runEditNode(res.newNode.uid);
             }
         }
 
-        export let saveNodeResponse = function(res: any, payload: any): void {
+        export let saveNodeResponse = function(res: json.SaveNodeResponse, payload: any): void {
             if (util.checkSuccess("Save node", res)) {
                 view.refreshTree(null, false, payload.savedId);
                 meta64.selectTab("mainTabName");
@@ -184,10 +184,11 @@ namespace m64 {
         }
 
         export let splitContent = function(): void {
-            let nodeBelow: NodeInfo = getNodeBelow(editNode);
-            util.json("splitNode", {
+            let nodeBelow: json.NodeInfo = getNodeBelow(editNode);
+            util.jsonG<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
                 "nodeId": editNode.id,
-                "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id)
+                "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
+                "delimiter" : null
             }, _splitContentResponse);
         }
 
@@ -209,7 +210,7 @@ namespace m64 {
                     return;
                 }
 
-                util.json("setNodePosition", {
+                util.jsonG<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
                     "siblingId": nodeAbove.name
@@ -227,7 +228,7 @@ namespace m64 {
                     return;
                 }
 
-                util.json("setNodePosition", {
+                util.jsonG<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeData.node.id,
                     "nodeId": nodeBelow.name,
                     "siblingId": node.name
@@ -250,7 +251,7 @@ namespace m64 {
         /*
          * Returns the node below the specified node or null if node is itself the bottom node
          */
-        export let getNodeBelow = function(node: any): NodeInfo {
+        export let getNodeBelow = function(node: any): json.NodeInfo {
             var ordinal = meta64.getOrdinalOfNode(node);
             console.log("ordinal = " + ordinal);
             if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -274,7 +275,7 @@ namespace m64 {
             }
             editingUnsavedNode = false;
 
-            util.json("initNodeEdit", {
+            util.jsonG<json.InitNodeEditRequest, json.InitNodeEditResponse>("initNodeEdit", {
                 "nodeId": node.id
             }, _initNodeEditResponse);
         }
@@ -369,7 +370,7 @@ namespace m64 {
 
             (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
                 function() {
-                    util.json("deleteNodes", {
+                    util.jsonG<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
                         "nodeIds": selNodesArray
                     }, _deleteNodesResponse);
                 })).open();
@@ -411,7 +412,7 @@ namespace m64 {
                      * page. Later on we can get more specific about allowing precise destination location for moved
                      * nodes.
                      */
-                    util.json("moveNodes", {
+                    util.jsonG<json.MoveNodesRequest, json.MoveNodesResponse>("moveNodes", {
                         "targetNodeId": highlightNode.id,
                         "targetChildId": highlightNode != null ? highlightNode.id : null,
                         "nodeIds": nodesToMove
@@ -428,7 +429,7 @@ namespace m64 {
                 if (!node) {
                     (new MessageDlg("No node is selected.")).open();
                 } else {
-                    util.json("insertBook", {
+                    util.jsonG<json.InsertBookRequest, json.InsertBookResponse>("insertBook", {
                         "nodeId": node.id,
                         "bookName": "War and Peace",
                         "truncated": user.isTestUserAccount()

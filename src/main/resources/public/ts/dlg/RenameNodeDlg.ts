@@ -43,19 +43,16 @@ namespace m64 {
 
             var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
-            var ironRes = util.json("renameNode", {
+            var thiz = this;
+            util.jsonG<json.RenameNodeRequest, json.RenameNodeResponse>("renameNode", {
                 "nodeId": highlightNode.id,
                 "newName": newName
-            });
-
-            var thiz = this;
-
-            ironRes.completes.then(function() {
-                thiz.renameNodeResponse(ironRes.response, renamingRootNode);
+            }, function(res: json.RenameNodeResponse) {
+                thiz.renameNodeResponse(res, renamingRootNode);
             });
         }
 
-        renameNodeResponse = (res: any, renamingPageRoot: boolean): void => {
+        renameNodeResponse = (res: json.RenameNodeResponse, renamingPageRoot: boolean): void => {
             if (util.checkSuccess("Rename node", res)) {
                 if (renamingPageRoot) {
                     view.refreshTree(res.newId, true);

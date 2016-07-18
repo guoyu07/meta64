@@ -207,6 +207,7 @@ public class AppController {
 		return res;
 	}
 
+	// ts-done
 	@RequestMapping(value = API_PATH + "/login", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody LoginResponse login(@RequestBody LoginRequest req) throws Exception {
@@ -550,7 +551,7 @@ public class AppController {
 	}
 
 	@RequestMapping(value = API_PATH + "/getServerInfo", method = RequestMethod.POST)
-	// IMPORTANT: No OakSession here, purposefully
+	// IMPORTANT: No OakSession annotation here, purposefully
 	// @OakSession
 	//
 	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {

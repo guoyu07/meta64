@@ -226,10 +226,10 @@ namespace m64 {
                 propertyName: "tags",
                 propertyValue: ""
             };
-            util.json("saveProperty", postData, this.addTagsPropertyResponse, this);
+            util.jsonG<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse, this);
         }
 
-        addTagsPropertyResponse = (res: any): void => {
+        addTagsPropertyResponse = (res: json.SavePropertyResponse): void => {
             if (util.checkSuccess("Add Tags Property", res)) {
                 this.savePropertyResponse(res);
             }
@@ -332,16 +332,12 @@ namespace m64 {
 
         deletePropertyImmediate = (propName: string) => {
 
-            var ironRes = util.json("deleteProperty", {
+            var thiz = this;
+            util.jsonG<json.DeletePropertyRequest, json.DeletePropertyResponse>("deleteProperty", {
                 "nodeId": edit.editNode.id,
                 "propName": propName
-            });
-
-            var thiz = this;
-
-            ironRes.completes.then(function() {
-                // not sure if 'this' will be correct here (using _this until I check)
-                thiz.deletePropertyResponse(ironRes.response, propName);
+            }, function(res:json.DeletePropertyResponse) {
+                thiz.deletePropertyResponse(res, propName);
             });
         }
 
@@ -431,13 +427,13 @@ namespace m64 {
 
             meta64.treeDirty = true;
             if (edit.nodeInsertTarget) {
-                util.json("insertNode", {
+                util.jsonG<json.InsertNodeRequest, json.InsertNodeResponse>("insertNode", {
                     "parentId": edit.parentOfNewNode.id,
                     "targetName": edit.nodeInsertTarget.name,
                     "newNodeName": newNodeName
                 }, edit.insertNodeResponse, edit);
             } else {
-                util.json("createSubNode", {
+                util.jsonG<json.CreateSubNodeRequest,json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName
                 }, edit.createSubNodeResponse, edit);
@@ -525,7 +521,7 @@ namespace m64 {
                 };
                 console.log("calling saveNode(). PostData=" + util.toJson(postData));
 
-                util.json("saveNode", postData, edit.saveNodeResponse, edit, {
+                util.jsonG<json.SaveNodeRequest, json.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
                     savedId: edit.editNode.id
                 });
                 edit.sendNotificationPendingSave = false;

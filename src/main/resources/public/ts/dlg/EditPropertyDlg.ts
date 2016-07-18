@@ -77,11 +77,11 @@ namespace m64 {
                 propertyName: propertyNameData,
                 propertyValue: propertyValueData
             };
-            util.json("saveProperty", postData, this.savePropertyResponse, this);
+            util.jsonG<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
         }
 
         /* Warning: don't confuse with EditNodeDlg */
-        savePropertyResponse = (res: any): void => {
+        savePropertyResponse = (res: json.SavePropertyResponse): void => {
             util.checkSuccess("Save properties", res);
 
             edit.editNode.properties.push(res.propertySaved);

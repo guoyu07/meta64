@@ -33,7 +33,7 @@ namespace m64 {
             var emailAddress = this.getInputVal("emailAddress").trim();
 
             if (userName && emailAddress) {
-                util.json("resetPassword", {
+                util.jsonG<json.ResetPasswordRequest, json.ResetPasswordResponse>("resetPassword", {
                     "user": userName,
                     "email": emailAddress
                 }, this.resetPasswordResponse, this);
@@ -42,7 +42,7 @@ namespace m64 {
             }
         }
 
-        resetPasswordResponse = (res: any): void => {
+        resetPasswordResponse = (res: json.ResetPasswordResponse): void => {
             if (util.checkSuccess("Reset password", res)) {
                 (new MessageDlg("Password reset email was sent. Check your inbox.")).open();
             }

@@ -133,18 +133,18 @@
 		
 		<!--
 		For  info about this and what it's for and why it's commented out, look in file JavaToTypeScriptCodeGen.java
-		
+		-->
 		<dependency>
 		 	<groupId>cz.habarta.typescript-generator</groupId>
         	<artifactId>typescript-generator-core</artifactId>
         	<version>1.10-SNAPSHOT</version>
 		</dependency>
-		-->
+		
 		
 	</dependencies>
 
 	<build>
-		<pluginManagement>
+		
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
@@ -192,7 +192,7 @@
 				-->
 				
 			</plugins>
-		</pluginManagement>
+		
 	</build>
 
 </project>

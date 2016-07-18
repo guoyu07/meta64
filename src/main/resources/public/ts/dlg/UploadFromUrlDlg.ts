@@ -42,14 +42,14 @@ namespace m64 {
 
             /* if uploading from URL */
             if (sourceUrl) {
-                util.json("uploadFromUrl", {
+                util.jsonG<json.UploadFromUrlRequest, json.UploadFromUrlResponse>("uploadFromUrl", {
                     "nodeId": attachment.uploadNode.id,
                     "sourceUrl": sourceUrl
                 }, this.uploadFromUrlResponse, this);
             }
         }
 
-        uploadFromUrlResponse = (res: any): void => {
+        uploadFromUrlResponse = (res: json.UploadFromUrlResponse): void => {
             if (util.checkSuccess("Upload from URL", res)) {
                 meta64.refresh();
             }

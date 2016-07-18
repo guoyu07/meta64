@@ -54,8 +54,6 @@ namespace m64 {
             var email = this.getInputVal("signupEmail");
             var captcha = this.getInputVal("signupCaptcha");
 
-
-
             /* no real validation yet, other than non-empty */
             if (!userName || userName.length == 0 || //
                 !password || password.length == 0 || //
@@ -65,15 +63,15 @@ namespace m64 {
                 return;
             }
 
-            util.json("signup", {
-                "useName": userName,
-                "pasword": password,
-                "mail": email,
-                "catcha": captcha
+            util.jsonG<json.SignupRequest,json.SignupResponse>("signup", {
+                "userName": userName,
+                "password": password,
+                "email": email,
+                "captcha": captcha
             }, this.signupResponse, this);
         }
 
-        signupResponse = (res: any): void => {
+        signupResponse = (res: json.SignupResponse): void => {
             if (util.checkSuccess("Signup new user", res)) {
 
                 /* close the signup dialog */

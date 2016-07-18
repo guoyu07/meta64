@@ -38,7 +38,6 @@
       "user.ts",
       "view.ts",
       "menu.ts",
-      "rest.ts",
       "./dlg/base/DialogBase.ts",
       "./dlg/ConfirmDlg.ts",
       "./dlg/ProgressDlg.ts",

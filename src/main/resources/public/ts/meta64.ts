@@ -352,14 +352,12 @@ namespace m64 {
         }
 
         export let updateNodeInfo = function(node) {
-            var ironRes = util.json("getNodePrivileges", {
+            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": node.id,
                 "includeAcl": false,
                 "includeOwners": true
-            });
-
-            ironRes.completes.then(function() {
-                updateNodeInfoResponse(ironRes.response, node);
+            },function(res : json.GetNodePrivilegesResponse) {
+                updateNodeInfoResponse(res, node);
             });
         }
 
@@ -521,7 +519,7 @@ namespace m64 {
             currentNodePath = data.node.path;
         }
 
-        export let anonPageLoadResponse = function(res) {
+        export let anonPageLoadResponse = function(res: json.AnonPageLoadResponse) {
 
             if (res.renderNodeResponse) {
 
@@ -726,7 +724,7 @@ namespace m64 {
         }
 
         export let loadAnonPageHome = function(ignoreUrl) {
-            util.json("anonPageLoad", {
+            util.jsonG<json.AnonPageLoadRequest, json.AnonPageLoadResponse>("anonPageLoad", {
                 "ignoreUrl": ignoreUrl
             }, anonPageLoadResponse);
         }

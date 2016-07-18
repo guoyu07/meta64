@@ -220,177 +220,8 @@ namespace m64 {
             }
         }
 
-		/*
-		 * If the callback function needs a 'this' context for the call, then pass the 'this' in the callbackThis
-		 * parameter.
-		 *
-		 * callbackPayload is passed to callback as its last parameter
-		 *
-		 * todo-3: this method got too long. Need to not inline these function definitions
-     * (This function is deprecated. jsonGeneric is preferred.)
-		 */
-        export let json = function(postName: any, postData: any, callback?: any, callbackThis?: any, callbackPayload?: any) {
-
-            if (callbackThis === window) {
-                console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
-            }
-
-            var ironAjax;
-            var ironRequest;
-
-            try {
-                if (offline) {
-                    console.log("offline: ignoring call for " + postName);
-                    return;
-                }
-
-                if (logAjax) {
-                    console.log("JSON-POST: [" + postName + "]" + JSON.stringify(postData));
-                }
-
-                /* Do not delete, research this way... */
-                // var ironAjax = this.$$("#myIronAjax");
-                //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
-
-                ironAjax = polyElmNode("ironAjax");
-
-                ironAjax.url = postTargetUrl + postName;
-                ironAjax.verbose = true;
-                ironAjax.body = JSON.stringify(postData);
-                ironAjax.method = "POST";
-                ironAjax.contentType = "application/json";
-
-                // specify any url params this way:
-                // ironAjax.params='{"alt":"json", "q":"chrome"}';
-
-                ironAjax.handleAs = "json"; // handle-as (is prop)
-
-                /* This not a required property */
-                // ironAjax.onResponse = "util.ironAjaxResponse"; // on-response
-                // (is
-                // prop)
-                ironAjax.debounceDuration = "300"; // debounce-duration (is
-                // prop)
-
-                _ajaxCounter++;
-                ironRequest = ironAjax.generateRequest();
-            } catch (ex) {
-                console.log("Failed starting request: " + postName);
-                throw ex;
-            }
-
-			/**
-			 * Notes
-			 * <p>
-			 * If using then function: promise.then(successFunction, failFunction);
-			 * <p>
-			 * I think the way these parameters get passed into done/fail functions, is because there are resolve/reject
-			 * methods getting called with the parameters. Basically the parameters passed to 'resolve' get distributed
-			 * to all the waiting methods just like as if they were subscribing in a pub/sub model. So the 'promise'
-			 * pattern is sort of a pub/sub model in a way
-			 * <p>
-			 * The reason to return a 'promise.promise()' method is so no other code can call resolve/reject but can
-			 * only react to a done/fail/complete.
-			 * <p>
-			 * deferred.when(promise1, promise2) creates a new promise that becomes 'resolved' only when all promises
-			 * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
-			 * failing, it fails this "ANDed" one also.
-			 */
-            ironRequest.completes.then(//
-
-                // Handle Success
-                function() {
-                    try {
-                        _ajaxCounter--;
-                        progressInterval();
-
-                        if (logAjax) {
-                            console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
-                                + JSON.stringify(ironRequest.response));
-                        }
-
-                        if (typeof callback == "function") {
-                            /*
-                             * This is ugly because it covers all four cases based on two booleans, but it's still the
-                             * simplest way to do this. We have a callback function that may or may not specify a 'this'
-                             * and always calls with the 'reponse' param and optionally a callbackPayload param.
-                             */
-                            if (callbackPayload) {
-                                if (callbackThis) {
-                                    callback.call(callbackThis, ironRequest.response, callbackPayload);
-                                } else {
-                                    callback(ironRequest.response, callbackPayload);
-                                }
-                            }
-                            /* Can't we just let callbackPayload be undefined, and call the above callback methods
-                            and not even have this else block here at all (i.e. not even check if callbackPayload is
-                            null/undefined, but just use it, and not have this if block?)
-                            */
-                            else {
-                                if (callbackThis) {
-                                    callback.call(callbackThis, ironRequest.response);
-                                } else {
-                                    callback(ironRequest.response);
-                                }
-                            }
-                        }
-                    } catch (ex) {
-                        throw "Failed handling result of: " + postName + " ex=" + ex;
-                    }
-
-                },
-                // Handle Fail
-                function() {
-                    try {
-                        _ajaxCounter--;
-                        progressInterval();
-                        console.log("Error in util.json");
-
-                        if (ironRequest.status == "403") {
-                            console.log("Not logged in detected in util.");
-                            offline = true;
-
-                            if (!timeoutMessageShown) {
-                                timeoutMessageShown = true;
-                                (new MessageDlg("Session timed out. Page will refresh.")).open();
-                            }
-
-                            $(window).off("beforeunload");
-                            window.location.href = window.location.origin;
-                            return;
-                        }
-
-                        var msg = "Server request failed.\n\n";
-
-                        /* catch block should fail silently */
-                        try {
-                            msg += "Status: " + ironRequest.statusText + "\n";
-                            msg += "Code: " + ironRequest.status + "\n";
-                        } catch (ex) {
-                        }
-
-                        /*
-                         * this catch block should also fail silently
-                         *
-                         * This was showing "classCastException" when I threw a regular "Exception" from server so for now
-                         * I'm just turning this off since its' not displaying the correct message.
-                         */
-                        // try {
-                        // msg += "Response: " +
-                        // JSON.parse(xhr.responseText).exception;
-                        // } catch (ex) {
-                        // }
-                        (new MessageDlg(msg)).open();
-                    } catch (ex) {
-                        throw "Failed processing server-side fail of: " + postName;
-                    }
-                });
-
-            return ironRequest;
-        }
-
-        /* This is the replacement for the 'json' function (immediately above). The 'json' function is considered deprecated */
-        export let jsonGeneric = function<ResponseType>(postName: any, postData: any, callback: (response: ResponseType) => any, callbackThis?: any, callbackPayload?: any) {
+        export let jsonG = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
+            callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, callbackPayload?: any) {
 
             if (callbackThis === window) {
                 console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
@@ -440,23 +271,23 @@ namespace m64 {
                 throw ex;
             }
 
-      /**
-       * Notes
-       * <p>
-       * If using then function: promise.then(successFunction, failFunction);
-       * <p>
-       * I think the way these parameters get passed into done/fail functions, is because there are resolve/reject
-       * methods getting called with the parameters. Basically the parameters passed to 'resolve' get distributed
-       * to all the waiting methods just like as if they were subscribing in a pub/sub model. So the 'promise'
-       * pattern is sort of a pub/sub model in a way
-       * <p>
-       * The reason to return a 'promise.promise()' method is so no other code can call resolve/reject but can
-       * only react to a done/fail/complete.
-       * <p>
-       * deferred.when(promise1, promise2) creates a new promise that becomes 'resolved' only when all promises
-       * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
-       * failing, it fails this "ANDed" one also.
-       */
+            /**
+             * Notes
+             * <p>
+             * If using then function: promise.then(successFunction, failFunction);
+             * <p>
+             * I think the way these parameters get passed into done/fail functions, is because there are resolve/reject
+             * methods getting called with the parameters. Basically the parameters passed to 'resolve' get distributed
+             * to all the waiting methods just like as if they were subscribing in a pub/sub model. So the 'promise'
+             * pattern is sort of a pub/sub model in a way
+             * <p>
+             * The reason to return a 'promise.promise()' method is so no other code can call resolve/reject but can
+             * only react to a done/fail/complete.
+             * <p>
+             * deferred.when(promise1, promise2) creates a new promise that becomes 'resolved' only when all promises
+             * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
+             * failing, it fails this "ANDed" one also.
+             */
             ironRequest.completes.then(//
 
                 // Handle Success

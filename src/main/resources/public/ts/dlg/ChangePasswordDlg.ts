@@ -39,7 +39,7 @@ namespace m64 {
             this.pwd = this.getInputVal("changePassword1").trim();
 
             if (this.pwd && this.pwd.length >= 4) {
-                util.json("changePassword", {
+                util.jsonG<json.ChangePasswordRequest,json.ChangePasswordResponse>("changePassword", {
                     "newPassword": this.pwd,
                     "passCode": this.passCode
                 }, this.changePasswordResponse, this);
@@ -48,7 +48,7 @@ namespace m64 {
             }
         }
 
-        changePasswordResponse = (res: any) => {
+        changePasswordResponse = (res: json.ChangePasswordResponse) => {
             if (util.checkSuccess("Change password", res)) {
 
                 var msg = "Password changed successfully.";

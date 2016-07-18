@@ -41,7 +41,7 @@ namespace m64 {
         reload = (): void => {
             console.log("Loading node sharing info.");
 
-            util.json("getNodePrivileges", {
+            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": share.sharingNode.id,
                 "includeAcl": true,
                 "includeOwners": true
@@ -55,14 +55,14 @@ namespace m64 {
          *
          * res.aclEntries = list of AccessControlEntryInfo.java json objects
          */
-        getNodePrivilegesResponse = (res: any): void => {
+        getNodePrivilegesResponse = (res: json.GetNodePrivilegesResponse): void => {
             this.populateSharingPg(res);
         }
 
         /*
          * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
          */
-        populateSharingPg = (res: any): void => {
+        populateSharingPg = (res: json.GetNodePrivilegesResponse): void => {
             var html = "";
             var This = this;
 
@@ -107,30 +107,32 @@ namespace m64 {
 
                 meta64.treeDirty = true;
 
-                util.json("addPrivilege", {
+                util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                     "nodeId": share.sharingNode.id,
-                    "publicAppend": polyElm.node.checked ? "true" : "false"
+                    "privileges" : null,
+                    "principal" : null,
+                    "publicAppend": (polyElm.node.checked ? true : false)
                 });
 
             }, 250);
         }
 
-        removePrivilege = (principal: any, privilege: any): void => {
+        removePrivilege = (principal: string, privilege: string): void => {
             /*
              * Trigger going to server at next main page refresh
              */
             meta64.treeDirty = true;
 
-            util.json("removePrivilege", {
+            util.jsonG<json.RemovePrivilegeRequest, json.RemovePrivilegeResponse>("removePrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": principal,
                 "privilege": privilege
             }, this.removePrivilegeResponse, this);
         }
 
-        removePrivilegeResponse = (res: any): void => {
+        removePrivilegeResponse = (res: json.RemovePrivilegeResponse): void => {
 
-            util.json("getNodePrivileges", {
+            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": share.sharingNode.path,
                 "includeAcl": true,
                 "includeOwners": true
@@ -174,10 +176,11 @@ namespace m64 {
              *
              * TODO: this additional call can be avoided as an optimization
              */
-            util.json("addPrivilege", {
+            util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": "everyone",
-                "privileges": ["read"]
+                "privileges": ["read"],
+                "publicAppend": false
             }, this.reload, this);
         }
     }

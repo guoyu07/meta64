@@ -12,7 +12,6 @@ import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.ConstantsProvider;
@@ -31,7 +30,6 @@ import com.meta64.mobile.util.JcrUtil;
  * periodically checks for emails ready to be sent and sends them.
  */
 @Component
-@Scope("singleton")
 public class JcrOutboxMgr {
 
 	private static final Logger log = LoggerFactory.getLogger(JcrOutboxMgr.class);

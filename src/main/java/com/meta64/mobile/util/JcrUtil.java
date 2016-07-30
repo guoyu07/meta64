@@ -279,7 +279,7 @@ public class JcrUtil {
 		boolean nodesCreated = false;
 		for (String nameToken : nameTokens) {
 
-			log.debug("ensuring node exists: parentPath=" + parentPath + " name=" + nameToken);
+			log.debug("ensuring node exists: parentPath=" + parentPath + "/" + nameToken);
 			node = JcrUtil.getNodeByPath(session, parentPath + nameToken);
 
 			/*

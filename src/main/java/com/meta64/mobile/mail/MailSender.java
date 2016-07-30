@@ -14,14 +14,12 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /*
  * Implements and processes the sending of emails.
  */
 @Component
-@Scope("singleton")
 public class MailSender implements TransportListener {
 
 	private static final Logger log = LoggerFactory.getLogger(MailSender.class);

@@ -3,7 +3,6 @@ package com.meta64.mobile.user;
 import javax.jcr.Session;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.repo.OakRepository;
@@ -17,7 +16,6 @@ import com.meta64.mobile.util.JcrRunnable;
  * where this run method is called from.
  */
 @Component
-@Scope("singleton")
 public class RunAsJcrAdmin {
 
 	@Autowired

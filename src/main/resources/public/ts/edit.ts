@@ -74,7 +74,7 @@ namespace m64 {
          */
         export let nodesToMove: any = null;
 
-        export let parentOfNewNode: any = null;
+        export let parentOfNewNode: json.NodeInfo = null;
 
         /*
          * indicates editor is displaying a node that is not yet saved on the server
@@ -137,7 +137,7 @@ namespace m64 {
          * triggered. The new approach now that we have the ability to 'rename' nodes is to just create one with a
          * random name an let user start editing right away and then rename the node IF a custom node name is needed.
          *
-         * What this means is if we call this function (startEditingNewNodeWithName) instead of 'startEditingNewNode()'
+         * This means if we call this function (startEditingNewNodeWithName) instead of 'startEditingNewNode()'
          * that will cause the GUI to always prompt for the node name before creating the node. This was the original
          * functionality and still works.
          */
@@ -150,7 +150,7 @@ namespace m64 {
 
         export let insertNodeResponse = function(res: json.InsertNodeResponse): void {
             if (util.checkSuccess("Insert node", res)) {
-                meta64.initNode(res.newNode);
+                meta64.initNode(res.newNode, true);
                 meta64.highlightNode(res.newNode, true);
                 runEditNode(res.newNode.uid);
             }
@@ -158,20 +158,30 @@ namespace m64 {
 
         export let createSubNodeResponse = function(res: json.CreateSubNodeResponse): void {
             if (util.checkSuccess("Create subnode", res)) {
-                meta64.initNode(res.newNode);
+                meta64.initNode(res.newNode, true);
                 runEditNode(res.newNode.uid);
             }
         }
 
         export let saveNodeResponse = function(res: json.SaveNodeResponse, payload: any): void {
             if (util.checkSuccess("Save node", res)) {
+                /* becasuse I don't understand 'editingUnsavedNode' variable any longer until i refresh my memory, i will use
+                the old approach of refreshing entire tree rather than more efficient refresnNodeOnPage, becuase it requires
+                the node to already be on the page, and this requires in depth analys i'm not going to do right this minute.
+                */
+                //render.refreshNodeOnPage(res.node);
                 view.refreshTree(null, false, payload.savedId);
                 meta64.selectTab("mainTabName");
             }
         }
 
-        export let editMode = function(): void {
-            meta64.editMode = meta64.editMode ? false : true;
+        export let editMode = function(modeVal?: boolean): void {
+            if (typeof modeVal != 'undefined') {
+                meta64.editMode = modeVal;
+            }
+            else {
+                meta64.editMode = meta64.editMode ? false : true;
+            }
             // todo-3: really edit mode button needs to be some kind of button
             // that can show an on/off state.
             render.renderPageFromData();
@@ -188,7 +198,7 @@ namespace m64 {
             util.jsonG<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
                 "nodeId": editNode.id,
                 "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
-                "delimiter" : null
+                "delimiter": null
             }, _splitContentResponse);
         }
 
@@ -203,7 +213,7 @@ namespace m64 {
         }
 
         export let moveNodeUp = function(uid: any): void {
-            var node = meta64.uidToNodeMap[uid];
+            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeAbove = getNodeAbove(node);
                 if (nodeAbove == null) {
@@ -221,7 +231,7 @@ namespace m64 {
         }
 
         export let moveNodeDown = function(uid: any): void {
-            var node = meta64.uidToNodeMap[uid];
+            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeBelow = getNodeBelow(node);
                 if (nodeBelow == null) {
@@ -267,7 +277,7 @@ namespace m64 {
         // },
 
         export let runEditNode = function(uid: any): void {
-            var node = meta64.uidToNodeMap[uid];
+            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 editNode = null;
                 (new MessageDlg("Unknown nodeId in editNodeClick: " + uid)).open();
@@ -292,7 +302,7 @@ namespace m64 {
              * We get the node selected for the insert position by using the uid if one was passed in or using the
              * currently highlighted node if no uid was passed.
              */
-            var node = null;
+            var node: json.NodeInfo = null;
             if (!uid) {
                 node = meta64.getHighlightedNode();
             } else {

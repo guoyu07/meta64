@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
@@ -22,9 +21,11 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.AnonPageLoadRequest;
+import com.meta64.mobile.request.ExpandAbbreviatedNodeRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
 import com.meta64.mobile.response.AnonPageLoadResponse;
+import com.meta64.mobile.response.ExpandAbbreviatedNodeResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
@@ -39,7 +40,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * rendering the pages on the client as the user browses around on the tree.
  */
 @Component
-@Scope("singleton")
 public class NodeRenderService {
 	private static final Logger log = LoggerFactory.getLogger(NodeRenderService.class);
 
@@ -107,12 +107,11 @@ public class NodeRenderService {
 			levelsUpRemaining--;
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
 		nodeInfo.setChildrenOrdered(ordered);
-		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +
-		// ordered);
+		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
 		res.setNode(nodeInfo);
 
 		NodeIterator nodeIter = node.getNodes();
@@ -124,7 +123,7 @@ public class NodeRenderService {
 				// Filter on server now too
 				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
 
-					children.add(convert.convertToNodeInfo(sessionContext, session, n, true));
+					children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
 
 					/*
 					 * Instead of crashing browser with too much load, just fail a bit more
@@ -165,7 +164,27 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false, false);
+		res.setNodeInfo(nodeInfo);
+		res.setSuccess(true);
+	}
+
+	public void expandAbbreviatedNode(Session session, ExpandAbbreviatedNodeRequest req, ExpandAbbreviatedNodeResponse res) throws Exception {
+
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+
+		String nodeId = req.getNodeId();
+		Node node = JcrUtil.safeFindNode(session, nodeId);
+
+		if (node == null) {
+			res.setMessage("Node not found.");
+			res.setSuccess(false);
+			return;
+		}
+
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, false);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

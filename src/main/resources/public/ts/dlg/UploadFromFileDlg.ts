@@ -23,7 +23,6 @@ namespace m64 {
             }
 
             var uploadFieldContainer = "";
-
             var formFields = "";
 
             /*
@@ -32,6 +31,7 @@ namespace m64 {
              */
             for (var i = 0; i < 7; i++) {
                 var input = render.tag("input", {
+                    "id": this.id("upload" + i + "FormInputId"),
                     "type": "file",
                     "name": "files"
                 }, "", true);
@@ -48,6 +48,12 @@ namespace m64 {
                 "name": "nodeId"
             }, "", true);
 
+            /* boolean field to specify if we explode zip files onto the JCR tree */
+            formFields += render.tag("input", {
+                "id": this.id("explodeZips"),
+                "type": "hidden",
+                "name": "explodeZips"
+            }, "", true);
             /*
              * According to some online posts I should have needed data-ajax="false" on this form but it is working as is
              * without that.
@@ -65,40 +71,69 @@ namespace m64 {
 
             var uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
             var backButton = this.makeCloseButton("Close", "closeUploadButton");
-
             var buttonBar = render.centeredButtonBar(uploadButton + backButton);
 
             return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
         }
 
+        hasAnyZipFiles = (): boolean => {
+            let ret: boolean = false;
+            for (var i = 0; i < 7; i++) {
+                let inputVal = $("#" + this.id("upload" + i + "FormInputId")).val();
+                if (inputVal.toLowerCase().endsWith(".zip")) {
+                    return true;
+                }
+            }
+            return ret;
+        }
+
         uploadFileNow = (): void => {
 
-            /* Upload form has hidden input element for nodeId parameter */
-            $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
+            let uploadFunc = (explodeZips) => {
+                /* Upload form has hidden input element for nodeId parameter */
+                $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
+                $("#" + this.id("explodeZips")).attr("value", explodeZips ? "true" : "false");
 
-            /*
-             * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
-             * this is highly specialized here for form uploading, and is different from normal ajax calls.
-             */
-            //////////////////////////////////////////
-            var data = new FormData(<HTMLFormElement>($("#" + this.id("uploadForm"))[0]));
+                /*
+                 * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
+                 * this is highly specialized here for form uploading, and is different from normal ajax calls.
+                 */
+                var data = new FormData(<HTMLFormElement>($("#" + this.id("uploadForm"))[0]));
 
-            var prms = $.ajax({
-                url: postTargetUrl + "upload",
-                data: data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                type: 'POST'
-            });
+                var prms = $.ajax({
+                    url: postTargetUrl + "upload",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST'
+                });
 
-            prms.done(function() {
-                meta64.refresh();
-            });
+                prms.done(function() {
+                    meta64.refresh();
+                });
 
-            prms.fail(function() {
-                (new MessageDlg("Upload failed.")).open();
-            });
+                prms.fail(function() {
+                    (new MessageDlg("Upload failed.")).open();
+                });
+            };
+
+            if (this.hasAnyZipFiles()) {
+                (new ConfirmDlg("Explode Zips?",
+                    "Do you want Zip files exploded onto the tree when uploaded?",
+                    "Yes, explode zips", //
+                    //Yes function
+                    function() {
+                        uploadFunc(true);
+                    },//
+                    //No function
+                    function() {
+                        uploadFunc(false);
+                    })).open();
+            }
+            else {
+                uploadFunc(false);
+            }
         }
 
         init = (): void => {

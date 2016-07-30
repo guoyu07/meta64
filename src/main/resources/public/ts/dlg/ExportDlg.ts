@@ -1,7 +1,7 @@
 console.log("running module: ExportDlg.js");
 
 namespace m64 {
-    class ExportDlg extends DialogBase {
+    export class ExportDlg extends DialogBase {
         constructor() {
             super("ExportDlg");
         }

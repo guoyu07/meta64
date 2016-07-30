@@ -38,7 +38,7 @@ public class JcrProp {
 	public static final String PRIMARY_TYPE = "jcr:primaryType";
 	public static final String LAST_MODIFIED = "jcr:lastModified";
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
-
+	public static final String FILENAME = "fileName";
 	public static final String DISABLE_INSERT = "disableInsert";
 
 	/*

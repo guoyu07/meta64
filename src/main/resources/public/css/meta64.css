@@ -3,6 +3,10 @@ code {
 	white-space: pre; 
 }
 */
+
+.moreLinkStyle {
+	cursor: pointer;
+}
   
 .ace-edit-panel { 
 	margin-top: 10px;
@@ -217,36 +221,23 @@ tr td div p {
     right: 0px;
 }
 
-.property-text {
+.property-table {
 	margin-left: 1em;
 }
 
 .prop-table-row {
-	border-bottom: 1px solid #d6d6d6;
 	width: 100%;
 }
 
 .prop-table-name-col {
-	border-right: 1px solid gray;
-	/*
-	margin: 0px;
-	paddign: 0px;
-	border: 1px solid red;
-	*/
 	width: 25%;
 }
 
 .prop-table-val-col {
-	/*
-	margin: 0px;
-	paddign: 0px;
-	border: 1px solid green;
-	*/
 	width: 70%;
 }
 
 .prop-table {
-	/* border: 1px solid gray; */
 	width: 100%;
 }
 

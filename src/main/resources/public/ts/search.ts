@@ -25,7 +25,7 @@ namespace m64 {
         /*
          * Will be the last row clicked on (NodeInfo.java object) and having the red highlight bar
          */
-        export let highlightRowNode: any = null;
+        export let highlightRowNode: json.NodeInfo = null;
 
         /*
          * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
@@ -40,7 +40,7 @@ namespace m64 {
          * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
          * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
          */
-        export let uidToNodeMap: any = {};
+        export let uidToNodeMap: { [key: string]: json.NodeInfo } = {};
 
         export let numSearchResults = function() {
             return srch.searchResults != null && //
@@ -93,7 +93,7 @@ namespace m64 {
             }, timelineResponse);
         }
 
-        export let initSearchNode = function(node) {
+        export let initSearchNode = function(node:json.NodeInfo) {
             node.uid = util.getUidForId(identToUidMap, node.id);
             uidToNodeMap[node.uid] = node;
         }
@@ -162,7 +162,7 @@ namespace m64 {
             util.changeOrAddClass(rowElm, "inactive-row", "active-row");
         }
 
-        export let clickSearchNode = function(uid) {
+        export let clickSearchNode = function(uid:string) {
             /*
              * update highlight node to point to the node clicked on, just to persist it for later
              */

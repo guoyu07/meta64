@@ -59,16 +59,9 @@ namespace m64 {
          */
         export let renderProperties = function(properties) {
             if (properties) {
-                var ret = "<table class='property-text'>";
+                var ret = "<table border=1 class='property-table'>";
                 var propCount = 0;
 
-                /*
-                 * We don't need or want a table header, but JQuery displays an error in the JS console if it can't find
-                 * the <thead> element. So we provide empty tags here, just to make JQuery happy.
-                 */
-                ret += "<thead><tr><th></th><th></th></tr></thead>";
-
-                ret += "<tbody>";
                 $.each(properties, function(i, property) {
                     if (render.allowPropertyToDisplay(property.name)) {
                         var isBinaryProp = render.isBinaryProperty(property.name);
@@ -98,7 +91,7 @@ namespace m64 {
                     return "";
                 }
 
-                ret += "</tbody></table>";
+                ret += "</table>";
                 return ret;
             } else {
                 return undefined;

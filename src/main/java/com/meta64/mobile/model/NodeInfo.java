@@ -32,10 +32,12 @@ public class NodeInfo {
 	 * These next four are set on Client Side only but I need to probably set them on server side
 	 * instead or else completely generate dynamically if based on properties.
 	 */
+	// todo-0: uid probably would have been better as, and is used on client as an integer
 	private String uid;
 	private String createdBy;
 	private Date lastModified;
 	private String imgId;
+	private String owner;
 
 	public NodeInfo() {
 	}
@@ -182,5 +184,13 @@ public class NodeInfo {
 
 	public void setImgId(String imgId) {
 		this.imgId = imgId;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 }

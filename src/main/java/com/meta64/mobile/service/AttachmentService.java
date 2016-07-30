@@ -3,6 +3,7 @@ package com.meta64.mobile.service;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,13 +16,18 @@ import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.ImageUtil;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
@@ -46,14 +53,13 @@ import com.meta64.mobile.util.ThreadLocals;
  * displayed right on the page. Otherwise a download link is what gets displayed on the node.
  */
 @Component
-@Scope("singleton")
 public class AttachmentService {
 	private static final Logger log = LoggerFactory.getLogger(AttachmentService.class);
 
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
 	 */
-	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles) throws Exception {
+	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles, boolean explodeZips) throws Exception {
 		try {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();
@@ -68,7 +74,7 @@ public class AttachmentService {
 				String fileName = uploadFile.getOriginalFilename();
 				if (!StringUtils.isEmpty(fileName)) {
 					log.debug("Uploading file: " + fileName);
-					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren);
+					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren, explodeZips);
 				}
 			}
 			session.save();
@@ -96,8 +102,8 @@ public class AttachmentService {
 	 * Gets the binary attachment from a supplied stream and loads it into the repository on the
 	 * node specified in 'nodeId'
 	 */
-	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height, boolean addAsChild)
-			throws Exception {
+	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height, boolean addAsChild,
+			boolean explodeZips) throws Exception {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		/*
@@ -127,6 +133,25 @@ public class AttachmentService {
 			}
 		}
 
+		if (mimeType.equalsIgnoreCase("application/zip")) {
+			/* This is a prototype bean, with state for processing one import at a time */
+			ImportZipStreamService importZipStreamService = (ImportZipStreamService) SpringContextUtil.getBean(ImportZipStreamService.class);
+
+			importZipStreamService.inputZipFileFromStream(session, is, node);
+		}
+		else {
+			saveBinaryStreamToNode(session, is, mimeType, width, height, node);
+		}
+		/*
+		 * DO NOT DELETE (this code can be used to test uploading) String directory =
+		 * "c:/temp-upload"; String filepath = Paths.get(directory, fileName).toString();
+		 * BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new
+		 * File(filepath))); stream.write(uploadfile.getBytes()); stream.close();
+		 */
+	}
+
+	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, int width, int height, Node node) throws ValueFormatException,
+			RepositoryException, UnsupportedRepositoryOperationException, IOException, VersionException, LockException, ConstraintViolationException {
 		long version = System.currentTimeMillis();
 		Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
 		if (binVerProp != null) {
@@ -153,13 +178,6 @@ public class AttachmentService {
 		node.setProperty(JcrProp.BIN_DATA, binary);
 		node.setProperty(JcrProp.BIN_MIME, mimeType);
 		node.setProperty(JcrProp.BIN_VER, version + 1);
-
-		/*
-		 * DO NOT DELETE (this code can be used to test uploading) String directory =
-		 * "c:/temp-upload"; String filepath = Paths.get(directory, fileName).toString();
-		 * BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new
-		 * File(filepath))); stream.write(uploadfile.getBytes()); stream.close();
-		 */
 	}
 
 	/*
@@ -236,7 +254,7 @@ public class AttachmentService {
 		String nodeId = req.getNodeId();
 		String sourceUrl = req.getSourceUrl();
 		String FAKE_USER_AGENT = "Mozilla/5.0";
-		int maxFileSize = 2 * 1024 * 1024;
+		int maxFileSize = 20 * 1024 * 1024;
 
 		URL url = new URL(sourceUrl);
 		InputStream uis = null;
@@ -264,7 +282,7 @@ public class AttachmentService {
 				httpcon.connect();
 				InputStream is = httpcon.getInputStream();
 				uis = new LimitedInputStreamEx(is, maxFileSize);
-				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false);
+				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
 			}
 			/*
 			 * if not an image extension, we can just stream directly into the database, but we want
@@ -278,7 +296,7 @@ public class AttachmentService {
 					httpcon.connect();
 					InputStream is = httpcon.getInputStream();
 					uis = new LimitedInputStreamEx(is, maxFileSize);
-					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1, false);
+					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1, false, false);
 				}
 			}
 		}
@@ -330,7 +348,7 @@ public class AttachmentService {
 					ImageIO.write(bufImg, formatName, os);
 					is2 = new ByteArrayInputStream(os.toByteArray());
 
-					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false);
+					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false, false);
 					return true;
 				}
 			}

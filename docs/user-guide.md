@@ -24,3 +24,12 @@ Any node can optionally have the following which will always cause the specified
 
 To display an image:
 	![Eat Apple Pie] (https://upload.wikimedia.org/wikipedia/commons/4/4b/Apple_pie.jpg)
+
+## Rapid Note Taking Feature
+
+There is an 'Add Node' feature that allows a url such as the following to be able to be used to add a node immediately and let you start editing it immediately when the browser loads. So if user Bob had a node of the specified path '/bob/my-notes', for example, he could create a Bookmark
+to this url in his browser, and it will allow him to immediately start typing a new note simply by going to the url. This means litterally just
+the one click on the Bookmark is all that's required to take a new note. Then you just type the note content, and click save.
+
+	http://meta64.com/?id=/bob/my-notes&cmd=addNode
+

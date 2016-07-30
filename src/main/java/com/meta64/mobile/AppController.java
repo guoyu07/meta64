@@ -31,6 +31,7 @@ import com.meta64.mobile.request.CreateSubNodeRequest;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
+import com.meta64.mobile.request.ExpandAbbreviatedNodeRequest;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
@@ -62,6 +63,7 @@ import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
+import com.meta64.mobile.response.ExpandAbbreviatedNodeResponse;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
@@ -122,7 +124,6 @@ import com.meta64.mobile.util.VarUtil;
  * TODO: need to get all "program logic" out of this layer (there is a tiny bit of it in here),
  * because it doesn't belong here. Should all be contained in service layer.
  */
-
 @Controller
 public class AppController {
 	private static final Logger log = LoggerFactory.getLogger(AppController.class);
@@ -175,6 +176,7 @@ public class AppController {
 	 */
 	@RequestMapping("/")
 	public String mobile(@RequestParam(value = "id", required = false) String id, //
+			@RequestParam(value = "cmd", required = false) String cmd, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
 			// @RequestParam(value = "passCode", required = false) String passCode, //
 			Model model) throws Exception {
@@ -187,6 +189,13 @@ public class AppController {
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 
 		sessionContext.setUrlId(id);
+
+		/*
+		 * url Cmd can be things like "addNode", to trigger quick note-taking under some other node,
+		 * so the app can be used as a productivity aid, and take notes quicker than someone could
+		 * open nodepad, or whatever other text editor, and deal with where to save file to, etc
+		 */
+		sessionContext.setUrlCmd(cmd);
 		return "index";
 	}
 
@@ -277,6 +286,16 @@ public class AppController {
 		return res;
 	}
 
+	@RequestMapping(value = API_PATH + "/expandAbbreviatedNode", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ExpandAbbreviatedNodeResponse expandAbbreviatedNode(@RequestBody ExpandAbbreviatedNodeRequest req) throws Exception {
+		logRequest("expandAbbreviatedNode", req);
+		ExpandAbbreviatedNodeResponse res = new ExpandAbbreviatedNodeResponse();
+		checkHttpSession();
+		nodeRenderService.expandAbbreviatedNode(null, req, res);
+		return res;
+	}
+
 	@RequestMapping(value = API_PATH + "/getNodePrivileges", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) throws Exception {
@@ -327,11 +346,11 @@ public class AppController {
 		String fileName = req.getSourceFileName();
 		if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
 			importExportService.importFromXml(null, req, res);
-			// It is not a mistake that there is no session.save() here. The
-			// import is using the
-			// workspace object
-			// which specifically documents that the saving on the session is
-			// not needed.
+			/*
+			 * It is not a mistake that there is no session.save() here. The import is using the
+			 * workspace object which specifically documents that the saving on the session is not
+			 * needed.
+			 */
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
 			importExportService.importFromZip(null, req, res);
@@ -495,9 +514,10 @@ public class AppController {
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
+			@RequestParam("explodeZips") String explodeZips, //
 			@RequestParam("files") MultipartFile[] uploadFiles) throws Exception {
 		logRequest("upload", null);
-		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles);
+		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles, explodeZips.equalsIgnoreCase("true"));
 	}
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)

@@ -10,6 +10,8 @@ namespace m64 {
         export let appInitialized: boolean = false;
 
         export let curUrlPath: string = window.location.pathname + window.location.search;
+        export let urlCmd:string;
+        export let homeNodeOverride:string;
 
         export let codeFormatDirty: boolean = false;
         export let serverMarkdown: boolean = true;
@@ -52,15 +54,15 @@ namespace m64 {
          * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
          * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
          */
-        export let uidToNodeMap: any = {};
-
-        /* Maps from the DOM ID to the editor javascript instance (Ace Editor instance) */
-        export let aceEditorsById: any = {};
+        export let uidToNodeMap: { [key: string]: json.NodeInfo } = {};
 
         /*
          * maps node.id values to NodeInfo.java objects
          */
-        export let idToNodeMap: any = {};
+        export let idToNodeMap: { [key: string]: json.NodeInfo } = {};
+
+        /* Maps from the DOM ID to the editor javascript instance (Ace Editor instance) */
+        export let aceEditorsById: any = {};
 
         /* counter for local uids */
         export let nextUid: number = 1;
@@ -69,7 +71,7 @@ namespace m64 {
          * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
          * nextUid as the counter.
          */
-        export let identToUidMap: any = {};
+        export let identToUidMap: { [key: string]: string } = {};
 
         /*
          * Under any given node, there can be one active 'selected' node that has the highlighting, and will be scrolled
@@ -78,7 +80,7 @@ namespace m64 {
          * selected node within that parent. Note this 'selection state' is only significant on the client, and only for
          * being able to scroll to the node during navigating around on the tree.
          */
-        export let parentUidToFocusNodeMap: any = {};
+        export let parentUidToFocusNodeMap: { [key: string]: json.NodeInfo } = {};
 
         /*
          * determines if we should render all the editing buttons on each row
@@ -115,13 +117,16 @@ namespace m64 {
          */
         export let selectedNodes: any = {};
 
+        /* Set of all nodes that have been expanded (from the abbreviated form) */
+        export let expandedAbbrevNodeIds: any = {};
+
         /* RenderNodeResponse.java object */
         export let currentNodeData: any = null;
 
         /*
          * all variables derivable from currentNodeData, but stored directly for simpler code/access
          */
-        export let currentNode: any = null;
+        export let currentNode: json.NodeInfo = null;
         export let currentNodeUid: any = null;
         export let currentNodeId: any = null;
         export let currentNodePath: any = null;
@@ -295,7 +300,7 @@ namespace m64 {
 
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
-                    var node = uidToNodeMap[uid];
+                    let node: json.NodeInfo = uidToNodeMap[uid];
                     if (!node) {
                         console.log("unable to find uidToNodeMap for uid=" + uid);
                     } else {
@@ -356,18 +361,18 @@ namespace m64 {
                 "nodeId": node.id,
                 "includeAcl": false,
                 "includeOwners": true
-            },function(res : json.GetNodePrivilegesResponse) {
+            }, function(res: json.GetNodePrivilegesResponse) {
                 updateNodeInfoResponse(res, node);
             });
         }
 
         /* Returns the node with the given node.id value */
-        export let getNodeFromId = function(id) {
+        export let getNodeFromId = function(id): json.NodeInfo {
             return idToNodeMap[id];
         }
 
         export let getPathOfUid = function(uid) {
-            var node = uidToNodeMap[uid];
+            let node: json.NodeInfo = uidToNodeMap[uid];
             if (!node) {
                 return "[path error. invalid uid: " + uid + "]";
             } else {
@@ -375,8 +380,8 @@ namespace m64 {
             }
         }
 
-        export let getHighlightedNode = function() {
-            var ret = parentUidToFocusNodeMap[currentNodeUid];
+        export let getHighlightedNode = function(): json.NodeInfo {
+            let ret: json.NodeInfo = parentUidToFocusNodeMap[currentNodeUid];
             return ret;
         }
 
@@ -393,14 +398,14 @@ namespace m64 {
          * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
          * setting that value should go thru this function.
          */
-        export let highlightNode = function(node, scroll) {
+        export let highlightNode = function(node: json.NodeInfo, scroll: boolean) {
             if (!node)
                 return;
 
             var doneHighlighting = false;
 
             /* Unhighlight currently highlighted node if any */
-            var curHighlightedNode = parentUidToFocusNodeMap[currentNodeUid];
+            let curHighlightedNode: json.NodeInfo = parentUidToFocusNodeMap[currentNodeUid];
             if (curHighlightedNode) {
                 if (curHighlightedNode.uid === node.uid) {
                     // console.log("already highlighted.");
@@ -435,6 +440,7 @@ namespace m64 {
             var selNodeCount = util.getPropertyCount(selectedNodes);
             var highlightNode = getHighlightedNode();
             var selNodeIsMine = highlightNode != null && highlightNode.createdBy === meta64.userName;
+            console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
             util.setEnablement("navLogoutButton", !isAnonUser);
             util.setEnablement("openSignupPgButton", isAnonUser);
@@ -487,7 +493,7 @@ namespace m64 {
             Polymer.updateStyles();
         }
 
-        export let getSingleSelectedNode = function() {
+        export let getSingleSelectedNode = function(): json.NodeInfo {
             var uid;
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
@@ -551,7 +557,7 @@ namespace m64 {
          * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
          * side code
          */
-        export let initNode = function(node) {
+        export let initNode = function(node: json.NodeInfo, updateMaps?: boolean) {
             if (!node) {
                 console.log("initNode has null node");
                 return;
@@ -560,7 +566,7 @@ namespace m64 {
              * assign a property for detecting this node type, I'll do this instead of using some kind of custom JS
              * prototype-related approach
              */
-            node.uid = util.getUidForId(identToUidMap, node.id);
+            node.uid = updateMaps ? util.getUidForId(identToUidMap, node.id) : identToUidMap[node.id];
             node.properties = props.getPropertiesInEditingOrder(node.properties);
 
             /*
@@ -571,8 +577,10 @@ namespace m64 {
             node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
             node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
 
-            uidToNodeMap[node.uid] = node;
-            idToNodeMap[node.id] = node;
+            if (updateMaps) {
+                uidToNodeMap[node.uid] = node;
+                idToNodeMap[node.id] = node;
+            }
         }
 
         export let initConstants = function() {
@@ -684,6 +692,8 @@ namespace m64 {
                     (new ChangePasswordDlg(passCode)).open();
                 }, 100);
             }
+
+            urlCmd = util.getParameterByName("cmd");
         }
 
         export let tabChangeEvent = function(tabName) {

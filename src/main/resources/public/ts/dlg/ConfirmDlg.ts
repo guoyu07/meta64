@@ -3,7 +3,8 @@ console.log("running module: ConfirmDlg.js");
 namespace m64 {
     export class ConfirmDlg extends DialogBase {
 
-        constructor(private title: string, private message: string, private buttonText: string, private callback: Function) {
+        constructor(private title: string, private message: string, private buttonText: string, private yesCallback: Function,
+         private noCallback?: Function) {
             super("ConfirmDlg");
         }
 
@@ -13,8 +14,8 @@ namespace m64 {
         build = (): string => {
             var content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
 
-            var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.callback)
-                + this.makeCloseButton("No", "ConfirmDlgNoButton");
+            var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
+                + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback);
             content += render.centeredButtonBar(buttons);
 
             return content;

@@ -11,12 +11,12 @@ import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
+import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.CreateSubNodeRequest;
@@ -41,7 +41,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * Service for editing content of nodes. That is, this method updates property values of JCR nodes.
  */
 @Component
-@Scope("singleton")
 public class NodeEditService {
 	private static final Logger log = LoggerFactory.getLogger(NodeEditService.class);
 
@@ -99,7 +98,7 @@ public class NodeEditService {
 		}
 		session.save();
 
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
 		res.setSuccess(true);
 	}
 
@@ -129,7 +128,7 @@ public class NodeEditService {
 		}
 
 		session.save();
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
 		res.setSuccess(true);
 	}
 
@@ -218,7 +217,7 @@ public class NodeEditService {
 		node.setProperty(req.getPropertyName(), req.getPropertyValue());
 		session.save();
 
-		PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), null, null);
+		PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), null, false, null);
 		res.setPropertySaved(propertySaved);
 		res.setSuccess(true);
 	}
@@ -285,8 +284,11 @@ public class NodeEditService {
 				}
 			}
 
+			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
+			res.setNode(nodeInfo);
 			session.save();
 		}
+
 		res.setSuccess(true);
 	}
 

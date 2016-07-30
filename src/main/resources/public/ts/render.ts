@@ -15,7 +15,7 @@ namespace m64 {
             return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
         }
 
-        let _renderBinary = function(node:json.NodeInfo) {
+        let _renderBinary = function(node: json.NodeInfo) {
             /*
              * If this is an image render the image directly onto the page as a visible image
              */
@@ -56,7 +56,7 @@ namespace m64 {
             }
         }
 
-        export let buildRowHeader = function(node:json.NodeInfo, showPath, showName) {
+        export let buildRowHeader = function(node: json.NodeInfo, showPath, showName) {
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
             var headerText = "";
@@ -108,7 +108,7 @@ namespace m64 {
          * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
          * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
          */
-        export let injectCodeFormatting = function(content:string) {
+        export let injectCodeFormatting = function(content: string) {
 
             // example markdown:
             // ```js
@@ -125,11 +125,11 @@ namespace m64 {
             return content;
         }
 
-        export let injectSubstitutions = function(content:string) {
+        export let injectSubstitutions = function(content: string) {
             return content.replaceAll("{{locationOrigin}}", window.location.origin);
         }
 
-        export let encodeLanguages = function(content:string) {
+        export let encodeLanguages = function(content: string) {
             /*
              * todo-1: need to provide some way of having these language types configurable in a properties file
              * somewhere, and fill out a lot more file types.
@@ -144,11 +144,25 @@ namespace m64 {
             return content;
         }
 
+        /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
+        which is what's done in most of the app, which is much less efficient and snappy visually */
+        export let refreshNodeOnPage = function(node: json.NodeInfo) {
+            //need to lookup uid from NodeInfo.id then set the content of this div.
+            //"id": uid + "_content"
+            //to the value from renderNodeContent(node, true, true, true, true, true)));
+            let uid: string = meta64.identToUidMap[node.id];
+            if (!uid) throw "Unable to find nodeId " + node.id + " in uid map";
+            meta64.initNode(node, false);
+            if (uid != node.uid) throw "uid changed unexpectly after initNode";
+            let rowContent: string = renderNodeContent(node, true, true, true, true, true);
+            $("#" + uid + "_content").html(rowContent);
+        }
+
         /*
          * This is the function that renders each node in the main window. The rendering in here is very central to the
          * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
          */
-        export let renderNodeContent = function(node:json.NodeInfo, showPath, showName, renderBinary, rowStyling, showHeader) {
+        export let renderNodeContent = function(node: json.NodeInfo, showPath, showName, renderBinary, rowStyling, showHeader) {
             var ret: string = getTopRightImageTag(node);
 
             /* todo-2: enable headerText when appropriate here */
@@ -280,7 +294,7 @@ namespace m64 {
          *
          * node is a NodeInfo.java JSON
          */
-        export let renderNodeAsListItem = function(node:json.NodeInfo, index:number, count:number, rowCount:number) {
+        export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number) {
 
             var uid = node.uid;
             var canMoveUp = index > 0 && rowCount > 1;
@@ -342,7 +356,7 @@ namespace m64 {
             (new MessageDlg(message, "URL of Node")).open();
         }
 
-        export let getTopRightImageTag = function(node:json.NodeInfo) {
+        export let getTopRightImageTag = function(node: json.NodeInfo) {
             var topRightImg = props.getNodePropertyVal('img.top.right', node);
             var topRightImgTag = "";
             if (topRightImg) {
@@ -354,7 +368,7 @@ namespace m64 {
             return topRightImgTag;
         }
 
-        export let getNodeBkgImageStyle = function(node:json.NodeInfo) {
+        export let getNodeBkgImageStyle = function(node: json.NodeInfo) {
             var bkgImg = props.getNodePropertyVal('img.node.bkg', node);
             var bkgImgStyle = "";
             if (bkgImg) {
@@ -379,7 +393,7 @@ namespace m64 {
             }, buttons);
         }
 
-        export let makeRowButtonBarHtml = function(node:json.NodeInfo, canMoveUp:boolean, canMoveDown:boolean, editingAllowed:boolean) {
+        export let makeRowButtonBarHtml = function(node: json.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
 
             var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
             var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -527,13 +541,13 @@ namespace m64 {
                 }, content, true);
         }
 
-        export let makeHorzControlGroup = function(content:string) {
+        export let makeHorzControlGroup = function(content: string) {
             return tag("div", {
                 "class": "horizontal layout"
             }, content, true);
         }
 
-        export let makeRadioButton = function(label:string, id:string) {
+        export let makeRadioButton = function(label: string, id: string) {
             return tag("paper-radio-button", {
                 "id": id,
                 "name": id
@@ -543,8 +557,8 @@ namespace m64 {
         /*
          * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
          */
-        export let nodeHasChildren = function(uid:string) {
-            var node = meta64.uidToNodeMap[uid];
+        export let nodeHasChildren = function(uid: string) {
+            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("Unknown nodeId in nodeHasChildren: " + uid);
                 return false;
@@ -553,7 +567,7 @@ namespace m64 {
             }
         }
 
-        export let formatPath = function(node:json.NodeInfo) {
+        export let formatPath = function(node: json.NodeInfo) {
             var path = node.path;
 
             /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -570,7 +584,7 @@ namespace m64 {
             return ret;
         }
 
-        export let wrapHtml = function(text:string) {
+        export let wrapHtml = function(text: string) {
             return "<div>" + text + "</div>";
         }
 
@@ -592,7 +606,7 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = function(data?:json.RenderNodeResponse) {
+        export let renderPageFromData = function(data?: json.RenderNodeResponse) {
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
@@ -624,7 +638,7 @@ namespace m64 {
                  */
                 meta64.selectedNodes = {};
 
-                meta64.initNode(data.node);
+                meta64.initNode(data.node, true);
                 meta64.setCurrentNodeData(data);
             }
 
@@ -720,7 +734,7 @@ namespace m64 {
             // console.log("rendering page controls.");
             renderMainPageControls();
 
-            let rowCount:number = 0;
+            let rowCount: number = 0;
             if (data.children) {
                 var childCount = data.children.length;
                 // console.log("childCount: " + childCount);
@@ -765,13 +779,13 @@ namespace m64 {
             }
         }
 
-        export let generateRow = function(i:number, node:json.NodeInfo, newData:boolean, childCount:number, rowCount:number) {
+        export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number) {
 
             if (meta64.isNodeBlackListed(node))
                 return "";
 
             if (newData) {
-                meta64.initNode(node);
+                meta64.initNode(node, true);
 
                 if (_debug) {
                     console.log(" RENDER ROW[" + i + "]: node.id=" + node.id);
@@ -784,12 +798,12 @@ namespace m64 {
             return row;
         }
 
-        export let getUrlForNodeAttachment = function(node:json.NodeInfo) {
+        export let getUrlForNodeAttachment = function(node: json.NodeInfo) {
             return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
         }
 
         /* see also: makeImageTag() */
-        export let adjustImageSize = function(node:json.NodeInfo) {
+        export let adjustImageSize = function(node: json.NodeInfo) {
 
             var elm = $("#" + node.imgId);
             if (elm) {
@@ -838,7 +852,7 @@ namespace m64 {
         }
 
         /* see also: adjustImageSize() */
-        export let makeImageTag = function(node:json.NodeInfo) {
+        export let makeImageTag = function(node: json.NodeInfo) {
             var src = getUrlForNodeAttachment(node);
             node.imgId = "imgUid_" + node.uid;
 
@@ -929,7 +943,7 @@ namespace m64 {
             return ret;
         }
 
-        export let makeTextArea = function(fieldName:string, fieldId:string) {
+        export let makeTextArea = function(fieldName: string, fieldId: string) {
             return tag("paper-textarea", {
                 "name": fieldId,
                 "label": fieldName,
@@ -937,7 +951,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeEditField = function(fieldName:string, fieldId:string) {
+        export let makeEditField = function(fieldName: string, fieldId: string) {
             return tag("paper-input", {
                 "name": fieldId,
                 "label": fieldName,
@@ -945,7 +959,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makePasswordField = function(fieldName:string, fieldId:string) {
+        export let makePasswordField = function(fieldName: string, fieldId: string) {
             return tag("paper-input", {
                 "type": "password",
                 "name": fieldId,
@@ -954,7 +968,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeButton = function(text:string, id:string, callback:any) {
+        export let makeButton = function(text: string, id: string, callback: any) {
             var attribs = {
                 "raised": "raised",
                 "id": id
@@ -970,7 +984,7 @@ namespace m64 {
         /*
          * domId is id of dialog being closed.
          */
-        export let makeBackButton = function(text:string, id:string, domId:string, callback:any) {
+        export let makeBackButton = function(text: string, id: string, domId: string, callback: any) {
 
             if (callback === undefined) {
                 callback = "";
@@ -983,21 +997,21 @@ namespace m64 {
             }, text, true);
         }
 
-        export let allowPropertyToDisplay = function(propName:string) {
+        export let allowPropertyToDisplay = function(propName: string) {
             if (!meta64.inSimpleMode())
                 return true;
             return meta64.simpleModePropertyBlackList[propName] == null;
         }
 
-        export let isReadOnlyProperty = function(propName:string) {
+        export let isReadOnlyProperty = function(propName: string) {
             return meta64.readOnlyPropertyList[propName];
         }
 
-        export let isBinaryProperty = function(propName:string) {
+        export let isBinaryProperty = function(propName: string) {
             return meta64.binaryPropertyList[propName];
         }
 
-        export let sanitizePropertyName = function(propName:string) {
+        export let sanitizePropertyName = function(propName: string) {
             if (meta64.editModeOption === "simple") {
                 return propName === jcrCnst.CONTENT ? "Content" : propName;
             } else {

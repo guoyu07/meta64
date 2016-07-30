@@ -12,7 +12,6 @@ import org.apache.jackrabbit.oak.spi.security.principal.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
@@ -34,7 +33,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * 
  */
 @Component
-@Scope("singleton")
 public class AclService {
 	private static final Logger log = LoggerFactory.getLogger(AclService.class);
 

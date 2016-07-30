@@ -439,13 +439,13 @@ namespace m64 {
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        export let getUidForId = function(map, id) {
+        export let getUidForId = function(map:{[key: string]: string}, id):string {
             /* look for uid in map */
-            var uid = map[id];
+            let uid:string = map[id];
 
             /* if not found, get next number, and add to map */
             if (!uid) {
-                uid = meta64.nextUid++;
+                uid = ""+meta64.nextUid++;
                 map[id] = uid;
             }
             return uid;

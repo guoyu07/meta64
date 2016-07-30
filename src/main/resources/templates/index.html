@@ -166,17 +166,16 @@
                 <style is="custom-style"
                        include="shared-styles"></style>
                 <iron-ajax id="ironAjax"></iron-ajax>
+                
                 <paper-drawer-panel id="paperDrawerPanel">
                     <!-- Left Side Panel -->
                     <paper-scroll-header-panel id="mainLhsMenuPanel"
                                                drawer="drawer"
                                                fixed="fixed">
-                        <!--
-                        commenting until I learn to style this in polymer                        
-                        <paper-toolbar id="drawerToolbar">
-                            <span class="paper-font-title">Menu</span>
+                                               
+                        <paper-toolbar>
+                        	<div id="headerAppName">Meta64</div>
                         </paper-toolbar>
-                        -->
                         <div class="horizontal-section">
                             <paper-menu id="mainNavBar"
                                         attr-for-item-title="label"
@@ -191,10 +190,8 @@
                                 when implemented this button will toggle visibility of left-side menu  
                                 -->
                             <paper-icon-button icon="menu"
-                                               onClick="nav.toggleMainMenu();"></paper-icon-button>
-                            <span id="headerAppName"
-                                  class="app-name title">Meta64</span>
-                            <paper-button id="navPublicHomeButton"
+                               	paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
+                            <paper-button id="homeButton"
                                           onClick="m64.nav.navPublicHome();">Home</paper-button>
                             <paper-button style="display:none;"
                                           id="navHomeButton"
@@ -215,6 +212,7 @@
                                           id="navLogoutButton"
                                           onClick="m64.user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
+               
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)
                         
@@ -229,6 +227,9 @@
         <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
         <script>/* 
 <![CDATA[*/
+         //Polymer({
+     	 //   is: "main-dom-module"
+     	 //});
                 var webComponentsReady = false;
                 addEventListener("WebComponentsReady", function() {
                         webComponentsReady = true;

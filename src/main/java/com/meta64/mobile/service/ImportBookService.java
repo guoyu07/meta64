@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.SessionContext;
@@ -19,7 +18,6 @@ import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
 @Component
-@Scope("singleton")
 public class ImportBookService {
 	private static final Logger log = LoggerFactory.getLogger(ImportBookService.class);
 

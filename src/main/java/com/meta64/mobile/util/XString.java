@@ -52,4 +52,35 @@ public class XString {
 		}
 		return sb.toString();
 	}
+
+	public final static String truncateAfter(String text, String delim) {
+		if (text == null) return null;
+
+		int idx = text.indexOf(delim);
+		if (idx != -1) {
+			text = text.substring(0, idx);
+		}
+		return text;
+	}
+
+	public final static String truncateAfterLast(String text, String delim) {
+		if (text == null) return null;
+
+		int idx = text.lastIndexOf(delim);
+		if (idx != -1) {
+			text = text.substring(0, idx);
+		}
+		return text;
+	}
+
+	public final static String parseAfterLast(String text, String delim) {
+		if (text == null) return null;
+
+		int idx = text.lastIndexOf(delim);
+		if (idx != -1) {
+			text = text.substring(idx + delim.length());
+		}
+		return text;
+	}
+
 }

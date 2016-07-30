@@ -197,6 +197,7 @@ namespace m64 {
                 if (!util.emptyString(res.homeNodeOverride)) {
                     console.log("loading homeNodeOverride=" + res.homeNodeOverride);
                     id = res.homeNodeOverride;
+                    meta64.homeNodeOverride = id;
                 } else {
                     if (res.userPreferences.lastNode) {
                         console.log("loading lastNode=" + res.userPreferences.lastNode);
@@ -207,7 +208,7 @@ namespace m64 {
                     }
                 }
 
-                view.refreshTree(id, false);
+                view.refreshTree(id, false, null, true);
                 setTitleUsingLoginResponse(res);
             } else {
                 if (usingCookies) {

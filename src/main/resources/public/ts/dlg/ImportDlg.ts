@@ -1,7 +1,7 @@
 console.log("running module: ImportDlg.js");
 
 namespace m64 {
-    class ImportDlg extends DialogBase {
+    export class ImportDlg extends DialogBase {
         constructor() {
             super("ImportDlg");
         }

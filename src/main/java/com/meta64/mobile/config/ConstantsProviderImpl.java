@@ -1,7 +1,6 @@
 package com.meta64.mobile.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  * need to before handing them to spring, because we are implementing the getters here.
  */
 @Component("constantsProvider")
-@Scope("singleton")
 public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Value("${metaHost}")

@@ -13,7 +13,6 @@ import javax.jcr.query.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
@@ -36,7 +35,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev- should-know/
  */
 @Component
-@Scope("singleton")
 public class NodeSearchService {
 	private static final Logger log = LoggerFactory.getLogger(NodeSearchService.class);
 
@@ -171,7 +169,7 @@ public class NodeSearchService {
 		res.setSearchResults(searchResults);
 
 		while (nodes.hasNext()) {
-			searchResults.add(convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true));
+			searchResults.add(convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true));
 			if (counter++ > MAX_NODES) {
 				break;
 			}
@@ -244,7 +242,7 @@ public class NodeSearchService {
 				continue;
 			}
 
-			searchResults.add(convert.convertToNodeInfo(sessionContext, session, parentNode, true));
+			searchResults.add(convert.convertToNodeInfo(sessionContext, session, parentNode, true, true));
 			if (counter++ > MAX_NODES) {
 				break;
 			}

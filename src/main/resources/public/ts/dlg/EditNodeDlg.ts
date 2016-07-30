@@ -9,6 +9,7 @@ declare var ace;
 namespace m64 {
     export class EditNodeDlg extends DialogBase {
 
+        contentFieldDomId: string;
         fieldIdToPropMap: any = {};
         propEntries: Array<PropEntry> = new Array<PropEntry>();
         editPropertyDlgInst: any;
@@ -37,7 +38,7 @@ namespace m64 {
             // this split works afaik, but I don't want it enabled yet.
             // var splitContentButton = this.makeButton("Split Content",
             // "splitContentButton", "edit.splitContent();");
-            var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "edit.cancelEdit();", this);
+            var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "m64.edit.cancelEdit();", this);
 
             var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton
 	/* + splitContentButton */ + cancelEditButton, "buttons");
@@ -336,7 +337,7 @@ namespace m64 {
             util.jsonG<json.DeletePropertyRequest, json.DeletePropertyResponse>("deleteProperty", {
                 "nodeId": edit.editNode.id,
                 "propName": propName
-            }, function(res:json.DeletePropertyResponse) {
+            }, function(res: json.DeletePropertyResponse) {
                 thiz.deletePropertyResponse(res, propName);
             });
         }
@@ -433,7 +434,7 @@ namespace m64 {
                     "newNodeName": newNodeName
                 }, edit.insertNodeResponse, edit);
             } else {
-                util.jsonG<json.CreateSubNodeRequest,json.CreateSubNodeResponse>("createSubNode", {
+                util.jsonG<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName
                 }, edit.createSubNodeResponse, edit);
@@ -520,7 +521,6 @@ namespace m64 {
                     sendNotification: edit.sendNotificationPendingSave
                 };
                 console.log("calling saveNode(). PostData=" + util.toJson(postData));
-
                 util.jsonG<json.SaveNodeRequest, json.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
                     savedId: edit.editNode.id
                 });
@@ -576,7 +576,7 @@ namespace m64 {
             return fields;
         }
 
-        makeSinglePropEditor = (propEntry: any, aceFields: any): string => {
+        makeSinglePropEditor = (propEntry: PropEntry, aceFields: any): string => {
             console.log("Property single-type: " + propEntry.property.name);
 
             var field = "";
@@ -585,7 +585,7 @@ namespace m64 {
             var label = render.sanitizePropertyName(propEntry.property.name);
             var propValStr = propVal ? propVal : '';
             propValStr = propValStr.escapeForAttrib();
-            console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.val
+            console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
                 + "] fieldId=" + propEntry.id);
 
             if (propEntry.readOnly || propEntry.binary) {
@@ -597,6 +597,9 @@ namespace m64 {
                     "value": propValStr
                 }, "", true);
             } else {
+                if (propEntry.property.name == jcrCnst.CONTENT) {
+                    this.contentFieldDomId = propEntry.id;
+                }
                 if (!cnst.USE_ACE_EDITOR) {
                     field += render.tag("paper-textarea", {
                         "id": propEntry.id,
@@ -622,6 +625,9 @@ namespace m64 {
         init = (): void => {
             console.log("EditNodeDlg.init");
             this.populateEditNodePg();
+            if (this.contentFieldDomId) {
+                util.delayedFocus("#" + this.contentFieldDomId);
+            }
         }
     }
 }

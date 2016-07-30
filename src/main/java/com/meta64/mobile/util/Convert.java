@@ -8,18 +8,17 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.security.AccessControlEntry;
 import javax.jcr.security.Privilege;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +37,9 @@ import com.meta64.mobile.model.UserPreferences;
  * Converting objects from one type to another, and formatting.
  */
 @Component
-@Scope("singleton")
 public class Convert {
+
+	public static final int MAX_INLINE_CHARS = 500;
 
 	/*
 	 * We have to use full annotation here because we already have a different Value class in the
@@ -49,6 +49,7 @@ public class Convert {
 	private String donateButton;
 
 	public static final boolean serverMarkdown = true;
+	public static final boolean defaultToMarkdown = true;
 
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 
@@ -92,7 +93,7 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly) throws Exception {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		long binVer = 0;
@@ -118,12 +119,11 @@ public class Convert {
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
 		// log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
-		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly);
+		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly, allowAbbreviated);
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
-		// log.debug("Node: "+node.getPath()+node.getName()+" type:
-		// "+primaryTypeName);
+		// log.debug("Node: "+node.getPath()+node.getName()+" type: "+primaryTypeName);
 
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
@@ -162,20 +162,30 @@ public class Convert {
 				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 	}
 
+	public boolean shouldUseMarkdownRendering(Node node) throws Exception {
+		String fileName = JcrUtil.safeGetStringProp(node, JcrProp.FILENAME);
+		if (fileName == null) {
+			return defaultToMarkdown;
+		}
+		return fileName.toLowerCase().endsWith(".md");
+	}
+
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
-			boolean htmlOnly) throws RepositoryException {
+			boolean htmlOnly, boolean allowAbbreviated) throws Exception {
 		List<PropertyInfo> props = null;
-		PropertyIterator iter = node.getProperties();
+		PropertyIterator propsIter = node.getProperties();
 		PropertyInfo contentPropInfo = null;
 
-		while (iter.hasNext()) {
+		boolean useMarkdown = shouldUseMarkdownRendering(node);
+
+		while (propsIter.hasNext()) {
 			/* lazy create props */
 			if (props == null) {
 				props = new LinkedList<PropertyInfo>();
 			}
-			Property p = iter.nextProperty();
+			Property p = propsIter.nextProperty();
 
-			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, p, htmlOnly);
+			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, useMarkdown);
 			// log.debug(" PROP Name: " + p.getName());
 
 			/*
@@ -201,9 +211,11 @@ public class Convert {
 		return props;
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Property prop, boolean htmlOnly) throws RepositoryException {
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean useMarkdown)
+			throws Exception {
 		String value = null;
 		String htmlValue = null;
+		boolean abbreviated = false;
 		List<String> values = null;
 
 		/* multivalue */
@@ -213,7 +225,7 @@ public class Convert {
 
 			// int valIdx = 0;
 			for (Value v : prop.getValues()) {
-				String strVal = formatValue(sessionContext, v, false);
+				String strVal = formatValue(sessionContext, v, false, useMarkdown);
 				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
 				values.add(strVal);
 				// valIdx++;
@@ -226,26 +238,82 @@ public class Convert {
 				value = "[binary data]";
 			}
 			else if (prop.getName().equals(JcrProp.CONTENT)) {
-				// log.trace(String.format("prop[%s] isContent", prop.getName()));
-				if (htmlOnly) {
-					htmlValue = formatValue(sessionContext, prop.getValue(), true);
-					value = "n/r";
+
+				String val = prop.getValue().getString();
+
+				if (allowAbbreviated && val.length() > MAX_INLINE_CHARS) {
+					abbreviated = true;
+					val = XString.truncateAfter(val, "\n");
+					val = XString.truncateAfter(val, "\r");
+					if (val.length() > MAX_INLINE_CHARS) {
+						val = val.substring(0, MAX_INLINE_CHARS);
+					}
+					val = StringEscapeUtils.escapeHtml4(val);
+					val += "..." + buildMoreLink(node);
+
+					// log.trace(String.format("prop[%s] isContent", prop.getName()));
+					if (htmlOnly) {
+						htmlValue = val;
+						// I can't remember what this n/r is for but it BREAKS app if it's not set
+						// to this
+						value = "n/r";
+
+						log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue);
+					}
+					else {
+						// I can't remember what this n/r is for but it BREAKS app if it's not set
+						// to this
+						htmlValue = "n/r";
+
+						value = val;
+						log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value);
+					}
 				}
 				else {
-					htmlValue = "n/r";
-					value = formatValue(sessionContext, prop.getValue(), false);
+					// log.trace(String.format("prop[%s] isContent", prop.getName()));
+					if (htmlOnly) {
+						htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
+						// I can't remember what this n/r is for but it BREAKS app if it's not set
+						// to
+						// this
+						value = "n/r";
+
+						log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue);
+					}
+					else {
+						// I can't remember what this n/r is for but it BREAKS app if it's not set
+						// to
+						// this
+						htmlValue = "n/r";
+
+						value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
+						log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value);
+					}
 				}
 			}
 			else {
-				value = formatValue(sessionContext, prop.getValue(), false);
+				value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
 				// log.trace(String.format("prop[%s]=%s", prop.getName(), value));
 			}
 		}
-		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, values);
+		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, abbreviated, values);
 		return propInfo;
 	}
 
-	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml) {
+	public String buildMoreLink(Node node) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<a class=\"moreLinkStyle\" onclick=\"m64.nav.expandMore('" + node.getIdentifier() + "');\">[more]</a>");
+		return sb.toString();
+	}
+
+	public String basicTextFormatting(String val) {
+		val = val.replace("\n\r", "<p>");
+		val = val.replace("\n", "<p>");
+		val = val.replace("\r", "<p>");
+		return val;
+	}
+
+	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml, boolean useMarkdown) {
 		try {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
@@ -254,7 +322,14 @@ public class Convert {
 				String ret = null;
 
 				if (convertToHtml && serverMarkdown) {
-					ret = getMarkdownProc().markdownToHtml(value.getString());
+					ret = StringEscapeUtils.escapeHtml4(value.getString());
+
+					if (useMarkdown) {
+						ret = getMarkdownProc().markdownToHtml(ret);
+					}
+					else {
+						ret = basicTextFormatting(ret);
+					}
 				}
 				else {
 					ret = value.getString();

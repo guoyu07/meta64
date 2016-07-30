@@ -1,4 +1,4 @@
-// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-17 18:27:13.
+// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-23 16:56:14.
 
 namespace m64 {
     export namespace json {
@@ -25,6 +25,7 @@ namespace m64 {
             createdBy: string;
             lastModified: Date;
             imgId: string;
+            owner: string;
         }
 
         export interface PrivilegeInfo {
@@ -37,6 +38,7 @@ namespace m64 {
             value: string;
             values: string[];
             htmlValue: string;
+            abbreviated: boolean;
         }
 
         export interface RefInfo {
@@ -84,6 +86,10 @@ namespace m64 {
         export interface DeletePropertyRequest {
             nodeId: string;
             propName: string;
+        }
+
+        export interface ExpandAbbreviatedNodeRequest {
+            nodeId: string;
         }
 
         export interface ExportRequest {
@@ -238,6 +244,10 @@ namespace m64 {
         export interface DeletePropertyResponse extends OakResponseBase {
         }
 
+        export interface ExpandAbbreviatedNodeResponse extends OakResponseBase {
+            nodeInfo: NodeInfo;
+        }
+
         export interface ExportResponse extends OakResponseBase {
         }
 
@@ -304,7 +314,9 @@ namespace m64 {
         export interface ResetPasswordResponse extends OakResponseBase {
         }
 
+
         export interface SaveNodeResponse extends OakResponseBase {
+            node: NodeInfo;
         }
 
         export interface SavePropertyResponse extends OakResponseBase {

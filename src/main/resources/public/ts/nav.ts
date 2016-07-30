@@ -4,8 +4,22 @@ namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
-        export let openMainMenuHelp = function() {
-            window.open(window.location.origin + "?id=/meta64/public/help", "_blank");
+        export let expandMore = function(nodeId: string) {
+
+            /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button
+            this is lower priority for now, so i'm not using it yet */
+            meta64.expandedAbbrevNodeIds[nodeId] = true;
+
+            util.jsonG<json.ExpandAbbreviatedNodeRequest, json.ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
+                "nodeId": nodeId
+            }, expandAbbreviatedNodeResponse);
+        }
+
+        let expandAbbreviatedNodeResponse = function(res: json.ExpandAbbreviatedNodeResponse): void {
+            if (util.checkSuccess("ExpandAbbreviatedNode", res)) {
+                //console.log("VAL: "+JSON.stringify(res.nodeInfo));
+                render.refreshNodeOnPage(res.nodeInfo);
+            }
         }
 
         export let displayingHome = function() {
@@ -55,7 +69,7 @@ namespace m64 {
             if (currentSelNode) {
 
                 /* get node by node identifier */
-                var node = meta64.uidToNodeMap[currentSelNode.uid];
+                var node: json.NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
 
                 if (node) {
                     console.log("found highlighted node.id=" + node.id);
@@ -80,7 +94,7 @@ namespace m64 {
                 if (currentSelNode) {
 
                     /* get node by node identifier */
-                    var node = meta64.uidToNodeMap[currentSelNode.uid];
+                    let node: json.NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
 
                     if (node) {
                         console.log("found highlighted node.id=" + node.id);
@@ -102,7 +116,7 @@ namespace m64 {
 
         export let clickOnNodeRow = function(rowElm, uid) {
 
-            var node = meta64.uidToNodeMap[uid];
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);
                 return;
@@ -116,7 +130,7 @@ namespace m64 {
             if (meta64.editMode) {
 
                 /*
-                 * if node.owner is currently null, that means we have not retrieve the owner from the server yet, but
+                 * if node.owner is currently null, that means we have not retrieved the owner from the server yet, but
                  * if non-null it's already displaying and we do nothing.
                  */
                 if (!node.owner) {
@@ -129,7 +143,7 @@ namespace m64 {
 
         export let openNode = function(uid) {
 
-            var node = meta64.uidToNodeMap[uid];
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
 
             meta64.highlightNode(node, true);
 
@@ -181,16 +195,6 @@ namespace m64 {
 
         export let navPublicHome = function() {
             meta64.loadAnonPageHome(true);
-        }
-
-        export let toggleMainMenu = function() {
-            //var paperDrawerPanel = util.polyElm("paperDrawerPanel");
-
-            /*
-             * this togglePanel function does absolutely nothing, and I think this is probably a bug on the google
-             * polymer code, because it should always work.
-             */
-            //paperDrawerPanel.node.togglePanel();
         }
     }
 }

@@ -20,15 +20,18 @@ public class PropertyInfo {
 	 */
 	private String htmlValue;
 
+	private boolean abbreviated;
+
 	public PropertyInfo() {
 	}
 
-	public PropertyInfo(int type, String name, String value, String htmlValue, List<String> values) {
+	public PropertyInfo(int type, String name, String value, String htmlValue, boolean abbreviated, List<String> values) {
 		this.type = type;
 		this.name = name;
 		this.value = value;
 		this.values = values;
 		this.htmlValue = htmlValue;
+		this.abbreviated = abbreviated;
 	}
 
 	public int getType() {
@@ -69,5 +72,13 @@ public class PropertyInfo {
 
 	public void setHtmlValue(String htmlValue) {
 		this.htmlValue = htmlValue;
+	}
+
+	public boolean isAbbreviated() {
+		return abbreviated;
+	}
+
+	public void setAbbreviated(boolean abbreviated) {
+		this.abbreviated = abbreviated;
 	}
 }

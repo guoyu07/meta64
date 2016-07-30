@@ -45,7 +45,7 @@ namespace m64 {
         /*
          * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
          */
-        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any) {
+        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any, isInitialRender?: boolean) {
             if (!nodeId) {
                 nodeId = meta64.currentNodeId;
             }
@@ -58,6 +58,10 @@ namespace m64 {
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false
             }, function(res: json.RenderNodeResponse) {
                 refreshTreeResponse(res, nodeId, renderParentIfLeaf, newId);
+                if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
+                    edit.editMode(true);
+                    edit.createSubNode(meta64.currentNode.uid);
+                }
             });
         }
 

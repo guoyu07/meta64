@@ -173,9 +173,6 @@
                                                drawer="drawer"
                                                fixed="fixed">
                                                
-                        <paper-toolbar>
-                        	<div id="headerAppName">Meta64</div>
-                        </paper-toolbar>
                         <div class="horizontal-section">
                             <paper-menu id="mainNavBar"
                                         attr-for-item-title="label"
@@ -191,6 +188,9 @@
                                 -->
                             <paper-icon-button icon="menu"
                                	paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
+                               
+                            <span class="title" id="headerAppName">Meta64</span>
+                               
                             <paper-button id="homeButton"
                                           onClick="m64.nav.navPublicHome();">Home</paper-button>
                             <paper-button style="display:none;"
@@ -211,6 +211,7 @@
                             <paper-button style="display:none;"
                                           id="navLogoutButton"
                                           onClick="m64.user.logout(true);">Logout</paper-button>
+                               
                         </paper-toolbar>
                
                         <!-- 

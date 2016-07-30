@@ -123,7 +123,7 @@ public class Convert {
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
-		// log.debug("Node: "+node.getPath()+node.getName()+" type: "+primaryTypeName);
+		//log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " + primaryTypeName + " hasBinary=" + hasBinary);
 
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //

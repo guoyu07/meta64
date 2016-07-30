@@ -631,12 +631,14 @@ namespace m64 {
             if (newData) {
                 meta64.uidToNodeMap = {};
                 meta64.idToNodeMap = {};
+                meta64.identToUidMap = {};
 
                 /*
                  * I'm choosing to reset selected nodes when a new page loads, but this is not a requirement. I just
                  * don't have a "clear selections" feature which would be needed so user has a way to clear out.
                  */
                 meta64.selectedNodes = {};
+                meta64.parentUidToFocusNodeMap = {};
 
                 meta64.initNode(data.node, true);
                 meta64.setCurrentNodeData(data);

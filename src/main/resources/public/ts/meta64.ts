@@ -212,15 +212,15 @@ namespace m64 {
             }
         }
 
-        export let inSimpleMode = function() : boolean{
+        export let inSimpleMode = function(): boolean {
             return editModeOption === MODE_SIMPLE;
         }
 
-        export let refresh = function() :void {
+        export let refresh = function(): void {
             goToMainPage(true, true);
         }
 
-        export let goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean):void {
+        export let goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean): void {
 
             if (forceServerRefresh) {
                 treeDirty = true;
@@ -231,8 +231,8 @@ namespace m64 {
                     view.refreshTree(null, true);
                 } else {
                     render.renderPageFromData();
+                    refreshAllGuiEnablement();
                 }
-                refreshAllGuiEnablement();
             }
             /*
              * If not re-rendering page (either from server, or from local data, then we just need to litterally switch
@@ -243,7 +243,7 @@ namespace m64 {
             }
         }
 
-        export let selectTab = function(pageName) :void {
+        export let selectTab = function(pageName): void {
             var ironPages = document.querySelector("#mainIronPages");
             (<_HasSelect>ironPages).select(pageName);
         }
@@ -267,7 +267,7 @@ namespace m64 {
             (<_HasSelect>paperTabs).select(pg.tabId);
         }
 
-        export let isNodeBlackListed = function(node) : boolean{
+        export let isNodeBlackListed = function(node): boolean {
             if (!inSimpleMode())
                 return false;
 
@@ -330,8 +330,8 @@ namespace m64 {
         }
 
         export let updateNodeInfoResponse = function(res, node) {
-            let ownerBuf:string = "";
-            let mine:boolean = false;
+            let ownerBuf: string = "";
+            let mine: boolean = false;
 
             if (res.owners) {
                 $.each(res.owners, function(index, owner) {
@@ -359,7 +359,7 @@ namespace m64 {
             }
         }
 
-        export let updateNodeInfo = function(node:json.NodeInfo) {
+        export let updateNodeInfo = function(node: json.NodeInfo) {
             util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": node.id,
                 "includeAcl": false,
@@ -370,11 +370,11 @@ namespace m64 {
         }
 
         /* Returns the node with the given node.id value */
-        export let getNodeFromId = function(id:string): json.NodeInfo {
+        export let getNodeFromId = function(id: string): json.NodeInfo {
             return idToNodeMap[id];
         }
 
-        export let getPathOfUid = function(uid:string) : string{
+        export let getPathOfUid = function(uid: string): string {
             let node: json.NodeInfo = uidToNodeMap[uid];
             if (!node) {
                 return "[path error. invalid uid: " + uid + "]";
@@ -388,7 +388,7 @@ namespace m64 {
             return ret;
         }
 
-        export let highlightRowById = function(id, scroll) : void {
+        export let highlightRowById = function(id, scroll): void {
             var node: json.NodeInfo = getNodeFromId(id);
             if (node) {
                 highlightNode(node, scroll);
@@ -401,11 +401,11 @@ namespace m64 {
          * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
          * setting that value should go thru this function.
          */
-        export let highlightNode = function(node: json.NodeInfo, scroll: boolean) : void{
+        export let highlightNode = function(node: json.NodeInfo, scroll: boolean): void {
             if (!node)
                 return;
 
-            let doneHighlighting:boolean = false;
+            let doneHighlighting: boolean = false;
 
             /* Unhighlight currently highlighted node if any */
             let curHighlightedNode: json.NodeInfo = parentUidToFocusNodeMap[currentNodeUid];
@@ -423,8 +423,8 @@ namespace m64 {
             if (!doneHighlighting) {
                 parentUidToFocusNodeMap[currentNodeUid] = node;
 
-                let rowElmId:string = node.uid + "_row";
-                let rowElm:string = $("#" + rowElmId);
+                let rowElmId: string = node.uid + "_row";
+                let rowElm: string = $("#" + rowElmId);
                 util.changeOrAddClass(rowElm, "inactive-row", "active-row");
             }
 
@@ -440,9 +440,9 @@ namespace m64 {
         export let refreshAllGuiEnablement = function() {
 
             /* multiple select nodes */
-            let selNodeCount:number = util.getPropertyCount(selectedNodes);
-            let highlightNode:json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine:boolean = highlightNode != null && highlightNode.createdBy === meta64.userName;
+            let selNodeCount: number = util.getPropertyCount(selectedNodes);
+            let highlightNode: json.NodeInfo = getHighlightedNode();
+            let selNodeIsMine: boolean = highlightNode != null && highlightNode.createdBy === meta64.userName;
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
             util.setEnablement("navLogoutButton", !isAnonUser);
@@ -450,10 +450,10 @@ namespace m64 {
             util.setEnablement("openExportDlg", isAdminUser);
             util.setEnablement("openImportDlg", isAdminUser);
 
-            let propsToggle:boolean = currentNode && !isAnonUser;
+            let propsToggle: boolean = currentNode && !isAnonUser;
             util.setEnablement("propsToggleButton", propsToggle);
 
-            let allowEditMode:boolean = currentNode && !isAnonUser;
+            let allowEditMode: boolean = currentNode && !isAnonUser;
 
             util.setEnablement("editModeButton", allowEditMode);
             util.setEnablement("upLevelButton", currentNode && nav.parentVisibleToUser());
@@ -469,7 +469,6 @@ namespace m64 {
             util.setEnablement("insertBookWarAndPeaceButton", isAdminUser || user.isTestUserAccount() && selNodeIsMine);
             util.setEnablement("uploadFromFileButton", !isAnonUser && highlightNode != null && selNodeIsMine);
             util.setEnablement("uploadFromUrlButton", !isAnonUser && highlightNode != null && selNodeIsMine);
-
             util.setEnablement("deleteAttachmentsButton", !isAnonUser && highlightNode != null
                 && highlightNode.hasBinary && selNodeIsMine);
             util.setEnablement("editNodeSharingButton", !isAnonUser && highlightNode != null && selNodeIsMine);
@@ -497,7 +496,7 @@ namespace m64 {
         }
 
         export let getSingleSelectedNode = function(): json.NodeInfo {
-            let uid:string;
+            let uid: string;
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
                     // console.log("found a single Sel NodeID: " + nodeId);
@@ -508,7 +507,7 @@ namespace m64 {
         }
 
         /* node = NodeInfo.java object */
-        export let getOrdinalOfNode = function(node) : number {
+        export let getOrdinalOfNode = function(node): number {
             if (!currentNodeData || !currentNodeData.children)
                 return -1;
 
@@ -520,7 +519,7 @@ namespace m64 {
             return -1;
         }
 
-        export let setCurrentNodeData = function(data) : void{
+        export let setCurrentNodeData = function(data): void {
             currentNodeData = data;
             currentNode = data.node;
             currentNodeUid = data.node.uid;
@@ -528,7 +527,7 @@ namespace m64 {
             currentNodePath = data.node.path;
         }
 
-        export let anonPageLoadResponse = function(res: json.AnonPageLoadResponse) : void{
+        export let anonPageLoadResponse = function(res: json.AnonPageLoadResponse): void {
 
             if (res.renderNodeResponse) {
 
@@ -546,9 +545,9 @@ namespace m64 {
             render.renderMainPageControls();
         }
 
-        export let removeBinaryByUid = function(uid) : void{
+        export let removeBinaryByUid = function(uid): void {
             for (var i = 0; i < currentNodeData.children.length; i++) {
-                let node :json.NodeInfo = currentNodeData.children[i];
+                let node: json.NodeInfo = currentNodeData.children[i];
                 if (node.uid === uid) {
                     node.hasBinary = false;
                     break;
@@ -560,7 +559,7 @@ namespace m64 {
          * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
          * side code
          */
-        export let initNode = function(node: json.NodeInfo, updateMaps?: boolean) : void {
+        export let initNode = function(node: json.NodeInfo, updateMaps?: boolean): void {
             if (!node) {
                 console.log("initNode has null node");
                 return;
@@ -619,7 +618,7 @@ namespace m64 {
         }
 
         /* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
-        export let initApp = function() : void {
+        export let initApp = function(): void {
             console.log("initApp running.");
 
             if (appInitialized)
@@ -688,7 +687,7 @@ namespace m64 {
             processUrlParams();
         }
 
-        export let processUrlParams = function() : void {
+        export let processUrlParams = function(): void {
             var passCode = util.getParameterByName("passCode");
             if (passCode) {
                 setTimeout(function() {
@@ -699,20 +698,20 @@ namespace m64 {
             urlCmd = util.getParameterByName("cmd");
         }
 
-        export let tabChangeEvent = function(tabName) : void{
+        export let tabChangeEvent = function(tabName): void {
             if (tabName == "searchTabName") {
                 srch.searchTabActivated();
             }
         }
 
-        export let displaySignupMessage = function():void {
+        export let displaySignupMessage = function(): void {
             var signupResponse = $("#signupCodeResponse").text();
             if (signupResponse === "ok") {
                 (new MessageDlg("Signup complete. You may now login.")).open();
             }
         }
 
-        export let screenSizeChange = function() :void {
+        export let screenSizeChange = function(): void {
             if (currentNodeData) {
 
                 if (meta64.currentNode.imgId) {
@@ -728,7 +727,7 @@ namespace m64 {
         }
 
         /* Don't need this method yet, and haven't tested to see if works */
-        export let orientationHandler = function(event) : void{
+        export let orientationHandler = function(event): void {
             // if (event.orientation) {
             // if (event.orientation === 'portrait') {
             // } else if (event.orientation === 'landscape') {

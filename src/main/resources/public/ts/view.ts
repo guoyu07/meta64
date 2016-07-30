@@ -23,17 +23,13 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) : void {
-
+        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, highlightId?: any) : void {
             render.renderPageFromData(res);
 
-            if (newId) {
-                meta64.highlightRowById(newId, true);
+            if (highlightId) {
+                meta64.highlightRowById(highlightId, true);
             } else {
-                /*
-                 * TODO-3: Why wasn't this just based on targetId ? This if condition is too confusing.
-                 */
-                if (targetId && renderParentIfLeaf && res.displayedParent) {
+                if (targetId) { // && renderParentIfLeaf && res.displayedParent) {
                     meta64.highlightRowById(targetId, true);
                 } else {
                     scrollToSelectedNode();
@@ -45,19 +41,24 @@ namespace m64 {
         /*
          * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
          */
-        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any, isInitialRender?: boolean) : void {
+        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean) : void {
             if (!nodeId) {
                 nodeId = meta64.currentNodeId;
             }
 
             console.log("Refreshing tree: nodeId=" + nodeId);
+            if (!highlightId) {
+                let currentSelNode:json.NodeInfo = meta64.getHighlightedNode();
+                highlightId = currentSelNode!=null ? currentSelNode.id : nodeId;
+            }
 
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": nodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false
             }, function(res: json.RenderNodeResponse) {
-                refreshTreeResponse(res, nodeId, renderParentIfLeaf, newId);
+                refreshTreeResponse(res, nodeId, renderParentIfLeaf, highlightId);
+
                 if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
                     edit.editMode(true);
                     edit.createSubNode(meta64.currentNode.uid);

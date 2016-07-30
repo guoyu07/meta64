@@ -90,7 +90,7 @@ namespace m64 {
          */
         export let getSelectedPolyElement = function() : any{
             try {
-                var currentSelNode = meta64.getHighlightedNode();
+                let currentSelNode:json.NodeInfo = meta64.getHighlightedNode();
                 if (currentSelNode) {
 
                     /* get node by node identifier */

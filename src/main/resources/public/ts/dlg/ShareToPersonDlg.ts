@@ -35,7 +35,7 @@ namespace m64 {
              */
             meta64.treeDirty = true;
             var thiz = this;
-            util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+            util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": targetUser,
                 "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],

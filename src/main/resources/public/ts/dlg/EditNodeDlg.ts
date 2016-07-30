@@ -227,7 +227,7 @@ namespace m64 {
                 propertyName: "tags",
                 propertyValue: ""
             };
-            util.jsonG<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse, this);
+            util.json<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse, this);
         }
 
         addTagsPropertyResponse = (res: json.SavePropertyResponse): void => {
@@ -334,7 +334,7 @@ namespace m64 {
         deletePropertyImmediate = (propName: string) => {
 
             var thiz = this;
-            util.jsonG<json.DeletePropertyRequest, json.DeletePropertyResponse>("deleteProperty", {
+            util.json<json.DeletePropertyRequest, json.DeletePropertyResponse>("deleteProperty", {
                 "nodeId": edit.editNode.id,
                 "propName": propName
             }, function(res: json.DeletePropertyResponse) {
@@ -428,13 +428,13 @@ namespace m64 {
 
             meta64.treeDirty = true;
             if (edit.nodeInsertTarget) {
-                util.jsonG<json.InsertNodeRequest, json.InsertNodeResponse>("insertNode", {
+                util.json<json.InsertNodeRequest, json.InsertNodeResponse>("insertNode", {
                     "parentId": edit.parentOfNewNode.id,
                     "targetName": edit.nodeInsertTarget.name,
                     "newNodeName": newNodeName
                 }, edit.insertNodeResponse, edit);
             } else {
-                util.jsonG<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
+                util.json<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName
                 }, edit.createSubNodeResponse, edit);
@@ -521,7 +521,7 @@ namespace m64 {
                     sendNotification: edit.sendNotificationPendingSave
                 };
                 console.log("calling saveNode(). PostData=" + util.toJson(postData));
-                util.jsonG<json.SaveNodeRequest, json.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
+                util.json<json.SaveNodeRequest, json.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
                     savedId: edit.editNode.id
                 });
                 edit.sendNotificationPendingSave = false;

@@ -174,7 +174,7 @@ namespace m64 {
 		 * This came from here:
 		 * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 		 */
-        export let getParameterByName = function(name?: any, url?: any) {
+        export let getParameterByName = function(name?: any, url?: any): string {
             if (!url)
                 url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -191,17 +191,17 @@ namespace m64 {
 		 * child so that methods can be added to it, which will behave like member functions in classic OOP with
 		 * inheritance hierarchies.
 		 */
-        export let inherit = function(parent, child) {
+        export let inherit = function(parent, child): any {
             child.prototype.constructor = child;
             child.prototype = Object.create(parent.prototype);
             return child.prototype;
         }
 
-        export let initProgressMonitor = function() {
+        export let initProgressMonitor = function(): void {
             setInterval(progressInterval, 1000);
         }
 
-        export let progressInterval = function() {
+        export let progressInterval = function(): void {
             var isWaiting = isAjaxWaiting();
             if (isWaiting) {
                 waitCounter++;
@@ -220,7 +220,7 @@ namespace m64 {
             }
         }
 
-        export let jsonG = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
+        export let json = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
             callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, callbackPayload?: any) {
 
             if (callbackThis === window) {
@@ -352,7 +352,7 @@ namespace m64 {
                             return;
                         }
 
-                        var msg = "Server request failed.\n\n";
+                        let msg: string = "Server request failed.\n\n";
 
                         /* catch block should fail silently */
                         try {
@@ -381,7 +381,7 @@ namespace m64 {
             return ironRequest;
         }
 
-        export let ajaxReady = function(requestName) {
+        export let ajaxReady = function(requestName): boolean {
             if (_ajaxCounter > 0) {
                 console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
                 return false;
@@ -389,12 +389,12 @@ namespace m64 {
             return true;
         }
 
-        export let isAjaxWaiting = function() {
+        export let isAjaxWaiting = function(): boolean {
             return _ajaxCounter > 0;
         }
 
         /* set focus to element by id (id must start with #) */
-        export let delayedFocus = function(id) {
+        export let delayedFocus = function(id): void {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
                 $(id).focus();
@@ -413,7 +413,7 @@ namespace m64 {
 		 *
 		 * requires: res.success res.message
 		 */
-        export let checkSuccess = function(opFriendlyName, res) {
+        export let checkSuccess = function(opFriendlyName, res): boolean {
             if (!res.success) {
                 (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
             }
@@ -421,7 +421,7 @@ namespace m64 {
         }
 
         /* adds all array objects to obj as a set */
-        export let addAll = function(obj, a) {
+        export let addAll = function(obj, a): void {
             for (var i = 0; i < a.length; i++) {
                 if (!a[i]) {
                     console.error("null element in addAll at idx=" + i);
@@ -431,7 +431,7 @@ namespace m64 {
             }
         }
 
-        export let nullOrUndef = function(obj) {
+        export let nullOrUndef = function(obj): boolean {
             return obj === null || obj === undefined;
         }
 
@@ -439,19 +439,19 @@ namespace m64 {
 		 * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
 		 * 'hashset-type' implementation
 		 */
-        export let getUidForId = function(map:{[key: string]: string}, id):string {
+        export let getUidForId = function(map: { [key: string]: string }, id): string {
             /* look for uid in map */
-            let uid:string = map[id];
+            let uid: string = map[id];
 
             /* if not found, get next number, and add to map */
             if (!uid) {
-                uid = ""+meta64.nextUid++;
+                uid = "" + meta64.nextUid++;
                 map[id] = uid;
             }
             return uid;
         }
 
-        export let elementExists = function(id) {
+        export let elementExists = function(id): boolean {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -466,7 +466,7 @@ namespace m64 {
         }
 
         /* Takes textarea dom Id (# optional) and returns its value */
-        export let getTextAreaValById = function(id) {
+        export let getTextAreaValById = function(id): string {
             var de: HTMLElement = domElm(id);
             return (<HTMLInputElement>de).value;
         }
@@ -474,7 +474,7 @@ namespace m64 {
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        export let domElm = function(id) {
+        export let domElm = function(id): any {
             if (id.startsWith("#")) {
                 id = id.substring(1);
             }
@@ -491,14 +491,14 @@ namespace m64 {
             return e;
         }
 
-        export let poly = function(id) {
+        export let poly = function(id): any {
             return polyElm(id).node;
         }
 
 		/*
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
-        export let polyElm = function(id) {
+        export let polyElm = function(id: string): any {
 
             if (id.startsWith("#")) {
                 id = id.substring(1);
@@ -516,7 +516,7 @@ namespace m64 {
             return Polymer.dom(e);
         }
 
-        export let polyElmNode = function(id) {
+        export let polyElmNode = function(id: string): any {
             var e = polyElm(id);
             return e.node;
         }
@@ -524,7 +524,7 @@ namespace m64 {
 		/*
 		 * Gets the element and displays an error message if it's not found
 		 */
-        export let getRequiredElement = function(id) {
+        export let getRequiredElement = function(id: string): any {
             var e = $(id);
             if (e == null) {
                 console.log("getRequiredElement. Required element id not found: " + id);
@@ -532,24 +532,24 @@ namespace m64 {
             return e;
         }
 
-        export let isObject = function(obj) {
+        export let isObject = function(obj: any): boolean {
             return obj && obj.length != 0;
         }
 
-        export let currentTimeMillis = function() {
+        export let currentTimeMillis = function(): number {
             return new Date().getMilliseconds();
         }
 
-        export let emptyString = function(val) {
+        export let emptyString = function(val: string): boolean {
             return !val || val.length == 0;
         }
 
-        export let getInputVal = function(id) {
+        export let getInputVal = function(id: string): any {
             return polyElm(id).node.value;
         }
 
         /* returns true if element was found, or false if element not found */
-        export let setInputVal = function(id, val) {
+        export let setInputVal = function(id: string, val: string): boolean {
             if (val == null) {
                 val = "";
             }
@@ -560,17 +560,18 @@ namespace m64 {
             return elm != null;
         }
 
-        export let bindEnterKey = function(id, func) {
+        export let bindEnterKey = function(id: string, func: any) {
             bindKey(id, func, 13);
         }
 
-        export let bindKey = function(id, func, keyCode) {
+        export let bindKey = function(id: string, func: any, keyCode: any): boolean {
             $(id).keypress(function(e) {
                 if (e.which == keyCode) { // 13==enter key code
                     func();
                     return false;
                 }
             });
+            return false;
         }
 
 		/*
@@ -578,7 +579,7 @@ namespace m64 {
 		 * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
 		 * old class didn't exist, then new Class is added at end of class list.
 		 */
-        export let changeOrAddClass = function(elm, oldClass, newClass) {
+        export let changeOrAddClass = function(elm: string, oldClass: string, newClass: string) {
             var elmement = $(elm);
             elmement.toggleClass(oldClass, false);
             elmement.toggleClass(newClass, true);
@@ -587,7 +588,7 @@ namespace m64 {
 		/*
 		 * displays message (msg) of object is not of specified type
 		 */
-        export let verifyType = function(obj, type, msg) {
+        export let verifyType = function(obj: any, type: any, msg: string) {
             if (typeof obj !== type) {
                 (new MessageDlg(msg)).open();
                 return false;
@@ -596,7 +597,7 @@ namespace m64 {
         }
 
         /* sets html and returns DOM element */
-        export let setHtmlEnhanced = function(id, content) {
+        export let setHtmlEnhanced = function(id: string, content: string): any {
             if (content == null) {
                 content = "";
             }
@@ -612,7 +613,7 @@ namespace m64 {
             return elm;
         }
 
-        export let setHtml = function(id, content) {
+        export let setHtml = function(id: string, content: string): void {
             if (content == null) {
                 content = "";
             }
@@ -622,7 +623,7 @@ namespace m64 {
             polyElm.node.innerHTML = content;
         }
 
-        export let getPropertyCount = function(obj) {
+        export let getPropertyCount = function(obj: Object): number {
             var count = 0;
             var prop;
 
@@ -637,13 +638,14 @@ namespace m64 {
 		/*
 		 * iterates over an object creating a string containing it's keys and values
 		 */
-        export let printObject = function(obj) {
+        export let printObject = function(obj: Object): string {
             if (!obj) {
                 return "null";
             }
 
+            let val: string = ""
             try {
-                var count = 0;
+                let count: number = 0;
                 for (var prop in obj) {
                     if (obj.hasOwnProperty(prop)) {
                         console.log("Property[" + count + "]");
@@ -651,7 +653,6 @@ namespace m64 {
                     }
                 }
 
-                var val = '';
                 $.each(obj, function(k, v) {
                     val += k + " , " + v + "\n";
                 });
@@ -662,11 +663,11 @@ namespace m64 {
         }
 
         /* iterates over an object creating a string containing it's keys */
-        export let printKeys = function(obj) {
+        export let printKeys = function(obj: Object): string {
             if (!obj)
                 return "null";
 
-            var val = '';
+            let val:string = "";
             $.each(obj, function(k, v) {
                 if (!k) {
                     k = "null";
@@ -685,7 +686,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setEnablement = function(elmId, enable) {
+        export let setEnablement = function(elmId:string, enable:boolean) : void {
 
             var elm = null;
             if (typeof elmId == "string") {
@@ -713,7 +714,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setVisibility = function(elmId, vis) {
+        export let setVisibility = function(elmId:string, vis:boolean): void {
 
             var elm = null;
             if (typeof elmId == "string") {
@@ -734,6 +735,16 @@ namespace m64 {
                 // console.log("hiding element: " + elmId);
                 elm.style.display = 'none';
             }
+        }
+
+        /* Programatically creates objects by name, similar to what Java reflection does
+
+        * ex: var example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
+        */
+        export let getInstance = function <T>(context: Object, name: string, ...args: any[]): T {
+            var instance = Object.create(context[name].prototype);
+            instance.constructor.apply(instance, args);
+            return <T>instance;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace m64 {
             var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
             meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
                 : meta64.MODE_ADVANCED;
-            util.jsonG<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
+            util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
                 "userPreferences": {
                     "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
 

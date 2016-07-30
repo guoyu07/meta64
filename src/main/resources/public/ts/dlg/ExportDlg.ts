@@ -31,7 +31,7 @@ namespace m64 {
             }
 
             if (highlightNode) {
-                util.jsonG<json.ExportRequest, json.ExportResponse>("exportToXml", {
+                util.json<json.ExportRequest, json.ExportResponse>("exportToXml", {
                     "nodeId": highlightNode.id,
                     "targetFileName": targetFileName
                 }, this.exportResponse, this);

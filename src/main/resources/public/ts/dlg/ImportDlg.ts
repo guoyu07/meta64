@@ -31,7 +31,7 @@ namespace m64 {
             }
 
             if (highlightNode) {
-                util.jsonG<json.ImportRequest,json.ImportResponse>("import", {
+                util.json<json.ImportRequest,json.ImportResponse>("import", {
                     "nodeId": highlightNode.id,
                     "sourceFileName": sourceFileName
                 }, this.importResponse, this);

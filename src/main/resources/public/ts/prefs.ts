@@ -15,7 +15,7 @@ namespace m64 {
             (new ConfirmDlg("Oh No!", "Close your Account?<p> Are you sure?", "Yes, Close Account.", function() {
                 (new ConfirmDlg("One more Click", "Your data will be deleted and can never be recovered.<p> Are you sure?", "Yes, Close Account.", function() {
                     user.deleteAllUserCookies();
-                    util.jsonG<json.CloseAccountRequest, json.CloseAccountResponse>("closeAccount", {}, closeAccountResponse);
+                    util.json<json.CloseAccountRequest, json.CloseAccountResponse>("closeAccount", {}, closeAccountResponse);
                 })).open();
             })).open();
         }

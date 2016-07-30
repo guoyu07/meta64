@@ -6,7 +6,7 @@ namespace m64 {
         export let uploadNode: any = null;
 
         export let openUploadFromFileDlg = function(): void {
-            var node = meta64.getHighlightedNode();
+            let node:json.NodeInfo = meta64.getHighlightedNode();
             console.log("running m64.namespace version!");
             if (!node) {
                 uploadNode = null;
@@ -19,7 +19,7 @@ namespace m64 {
         }
 
         export let openUploadFromUrlDlg = function(): void {
-            var node = meta64.getHighlightedNode();
+            let node:json.NodeInfo = meta64.getHighlightedNode();
 
             if (!node) {
                 uploadNode = null;
@@ -32,12 +32,12 @@ namespace m64 {
         }
 
         export let deleteAttachment = function(): void {
-            var node = meta64.getHighlightedNode();
-            //var thiz: Attachment = this;
+            let node:json.NodeInfo = meta64.getHighlightedNode();
+
             if (node) {
                 (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
                     function() {
-                        util.jsonG<json.DeleteAttachmentRequest, json.DeleteAttachmentResponse>("deleteAttachment", {
+                        util.json<json.DeleteAttachmentRequest, json.DeleteAttachmentResponse>("deleteAttachment", {
                             "nodeId": node.id
                         }, deleteAttachmentResponse, null, node.uid);
                     })).open();

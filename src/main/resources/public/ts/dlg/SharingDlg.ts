@@ -41,7 +41,7 @@ namespace m64 {
         reload = (): void => {
             console.log("Loading node sharing info.");
 
-            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+            util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": share.sharingNode.id,
                 "includeAcl": true,
                 "includeOwners": true
@@ -107,7 +107,7 @@ namespace m64 {
 
                 meta64.treeDirty = true;
 
-                util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+                util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                     "nodeId": share.sharingNode.id,
                     "privileges" : null,
                     "principal" : null,
@@ -123,7 +123,7 @@ namespace m64 {
              */
             meta64.treeDirty = true;
 
-            util.jsonG<json.RemovePrivilegeRequest, json.RemovePrivilegeResponse>("removePrivilege", {
+            util.json<json.RemovePrivilegeRequest, json.RemovePrivilegeResponse>("removePrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": principal,
                 "privilege": privilege
@@ -132,7 +132,7 @@ namespace m64 {
 
         removePrivilegeResponse = (res: json.RemovePrivilegeResponse): void => {
 
-            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+            util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": share.sharingNode.path,
                 "includeAcl": true,
                 "includeOwners": true
@@ -176,7 +176,7 @@ namespace m64 {
              *
              * TODO: this additional call can be avoided as an optimization
              */
-            util.jsonG<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+            util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "principal": "everyone",
                 "privileges": ["read"],

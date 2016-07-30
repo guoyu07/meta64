@@ -39,7 +39,7 @@ namespace m64 {
             this.pwd = this.getInputVal("changePassword1").trim();
 
             if (this.pwd && this.pwd.length >= 4) {
-                util.jsonG<json.ChangePasswordRequest,json.ChangePasswordResponse>("changePassword", {
+                util.json<json.ChangePasswordRequest,json.ChangePasswordResponse>("changePassword", {
                     "newPassword": this.pwd,
                     "passCode": this.passCode
                 }, this.changePasswordResponse, this);

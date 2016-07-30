@@ -63,7 +63,7 @@ namespace m64 {
                 return;
             }
 
-            util.jsonG<json.SignupRequest,json.SignupResponse>("signup", {
+            util.json<json.SignupRequest,json.SignupResponse>("signup", {
                 "userName": userName,
                 "password": password,
                 "email": email,

@@ -5,17 +5,17 @@ declare var prettyPrint;
 
 namespace m64 {
     export namespace render {
-        let _debug: boolean = false;
+        let debug: boolean = false;
 
         /*
          * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
          * want to give them some instructions and the ability to add content.
          */
-        let _getEmptyPagePrompt = function() {
+        let getEmptyPagePrompt = function(): string {
             return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
         }
 
-        let _renderBinary = function(node: json.NodeInfo) {
+        let renderBinary = function(node: json.NodeInfo): string {
             /*
              * If this is an image render the image directly onto the page as a visible image
              */
@@ -26,7 +26,7 @@ namespace m64 {
              * If not an image we render a link to the attachment, so that it can be downloaded.
              */
             else {
-                var anchor = tag("a", {
+                let anchor: string = tag("a", {
                     "href": getUrlForNodeAttachment(node)
                 }, "[Download Attachment]");
 
@@ -43,7 +43,7 @@ namespace m64 {
          *
          * If 'data' is provided, this is the instance data for the dialog
          */
-        export let buidPage = function(pg, data) {
+        export let buidPage = function(pg, data): void {
             console.log("buildPage: pg.domId=" + pg.domId);
 
             if (!pg.built || data) {
@@ -56,10 +56,10 @@ namespace m64 {
             }
         }
 
-        export let buildRowHeader = function(node: json.NodeInfo, showPath, showName) {
-            var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+        export let buildRowHeader = function(node: json.NodeInfo, showPath: boolean, showName: boolean): string {
+            let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
-            var headerText = "";
+            let headerText: string = "";
 
             if (cnst.SHOW_PATH_ON_ROWS) {
                 headerText += "<div class='path-display'>Path: " + formatPath(node) + "</div>";
@@ -68,11 +68,11 @@ namespace m64 {
             headerText += "<div>";
 
             if (commentBy) {
-                var clazz = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
+                let clazz: string = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
                 headerText += "<span class='" + clazz + "'>Comment By: " + commentBy + "</span>";
             } //
             else if (node.createdBy) {
-                var clazz = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
+                let clazz: string = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
                 headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
             }
 
@@ -108,7 +108,7 @@ namespace m64 {
          * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
          * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
          */
-        export let injectCodeFormatting = function(content: string) {
+        export let injectCodeFormatting = function(content: string): string {
 
             // example markdown:
             // ```js
@@ -125,11 +125,11 @@ namespace m64 {
             return content;
         }
 
-        export let injectSubstitutions = function(content: string) {
+        export let injectSubstitutions = function(content: string): string {
             return content.replaceAll("{{locationOrigin}}", window.location.origin);
         }
 
-        export let encodeLanguages = function(content: string) {
+        export let encodeLanguages = function(content: string): string {
             /*
              * todo-1: need to provide some way of having these language types configurable in a properties file
              * somewhere, and fill out a lot more file types.
@@ -146,7 +146,7 @@ namespace m64 {
 
         /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
         which is what's done in most of the app, which is much less efficient and snappy visually */
-        export let refreshNodeOnPage = function(node: json.NodeInfo) {
+        export let refreshNodeOnPage = function(node: json.NodeInfo): void {
             //need to lookup uid from NodeInfo.id then set the content of this div.
             //"id": uid + "_content"
             //to the value from renderNodeContent(node, true, true, true, true, true)));
@@ -162,7 +162,7 @@ namespace m64 {
          * This is the function that renders each node in the main window. The rendering in here is very central to the
          * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
          */
-        export let renderNodeContent = function(node: json.NodeInfo, showPath, showName, renderBinary, rowStyling, showHeader) {
+        export let renderNodeContent = function(node: json.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
             var ret: string = getTopRightImageTag(node);
 
             /* todo-2: enable headerText when appropriate here */
@@ -174,11 +174,11 @@ namespace m64 {
                     ret += /* "<br>" + */properties;
                 }
             } else {
-                var contentProp = props.getNodeProperty(jcrCnst.CONTENT, node);
+                let contentProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
                 // console.log("contentProp: " + contentProp);
                 if (contentProp) {
 
-                    var jcrContent = props.renderProperty(contentProp);
+                    let jcrContent: string = props.renderProperty(contentProp);
                     jcrContent = "<div>" + jcrContent + "</div>"
 
                     if (jcrContent.length > 0) {
@@ -238,7 +238,7 @@ namespace m64 {
                         }
                     } else {
                         ret += "<div>[No Content Text]</div>";
-                        var properties = props.renderProperties(node.properties);
+                        let properties: string = props.renderProperties(node.properties);
                         if (properties) {
                             ret += /* "<br>" + */properties;
                         }
@@ -256,15 +256,15 @@ namespace m64 {
                         ret += "Root Node";
                     }
                     // ret += "<div>[No Content Property]</div>";
-                    var properties = props.renderProperties(node.properties);
+                    let properties: string = props.renderProperties(node.properties);
                     if (properties) {
                         ret += /* "<br>" + */properties;
                     }
                 }
             }
 
-            if (renderBinary && node.hasBinary) {
-                var binary = _renderBinary(node);
+            if (renderBin && node.hasBinary) {
+                let binary: string = renderBinary(node);
 
                 /*
                  * We append the binary image or resource link either at the end of the text or at the location where
@@ -278,7 +278,7 @@ namespace m64 {
                 }
             }
 
-            var tags = props.getNodePropertyVal(jcrCnst.TAGS, node);
+            let tags: string = props.getNodePropertyVal(jcrCnst.TAGS, node);
             if (tags) {
                 ret += tag("div", {
                     "class": "tags-content"
@@ -294,17 +294,17 @@ namespace m64 {
          *
          * node is a NodeInfo.java JSON
          */
-        export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number) {
+        export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number): string {
 
-            var uid = node.uid;
-            var canMoveUp = index > 0 && rowCount > 1;
-            var canMoveDown = index < count - 1;
+            let uid: string = node.uid;
+            let canMoveUp: boolean = index > 0 && rowCount > 1;
+            let canMoveDown: boolean = index < count - 1;
 
-            var isRep = node.name.startsWith("rep:") || /*
+            let isRep: boolean = node.name.startsWith("rep:") || /*
 														 * meta64.currentNodeData. bug?
 														 */node.path.contains("/rep:");
 
-            var editingAllowed = props.isOwnedCommentNode(node);
+            let editingAllowed: boolean = props.isOwnedCommentNode(node);
             if (!editingAllowed) {
                 editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
                     && !props.isNonOwnedNode(node);
@@ -318,13 +318,13 @@ namespace m64 {
              */
             // console.log("test: [" + parentIdToFocusIdMap[currentNodeId]
             // +"]==["+ node.id + "]")
-            var focusNode = meta64.getHighlightedNode();
-            var selected = (focusNode && focusNode.uid === uid);
+            let focusNode: json.NodeInfo = meta64.getHighlightedNode();
+            let selected: boolean = (focusNode && focusNode.uid === uid);
 
-            var buttonBarHtmlRet = makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
-            var bkgStyle = getNodeBkgImageStyle(node);
+            let buttonBarHtmlRet: string = makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
+            let bkgStyle: string = getNodeBkgImageStyle(node);
 
-            var cssId = uid + "_row";
+            let cssId: string = uid + "_row";
             return tag("div", {
                 "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
                 "onClick": "m64.nav.clickOnNodeRow(this, '" + uid + "');", //
@@ -337,18 +337,18 @@ namespace m64 {
         }
 
         export let showNodeUrl = function() {
-            var node = meta64.getHighlightedNode();
+            let node: json.NodeInfo = meta64.getHighlightedNode();
             if (!node) {
                 (new MessageDlg("You must first click on a node.")).open();
                 return;
             }
 
-            var path = node.path.stripIfStartsWith("/root");
-            var url = window.location.origin + "?id=" + path;
+            let path: string = node.path.stripIfStartsWith("/root");
+            let url: string = window.location.origin + "?id=" + path;
             meta64.selectTab("mainTabName");
 
-            var message = "URL using path: <br>" + url;
-            var uuid = props.getNodePropertyVal("jcr:uuid", node);
+            let message: string = "URL using path: <br>" + url;
+            let uuid: string = props.getNodePropertyVal("jcr:uuid", node);
             if (uuid) {
                 message += "<p>URL for UUID: <br>" + window.location.origin + "?id=" + uuid;
             }
@@ -357,8 +357,8 @@ namespace m64 {
         }
 
         export let getTopRightImageTag = function(node: json.NodeInfo) {
-            var topRightImg = props.getNodePropertyVal('img.top.right', node);
-            var topRightImgTag = "";
+            let topRightImg: string = props.getNodePropertyVal('img.top.right', node);
+            let topRightImgTag: string = "";
             if (topRightImg) {
                 topRightImgTag = tag("img", {
                     "src": topRightImg,
@@ -368,16 +368,16 @@ namespace m64 {
             return topRightImgTag;
         }
 
-        export let getNodeBkgImageStyle = function(node: json.NodeInfo) {
-            var bkgImg = props.getNodePropertyVal('img.node.bkg', node);
-            var bkgImgStyle = "";
+        export let getNodeBkgImageStyle = function(node: json.NodeInfo): string {
+            let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
+            let bkgImgStyle: string = "";
             if (bkgImg) {
                 bkgImgStyle = "background-image: url(" + bkgImg + ");";
             }
             return bkgImgStyle;
         }
 
-        export let centeredButtonBar = function(buttons?: any, classes?: any) {
+        export let centeredButtonBar = function(buttons?: string, classes?: string): string {
             classes = classes || "";
 
             return tag("div", {
@@ -385,7 +385,7 @@ namespace m64 {
             }, buttons);
         }
 
-        export let buttonBar = function(buttons, classes) {
+        export let buttonBar = function(buttons: string, classes: string): string {
             classes = classes || "";
 
             return tag("div", {
@@ -395,18 +395,18 @@ namespace m64 {
 
         export let makeRowButtonBarHtml = function(node: json.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
 
-            var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-            var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-            var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
+            let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
+            let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+            let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 
-            var openButton = "";
-            var selButton = "";
-            var createSubNodeButton = "";
-            var editNodeButton = "";
-            var moveNodeUpButton = "";
-            var moveNodeDownButton = "";
-            var insertNodeButton = "";
-            var replyButton = "";
+            let openButton: string = "";
+            let selButton: string = "";
+            let createSubNodeButton: string = "";
+            let editNodeButton: string = "";
+            let moveNodeUpButton: string = "";
+            let moveNodeDownButton: string = "";
+            let insertNodeButton: string = "";
+            let replyButton: string = "";
 
             /*
              * Show Reply button if this is a publicly appendable node and not created by current user,
@@ -420,7 +420,7 @@ namespace m64 {
                     "Reply");
             }
 
-            var buttonCount = 0;
+            let buttonCount: number = 0;
 
             /* Construct Open Button */
             if (nodeHasChildren(node.uid)) {
@@ -442,12 +442,12 @@ namespace m64 {
             if (meta64.editMode) {
                 // console.log("Editing allowed: " + nodeId);
 
-                var selected = meta64.selectedNodes[node.uid] ? true : false;
+                let selected: boolean = meta64.selectedNodes[node.uid] ? true : false;
 
                 // console.log(" nodeId " + node.uid + " selected=" + selected);
                 buttonCount++;
 
-                var css = selected ? {
+                let css: Object = selected ? {
                     "id": node.uid + "_sel",//
                     "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');",
                     "checked": "checked"
@@ -516,23 +516,23 @@ namespace m64 {
              *
              * However tooltips ALWAYS cause problems. Mystery for now.
              */
-            var insertNodeTooltip = "";
+            let insertNodeTooltip: string = "";
             //			 tag("paper-tooltip", {
             //			 "for" : "insertNodeButtonId" + node.uid
             //			 }, "INSERTS a new node at the current tree position. As a sibling on this level.");
 
-            var addNodeTooltip = "";
+            let addNodeTooltip: string = "";
             //			 tag("paper-tooltip", {
             //			 "for" : "addNodeButtonId" + node.uid
             //			 }, "ADDS a new node inside the current node, as a child of it.");
 
-            var allButtons = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
+            let allButtons: string = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
                 + addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton + replyButton;
 
             return allButtons.length > 0 ? makeHorizontalFieldSet(allButtons) : "";
         }
 
-        export let makeHorizontalFieldSet = function(content?: string, extraClasses?: string) {
+        export let makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
 
             /* Now build entire control bar */
             return tag("div", //
@@ -541,13 +541,13 @@ namespace m64 {
                 }, content, true);
         }
 
-        export let makeHorzControlGroup = function(content: string) {
+        export let makeHorzControlGroup = function(content: string): string {
             return tag("div", {
                 "class": "horizontal layout"
             }, content, true);
         }
 
-        export let makeRadioButton = function(label: string, id: string) {
+        export let makeRadioButton = function(label: string, id: string): string {
             return tag("paper-radio-button", {
                 "id": id,
                 "name": id
@@ -557,7 +557,7 @@ namespace m64 {
         /*
          * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
          */
-        export let nodeHasChildren = function(uid: string) {
+        export let nodeHasChildren = function(uid: string): boolean {
             var node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("Unknown nodeId in nodeHasChildren: " + uid);
@@ -567,24 +567,24 @@ namespace m64 {
             }
         }
 
-        export let formatPath = function(node: json.NodeInfo) {
-            var path = node.path;
+        export let formatPath = function(node: json.NodeInfo): string {
+            let path: string = node.path;
 
             /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
             path = path.replaceAll("/", " / ");
-            var shortPath = path.length < 50 ? path : path.substring(0, 40) + "...";
+            let shortPath: string = path.length < 50 ? path : path.substring(0, 40) + "...";
 
-            var noRootPath = shortPath;
+            let noRootPath: string = shortPath;
             if (noRootPath.startsWith("/root")) {
                 noRootPath = noRootPath.substring(0, 5);
             }
 
-            var ret = meta64.isAdminUser ? shortPath : noRootPath;
+            let ret: string = meta64.isAdminUser ? shortPath : noRootPath;
             ret += " [" + node.primaryTypeName + "]";
             return ret;
         }
 
-        export let wrapHtml = function(text: string) {
+        export let wrapHtml = function(text: string): string {
             return "<div>" + text + "</div>";
         }
 
@@ -592,8 +592,8 @@ namespace m64 {
          * Each page can show buttons at the top of it (not main header buttons but additional buttons just for that
          * page only, and this generates that content for that entire control bar.
          */
-        export let renderMainPageControls = function() {
-            var html = '';
+        export let renderMainPageControls = function(): void {
+            let html: string = "";
 
             var hasContent = html.length > 0;
             if (hasContent) {
@@ -606,11 +606,11 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = function(data?: json.RenderNodeResponse) {
+        export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
-            var newData = false;
+            let newData: boolean = false;
             if (!data) {
                 data = meta64.currentNodeData;
             } else {
@@ -642,38 +642,38 @@ namespace m64 {
                 meta64.setCurrentNodeData(data);
             }
 
-            var propCount = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
+            let propCount: number = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
 
-            if (_debug) {
+            if (debug) {
                 console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
             }
 
-            var output = '';
-            var bkgStyle = getNodeBkgImageStyle(data.node);
+            let output: string = "";
+            let bkgStyle: string = getNodeBkgImageStyle(data.node);
 
             /*
              * NOTE: mainNodeContent is the parent node of the page content, and is always the node displayed at the to
              * of the page above all the other nodes which are its child nodes.
              */
-            var mainNodeContent = renderNodeContent(data.node, true, true, true, false, true);
+            let mainNodeContent: string = renderNodeContent(data.node, true, true, true, false, true);
 
             //console.log("mainNodeContent: "+mainNodeContent);
 
             if (mainNodeContent.length > 0) {
-                var uid = data.node.uid;
-                var cssId = uid + "_row";
-                var buttonBar = "";
-                var editNodeButton = "";
-                var createSubNodeButton = "";
-                var replyButton = "";
+                let uid:string = data.node.uid;
+                let cssId:string = uid + "_row";
+                let buttonBar:string = "";
+                let editNodeButton:string = "";
+                let createSubNodeButton:string = "";
+                let replyButton:string = "";
 
                 // console.log("data.node.path="+data.node.path);
                 // console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
                 // console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
-                var createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
-                var commentBy = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
-                var publicAppend = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
+                let createdBy:string = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
+                let commentBy:string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
+                let publicAppend:string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
 
                 /*
                  * Show Reply button if this is a publicly appendable node and not created by current user,
@@ -707,15 +707,15 @@ namespace m64 {
                 }
 
                 /* Construct Create Subnode Button */
-                var focusNode = meta64.getHighlightedNode();
-                var selected = focusNode && focusNode.uid === uid;
+                let focusNode:json.NodeInfo = meta64.getHighlightedNode();
+                let selected:boolean = focusNode && focusNode.uid === uid;
                 // var rowHeader = buildRowHeader(data.node, true, true);
 
                 if (createSubNodeButton || editNodeButton || replyButton) {
                     buttonBar = makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
                 }
 
-                var content = tag("div", {
+                let content:string = tag("div", {
                     "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
                     "onClick": "m64.nav.clickOnNodeRow(this, '" + uid + "');",
                     "id": cssId
@@ -736,7 +736,7 @@ namespace m64 {
 
             let rowCount: number = 0;
             if (data.children) {
-                var childCount = data.children.length;
+                let childCount:number = data.children.length;
                 // console.log("childCount: " + childCount);
                 /*
                  * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
@@ -744,8 +744,8 @@ namespace m64 {
                  */
 
                 for (var i = 0; i < data.children.length; i++) {
-                    var node = data.children[i];
-                    var row = generateRow(i, node, newData, childCount, rowCount);
+                    let node:json.NodeInfo = data.children[i];
+                    let row:string = generateRow(i, node, newData, childCount, rowCount);
                     if (row.length != 0) {
                         output += row;
                         rowCount++;
@@ -755,7 +755,7 @@ namespace m64 {
 
             if (edit.isInsertAllowed(data.node)) {
                 if (rowCount == 0 && !meta64.isAnonUser) {
-                    output = _getEmptyPagePrompt();
+                    output = getEmptyPagePrompt();
                 }
             }
 
@@ -779,7 +779,7 @@ namespace m64 {
             }
         }
 
-        export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number) {
+        export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number) :string {
 
             if (meta64.isNodeBlackListed(node))
                 return "";
@@ -787,7 +787,7 @@ namespace m64 {
             if (newData) {
                 meta64.initNode(node, true);
 
-                if (_debug) {
+                if (debug) {
                     console.log(" RENDER ROW[" + i + "]: node.id=" + node.id);
                 }
             }
@@ -798,12 +798,12 @@ namespace m64 {
             return row;
         }
 
-        export let getUrlForNodeAttachment = function(node: json.NodeInfo) {
+        export let getUrlForNodeAttachment = function(node: json.NodeInfo):string {
             return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
         }
 
         /* see also: makeImageTag() */
-        export let adjustImageSize = function(node: json.NodeInfo) {
+        export let adjustImageSize = function(node: json.NodeInfo) :void {
 
             var elm = $("#" + node.imgId);
             if (elm) {
@@ -853,7 +853,7 @@ namespace m64 {
 
         /* see also: adjustImageSize() */
         export let makeImageTag = function(node: json.NodeInfo) {
-            var src = getUrlForNodeAttachment(node);
+            let src:string = getUrlForNodeAttachment(node);
             node.imgId = "imgUid_" + node.uid;
 
             if (node.width && node.height) {
@@ -872,12 +872,12 @@ namespace m64 {
                 if (node.width > meta64.deviceWidth - 50) {
 
                     /* set the width we want to go for */
-                    var width = meta64.deviceWidth - 50;
+                    let width:number = meta64.deviceWidth - 50;
 
                     /*
                      * and set the height to the value it needs to be at for same w/h ratio (no image stretching)
                      */
-                    var height = width * node.height / node.width;
+                    let height:number = width * node.height / node.width;
 
                     return tag("img", {
                         "src": src,
@@ -907,14 +907,14 @@ namespace m64 {
          * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
          * content is non-null
          */
-        export let tag = function(tag?: string, attributes?: Object, content?: string, closeTag?: boolean) {
+        export let tag = function(tag?: string, attributes?: Object, content?: string, closeTag?: boolean): string {
 
             /* default parameter values */
             if (typeof (closeTag) === 'undefined')
                 closeTag = true;
 
             /* HTML tag itself */
-            var ret = "<" + tag;
+            let ret:string = "<" + tag;
 
             if (attributes) {
                 ret += " ";
@@ -943,7 +943,7 @@ namespace m64 {
             return ret;
         }
 
-        export let makeTextArea = function(fieldName: string, fieldId: string) {
+        export let makeTextArea = function(fieldName: string, fieldId: string) :string {
             return tag("paper-textarea", {
                 "name": fieldId,
                 "label": fieldName,
@@ -951,7 +951,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeEditField = function(fieldName: string, fieldId: string) {
+        export let makeEditField = function(fieldName: string, fieldId: string) : string{
             return tag("paper-input", {
                 "name": fieldId,
                 "label": fieldName,
@@ -959,7 +959,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makePasswordField = function(fieldName: string, fieldId: string) {
+        export let makePasswordField = function(fieldName: string, fieldId: string):string {
             return tag("paper-input", {
                 "type": "password",
                 "name": fieldId,
@@ -968,8 +968,8 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeButton = function(text: string, id: string, callback: any) {
-            var attribs = {
+        export let makeButton = function(text: string, id: string, callback: any) :string{
+            let attribs:Object = {
                 "raised": "raised",
                 "id": id
             };
@@ -984,7 +984,7 @@ namespace m64 {
         /*
          * domId is id of dialog being closed.
          */
-        export let makeBackButton = function(text: string, id: string, domId: string, callback: any) {
+        export let makeBackButton = function(text: string, id: string, domId: string, callback: any) : string{
 
             if (callback === undefined) {
                 callback = "";
@@ -997,21 +997,21 @@ namespace m64 {
             }, text, true);
         }
 
-        export let allowPropertyToDisplay = function(propName: string) {
+        export let allowPropertyToDisplay = function(propName: string) : boolean {
             if (!meta64.inSimpleMode())
                 return true;
             return meta64.simpleModePropertyBlackList[propName] == null;
         }
 
-        export let isReadOnlyProperty = function(propName: string) {
+        export let isReadOnlyProperty = function(propName: string) : boolean{
             return meta64.readOnlyPropertyList[propName];
         }
 
-        export let isBinaryProperty = function(propName: string) {
+        export let isBinaryProperty = function(propName: string) : boolean {
             return meta64.binaryPropertyList[propName];
         }
 
-        export let sanitizePropertyName = function(propName: string) {
+        export let sanitizePropertyName = function(propName: string) : string{
             if (meta64.editModeOption === "simple") {
                 return propName === jcrCnst.CONTENT ? "Content" : propName;
             } else {

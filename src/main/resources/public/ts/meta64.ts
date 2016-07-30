@@ -10,8 +10,8 @@ namespace m64 {
         export let appInitialized: boolean = false;
 
         export let curUrlPath: string = window.location.pathname + window.location.search;
-        export let urlCmd:string;
-        export let homeNodeOverride:string;
+        export let urlCmd: string;
+        export let homeNodeOverride: string;
 
         export let codeFormatDirty: boolean = false;
         export let serverMarkdown: boolean = true;
@@ -171,7 +171,7 @@ namespace m64 {
          *
          * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
          */
-        export let encodeOnClick = function(callback, ctx) {
+        export let encodeOnClick = function(callback: any, ctx) {
             if (typeof callback == "string") {
                 return callback;
             } //
@@ -184,6 +184,9 @@ namespace m64 {
                 } else {
                     return "m64.meta64.runCallback(" + callback.guid + ");";
                 }
+            }
+            else {
+                throw "unexpected callback type in encodeOnClick";
             }
         }
 
@@ -205,19 +208,19 @@ namespace m64 {
                     dataObj();
                 }
             } else {
-                alert("unable to find callback on registered guid: " + guid);
+                throw "unable to find callback on registered guid: " + guid;
             }
         }
 
-        export let inSimpleMode = function() {
+        export let inSimpleMode = function() : boolean{
             return editModeOption === MODE_SIMPLE;
         }
 
-        export let refresh = function() {
+        export let refresh = function() :void {
             goToMainPage(true, true);
         }
 
-        export let goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean) {
+        export let goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean):void {
 
             if (forceServerRefresh) {
                 treeDirty = true;
@@ -240,7 +243,7 @@ namespace m64 {
             }
         }
 
-        export let selectTab = function(pageName) {
+        export let selectTab = function(pageName) :void {
             var ironPages = document.querySelector("#mainIronPages");
             (<_HasSelect>ironPages).select(pageName);
         }
@@ -264,11 +267,11 @@ namespace m64 {
             (<_HasSelect>paperTabs).select(pg.tabId);
         }
 
-        export let isNodeBlackListed = function(node) {
+        export let isNodeBlackListed = function(node) : boolean{
             if (!inSimpleMode())
                 return false;
 
-            var prop;
+            let prop;
             for (prop in simpleModeNodePrefixBlackList) {
                 if (simpleModeNodePrefixBlackList.hasOwnProperty(prop) && node.name.startsWith(prop)) {
                     return true;
@@ -327,8 +330,8 @@ namespace m64 {
         }
 
         export let updateNodeInfoResponse = function(res, node) {
-            var ownerBuf = '';
-            var mine = false;
+            let ownerBuf:string = "";
+            let mine:boolean = false;
 
             if (res.owners) {
                 $.each(res.owners, function(index, owner) {
@@ -356,8 +359,8 @@ namespace m64 {
             }
         }
 
-        export let updateNodeInfo = function(node) {
-            util.jsonG<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+        export let updateNodeInfo = function(node:json.NodeInfo) {
+            util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
                 "nodeId": node.id,
                 "includeAcl": false,
                 "includeOwners": true
@@ -367,11 +370,11 @@ namespace m64 {
         }
 
         /* Returns the node with the given node.id value */
-        export let getNodeFromId = function(id): json.NodeInfo {
+        export let getNodeFromId = function(id:string): json.NodeInfo {
             return idToNodeMap[id];
         }
 
-        export let getPathOfUid = function(uid) {
+        export let getPathOfUid = function(uid:string) : string{
             let node: json.NodeInfo = uidToNodeMap[uid];
             if (!node) {
                 return "[path error. invalid uid: " + uid + "]";
@@ -385,8 +388,8 @@ namespace m64 {
             return ret;
         }
 
-        export let highlightRowById = function(id, scroll) {
-            var node = getNodeFromId(id);
+        export let highlightRowById = function(id, scroll) : void {
+            var node: json.NodeInfo = getNodeFromId(id);
             if (node) {
                 highlightNode(node, scroll);
             } else {
@@ -398,11 +401,11 @@ namespace m64 {
          * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
          * setting that value should go thru this function.
          */
-        export let highlightNode = function(node: json.NodeInfo, scroll: boolean) {
+        export let highlightNode = function(node: json.NodeInfo, scroll: boolean) : void{
             if (!node)
                 return;
 
-            var doneHighlighting = false;
+            let doneHighlighting:boolean = false;
 
             /* Unhighlight currently highlighted node if any */
             let curHighlightedNode: json.NodeInfo = parentUidToFocusNodeMap[currentNodeUid];
@@ -420,8 +423,8 @@ namespace m64 {
             if (!doneHighlighting) {
                 parentUidToFocusNodeMap[currentNodeUid] = node;
 
-                var rowElmId = node.uid + "_row";
-                var rowElm = $("#" + rowElmId);
+                let rowElmId:string = node.uid + "_row";
+                let rowElm:string = $("#" + rowElmId);
                 util.changeOrAddClass(rowElm, "inactive-row", "active-row");
             }
 
@@ -437,9 +440,9 @@ namespace m64 {
         export let refreshAllGuiEnablement = function() {
 
             /* multiple select nodes */
-            var selNodeCount = util.getPropertyCount(selectedNodes);
-            var highlightNode = getHighlightedNode();
-            var selNodeIsMine = highlightNode != null && highlightNode.createdBy === meta64.userName;
+            let selNodeCount:number = util.getPropertyCount(selectedNodes);
+            let highlightNode:json.NodeInfo = getHighlightedNode();
+            let selNodeIsMine:boolean = highlightNode != null && highlightNode.createdBy === meta64.userName;
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
             util.setEnablement("navLogoutButton", !isAnonUser);
@@ -447,10 +450,10 @@ namespace m64 {
             util.setEnablement("openExportDlg", isAdminUser);
             util.setEnablement("openImportDlg", isAdminUser);
 
-            var propsToggle = currentNode && !isAnonUser;
+            let propsToggle:boolean = currentNode && !isAnonUser;
             util.setEnablement("propsToggleButton", propsToggle);
 
-            var allowEditMode = currentNode && !isAnonUser;
+            let allowEditMode:boolean = currentNode && !isAnonUser;
 
             util.setEnablement("editModeButton", allowEditMode);
             util.setEnablement("upLevelButton", currentNode && nav.parentVisibleToUser());
@@ -494,7 +497,7 @@ namespace m64 {
         }
 
         export let getSingleSelectedNode = function(): json.NodeInfo {
-            var uid;
+            let uid:string;
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
                     // console.log("found a single Sel NodeID: " + nodeId);
@@ -505,7 +508,7 @@ namespace m64 {
         }
 
         /* node = NodeInfo.java object */
-        export let getOrdinalOfNode = function(node) {
+        export let getOrdinalOfNode = function(node) : number {
             if (!currentNodeData || !currentNodeData.children)
                 return -1;
 
@@ -517,7 +520,7 @@ namespace m64 {
             return -1;
         }
 
-        export let setCurrentNodeData = function(data) {
+        export let setCurrentNodeData = function(data) : void{
             currentNodeData = data;
             currentNode = data.node;
             currentNodeUid = data.node.uid;
@@ -525,7 +528,7 @@ namespace m64 {
             currentNodePath = data.node.path;
         }
 
-        export let anonPageLoadResponse = function(res: json.AnonPageLoadResponse) {
+        export let anonPageLoadResponse = function(res: json.AnonPageLoadResponse) : void{
 
             if (res.renderNodeResponse) {
 
@@ -543,9 +546,9 @@ namespace m64 {
             render.renderMainPageControls();
         }
 
-        export let removeBinaryByUid = function(uid) {
+        export let removeBinaryByUid = function(uid) : void{
             for (var i = 0; i < currentNodeData.children.length; i++) {
-                var node = currentNodeData.children[i];
+                let node :json.NodeInfo = currentNodeData.children[i];
                 if (node.uid === uid) {
                     node.hasBinary = false;
                     break;
@@ -557,7 +560,7 @@ namespace m64 {
          * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
          * side code
          */
-        export let initNode = function(node: json.NodeInfo, updateMaps?: boolean) {
+        export let initNode = function(node: json.NodeInfo, updateMaps?: boolean) : void {
             if (!node) {
                 console.log("initNode has null node");
                 return;
@@ -575,7 +578,7 @@ namespace m64 {
              * simplify code.
              */
             node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-            node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
+            node.lastModified = new Date(props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node));
 
             if (updateMaps) {
                 uidToNodeMap[node.uid] = node;
@@ -616,7 +619,7 @@ namespace m64 {
         }
 
         /* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
-        export let initApp = function() {
+        export let initApp = function() : void {
             console.log("initApp running.");
 
             if (appInitialized)
@@ -685,7 +688,7 @@ namespace m64 {
             processUrlParams();
         }
 
-        export let processUrlParams = function() {
+        export let processUrlParams = function() : void {
             var passCode = util.getParameterByName("passCode");
             if (passCode) {
                 setTimeout(function() {
@@ -696,20 +699,20 @@ namespace m64 {
             urlCmd = util.getParameterByName("cmd");
         }
 
-        export let tabChangeEvent = function(tabName) {
+        export let tabChangeEvent = function(tabName) : void{
             if (tabName == "searchTabName") {
                 srch.searchTabActivated();
             }
         }
 
-        export let displaySignupMessage = function() {
+        export let displaySignupMessage = function():void {
             var signupResponse = $("#signupCodeResponse").text();
             if (signupResponse === "ok") {
                 (new MessageDlg("Signup complete. You may now login.")).open();
             }
         }
 
-        export let screenSizeChange = function() {
+        export let screenSizeChange = function() :void {
             if (currentNodeData) {
 
                 if (meta64.currentNode.imgId) {
@@ -725,7 +728,7 @@ namespace m64 {
         }
 
         /* Don't need this method yet, and haven't tested to see if works */
-        export let orientationHandler = function(event) {
+        export let orientationHandler = function(event) : void{
             // if (event.orientation) {
             // if (event.orientation === 'portrait') {
             // } else if (event.orientation === 'landscape') {
@@ -733,15 +736,16 @@ namespace m64 {
             // }
         }
 
-        export let loadAnonPageHome = function(ignoreUrl) {
-            util.jsonG<json.AnonPageLoadRequest, json.AnonPageLoadResponse>("anonPageLoad", {
+        export let loadAnonPageHome = function(ignoreUrl): void {
+            util.json<json.AnonPageLoadRequest, json.AnonPageLoadResponse>("anonPageLoad", {
                 "ignoreUrl": ignoreUrl
             }, anonPageLoadResponse);
         }
     }
 }
 
-//todo-0: for now I'll just drop this into a global variable. I know there's a better way.
+/* todo-0: for now I'll just drop this into a global variable. I know there's a better way. This is the only variable
+we have on the global namespace, and is only required for application initialization in JS on the index.html page */
 if (!window["meta64"]) {
     var meta64 = m64.meta64;
 }

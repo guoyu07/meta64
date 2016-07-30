@@ -3,7 +3,7 @@ console.log("running module: edit.js");
 namespace m64 {
     export namespace edit {
 
-        let _insertBookResponse = function(res: json.InsertBookResponse): void {
+        let insertBookResponse = function(res: json.InsertBookResponse): void {
             console.log("insertBookResponse running.");
 
             util.checkSuccess("Insert Book", res);
@@ -12,21 +12,21 @@ namespace m64 {
             view.scrollToSelectedNode();
         }
 
-        let _deleteNodesResponse = function(res: json.DeleteNodesResponse): void {
+        let deleteNodesResponse = function(res: json.DeleteNodesResponse): void {
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
                 view.refreshTree(null, false);
             }
         }
 
-        let _initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
+        let initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
             if (util.checkSuccess("Editing node", res)) {
-                var node = res.nodeInfo;
+                let node:json.NodeInfo = res.nodeInfo;
 
-                var isRep = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
+                let isRep:boolean = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 
                 /* if this is a comment node and we are the commenter */
-                var editingAllowed = props.isOwnedCommentNode(node);
+                let editingAllowed:boolean = props.isOwnedCommentNode(node);
 
                 if (!editingAllowed) {
                     editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
@@ -47,20 +47,20 @@ namespace m64 {
             }
         }
 
-        let _moveNodesResponse = function(res: json.MoveNodesResponse): void {
+        let moveNodesResponse = function(res: json.MoveNodesResponse): void {
             if (util.checkSuccess("Move nodes", res)) {
                 nodesToMove = null; // reset
                 view.refreshTree(null, false);
             }
         }
 
-        let _setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
+        let setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
             if (util.checkSuccess("Change node position", res)) {
                 meta64.refresh();
             }
         }
 
-        let _splitContentResponse = function(res: json.SplitNodeResponse): void {
+        let splitContentResponse = function(res: json.SplitNodeResponse): void {
             if (util.checkSuccess("Split content", res)) {
                 view.refreshTree(null, false);
                 meta64.selectTab("mainTabName");
@@ -79,12 +79,12 @@ namespace m64 {
         /*
          * indicates editor is displaying a node that is not yet saved on the server
          */
-        export let editingUnsavedNode: any = false;
+        export let editingUnsavedNode: boolean = false;
 
         /*
          * node (NodeInfo.java) that is being created under when new node is created
          */
-        export let sendNotificationPendingSave: any = false;
+        export let sendNotificationPendingSave: boolean = false;
 
         /*
          * Node being edited
@@ -92,10 +92,10 @@ namespace m64 {
          * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
          * coupling/responsibility?
          */
-        export let editNode: any = null;
+        export let editNode: json.NodeInfo = null;
 
         /* Instance of EditNodeDialog: For now creating new one each time */
-        export let editNodeDlgInst: any = null;
+        export let editNodeDlgInst: EditNodeDlg = null;
 
         /*
          * type=NodeInfo.java
@@ -195,11 +195,11 @@ namespace m64 {
 
         export let splitContent = function(): void {
             let nodeBelow: json.NodeInfo = getNodeBelow(editNode);
-            util.jsonG<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
+            util.json<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
                 "nodeId": editNode.id,
                 "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
                 "delimiter": null
-            }, _splitContentResponse);
+            }, splitContentResponse);
         }
 
         export let cancelEdit = function(): void {
@@ -213,36 +213,36 @@ namespace m64 {
         }
 
         export let moveNodeUp = function(uid: any): void {
-            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeAbove = getNodeAbove(node);
                 if (nodeAbove == null) {
                     return;
                 }
 
-                util.jsonG<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+                util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
                     "siblingId": nodeAbove.name
-                }, _setNodePositionResponse);
+                }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);
             }
         }
 
         export let moveNodeDown = function(uid: any): void {
-            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                var nodeBelow = getNodeBelow(node);
+                let nodeBelow:json.NodeInfo = getNodeBelow(node);
                 if (nodeBelow == null) {
                     return;
                 }
 
-                util.jsonG<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+                util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeData.node.id,
                     "nodeId": nodeBelow.name,
                     "siblingId": node.name
-                }, _setNodePositionResponse);
+                }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);
             }
@@ -252,7 +252,7 @@ namespace m64 {
          * Returns the node above the specified node or null if node is itself the top node
          */
         export let getNodeAbove = function(node): any {
-            var ordinal = meta64.getOrdinalOfNode(node);
+            let ordinal:number = meta64.getOrdinalOfNode(node);
             if (ordinal <= 0)
                 return null;
             return meta64.currentNodeData.children[ordinal - 1];
@@ -262,7 +262,7 @@ namespace m64 {
          * Returns the node below the specified node or null if node is itself the bottom node
          */
         export let getNodeBelow = function(node: any): json.NodeInfo {
-            var ordinal = meta64.getOrdinalOfNode(node);
+            let ordinal:number = meta64.getOrdinalOfNode(node);
             console.log("ordinal = " + ordinal);
             if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
                 return null;
@@ -277,7 +277,7 @@ namespace m64 {
         // },
 
         export let runEditNode = function(uid: any): void {
-            var node: json.NodeInfo = meta64.uidToNodeMap[uid];
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 editNode = null;
                 (new MessageDlg("Unknown nodeId in editNodeClick: " + uid)).open();
@@ -285,9 +285,9 @@ namespace m64 {
             }
             editingUnsavedNode = false;
 
-            util.jsonG<json.InitNodeEditRequest, json.InitNodeEditResponse>("initNodeEdit", {
+            util.json<json.InitNodeEditRequest, json.InitNodeEditResponse>("initNodeEdit", {
                 "nodeId": node.id
-            }, _initNodeEditResponse);
+            }, initNodeEditResponse);
         }
 
         export let insertNode = function(uid: any): void {
@@ -302,7 +302,7 @@ namespace m64 {
              * We get the node selected for the insert position by using the uid if one was passed in or using the
              * currently highlighted node if no uid was passed.
              */
-            var node: json.NodeInfo = null;
+            let node: json.NodeInfo = null;
             if (!uid) {
                 node = meta64.getHighlightedNode();
             } else {
@@ -380,9 +380,9 @@ namespace m64 {
 
             (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
                 function() {
-                    util.jsonG<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
+                    util.json<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
                         "nodeIds": selNodesArray
-                    }, _deleteNodesResponse);
+                    }, deleteNodesResponse);
                 })).open();
         }
 
@@ -422,11 +422,11 @@ namespace m64 {
                      * page. Later on we can get more specific about allowing precise destination location for moved
                      * nodes.
                      */
-                    util.jsonG<json.MoveNodesRequest, json.MoveNodesResponse>("moveNodes", {
+                    util.json<json.MoveNodesRequest, json.MoveNodesResponse>("moveNodes", {
                         "targetNodeId": highlightNode.id,
                         "targetChildId": highlightNode != null ? highlightNode.id : null,
                         "nodeIds": nodesToMove
-                    }, _moveNodesResponse);
+                    }, moveNodesResponse);
                 })).open();
         }
 
@@ -439,11 +439,11 @@ namespace m64 {
                 if (!node) {
                     (new MessageDlg("No node is selected.")).open();
                 } else {
-                    util.jsonG<json.InsertBookRequest, json.InsertBookResponse>("insertBook", {
+                    util.json<json.InsertBookRequest, json.InsertBookResponse>("insertBook", {
                         "nodeId": node.id,
                         "bookName": "War and Peace",
                         "truncated": user.isTestUserAccount()
-                    }, _insertBookResponse);
+                    }, insertBookResponse);
                 }
             })).open();
         }

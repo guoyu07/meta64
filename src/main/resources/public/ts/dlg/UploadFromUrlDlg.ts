@@ -42,7 +42,7 @@ namespace m64 {
 
             /* if uploading from URL */
             if (sourceUrl) {
-                util.jsonG<json.UploadFromUrlRequest, json.UploadFromUrlResponse>("uploadFromUrl", {
+                util.json<json.UploadFromUrlRequest, json.UploadFromUrlResponse>("uploadFromUrl", {
                     "nodeId": attachment.uploadNode.id,
                     "sourceUrl": sourceUrl
                 }, this.uploadFromUrlResponse, this);

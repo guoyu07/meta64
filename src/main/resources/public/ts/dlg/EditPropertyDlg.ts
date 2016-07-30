@@ -77,7 +77,7 @@ namespace m64 {
                 propertyName: propertyNameData,
                 propertyValue: propertyValueData
             };
-            util.jsonG<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
+            util.json<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
         }
 
         /* Warning: don't confuse with EditNodeDlg */

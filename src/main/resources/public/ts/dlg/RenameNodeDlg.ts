@@ -44,7 +44,7 @@ namespace m64 {
             var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
             var thiz = this;
-            util.jsonG<json.RenameNodeRequest, json.RenameNodeResponse>("renameNode", {
+            util.json<json.RenameNodeRequest, json.RenameNodeResponse>("renameNode", {
                 "nodeId": highlightNode.id,
                 "newName": newName
             }, function(res: json.RenameNodeResponse) {

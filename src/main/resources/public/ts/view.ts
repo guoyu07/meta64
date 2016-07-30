@@ -5,7 +5,7 @@ namespace m64 {
 
         export let scrollToSelNodePending: boolean = false;
 
-        export let updateStatusBar = function() {
+        export let updateStatusBar = function() : void {
             if (!meta64.currentNodeData)
                 return;
             var statusLine = "";
@@ -23,7 +23,7 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) {
+        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, newId?: any) : void {
 
             render.renderPageFromData(res);
 
@@ -45,14 +45,14 @@ namespace m64 {
         /*
          * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
          */
-        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any, isInitialRender?: boolean) {
+        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, newId?: any, isInitialRender?: boolean) : void {
             if (!nodeId) {
                 nodeId = meta64.currentNodeId;
             }
 
             console.log("Refreshing tree: nodeId=" + nodeId);
 
-            util.jsonG<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+            util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": nodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false
@@ -77,7 +77,7 @@ namespace m64 {
             setTimeout(function() {
                 scrollToSelNodePending = false;
 
-                var elm = nav.getSelectedPolyElement();
+                let elm:any = nav.getSelectedPolyElement();
                 if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                     elm.node.scrollIntoView();
                 }
@@ -103,16 +103,16 @@ namespace m64 {
                 if (scrollToSelNodePending)
                     return;
 
-                var elm = util.polyElm("mainPaperTabs");
+                let elm:any = util.polyElm("mainPaperTabs");
                 if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                     elm.node.scrollIntoView();
                 }
             }, 1000);
         }
 
-        export let initEditPathDisplayById = function(domId) {
-            var node = edit.editNode;
-            var e = $("#" + domId);
+        export let initEditPathDisplayById = function(domId:string) {
+            let node:json.NodeInfo = edit.editNode;
+            let e:any = $("#" + domId);
             if (!e)
                 return;
 
@@ -134,7 +134,7 @@ namespace m64 {
         }
 
         export let showServerInfo = function() {
-            util.jsonG<json.GetServerInfoRequest, json.GetServerInfoResponse>("getServerInfo", {}, function(res: json.GetServerInfoResponse) {
+            util.json<json.GetServerInfoRequest, json.GetServerInfoResponse>("getServerInfo", {}, function(res: json.GetServerInfoResponse) {
                 (new MessageDlg(res.serverInfo)).open();
             });
         }

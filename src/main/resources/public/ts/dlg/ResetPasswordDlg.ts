@@ -33,7 +33,7 @@ namespace m64 {
             var emailAddress = this.getInputVal("emailAddress").trim();
 
             if (userName && emailAddress) {
-                util.jsonG<json.ResetPasswordRequest, json.ResetPasswordResponse>("resetPassword", {
+                util.json<json.ResetPasswordRequest, json.ResetPasswordResponse>("resetPassword", {
                     "user": userName,
                     "email": emailAddress
                 }, this.resetPasswordResponse, this);

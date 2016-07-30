@@ -53,7 +53,7 @@ namespace m64 {
                 return;
             }
 
-            util.jsonG<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
+            util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": searchText,
                 "modSortDesc": false,

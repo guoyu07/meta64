@@ -1,5 +1,7 @@
 
 namespace m64 {
+    /* These are Client-side only models, and are not seen on the server side ever */
+    
     export class PropEntry {
         constructor(public id: string, //
             public property: json.PropertyInfo, //

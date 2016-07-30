@@ -22,12 +22,15 @@ namespace m64 {
 
             /*
              * We register 'this' so we can do meta64.getObjectByGuid in onClick methods
-             * on the dialog and be able to have 'this'available to the functions.
+             * on the dialog and be able to have 'this' available to the functions that are encoded in onClick methods
+             * as strings.
              */
             meta64.registerDataObject(this);
             meta64.registerDataObject(this.data);
         }
 
+        /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
+        any defaults or values in for fields, etc. should be set when the dialog is displayed */
         init = (): void => {
         }
 
@@ -69,9 +72,7 @@ namespace m64 {
             util.setHtmlEnhanced(id, content);
             this.built = true;
 
-            if (this.init) {
-                this.init();
-            }
+            this.init();
             console.log("Showing dialog: " + id);
 
             /* now open and display polymer dialog we just created */

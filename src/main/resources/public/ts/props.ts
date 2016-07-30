@@ -6,7 +6,7 @@ namespace m64 {
         /*
          * Toggles display of properties in the gui.
          */
-        export let propsToggle = function() : void {
+        export let propsToggle = function(): void {
             meta64.showProperties = meta64.showProperties ? false : true;
             // setDataIconUsingId("#editModeButton", editMode ? "edit" :
             // "forbidden");
@@ -21,7 +21,7 @@ namespace m64 {
             meta64.selectTab("mainTabName");
         }
 
-        export let deletePropertyFromLocalData = function(propertyName) : void {
+        export let deletePropertyFromLocalData = function(propertyName): void {
             for (var i = 0; i < edit.editNode.properties.length; i++) {
                 if (propertyName === edit.editNode.properties[i].name) {
                     // splice is how you delete array elements in js.
@@ -35,11 +35,11 @@ namespace m64 {
          * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
          * node and puts it on the top, and then does same for 'jctCnst.TAGS'
          */
-        export let getPropertiesInEditingOrder = function(props: json.PropertyInfo[]) : json.PropertyInfo[] {
-            let propsNew:json.PropertyInfo[] = props.clone();
-            let targetIdx:number = 0;
+        export let getPropertiesInEditingOrder = function(props: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propsNew: json.PropertyInfo[] = props.clone();
+            let targetIdx: number = 0;
 
-            let tagIdx:number = propsNew.indexOfItemByProp("name", jcrCnst.CONTENT);
+            let tagIdx: number = propsNew.indexOfItemByProp("name", jcrCnst.CONTENT);
             if (tagIdx != -1) {
                 propsNew.arrayMoveItem(tagIdx, targetIdx++);
             }
@@ -54,34 +54,38 @@ namespace m64 {
 
         /*
          * properties will be null or a list of PropertyInfo objects.
-         *
-         * todo-3: I can do much better in this method, I just haven't had time to clean it up. this method is ugly.
          */
         export let renderProperties = function(properties): string {
             if (properties) {
-                let ret:string = "<table border=1 class='property-table'>";
-                let propCount:number = 0;
+                let table: string = "";
+                let propCount: number = 0;
 
                 $.each(properties, function(i, property) {
                     if (render.allowPropertyToDisplay(property.name)) {
                         var isBinaryProp = render.isBinaryProperty(property.name);
 
                         propCount++;
-                        ret += "<tr class='prop-table-row'>";
+                        let td: string = render.tag("td", {
+                            "class": "prop-table-name-col"
+                        }, render.sanitizePropertyName(property.name));
 
-                        ret += "<td class='prop-table-name-col'>" + render.sanitizePropertyName(property.name)
-                            + "</td>";
-
+                        let val: string;
                         if (isBinaryProp) {
-                            ret += "<td class='prop-table-val-col'>[binary]</td>";
+                            val = "[binary]";
                         } else if (!property.values) {
-                            var val = property.htmlValue ? property.htmlValue : property.value;
-                            ret += "<td class='prop-table-val-col'>" + render.wrapHtml(val) + "</td>";
+                            val = render.wrapHtml(property.htmlValue ? property.htmlValue : property.value);
                         } else {
-                            ret += "<td class='prop-table-val-col'>" + props.renderPropertyValues(property.values)
-                                + "</td>";
+                            val = props.renderPropertyValues(property.values);
                         }
-                        ret += "</tr>";
+
+                        td += render.tag("td", {
+                            "class": "prop-table-val-col"
+                        }, val);
+
+                        table += render.tag("tr", {
+                            "class": "prop-table-row"
+                        }, td);
+
                     } else {
                         console.log("Hiding property: " + property.name);
                     }
@@ -91,8 +95,10 @@ namespace m64 {
                     return "";
                 }
 
-                ret += "</table>";
-                return ret;
+                return render.tag("table", {
+                    "border": "1",
+                    "class": "property-table"
+                }, table);
             } else {
                 return undefined;
             }
@@ -102,12 +108,12 @@ namespace m64 {
          * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
          * (PropertyInfo.java) with name matching propertyName, else null.
          */
-        export let getNodeProperty = function(propertyName, node) : json.PropertyInfo{
+        export let getNodeProperty = function(propertyName, node): json.PropertyInfo {
             if (!node || !node.properties)
                 return null;
 
             for (var i = 0; i < node.properties.length; i++) {
-                let prop:json.PropertyInfo = node.properties[i];
+                let prop: json.PropertyInfo = node.properties[i];
                 if (prop.name === propertyName) {
                     return prop;
                 }
@@ -115,8 +121,8 @@ namespace m64 {
             return null;
         }
 
-        export let getNodePropertyVal = function(propertyName, node):string {
-            let prop:json.PropertyInfo = getNodeProperty(propertyName, node);
+        export let getNodePropertyVal = function(propertyName, node): string {
+            let prop: json.PropertyInfo = getNodeProperty(propertyName, node);
             return prop ? prop.value : null;
         }
 
@@ -124,8 +130,8 @@ namespace m64 {
          * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
          * etc. on the GUI.
          */
-        export let isNonOwnedNode = function(node) : boolean {
-            let createdBy:string = getNodePropertyVal(jcrCnst.CREATED_BY, node);
+        export let isNonOwnedNode = function(node): boolean {
+            let createdBy: string = getNodePropertyVal(jcrCnst.CREATED_BY, node);
 
             // if we don't know who owns this node assume the admin owns it.
             if (!createdBy) {
@@ -140,20 +146,20 @@ namespace m64 {
          * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
          * etc. on the GUI.
          */
-        export let isNonOwnedCommentNode = function(node) : boolean {
-            let commentBy:string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+        export let isNonOwnedCommentNode = function(node): boolean {
+            let commentBy: string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
             return commentBy != null && commentBy != meta64.userName;
         }
 
-        export let isOwnedCommentNode = function(node):boolean {
-            let commentBy:string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+        export let isOwnedCommentNode = function(node): boolean {
+            let commentBy: string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
             return commentBy != null && commentBy == meta64.userName;
         }
 
         /*
          * Returns string representation of property value, even if multiple properties
          */
-        export let renderProperty = function(property) :string {
+        export let renderProperty = function(property): string {
             if (!property.values) {
                 if (!property.value || property.value.length == 0) {
                     return "";
@@ -165,9 +171,9 @@ namespace m64 {
             }
         }
 
-        export let renderPropertyValues = function(values) :string {
-            let ret:string = "<div>";
-            let count:number = 0;
+        export let renderPropertyValues = function(values): string {
+            let ret: string = "<div>";
+            let count: number = 0;
             $.each(values, function(i, value) {
                 if (count > 0) {
                     ret += cnst.BR;

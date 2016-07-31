@@ -109,7 +109,7 @@ namespace m64 {
 
         /* returns true if we can 'try to' insert under 'node' or false if not */
         export let isEditAllowed = function(node: any): boolean {
-            return meta64.editMode && node.path != "/" &&
+            return meta64.userPreferences.editMode && node.path != "/" &&
                 /*
                  * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
                  */
@@ -177,10 +177,10 @@ namespace m64 {
 
         export let editMode = function(modeVal?: boolean): void {
             if (typeof modeVal != 'undefined') {
-                meta64.editMode = modeVal;
+                meta64.userPreferences.editMode = modeVal;
             }
             else {
-                meta64.editMode = meta64.editMode ? false : true;
+                meta64.userPreferences.editMode = meta64.userPreferences.editMode ? false : true;
             }
             // todo-3: really edit mode button needs to be some kind of button
             // that can show an on/off state.
@@ -191,7 +191,9 @@ namespace m64 {
              * goes completely offscreen out of view, so we scroll it back into view every time
              */
             view.scrollToSelectedNode();
-        }
+
+            meta64.saveUserPreferences();
+      }
 
         export let splitContent = function(): void {
             let nodeBelow: json.NodeInfo = getNodeBelow(editNode);

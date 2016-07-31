@@ -21,6 +21,7 @@ public class JcrProp {
 
 	public static final String USER_PREF_LAST_NODE = "lastNode";
 	public static final String USER_PREF_ADV_MODE = "advMode";
+	public static final String USER_PREF_EDIT_MODE = "editMode";
 	public static final String USER_PREF_PASSWORD_RESET_AUTHCODE = "pwdResetAuth";
 
 	/*

@@ -439,7 +439,7 @@ namespace m64 {
              * they don't have privileges the server side security will let them know. In the future we can add more
              * intelligence to when to show these buttons or not.
              */
-            if (meta64.editMode) {
+            if (meta64.userPreferences.editMode) {
                 // console.log("Editing allowed: " + nodeId);
 
                 let selected: boolean = meta64.selectedNodes[node.uid] ? true : false;
@@ -480,7 +480,7 @@ namespace m64 {
                 }
             }
 
-            if (meta64.editMode && editingAllowed) {
+            if (meta64.userPreferences.editMode && editingAllowed) {
                 buttonCount++;
                 /* Construct Create Subnode Button */
                 editNodeButton = tag("paper-button", //
@@ -690,7 +690,7 @@ namespace m64 {
                         "Reply");
                 }
 
-                if (meta64.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
+                if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
                     createSubNodeButton = tag("paper-button", {
                         // "id" : "addNodeButtonId" + node.uid,
                         "raised": "raised",

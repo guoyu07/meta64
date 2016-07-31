@@ -369,6 +369,7 @@ public class UserManagerService {
 
 	public void setDefaultUserPreferences(Node prefsNode) throws Exception {
 		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
+		prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, false);
 	}
 
 	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
@@ -383,6 +384,10 @@ public class UserManagerService {
 			 */
 			boolean isAdvancedMode = req.getUserPreferences().isAdvancedMode();
 			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, isAdvancedMode);
+
+			boolean isEditMode = req.getUserPreferences().isEditMode();
+			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, isEditMode);
+
 			session.save();
 
 			/*
@@ -393,6 +398,7 @@ public class UserManagerService {
 			 */
 			UserPreferences userPreferences = sessionContext.getUserPreferences();
 			userPreferences.setAdvancedMode(isAdvancedMode);
+			userPreferences.setEditMode(isEditMode);
 
 			res.setSuccess(true);
 		});
@@ -411,6 +417,7 @@ public class UserManagerService {
 
 			/* for polymer conversion, forcing to true here */
 			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
+			userPrefs.setEditMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_EDIT_MODE));
 
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 

@@ -1,4 +1,4 @@
-// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-23 16:56:14.
+// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-30 19:23:17.
 
 namespace m64 {
     export namespace json {
@@ -47,6 +47,7 @@ namespace m64 {
         }
 
         export interface UserPreferences {
+            editMode: boolean;
             advancedMode: boolean;
             lastNode: string;
         }
@@ -313,7 +314,6 @@ namespace m64 {
 
         export interface ResetPasswordResponse extends OakResponseBase {
         }
-
 
         export interface SaveNodeResponse extends OakResponseBase {
             node: NodeInfo;

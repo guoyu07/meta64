@@ -3,19 +3,7 @@ console.log("running module: user.js");
 namespace m64 {
     export namespace user {
 
-        // res is JSON response object from server.
-        let refreshLoginResponse = function(res) : void{
-            console.log("refreshLoginResponse");
-
-            if (res.success) {
-                user.setStateVarsUsingLoginResponse(res);
-                user.setTitleUsingLoginResponse(res);
-            }
-
-            meta64.loadAnonPageHome(false);
-        }
-
-        let logoutResponse = function(res: json.LogoutResponse) : void{
+        let logoutResponse = function(res: json.LogoutResponse): void {
             /* reloads browser with the query parameters stripped off the path */
             window.location.href = window.location.origin;
         }
@@ -25,14 +13,14 @@ namespace m64 {
          * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
          * use these names
          */
-        export let isTestUserAccount = function() : boolean{
+        export let isTestUserAccount = function(): boolean {
             return meta64.userName.toLowerCase() === "adam" || //
                 meta64.userName.toLowerCase() === "bob" || //
                 meta64.userName.toLowerCase() === "cory" || //
                 meta64.userName.toLowerCase() === "dan";
         }
 
-        export let setTitleUsingLoginResponse = function(res) : void {
+        export let setTitleUsingLoginResponse = function(res): void {
             var title = BRANDING_TITLE;
             if (!meta64.isAnonUser) {
                 title += " - " + res.userName;
@@ -42,7 +30,7 @@ namespace m64 {
         }
 
         /* TODO-3: move this into meta64 module */
-        export let setStateVarsUsingLoginResponse = function(res) : void{
+        export let setStateVarsUsingLoginResponse = function(res: json.LoginResponse): void {
             if (res.rootNode) {
                 meta64.homeNodeId = res.rootNode.id;
                 meta64.homeNodePath = res.rootNode.path;
@@ -52,17 +40,18 @@ namespace m64 {
             meta64.isAnonUser = res.userName === "anonymous";
             meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
 
+            meta64.userPreferences = res.userPreferences;
             meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
 
             console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
         }
 
-        export let openSignupPg = function() : void{
+        export let openSignupPg = function(): void {
             (new SignupDlg()).open();
         }
 
         /* Write a cookie that expires in a year for all paths */
-        export let writeCookie = function(name, val) : void {
+        export let writeCookie = function(name, val): void {
             $.cookie(name, val, {
                 expires: 365,
                 path: '/'
@@ -72,19 +61,19 @@ namespace m64 {
         /*
          * This method is ugly. It is the button that can be login *or* logout.
          */
-        export let openLoginPg = function() : void{
-            let loginDlg:LoginDlg = new LoginDlg();
+        export let openLoginPg = function(): void {
+            let loginDlg: LoginDlg = new LoginDlg();
             loginDlg.populateFromCookies();
             loginDlg.open();
         }
 
-        export let refreshLogin = function() : void{
+        export let refreshLogin = function(): void {
 
             console.log("refreshLogin.");
 
-            let callUsr:string;
-            let callPwd:string;
-            let usingCookies:boolean = false;
+            let callUsr: string;
+            let callPwd: string;
+            let usingCookies: boolean = false;
 
             var loginSessionReady = $("#loginSessionReady").text();
             if (loginSessionReady === "true") {
@@ -98,7 +87,7 @@ namespace m64 {
             } else {
                 console.log("    loginSessionReady = false");
 
-                let loginState:string = $.cookie(cnst.COOKIE_LOGIN_STATE);
+                let loginState: string = $.cookie(cnst.COOKIE_LOGIN_STATE);
 
                 /* if we have known state as logged out, then do nothing here */
                 if (loginState === "0") {
@@ -106,8 +95,8 @@ namespace m64 {
                     return;
                 }
 
-                let usr:string = $.cookie(cnst.COOKIE_LOGIN_USR);
-                let pwd:string = $.cookie(cnst.COOKIE_LOGIN_PWD);
+                let usr: string = $.cookie(cnst.COOKIE_LOGIN_USR);
+                let pwd: string = $.cookie(cnst.COOKIE_LOGIN_PWD);
 
                 usingCookies = !util.emptyString(usr) && !util.emptyString(pwd);
                 console.log("cookieUser=" + usr + " usingCookies = " + usingCookies);
@@ -124,7 +113,7 @@ namespace m64 {
             if (!callUsr) {
                 meta64.loadAnonPageHome(false);
             } else {
-              util.json<json.LoginRequest,json.LoginResponse>("login", {
+                util.json<json.LoginRequest, json.LoginResponse>("login", {
                     "userName": callUsr,
                     "password": callPwd,
                     "tzOffset": new Date().getTimezoneOffset(),
@@ -155,12 +144,12 @@ namespace m64 {
         }
 
         export let login = function(loginDlg, usr, pwd) {
-            util.json<json.LoginRequest,json.LoginResponse>("login",{
+            util.json<json.LoginRequest, json.LoginResponse>("login", {
                 "userName": usr,
                 "password": pwd,
                 "tzOffset": new Date().getTimezoneOffset(),
                 "dst": util.daylightSavingsTime
-            }, function(res : json.LoginResponse) {
+            }, function(res: json.LoginResponse) {
                 loginResponse(res, usr, pwd, null, loginDlg);
             });
         }
@@ -194,7 +183,7 @@ namespace m64 {
                 }
 
                 /* set ID to be the page we want to show user right after login */
-                let id:string = null;
+                let id: string = null;
 
                 if (!util.emptyString(res.homeNodeOverride)) {
                     console.log("loading homeNodeOverride=" + res.homeNodeOverride);
@@ -226,6 +215,18 @@ namespace m64 {
                     location.reload();
                 }
             }
+        }
+
+        // res is JSON response object from server.
+        let refreshLoginResponse = function(res: json.LoginResponse): void {
+            console.log("refreshLoginResponse");
+
+            if (res.success) {
+                user.setStateVarsUsingLoginResponse(res);
+                user.setTitleUsingLoginResponse(res);
+            }
+
+            meta64.loadAnonPageHome(false);
         }
     }
 }

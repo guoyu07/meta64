@@ -29,7 +29,6 @@ namespace m64 {
             var backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
 
             var buttonBar = render.centeredButtonBar(saveButton + backButton);
-
             return header + radioBar + buttonBar;
         }
 
@@ -38,11 +37,12 @@ namespace m64 {
             meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
                 : meta64.MODE_ADVANCED;
             util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
+                //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
                 "userPreferences": {
                     "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
-
+                    "editMode": meta64.userPreferences.editMode,
                     /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
-                    "lastNode" : null
+                    "lastNode": null
                 }
             }, this.savePreferencesResponse, this);
         }

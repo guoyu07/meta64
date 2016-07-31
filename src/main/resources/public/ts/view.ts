@@ -14,7 +14,7 @@ namespace m64 {
                 statusLine += "count: " + meta64.currentNodeData.children.length;
             }
 
-            if (meta64.editMode) {
+            if (meta64.userPreferences.editMode) {
                 statusLine += " Selections: " + util.getPropertyCount(meta64.selectedNodes);
             }
         }

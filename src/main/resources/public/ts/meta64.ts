@@ -82,11 +82,6 @@ namespace m64 {
          */
         export let parentUidToFocusNodeMap: { [key: string]: json.NodeInfo } = {};
 
-        /*
-         * determines if we should render all the editing buttons on each row
-         */
-        export let editMode: boolean = false;
-
         /* User-selectable user-account options each user can set on his account */
         export let MODE_ADVANCED: string = "advanced";
         export let MODE_SIMPLE: string = "simple";
@@ -133,6 +128,12 @@ namespace m64 {
 
         /* Maps from guid to Data Object */
         export let dataObjMap: any = {};
+
+        export let userPreferences: json.UserPreferences = {
+            "editMode": false,
+            "advancedMode": false,
+            "lastNode": ""
+        };
 
         export let updateMainMenuPanel = function() {
             console.log("building main menu panel");
@@ -739,6 +740,13 @@ namespace m64 {
             util.json<json.AnonPageLoadRequest, json.AnonPageLoadResponse>("anonPageLoad", {
                 "ignoreUrl": ignoreUrl
             }, anonPageLoadResponse);
+        }
+
+        export let saveUserPreferences = function(): void {
+            util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
+                //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
+                "userPreferences": userPreferences
+            });
         }
     }
 }

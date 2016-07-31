@@ -6,6 +6,9 @@ code {
 
 .moreLinkStyle {
 	cursor: pointer;
+	background: green;
+	color: white;
+	padding: 4px;
 }
      
 .ace-edit-panel { 

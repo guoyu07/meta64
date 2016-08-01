@@ -55,7 +55,7 @@ namespace m64 {
              * and open up the search dialog.
              */
             if (numSearchResults() == 0 && !meta64.isAnonUser) {
-                (new SearchDlg()).open();
+                (new SearchContentDlg()).open();
             }
         }
 

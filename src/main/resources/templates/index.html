@@ -166,13 +166,11 @@
                 <style is="custom-style"
                        include="shared-styles"></style>
                 <iron-ajax id="ironAjax"></iron-ajax>
-                
                 <paper-drawer-panel id="paperDrawerPanel">
                     <!-- Left Side Panel -->
                     <paper-scroll-header-panel id="mainLhsMenuPanel"
                                                drawer="drawer"
                                                fixed="fixed">
-                                               
                         <div class="horizontal-section">
                             <paper-menu id="mainNavBar"
                                         attr-for-item-title="label"
@@ -187,21 +185,19 @@
                                 when implemented this button will toggle visibility of left-side menu  
                                 -->
                             <paper-icon-button icon="menu"
-                               	paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
-                               
-                            <span class="title" id="headerAppName">Meta64</span>
-                               
-                            <paper-button id="homeButton"
-                                          onClick="m64.nav.navPublicHome();">Home</paper-button>
+                                               paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
+                            <span class="title"
+                                  onClick="m64.nav.navPublicHome();"
+                                  id="headerAppName">Meta64</span>
                             <paper-button style="display:none;"
                                           id="navHomeButton"
-                                          onClick="m64.nav.navHome();">My Info</paper-button>
+                                          onClick="m64.nav.navHome();">Root</paper-button>
                             <paper-button style="display:none;"
                                           id="upLevelButton"
-                                          onClick="m64.nav.navUpLevel();">Up Level</paper-button>
+                                          onClick="m64.nav.navUpLevel();">Up</paper-button>
                             <paper-button style="display:none;"
                                           id="editModeButton"
-                                          onClick="m64.edit.editMode();">Edit Mode</paper-button>
+                                          onClick="m64.edit.editMode();">Edit</paper-button>
                             <paper-button style="display:none;"
                                           id="openSignupPgButton"
                                           onClick="m64.user.openSignupPg();">Signup</paper-button>
@@ -212,7 +208,6 @@
                                           id="navLogoutButton"
                                           onClick="m64.user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
-               
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)
                         
@@ -228,8 +223,8 @@
         <script>/* 
 <![CDATA[*/
          //Polymer({
-     	 //   is: "main-dom-module"
-     	 //});
+         //   is: "main-dom-module"
+         //});
                 var webComponentsReady = false;
                 addEventListener("WebComponentsReady", function() {
                         webComponentsReady = true;

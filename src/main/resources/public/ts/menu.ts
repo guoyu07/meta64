@@ -50,11 +50,13 @@ namespace m64 {
             var sharingMenu = makeTopLevelMenu("Share", sharingMenuItems);
 
             var searchMenuItems = //
-                menuItem("Text Search", "searchDlgButton", "(new m64.SearchDlg()).open();");
+                menuItem("Content", "searchDlgButton", "(new m64.SearchContentDlg()).open();") +//
+                //todo-0: make a version of the dialog that does a tag search
+                menuItem("Tags", "searchDlgButton", "(new m64.SearchTagsDlg()).open();");
             var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
 
             var timelineMenuItems = //
-                menuItem("Created", "timelineCreatedButton", "m64.srch.timelineByCreateTime();")+//
+                menuItem("Created", "timelineCreatedButton", "m64.srch.timelineByCreateTime();") +//
                 menuItem("Modified", "timelineModifiedButton", "m64.srch.timelineByModTime();");//
             var timelineMenu = makeTopLevelMenu("Timeline", timelineMenuItems);
 

@@ -1,25 +1,24 @@
-console.log("running module: SearchDlg.js");
+console.log("running module: SearchContentDlg.js");
 
 namespace m64 {
-    export class SearchDlg extends DialogBase {
+    export class SearchContentDlg extends DialogBase {
 
         constructor() {
-            super("SearchDlg");
+            super("SearchContentDlg");
         }
 
         /*
          * Returns a string that is the HTML content of the dialog
          */
         build = (): string => {
-            var header = this.makeHeader("Search");
+            var header = this.makeHeader("Search Content");
 
-            var instructions = this.makeMessageArea("Enter some text to find. All sub-nodes under the selected node are included in the search.");
+            var instructions = this.makeMessageArea("Enter some text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search.");
             var formControls = this.makeEditField("Search", "searchText");
 
             var searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchNodes, this);
-            var searchTagsButton = this.makeCloseButton("Search Tags", "searchTagsButton", this.searchTags, this);
             var backButton = this.makeCloseButton("Close", "cancelSearchButton");
-            var buttonBar = render.centeredButtonBar(searchButton + searchTagsButton + backButton);
+            var buttonBar = render.centeredButtonBar(searchButton + backButton);
 
             var content = header + instructions + formControls + buttonBar;
             this.bindEnterKey("searchText", srch.searchNodes)
@@ -27,14 +26,10 @@ namespace m64 {
         }
 
         searchNodes = (): void => {
-            return this.searchProperty("jcr:content");
+            return this.searchProperty(jcrCnst.CONTENT);
         }
 
-        searchTags = (): void => {
-            return this.searchProperty(jcrCnst.TAGS);
-        }
-
-        searchProperty = (searchProp: any) => {
+        searchProperty = (searchProp: string) => {
             if (!util.ajaxReady("searchNodes")) {
                 return;
             }

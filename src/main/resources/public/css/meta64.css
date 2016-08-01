@@ -6,8 +6,7 @@ code {
 
 .moreLinkStyle {
 	cursor: pointer;
-	background: green;
-	color: white;
+	background: lightGray;
 	padding: 4px;
 }
      

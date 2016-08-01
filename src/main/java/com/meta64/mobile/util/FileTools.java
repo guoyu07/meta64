@@ -37,4 +37,25 @@ public class FileTools {
 			}
 		}
 	}
+
+	public static String ensureValidFileNameChars(String text) {
+		if (text == null) return null;
+
+		int length = text.length();
+		StringBuilder ret = new StringBuilder();
+		char c;
+
+		for (int i = 0; i < length; i++) {
+			c = text.charAt(i);
+
+			if (Character.isLetter(c) || Character.isDigit(c) || c == '.' || c == ' ' || c == '-' || c == '_') {
+				ret.append(c);
+			}
+			else {
+				ret.append('-');
+			}
+		}
+
+		return ret.toString();
+	}
 }

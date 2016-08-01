@@ -77,7 +77,7 @@ namespace m64 {
             meta64.changePage(timelineResultsPanel);
         }
 
-        export let timeline = function() {
+        export let timelineByModTime = function() {
             var node = meta64.getHighlightedNode();
             if (!node) {
                 (new MessageDlg("No node is selected to 'timeline' under.")).open();
@@ -87,9 +87,25 @@ namespace m64 {
             util.json<json.NodeSearchRequest,json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": "",
-                "modSortDesc": true,
-                "searchProp": "jcr:content" // should have no effect, for
-                // timeline?
+                "sortDir": "DESC",
+                "sortField": jcrCnst.LAST_MODIFIED,
+                "searchProp": jcrCnst.CONTENT
+            }, timelineResponse);
+        }
+
+        export let timelineByCreateTime = function() {
+            var node = meta64.getHighlightedNode();
+            if (!node) {
+                (new MessageDlg("No node is selected to 'timeline' under.")).open();
+                return;
+            }
+
+            util.json<json.NodeSearchRequest,json.NodeSearchResponse>("nodeSearch", {
+                "nodeId": node.id,
+                "searchText": "",
+                "sortDir": "DESC",
+                "sortField": jcrCnst.CREATED,
+                "searchProp": jcrCnst.CONTENT
             }, timelineResponse);
         }
 

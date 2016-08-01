@@ -10,12 +10,12 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.request.GetSharedNodesRequest;
@@ -155,10 +155,10 @@ public class NodeSearchService {
 			}
 		}
 
-		if (req.isModSortDesc()) {
+		if (!StringUtils.isEmpty(req.getSortField())) {
 			queryStr.append(" ORDER BY [");
-			queryStr.append(JcrProp.LAST_MODIFIED);
-			queryStr.append("] DESC");
+			queryStr.append(req.getSortField()); // JcrProp.LAST_MODIFIED);
+			queryStr.append("] " + req.getSortDir()); // DESC
 		}
 
 		Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);

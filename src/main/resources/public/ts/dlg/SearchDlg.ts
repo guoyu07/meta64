@@ -56,7 +56,8 @@ namespace m64 {
             util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": searchText,
-                "modSortDesc": false,
+                "sortDir": "",
+                "sortField": "",
                 "searchProp": searchProp
             }, srch.searchNodesResponse, srch);
         }

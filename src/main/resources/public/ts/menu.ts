@@ -50,9 +50,13 @@ namespace m64 {
             var sharingMenu = makeTopLevelMenu("Share", sharingMenuItems);
 
             var searchMenuItems = //
-                menuItem("Text Search", "searchDlgButton", "(new m64.SearchDlg()).open();") + //
-                menuItem("Timeline", "timelineButton", "m64.srch.timeline();");//
+                menuItem("Text Search", "searchDlgButton", "(new m64.SearchDlg()).open();");
             var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
+
+            var timelineMenuItems = //
+                menuItem("Created", "timelineCreatedButton", "m64.srch.timelineByCreateTime();")+//
+                menuItem("Modified", "timelineModifiedButton", "m64.srch.timelineByModTime();");//
+            var timelineMenu = makeTopLevelMenu("Timeline", timelineMenuItems);
 
             var viewOptionsMenuItems = //
                 menuItem("Toggle Properties", "propsToggleButton", "m64.props.propsToggle();") + //
@@ -78,7 +82,7 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + myAccountMenu
+            var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + mainMenuHelp;
 
             util.setHtmlEnhanced(domId, content);

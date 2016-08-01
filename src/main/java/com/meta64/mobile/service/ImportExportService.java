@@ -5,6 +5,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.zip.ZipInputStream;
 
@@ -26,6 +28,7 @@ import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
@@ -37,9 +40,7 @@ import com.meta64.mobile.util.ThreadLocals;
 @Component
 public class ImportExportService {
 	private static final Logger log = LoggerFactory.getLogger(ImportExportService.class);
-
-	public static final int BUF_SIZE = 1024 * 4;
-	private byte[] byteBuf = new byte[BUF_SIZE];
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
 
 	public enum ExportXMLViewType {
 		SYSTEM, DOCUMENT
@@ -77,18 +78,23 @@ public class ImportExportService {
 		else {
 			String fileName = req.getTargetFileName();
 
+			/* Timestamp-based folder name groups the 4 redundant files we export */
+			Date date = new Date();
+			String dirName = dateFormat.format(date);
+			dirName = FileTools.ensureValidFileNameChars(dirName);
+
 			/*
 			 * For now, out of an abundance of caution for backups do all for combinations of SYSTEM
 			 * v.s. DOCUMENT export both with and without binaries.
 			 */
 
 			log.info("Exporting System View.");
-			exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.SYSTEM, true);
-			exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.SYSTEM, false);
+			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM, true);
+			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM, false);
 
 			log.info("Exporting Document View.");
-			exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.DOCUMENT, true);
-			exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.DOCUMENT, false);
+			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, true);
+			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, false);
 
 			// exportNodeToFileSingleTextFile(session, nodeId, fileName);
 		}
@@ -134,7 +140,8 @@ public class ImportExportService {
 	// exportNodeToXMLFile(session, "/root", fileName);
 	// }
 
-	private void exportNodeToXMLFile(Session session, String nodeId, String fileName, ExportXMLViewType formatType, boolean includeBinaries) throws Exception {
+	private void exportNodeToXMLFile(Session session, String nodeId, String dirName, String fileName, ExportXMLViewType formatType, boolean includeBinaries)
+			throws Exception {
 
 		String fileNameSuffix = null;
 		switch (formatType) {
@@ -154,7 +161,11 @@ public class ImportExportService {
 
 		fileName = fileName.replace(".", "_");
 		fileName = fileName.replace(File.separator, "_");
-		String fullFileName = adminDataFolder + File.separator + fileName + "-" + fileNameSuffix + ".xml";
+
+		/* not a bug, I'm including the fileName onto part of dirName */
+		String fullDir = adminDataFolder + File.separator + dirName + "-" + fileName;
+		FileTools.createDirectory(fullDir);
+		String fullFileName = fullDir + File.separator + fileName + "-" + fileNameSuffix + ".xml";
 
 		if (FileTools.fileExists(fullFileName)) {
 			throw new Exception("File already exists.");
@@ -186,26 +197,6 @@ public class ImportExportService {
 			}
 		}
 	}
-
-	// temporary one time use. not part of product.
-	//
-	// private void exportNodeToFileSingleTextFile(Session session, String nodeId, String fileName)
-	// throws Exception {
-	//
-	// fileName = fileName.replace(".", "_");
-	// fileName = fileName.replace(File.separator, "_");
-	// String fullFileName = adminDataFolder + File.separator + fileName + ".txt";
-	//
-	// if (FileTools.fileExists(fullFileName)) {
-	// throw new Exception("File already exists.");
-	// }
-	//
-	// Node node = JcrUtil.findNode(session, nodeId);
-	// log.debug("Export Node: " + node.getPath() + " to file " + fullFileName);
-	// StringBuilder content = new StringBuilder();
-	// recurseNode(node, 0, content);
-	// FileTools.writeEntireFile(fullFileName, content.toString());
-	// }
 
 	/*
 	 * todo: move to string utils class

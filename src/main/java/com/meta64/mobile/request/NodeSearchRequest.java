@@ -2,7 +2,11 @@ package com.meta64.mobile.request;
 
 public class NodeSearchRequest {
 
-	private boolean modSortDesc;
+	/* ascending=asc, descending=desc */
+	private String sortDir;
+
+	/* property to sort on */
+	private String sortField;
 
 	/* can be node id or path. server interprets correctly no matter which */
 	private String nodeId;
@@ -27,19 +31,27 @@ public class NodeSearchRequest {
 		this.searchText = searchText;
 	}
 
-	public boolean isModSortDesc() {
-		return modSortDesc;
-	}
-
-	public void setModSortDesc(boolean modSortDesc) {
-		this.modSortDesc = modSortDesc;
-	}
-
 	public String getSearchProp() {
 		return searchProp;
 	}
 
 	public void setSearchProp(String searchProp) {
 		this.searchProp = searchProp;
+	}
+
+	public String getSortDir() {
+		return sortDir;
+	}
+
+	public void setSortDir(String sortDir) {
+		this.sortDir = sortDir;
+	}
+
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
 	}
 }

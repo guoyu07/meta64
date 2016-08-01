@@ -1,4 +1,4 @@
-// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-30 19:23:17.
+// Generated using typescript-generator version 1.10-SNAPSHOT on 2016-07-31 20:21:01.
 
 namespace m64 {
     export namespace json {
@@ -149,7 +149,8 @@ namespace m64 {
         }
 
         export interface NodeSearchRequest {
-            modSortDesc: boolean;
+            sortDir: string;
+            sortField: string;
             nodeId: string;
             searchText: string;
             searchProp: string;

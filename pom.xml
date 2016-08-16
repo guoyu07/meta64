@@ -132,14 +132,14 @@
 		</dependency>
 		
 		<!--
-		For  info about this and what it's for and why it's commented out, look in file JavaToTypeScriptCodeGen.java
-		-->
+		For info about this and what it's for and why it's commented out, look in file JavaToTypeScriptCodeGen.java
+		
 		<dependency>
 		 	<groupId>cz.habarta.typescript-generator</groupId>
         	<artifactId>typescript-generator-core</artifactId>
         	<version>1.10-SNAPSHOT</version>
 		</dependency>
-		
+		-->
 		
 	</dependencies>
 

@@ -50,6 +50,8 @@ namespace m64 {
             editMode: boolean;
             advancedMode: boolean;
             lastNode: string;
+            importAllowed: boolean;
+            exportAllowed: boolean;
         }
 
         export interface AddPrivilegeRequest {

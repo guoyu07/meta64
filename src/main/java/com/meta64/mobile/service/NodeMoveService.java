@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
@@ -16,6 +18,7 @@ import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
@@ -35,6 +38,12 @@ public class NodeMoveService {
 	@Autowired
 	private OakRepository oak;
 
+	@Autowired
+	private SessionContext sessionContext;
+
+	@Autowired
+	private RunAsJcrAdmin adminRunner;
+
 	/*
 	 * Moves the the node to a new ordinal/position location (relative to parent)
 	 */
@@ -43,10 +52,28 @@ public class NodeMoveService {
 			session = ThreadLocals.getJcrSession();
 		}
 		String parentNodeId = req.getParentNodeId();
+
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
-		JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
-		parentNode.orderBefore(req.getNodeId(), req.getSiblingId());
-		session.save();
+		String parentPath = parentNode.getPath() + "/";
+
+		/*
+		 * if we are moving nodes around on the root, the root belongs to admin and needs special
+		 * access (adminRunner)
+		 */
+		if (parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+			adminRunner.run((Session adminSession) -> {
+				Node parentNode2 = JcrUtil.findNode(adminSession, parentNodeId);
+				JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());
+				parentNode2.orderBefore(req.getNodeId(), req.getSiblingId());
+				adminSession.save();
+			});
+		}
+		else {
+			JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
+			parentNode.orderBefore(req.getNodeId(), req.getSiblingId());
+			session.save();
+		}
+
 		res.setSuccess(true);
 	}
 
@@ -119,6 +146,31 @@ public class NodeMoveService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
+
+		String targetId = req.getTargetNodeId();
+		Node targetNode = JcrUtil.findNode(session, targetId);
+		String targetPath = targetNode.getPath() + "/";
+
+		/*
+		 * If the user is moving nodes to his root note, that root node will be owned by admin so we
+		 * must run the processing using adminRunner session
+		 */
+		if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+			adminRunner.run((Session adminSession) -> {
+				moveNodesInternal(adminSession, req, res);
+			});
+		}
+		/*
+		 * Otherwise this user is just moving a node somewhere other than their root and we can use
+		 * their actual session
+		 */
+		else {
+			moveNodesInternal(session, req, res);
+		}
+	}
+
+	/* Uses session passed unmodified */
+	private void moveNodesInternal(Session session, MoveNodesRequest req, MoveNodesResponse res) throws Exception {
 
 		String targetId = req.getTargetNodeId();
 		Node targetNode = JcrUtil.findNode(session, targetId);

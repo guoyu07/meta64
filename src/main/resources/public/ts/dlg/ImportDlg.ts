@@ -12,7 +12,7 @@ namespace m64 {
         build = (): string => {
             var header = this.makeHeader("Import from XML");
 
-            var formControls = this.makeEditField("Import Target Node Name", "importTargetNodeName");
+            var formControls = this.makeEditField("File name to import", "sourceFileName");
 
             var importButton = this.makeButton("Import", "importNodesButton", this.importNodes, this);
             var backButton = this.makeCloseButton("Close", "cancelImportButton");
@@ -23,7 +23,7 @@ namespace m64 {
 
         importNodes = (): void => {
             var highlightNode = meta64.getHighlightedNode();
-            var sourceFileName = this.getInputVal("importTargetNodeName");
+            var sourceFileName = this.getInputVal("sourceFileName");
 
             if (util.emptyString(sourceFileName)) {
                 (new MessageDlg("Please enter a name for the import file.")).open();

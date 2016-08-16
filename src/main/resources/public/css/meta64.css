@@ -4,6 +4,11 @@ code {
 }
 */
 
+.customPre {
+	background: lightGray;
+	padding: 10px;
+}
+
 .moreLinkStyle {
 	cursor: pointer;
 	background: lightGray;

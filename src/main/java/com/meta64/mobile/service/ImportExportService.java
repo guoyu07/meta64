@@ -24,10 +24,12 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
@@ -41,6 +43,12 @@ import com.meta64.mobile.util.ThreadLocals;
 public class ImportExportService {
 	private static final Logger log = LoggerFactory.getLogger(ImportExportService.class);
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
+
+	@Autowired
+	private RunAsJcrAdmin adminRunner;
+
+	@Autowired
+	private NodeEditService nodeEditService;
 
 	public enum ExportXMLViewType {
 		SYSTEM, DOCUMENT
@@ -61,7 +69,10 @@ public class ImportExportService {
 			session = ThreadLocals.getJcrSession();
 		}
 
-		if (!sessionContext.isAdmin()) {
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
+
+		if (!exportAllowed && !sessionContext.isAdmin()) {
 			throw new Exception("export is an admin-only feature.");
 		}
 
@@ -78,7 +89,9 @@ public class ImportExportService {
 		else {
 			String fileName = req.getTargetFileName();
 
-			/* Timestamp-based folder name groups the 4 redundant files we export */
+			/*
+			 * Timestamp-based folder name groups the 4 redundant files we export
+			 */
 			Date date = new Date();
 			String dirName = dateFormat.format(date);
 			dirName = FileTools.ensureValidFileNameChars(dirName);
@@ -115,13 +128,15 @@ public class ImportExportService {
 	// private void exportEntireRepository(Session session) throws Exception {
 	// long time = System.currentTimeMillis();
 	//
-	// String fileName = String.format("full-backup-%d-jcr_systemActivities", time);
+	// String fileName = String.format("full-backup-%d-jcr_systemActivities",
+	// time);
 	// exportNodeToXMLFile(session, "/jcr:system/jcr:activities", fileName);
 	//
 	// fileName = String.format("full-backup-%d-jcr_systemNodeTypes", time);
 	// exportNodeToXMLFile(session, "/jcr:system/jcr:nodeTypes", fileName);
 	//
-	// fileName = String.format("full-backup-%d-jcr_systemVersionStorage", time);
+	// fileName = String.format("full-backup-%d-jcr_systemVersionStorage",
+	// time);
 	// exportNodeToXMLFile(session, "/jcr:system/jcr:versionStorage", fileName);
 	//
 	// fileName = String.format("full-backup-%d-rep_security", time);
@@ -252,8 +267,11 @@ public class ImportExportService {
 			session = ThreadLocals.getJcrSession();
 		}
 
-		if (!sessionContext.isAdmin()) {
-			throw new Exception("export is an admin-only feature.");
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
+
+		if (!importAllowed && !sessionContext.isAdmin()) {
+			throw new Exception("import is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
@@ -290,15 +308,41 @@ public class ImportExportService {
 			// nodeId);
 		}
 		else {
-			importFromFileToNode(session, sourceFileName, nodeId);
+			////////////////
+			//
+			Node targetNode = JcrUtil.findNode(session, nodeId);
+			String createdBy = JcrUtil.safeGetStringProp(targetNode, JcrProp.CREATED_BY);
+
+			/*
+			 * Detect if this node is a comment we "own" (although true security rules make it
+			 * belong to admin user) then we should be able to delete it, so we execute the delete
+			 * under an 'AdminSession'. Also now that we have switched sessions, we set that in the
+			 * return value, so the caller can always, stop processing after this happens. Meaning
+			 * essentialy only *one* comment node can be deleted at a time unless you are admin
+			 * user.
+			 */
+			if (!session.getUserID().equals(createdBy)) {
+				throw new Exception("You cannot import onto a node you do not own.");
+			}
+
+			// adminRunner.run((Session adminSession) -> {
+			// try {
+			// importFromFileToNode(adminSession, sourceFileName, targetNode);
+			// javax.jcr.Value val = adminSession.getValueFactory().createValue(createdBy);
+			// nodeEditService.recursiveSetPropertyOnAllNodes(adminSession, targetNode,
+			// JcrProp.CREATED_BY, val);
+			// } catch (Exception e) {
+			// log.debug("failed importing nodes", e);
+			// }
+			// });
+
+			importFromFileToNode(session, sourceFileName, targetNode);
 		}
 
 		res.setSuccess(true);
 	}
 
-	private void importFromFileToNode(Session session, String sourceFileName, String nodeId) throws Exception {
-
-		// sourceFileName = sourceFileName.replace(".", "_");
+	private void importFromFileToNode(Session session, String sourceFileName, Node targetNode) throws Exception {
 		sourceFileName = sourceFileName.replace(File.separator, "_");
 
 		String fullFileName = adminDataFolder + File.separator + sourceFileName;
@@ -307,8 +351,7 @@ public class ImportExportService {
 			throw new Exception("Import file not found.");
 		}
 
-		Node importNode = JcrUtil.findNode(session, nodeId);
-		log.debug("Import to Node: " + importNode.getPath());
+		log.debug("Import to Node: " + targetNode.getPath());
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(fullFileName));
 
 		/*
@@ -319,7 +362,7 @@ public class ImportExportService {
 		 * This UUID behavior is so interesting and powerful it really needs to be an option
 		 * specified at the user level that determines how this should work.
 		 */
-		session.getWorkspace().importXML(importNode.getPath(), in,
+		session.getWorkspace().importXML(targetNode.getPath(), in,
 				// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
 				ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
 
@@ -335,7 +378,7 @@ public class ImportExportService {
 		}
 
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("export is an admin-only feature.");
+			throw new Exception("import is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();

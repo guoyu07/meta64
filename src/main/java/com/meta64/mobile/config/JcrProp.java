@@ -22,6 +22,8 @@ public class JcrProp {
 	public static final String USER_PREF_LAST_NODE = "lastNode";
 	public static final String USER_PREF_ADV_MODE = "advMode";
 	public static final String USER_PREF_EDIT_MODE = "editMode";
+	public static final String USER_PREF_IMPORT_ALLOWED = "importAllowed";
+	public static final String USER_PREF_EXPORT_ALLOWED = "exportAllowed";
 	public static final String USER_PREF_PASSWORD_RESET_AUTHCODE = "pwdResetAuth";
 
 	/*
@@ -41,6 +43,12 @@ public class JcrProp {
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
 	public static final String FILENAME = "fileName";
 	public static final String DISABLE_INSERT = "disableInsert";
+
+	/*
+	 * mime type expressed as a file extension. Invented so we can set 'txt' v.s. 'md' to turn off
+	 * metadata rendering
+	 */
+	public static final String MIME_EXT = "ext";
 
 	/*
 	 * Sub Properties of Signup node

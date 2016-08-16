@@ -726,6 +726,12 @@ namespace m64 {
 
                 $("#mainNodeContent").show();
                 $("#mainNodeContent").html(content);
+
+                /* force all links to open a new window/tab */
+                //$("a").attr("target", "_blank"); <---- this doesn't work.
+                // $('#mainNodeContent').find("a").each(function() {
+                //     $(this).attr("target", "_blank");
+                // });
             } else {
                 $("#mainNodeContent").hide();
             }
@@ -766,6 +772,8 @@ namespace m64 {
             if (meta64.codeFormatDirty) {
                 prettyPrint();
             }
+
+            $("a").attr("target", "_blank");
 
             /*
              * TODO-3: Instead of calling screenSizeChange here immediately, it would be better to set the image sizes

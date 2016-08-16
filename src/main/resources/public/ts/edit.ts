@@ -60,14 +60,6 @@ namespace m64 {
             }
         }
 
-        let splitContentResponse = function(res: json.SplitNodeResponse): void {
-            if (util.checkSuccess("Split content", res)) {
-                view.refreshTree(null, false);
-                meta64.selectTab("mainTabName");
-                view.scrollToSelectedNode();
-            }
-        }
-
         export let showReadOnlyProperties: boolean = true;
         /*
          * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
@@ -194,25 +186,6 @@ namespace m64 {
 
             meta64.saveUserPreferences();
       }
-
-        export let splitContent = function(): void {
-            let nodeBelow: json.NodeInfo = getNodeBelow(editNode);
-            util.json<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
-                "nodeId": editNode.id,
-                "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
-                "delimiter": null
-            }, splitContentResponse);
-        }
-
-        export let cancelEdit = function(): void {
-
-            if (meta64.treeDirty) {
-                meta64.goToMainPage(true);
-            } else {
-                meta64.selectTab("mainTabName");
-                view.scrollToSelectedNode();
-            }
-        }
 
         export let moveNodeUp = function(uid: any): void {
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];

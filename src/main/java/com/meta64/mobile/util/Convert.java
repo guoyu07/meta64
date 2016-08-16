@@ -123,7 +123,7 @@ public class Convert {
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
-		//log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " + primaryTypeName + " hasBinary=" + hasBinary);
+		/* log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " + primaryTypeName + " hasBinary=" + hasBinary); */
 
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
@@ -162,12 +162,29 @@ public class Convert {
 				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 	}
 
+	/*
+	 * todo-0: need to document what's going on in this method, and eventually add a checkbox called
+	 * "plaintext" to set ext=txt
+	 */
 	public boolean shouldUseMarkdownRendering(Node node) throws Exception {
 		String fileName = JcrUtil.safeGetStringProp(node, JcrProp.FILENAME);
+
+		/* if there's a file name it's extension takes precidence */
 		if (fileName == null) {
+
+			/* otherwise look for just ext property alone and use it if found */
+			String ext = JcrUtil.safeGetStringProp(node, JcrProp.MIME_EXT);
+			if ("md".equalsIgnoreCase(ext)) {
+				return true;
+			}
+			if ("txt".equalsIgnoreCase(ext)) {
+				return false;
+			}
 			return defaultToMarkdown;
 		}
-		return fileName.toLowerCase().endsWith(".md");
+		else {
+			return fileName.toLowerCase().endsWith(".md");
+		}
 	}
 
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
@@ -241,6 +258,7 @@ public class Convert {
 
 				String val = prop.getValue().getString();
 
+				/* truncate text if too long, and allowAbbreviated=true */
 				if (allowAbbreviated && val.length() > MAX_INLINE_CHARS) {
 					abbreviated = true;
 					val = XString.truncateAfter(val, "\n");
@@ -251,49 +269,56 @@ public class Convert {
 					val = StringEscapeUtils.escapeHtml4(val);
 					val += "..." + buildMoreLink(node);
 
-					// log.trace(String.format("prop[%s] isContent", prop.getName()));
+					/* log.trace(String.format("prop[%s] isContent", prop.getName())); */
 					if (htmlOnly) {
 						htmlValue = val;
-						// I can't remember what this n/r is for but it BREAKS app if it's not set
-						// to this
+						/*
+						 * I can't remember what this n/r is for but it BREAKS app if it's not set
+						 * to this
+						 */
 						value = "n/r";
 
-						log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue);
+						/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
 					}
 					else {
-						// I can't remember what this n/r is for but it BREAKS app if it's not set
-						// to this
+						/*
+						 * I can't remember what this n/r is for but it BREAKS app if it's not set
+						 * to this
+						 */
 						htmlValue = "n/r";
 
 						value = val;
-						log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value);
+						/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
 					}
 				}
+				/* otherwise render full text */
 				else {
-					// log.trace(String.format("prop[%s] isContent", prop.getName()));
+					log.trace(String.format("prop[%s] isContent", prop.getName()) + " useMarkdown=" + useMarkdown);
 					if (htmlOnly) {
 						htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
-						// I can't remember what this n/r is for but it BREAKS app if it's not set
-						// to
-						// this
+						/*
+						 * I can't remember what this n/r is for but it BREAKS app if it's not set
+						 * to this
+						 */
 						value = "n/r";
 
-						log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue);
+						/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
 					}
 					else {
-						// I can't remember what this n/r is for but it BREAKS app if it's not set
-						// to
-						// this
+						/*
+						 * I can't remember what this n/r is for but it BREAKS app if it's not set
+						 * to this
+						 */
 						htmlValue = "n/r";
 
 						value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
-						log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value);
+						/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
 					}
 				}
 			}
 			else {
 				value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
-				// log.trace(String.format("prop[%s]=%s", prop.getName(), value));
+				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 		}
 		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, abbreviated, values);
@@ -330,14 +355,16 @@ public class Convert {
 					else {
 						ret = basicTextFormatting(ret);
 					}
+
 				}
 				else {
 					ret = value.getString();
 				}
 
-				// need this to go only on the renderable text. not the SAVED text.
+				/* need this to go only on the renderable text. not the SAVED text. */
 				if (convertToHtml) {
 					ret = ret.replace("{{donateButton}}", donateButton);
+					ret = finalTagReplace(ret);
 				}
 
 				return ret;
@@ -346,6 +373,14 @@ public class Convert {
 		catch (Exception e) {
 			return "";
 		}
+	}
+
+	public static String finalTagReplace(String val) {
+		val = val.replace("[pre]<p></p>", "<pre class='customPre'>");
+		val = val.replace("[pre]<p>", "<pre class='customPre'>");
+		val = val.replace("[pre]", "<pre class='customPre'>");
+		val = val.replace("[/pre]", "</pre>");
+		return val;
 	}
 
 	/*

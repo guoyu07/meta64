@@ -4,6 +4,8 @@ public class UserPreferences {
 	private boolean editMode;
 	private boolean advancedMode;
 	private String lastNode;
+	private boolean importAllowed;
+	private boolean exportAllowed;
 
 	public boolean isAdvancedMode() {
 		return advancedMode;
@@ -27,5 +29,21 @@ public class UserPreferences {
 
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
+	}
+
+	public boolean isImportAllowed() {
+		return importAllowed;
+	}
+
+	public void setImportAllowed(boolean importAllowed) {
+		this.importAllowed = importAllowed;
+	}
+
+	public boolean isExportAllowed() {
+		return exportAllowed;
+	}
+
+	public void setExportAllowed(boolean exportAllowed) {
+		this.exportAllowed = exportAllowed;
 	}
 }

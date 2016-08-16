@@ -33,15 +33,13 @@ namespace m64 {
 
             var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode, this);
             var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty, this);
-            var addTagsPropertyButton = this.makeButton("Add Tags Property", "addTagsPropertyButton",
+            var addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
                 this.addTagsProperty, this);
-            // this split works afaik, but I don't want it enabled yet.
-            // var splitContentButton = this.makeButton("Split Content",
-            // "splitContentButton", "edit.splitContent();");
-            var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", "m64.edit.cancelEdit();", this);
+            var splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent, this);
+            var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit, this);
 
             var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton
-	/* + splitContentButton */ + cancelEditButton, "buttons");
+                + splitContentButton + cancelEditButton, "buttons");
 
             var width = window.innerWidth * 0.6;
             var height = window.innerHeight * 0.4;
@@ -620,6 +618,34 @@ namespace m64 {
                 }
             }
             return field;
+        }
+
+        splitContent = (): void => {
+            let nodeBelow: json.NodeInfo = edit.getNodeBelow(edit.editNode);
+            util.json<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
+                "nodeId": edit.editNode.id,
+                "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
+                "delimiter": null
+            }, this.splitContentResponse);
+        }
+
+        splitContentResponse = (res: json.SplitNodeResponse): void => {
+            if (util.checkSuccess("Split content", res)) {
+                this.cancel();
+                view.refreshTree(null, false);
+                meta64.selectTab("mainTabName");
+                view.scrollToSelectedNode();
+            }
+        }
+
+        cancelEdit = (): void => {
+            this.cancel();
+            if (meta64.treeDirty) {
+                meta64.goToMainPage(true);
+            } else {
+                meta64.selectTab("mainTabName");
+                view.scrollToSelectedNode();
+            }
         }
 
         init = (): void => {

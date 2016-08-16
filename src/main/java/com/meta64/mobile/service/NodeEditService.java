@@ -3,8 +3,13 @@ package com.meta64.mobile.service;
 import java.util.Calendar;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -391,4 +396,24 @@ public class NodeEditService {
 		session.save();
 		res.setSuccess(true);
 	}
+
+	/* Sets the property value of propName to propVal on 'node' and ALL subnodes recursively */
+	public void recursiveSetPropertyOnAllNodes(Session session, Node node, String propName, Value val) throws Exception {
+		QueryManager qm = session.getWorkspace().getQueryManager();
+
+		StringBuilder queryStr = new StringBuilder();
+		queryStr.append("SELECT * from [nt:base] AS t WHERE ISDESCENDANTNODE([");
+		queryStr.append(node.getPath());
+		queryStr.append("])");
+
+		Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);
+		QueryResult r = q.execute();
+		NodeIterator nodes = r.getNodes();
+		while (nodes.hasNext()) {
+			Node iterNode = nodes.nextNode();
+			iterNode.setProperty(propName, val);
+		}
+		session.save();
+	}
+
 }

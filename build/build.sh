@@ -4,6 +4,9 @@ source ./setenv.sh
 #
 # Trouble with Tidy? Check for "- -" where "--" was needed.
 #
+# Nodejs is required for the build for typescript compiler
+# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+#
 
 export timestamp=`eval date +%Y-%m-%d-%s`
 export backupFolder=$META64_BAK
@@ -32,8 +35,13 @@ else
 fi
 
 cd $META64/build
-./run-tidy.sh $META64/src/main/resources/templates index
-./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
+# 8/6/2016 - tidy got removed from Ubuntu Package manager so i'm commenting it out until I 
+# find out where is the safe place to get it from.
+#
+# ***** WARNING ****
+# I discovered this run-tidy script will have the effect of destroying the files it tries to edit if anything goes wrong, like when tidy isn't installed. OOOPS! 
+# ./run-tidy.sh $META64/src/main/resources/templates index
+# ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
 
 #copy the readme.md from project root to published location (landing-page.md) where the app will
 #be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
@@ -53,8 +61,6 @@ cd $META64
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
 mvn clean package -DskipTests=true
-
-cp -v ./target/com.meta64.mobile-0.0.1-SNAPSHOT.jar $META64_RUN/com.meta64.mobile-0.0.1-SNAPSHOT.jar
 
 rm -f $META64/build/all.js
 rm -f $META64/build/*.sh~

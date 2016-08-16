@@ -132,7 +132,9 @@ namespace m64 {
         export let userPreferences: json.UserPreferences = {
             "editMode": false,
             "advancedMode": false,
-            "lastNode": ""
+            "lastNode": "",
+            "importAllowed" : false,
+            "exportAllowed" : false
         };
 
         export let updateMainMenuPanel = function() {
@@ -443,13 +445,18 @@ namespace m64 {
             /* multiple select nodes */
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine: boolean = highlightNode != null && highlightNode.createdBy === meta64.userName;
+            let selNodeIsMine: boolean = highlightNode && highlightNode.createdBy === meta64.userName;
+            //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
+            let homeNodeSelected: boolean = highlightNode && meta64.homeNodeId==highlightNode.id;
+            let importAllowed = isAdminUser || userPreferences.importAllowed;
+            let exportAllowed = isAdminUser || userPreferences.exportAllowed;
+
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
             util.setEnablement("navLogoutButton", !isAnonUser);
             util.setEnablement("openSignupPgButton", isAnonUser);
-            util.setEnablement("openExportDlg", isAdminUser);
-            util.setEnablement("openImportDlg", isAdminUser);
+            util.setEnablement("openExportDlg", exportAllowed);
+            util.setEnablement("openImportDlg", importAllowed);
 
             let propsToggle: boolean = currentNode && !isAnonUser;
             util.setEnablement("propsToggleButton", propsToggle);
@@ -462,7 +469,7 @@ namespace m64 {
             util.setEnablement("deleteSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
             util.setEnablement("clearSelectionsButton", !isAnonUser && selNodeCount > 0);
             util.setEnablement("moveSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
-            util.setEnablement("finishMovingSelNodesButton", !isAnonUser && edit.nodesToMove != null && selNodeIsMine);
+            util.setEnablement("finishMovingSelNodesButton", !isAnonUser && edit.nodesToMove != null && (selNodeIsMine || homeNodeSelected));
 
             util.setEnablement("changePasswordPgButton", !isAnonUser);
             util.setEnablement("accountPreferencesButton", !isAnonUser);
@@ -481,8 +488,8 @@ namespace m64 {
             util.setEnablement("refreshPageButton", !isAnonUser);
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
 
-            util.setVisibility("openImportDlg", isAdminUser && selNodeIsMine);
-            util.setVisibility("openExportDlg", isAdminUser && selNodeIsMine);
+            util.setVisibility("openImportDlg", importAllowed && selNodeIsMine);
+            util.setVisibility("openExportDlg", exportAllowed && selNodeIsMine);
             util.setVisibility("navHomeButton", !isAnonUser);
             util.setVisibility("editModeButton", allowEditMode);
             util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());

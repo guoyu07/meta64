@@ -420,6 +420,8 @@ public class UserManagerService {
 			userPrefs.setEditMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_EDIT_MODE));
 
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
+			userPrefs.setImportAllowed(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_IMPORT_ALLOWED));
+			userPrefs.setExportAllowed(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_EXPORT_ALLOWED));
 
 			// String password = JcrUtil.safeGetStringProp(prefsNode,
 			// JcrProp.PWD);

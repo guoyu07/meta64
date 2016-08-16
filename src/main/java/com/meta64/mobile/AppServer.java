@@ -19,7 +19,7 @@ public class AppServer {
 
 	private static boolean shuttingDown;
 	private static boolean enableScheduling;
-	
+
 	public static void main(String[] args) {
 		/*
 		 * If we are running AppServer then enableScheduling, otherwise we may be running some
@@ -28,8 +28,8 @@ public class AppServer {
 		enableScheduling = true;
 		SpringApplication.run(AppServer.class, args);
 		hookEclipseShutdown(args);
-		
-		//Note: See SpringContextUtil.java for more code that runs at startup time.
+
+		// Note: See SpringContextUtil.java for more code that runs at startup time.
 	}
 
 	/*

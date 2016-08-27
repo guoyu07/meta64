@@ -38,6 +38,11 @@ namespace m64 {
                 menuItem("Export", "openExportDlg", "(new m64.ExportDlg()).open();"); //
             var editMenu = makeTopLevelMenu("Edit", editMenuItems);
 
+            var moveMenuItems = //
+                menuItem("Up", "moveNodeUpButton", "m64.edit.moveNodeUp();") + //
+                menuItem("Down", "moveNodeDownButton", "m64.edit.moveNodeDown();");//
+            var moveMenu = makeTopLevelMenu("Move", moveMenuItems);
+
             var attachmentMenuItems = //
                 menuItem("Upload from File", "uploadFromFileButton", "m64.attachment.openUploadFromFileDlg();") + //
                 menuItem("Upload from URL", "uploadFromUrlButton", "m64.attachment.openUploadFromUrlDlg();") + //
@@ -84,7 +89,7 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = editMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
+            var content = editMenu + moveMenu+ attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + mainMenuHelp;
 
             util.setHtmlEnhanced(domId, content);

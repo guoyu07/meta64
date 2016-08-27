@@ -450,6 +450,10 @@ namespace m64 {
             let homeNodeSelected: boolean = highlightNode && meta64.homeNodeId==highlightNode.id;
             let importAllowed = isAdminUser || userPreferences.importAllowed;
             let exportAllowed = isAdminUser || userPreferences.exportAllowed;
+            let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
+            let numChildNodes : number = getNumChildNodes();
+            let canMoveUp: boolean = highlightOrdinal> 0 && numChildNodes > 1;
+            let canMoveDown: boolean = highlightOrdinal < numChildNodes - 1 && numChildNodes > 1;
 
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
@@ -470,6 +474,9 @@ namespace m64 {
             util.setEnablement("clearSelectionsButton", !isAnonUser && selNodeCount > 0);
             util.setEnablement("moveSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
             util.setEnablement("finishMovingSelNodesButton", !isAnonUser && edit.nodesToMove != null && (selNodeIsMine || homeNodeSelected));
+
+            util.setEnablement("moveNodeUpButton", canMoveUp);
+            util.setEnablement("moveNodeDownButton", canMoveDown);
 
             util.setEnablement("changePasswordPgButton", !isAnonUser);
             util.setEnablement("accountPreferencesButton", !isAnonUser);
@@ -515,7 +522,7 @@ namespace m64 {
         }
 
         /* node = NodeInfo.java object */
-        export let getOrdinalOfNode = function(node): number {
+        export let getOrdinalOfNode = function(node : json.NodeInfo): number {
             if (!currentNodeData || !currentNodeData.children)
                 return -1;
 
@@ -525,6 +532,13 @@ namespace m64 {
                 }
             }
             return -1;
+        }
+
+        export let getNumChildNodes = function() : number {
+          if (!currentNodeData || !currentNodeData.children)
+              return 0;
+
+          return currentNodeData.children.length;
         }
 
         export let setCurrentNodeData = function(data): void {

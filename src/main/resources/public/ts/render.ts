@@ -489,7 +489,7 @@ namespace m64 {
                         "onClick": "m64.edit.runEditNode('" + node.uid + "');"
                     }, "Edit");
 
-                if (meta64.currentNode.childrenOrdered && !commentBy) {
+                if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
 
                     if (canMoveUp) {
                         buttonCount++;

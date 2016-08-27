@@ -187,7 +187,13 @@ namespace m64 {
             meta64.saveUserPreferences();
       }
 
-        export let moveNodeUp = function(uid: any): void {
+        export let moveNodeUp = function(uid?: string): void {
+            /* if no uid was passed, use the highlighted node */
+            if (!uid) {
+                let selNode:json.NodeInfo = meta64.getHighlightedNode();
+                uid = selNode.uid;
+            }
+
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
                 var nodeAbove = getNodeAbove(node);
@@ -205,7 +211,13 @@ namespace m64 {
             }
         }
 
-        export let moveNodeDown = function(uid: any): void {
+        export let moveNodeDown = function(uid?: string): void {
+            /* if no uid was passed, use the highlighted node */
+            if (!uid) {
+                let selNode:json.NodeInfo = meta64.getHighlightedNode();
+                uid = selNode.uid;
+            }
+
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
                 let nodeBelow:json.NodeInfo = getNodeBelow(node);

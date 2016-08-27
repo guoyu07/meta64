@@ -382,18 +382,12 @@ namespace m64 {
             }
 
             (new ConfirmDlg(
-                "Confirm Move",
-                "Move " + selNodesArray.length + " node(s) to a new location ?",
+                "Confirm Paste",
+                "Paste " + selNodesArray.length + " node(s) to new location ?",
                 "Yes, move.",
                 function() {
                     nodesToMove = selNodesArray;
                     meta64.selectedNodes = {}; // clear selections.
-                    // No longer need
-                    // or want any selections.
-                    (new MessageDlg(
-                        "Identified nodes to move.<p/>To actually move these nodes, browse to the target location, then click 'Finish Moving'<p/>" +
-                        "The nodes will then be moved to the end of the list of subnodes under the target node. (i.e. The target you select will become the new parent of the nodes)"))
-                        .open();
                     meta64.refreshAllGuiEnablement();
                 })).open();
         }

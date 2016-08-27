@@ -29,8 +29,6 @@ namespace m64 {
         export let build = function(): void {
 
             var editMenuItems = //
-                menuItem("Move", "moveSelNodesButton", "m64.edit.moveSelNodes();") + //
-                menuItem("Finish Moving", "finishMovingSelNodesButton", "m64.edit.finishMovingSelNodes();") + //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
                 menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();") + //
                 menuItem("Clear Selections", "clearSelectionsButton", "m64.edit.clearSelections();") + //
@@ -39,6 +37,8 @@ namespace m64 {
             var editMenu = makeTopLevelMenu("Edit", editMenuItems);
 
             var moveMenuItems = //
+                menuItem("Cut", "moveSelNodesButton", "m64.edit.moveSelNodes();") + //
+                menuItem("Paste", "finishMovingSelNodesButton", "m64.edit.finishMovingSelNodes();") + //
                 menuItem("Up", "moveNodeUpButton", "m64.edit.moveNodeUp();") + //
                 menuItem("Down", "moveNodeDownButton", "m64.edit.moveNodeDown();");//
             var moveMenu = makeTopLevelMenu("Move", moveMenuItems);

@@ -40,7 +40,9 @@ namespace m64 {
                 menuItem("Cut", "moveSelNodesButton", "m64.edit.moveSelNodes();") + //
                 menuItem("Paste", "finishMovingSelNodesButton", "m64.edit.finishMovingSelNodes();") + //
                 menuItem("Up", "moveNodeUpButton", "m64.edit.moveNodeUp();") + //
-                menuItem("Down", "moveNodeDownButton", "m64.edit.moveNodeDown();");//
+                menuItem("Down", "moveNodeDownButton", "m64.edit.moveNodeDown();") + //
+                menuItem("to Top", "moveNodeToTopButton", "m64.edit.moveNodeToTop();") + //
+                menuItem("to Bottom", "moveNodeToBottomButton", "m64.edit.moveNodeToBottom();");//
             var moveMenu = makeTopLevelMenu("Move", moveMenuItems);
 
             var attachmentMenuItems = //

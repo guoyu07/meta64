@@ -293,7 +293,7 @@ public class Convert {
 				}
 				/* otherwise render full text */
 				else {
-					log.trace(String.format("prop[%s] isContent", prop.getName()) + " useMarkdown=" + useMarkdown);
+					//log.trace(String.format("prop[%s] isContent", prop.getName()) + " useMarkdown=" + useMarkdown);
 					if (htmlOnly) {
 						htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
 						/*

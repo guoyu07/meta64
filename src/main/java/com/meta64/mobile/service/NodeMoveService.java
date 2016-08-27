@@ -162,7 +162,7 @@ public class NodeMoveService {
 		}
 		/*
 		 * Otherwise this user is just moving a node somewhere other than their root and we can use
-		 * their actual session
+		 * their own actual session
 		 */
 		else {
 			moveNodesInternal(session, req, res);

@@ -21,12 +21,12 @@ namespace m64 {
 
         let initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
             if (util.checkSuccess("Editing node", res)) {
-                let node:json.NodeInfo = res.nodeInfo;
+                let node: json.NodeInfo = res.nodeInfo;
 
-                let isRep:boolean = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
+                let isRep: boolean = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 
                 /* if this is a comment node and we are the commenter */
-                let editingAllowed:boolean = props.isOwnedCommentNode(node);
+                let editingAllowed: boolean = props.isOwnedCommentNode(node);
 
                 if (!editingAllowed) {
                     editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
@@ -185,12 +185,12 @@ namespace m64 {
             view.scrollToSelectedNode();
 
             meta64.saveUserPreferences();
-      }
+        }
 
         export let moveNodeUp = function(uid?: string): void {
             /* if no uid was passed, use the highlighted node */
             if (!uid) {
-                let selNode:json.NodeInfo = meta64.getHighlightedNode();
+                let selNode: json.NodeInfo = meta64.getHighlightedNode();
                 uid = selNode.uid;
             }
 
@@ -214,13 +214,13 @@ namespace m64 {
         export let moveNodeDown = function(uid?: string): void {
             /* if no uid was passed, use the highlighted node */
             if (!uid) {
-                let selNode:json.NodeInfo = meta64.getHighlightedNode();
+                let selNode: json.NodeInfo = meta64.getHighlightedNode();
                 uid = selNode.uid;
             }
 
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                let nodeBelow:json.NodeInfo = getNodeBelow(node);
+                let nodeBelow: json.NodeInfo = getNodeBelow(node);
                 if (nodeBelow == null) {
                     return;
                 }
@@ -235,11 +235,54 @@ namespace m64 {
             }
         }
 
+        export let moveNodeToTop = function(uid?: string): void {
+            /* if no uid was passed, use the highlighted node */
+            if (!uid) {
+                let selNode: json.NodeInfo = meta64.getHighlightedNode();
+                uid = selNode.uid;
+            }
+
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+            if (node) {
+                var topNode = getFirstChildNode();
+                if (topNode == null) {
+                    return;
+                }
+
+                util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+                    "parentNodeId": meta64.currentNodeId,
+                    "nodeId": node.name,
+                    "siblingId": topNode.name
+                }, setNodePositionResponse);
+            } else {
+                console.log("idToNodeMap does not contain " + uid);
+            }
+        }
+
+        export let moveNodeToBottom = function(uid?: string): void {
+            /* if no uid was passed, use the highlighted node */
+            if (!uid) {
+                let selNode: json.NodeInfo = meta64.getHighlightedNode();
+                uid = selNode.uid;
+            }
+
+            let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+            if (node) {
+                util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+                    "parentNodeId": meta64.currentNodeData.node.id,
+                    "nodeId": node.name,
+                    "siblingId": null
+                }, setNodePositionResponse);
+            } else {
+                console.log("idToNodeMap does not contain " + uid);
+            }
+        }
+
         /*
          * Returns the node above the specified node or null if node is itself the top node
          */
         export let getNodeAbove = function(node): any {
-            let ordinal:number = meta64.getOrdinalOfNode(node);
+            let ordinal: number = meta64.getOrdinalOfNode(node);
             if (ordinal <= 0)
                 return null;
             return meta64.currentNodeData.children[ordinal - 1];
@@ -249,7 +292,7 @@ namespace m64 {
          * Returns the node below the specified node or null if node is itself the bottom node
          */
         export let getNodeBelow = function(node: any): json.NodeInfo {
-            let ordinal:number = meta64.getOrdinalOfNode(node);
+            let ordinal: number = meta64.getOrdinalOfNode(node);
             console.log("ordinal = " + ordinal);
             if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
                 return null;
@@ -257,11 +300,10 @@ namespace m64 {
             return meta64.currentNodeData.children[ordinal + 1];
         }
 
-        // fullRepositoryExport: function() {
-        //     util.json("exportToXml", {
-        //         "nodeId": "/"
-        //     }, this._exportResponse, this);
-        // },
+        export let getFirstChildNode = function(): any {
+            if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
+            return meta64.currentNodeData.children[0];
+        }
 
         export let runEditNode = function(uid: any): void {
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];

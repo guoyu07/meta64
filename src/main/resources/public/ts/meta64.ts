@@ -477,6 +477,8 @@ namespace m64 {
 
             util.setEnablement("moveNodeUpButton", canMoveUp);
             util.setEnablement("moveNodeDownButton", canMoveDown);
+            util.setEnablement("moveNodeToTopButton", canMoveUp);
+            util.setEnablement("moveNodeToBottomButton", canMoveDown);
 
             util.setEnablement("changePasswordPgButton", !isAnonUser);
             util.setEnablement("accountPreferencesButton", !isAnonUser);

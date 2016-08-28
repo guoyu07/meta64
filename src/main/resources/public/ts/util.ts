@@ -139,7 +139,7 @@ if (typeof String.prototype.escapeForAttrib != 'function') {
 namespace m64 {
     export namespace util {
 
-        export let logAjax: boolean = true;
+        export let logAjax: boolean = false;
         export let timeoutMessageShown: boolean = false;
         export let offline: boolean = false;
 

@@ -40,12 +40,8 @@ namespace m64 {
             meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
                 : meta64.MODE_ADVANCED;
 
-            //debugger;
             let showMetaDataCheckbox = util.polyElm(this.id("showMetaData"));
             meta64.showMetaData = showMetaDataCheckbox.node.checked;
-
-            //let checked:boolean = $("#"+this.id("showMetaData")).is(":checked");
-            //let checked2:boolean = $(showMetaDataCheckbox.node).is(":checked");
 
             util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
                 //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.

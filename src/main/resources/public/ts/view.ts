@@ -5,7 +5,7 @@ namespace m64 {
 
         export let scrollToSelNodePending: boolean = false;
 
-        export let updateStatusBar = function() : void {
+        export let updateStatusBar = function(): void {
             if (!meta64.currentNodeData)
                 return;
             var statusLine = "";
@@ -23,33 +23,30 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, renderParentIfLeaf?: any, highlightId?: any) : void {
+        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any): void {
             render.renderPageFromData(res);
 
-            if (highlightId) {
-                meta64.highlightRowById(highlightId, true);
+            if (targetId) {
+                meta64.highlightRowById(targetId, true);
             } else {
-                if (targetId) { // && renderParentIfLeaf && res.displayedParent) {
-                    meta64.highlightRowById(targetId, true);
-                } else {
-                    scrollToSelectedNode();
-                }
+                scrollToSelectedNode();
             }
+
             meta64.refreshAllGuiEnablement();
         }
 
         /*
          * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
          */
-        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean) : void {
+        export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
             if (!nodeId) {
                 nodeId = meta64.currentNodeId;
             }
 
             console.log("Refreshing tree: nodeId=" + nodeId);
             if (!highlightId) {
-                let currentSelNode:json.NodeInfo = meta64.getHighlightedNode();
-                highlightId = currentSelNode!=null ? currentSelNode.id : nodeId;
+                let currentSelNode: json.NodeInfo = meta64.getHighlightedNode();
+                highlightId = currentSelNode != null ? currentSelNode.id : nodeId;
             }
 
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
@@ -57,7 +54,7 @@ namespace m64 {
                 "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false
             }, function(res: json.RenderNodeResponse) {
-                refreshTreeResponse(res, nodeId, renderParentIfLeaf, highlightId);
+                refreshTreeResponse(res, highlightId);
 
                 if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
                     edit.editMode(true);
@@ -78,7 +75,7 @@ namespace m64 {
             setTimeout(function() {
                 scrollToSelNodePending = false;
 
-                let elm:any = nav.getSelectedPolyElement();
+                let elm: any = nav.getSelectedPolyElement();
                 if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                     elm.node.scrollIntoView();
                 }
@@ -104,16 +101,16 @@ namespace m64 {
                 if (scrollToSelNodePending)
                     return;
 
-                let elm:any = util.polyElm("mainPaperTabs");
+                let elm: any = util.polyElm("mainPaperTabs");
                 if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                     elm.node.scrollIntoView();
                 }
             }, 1000);
         }
 
-        export let initEditPathDisplayById = function(domId:string) {
-            let node:json.NodeInfo = edit.editNode;
-            let e:any = $("#" + domId);
+        export let initEditPathDisplayById = function(domId: string) {
+            let node: json.NodeInfo = edit.editNode;
+            let e: any = $("#" + domId);
             if (!e)
                 return;
 

@@ -59,7 +59,7 @@ namespace m64 {
             }
         }
 
-        export let searchNodesResponse = function(res:json.NodeSearchResponse) {
+        export let searchNodesResponse = function(res: json.NodeSearchResponse) {
             searchResults = res;
             let searchResultsPanel = new SearchResultsPanel();
             var content = searchResultsPanel.build();
@@ -84,7 +84,7 @@ namespace m64 {
                 return;
             }
 
-            util.json<json.NodeSearchRequest,json.NodeSearchResponse>("nodeSearch", {
+            util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": "",
                 "sortDir": "DESC",
@@ -100,7 +100,7 @@ namespace m64 {
                 return;
             }
 
-            util.json<json.NodeSearchRequest,json.NodeSearchResponse>("nodeSearch", {
+            util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
                 "nodeId": node.id,
                 "searchText": "",
                 "sortDir": "DESC",
@@ -109,7 +109,7 @@ namespace m64 {
             }, timelineResponse);
         }
 
-        export let initSearchNode = function(node:json.NodeInfo) {
+        export let initSearchNode = function(node: json.NodeInfo) {
             node.uid = util.getUidForId(identToUidMap, node.id);
             uidToNodeMap[node.uid] = node;
         }
@@ -178,12 +178,16 @@ namespace m64 {
             util.changeOrAddClass(rowElm, "inactive-row", "active-row");
         }
 
-        export let clickSearchNode = function(uid:string) {
+        export let clickSearchNode = function(uid: string) {
             /*
              * update highlight node to point to the node clicked on, just to persist it for later
              */
             srch.highlightRowNode = srch.uidToNodeMap[uid];
-            view.refreshTree(srch.highlightRowNode.id, true);
+            if (!srch.highlightRowNode) {
+                throw "Unable to find uid in search results: " + uid;
+            }
+
+            view.refreshTree(srch.highlightRowNode.id, true, srch.highlightRowNode.id);
             meta64.selectTab("mainTabName");
         }
 

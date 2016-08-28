@@ -382,12 +382,15 @@ public class UserManagerService {
 			/*
 			 * Assign preferences as properties on this node,
 			 */
-			boolean isAdvancedMode = req.getUserPreferences().isAdvancedMode();
-			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, isAdvancedMode);
+			boolean advancedMode = req.getUserPreferences().isAdvancedMode();
+			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, advancedMode);
 
-			boolean isEditMode = req.getUserPreferences().isEditMode();
-			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, isEditMode);
+			boolean editMode = req.getUserPreferences().isEditMode();
+			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, editMode);
 
+			boolean showMetaData = req.getUserPreferences().isShowMetaData();
+			prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
+			
 			session.save();
 
 			/*
@@ -397,8 +400,9 @@ public class UserManagerService {
 			 * form anywhere else at that time.
 			 */
 			UserPreferences userPreferences = sessionContext.getUserPreferences();
-			userPreferences.setAdvancedMode(isAdvancedMode);
-			userPreferences.setEditMode(isEditMode);
+			userPreferences.setAdvancedMode(advancedMode);
+			userPreferences.setEditMode(editMode);
+			userPreferences.setShowMetaData(showMetaData);
 
 			res.setSuccess(true);
 		});
@@ -418,6 +422,7 @@ public class UserManagerService {
 			/* for polymer conversion, forcing to true here */
 			userPrefs.setAdvancedMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_ADV_MODE));
 			userPrefs.setEditMode(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_EDIT_MODE));
+			userPrefs.setShowMetaData(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_SHOW_METADATA));
 
 			userPrefs.setLastNode(JcrUtil.safeGetStringProp(prefsNode, JcrProp.USER_PREF_LAST_NODE));
 			userPrefs.setImportAllowed(JcrUtil.safeGetBooleanProp(prefsNode, JcrProp.USER_PREF_IMPORT_ALLOWED));

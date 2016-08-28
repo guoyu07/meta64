@@ -22,6 +22,7 @@ public class JcrProp {
 	public static final String USER_PREF_LAST_NODE = "lastNode";
 	public static final String USER_PREF_ADV_MODE = "advMode";
 	public static final String USER_PREF_EDIT_MODE = "editMode";
+	public static final String USER_PREF_SHOW_METADATA = "showMetaData";
 	public static final String USER_PREF_IMPORT_ALLOWED = "importAllowed";
 	public static final String USER_PREF_EXPORT_ALLOWED = "exportAllowed";
 	public static final String USER_PREF_PASSWORD_RESET_AUTHCODE = "pwdResetAuth";

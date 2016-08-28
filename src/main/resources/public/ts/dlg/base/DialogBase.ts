@@ -193,6 +193,38 @@ namespace m64 {
             }, label);
         }
 
+        makeCheckBox = (label: string, id: string, initialState:boolean): string => {
+            id = this.id(id);
+
+            var attrs = {
+                //"onClick": "m64.meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
+                "name": id,
+                "id": id
+            };
+
+            ////////////
+//             <paper-checkbox on-change="checkboxChanged">click</paper-checkbox>
+//
+//             checkboxChanged : function(event){
+//     if(event.target.checked) {
+//         console.log(event.target.value);
+//     }
+// }
+            ////////////
+
+            if (initialState) {
+                attrs["checked"] = "checked";
+            }
+
+            let checkbox: string = render.tag("paper-checkbox", attrs, "", false);
+
+            checkbox += render.tag("label", {
+                "for": id
+            }, label, true);
+
+            return checkbox;
+        }
+
         makeHeader = (text: string, id?: string, centered?: boolean): string => {
             var attrs = {
                 "class": "dialog-header " + (centered ? "horizontal center-justified layout" : "")

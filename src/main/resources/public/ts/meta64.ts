@@ -94,6 +94,9 @@ namespace m64 {
          */
         export let showProperties: boolean = false;
 
+        /* Flag that indicates if we are rendering path, owner, modTime, etc. on each row */
+        export let showMetaData: boolean = false;
+
         /*
          * List of node prefixes to flag nodes to not allow to be shown in the page in simple mode
          */
@@ -134,7 +137,8 @@ namespace m64 {
             "advancedMode": false,
             "lastNode": "",
             "importAllowed" : false,
-            "exportAllowed" : false
+            "exportAllowed" : false,
+            "showMetaData" : false
         };
 
         export let updateMainMenuPanel = function() {

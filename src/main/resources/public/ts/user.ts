@@ -42,6 +42,7 @@ namespace m64 {
 
             meta64.userPreferences = res.userPreferences;
             meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
+            meta64.showMetaData = res.userPreferences.showMetaData;
 
             console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
         }

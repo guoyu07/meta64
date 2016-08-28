@@ -71,6 +71,7 @@ namespace m64 {
                 menuItem("Toggle Properties", "propsToggleButton", "m64.props.propsToggle();") + //
                 menuItem("Refresh", "refreshPageButton", "m64.meta64.refresh();") + //
                 menuItem("Show URL", "showFullNodeUrlButton", "m64.render.showNodeUrl();") + //
+                menuItem("Preferences", "accountPreferencesButton", "(new m64.PrefsDlg()).open();") + //
                 //todo-0: bug: server info menu item is showing up (although correctly disabled) for non-admin users.
                 menuItem("Server Info", "showServerInfoButton", "m64.view.showServerInfo();"); //
             var viewOptionsMenu = makeTopLevelMenu("View", viewOptionsMenuItems);
@@ -80,7 +81,6 @@ namespace m64 {
              */
             var myAccountItems = //
                 menuItem("Change Password", "changePasswordPgButton", "(new m64.ChangePasswordDlg()).open();") + //
-                menuItem("Preferences", "accountPreferencesButton", "(new m64.PrefsDlg()).open();") + //
                 menuItem("Manage Account", "manageAccountButton", "(new m64.ManageAccountDlg()).open();") + //
                 menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", "m64.edit.insertBookWarAndPeace();"); //
             // menuItem("Full Repository Export", "fullRepositoryExport", "

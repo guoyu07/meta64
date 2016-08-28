@@ -10,7 +10,7 @@ namespace m64 {
          * Returns a string that is the HTML content of the dialog
          */
         build = (): string => {
-            var header = this.makeHeader("Account Peferences");
+            var header = this.makeHeader("Peferences");
 
             var radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
                 this.makeRadioButton("Advanced", "editModeAdvanced");
@@ -19,6 +19,9 @@ namespace m64 {
                 "id": this.id("simpleModeRadioGroup"),
                 "selected": this.id("editModeSimple")
             }, radioButtons);
+
+            let showMetaDataCheckBox = this.makeCheckBox("Show Row Metadata", "showMetaData", meta64.showMetaData);
+            var checkboxBar = render.makeHorzControlGroup(showMetaDataCheckBox);
 
             var formControls = radioButtonGroup;
 
@@ -29,13 +32,21 @@ namespace m64 {
             var backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
 
             var buttonBar = render.centeredButtonBar(saveButton + backButton);
-            return header + radioBar + buttonBar;
+            return header + radioBar + checkboxBar + buttonBar;
         }
 
         savePreferences = (): void => {
             var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
             meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
                 : meta64.MODE_ADVANCED;
+
+            //debugger;
+            let showMetaDataCheckbox = util.polyElm(this.id("showMetaData"));
+            meta64.showMetaData = showMetaDataCheckbox.node.checked;
+
+            //let checked:boolean = $("#"+this.id("showMetaData")).is(":checked");
+            //let checked2:boolean = $(showMetaDataCheckbox.node).is(":checked");
+
             util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
                 //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
                 "userPreferences": {
@@ -43,8 +54,9 @@ namespace m64 {
                     "editMode": meta64.userPreferences.editMode,
                     /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
                     "lastNode": null,
-                    "importAllowed" : false,
-                    "exportAllowed" : false
+                    "importAllowed": false,
+                    "exportAllowed": false,
+                    "showMetaData": meta64.showMetaData
                 }
             }, this.savePreferencesResponse, this);
         }
@@ -59,9 +71,15 @@ namespace m64 {
         }
 
         init = (): void => {
+            //debugger;
             var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
             polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
                 .id("editModeAdvanced"));
+
+            //todo-0: put these two lines in a utility method
+            polyElm = util.polyElm(this.id("showMetaData"));
+            polyElm.node.checked = meta64.showMetaData;
+
             Polymer.dom.flush();
         }
     }

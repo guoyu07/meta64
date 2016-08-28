@@ -52,6 +52,7 @@ namespace m64 {
             lastNode: string;
             importAllowed: boolean;
             exportAllowed: boolean;
+            showMetaData: boolean;
         }
 
         export interface AddPrivilegeRequest {

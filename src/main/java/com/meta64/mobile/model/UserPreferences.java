@@ -2,6 +2,7 @@ package com.meta64.mobile.model;
 
 public class UserPreferences {
 	private boolean editMode;
+	private boolean showMetaData;
 	private boolean advancedMode;
 	private String lastNode;
 	private boolean importAllowed;
@@ -45,5 +46,13 @@ public class UserPreferences {
 
 	public void setExportAllowed(boolean exportAllowed) {
 		this.exportAllowed = exportAllowed;
+	}
+
+	public boolean isShowMetaData() {
+		return showMetaData;
+	}
+
+	public void setShowMetaData(boolean showMetaData) {
+		this.showMetaData = showMetaData;
 	}
 }

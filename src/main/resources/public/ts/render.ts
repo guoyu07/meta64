@@ -166,7 +166,9 @@ namespace m64 {
             var ret: string = getTopRightImageTag(node);
 
             /* todo-2: enable headerText when appropriate here */
-            ret += showHeader ? buildRowHeader(node, showPath, showName) : "";
+            if (meta64.showMetaData) {
+                ret += showHeader ? buildRowHeader(node, showPath, showName) : "";
+            }
 
             if (meta64.showProperties) {
                 var properties = props.renderProperties(node.properties);
@@ -662,20 +664,20 @@ namespace m64 {
             //console.log("mainNodeContent: "+mainNodeContent);
 
             if (mainNodeContent.length > 0) {
-                let uid:string = data.node.uid;
-                let cssId:string = uid + "_row";
-                let buttonBar:string = "";
-                let editNodeButton:string = "";
-                let createSubNodeButton:string = "";
-                let replyButton:string = "";
+                let uid: string = data.node.uid;
+                let cssId: string = uid + "_row";
+                let buttonBar: string = "";
+                let editNodeButton: string = "";
+                let createSubNodeButton: string = "";
+                let replyButton: string = "";
 
                 // console.log("data.node.path="+data.node.path);
                 // console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
                 // console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
-                let createdBy:string = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
-                let commentBy:string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
-                let publicAppend:string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
+                let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
+                let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
+                let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
 
                 /*
                  * Show Reply button if this is a publicly appendable node and not created by current user,
@@ -709,15 +711,15 @@ namespace m64 {
                 }
 
                 /* Construct Create Subnode Button */
-                let focusNode:json.NodeInfo = meta64.getHighlightedNode();
-                let selected:boolean = focusNode && focusNode.uid === uid;
+                let focusNode: json.NodeInfo = meta64.getHighlightedNode();
+                let selected: boolean = focusNode && focusNode.uid === uid;
                 // var rowHeader = buildRowHeader(data.node, true, true);
 
                 if (createSubNodeButton || editNodeButton || replyButton) {
                     buttonBar = makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
                 }
 
-                let content:string = tag("div", {
+                let content: string = tag("div", {
                     "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
                     "onClick": "m64.nav.clickOnNodeRow(this, '" + uid + "');",
                     "id": cssId
@@ -744,7 +746,7 @@ namespace m64 {
 
             let rowCount: number = 0;
             if (data.children) {
-                let childCount:number = data.children.length;
+                let childCount: number = data.children.length;
                 // console.log("childCount: " + childCount);
                 /*
                  * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
@@ -752,8 +754,8 @@ namespace m64 {
                  */
 
                 for (var i = 0; i < data.children.length; i++) {
-                    let node:json.NodeInfo = data.children[i];
-                    let row:string = generateRow(i, node, newData, childCount, rowCount);
+                    let node: json.NodeInfo = data.children[i];
+                    let row: string = generateRow(i, node, newData, childCount, rowCount);
                     if (row.length != 0) {
                         output += row;
                         rowCount++;
@@ -789,7 +791,7 @@ namespace m64 {
             }
         }
 
-        export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number) :string {
+        export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
 
             if (meta64.isNodeBlackListed(node))
                 return "";
@@ -808,12 +810,12 @@ namespace m64 {
             return row;
         }
 
-        export let getUrlForNodeAttachment = function(node: json.NodeInfo):string {
+        export let getUrlForNodeAttachment = function(node: json.NodeInfo): string {
             return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
         }
 
         /* see also: makeImageTag() */
-        export let adjustImageSize = function(node: json.NodeInfo) :void {
+        export let adjustImageSize = function(node: json.NodeInfo): void {
 
             var elm = $("#" + node.imgId);
             if (elm) {
@@ -863,7 +865,7 @@ namespace m64 {
 
         /* see also: adjustImageSize() */
         export let makeImageTag = function(node: json.NodeInfo) {
-            let src:string = getUrlForNodeAttachment(node);
+            let src: string = getUrlForNodeAttachment(node);
             node.imgId = "imgUid_" + node.uid;
 
             if (node.width && node.height) {
@@ -882,12 +884,12 @@ namespace m64 {
                 if (node.width > meta64.deviceWidth - 50) {
 
                     /* set the width we want to go for */
-                    let width:number = meta64.deviceWidth - 50;
+                    let width: number = meta64.deviceWidth - 50;
 
                     /*
                      * and set the height to the value it needs to be at for same w/h ratio (no image stretching)
                      */
-                    let height:number = width * node.height / node.width;
+                    let height: number = width * node.height / node.width;
 
                     return tag("img", {
                         "src": src,
@@ -924,7 +926,7 @@ namespace m64 {
                 closeTag = true;
 
             /* HTML tag itself */
-            let ret:string = "<" + tag;
+            let ret: string = "<" + tag;
 
             if (attributes) {
                 ret += " ";
@@ -953,7 +955,7 @@ namespace m64 {
             return ret;
         }
 
-        export let makeTextArea = function(fieldName: string, fieldId: string) :string {
+        export let makeTextArea = function(fieldName: string, fieldId: string): string {
             return tag("paper-textarea", {
                 "name": fieldId,
                 "label": fieldName,
@@ -961,7 +963,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeEditField = function(fieldName: string, fieldId: string) : string{
+        export let makeEditField = function(fieldName: string, fieldId: string): string {
             return tag("paper-input", {
                 "name": fieldId,
                 "label": fieldName,
@@ -969,7 +971,7 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makePasswordField = function(fieldName: string, fieldId: string):string {
+        export let makePasswordField = function(fieldName: string, fieldId: string): string {
             return tag("paper-input", {
                 "type": "password",
                 "name": fieldId,
@@ -978,8 +980,8 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeButton = function(text: string, id: string, callback: any) :string{
-            let attribs:Object = {
+        export let makeButton = function(text: string, id: string, callback: any): string {
+            let attribs: Object = {
                 "raised": "raised",
                 "id": id
             };
@@ -994,7 +996,7 @@ namespace m64 {
         /*
          * domId is id of dialog being closed.
          */
-        export let makeBackButton = function(text: string, id: string, domId: string, callback: any) : string{
+        export let makeBackButton = function(text: string, id: string, domId: string, callback: any): string {
 
             if (callback === undefined) {
                 callback = "";
@@ -1007,21 +1009,21 @@ namespace m64 {
             }, text, true);
         }
 
-        export let allowPropertyToDisplay = function(propName: string) : boolean {
+        export let allowPropertyToDisplay = function(propName: string): boolean {
             if (!meta64.inSimpleMode())
                 return true;
             return meta64.simpleModePropertyBlackList[propName] == null;
         }
 
-        export let isReadOnlyProperty = function(propName: string) : boolean{
+        export let isReadOnlyProperty = function(propName: string): boolean {
             return meta64.readOnlyPropertyList[propName];
         }
 
-        export let isBinaryProperty = function(propName: string) : boolean {
+        export let isBinaryProperty = function(propName: string): boolean {
             return meta64.binaryPropertyList[propName];
         }
 
-        export let sanitizePropertyName = function(propName: string) : string{
+        export let sanitizePropertyName = function(propName: string): string {
             if (meta64.editModeOption === "simple") {
                 return propName === jcrCnst.CONTENT ? "Content" : propName;
             } else {

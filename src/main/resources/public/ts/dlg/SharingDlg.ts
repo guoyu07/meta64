@@ -73,9 +73,8 @@ namespace m64 {
                 }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
             });
 
-            var thiz = this;
             var publicAppendAttrs = {
-                "onClick": "m64.meta64.getObjectByGuid(" + thiz.guid + ").publicCommentingChanged();",
+                "onClick": "m64.meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
                 "name": "allowPublicCommenting",
                 "id": this.id("allowPublicCommenting")
             };

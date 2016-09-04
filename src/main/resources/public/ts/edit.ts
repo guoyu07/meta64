@@ -12,10 +12,18 @@ namespace m64 {
             view.scrollToSelectedNode();
         }
 
-        let deleteNodesResponse = function(res: json.DeleteNodesResponse): void {
+        let deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
-                view.refreshTree(null, false);
+
+                debugger;
+                let highlightId: string = null;
+                if (payload) {
+                    let selNode = payload["postDeleteSelNode"];
+                    highlightId = selNode.id;
+                }
+
+                view.refreshTree(null, false, highlightId);
             }
         }
 
@@ -409,10 +417,40 @@ namespace m64 {
 
             (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
                 function() {
+                    debugger;
+                    let postDeleteSelNode: json.NodeInfo = getBestPostDeleteSelNode();
+
                     util.json<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
                         "nodeIds": selNodesArray
-                    }, deleteNodesResponse);
+                    }, deleteNodesResponse, null, { "postDeleteSelNode": postDeleteSelNode });
                 })).open();
+        }
+
+        /* Gets the node we want to scroll to after a delete */
+        export let getBestPostDeleteSelNode = function(): json.NodeInfo {
+            /* Use a hashmap-type approach to saving all selected nodes into a looup map */
+            let nodesMap: Object = meta64.getSelectedNodesAsMapById();
+            let bestNode: json.NodeInfo = null;
+            let takeNextNode: boolean = false;
+
+            /* now we scan the children, and the last child we encounterd up until we find the rist onen in nodesMap will be the
+            node we will want to select and scroll the user to AFTER the deleting is done */
+            for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
+                let node: json.NodeInfo = meta64.currentNodeData.children[i];
+
+                if (takeNextNode) {
+                    return node;
+                }
+
+                /* is this node one to be deleted */
+                if (nodesMap[node.id]) {
+                    takeNextNode = true;
+                }
+                else {
+                    bestNode = node;
+                }
+            }
+            return bestNode;
         }
 
         export let moveSelNodes = function(): void {

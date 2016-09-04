@@ -163,6 +163,8 @@ public class AppController {
 	@Autowired
 	private SystemService systemService;
 
+	private static final boolean logRequests = false;
+
 	/*
 	 * This is the actual app page loading request, for his SPA (Single Page Application) this is
 	 * the request to load the page.
@@ -594,7 +596,9 @@ public class AppController {
 	}
 
 	private static void logRequest(String url, Object req) throws Exception {
-		log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
+		if (logRequests) {
+			log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
+		}
 	}
 
 	private void checkHttpSession() throws NotLoggedInException {

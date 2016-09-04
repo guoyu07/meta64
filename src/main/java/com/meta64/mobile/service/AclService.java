@@ -66,7 +66,7 @@ public class AclService {
 
 		if (req.isIncludeOwners()) {
 			List<String> owners = userManagerService.getOwnerNames(node);
-			log.info("Owner Count: " + owners.size());
+			//log.info("Owner Count: " + owners.size());
 			res.setOwners(owners);
 		}
 

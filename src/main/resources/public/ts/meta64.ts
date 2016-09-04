@@ -136,9 +136,9 @@ namespace m64 {
             "editMode": false,
             "advancedMode": false,
             "lastNode": "",
-            "importAllowed" : false,
-            "exportAllowed" : false,
-            "showMetaData" : false
+            "importAllowed": false,
+            "exportAllowed": false,
+            "showMetaData": false
         };
 
         export let updateMainMenuPanel = function() {
@@ -288,7 +288,7 @@ namespace m64 {
             return false;
         }
 
-        export let getSelectedNodeUidsArray = function() {
+        export let getSelectedNodeUidsArray = function(): string[] {
             var selArray = [], idx = 0, uid;
 
             for (uid in selectedNodes) {
@@ -299,7 +299,7 @@ namespace m64 {
             return selArray;
         }
 
-        export let getSelectedNodeIdsArray = function() {
+        export let getSelectedNodeIdsArray = function(): string[] {
             var selArray = [], idx = 0, uid;
 
             if (!selectedNodes) {
@@ -321,9 +321,21 @@ namespace m64 {
             return selArray;
         }
 
+        /* return an object with properties for each NodeInfo where the key is the id */
+        export let getSelectedNodesAsMapById = function(): Object {
+            let ret : Object = {};
+            let selArray:json.NodeInfo[] = this.getSelectedNodesArray();
+            for (var i = 0; i < selArray.length; i++) {
+                ret[selArray[i].id] = selArray[i];
+            }
+            return ret;
+        }
+
         /* Gets selected nodes as NodeInfo.java objects array */
-        export let getSelectedNodesArray = function() {
-            var selArray = [], idx = 0, uid;
+        export let getSelectedNodesArray = function(): json.NodeInfo[] {
+            let selArray: json.NodeInfo[] = [];
+            let idx: number = 0;
+            let uid: string = "";
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
                     selArray[idx++] = uidToNodeMap[uid];
@@ -451,12 +463,12 @@ namespace m64 {
             let highlightNode: json.NodeInfo = getHighlightedNode();
             let selNodeIsMine: boolean = highlightNode && highlightNode.createdBy === meta64.userName;
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
-            let homeNodeSelected: boolean = highlightNode && meta64.homeNodeId==highlightNode.id;
+            let homeNodeSelected: boolean = highlightNode && meta64.homeNodeId == highlightNode.id;
             let importAllowed = isAdminUser || userPreferences.importAllowed;
             let exportAllowed = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
-            let numChildNodes : number = getNumChildNodes();
-            let canMoveUp: boolean = highlightOrdinal> 0 && numChildNodes > 1;
+            let numChildNodes: number = getNumChildNodes();
+            let canMoveUp: boolean = highlightOrdinal > 0 && numChildNodes > 1;
             let canMoveDown: boolean = highlightOrdinal < numChildNodes - 1 && numChildNodes > 1;
 
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
@@ -527,8 +539,7 @@ namespace m64 {
             return null;
         }
 
-        /* node = NodeInfo.java object */
-        export let getOrdinalOfNode = function(node : json.NodeInfo): number {
+        export let getOrdinalOfNode = function(node: json.NodeInfo): number {
             if (!currentNodeData || !currentNodeData.children)
                 return -1;
 
@@ -540,11 +551,11 @@ namespace m64 {
             return -1;
         }
 
-        export let getNumChildNodes = function() : number {
-          if (!currentNodeData || !currentNodeData.children)
-              return 0;
+        export let getNumChildNodes = function(): number {
+            if (!currentNodeData || !currentNodeData.children)
+                return 0;
 
-          return currentNodeData.children.length;
+            return currentNodeData.children.length;
         }
 
         export let setCurrentNodeData = function(data): void {

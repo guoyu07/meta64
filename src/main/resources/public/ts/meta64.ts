@@ -285,7 +285,7 @@ namespace m64 {
             }
 
             /* this is the same as setting using mainIronPages?? */
-            var paperTabs = document.querySelector("#mainPaperTabs");
+            var paperTabs = document.querySelector("#mainIronPages"); //"#mainPaperTabs");
             (<_HasSelect>paperTabs).select(pg.tabId);
         }
 

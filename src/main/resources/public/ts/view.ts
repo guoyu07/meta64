@@ -82,10 +82,11 @@ namespace m64 {
                 // If we couldn't find a selected node on this page, scroll to
                 // top instead.
                 else {
-                    elm = util.polyElm("mainPaperTabs");
-                    if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
-                        elm.node.scrollIntoView();
-                    }
+                  //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
+                    // elm = util.polyElm("mainPaperTabs");
+                    // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
+                    //     elm.node.scrollIntoView();
+                    // }
                 }
             }, 1000);
         }
@@ -97,15 +98,16 @@ namespace m64 {
             if (scrollToSelNodePending)
                 return;
 
-            setTimeout(function() {
-                if (scrollToSelNodePending)
-                    return;
-
-                let elm: any = util.polyElm("mainPaperTabs");
-                if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
-                    elm.node.scrollIntoView();
-                }
-            }, 1000);
+                //todo-0: not using mainPaperTabs any longer so shw should go here now ?
+            // setTimeout(function() {
+            //     if (scrollToSelNodePending)
+            //         return;
+            //
+            //     let elm: any = util.polyElm("mainPaperTabs");
+            //     if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
+            //         elm.node.scrollIntoView();
+            //     }
+            // }, 1000);
         }
 
         export let initEditPathDisplayById = function(domId: string) {

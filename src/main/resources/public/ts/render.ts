@@ -705,7 +705,7 @@ namespace m64 {
 
                 if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
                     createSubNodeButton = tag("paper-icon-button", {
-                      "icon": "icons:mode-vert",
+                      "icon": "icons:more-vert",
                         // "id" : "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + uid + "');"

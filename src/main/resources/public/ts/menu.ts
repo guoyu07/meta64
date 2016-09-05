@@ -28,6 +28,12 @@ namespace m64 {
 
         export let build = function(): void {
 
+            var pageMenuItems = //
+                menuItem("Main", "mainPageButton", "m64.meta64.selectTab('mainTabName');") + //
+                menuItem("Search", "searchPageButton", "m64.meta64.selectTab('searchTabName');") + //
+                menuItem("Timeline", "timelinePageButton", "m64.meta64.selectTab('timelineTabName');");
+            var pageMenu = makeTopLevelMenu("Page", pageMenuItems);
+
             var editMenuItems = //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
                 menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();") + //
@@ -91,7 +97,7 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = editMenu + moveMenu+ attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
+            var content = pageMenu+ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + mainMenuHelp;
 
             util.setHtmlEnhanced(domId, content);

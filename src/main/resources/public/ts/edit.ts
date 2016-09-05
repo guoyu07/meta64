@@ -15,8 +15,6 @@ namespace m64 {
         let deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
-
-                debugger;
                 let highlightId: string = null;
                 if (payload) {
                     let selNode = payload["postDeleteSelNode"];
@@ -417,7 +415,6 @@ namespace m64 {
 
             (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
                 function() {
-                    debugger;
                     let postDeleteSelNode: json.NodeInfo = getBestPostDeleteSelNode();
 
                     util.json<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {

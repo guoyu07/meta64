@@ -35,6 +35,8 @@
               href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html" />
         <link rel="import"
               href="/bower_components/iron-icons/iron-icons.html" />
+        <link rel="import" 
+              href="/bower_components/iron-icons/editor-icons.html"/>
         <link rel="import"
               href="/bower_components/iron-pages/iron-pages.html" />
         <link rel="import"
@@ -189,24 +191,49 @@
                             <span class="title"
                                   onClick="m64.nav.navPublicHome();"
                                   id="headerAppName">Meta64</span>
-                            <paper-button style="display:none;"
+                            <paper-icon-button style="display:none;"
+                            			  icon="icons:home"
                                           id="navHomeButton"
-                                          onClick="m64.nav.navHome();">Home</paper-button>
-                            <paper-button style="display:none;"
+                                          onClick="m64.nav.navHome();">Home</paper-icon-button>
+                                          
+                            <paper-icon-button style="display:none;"
+                             				icon="icons:change-history"
                                           id="upLevelButton"
-                                          onClick="m64.nav.navUpLevel();">Parent</paper-button>
-                            <paper-button style="display:none;"
+                                          onClick="m64.nav.navUpLevel();">Parent</paper-icon-button>
+                                          
+                            <paper-icon-button style="display:none;"
+                             			  icon="editor:mode-edit"
                                           id="editModeButton"
-                                          onClick="m64.edit.editMode();">Edit</paper-button>
+                                          onClick="m64.edit.editMode();">Edit</paper-icon-button>
+                                          
+                            <paper-icon-button style="display:none;"
+                             			  icon="icons:search"
+                                          id="searchMainAppButton"
+                                          onClick="(new m64.SearchContentDlg()).open();">Search</paper-icon-button>
+                                          
+                             <paper-icon-button style="display:none;"
+                             			  icon="icons:schedule"
+                                          id="timelineMainAppButton"
+                                          onClick="m64.srch.timelineByModTime();">Timeline</paper-icon-button>
+                                                       
+                            <paper-icon-button style="display:none;"
+                             			  icon="icons:settings"
+                                          id="userPreferencesMainAppButton"
+                                          onClick="(new m64.PrefsDlg()).open();">Preferences</paper-icon-button>
+                                                       
+                            <paper-icon-button style="display:none;"
+                            			 icon="icons:account-box"
+                                          id="openLoginDlgButton"
+                                          onClick="(new m64.LoginDlg()).open();">Login</paper-icon-button>
+                                          
+                            <paper-icon-button style="display:none;"
+                            			  icon="icons:account-box"
+                                          id="navLogoutButton"
+                                          onClick="m64.user.logout(true);">Logout</paper-icon-button>
+                                          
                             <paper-button style="display:none;"
                                           id="openSignupPgButton"
                                           onClick="m64.user.openSignupPg();">Signup</paper-button>
-                            <paper-button style="display:none;"
-                                          id="openLoginDlgButton"
-                                          onClick="(new m64.LoginDlg()).open();">Login</paper-button>
-                            <paper-button style="display:none;"
-                                          id="navLogoutButton"
-                                          onClick="m64.user.logout(true);">Logout</paper-button>
                         </paper-toolbar>
                         <!-- 
                         Main Content (Tabs on RHS, which hold all content, except popup dialogs)

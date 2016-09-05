@@ -201,8 +201,11 @@ namespace m64 {
                                     // "img.top.right" feature for
                                     // (Also need to make this a configurable option, because other clones of meta64 don't
                                     // want my github link!)
-                                    "<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-                                    + jcrContent);
+                                    //
+                                    //I decided for now I don't want to show the fork-me-on-github image at upper right of app, but uncommenting this line is al
+                                    //that's required to bring it back.
+                                    //"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"+
+                                    jcrContent);
                             }
                         }
                         /*
@@ -464,7 +467,8 @@ namespace m64 {
                 if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                     /* Construct Create Subnode Button */
                     buttonCount++;
-                    createSubNodeButton = tag("paper-button", {
+                    createSubNodeButton = tag("paper-icon-button", {
+                        "icon": "icons:more-vert",
                         "id": "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + node.uid + "');"
@@ -474,7 +478,8 @@ namespace m64 {
                 if (cnst.INS_ON_TOOLBAR && !commentBy) {
                     buttonCount++;
                     /* Construct Create Subnode Button */
-                    insertNodeButton = tag("paper-button", {
+                    insertNodeButton = tag("paper-icon-button", {
+                        "icon": "icons:more-horiz",
                         "id": "insertNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.insertNode('" + node.uid + "');"
@@ -482,11 +487,15 @@ namespace m64 {
                 }
             }
 
+            //Polmer Icons Reference: https://elements.polymer-project.org/elements/iron-icons?view=demo:demo/index.html
+
             if (meta64.userPreferences.editMode && editingAllowed) {
                 buttonCount++;
                 /* Construct Create Subnode Button */
-                editNodeButton = tag("paper-button", //
+                editNodeButton = tag("paper-icon-button", //
                     {
+                        "alt": "Edit node.",
+                        "icon": "editor:mode-edit",
                         "raised": "raised",
                         "onClick": "m64.edit.runEditNode('" + node.uid + "');"
                     }, "Edit");
@@ -496,7 +505,8 @@ namespace m64 {
                     if (canMoveUp) {
                         buttonCount++;
                         /* Construct Create Subnode Button */
-                        moveNodeUpButton = tag("paper-button", {
+                        moveNodeUpButton = tag("paper-icon-button", {
+                            "icon": "icons:arrow-upward",
                             "raised": "raised",
                             "onClick": "m64.edit.moveNodeUp('" + node.uid + "');"
                         }, "Up");
@@ -505,7 +515,8 @@ namespace m64 {
                     if (canMoveDown) {
                         buttonCount++;
                         /* Construct Create Subnode Button */
-                        moveNodeDownButton = tag("paper-button", {
+                        moveNodeDownButton = tag("paper-icon-button", {
+                            "icon": "icons:arrow-downward",
                             "raised": "raised",
                             "onClick": "m64.edit.moveNodeDown('" + node.uid + "');"
                         }, "Dn");
@@ -693,7 +704,8 @@ namespace m64 {
                 }
 
                 if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
-                    createSubNodeButton = tag("paper-button", {
+                    createSubNodeButton = tag("paper-icon-button", {
+                      "icon": "icons:mode-vert",
                         // "id" : "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + uid + "');"
@@ -704,7 +716,8 @@ namespace m64 {
                 if (edit.isEditAllowed(data.node)) {
 
                     /* Construct Create Subnode Button */
-                    editNodeButton = tag("paper-button", {
+                    editNodeButton = tag("paper-icon-button", {
+                      "icon": "editor:mode-edit",
                         "raised": "raised",
                         "onClick": "m64.edit.runEditNode('" + uid + "');"
                     }, "Edit");

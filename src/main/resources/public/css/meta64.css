@@ -49,8 +49,10 @@ code {
 }
 
 .mainNodeContentStyle {
+	/*
 	margin-top: 15px;
 	margin-bottom: 15px;
+	*/
 	background-color: lightGray;
 }
 
@@ -220,6 +222,7 @@ tr td div p {
 	*/
 	border: 1px dotted lightGray;
 	max-width: 800px;
+	background: #f9e79f;
 }
 
 .corner-style {

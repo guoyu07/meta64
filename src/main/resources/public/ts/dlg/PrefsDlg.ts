@@ -67,7 +67,6 @@ namespace m64 {
         }
 
         init = (): void => {
-            //debugger;
             var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
             polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
                 .id("editModeAdvanced"));

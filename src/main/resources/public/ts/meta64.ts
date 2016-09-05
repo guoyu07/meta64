@@ -253,6 +253,21 @@ namespace m64 {
         export let selectTab = function(pageName): void {
             var ironPages = document.querySelector("#mainIronPages");
             (<_HasSelect>ironPages).select(pageName);
+
+            /* this code can be made more DRY, but i'm just trying it out for now, so i'm not bothering to perfect it yet. */
+            $("#mainPageButton").css("border-left", "");
+            $("#searchPageButton").css("border-left", "");
+            $("#timelinePageButton").css("border-left", "");
+
+            if (pageName == 'mainTabName') {
+                $("#mainPageButton").css("border-left", "8px solid red");
+            }
+            else if (pageName == 'searchTabName') {
+                $("#searchPageButton").css("border-left", "8px solid red");
+            }
+            else if (pageName == 'timelineTabName') {
+                $("#timelinePageButton").css("border-left", "8px solid red");
+            }
         }
 
         /*
@@ -323,8 +338,8 @@ namespace m64 {
 
         /* return an object with properties for each NodeInfo where the key is the id */
         export let getSelectedNodesAsMapById = function(): Object {
-            let ret : Object = {};
-            let selArray:json.NodeInfo[] = this.getSelectedNodesArray();
+            let ret: Object = {};
+            let selArray: json.NodeInfo[] = this.getSelectedNodesArray();
             for (var i = 0; i < selArray.length; i++) {
                 ret[selArray[i].id] = selArray[i];
             }
@@ -508,10 +523,15 @@ namespace m64 {
             util.setEnablement("renameNodePgButton", !isAnonUser && highlightNode != null && selNodeIsMine);
             util.setEnablement("searchDlgButton", !isAnonUser && highlightNode != null);
             util.setEnablement("timelineButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("searchMainAppButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("timelineMainAppButton", !isAnonUser && highlightNode != null);
             util.setEnablement("showServerInfoButton", isAdminUser);
             util.setEnablement("showFullNodeUrlButton", highlightNode != null);
             util.setEnablement("refreshPageButton", !isAnonUser);
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
+
+            //VISIBILITY
 
             util.setVisibility("openImportDlg", importAllowed && selNodeIsMine);
             util.setVisibility("openExportDlg", exportAllowed && selNodeIsMine);
@@ -523,6 +543,9 @@ namespace m64 {
             util.setVisibility("openLoginDlgButton", isAnonUser);
             util.setVisibility("navLogoutButton", !isAnonUser);
             util.setVisibility("openSignupPgButton", isAnonUser);
+            util.setVisibility("searchMainAppButton", !isAnonUser && highlightNode != null);
+            util.setVisibility("timelineMainAppButton", !isAnonUser && highlightNode != null);
+            util.setVisibility("userPreferencesMainAppButton", !isAnonUser);
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();

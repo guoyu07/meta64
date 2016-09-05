@@ -40,6 +40,7 @@ import com.meta64.mobile.model.UserPreferences;
 public class Convert {
 
 	public static final int MAX_INLINE_CHARS = 500;
+	public static final boolean ALLOW_ROW_TRUCATION = false;
 
 	/*
 	 * We have to use full annotation here because we already have a different Value class in the
@@ -123,7 +124,10 @@ public class Convert {
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
-		/* log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " + primaryTypeName + " hasBinary=" + hasBinary); */
+		/*
+		 * log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " +
+		 * primaryTypeName + " hasBinary=" + hasBinary);
+		 */
 
 		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
@@ -258,8 +262,15 @@ public class Convert {
 
 				String val = prop.getValue().getString();
 
-				/* truncate text if too long, and allowAbbreviated=true */
-				if (allowAbbreviated && val.length() > MAX_INLINE_CHARS) {
+				/*
+				 * truncate text if too long, and allowAbbreviated=true
+				 * 
+				 * I have this disabled ALLOW_ROW_TRUCATION=false, becasue I decided truncating text
+				 * is not something that can really cleanly be done. What I'll do instead,
+				 * eventually, is just make each node hight be limited wherever it would make sense
+				 * but will still contain the full rendered content if the DIV its in is resized.
+				 */
+				if (ALLOW_ROW_TRUCATION && allowAbbreviated && val.length() > MAX_INLINE_CHARS) {
 					abbreviated = true;
 					val = XString.truncateAfter(val, "\n");
 					val = XString.truncateAfter(val, "\r");
@@ -293,7 +304,8 @@ public class Convert {
 				}
 				/* otherwise render full text */
 				else {
-					//log.trace(String.format("prop[%s] isContent", prop.getName()) + " useMarkdown=" + useMarkdown);
+					// log.trace(String.format("prop[%s] isContent", prop.getName()) + "
+					// useMarkdown=" + useMarkdown);
 					if (htmlOnly) {
 						htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
 						/*

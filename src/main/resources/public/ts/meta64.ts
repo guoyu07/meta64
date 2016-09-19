@@ -255,19 +255,19 @@ namespace m64 {
             (<_HasSelect>ironPages).select(pageName);
 
             /* this code can be made more DRY, but i'm just trying it out for now, so i'm not bothering to perfect it yet. */
-            $("#mainPageButton").css("border-left", "");
-            $("#searchPageButton").css("border-left", "");
-            $("#timelinePageButton").css("border-left", "");
-
-            if (pageName == 'mainTabName') {
-                $("#mainPageButton").css("border-left", "8px solid red");
-            }
-            else if (pageName == 'searchTabName') {
-                $("#searchPageButton").css("border-left", "8px solid red");
-            }
-            else if (pageName == 'timelineTabName') {
-                $("#timelinePageButton").css("border-left", "8px solid red");
-            }
+            // $("#mainPageButton").css("border-left", "");
+            // $("#searchPageButton").css("border-left", "");
+            // $("#timelinePageButton").css("border-left", "");
+            //
+            // if (pageName == 'mainTabName') {
+            //     $("#mainPageButton").css("border-left", "8px solid red");
+            // }
+            // else if (pageName == 'searchTabName') {
+            //     $("#searchPageButton").css("border-left", "8px solid red");
+            // }
+            // else if (pageName == 'timelineTabName') {
+            //     $("#timelinePageButton").css("border-left", "8px solid red");
+            // }
         }
 
         /*
@@ -448,8 +448,8 @@ namespace m64 {
                     // console.log("already highlighted.");
                     doneHighlighting = true;
                 } else {
-                    var rowElmId = curHighlightedNode.uid + "_row";
-                    var rowElm = $("#" + rowElmId);
+                    let rowElmId = curHighlightedNode.uid + "_row";
+                    let rowElm = $("#" + rowElmId);
                     util.changeOrAddClass(rowElm, "active-row", "inactive-row");
                 }
             }
@@ -459,6 +459,9 @@ namespace m64 {
 
                 let rowElmId: string = node.uid + "_row";
                 let rowElm: string = $("#" + rowElmId);
+                if (!rowElm || rowElm.length == 0) {
+                    console.log("Unable to find rowElement to highlight: " + rowElmId);
+                }
                 util.changeOrAddClass(rowElm, "inactive-row", "active-row");
             }
 
@@ -602,7 +605,7 @@ namespace m64 {
                 util.setVisibility("mainNodeContent", false);
 
                 console.log("setting listview to: " + res.content);
-                util.setHtmlEnhanced("listView", res.content);
+                util.setHtml("listView", res.content);
             }
             render.renderMainPageControls();
         }

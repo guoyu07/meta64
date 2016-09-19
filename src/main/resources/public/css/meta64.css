@@ -1,3 +1,9 @@
+
+:root { 
+	--paper-tab-ink: var(--paper-blue-900); 
+	--paper-tabs-selection-bar-color: var(--paper-blue-900);
+}
+
 /*
 code { 
 	white-space: pre; 
@@ -152,14 +158,6 @@ tr td div p {
 	text-align: center;
 }
 
-.donations {
-	text-align: center;
-}
-
-.donate-back-button {
-	margin: 3em;
-}
-
 .page-node-header {
 	border-left: 10px solid transparent;
 }
@@ -299,3 +297,49 @@ tr td div p {
 	width: 80%;
 }
 
+.modelessDialog {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+}
+
+.mainNodeContent {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        background-color: lightGray;
+        border: 1px solid green;
+}
+
+.nav {
+	border-right: 1px solid #ccc;
+}
+
+.main {
+	background-color: #eee;
+}
+
+/*
+.content {
+	height: 3000px;
+}
+*/
+
+.my-menu-section /* paper-item */ {
+	padding-left: 30px;
+	background-color: white;
+	color: black;
+}
+
+.meta64-menu-heading /* paper-submenu */ {
+	background-color: lightGray;
+	color: black;
+}
+                         
+.page-title { @apply (--paper-font-display2);	
+}
+
+@media ( max-width : 600px) {
+	.page-title {
+		font-size: 24px !important;
+	}
+}

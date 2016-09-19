@@ -432,10 +432,16 @@ namespace m64 {
                 buttonCount++;
 
                 openButton = tag("paper-button", {
-                    "class": "highlight-button",
-                    "raised": "raised",
-                    "onClick": "m64.nav.openNode('" + node.uid + "');"//
-                }, //
+
+                        /* For some unknown reason the ability to style this with the class broke, and even
+                        after dedicating several hours trying to figure out why I'm still baffled. I checked everything
+                        a hundred times and still don't know what I'm doing wrong...I just finally put the god damn fucking style attribute
+                        here to accomplish the same thing */
+                        //"class": "green",
+                        "style": "background-color: #4caf50;color:white;",
+                        "raised": "raised",
+                        "onClick": "m64.nav.openNode('" + node.uid + "');"//
+                    }, //
                     "Open");
             }
 
@@ -455,11 +461,15 @@ namespace m64 {
                 let css: Object = selected ? {
                     "id": node.uid + "_sel",//
                     "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');",
-                    "checked": "checked"
+                    "checked": "checked",
+                    //padding is a back hack to make checkbox line up with other icons.
+                    //(i will probably end up using a paper-icon-button that toggles here, instead of checkbox)
+                    "style": "margin-top: 11px;"
                 } : //
                     {
                         "id": node.uid + "_sel",//
-                        "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');"
+                        "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');",
+                        "style": "margin-top: 11px;"
                     };
 
                 selButton = tag("paper-checkbox", css, "");
@@ -468,7 +478,7 @@ namespace m64 {
                     /* Construct Create Subnode Button */
                     buttonCount++;
                     createSubNodeButton = tag("paper-icon-button", {
-                        "icon": "icons:more-vert",
+                        "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                         "id": "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + node.uid + "');"
@@ -479,7 +489,7 @@ namespace m64 {
                     buttonCount++;
                     /* Construct Create Subnode Button */
                     insertNodeButton = tag("paper-icon-button", {
-                        "icon": "icons:more-horiz",
+                        "icon": "icons:picture-in-picture", //"icons:more-horiz",
                         "id": "insertNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.insertNode('" + node.uid + "');"
@@ -610,7 +620,7 @@ namespace m64 {
 
             var hasContent = html.length > 0;
             if (hasContent) {
-                util.setHtmlEnhanced("mainPageControls", html);
+                util.setHtml("mainPageControls", html);
             }
 
             util.setVisibility("#mainPageControls", hasContent)
@@ -705,7 +715,7 @@ namespace m64 {
 
                 if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
                     createSubNodeButton = tag("paper-icon-button", {
-                      "icon": "icons:more-vert",
+                        "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                         // "id" : "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + uid + "');"
@@ -717,7 +727,7 @@ namespace m64 {
 
                     /* Construct Create Subnode Button */
                     editNodeButton = tag("paper-icon-button", {
-                      "icon": "editor:mode-edit",
+                        "icon": "editor:mode-edit",
                         "raised": "raised",
                         "onClick": "m64.edit.runEditNode('" + uid + "');"
                     }, "Edit");
@@ -782,7 +792,7 @@ namespace m64 {
                 }
             }
 
-            util.setHtmlEnhanced("listView", output);
+            util.setHtml("listView", output);
 
             if (meta64.codeFormatDirty) {
                 prettyPrint();
@@ -793,7 +803,7 @@ namespace m64 {
             /*
              * TODO-3: Instead of calling screenSizeChange here immediately, it would be better to set the image sizes
              * exactly on the attributes of each image, as the HTML text is rendered before we even call
-             * setHtmlEnhancedById, so that images always are GUARANTEED to render correctly immediately.
+             * setHtml, so that images always are GUARANTEED to render correctly immediately.
              */
             meta64.screenSizeChange();
 

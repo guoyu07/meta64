@@ -173,8 +173,6 @@ public class AppController {
 	 * repository by uuid.
 	 * 
 	 * passCode is an auth code for a password reset
-	 * 
-	 * NOTE: Before removing thymeleaf I had "index" being returned in stead of "/index.html"
 	 */
 	@RequestMapping("/")
 	public String mobile(@RequestParam(value = "id", required = false) String id, //

@@ -69,7 +69,7 @@ namespace m64 {
             Polymer.updateStyles();
 
             var content = this.build();
-            util.setHtmlEnhanced(id, content);
+            util.setHtml(id, content);
             this.built = true;
 
             this.init();

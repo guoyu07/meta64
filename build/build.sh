@@ -35,13 +35,6 @@ else
 fi
 
 cd $META64/build
-# 8/6/2016 - tidy got removed from Ubuntu Package manager so i'm commenting it out until I 
-# find out where is the safe place to get it from.
-#
-# ***** WARNING ****
-# I discovered this run-tidy script will have the effect of destroying the files it tries to edit if anything goes wrong, like when tidy isn't installed. OOOPS! 
-# ./run-tidy.sh $META64/src/main/resources/templates index
-# ./run-tidy.sh $META64/src/main/resources/public/elements/main-tabs main-tabs
 
 #copy the readme.md from project root to published location (landing-page.md) where the app will
 #be able to pick it up at runtime. The reason I don't just keep these two files in the 'static' folder
@@ -55,6 +48,7 @@ java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/
 
 #java -jar google-compiler.jar --help
 read -p "Google compiler done."
+
 
 cd $META64
 

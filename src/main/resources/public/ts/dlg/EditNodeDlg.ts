@@ -174,7 +174,7 @@ namespace m64 {
             //
             // fields += toggleReadonlyVisButton;
 
-            util.setHtmlEnhanced(this.id("propertyEditFieldContainer"), fields);
+            util.setHtml(this.id("propertyEditFieldContainer"), fields);
 
             if (cnst.USE_ACE_EDITOR) {
                 for (var i = 0; i < aceFields.length; i++) {

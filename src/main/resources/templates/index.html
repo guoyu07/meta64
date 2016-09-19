@@ -1,313 +1,181 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      lang="en">
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    lang="en">
     <head>
         <meta charset="utf-8" />
         <title>{{brandingTitle}}</title>
-        <meta name="description"
-              content="{{brandingMetaContent}}" />
-        <meta name="keywords"
-              content="jcr" />
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1" />
-        <link rel="manifest"
-              href="manifest.json" />
-        <meta name="mobile-web-app-capable"
-              content="yes" />
-        <meta name="application-name"
-              content="meta64.com" />
-        <link rel="icon"
-              href="favicon.ico" />
+        <meta
+            name="description"
+            content="{{brandingMetaContent}}" />
+        <meta
+            name="keywords"
+            content="jcr" />
+        <meta charset="utf-8" />
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge,chrome=1" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1" />
+        <link
+            rel="manifest"
+            href="manifest.json" />
+        <meta
+            name="mobile-web-app-capable"
+            content="yes" />
+        <meta
+            name="application-name"
+            content="meta64.com" />
+        <link
+            rel="icon"
+            href="favicon.ico" />
         <!-- Add to homescreen for Safari on iOS -->
-        <meta name="apple-mobile-web-app-capable"
-              content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style"
-              content="black" />
-        <meta name="apple-mobile-web-app-title"
-              content="Meta64" />
-        <script src="/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-        <link rel="import"
-              href="/bower_components/polymer/polymer.html" />
-        <link rel="import"
-              href="/bower_components/paper-styles/typography.html" />
-        <!-- Iron elements -->
-        <link rel="import"
-              href="/bower_components/iron-flex-layout/classes/iron-flex-layout.html" />
-        <link rel="import"
-              href="/bower_components/iron-icons/iron-icons.html" />
-        <link rel="import" 
-              href="/bower_components/iron-icons/editor-icons.html"/>
-        <link rel="import"
-              href="/bower_components/iron-pages/iron-pages.html" />
-        <link rel="import"
-              href="/bower_components/iron-ajax/iron-ajax.html" />
-        <link rel="import"
-              href="/bower_components/iron-selector/iron-selector.html" />
-        <!-- Paper elements -->
-        <link rel="import"
-              href="/bower_components/paper-drawer-panel/paper-drawer-panel.html" />
-        <link rel="import"
-              href="/bower_components/paper-item/paper-item.html" />
-        <link rel="import"
-              href="/bower_components/paper-card/paper-card.html" />
-        <link rel="import"
-              href="/bower_components/paper-material/paper-material.html" />
-        <link rel="import"
-              href="/bower_components/paper-menu/paper-menu.html" />
-        <link rel="import"
-              href="/bower_components/paper-menu/paper-submenu.html" />
-        <link rel="import"
-              href="/bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html" />
-        <link rel="import"
-              href="/bower_components/paper-styles/paper-styles-classes.html" />
-        <link rel="import"
-              href="/bower_components/paper-toast/paper-toast.html" />
-        <link rel="import"
-              href="/bower_components/paper-toolbar/paper-toolbar.html" />
-        <link rel="import"
-              href="/bower_components/paper-dialog/paper-dialog.html" />
-        <link rel="import"
-              href="/bower_components/paper-progress/paper-progress.html" />
-        <link rel="import"
-              href="/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" />
-        <link rel="import"
-              href="/bower_components/paper-button/paper-button.html" />
-        <link rel="import"
-              href="/bower_components/paper-checkbox/paper-checkbox.html" />
-        <link rel="import"
-              href="/bower_components/paper-icon-button/paper-icon-button.html" />
-        <link rel="import"
-              href="/bower_components/paper-toggle-button/paper-toggle-button.html" />
-        <link rel="import"
-              href="/bower_components/paper-tooltip/paper-tooltip.html" />
-        <link rel="import"
-              href="/bower_components/paper-header-panel/paper-header-panel.html" />
-        <link rel="import"
-              href="/bower_components/paper-styles/color.html" />
-        <link rel="import"
-              href="/bower_components/paper-tabs/paper-tabs.html" />
-        <link rel="import"
-              href="/bower_components/paper-tabs/paper-tab.html" />
-        <link rel="import"
-              href="/bower_components/paper-radio-button/paper-radio-button.html" />
-        <link rel="import"
-              href="/bower_components/paper-radio-group/paper-radio-group.html" />
-        <link rel="import"
-              href="/bower_components/marked-element/marked-element.html" />
-        <!-- Application elements-->
-        <link rel="import"
-              href="/elements/shared-styles.html" />
-        <link rel="import"
-              href="/elements/main-tabs/main-tabs.html?ver={{cacheVersion}}" />
-        <link rel="stylesheet"
-              href="/css/meta64.css?ver={{cacheVersion}}" />
-        <script>/* 
-<![CDATA[*/
-        /*
-        Old browsers may not have the console.log/console.error functions.
-         */
-        if (!window.console) {
-                console = {
-                        log : function() {
-                        },
-                        error : function() {
-                        }
-                };
-        }
+        <meta
+            name="apple-mobile-web-app-capable"
+            content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black" />
+        <meta
+            name="apple-mobile-web-app-title"
+            content="Meta64" />
+        <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
+        <script
+            src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
+        <link
+            rel="import"
+            href="/polymer/paper-styles/color.html" />
+        <link
+            rel="import"
+            href="/elements/x-app/x-app.xml?ver={{cacheVersion}}" />
+        <link
+            rel="import"
+            href="/elements/main-tabs/main-tabs.xml?ver={{cacheVersion}}" />
+        <link
+            rel="stylesheet"
+            href="/css/meta64.css?ver={{cacheVersion}}" />
 
-        window.onerror = function(message, url, line, col, err) {
-                var msg = "ERROR: " + message + " [url:" + url + "] line " + line + " col: " + col;
-                if (err.stack) {
-                        msg += " err: " + err.stack;
-                }
-                console.log(msg);
-        }
-
-        var cookiePrefix = "{{cookiePrefix}}";
-        var BRANDING_TITLE = "{{brandingTitle}}";
-        var cacheVersion = "{{cacheVersion}}";
-        var profileName = "{{profileName}}";
-        console.log("cacheVersion: " + cacheVersion);
-
-        /**
-         * IMPORTANT: "Same Origin Policy" is very very strict on the precise text of the name even if
-         * it maps in DNS to same thing it must be a text match and may different to browser.
-         */
-        var postTargetUrl = window.location.origin + "/mobile/api/";
-        /*]]>
-*/</script>
+        <script>
+            /*<![CDATA[*/            
+            	/*
+            	Old browsers may not have the console.log/console.error functions.
+            	 */
+            	if (!window.console) {
+            		console = {
+            			log : function() {
+            			},
+            			error : function() {
+            			}
+            		};
+            	}
+            
+            	window.onerror = function(message, url, line, col, err) {
+            		var msg = "ERROR: " + message + " [url:" + url + "] line " + line + " col: " + col;
+            		if (err.stack) {
+            			msg += " err: " + err.stack;
+            		}
+            		console.log(msg);
+            	}
+            
+            	var cookiePrefix = "{{cookiePrefix}}";
+            	var BRANDING_TITLE = "{{brandingTitle}}";
+            	var cacheVersion = "{{cacheVersion}}";
+            	var profileName = "{{profileName}}";
+            	console.log("cacheVersion: " + cacheVersion);
+            
+            	/**
+            	 * IMPORTANT: "Same Origin Policy" is very very strict on the precise text of the name even if
+            	 * it maps in DNS to same thing it must be a text match and may different to browser.
+            	 */
+            	var postTargetUrl = window.location.origin + "/mobile/api/";
+        	/*]]>*/
+        </script>
         <script src="/js/systemjs/system.js"></script>
-        <script type="text/javascript"
-                src="{{jqueryJs}}"></script>
-        <script type="text/javascript"
-                src="/js/jquery/jquery.cookie.js?ver.md=1"></script>
+        <script
+            type="text/javascript"
+            src="{{jqueryJs}}"></script>
+        <script
+            type="text/javascript"
+            src="/js/jquery/jquery.cookie.js?ver.md=1"></script>
         <script src="/js/google-code-prettify/prettify.js"></script>
-        <link rel="stylesheet"
-              href="/js/google-code-prettify/prettify.css" />
-        <link rel="stylesheet"
-              href="/js/google-code-prettify/desert.css" />
-        <!-- The ace.js is the same as here:
-        <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>      
-        -->
-        <script src="/js/ace/ace.js"
-                type="text/javascript"
-                charset="utf-8"></script>
-        <!--
-        requirejs is VERY finnicky. Every time I've ever tried to touch it, i end up
-        regretting it for one reason or another. It's EXTREMELY un-userfriendly.
-        <script src="/js/amd/require.js" type="text/javascript"></script> 
-        -->
+        <link
+            rel="stylesheet"
+            href="/js/google-code-prettify/prettify.css" />
+        <link
+            rel="stylesheet"
+            href="/js/google-code-prettify/desert.css" />
+        <!-- The ace.js is the same as here: <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" 
+            type="text/javascript" charset="utf-8"></script> -->
+        <script
+            src="/js/ace/ace.js"
+            type="text/javascript"
+            charset="utf-8"></script>
+        <!-- requirejs is VERY finnicky. Every time I've ever tried to touch 
+            it, i end up regretting it for one reason or another. It's EXTREMELY un-userfriendly. 
+            <script src="/js/amd/require.js" type="text/javascript"></script> -->
     </head>
-    <body unresolved="unresolved"
-          class="fullbleed layout vertical">
-        <span id="browser-sync-binding"></span>
-        <dom-module is="main-dom-module">
-            <!--  link rel="import" type="css" href="/css/meta64.css"/ -->
-            <template is="dom-bind"
-                      id="app">
-                <style is="custom-style"
-                       include="shared-styles"></style>
-                <iron-ajax id="ironAjax"></iron-ajax>
-                <paper-drawer-panel id="paperDrawerPanel">
-                    <!-- Left Side Panel -->
-                    <paper-scroll-header-panel id="mainLhsMenuPanel"
-                                               drawer="drawer"
-                                               fixed="fixed">
-                        <div class="horizontal-section">
-                            <paper-menu id="mainNavBar"
-                                        attr-for-item-title="label"
-                                        multi="multi"></paper-menu>
-                        </div>
-                    </paper-scroll-header-panel>
-                    <!-- Main Area -->
-                    <paper-header-panel main="main"
-                                        id="headerPanelMain">
-                        <paper-toolbar id="mainToolbar">
-                            <!--
-                                when implemented this button will toggle visibility of left-side menu  
-                                -->
-                            <paper-icon-button icon="menu"
-                                               paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
-                            <span class="title"
-                                  onClick="m64.nav.navPublicHome();"
-                                  id="headerAppName">Meta64</span>
-                            <paper-icon-button style="display:none;"
-                            			  icon="icons:home"
-                                          id="navHomeButton"
-                                          onClick="m64.nav.navHome();">Home</paper-icon-button>
-                                          
-                            <paper-icon-button style="display:none;"
-                             				icon="icons:change-history"
-                                          id="upLevelButton"
-                                          onClick="m64.nav.navUpLevel();">Parent</paper-icon-button>
-                                          
-                            <paper-icon-button style="display:none;"
-                             			  icon="editor:mode-edit"
-                                          id="editModeButton"
-                                          onClick="m64.edit.editMode();">Edit</paper-icon-button>
-                                          
-                            <paper-icon-button style="display:none;"
-                             			  icon="icons:search"
-                                          id="searchMainAppButton"
-                                          onClick="(new m64.SearchContentDlg()).open();">Search</paper-icon-button>
-                                          
-                             <paper-icon-button style="display:none;"
-                             			  icon="icons:schedule"
-                                          id="timelineMainAppButton"
-                                          onClick="m64.srch.timelineByModTime();">Timeline</paper-icon-button>
-                                                       
-                            <paper-icon-button style="display:none;"
-                             			  icon="icons:settings"
-                                          id="userPreferencesMainAppButton"
-                                          onClick="(new m64.PrefsDlg()).open();">Preferences</paper-icon-button>
-                                                       
-                            <paper-icon-button style="display:none;"
-                            			 icon="icons:account-box"
-                                          id="openLoginDlgButton"
-                                          onClick="(new m64.LoginDlg()).open();">Login</paper-icon-button>
-                                          
-                            <paper-icon-button style="display:none;"
-                            			  icon="icons:account-box"
-                                          id="navLogoutButton"
-                                          onClick="m64.user.logout(true);">Logout</paper-icon-button>
-                                          
-                            <paper-button style="display:none;"
-                                          id="openSignupPgButton"
-                                          onClick="m64.user.openSignupPg();">Signup</paper-button>
-                        </paper-toolbar>
-                        <!-- 
-                        Main Content (Tabs on RHS, which hold all content, except popup dialogs)
-                        
-                        WARNING: do not try using this: </main-tabs> polymer chokes on that and will truncate everything
-                        after the tag (at least in its parent element)
-                        -->
-                        <main-tabs></main-tabs>
-                    </paper-header-panel>
-                </paper-drawer-panel>
-            </template>
-        </dom-module>
-        <!-- PreProcFilter.java loads scripts here depending on spring profile (dev, prod, test) -->
-        <script>/* 
-<![CDATA[*/
-         //Polymer({
-         //   is: "main-dom-module"
-         //});
-                var webComponentsReady = false;
-                addEventListener("WebComponentsReady", function() {
-                        webComponentsReady = true;
-                });    
-                
-                //todo-0: this code is not production ready
-           // set our baseURL reference path
-        SystemJS.config({
-             baseURL: '/js'
-        });
+    <body unresolved="unresolved">
 
-           //todo-0: need to get this from the properties (see html.scripts above)
-           //SystemJS.import("meta64-app.js");
-           
-           System.import( "{{html.mainModule}}" ).then(function(m) {
-                   
-                   console.log("Adding WebComponentsReady event listener.");
-                   
-                   var webComponentsReadyTimer = setInterval(function() {
-                   
-                   if (webComponentsReady) {
-                           clearTimeout(webComponentsReadyTimer);
-                           meta64.initApp();
-                   }
-                            
-                   }, 100);
-           });
-         
-         
-      // Tell RequireJS where ace is located
-      /*
-         require.config({
-                 //baseUrl: window.location.protocol + "//" + window.location.host
-             //+ window.location.pathname.split("/").slice(0, -1).join("/"),
-             
-             paths: {
-                 'ace': '/js/ace'
-             }
-         });
+        <x-app></x-app>
 
-         // Load the ace module
-         require(['ace/ace'], function(ace) {
-                 console.log("Ace loaded!");
-                 if (ace) {
-                         console.log("Ace successful, not null");
-                 }
-             // Set up the editor
-             //var editor = ace.edit('editor');
-             //editor.setTheme('ace/theme/monokai');
-             //editor.getSession().setMode('ace/mode/javascript');
-             // etc...
-         });
-     */
-        
-                        
-         /*]]>
-*/</script>
+        <!-- PreProcFilter.java loads scripts here depending on spring profile 
+            (dev, prod, test) -->
+        <script>
+            /*<![CDATA[*/
+    			var webComponentsReady = false;
+    			addEventListener("WebComponentsReady", function() {
+    				webComponentsReady = true;
+    			});
+    
+    			//todo-0: this code is not production ready
+    			// set our baseURL reference path
+    			SystemJS.config({
+    				baseURL : '/js'
+    			});
+    
+    			//todo-0: need to get this from the properties (see html.scripts above)
+    			//SystemJS.import("meta64-app.js");
+    
+    			System.import("{{html.mainModule}}").then(function(m) {
+    				console.log("Adding WebComponentsReady event listener.");
+    
+    				var webComponentsReadyTimer = setInterval(function() {
+    
+    					if (webComponentsReady) {
+    						clearTimeout(webComponentsReadyTimer);
+    						meta64.initApp();
+    					}
+    
+    				}, 100);
+    			});
+    
+    			// Tell RequireJS where ace is located
+    			   /*
+    			   require.config({
+    			           //baseUrl: window.location.protocol + "//" + window.location.host
+    			       //+ window.location.pathname.split("/").slice(0, -1).join("/"),
+    			       
+    			       paths: {
+    			           'ace': '/js/ace'
+    			       }
+    			   });
+    
+    			   // Load the ace module
+    			   require(['ace/ace'], function(ace) {
+    			           console.log("Ace loaded!");
+    			           if (ace) {
+    			                   console.log("Ace successful, not null");
+    			           }
+    			       // Set up the editor
+    			       //var editor = ace.edit('editor');
+    			       //editor.setTheme('ace/theme/monokai');
+    			       //editor.getSession().setMode('ace/mode/javascript');
+    			       // etc...
+    			   });
+    			 */
+                 
+		      /*]]>*/
+        </script>
     </body>
 </html>

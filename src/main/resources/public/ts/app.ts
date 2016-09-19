@@ -30,14 +30,15 @@ function windowResize() {
 
 addEvent(window, "resize", windowResize);
 
+// this commented section is not working in my new x-app code, but it's ok to comment it out for now.
+//
 // This is our template element in index.html
-var app = document.querySelector('#app');
-
-// Listen for template bound event to know when bindings
-// have resolved and content has been stamped to the page
-app.addEventListener('dom-change', function() {
-    console.log('app ready event!');
-});
+// var app = document.querySelector('#x-app');
+// // Listen for template bound event to know when bindings
+// // have resolved and content has been stamped to the page
+// app.addEventListener('dom-change', function() {
+//     console.log('app ready event!');
+// });
 
 window.addEventListener('polymer-ready', function(e) {
     console.log('polymer-ready event!');

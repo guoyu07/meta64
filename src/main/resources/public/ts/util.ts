@@ -20,10 +20,10 @@ interface _HasSelect {
 
 //WARNING: These prototype functions must be defined outside any functions.
 interface Array<T> {
-				clone(): Array<T>;
-				indexOfItemByProp(propName, propVal): number;
-				arrayMoveItem(fromIndex, toIndex): void;
-				indexOfObject(obj: any): number;
+    clone(): Array<T>;
+    indexOfItemByProp(propName, propVal): number;
+    arrayMoveItem(fromIndex, toIndex): void;
+    indexOfObject(obj: any): number;
 };
 
 Array.prototype.clone = function() {
@@ -63,8 +63,8 @@ if (typeof Array.prototype.indexOfObject != 'function') {
 ///////////////////////////////////////////////////////////////////////////////
 
 interface Date {
-				stdTimezoneOffset(): number;
-				dst(): boolean;
+    stdTimezoneOffset(): number;
+    dst(): boolean;
 };
 
 Date.prototype.stdTimezoneOffset = function() {
@@ -596,23 +596,6 @@ namespace m64 {
             return true;
         }
 
-        /* sets html and returns DOM element */
-        export let setHtmlEnhanced = function(id: string, content: string): any {
-            if (content == null) {
-                content = "";
-            }
-
-            var elm = domElm(id);
-            var polyElm = Polymer.dom(elm);
-            polyElm.node.innerHTML = content;
-
-            // Not sure yet, if these two are required.
-            Polymer.dom.flush();
-            Polymer.updateStyles();
-
-            return elm;
-        }
-
         export let setHtml = function(id: string, content: string): void {
             if (content == null) {
                 content = "";
@@ -620,7 +603,14 @@ namespace m64 {
 
             var elm = domElm(id);
             var polyElm = Polymer.dom(elm);
-            polyElm.node.innerHTML = content;
+
+            //For Polymer 1.0.0, you need this...
+            //polyElm.node.innerHTML = content;
+
+            polyElm.innerHTML = content;
+
+            Polymer.dom.flush();
+            Polymer.updateStyles();
         }
 
         export let getPropertyCount = function(obj: Object): number {
@@ -667,7 +657,7 @@ namespace m64 {
             if (!obj)
                 return "null";
 
-            let val:string = "";
+            let val: string = "";
             $.each(obj, function(k, v) {
                 if (!k) {
                     k = "null";
@@ -686,7 +676,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setEnablement = function(elmId:string, enable:boolean) : void {
+        export let setEnablement = function(elmId: string, enable: boolean): void {
 
             var elm = null;
             if (typeof elmId == "string") {
@@ -714,7 +704,7 @@ namespace m64 {
 		 *
 		 * eleId can be a DOM element or the ID of a dom element, with or without leading #
 		 */
-        export let setVisibility = function(elmId:string, vis:boolean): void {
+        export let setVisibility = function(elmId: string, vis: boolean): void {
 
             var elm = null;
             if (typeof elmId == "string") {

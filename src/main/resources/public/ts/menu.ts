@@ -5,15 +5,18 @@ namespace m64 {
 
         let makeTopLevelMenu = function(title: string, content: string): string {
             return render.tag("paper-submenu", {
-                "class": "meta64-menu-heading"
+              "label" : title,
+                //"class": "meta64-menu-heading",
+                //"class": "menu-content sublist"
             }, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
                 makeSecondLevelList(content), true);
         }
 
         let makeSecondLevelList = function(content: string): string {
             return render.tag("paper-menu", {
-                "class": "menu-content my-menu-section",
-                "multi": "multi"
+              "class": "menu-content sublist my-menu-section",
+                //,
+                //"multi": "multi"
             }, content, true);
         }
 
@@ -24,15 +27,16 @@ namespace m64 {
             }, name, true);
         }
 
-        let domId: string = "mainNavBar";
+        let domId: string = "mainAppMenu";
 
         export let build = function(): void {
 
-            var pageMenuItems = //
-                menuItem("Main", "mainPageButton", "m64.meta64.selectTab('mainTabName');") + //
-                menuItem("Search", "searchPageButton", "m64.meta64.selectTab('searchTabName');") + //
-                menuItem("Timeline", "timelinePageButton", "m64.meta64.selectTab('timelineTabName');");
-            var pageMenu = makeTopLevelMenu("Page", pageMenuItems);
+            // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.
+            // var pageMenuItems = //
+            //     menuItem("Main", "mainPageButton", "m64.meta64.selectTab('mainTabName');") + //
+            //     menuItem("Search", "searchPageButton", "m64.meta64.selectTab('searchTabName');") + //
+            //     menuItem("Timeline", "timelinePageButton", "m64.meta64.selectTab('timelineTabName');");
+            // var pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
             var editMenuItems = //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
@@ -97,10 +101,10 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = pageMenu+ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
+            var content = /* pageMenu+ */ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + mainMenuHelp;
 
-            util.setHtmlEnhanced(domId, content);
+            util.setHtml(domId, content);
         }
 
         export let init = function(): void {

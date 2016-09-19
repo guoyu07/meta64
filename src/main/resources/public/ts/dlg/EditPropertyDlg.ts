@@ -65,7 +65,7 @@ namespace m64 {
             /* display the node path at the top of the edit page */
             view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
 
-            util.setHtmlEnhanced(this.id("addPropertyFieldContainer"), field);
+            util.setHtml(this.id("addPropertyFieldContainer"), field);
         }
 
         saveProperty = (): void => {

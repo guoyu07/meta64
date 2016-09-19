@@ -63,7 +63,7 @@ namespace m64 {
             searchResults = res;
             let searchResultsPanel = new SearchResultsPanel();
             var content = searchResultsPanel.build();
-            util.setHtmlEnhanced("searchResultsPanel", content);
+            util.setHtml("searchResultsPanel", content);
             searchResultsPanel.init();
             meta64.changePage(searchResultsPanel);
         }
@@ -72,7 +72,7 @@ namespace m64 {
             timelineResults = res;
             let timelineResultsPanel = new TimelineResultsPanel();
             var content = timelineResultsPanel.build();
-            util.setHtmlEnhanced("timelineResultsPanel", content);
+            util.setHtml("timelineResultsPanel", content);
             timelineResultsPanel.init();
             meta64.changePage(timelineResultsPanel);
         }
@@ -134,7 +134,7 @@ namespace m64 {
                 output += renderSearchResultAsListItem(node, i, childCount, rowCount);
             });
 
-            util.setHtmlEnhanced(viewName, output);
+            util.setHtml(viewName, output);
         }
 
         /*

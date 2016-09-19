@@ -90,7 +90,7 @@ namespace m64 {
                 "for": this.id("allowPublicCommenting")
             }, "Allow public commenting under this node.", true);
 
-            util.setHtmlEnhanced(this.id("sharingListFieldContainer"), html);
+            util.setHtml(this.id("sharingListFieldContainer"), html);
         }
 
         publicCommentingChanged = (): void => {

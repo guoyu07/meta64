@@ -123,6 +123,7 @@ public class PreProcFilter implements Filter {
 
 		content = insertProps(content);
 
+		//content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
 		content = content.replace("{{jqueryJs}}", jqueryJs);
 		content = content.replace("{{brandingTitle}}", brandingTitle);

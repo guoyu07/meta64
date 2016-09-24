@@ -612,21 +612,6 @@ namespace m64 {
         }
 
         /*
-         * Each page can show buttons at the top of it (not main header buttons but additional buttons just for that
-         * page only, and this generates that content for that entire control bar.
-         */
-        export let renderMainPageControls = function(): void {
-            let html: string = "";
-
-            var hasContent = html.length > 0;
-            if (hasContent) {
-                util.setHtml("mainPageControls", html);
-            }
-
-            util.setVisibility("#mainPageControls", hasContent)
-        }
-
-        /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
         export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
@@ -648,7 +633,6 @@ namespace m64 {
                 util.setVisibility("#listView", true);
             }
 
-            renderMainPageControls();
             meta64.treeDirty = false;
 
             if (newData) {
@@ -763,9 +747,6 @@ namespace m64 {
 
             // console.log("update status bar.");
             view.updateStatusBar();
-
-            // console.log("rendering page controls.");
-            renderMainPageControls();
 
             let rowCount: number = 0;
             if (data.children) {

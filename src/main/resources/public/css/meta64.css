@@ -37,28 +37,13 @@ code {
 	height: .5em;
 }
 
-@font-face {
-	font-family: 'open_sansregular';
-	src: url('/font/opensans-regular-webfont.eot');
-	src: url('/font/opensans-regular-webfont.eot?#iefix')
-		format('embedded-opentype'),
-		url('/font/opensans-regular-webfont.woff') format('woff'),
-		url('/font/opensans-regular-webfont.ttf') format('truetype'),
-		url('/font/opensans-regular-webfont.svg#open_sansregular')
-		format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
+
 
 .meta64-menu-heading {
 	cursor: pointer;
 }
 
 .mainNodeContentStyle {
-	/*
-	margin-top: 15px;
-	margin-bottom: 15px;
-	*/
 	background-color: lightGray;
 }
 
@@ -72,7 +57,7 @@ code {
 }
 
 body {
-	font-family: Roboto, open_sansregular, Tahoma, Verdana, Arial;
+	font-family: Roboto, Tahoma, Verdana, Arial;
 }
 
 tr td div p {
@@ -303,12 +288,14 @@ tr td div p {
         padding-bottom: 15px;
 }
 
+/*
 .mainNodeContent {
         margin-top: 15px;
         margin-bottom: 15px;
         background-color: lightGray;
         border: 1px solid green;
 }
+*/
 
 .nav {
 	border-right: 1px solid #ccc;

@@ -607,7 +607,6 @@ namespace m64 {
                 console.log("setting listview to: " + res.content);
                 util.setHtml("listView", res.content);
             }
-            render.renderMainPageControls();
         }
 
         export let removeBinaryByUid = function(uid): void {

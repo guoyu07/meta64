@@ -159,6 +159,10 @@ namespace m64 {
             searchProp: string;
         }
 
+        export interface FileSearchRequest {
+            searchText: string;
+        }
+
         export interface RemovePrivilegeRequest {
             nodeId: string;
             principal: string;
@@ -195,6 +199,10 @@ namespace m64 {
 
         export interface SaveUserPreferencesRequest {
             userPreferences: UserPreferences;
+        }
+
+        export interface OpenSystemFileRequest {
+            fileName: string;
         }
 
         export interface SetNodePositionRequest {
@@ -291,6 +299,7 @@ namespace m64 {
             anonUserLandingPageNode: string;
             homeNodeOverride: string;
             userPreferences: UserPreferences;
+            allowFileSystemSearch: boolean;
         }
 
         export interface LogoutResponse extends OakResponseBase {
@@ -301,6 +310,10 @@ namespace m64 {
 
         export interface NodeSearchResponse extends OakResponseBase {
             searchResults: NodeInfo[];
+        }
+
+        export interface FileSearchResponse extends OakResponseBase {
+            searchResultNodeId: string;
         }
 
         export interface RemovePrivilegeResponse extends OakResponseBase {
@@ -328,6 +341,9 @@ namespace m64 {
         }
 
         export interface SaveUserPreferencesResponse extends OakResponseBase {
+        }
+
+        export interface OpenSystemFileResponse extends OakResponseBase {
         }
 
         export interface SetNodePositionResponse extends OakResponseBase {

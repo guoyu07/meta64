@@ -21,6 +21,8 @@ public class LoginResponse extends OakResponseBase {
 	private String homeNodeOverride;
 
 	private UserPreferences userPreferences;
+	
+	private boolean allowFileSystemSearch;
 
 	public String getUserName() {
 		return userName;
@@ -60,5 +62,13 @@ public class LoginResponse extends OakResponseBase {
 
 	public void setUserPreferences(UserPreferences userPreferences) {
 		this.userPreferences = userPreferences;
+	}
+
+	public boolean isAllowFileSystemSearch() {
+		return allowFileSystemSearch;
+	}
+
+	public void setAllowFileSystemSearch(boolean allowFileSystemSearch) {
+		this.allowFileSystemSearch = allowFileSystemSearch;
 	}
 }

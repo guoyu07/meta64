@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -58,6 +59,9 @@ public class UserManagerService {
 	private static final Random rand = new Random();
 	private static final Logger log = LoggerFactory.getLogger(UserManagerService.class);
 
+	@Autowired
+	private Environment env;
+	
 	@Value("${anonUserLandingPageNode}")
 	private String anonUserLandingPageNode;
 
@@ -132,6 +136,7 @@ public class UserManagerService {
 			sessionContext.setRootRefInfo(rootRefInfo);
 			res.setRootNode(rootRefInfo);
 			res.setUserName(userName);
+			res.setAllowFileSystemSearch(isAllowFileSystemSearch());
 
 			try {
 				UserPreferences userPreferences = getUserPreferences();
@@ -622,5 +627,9 @@ public class UserManagerService {
 			password.setVal(encryptor.decrypt(encPwd));
 		});
 		return password.getVal();
+	}
+
+	public boolean isAllowFileSystemSearch() {
+		return "true".equalsIgnoreCase(env.getRequiredProperty("allowFileSystemSearch"));
 	}
 }

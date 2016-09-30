@@ -720,10 +720,12 @@ namespace m64 {
 
             if (vis) {
                 // console.log("Showing element: " + elmId);
-                elm.style.display = 'block';
+                //elm.style.display = 'block';
+                $(elm).show();
             } else {
                 // console.log("hiding element: " + elmId);
-                elm.style.display = 'none';
+                //elm.style.display = 'none';
+                $(elm).hide();
             }
         }
 

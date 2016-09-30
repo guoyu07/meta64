@@ -39,6 +39,7 @@ namespace m64 {
             meta64.isAdminUser = res.userName === "admin";
             meta64.isAnonUser = res.userName === "anonymous";
             meta64.anonUserLandingPageNode = res.anonUserLandingPageNode;
+            meta64.allowFileSystemSearch = res.allowFileSystemSearch;
 
             meta64.userPreferences = res.userPreferences;
             meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;

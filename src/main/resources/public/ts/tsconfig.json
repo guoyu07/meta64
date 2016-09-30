@@ -50,6 +50,7 @@
       "./dlg/ImportDlg.ts",
       "./dlg/SearchContentDlg.ts",
       "./dlg/SearchTagsDlg.ts",
+      "./dlg/SearchFilesDlg.ts",
       "./dlg/ChangePasswordDlg.ts",
       "./dlg/ResetPasswordDlg.ts",
       "./dlg/UploadFromFileDlg.ts",

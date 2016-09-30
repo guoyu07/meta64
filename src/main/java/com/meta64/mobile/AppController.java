@@ -1,5 +1,7 @@
 package com.meta64.mobile;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -33,6 +35,7 @@ import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExpandAbbreviatedNodeRequest;
 import com.meta64.mobile.request.ExportRequest;
+import com.meta64.mobile.request.FileSearchRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.GetSharedNodesRequest;
@@ -44,6 +47,7 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.LogoutRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
+import com.meta64.mobile.request.OpenSystemFileRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
@@ -65,6 +69,7 @@ import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExpandAbbreviatedNodeResponse;
 import com.meta64.mobile.response.ExportResponse;
+import com.meta64.mobile.response.FileSearchResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.GetSharedNodesResponse;
@@ -76,6 +81,7 @@ import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.LogoutResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
+import com.meta64.mobile.response.OpenSystemFileResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
@@ -95,9 +101,11 @@ import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
 import com.meta64.mobile.service.NodeSearchService;
+import com.meta64.mobile.service.SolrSearchService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.DesktopApi;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
@@ -162,6 +170,9 @@ public class AppController {
 
 	@Autowired
 	private SystemService systemService;
+	
+	@Autowired
+	private SolrSearchService solrSearchService;
 
 	private static final boolean logRequests = false;
 
@@ -546,7 +557,17 @@ public class AppController {
 		logRequest("nodeSearch", req);
 		NodeSearchResponse res = new NodeSearchResponse();
 		checkHttpSession();
-		nodeSearchService.search(null, req, res);
+		nodeSearchService.search(null, req, res);		
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/fileSearch", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) throws Exception {
+		logRequest("fileSearch", req);
+		FileSearchResponse res = new FileSearchResponse();
+		checkHttpSession();
+		solrSearchService.search(null, req, res);
 		return res;
 	}
 
@@ -592,6 +613,17 @@ public class AppController {
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}
+	
+	@RequestMapping(value = API_PATH + "/openSystemFile", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody OpenSystemFileResponse saveUserPreferences(@RequestBody OpenSystemFileRequest req) throws Exception {
+		logRequest("openSystemFile", req);
+		OpenSystemFileResponse res = new OpenSystemFileResponse();
+		checkHttpSession();
+		DesktopApi.open(new File(req.getFileName()));
+		return res;
+	}
+
 
 	private static void logRequest(String url, Object req) throws Exception {
 		if (logRequests) {

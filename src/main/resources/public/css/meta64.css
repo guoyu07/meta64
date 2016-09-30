@@ -20,6 +20,13 @@ code {
 	background: lightGray;
 	padding: 4px;
 }
+
+.systemFile {
+	font-family: Courier New, Courier, Roboto, Tahoma, Verdana, Arial;
+	cursor: pointer;
+	background: lightGray;
+	padding: 4px;
+}
      
 .ace-edit-panel { 
 	margin-top: 10px;

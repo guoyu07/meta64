@@ -40,6 +40,7 @@ namespace m64 {
         /* always start out as anon user until login */
         export let isAnonUser: boolean = true;
         export let anonUserLandingPageNode: any = null;
+        export let allowFileSystemSearch: boolean = false;
 
         /*
          * signals that data has changed and the next time we go to the main tree view window we need to refresh data
@@ -479,9 +480,9 @@ namespace m64 {
             /* multiple select nodes */
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine: boolean = highlightNode && highlightNode.createdBy === meta64.userName;
+            let selNodeIsMine: boolean = highlightNode && highlightNode.createdBy === userName;
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
-            let homeNodeSelected: boolean = highlightNode && meta64.homeNodeId == highlightNode.id;
+            let homeNodeSelected: boolean = highlightNode && homeNodeId == highlightNode.id;
             let importAllowed = isAdminUser || userPreferences.importAllowed;
             let exportAllowed = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
@@ -524,7 +525,9 @@ namespace m64 {
                 && highlightNode.hasBinary && selNodeIsMine);
             util.setEnablement("editNodeSharingButton", !isAnonUser && highlightNode != null && selNodeIsMine);
             util.setEnablement("renameNodePgButton", !isAnonUser && highlightNode != null && selNodeIsMine);
-            util.setEnablement("searchDlgButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("contentSearchDlgButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("tagSearchDlgButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
             util.setEnablement("timelineButton", !isAnonUser && highlightNode != null);
             util.setEnablement("searchMainAppButton", !isAnonUser && highlightNode != null);
             util.setEnablement("timelineMainAppButton", !isAnonUser && highlightNode != null);
@@ -540,7 +543,7 @@ namespace m64 {
             util.setVisibility("openExportDlg", exportAllowed && selNodeIsMine);
             util.setVisibility("navHomeButton", !isAnonUser);
             util.setVisibility("editModeButton", allowEditMode);
-            util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
+            util.setVisibility("upLevelButton", currentNode && nav.parentVisibleToUser());
             util.setVisibility("insertBookWarAndPeaceButton", isAdminUser || user.isTestUserAccount() && selNodeIsMine);
             util.setVisibility("propsToggleButton", !isAnonUser);
             util.setVisibility("openLoginDlgButton", isAnonUser);
@@ -549,6 +552,7 @@ namespace m64 {
             util.setVisibility("searchMainAppButton", !isAnonUser && highlightNode != null);
             util.setVisibility("timelineMainAppButton", !isAnonUser && highlightNode != null);
             util.setVisibility("userPreferencesMainAppButton", !isAnonUser);
+            util.setVisibility("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();
@@ -778,8 +782,8 @@ namespace m64 {
         export let screenSizeChange = function(): void {
             if (currentNodeData) {
 
-                if (meta64.currentNode.imgId) {
-                    render.adjustImageSize(meta64.currentNode);
+                if (currentNode.imgId) {
+                    render.adjustImageSize(currentNode);
                 }
 
                 $.each(currentNodeData.children, function(i, node) {
@@ -809,6 +813,12 @@ namespace m64 {
             util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
                 //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
                 "userPreferences": userPreferences
+            });
+        }
+
+        export let openSystemFile = function(fileName: string) {
+            util.json<json.OpenSystemFileRequest, json.OpenSystemFileResponse>("openSystemFile", {
+                "fileName": fileName
             });
         }
     }

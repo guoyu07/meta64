@@ -9,4 +9,5 @@ public class JcrName {
 	public static final String OUTBOX = "outbox";
 	public static final String SIGNUP = "signup";
 	public static final String USER_PREFERENCES = "userPreferences";
+	public static final String FILE_SEARCH_RESULTS = "fileSearchResults";
 }

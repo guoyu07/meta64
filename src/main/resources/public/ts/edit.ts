@@ -14,7 +14,6 @@ namespace m64 {
 
         let deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
             if (util.checkSuccess("Delete node", res)) {
-                debugger;
                 meta64.clearSelectedNodes();
                 let highlightId: string = null;
                 if (payload) {

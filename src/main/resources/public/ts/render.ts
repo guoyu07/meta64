@@ -176,14 +176,35 @@ namespace m64 {
                     ret += /* "<br>" + */properties;
                 }
             } else {
-                let contentProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
-                // console.log("contentProp: " + contentProp);
-                if (contentProp) {
+                let renderComplete: boolean = false;
+                let jcrContent: string;
+                let jsonProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
 
-                    let jcrContent: string = props.renderProperty(contentProp);
-                    jcrContent = "<div>" + jcrContent + "</div>"
+                if (jsonProp) {
+                    debugger;
+                    jcrContent = renderJsonFileSearchResultProperty(jsonProp.value);
+                    renderComplete = true;
 
-                    if (jcrContent.length > 0) {
+                    if (rowStyling) {
+                        ret += tag("div", {
+                            "class": "jcr-content"
+                        }, jcrContent);
+                    } else {
+                        ret += tag("div", {
+                            "class": "jcr-root-content"
+                        },
+                            jcrContent);
+                    }
+                }
+
+                if (!renderComplete) {
+                    let contentProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
+
+                    //console.log("contentProp: " + contentProp);
+                    if (contentProp) {
+
+                        jcrContent = props.renderProperty(contentProp);
+                        jcrContent = "<div>" + jcrContent + "</div>";
 
                         if (meta64.serverMarkdown) {
                             jcrContent = injectCodeFormatting(jcrContent);
@@ -241,29 +262,23 @@ namespace m64 {
                             }
                             ret += "</div></marked-element>";
                         }
+
+                        /*
+                         * if (jcrContent.length > 0) { if (rowStyling) { ret += tag("div", { "class" : "jcr-content" },
+                         * jcrContent); } else { ret += tag("div", { "class" : "jcr-root-content" }, // probably could
+                         * "img.top.right" feature for this // if we wanted to. oops. "<a
+                         * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
+                         * class='corner-style'/></a>" + jcrContent); } }
+                         */
                     } else {
-                        ret += "<div>[No Content Text]</div>";
+                        if (node.path.trim() == "/") {
+                            ret += "Root Node";
+                        }
+                        // ret += "<div>[No Content Property]</div>";
                         let properties: string = props.renderProperties(node.properties);
                         if (properties) {
                             ret += /* "<br>" + */properties;
                         }
-                    }
-
-                    /*
-                     * if (jcrContent.length > 0) { if (rowStyling) { ret += tag("div", { "class" : "jcr-content" },
-                     * jcrContent); } else { ret += tag("div", { "class" : "jcr-root-content" }, // probably could
-                     * "img.top.right" feature for this // if we wanted to. oops. "<a
-                     * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
-                     * class='corner-style'/></a>" + jcrContent); } }
-                     */
-                } else {
-                    if (node.path.trim() == "/") {
-                        ret += "Root Node";
-                    }
-                    // ret += "<div>[No Content Property]</div>";
-                    let properties: string = props.renderProperties(node.properties);
-                    if (properties) {
-                        ret += /* "<br>" + */properties;
                     }
                 }
             }
@@ -291,6 +306,27 @@ namespace m64 {
             }
 
             return ret;
+        }
+
+        export let renderJsonFileSearchResultProperty = function(jsonContent: string): string {
+            let content: string = "";
+            try {
+                console.log("json: " + jsonContent);
+                let list: any[] = JSON.parse(jsonContent);
+
+                for (let entry of list) {
+                    let anchor = tag("a", {
+                        "onclick": "m64.meta64.openSystemFile('" + entry.fileName + "')"
+                    }, entry.fileName)
+                    content += tag("div", {
+                        "class": "systemFile",
+                    }, anchor);
+                }
+            }
+            catch (e) {
+                content = "[render failed]";
+            }
+            return content;
         }
 
         /*
@@ -433,15 +469,15 @@ namespace m64 {
 
                 openButton = tag("paper-button", {
 
-                        /* For some unknown reason the ability to style this with the class broke, and even
-                        after dedicating several hours trying to figure out why I'm still baffled. I checked everything
-                        a hundred times and still don't know what I'm doing wrong...I just finally put the god damn fucking style attribute
-                        here to accomplish the same thing */
-                        //"class": "green",
-                        "style": "background-color: #4caf50;color:white;",
-                        "raised": "raised",
-                        "onClick": "m64.nav.openNode('" + node.uid + "');"//
-                    }, //
+                    /* For some unknown reason the ability to style this with the class broke, and even
+                    after dedicating several hours trying to figure out why I'm still baffled. I checked everything
+                    a hundred times and still don't know what I'm doing wrong...I just finally put the god damn fucking style attribute
+                    here to accomplish the same thing */
+                    //"class": "green",
+                    "style": "background-color: #4caf50;color:white;",
+                    "raised": "raised",
+                    "onClick": "m64.nav.openNode('" + node.uid + "');"//
+                }, //
                     "Open");
             }
 

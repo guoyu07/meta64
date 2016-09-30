@@ -141,6 +141,12 @@
 		</dependency>
 		-->
 		
+		<dependency>
+    		<groupId>org.apache.solr</groupId>
+    		<artifactId>solr-solrj</artifactId>
+    		<version>6.2.0</version>
+		</dependency>
+				
 	</dependencies>
 
 	<build>
@@ -194,5 +200,5 @@
 			</plugins>
 		
 	</build>
-
+		
 </project>

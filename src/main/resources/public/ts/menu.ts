@@ -5,7 +5,7 @@ namespace m64 {
 
         let makeTopLevelMenu = function(title: string, content: string): string {
             return render.tag("paper-submenu", {
-              "label" : title,
+                "label": title,
                 //"class": "meta64-menu-heading",
                 //"class": "menu-content sublist"
             }, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
@@ -14,7 +14,7 @@ namespace m64 {
 
         let makeSecondLevelList = function(content: string): string {
             return render.tag("paper-menu", {
-              "class": "menu-content sublist my-menu-section",
+                "class": "menu-content sublist my-menu-section",
                 //,
                 //"multi": "multi"
             }, content, true);
@@ -67,9 +67,11 @@ namespace m64 {
             var sharingMenu = makeTopLevelMenu("Share", sharingMenuItems);
 
             var searchMenuItems = //
-                menuItem("Content", "searchDlgButton", "(new m64.SearchContentDlg()).open();") +//
+                menuItem("Content", "contentSearchDlgButton", "(new m64.SearchContentDlg()).open();") +//
                 //todo-0: make a version of the dialog that does a tag search
-                menuItem("Tags", "searchDlgButton", "(new m64.SearchTagsDlg()).open();");
+                menuItem("Tags", "tagSearchDlgButton", "(new m64.SearchTagsDlg()).open();")+ //
+                menuItem("Files", "fileSearchDlgButton", "(new m64.SearchFilesDlg()).open();");
+
             var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
 
             var timelineMenuItems = //

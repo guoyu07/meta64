@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.util.JcrUtil;
@@ -91,6 +93,7 @@ public class UserManagerUtil {
 
 	public static RefInfo getRootNodeRefInfoForUser(Session session, String userName) throws Exception {
 		Node rootNode = null;
+
 		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN)) {
 			rootNode = session.getRootNode();
 		}

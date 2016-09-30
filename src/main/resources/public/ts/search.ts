@@ -77,6 +77,14 @@ namespace m64 {
             meta64.changePage(timelineResultsPanel);
         }
 
+        export let searchFilesResponse = function(res: json.FileSearchResponse) {
+            util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+                "nodeId": res.searchResultNodeId,
+                "upLevel": null,
+                "renderParentIfLeaf": null
+            }, nav.navHomeResponse);
+        }
+
         export let timelineByModTime = function() {
             var node = meta64.getHighlightedNode();
             if (!node) {

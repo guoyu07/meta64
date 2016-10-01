@@ -21,11 +21,21 @@ code {
 	padding: 4px;
 }
 
+.systemFileRow {
+	margin-botom: 10px;
+}
+
+.systemFileActionLink {
+	cursor: pointer;
+	margin-right: 10x;
+	border-bottom: 1px dotted gray;
+}
+
 .systemFile {
 	font-family: Courier New, Courier, Roboto, Tahoma, Verdana, Arial;
-	cursor: pointer;
-	background: lightGray;
-	padding: 4px;
+	/* cursor: pointer; */
+	/* background: lightGray; */
+	padding-bottom: 5px;
 }
      
 .ace-edit-panel { 

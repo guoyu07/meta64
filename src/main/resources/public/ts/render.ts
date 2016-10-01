@@ -315,12 +315,23 @@ namespace m64 {
                 let list: any[] = JSON.parse(jsonContent);
 
                 for (let entry of list) {
-                    let anchor = tag("a", {
+                    let fileNameDiv = tag("div", {
+                      "class": "systemFile",
+                    }, entry.fileName);
+
+                    let localOpenLink = tag("a", {
                         "onclick": "m64.meta64.openSystemFile('" + entry.fileName + "')"
-                    }, entry.fileName)
+                    }, "Local Open")
+
+                    let downloadLink = tag("a", {
+                        "onclick": "m64.meta64.downloadSystemFile('" + entry.fileName + "')"
+                    }, "Download")
+
+                    let linksDiv = tag("div", {
+                    }, localOpenLink + downloadLink);
+
                     content += tag("div", {
-                        "class": "systemFile",
-                    }, anchor);
+                    }, fileNameDiv + linksDiv);
                 }
             }
             catch (e) {

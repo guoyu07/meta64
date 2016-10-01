@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.net.HttpHeaders;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.ImageUtil;
@@ -80,7 +81,7 @@ public class AttachmentService {
 			session.save();
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
@@ -133,14 +134,19 @@ public class AttachmentService {
 			}
 		}
 
-		if (mimeType.equalsIgnoreCase("application/zip")) {
+		/* fallback to at lest some acceptable mime type */
+		if (mimeType == null) {
+			mimeType = "application/octet-stream";
+		}
+
+		if ("application/zip".equalsIgnoreCase(mimeType)) {
 			/* This is a prototype bean, with state for processing one import at a time */
 			ImportZipStreamService importZipStreamService = (ImportZipStreamService) SpringContextUtil.getBean(ImportZipStreamService.class);
 
 			importZipStreamService.inputZipFileFromStream(session, is, node);
 		}
 		else {
-			saveBinaryStreamToNode(session, is, mimeType, width, height, node);
+			saveBinaryStreamToNode(session, is, mimeType, fileName, width, height, node);
 		}
 		/*
 		 * DO NOT DELETE (this code can be used to test uploading) String directory =
@@ -150,7 +156,7 @@ public class AttachmentService {
 		 */
 	}
 
-	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, int width, int height, Node node) throws ValueFormatException,
+	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) throws ValueFormatException,
 			RepositoryException, UnsupportedRepositoryOperationException, IOException, VersionException, LockException, ConstraintViolationException {
 		long version = System.currentTimeMillis();
 		Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
@@ -177,6 +183,9 @@ public class AttachmentService {
 
 		node.setProperty(JcrProp.BIN_DATA, binary);
 		node.setProperty(JcrProp.BIN_MIME, mimeType);
+		if (fileName != null) {
+			node.setProperty(JcrProp.BIN_FILENAME, fileName);
+		}
 		node.setProperty(JcrProp.BIN_VER, version + 1);
 	}
 
@@ -204,6 +213,7 @@ public class AttachmentService {
 		JcrUtil.safeDeleteProperty(node, JcrProp.BIN_DATA);
 		JcrUtil.safeDeleteProperty(node, JcrProp.BIN_MIME);
 		JcrUtil.safeDeleteProperty(node, JcrProp.BIN_VER);
+		JcrUtil.safeDeleteProperty(node, JcrProp.BIN_FILENAME);
 	}
 
 	/*
@@ -233,12 +243,18 @@ public class AttachmentService {
 			Binary binary = dataProp.getBinary();
 			// log.debug("Retrieving binary bytes: " + binary.getSize());
 
+			String fileName = JcrUtil.safeGetStringProp(node, JcrProp.BIN_FILENAME);
+			if (fileName == null) {
+				fileName = "filename";
+			}
+
 			return ResponseEntity.ok().contentLength(binary.getSize())//
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")//
 					.contentType(MediaType.parseMediaType(mimeTypeProp.getValue().getString()))//
 					.body(new InputStreamResource(binary.getStream()));
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}

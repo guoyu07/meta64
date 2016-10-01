@@ -73,6 +73,7 @@ public class JcrProp {
 	 */
 	public static final String BIN_DATA = "jcrData";
 	public static final String BIN_MIME = "jcr:mimeType";
+	public static final String BIN_FILENAME = "jcrFileName";
 
 	public static final String IMG_WIDTH = "imgWidth";
 	public static final String IMG_HEIGHT = "imgHeight";

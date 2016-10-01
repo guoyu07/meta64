@@ -158,7 +158,7 @@ public class DesktopApi {
 
 	private static boolean runCommand(String command, String args, String file) {
 
-		//logOut("Trying to exec:\n   cmd = " + command + "\n   args = " + args + "\n   %s = " + file);
+		// logOut("Trying to exec:\n cmd = " + command + "\n args = " + args + "\n %s = " + file);
 
 		String[] parts = prepareCommand(command, args, file);
 
@@ -183,7 +183,11 @@ public class DesktopApi {
 			}
 		}
 		catch (IOException e) {
-			logErr("Error running command.", e);
+			/*
+			 * It's normal application flow to cause one exception here when it tries each command
+			 * the first time, so we don't clutter the log file with any log message here.
+			 */
+			// logErr("Error running command.", e);
 			return false;
 		}
 	}

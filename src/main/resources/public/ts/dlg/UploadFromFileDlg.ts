@@ -11,9 +11,9 @@ namespace m64 {
          * Returns a string that is the HTML content of the dialog
          */
         build = (): string => {
-            var header = this.makeHeader("Upload File Attachment");
+            let header = this.makeHeader("Upload File Attachment");
 
-            var uploadPathDisplay = "";
+            let uploadPathDisplay = "";
 
             if (cnst.SHOW_PATH_IN_DLGS) {
                 uploadPathDisplay += render.tag("div", {//
@@ -22,15 +22,15 @@ namespace m64 {
                 }, "");
             }
 
-            var uploadFieldContainer = "";
-            var formFields = "";
+            let uploadFieldContainer = "";
+            let formFields = "";
 
             /*
              * For now I just hard-code in 7 edit fields, but we could theoretically make this dynamic so user can click 'add'
              * button and add new ones one at a time. Just not taking the time to do that yet.
              */
-            for (var i = 0; i < 7; i++) {
-                var input = render.tag("input", {
+            for (let i = 0; i < 7; i++) {
+                let input = render.tag("input", {
                     "id": this.id("upload" + i + "FormInputId"),
                     "type": "file",
                     "name": "files"
@@ -54,11 +54,8 @@ namespace m64 {
                 "type": "hidden",
                 "name": "explodeZips"
             }, "", true);
-            /*
-             * According to some online posts I should have needed data-ajax="false" on this form but it is working as is
-             * without that.
-             */
-            var form = render.tag("form", {
+
+            let form = render.tag("form", {
                 "id": this.id("uploadForm"),
                 "method": "POST",
                 "enctype": "multipart/form-data",
@@ -69,16 +66,16 @@ namespace m64 {
                 "id": this.id("uploadFieldContainer")
             }, "<p>Upload from your computer</p>" + form);
 
-            var uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
-            var backButton = this.makeCloseButton("Close", "closeUploadButton");
-            var buttonBar = render.centeredButtonBar(uploadButton + backButton);
+            let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
+            let backButton = this.makeCloseButton("Close", "closeUploadButton");
+            let buttonBar = render.centeredButtonBar(uploadButton + backButton);
 
             return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
         }
 
         hasAnyZipFiles = (): boolean => {
             let ret: boolean = false;
-            for (var i = 0; i < 7; i++) {
+            for (let i = 0; i < 7; i++) {
                 let inputVal = $("#" + this.id("upload" + i + "FormInputId")).val();
                 if (inputVal.toLowerCase().endsWith(".zip")) {
                     return true;
@@ -98,9 +95,9 @@ namespace m64 {
                  * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
                  * this is highly specialized here for form uploading, and is different from normal ajax calls.
                  */
-                var data = new FormData(<HTMLFormElement>($("#" + this.id("uploadForm"))[0]));
+                let data = new FormData(<HTMLFormElement>($("#" + this.id("uploadForm"))[0]));
 
-                var prms = $.ajax({
+                let prms = $.ajax({
                     url: postTargetUrl + "upload",
                     data: data,
                     cache: false,

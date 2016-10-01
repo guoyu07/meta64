@@ -105,7 +105,7 @@ public class ImportZipStreamService {
 			byte[] bytes = IOUtils.toByteArray(zis);
 			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 
-			attachmentService.saveBinaryStreamToNode(session, bais, mimeType, -1, -1, fileNode);
+			attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1, -1, fileNode);
 		}
 		fileNode.setProperty(JcrProp.FILENAME, fileName);
 		JcrUtil.timestampNewNode(session, fileNode);

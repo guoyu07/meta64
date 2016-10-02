@@ -97,22 +97,17 @@ public class Convert {
 	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
-		long binVer = 0;
 		ImageSize imageSize = null;
-		try {
-			binVer = getBinaryVersion(node);
-			if (binVer > 0) {
-				/* if we didn't get an exception, we know we have a binary */
-				hasBinary = true;
-				binaryIsImage = isImageAttached(node);
 
-				if (binaryIsImage) {
-					imageSize = getImageSize(node);
-				}
+		long binVer = getBinaryVersion(node);
+		if (binVer > 0) {
+			/* if we didn't get an exception, we know we have a binary */
+			hasBinary = true;
+			binaryIsImage = isImageAttached(node);
+
+			if (binaryIsImage) {
+				imageSize = getImageSize(node);
 			}
-		}
-		catch (Exception e) {
-			// not an error. means node has no binary subnode.
 		}
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
@@ -137,9 +132,15 @@ public class Convert {
 	}
 
 	public static long getBinaryVersion(Node node) throws Exception {
-		Property versionProperty = node.getProperty(JcrProp.BIN_VER);
-		if (versionProperty != null) {
-			return versionProperty.getValue().getLong();
+		try {
+			Property versionProperty = node.getProperty(JcrProp.BIN_VER);
+			if (versionProperty != null) {
+				return versionProperty.getValue().getLong();
+			}
+		}
+		catch (Exception e) {
+			// if we catch this exception here it's perfectly normal and just means this node has no
+			// binary attachment.
 		}
 		return 0;
 	}

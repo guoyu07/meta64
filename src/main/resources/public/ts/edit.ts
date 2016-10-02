@@ -13,12 +13,15 @@ namespace m64 {
         }
 
         let deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
+            debugger;
             if (util.checkSuccess("Delete node", res)) {
                 meta64.clearSelectedNodes();
                 let highlightId: string = null;
                 if (payload) {
                     let selNode = payload["postDeleteSelNode"];
-                    highlightId = selNode.id;
+                    if (selNode) {
+                        highlightId = selNode.id;
+                    }
                 }
 
                 view.refreshTree(null, false, highlightId);

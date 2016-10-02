@@ -1,5 +1,7 @@
 console.log("running module: UploadFromFileDlg.js");
 
+declare var Dropzone;
+
 namespace m64 {
     export class UploadFromFileDlg extends DialogBase {
 
@@ -28,6 +30,9 @@ namespace m64 {
             /*
              * For now I just hard-code in 7 edit fields, but we could theoretically make this dynamic so user can click 'add'
              * button and add new ones one at a time. Just not taking the time to do that yet.
+             *
+             * todo-0: This is ugly to pre-create these input fields. Need to make them able to add dynamically.
+             * (Will do this modification once I get the drag-n-drop stuff working first)
              */
             for (let i = 0; i < 7; i++) {
                 let input = render.tag("input", {

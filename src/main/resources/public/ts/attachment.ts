@@ -15,7 +15,13 @@ namespace m64 {
             }
 
             uploadNode = node;
+            (new UploadFromFileDropzoneDlg()).open();
+
+            /* Note: To run legacy uploader just put this version of the dialog here, and
+            nothing else is required. Server side processing is still in place for it
+
             (new UploadFromFileDlg()).open();
+            */
         }
 
         export let openUploadFromUrlDlg = function(): void {

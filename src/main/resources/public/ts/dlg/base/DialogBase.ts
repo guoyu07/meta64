@@ -93,6 +93,7 @@ namespace m64 {
 
         /* todo: need to cleanup the registered IDs that are in maps for this dialog */
         cancel = (): void => {
+          debugger;
             var polyElm = util.polyElm(this.id(this.domId));
             polyElm.node.cancel();
         }
@@ -150,7 +151,7 @@ namespace m64 {
             return render.tag("paper-button", attribs, text, true);
         }
 
-        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any): string => {
+        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible? : boolean): string => {
 
             var attribs = {
                 "raised": "raised",
@@ -161,6 +162,10 @@ namespace m64 {
 
             if (callback != undefined) {
                 attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
+            }
+
+            if (initiallyVisible===false) {
+                attribs["style"] = "display:none;"
             }
 
             return render.tag("paper-button", attribs, text, true);

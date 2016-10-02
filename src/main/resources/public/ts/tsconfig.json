@@ -54,6 +54,7 @@
       "./dlg/ChangePasswordDlg.ts",
       "./dlg/ResetPasswordDlg.ts",
       "./dlg/UploadFromFileDlg.ts",
+      "./dlg/UploadFromFileDropzoneDlg.ts",
       "./dlg/UploadFromUrlDlg.ts",
       "./dlg/EditNodeDlg.ts",
       "./dlg/EditPropertyDlg.ts",

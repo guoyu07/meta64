@@ -4,11 +4,13 @@ import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.HeaderParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -170,7 +172,7 @@ public class AppController {
 
 	@Autowired
 	private SystemService systemService;
-	
+
 	@Autowired
 	private SolrSearchService solrSearchService;
 
@@ -522,12 +524,17 @@ public class AppController {
 		return attachmentService.getBinary(null, nodeId);
 	}
 
+	/* todo-0: make these parametes required. this was only testing making them optional */
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ResponseEntity<?> upload(@RequestParam("nodeId") String nodeId, //
-			@RequestParam("explodeZips") String explodeZips, //
-			@RequestParam("files") MultipartFile[] uploadFiles) throws Exception {
+	public @ResponseBody ResponseEntity<?> upload(//
+			@RequestParam(value = "nodeId", required = false) String nodeId, //
+			@RequestParam(value = "explodeZips", required = false) String explodeZips, //
+			@RequestParam(value = "files", required = false) MultipartFile[] uploadFiles) throws Exception {
 		logRequest("upload", null);
+		if (nodeId == null) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
 		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles, explodeZips.equalsIgnoreCase("true"));
 	}
 
@@ -557,10 +564,10 @@ public class AppController {
 		logRequest("nodeSearch", req);
 		NodeSearchResponse res = new NodeSearchResponse();
 		checkHttpSession();
-		nodeSearchService.search(null, req, res);		
+		nodeSearchService.search(null, req, res);
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/fileSearch", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) throws Exception {
@@ -613,7 +620,7 @@ public class AppController {
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/openSystemFile", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody OpenSystemFileResponse saveUserPreferences(@RequestBody OpenSystemFileRequest req) throws Exception {
@@ -623,7 +630,6 @@ public class AppController {
 		DesktopApi.open(new File(req.getFileName()));
 		return res;
 	}
-
 
 	private static void logRequest(String url, Object req) throws Exception {
 		if (logRequests) {

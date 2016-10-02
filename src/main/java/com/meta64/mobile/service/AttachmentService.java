@@ -43,6 +43,7 @@ import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
+import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.meta64.mobile.util.ThreadLocals;
@@ -65,17 +66,28 @@ public class AttachmentService {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();
 			}
+
 			/*
-			 * Uploading a single file attaches to the current node, but uploading multiple files
-			 * creates each file on it's own subnode (child nodes)
+			 * OLD LOGIC: Uploading a single file attaches to the current node, but uploading
+			 * multiple files creates each file on it's own subnode (child nodes)
 			 */
-			boolean addAsChildren = countFileUploads(uploadFiles) > 1;
+			// boolean addAsChildren = countFileUploads(uploadFiles) > 1;
+
+			/*
+			 * NEW LOGIC: If the node itself currently has an attachment, leave it alone and just
+			 * upload UNDERNEATH this current node.
+			 */
+			Node node = JcrUtil.findNode(session, nodeId);
+			if (node == null) {
+				throw new Exception("Node not found.");
+			}
+			boolean addAsChildren = Convert.getBinaryVersion(node) > 0;
 
 			for (MultipartFile uploadFile : uploadFiles) {
 				String fileName = uploadFile.getOriginalFilename();
 				if (!StringUtils.isEmpty(fileName)) {
 					log.debug("Uploading file: " + fileName);
-					attachBinaryFromStream(session, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren, explodeZips);
+					attachBinaryFromStream(session, node, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren, explodeZips);
 				}
 			}
 			session.save();
@@ -103,9 +115,14 @@ public class AttachmentService {
 	 * Gets the binary attachment from a supplied stream and loads it into the repository on the
 	 * node specified in 'nodeId'
 	 */
-	private void attachBinaryFromStream(Session session, String nodeId, String fileName, InputStream is, String mimeType, int width, int height, boolean addAsChild,
-			boolean explodeZips) throws Exception {
-		Node node = JcrUtil.findNode(session, nodeId);
+	private void attachBinaryFromStream(Session session, Node node, String nodeId, String fileName, InputStream is, String mimeType, int width, int height,
+			boolean addAsChild, boolean explodeZips) throws Exception {
+
+		/* If caller already has 'node' it can pass node, and avoid looking up node again */
+		if (node == null && nodeId != null) {
+			node = JcrUtil.findNode(session, nodeId);
+		}
+
 		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		/*
 		 * Multiple file uploads always attach children for each file uploaded
@@ -298,7 +315,7 @@ public class AttachmentService {
 				httpcon.connect();
 				InputStream is = httpcon.getInputStream();
 				uis = new LimitedInputStreamEx(is, maxFileSize);
-				attachBinaryFromStream(session, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
+				attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
 			}
 			/*
 			 * if not an image extension, we can just stream directly into the database, but we want
@@ -312,7 +329,7 @@ public class AttachmentService {
 					httpcon.connect();
 					InputStream is = httpcon.getInputStream();
 					uis = new LimitedInputStreamEx(is, maxFileSize);
-					attachBinaryFromStream(session, nodeId, sourceUrl, is, "", -1, -1, false, false);
+					attachBinaryFromStream(session, null, nodeId, sourceUrl, is, "", -1, -1, false, false);
 				}
 			}
 		}
@@ -364,7 +381,7 @@ public class AttachmentService {
 					ImageIO.write(bufImg, formatName, os);
 					is2 = new ByteArrayInputStream(os.toByteArray());
 
-					attachBinaryFromStream(session, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false, false);
+					attachBinaryFromStream(session, null, nodeId, fileName, is2, mimeType, bufImg.getWidth(null), bufImg.getHeight(null), false, false);
 					return true;
 				}
 			}

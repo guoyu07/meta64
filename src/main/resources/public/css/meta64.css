@@ -10,6 +10,27 @@ code {
 }
 */
 
+/* Dropzone message */
+.dz-message {
+	font-size: large;
+	background-image: url('/js/dropzone/upload.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center; 
+    width: 500px;
+    height: 200px;
+}
+
+.dropzone {
+	border: 4px dashed lightGray;
+	margin: 10px;
+	width: 600px;
+	height: 300px;
+	padding: 0px;
+	overflow-y: auto;
+	/* min-height: 0px !important; */
+}   
+
 .customPre {
 	background: lightGray;
 	padding: 10px;

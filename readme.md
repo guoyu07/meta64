@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-All JavaScript is now in the form of TypeScript! This is a major advancement for the application, and allows perfect type-safety in all JavaScript.
+Switched to DropzoneJS API for Drag&Drop uploading support!
 
 ## Technology Stack
 * Web App: Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
@@ -69,6 +69,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Uploading attachments (attached files) onto a node
 * Image Attachments automatically display in the content, anywhere you specify.
 * Upload from local machine
+* Drag & Drop support (File Uploads)
 * Upload directly from any internet URL.
 * Deleting node attachments
 * Renders image attachments on the page (on the node)
@@ -101,6 +102,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Using Google Closure Compiler for JS Minification (https://developers.google.com/closure/compiler/)
 * Pure Java on Server (https://www.oracle.com/java/index.html)
 * Markdown support provided by PegDown (https://github.com/sirthias/pegdown)
+* DropzoneJS API for Drag&Drop uploading (http://dropzonejs.com)
 * Google Code Prettifier (https://github.com/google/code-prettify)
 * Ace Editor for code editing (https://ace.c9.io/#nav=about)
 * Built using Maven (https://maven.apache.org/)

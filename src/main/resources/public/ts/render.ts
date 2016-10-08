@@ -181,7 +181,6 @@ namespace m64 {
                 let jsonProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
 
                 if (jsonProp) {
-                    debugger;
                     jcrContent = renderJsonFileSearchResultProperty(jsonProp.value);
                     renderComplete = true;
 

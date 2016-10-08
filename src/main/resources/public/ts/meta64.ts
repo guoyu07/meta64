@@ -476,7 +476,6 @@ namespace m64 {
          * decouple
          */
         export let refreshAllGuiEnablement = function() {
-            debugger;
             /* multiple select nodes */
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();

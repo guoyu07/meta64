@@ -18,7 +18,7 @@ namespace m64 {
         export let INSERT_ATTACHMENT: string = "{{insert-attachment}}";
         export let NEW_ON_TOOLBAR: boolean = true;
         export let INS_ON_TOOLBAR: boolean = true;
-        export let MOVE_UPDOWN_ON_TOOLBAR: boolean = false;
+        export let MOVE_UPDOWN_ON_TOOLBAR: boolean = true;
 
         /*
          * This works, but I'm not sure I want it for ALL editing. Still thinking about design here, before I turn this

@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.HeaderParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,7 +228,6 @@ public class AppController {
 		return res;
 	}
 
-	// ts-done
 	@RequestMapping(value = API_PATH + "/login", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody LoginResponse login(@RequestBody LoginRequest req) throws Exception {

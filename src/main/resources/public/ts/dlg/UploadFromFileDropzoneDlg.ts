@@ -9,6 +9,10 @@ namespace m64 {
             super("UploadFromFileDropzoneDlg");
         }
 
+        fileList: Object[] = null;
+        zipQuestionAnswered: boolean = false;
+        explodeZips: boolean = false;
+
         build = (): string => {
             let header = this.makeHeader("Upload File Attachment");
 
@@ -21,7 +25,6 @@ namespace m64 {
                 }, "");
             }
 
-            //let uploadFieldContainer = "";
             let formFields = "";
 
             console.log("Upload Action URL: " + postTargetUrl + "upload");
@@ -43,15 +46,10 @@ namespace m64 {
             let backButton = this.makeCloseButton("Close", "closeUploadButton");
             let buttonBar = render.centeredButtonBar(uploadButton + backButton);
 
-            return header + uploadPathDisplay + form /*uploadFieldContainer */ + hiddenInputContainer + buttonBar;
+            return header + uploadPathDisplay + form + hiddenInputContainer + buttonBar;
         }
 
         configureDropZone = (): void => {
-
-            /* I haven't taken the explodeZips option code from UploadFromFileDlg.ts yet, to put
-            in this new dropzone class, but will do that sometime. For now the feature of exploding zip
-            will juse not be enabled */
-            let explodeZips: boolean = false;
 
             let thiz = this;
             let config: Object = {
@@ -91,16 +89,19 @@ namespace m64 {
                     });
 
                     this.on("addedfile", function() {
+                        thiz.updateFileList(this);
                         thiz.runButtonEnablement(this);
                     });
 
                     this.on("removedfile", function() {
+                        thiz.updateFileList(this);
                         thiz.runButtonEnablement(this);
                     });
 
                     this.on("sending", function(file, xhr, formData) {
                         formData.append("nodeId", attachment.uploadNode.id);
-                        formData.append("explodeZips", explodeZips ? "true" : "false");
+                        formData.append("explodeZips", this.explodeZips ? "true" : "false");
+                        this.zipQuestionAnswered = false;
                     });
 
                     this.on("queuecomplete", function(file) {
@@ -110,6 +111,40 @@ namespace m64 {
             };
 
             $("#" + this.id("dropzone-form-id")).dropzone(config);
+        }
+
+        updateFileList = (dropzoneEvt: any): void => {
+            let thiz = this;
+            this.fileList = dropzoneEvt.getAddedFiles();
+            this.fileList = this.fileList.concat(dropzoneEvt.getQueuedFiles());
+
+            /* Detect if any ZIP files are currently selected, and ask user the question about whether they
+            should be extracted automatically during the upload, and uploaded as individual nodes
+            for each file */
+            if (!this.zipQuestionAnswered && this.hasAnyZipFiles()) {
+                this.zipQuestionAnswered = true;
+                (new ConfirmDlg("Explode Zips?",
+                    "Do you want Zip files exploded onto the tree when uploaded?",
+                    "Yes, explode zips", //
+                    //Yes function
+                    function() {
+                        thiz.explodeZips = true;
+                    },//
+                    //No function
+                    function() {
+                        thiz.explodeZips = false;
+                    })).open();
+            }
+        }
+
+        hasAnyZipFiles = (): boolean => {
+            let ret: boolean = false;
+            for (let file of this.fileList) {
+                if (file["name"].toLowerCase().endsWith(".zip")) {
+                    return true;
+                }
+            }
+            return ret;
         }
 
         runButtonEnablement = (dropzoneEvt: any): void => {

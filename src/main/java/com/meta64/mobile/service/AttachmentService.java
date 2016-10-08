@@ -156,7 +156,7 @@ public class AttachmentService {
 			mimeType = "application/octet-stream";
 		}
 
-		if ("application/zip".equalsIgnoreCase(mimeType)) {
+		if (explodeZips && "application/zip".equalsIgnoreCase(mimeType)) {
 			/* This is a prototype bean, with state for processing one import at a time */
 			ImportZipStreamService importZipStreamService = (ImportZipStreamService) SpringContextUtil.getBean(ImportZipStreamService.class);
 
@@ -165,12 +165,14 @@ public class AttachmentService {
 		else {
 			saveBinaryStreamToNode(session, is, mimeType, fileName, width, height, node);
 		}
-		/*
-		 * DO NOT DELETE (this code can be used to test uploading) String directory =
-		 * "c:/temp-upload"; String filepath = Paths.get(directory, fileName).toString();
-		 * BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new
-		 * File(filepath))); stream.write(uploadfile.getBytes()); stream.close();
-		 */
+
+		// DO NOT DELETE (this code can be used to test uploading)
+		// String directory = "c:/temp-upload";
+		// String filepath = Paths.get(directory, fileName).toString();
+		// BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new
+		// File(filepath)));
+		// stream.write(uploadfile.getBytes());
+		// stream.close();
 	}
 
 	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) throws ValueFormatException,

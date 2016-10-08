@@ -20,6 +20,7 @@ public class AppServer {
 	private static boolean shuttingDown;
 	private static boolean enableScheduling;
 
+	/* Java Main entry point for meta64 application */
 	public static void main(String[] args) {
 		/*
 		 * If we are running AppServer then enableScheduling, otherwise we may be running some

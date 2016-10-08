@@ -476,11 +476,11 @@ namespace m64 {
          * decouple
          */
         export let refreshAllGuiEnablement = function() {
-
+            debugger;
             /* multiple select nodes */
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine: boolean = highlightNode && highlightNode.createdBy === userName;
+            let selNodeIsMine: boolean = highlightNode && (highlightNode.createdBy === userName || "admin" === userName);
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
             let homeNodeSelected: boolean = highlightNode && homeNodeId == highlightNode.id;
             let importAllowed = isAdminUser || userPreferences.importAllowed;

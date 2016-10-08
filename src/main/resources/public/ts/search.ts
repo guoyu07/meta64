@@ -82,7 +82,7 @@ namespace m64 {
                 "nodeId": res.searchResultNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null
-            }, nav.navHomeResponse);
+            }, nav.navPageNodeResponse);
         }
 
         export let timelineByModTime = function() {

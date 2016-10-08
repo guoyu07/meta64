@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.UserPreferences;
@@ -194,6 +195,13 @@ public class ImportExportService {
 			output = new BufferedOutputStream(new FileOutputStream(fullFileName));
 			String exportPath = exportNode.getPath();
 
+			/*
+			 * Refer to JCR 2.0 Spec regarding difference between SYSTEM v.s. DOCUMENT XML format,
+			 * but in a nutshell SYSTEM is better for serializing export data for backup or
+			 * specifically for reimporting later onto a JCR repository. DOCUMENT is more for
+			 * compatibility with XML standards itself and is helpful if something other than a JCR
+			 * DB might need to process the XML
+			 */
 			switch (formatType) {
 			case SYSTEM:
 				session.exportSystemView(exportPath, output, !includeBinaries, false);
@@ -321,7 +329,7 @@ public class ImportExportService {
 			 * essentialy only *one* comment node can be deleted at a time unless you are admin
 			 * user.
 			 */
-			if (!session.getUserID().equals(createdBy)) {
+			if (!session.getUserID().equals(createdBy) && !JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
 				throw new Exception("You cannot import onto a node you do not own.");
 			}
 

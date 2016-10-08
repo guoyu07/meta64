@@ -103,7 +103,7 @@ public class PreProcFilter implements Filter {
 				ver = "";
 				warning = "WARNING: NO VERSION!!!";
 			}
-			log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
+			//log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
 			if (uri.equals("/") || //
 					uri.toLowerCase().contains(".html")) {

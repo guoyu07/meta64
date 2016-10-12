@@ -132,6 +132,7 @@ public class UserManagerUtil {
 		((User) authorizable).changePassword(newPassword);
 	}
 
+	/* todo-0 Why isn't this method using the standard Admin JCR runner ? */
 	public static void verifyAdminAccountReady(OakRepository oak) throws Exception {
 
 		Session session = null;

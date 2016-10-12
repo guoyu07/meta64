@@ -12,6 +12,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
@@ -56,6 +57,15 @@ public class JcrUtil {
 		nonSavableProperties.add(JcrProp.IMG_WIDTH);
 	}
 
+	public static NodeType safeGetNodeType(NodeTypeManager mgr, String nodeTypeName) {
+		try {
+			return mgr.getNodeType(nodeTypeName);
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+	
 	public static boolean isPublicAppend(Node node) {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}

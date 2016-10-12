@@ -68,7 +68,7 @@ import com.mongodb.MongoTimeoutException;
 public class OakRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
-
+	
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
 
@@ -136,6 +136,9 @@ public class OakRepository {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
+	
+	@Autowired
+	private TypeService typeService;
 
 	public OakRepository() {
 		instance = this;
@@ -228,7 +231,6 @@ public class OakRepository {
 				if (AppServer.isShuttingDown()) return;
 
 				repository = jcr.createRepository();
-
 				log.debug("MongoDb connection ok.");
 
 				/* can shutdown during startup. */
@@ -244,6 +246,7 @@ public class OakRepository {
 				UserManagerUtil.verifyAdminAccountReady(this);
 				initRequiredNodes();
 				createTestAccounts();
+				typeService.initNodeTypes();
 
 				log.debug("Repository fully initialized.");
 			}

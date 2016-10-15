@@ -86,6 +86,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Soft "Branding". Can rebrand portal by a properties file entry. Includes Search Engine Optimization text.
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
 * Solr Desktop Search (Find and open files on native filesystem)
+* Automatic Type Registration from CND file
 * For future planned features see file: **/docs/bugs-and-todos.md**
 
 ## Technology Stack and APIs

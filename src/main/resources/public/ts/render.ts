@@ -203,6 +203,32 @@ namespace m64 {
                     if (contentProp) {
 
                         jcrContent = props.renderProperty(contentProp);
+
+                        ///////////////////////////////////////////////////////////////
+                        // Experimental Hack for Podcast Player Prototype
+                        // http://www.w3schools.com/tags/ref_av_dom.asp
+                        ///////////////////////////////////////////////////////////////
+                        let podcastProp: json.PropertyInfo = props.getNodeProperty("podcast", node);
+                        if (podcastProp) {
+                            jcrContent += tag("div", {
+                            }, "PODCAST: " + podcastProp.value);
+
+                            jcrContent += tag("audio", {
+                                "src": podcastProp.value,
+                                "style" : "width: 100%;",
+                                "ontimeupdate" : "m64.nav.podcastOnTimeUpdate('" + node.uid + "', this);",
+                                "controls": "controls"
+                            });
+
+                            jcrContent += tag("paper-button", {
+                                "raised": "raised",
+                                "onClick": "m64.nav.podcast30SecSkip('" + node.uid + "', this);"
+                            }, //
+                                "30sec Skip");
+
+                        }
+                        ///////////////////////////////////////////////////////////////
+
                         jcrContent = "<div>" + jcrContent + "</div>";
 
                         if (meta64.serverMarkdown) {
@@ -315,7 +341,7 @@ namespace m64 {
 
                 for (let entry of list) {
                     let fileNameDiv = tag("div", {
-                      "class": "systemFile",
+                        "class": "systemFile",
                     }, entry.fileName);
 
                     let localOpenLink = tag("a", {

@@ -372,6 +372,7 @@ namespace m64 {
         }
 
         export let createSubNode = function(uid: any): void {
+
             /*
              * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page)
              */

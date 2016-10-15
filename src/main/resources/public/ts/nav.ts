@@ -3,6 +3,7 @@ console.log("running module: nav.js");
 namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
+        export let player: any = null;
 
         export let openMainMenuHelp = function(): void {
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
@@ -202,6 +203,24 @@ namespace m64 {
 
         export let navPublicHome = function(): void {
             meta64.loadAnonPageHome(true);
+        }
+
+        //This podcast handling hack is only in this file temporarily
+        export let podcastOnTimeUpdate = function(uid, elm): void {
+            console.log("CurrentTime=" + elm.currentTime);
+            player = elm;
+            //This WORKS! We have capability to skip content.
+            if (player.currentTime > 10 && player.currentTime < 11) {
+                player.currentTime = 30;
+            }
+        }
+
+        //This podcast handling hack is only in this file temporarily
+        export let podcast30SecSkip = function(): void {
+            //This WORKS! We have capability to skip content.
+            if (player) {
+                player.currentTime += 30;
+            }
         }
     }
 }

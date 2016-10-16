@@ -60,8 +60,6 @@ namespace m64 {
             //node.setAttribute("with-backdrop", "with-backdrop");
 
             node.setAttribute("id", id);
-
-            //trying to use fitInto instead...
             modalsContainer.node.appendChild(node);
 
             // todo-3: put in CSS now

@@ -41,11 +41,29 @@ namespace m64 {
                 "raised": "raised",
                 "onClick": "m64.podcast.podcast30SecSkip('" + this.nodeUid + "', this);"
             }, //
-                "30sec Skip");
+                "30s Skip");
+
+            let speedNormalButton = render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.podcast.podcastSpeed(1.0);"
+            }, //
+                "Normal Speed");
+
+            let speed15Button = render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.podcast.podcastSpeed(1.5);"
+            }, //
+                "1.5X");
+
+            let speed2xButton = render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.podcast.podcastSpeed(2);"
+            }, //
+                "2X");
 
             let closeButton = this.makeCloseButton("Close", "closeAudioPlayerDlgButton");
 
-            let buttonBar = render.centeredButtonBar(skipButton + closeButton);
+            let buttonBar = render.centeredButtonBar(skipButton + speedNormalButton + speed15Button + speed2xButton + closeButton);
             return header + description + player + buttonBar;
         }
 

@@ -96,6 +96,13 @@ namespace m64 {
         }
 
         //This podcast handling hack is only in this file temporarily
+        export let podcastSpeed = function(rate:number): void {
+            if (player) {
+                player.playbackRate = rate;
+            }
+        }
+
+        //This podcast handling hack is only in this file temporarily
         export let podcast30SecSkip = function(): void {
             if (player) {
                 player.currentTime += 30;

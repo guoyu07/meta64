@@ -43,32 +43,34 @@ namespace m64 {
             /*
              * get container where all dialogs are created (true polymer dialogs)
              */
-            var modalsContainer = util.polyElm("modalsContainer");
+            let modalsContainer = util.polyElm("modalsContainer");
 
             /* suffix domId for this instance/guid */
-            var id = this.id(this.domId);
+            let id = this.id(this.domId);
 
             /*
              * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
              * once it's closed, AND that same code should delete the guid's object in
              * map in this module
              */
-            var node = document.createElement("paper-dialog");
+            let node = document.createElement("paper-dialog");
 
             //NOTE: This works, but is an example of what NOT to do actually. Instead always
             //set these properties on the 'polyElm.node' below.
             //node.setAttribute("with-backdrop", "with-backdrop");
 
             node.setAttribute("id", id);
+
+            //trying to use fitInto instead...
             modalsContainer.node.appendChild(node);
 
             // todo-3: put in CSS now
-            node.style.border = "3px solid gray";
+            node.style.border = "4px solid gray";
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();
 
-            var content = this.build();
+            let content = this.build();
             util.setHtml(id, content);
             this.built = true;
 
@@ -76,7 +78,11 @@ namespace m64 {
             console.log("Showing dialog: " + id);
 
             /* now open and display polymer dialog we just created */
-            var polyElm = util.polyElm(id);
+            let polyElm = util.polyElm(id);
+
+            //i tried to tweak the placement of teh dialog using fitInto, and it didn't work
+            //so I'm just using the paper-dialog CSS styling to alter the dialog size to fullscreen
+            //let ironPages = util.polyElm("mainIronPages");
 
             //After the TypeScript conversion I noticed having a modal flag will cause
             //an infinite loop (completely hang) Chrome browser, but this issue is most likely
@@ -86,14 +92,17 @@ namespace m64 {
             //polyElm.node.modal = true;
 
             polyElm.node.refit();
-            polyElm.node.constrain();
+            polyElm.node.noCancelOnOutsideClick = true;
+            polyElm.node.horizontalOffset = 0;
+            polyElm.node.verticalOffset = 0;
+            //polyElm.node.fitInto = ironPages.node;
+            //polyElm.node.constrain();
             polyElm.node.center();
             polyElm.node.open();
         }
 
         /* todo: need to cleanup the registered IDs that are in maps for this dialog */
-        cancel = (): void => {
-          debugger;
+        public cancel() {
             var polyElm = util.polyElm(this.id(this.domId));
             polyElm.node.cancel();
         }
@@ -122,7 +131,8 @@ namespace m64 {
             return render.tag("paper-input", {
                 "name": id,
                 "label": fieldName,
-                "id": id
+                "id": id,
+                "class": "meta64-input"
             }, "", true);
         }
 
@@ -139,7 +149,7 @@ namespace m64 {
         // todo: there's a makeButton (and other similar methods) that don't have the
         // encodeCallback capability yet
         makeButton = (text: string, id: string, callback: any, ctx?: any): string => {
-            var attribs = {
+            let attribs = {
                 "raised": "raised",
                 "id": this.id(id)
             };
@@ -151,20 +161,28 @@ namespace m64 {
             return render.tag("paper-button", attribs, text, true);
         }
 
-        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible? : boolean): string => {
+        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible?: boolean): string => {
 
-            var attribs = {
+            let attribs = {
                 "raised": "raised",
                 // warning: this dialog-confirm is required (logic fails without)
                 "dialog-confirm": "dialog-confirm",
                 "id": this.id(id)
             };
 
+            let onClick = "";
+
             if (callback != undefined) {
-                attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
+                onClick = meta64.encodeOnClick(callback, ctx);
             }
 
-            if (initiallyVisible===false) {
+            onClick += ";" + meta64.encodeOnClick(this.cancel, this);
+
+            if (onClick) {
+                attribs["onClick"] = onClick;
+            }
+
+            if (initiallyVisible === false) {
                 attribs["style"] = "display:none;"
             }
 
@@ -198,7 +216,7 @@ namespace m64 {
             }, label);
         }
 
-        makeCheckBox = (label: string, id: string, initialState:boolean): string => {
+        makeCheckBox = (label: string, id: string, initialState: boolean): string => {
             id = this.id(id);
 
             var attrs = {
@@ -208,13 +226,13 @@ namespace m64 {
             };
 
             ////////////
-//             <paper-checkbox on-change="checkboxChanged">click</paper-checkbox>
-//
-//             checkboxChanged : function(event){
-//     if(event.target.checked) {
-//         console.log(event.target.value);
-//     }
-// }
+            //             <paper-checkbox on-change="checkboxChanged">click</paper-checkbox>
+            //
+            //             checkboxChanged : function(event){
+            //     if(event.target.checked) {
+            //         console.log(event.target.value);
+            //     }
+            // }
             ////////////
 
             if (initialState) {

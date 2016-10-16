@@ -47,6 +47,7 @@
     <template>
         <style is="custom-style">
             /*<![CDATA[*/
+                
                 :host {
                     display: block;
     

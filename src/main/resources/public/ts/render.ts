@@ -109,7 +109,7 @@ namespace m64 {
          * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
          */
         export let injectCodeFormatting = function(content: string): string {
-
+            if (!content) return content;
             // example markdown:
             // ```js
             // var x = 10;
@@ -213,18 +213,24 @@ namespace m64 {
                             jcrContent += tag("div", {
                             }, "PODCAST: " + podcastProp.value);
 
-                            jcrContent += tag("audio", {
-                                "src": podcastProp.value,
-                                "style" : "width: 100%;",
-                                "ontimeupdate" : "m64.nav.podcastOnTimeUpdate('" + node.uid + "', this);",
-                                "controls": "controls"
-                            });
-
                             jcrContent += tag("paper-button", {
                                 "raised": "raised",
-                                "onClick": "m64.nav.podcast30SecSkip('" + node.uid + "', this);"
+                                "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
                             }, //
-                                "30sec Skip");
+                                "Play");
+
+                            // jcrContent += tag("audio", {
+                            //     "src": podcastProp.value,
+                            //     "style" : "width: 100%;",
+                            //     "ontimeupdate" : "m64.podcast.podcastOnTimeUpdate('" + node.uid + "', this);",
+                            //     "controls": "controls"
+                            // });
+                            //
+                            // jcrContent += tag("paper-button", {
+                            //     "raised": "raised",
+                            //     "onClick": "m64.podcast.podcast30SecSkip('" + node.uid + "', this);"
+                            // }, //
+                            //     "30sec Skip");
 
                         }
                         ///////////////////////////////////////////////////////////////

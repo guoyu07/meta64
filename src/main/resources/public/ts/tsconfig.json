@@ -38,6 +38,7 @@
       "user.ts",
       "view.ts",
       "menu.ts",
+      "podcast.ts",
       "./dlg/base/DialogBase.ts",
       "./dlg/ConfirmDlg.ts",
       "./dlg/ProgressDlg.ts",
@@ -61,6 +62,7 @@
       "./dlg/ShareToPersonDlg.ts",
       "./dlg/SharingDlg.ts",
       "./dlg/RenameNodeDlg.ts",
+      "./dlg/AudioPlayerDlg.ts",
       "./panel/searchResultsPanel.ts",
       "./panel/timelineResultsPanel.ts"
     ],

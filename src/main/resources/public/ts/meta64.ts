@@ -179,7 +179,7 @@ namespace m64 {
          *
          * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
          */
-        export let encodeOnClick = function(callback: any, ctx) {
+        export let encodeOnClick = function(callback: any, ctx?:any) {
             if (typeof callback == "string") {
                 return callback;
             } //

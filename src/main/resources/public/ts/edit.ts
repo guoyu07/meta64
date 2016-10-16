@@ -30,7 +30,6 @@ namespace m64 {
         let initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
             if (util.checkSuccess("Editing node", res)) {
                 let node: json.NodeInfo = res.nodeInfo;
-
                 let isRep: boolean = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
 
                 /* if this is a comment node and we are the commenter */

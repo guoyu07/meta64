@@ -58,6 +58,7 @@ public class RssDbWriter {
 		newNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
 		newNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
 		newNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
+		newNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
 		// 2016 -> write(id, feed.getImage());
 
 		return newNode;

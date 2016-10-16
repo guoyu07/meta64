@@ -8,6 +8,7 @@ public class JcrProp {
 	public static final String RSS_FEED_TITLE = "rssFeedTitle";
 	public static final String RSS_FEED_DESC = "rssFeedDesc";
 	public static final String RSS_FEED_URI = "rssFeedUri";
+	public static final String RSS_FEED_LINK = "rssFeedLink";
 	
 	public static final String RSS_ENTRY_TITLE = "rssEntryTitle";
 	public static final String RSS_ENTRY_DESC = "rssEntryDesc";

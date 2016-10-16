@@ -33,24 +33,11 @@ public class RssReader {
 	private static final Logger log = LoggerFactory.getLogger(RssReader.class);
 
 	public static final int MAX_RSS_ENTRIES = 10;
+	private List<RssFeedWrapper> feedList = new LinkedList<RssFeedWrapper>();
 	
 	@Autowired
 	private RssService rssService;
 
-	private List<String> feedUrlList;
-	private List<RssFeedWrapper> feedList = new LinkedList<RssFeedWrapper>();
-	private RssDbReader dbReader = new RssDbReader();
-	private final StringBuilder output = new StringBuilder();
-
-	//private HashSet<String> existingTitles = new HashSet<String>();
-
-	private int feedsProcessed = 0;
-	private int newEntries = 0;
-	private int oldEntries = 0;
-	private int newFeeds = 0;
-	private int oldFeeds = 0;
-	private int errorFeeds = 0;
-	
 	@Autowired
 	private RssDbWriter dbWriter;
 
@@ -58,13 +45,6 @@ public class RssReader {
 	}
 
 	public void run(Session session) throws Exception {
-		/*
-		 * first read out everything that's in the database already (that is, what entries and feeds
-		 * already exist so that we can avoid adding them twice
-		 */
-		// 2016
-		// dbReader.read(parentId);
-
 		/* and next read the actual feed RSS from the internet */
 		// readFeedsFromNet();
 		// 2016 let's just read one feed for now:
@@ -72,17 +52,6 @@ public class RssReader {
 
 		/* write the feeds & entries to the db */
 		writeFeeds(session);
-
-		output.append("Processed " + String.valueOf(feedsProcessed) + " RSS feeds.<p>");
-
-		output.append(String.valueOf(newFeeds) + " new feeds.<br>");
-		output.append(String.valueOf(newEntries) + " new entries.<p>");
-
-		output.append(String.valueOf(oldFeeds) + " existing feeds.<p>");
-		output.append(String.valueOf(oldEntries) + " ignored/duplicate entries.<br>");
-
-		output.append(errorFeeds + " feeds failed.<br>");
-		output.append("<b>Total Entries: " + String.valueOf(newEntries + oldEntries) + "</b>");
 	}
 
 	private void writeFeeds(Session session) throws Exception {
@@ -95,7 +64,6 @@ public class RssReader {
 			}
 			catch (Exception e) {
 				log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
-				errorFeeds++;
 			}
 		}
 	}
@@ -131,7 +99,6 @@ public class RssReader {
 	// }
 
 	private void readFeed(String feedUrl) throws Exception {
-		feedsProcessed++;
 		log.debug("processing RSS url: " + feedUrl);
 
 		URL url = new URL(feedUrl);
@@ -171,11 +138,15 @@ public class RssReader {
 		log.debug("writing feed: " + feed.getTitle());
 
 		/*
-		 * try to get feed node from repository (by looking up feed uri), and if not existing we create it
+		 * look up this feedNode by uri, because it may already exist. It WILL exist unless this is
+		 * the first time we are ever reading this feed
 		 */
-		//Integer feedUriId = -1; //2016 dbReader.getExistingFeedUriId(feed);
-		//int feedId = -1;
 		Node feedNode = rssService.getFeedNodeByUri(feed.getUri());
+		
+		/* if not found by uri, try looking up by link */
+		if (feedNode==null) {
+			feedNode = rssService.getFeedNodeByLink(feed.getLink());
+		}
 
 		/*
 		 * if feed URI is not found, that means this feed is not in db, so we add a new feed and
@@ -184,70 +155,22 @@ public class RssReader {
 		if (feedNode == null) {
 			log.debug("Feed not found, must be new feed.");
 			feedNode = dbWriter.write(session, feed);
-			newFeeds++;
-		}
-		/*
-		 * otherwise our feed does exist and we know the db id of the URI node UNDERNEATH it, so we
-		 * have to grab the feed node buy looking UP the tree towards the parent which will be the
-		 * feed node
-		 */
-		else {
-			log.debug("Is existing feed, in db already.");
-
-			//2016
-//			NodeEntity parent = Factory.nodeService().findByChild(feedUriId);
-//			/* allow exception to be thrown if parent==null */
-//			feedId = parent.getParentId();
-			oldFeeds++;
 		}
 
-		int idx = -1;
 		/*
 		 * now we have the Feed node in place so we can write all RSS entries to the db
 		 */
 		for (RssEntryWrapper wEntry : wFeed.getEntryList()) {
-			idx++;
-			log.debug("RSS Entry: index=" + idx);
 			SyndEntry entry = (SyndEntry) wEntry.getEntry();
 
-			/*
-			 * if we already have an RSS element that has the same title then consider this a
-			 * duplicate and bypass it.
-			 * 
-			 * What was this for? Entries that are duplicates still need to be read ithink
-			 */
-//			if (entry.getTitle() != null) {
-//				if (existingTitles.contains(entry.getTitle().trim())) {
-//					log.debug("avoided duplicate RSS link: " + entry.getTitle());
-//					continue;
-//				}
-//				/*
-//				 * otherwise we do need to update the existingTitles map to add this title
-//				 */
-//				else {
-//					log.debug("Accepting Title (not dupliate yet)." + entry.getTitle());
-//					existingTitles.add(entry.getTitle().trim());
-//				}
-//			}
-//			else {
-//				log.debug("RSS Entry with no title!");
-//			}
-
 			try {
-				//2016
-//				/* if this entry doesn't already exist in our DB */
-//				if (!dbReader.entryExistsInDb(entry)) {
-//					newEntries++;
-//
-//					log.debug("writing new entry." + entry.getTitle());					
-//
-//					/* write the entry into db */
+				/* if this entry doesn't already exist in our DB */
+				if (rssService.getEntryByLink(entry.getLink())==null) {
+					log.debug("writing new entry." + entry.getTitle());
+
+					/* write the entry into db */
 					dbWriter.write(session, feedNode, entry);
-//				}
-//				else {
-//					oldEntries++;
-//					log.debug("skipping entry that is already in db: " + entry.getTitle());
-//				}
+				}
 			}
 			catch (Exception e) {
 				log.error("Failed writing feed.", e);

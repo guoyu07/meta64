@@ -5,6 +5,16 @@ package com.meta64.mobile.config;
  */
 public class JcrProp {
 
+	public static final String RSS_FEED_TITLE = "rssFeedTitle";
+	public static final String RSS_FEED_DESC = "rssFeedDesc";
+	public static final String RSS_FEED_URI = "rssFeedUri";
+	
+	public static final String RSS_ENTRY_TITLE = "rssEntryTitle";
+	public static final String RSS_ENTRY_DESC = "rssEntryDesc";
+	public static final String RSS_ENTRY_URI = "rssEntryUri";
+	public static final String RSS_ENTRY_LINK = "rssEntryLink";
+	public static final String RSS_ENTRY_AUTHOR = "rssEntryAuthor";
+	
 	/*
 	 * "true" means any user can add subnode under the node that has this property
 	 */

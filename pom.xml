@@ -146,6 +146,12 @@
     		<artifactId>solr-solrj</artifactId>
     		<version>6.2.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.java.dev.rome</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 				
 	</dependencies>
 

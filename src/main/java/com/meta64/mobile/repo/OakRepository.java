@@ -48,6 +48,7 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.SignupResponse;
+import com.meta64.mobile.service.TypeService;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;

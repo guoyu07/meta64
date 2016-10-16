@@ -10,4 +10,6 @@ public class JcrName {
 	public static final String SIGNUP = "signup";
 	public static final String USER_PREFERENCES = "userPreferences";
 	public static final String FILE_SEARCH_RESULTS = "fileSearchResults";
+	public static final String RSS = "rss";
+	public static final String RSS_FEEDS = "rssFeeds";
 }

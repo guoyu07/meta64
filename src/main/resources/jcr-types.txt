@@ -2,3 +2,7 @@
  
 [meta64:podcast] > nt:base orderable
  
+[meta64:rssfeed] > nt:base orderable
+ 
+[meta64:rssitem] > nt:base orderable 
+ 

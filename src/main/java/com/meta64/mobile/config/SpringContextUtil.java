@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.service.RssService;
 
 /**
  * Manages certain aspects of Spring application context.
@@ -21,6 +22,9 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 	@Autowired
 	private OakRepository oakRepository;
+	
+	@Autowired
+	private RssService rssService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -29,9 +33,10 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 		try {
 			oakRepository.init();
+			rssService.readFeeds();
 		}
 		catch (Exception e) {
-			log.error("repository startup failed.");
+			log.error("application startup failed.");
 			throw new RuntimeException(e);
 		}
 	}

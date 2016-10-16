@@ -1,4 +1,4 @@
-package com.meta64.mobile.repo;
+package com.meta64.mobile.service;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 

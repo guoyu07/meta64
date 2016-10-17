@@ -161,6 +161,10 @@ namespace m64 {
         /*
          * This is the function that renders each node in the main window. The rendering in here is very central to the
          * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
+         *
+         * todo-0: Rather than having this node renderer itself be responsible for rendering all the different types
+         * of nodes, need a more pluggable design, where rendeing of different things is deletaged to some
+         * appropriate object/service
          */
         export let renderNodeContent = function(node: json.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
             var ret: string = getTopRightImageTag(node);
@@ -177,11 +181,13 @@ namespace m64 {
                 }
             } else {
                 let renderComplete: boolean = false;
-                let jcrContent: string;
-                let jsonProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
 
-                if (jsonProp) {
-                    jcrContent = renderJsonFileSearchResultProperty(jsonProp.value);
+                /*
+                 * Special Rendering for Search Result
+                 */
+                let searchResultProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
+                if (searchResultProp) {
+                    let jcrContent = renderJsonFileSearchResultProperty(searchResultProp.value);
                     renderComplete = true;
 
                     if (rowStyling) {
@@ -196,45 +202,34 @@ namespace m64 {
                     }
                 }
 
+                /*
+                 * Special Rendering for RSS Feed node
+                 */
+                if (!renderComplete) {
+                    let rssFeedTitle: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
+                    if (rssFeedTitle) {
+                        renderComplete = true;
+                        ret += podcast.renderFeedNode(node, rowStyling);
+                    }
+                }
+
+                /*
+                 * Special Rendering for RSS Entry
+                 */
+                if (!renderComplete) {
+                    let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+                    if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                        renderComplete = true;
+                        ret += podcast.renderEntryNode(node, rowStyling);
+                    }
+                }
+
                 if (!renderComplete) {
                     let contentProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
 
                     //console.log("contentProp: " + contentProp);
                     if (contentProp) {
-
-                        jcrContent = props.renderProperty(contentProp);
-
-                        ///////////////////////////////////////////////////////////////
-                        // Experimental Hack for Podcast Player Prototype
-                        // http://www.w3schools.com/tags/ref_av_dom.asp
-                        ///////////////////////////////////////////////////////////////
-                        let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
-                        if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
-                            jcrContent += tag("div", {
-                            }, "PODCAST: " + rssLink.value);
-
-                            jcrContent += tag("paper-button", {
-                                "raised": "raised",
-                                "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
-                            }, //
-                                "Play");
-
-                            // jcrContent += tag("audio", {
-                            //     "src": podcastProp.value,
-                            //     "style" : "width: 100%;",
-                            //     "ontimeupdate" : "m64.podcast.podcastOnTimeUpdate('" + node.uid + "', this);",
-                            //     "controls": "controls"
-                            // });
-                            //
-                            // jcrContent += tag("paper-button", {
-                            //     "raised": "raised",
-                            //     "onClick": "m64.podcast.podcast30SecSkip('" + node.uid + "', this);"
-                            // }, //
-                            //     "30sec Skip");
-
-                        }
-                        ///////////////////////////////////////////////////////////////
-
+                        let jcrContent = props.renderProperty(contentProp);
                         jcrContent = "<div>" + jcrContent + "</div>";
 
                         if (meta64.serverMarkdown) {

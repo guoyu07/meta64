@@ -9,6 +9,80 @@ namespace m64 {
         let node: json.NodeInfo = null;
         let adSegments: AdSegment[] = null;
 
+        export let renderFeedNode = function(node: json.NodeInfo, rowStyling:boolean): string {
+            let ret: string = "";
+            let title: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
+            let desc: json.PropertyInfo = props.getNodeProperty("rssFeedDesc", node);
+
+            let feed: string = "";
+            if (title) {
+                feed += render.tag("h2", {
+                }, title.value);
+            }
+            if (desc) {
+                feed += render.tag("p", {
+                }, desc.value);
+            }
+
+            // ret += render.tag("div", {
+            // }, feed);
+            if (rowStyling) {
+                ret += render.tag("div", {
+                    "class": "jcr-content"
+                }, feed);
+            } else {
+                ret += render.tag("div", {
+                    "class": "jcr-root-content"
+                },
+                    feed);
+            }
+
+            return ret;
+        }
+
+        export let renderEntryNode = function(node: json.NodeInfo, rowStyling:boolean): string {
+            let ret: string = "";
+            let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
+            let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);
+            let rssAuthor: json.PropertyInfo = props.getNodeProperty("rssEntryAuthor", node);
+            let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+
+            let entry: string = "";
+            if (rssTitle) {
+                entry += render.tag("h3", {
+                }, rssTitle.value);
+            }
+            if (rssDesc) {
+                entry += render.tag("p", {
+                }, rssDesc.value);
+            }
+            if (rssAuthor && rssAuthor.value) {
+                entry += render.tag("div", {
+                }, "By: " + rssAuthor.value);
+            }
+
+            // entry += render.tag("div", {
+            // }, "Link: " + rssLink.value);
+            entry += render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
+            }, //
+                "Play");
+
+            if (rowStyling) {
+                ret += render.tag("div", {
+                    "class": "jcr-content"
+                }, entry);
+            } else {
+                ret += render.tag("div", {
+                    "class": "jcr-root-content"
+                },
+                    entry);
+            }
+
+            return ret;
+        }
+
         export let openPlayerDialog = function(_uid: string) {
             uid = _uid;
             node = meta64.uidToNodeMap[uid];

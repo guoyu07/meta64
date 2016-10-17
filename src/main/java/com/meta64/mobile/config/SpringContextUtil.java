@@ -33,7 +33,9 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 		try {
 			oakRepository.init();
-			rssService.readFeeds();
+			
+			//make this an admin function or else something that runs only daily
+			//rssService.readFeeds();
 		}
 		catch (Exception e) {
 			log.error("application startup failed.");

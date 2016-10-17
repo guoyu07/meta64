@@ -13,11 +13,11 @@ namespace m64 {
             uid = _uid;
             node = meta64.uidToNodeMap[uid];
             if (node) {
-                let podcastProp: json.PropertyInfo = props.getNodeProperty("podcast", node);
-                if (podcastProp) {
-                  parseAdSegmentUid(uid);
-                  let dlg = new AudioPlayerDlg(podcastProp.value, uid);
-                  dlg.open();
+                let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+                if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                    parseAdSegmentUid(uid);
+                    let dlg = new AudioPlayerDlg(rssLink.value, uid);
+                    dlg.open();
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace m64 {
         }
 
         //This podcast handling hack is only in this file temporarily
-        export let podcastSpeed = function(rate:number): void {
+        export let podcastSpeed = function(rate: number): void {
             if (player) {
                 player.playbackRate = rate;
             }

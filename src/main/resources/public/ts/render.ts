@@ -208,10 +208,10 @@ namespace m64 {
                         // Experimental Hack for Podcast Player Prototype
                         // http://www.w3schools.com/tags/ref_av_dom.asp
                         ///////////////////////////////////////////////////////////////
-                        let podcastProp: json.PropertyInfo = props.getNodeProperty("podcast", node);
-                        if (podcastProp) {
+                        let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+                        if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
                             jcrContent += tag("div", {
-                            }, "PODCAST: " + podcastProp.value);
+                            }, "PODCAST: " + rssLink.value);
 
                             jcrContent += tag("paper-button", {
                                 "raised": "raised",

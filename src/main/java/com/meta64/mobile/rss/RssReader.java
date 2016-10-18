@@ -49,6 +49,8 @@ public class RssReader {
 		// readFeedsFromNet();
 		// 2016 let's just read one feed for now:
 		readFeed("http://theadamcarollashow.libsyn.com/rss");
+		readFeed("http://www.dailywire.com/rss.xml");
+		readFeed("http://feeds.twit.tv/twit.xml");
 
 		/* write the feeds & entries to the db */
 		writeFeeds(session);

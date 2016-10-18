@@ -999,7 +999,7 @@ namespace m64 {
          * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
          * content is non-null
          */
-        export let tag = function(tag?: string, attributes?: Object, content?: string, closeTag?: boolean): string {
+        export let tag = function(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
 
             /* default parameter values */
             if (typeof (closeTag) === 'undefined')
@@ -1012,6 +1012,10 @@ namespace m64 {
                 ret += " ";
                 $.each(attributes, function(k, v) {
                     if (v) {
+                        if (!v.contains) {
+                            debugger;
+                            throw "failed rendering tag " + tag + " with attrubutes object: " + attributes + ". Should be string attributes only.";
+                        }
                         /*
                          * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                          */
@@ -1027,6 +1031,9 @@ namespace m64 {
             }
 
             if (closeTag) {
+                if (!content) {
+                    content = "";
+                }
                 ret += ">" + content + "</" + tag + ">";
             } else {
                 ret += "/>";

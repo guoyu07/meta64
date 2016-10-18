@@ -9,12 +9,14 @@ public class JcrProp {
 	public static final String RSS_FEED_DESC = "rssFeedDesc";
 	public static final String RSS_FEED_URI = "rssFeedUri";
 	public static final String RSS_FEED_LINK = "rssFeedLink";
+	public static final String RSS_FEED_IMAGE_URL = "rssFeedImageUrl";
 	
 	public static final String RSS_ENTRY_TITLE = "rssEntryTitle";
 	public static final String RSS_ENTRY_DESC = "rssEntryDesc";
 	public static final String RSS_ENTRY_URI = "rssEntryUri";
 	public static final String RSS_ENTRY_LINK = "rssEntryLink";
 	public static final String RSS_ENTRY_AUTHOR = "rssEntryAuthor";
+	//public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
 	
 	/*
 	 * "true" means any user can add subnode under the node that has this property

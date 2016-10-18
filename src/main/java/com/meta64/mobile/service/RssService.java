@@ -38,24 +38,22 @@ public class RssService {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
-	
+
 	private Node rssRoot;
 	private Node feedsRootNode;
-	
-	/* List of nodes and hashmap for looking them up quickly by URI 
-	 * 
-	 * todo-0: revisit concurrent access to these collections. May need some locking.
-	 * */
+
+	/* List of nodes and hashmap for looking them up quickly by URI */
 	private List<Node> feedNodes = new LinkedList<Node>();
 	private HashMap<String, Node> feedsByUri = new HashMap<String, Node>();
 	private HashMap<String, Node> feedsByLink = new HashMap<String, Node>();
 	private HashMap<String, Node> entriesByLink = new HashMap<String, Node>();
-	
+
 	public void readFeeds() throws Exception {
 		
 		adminRunner.run((Session session) -> {
 			try {
 				init(session);
+				session.save();
 				
 				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
 				try {
@@ -64,7 +62,7 @@ public class RssService {
 				catch (Exception e) {
 					log.error("Failed processing RSS feeds", e);
 				}
-				
+
 				session.save();
 			}
 			catch (Exception e) {
@@ -72,33 +70,35 @@ public class RssService {
 			}
 		});
 	}
-	
+
 	public Node getFeedsRootNode() {
 		return feedsRootNode;
 	}
-	
+
 	public Node getFeedNodeByUri(String uri) {
 		return feedsByUri.get(uri);
 	}
-	
+
 	public Node getFeedNodeByLink(String link) {
 		return feedsByLink.get(link);
 	}
-	
+
 	public Node getEntryByLink(String link) {
-		return entriesByLink.get(link);
+		Node entry = entriesByLink.get(link);
+		log.debug("Looked up link[" + link + "] found=" + (entry != null));
+		return entry;
 	}
-	
+
 	public void init(Session session) throws Exception {
-		 rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
-		 feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "RSS Feeds");
-		 cacheCurrentFeedNodes();
+		rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
+		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "RSS Feeds");
+		cacheCurrentFeedNodes();
 	}
-	
+
 	private void cacheCurrentFeedNodes() throws Exception {
 		feedNodes.clear();
 		feedsByUri.clear();
-		
+
 		NodeIterator nodeIter = feedsRootNode.getNodes();
 		try {
 			while (true) {
@@ -119,15 +119,16 @@ public class RssService {
 			// not an error. Normal iterator end condition.
 		}
 	}
-	
+
 	private void cacheFeedEntries(Node feedNode) throws Exception {
-		
+
 		NodeIterator nodeIter = feedNode.getNodes();
 		try {
 			while (true) {
 				Node entryNode = nodeIter.nextNode();
-				String linkProp = JcrUtil.safeGetStringProp(entryNode, JcrProp.RSS_FEED_LINK);
+				String linkProp = JcrUtil.safeGetStringProp(entryNode, JcrProp.RSS_ENTRY_LINK);
 				if (linkProp != null) {
+					log.debug("CACHING ENTRY: link="+linkProp);
 					entriesByLink.put(linkProp, entryNode);
 				}
 			}

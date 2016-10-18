@@ -19,9 +19,11 @@ namespace m64 {
         }
 
         export let renderFeedNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+            debugger;
             let ret: string = "";
             let title: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
             let desc: json.PropertyInfo = props.getNodeProperty("rssFeedDesc", node);
+            let imgUrl: json.PropertyInfo = props.getNodeProperty("rssFeedImageUrl", node);
 
             let feed: string = "";
             if (title) {
@@ -46,10 +48,18 @@ namespace m64 {
                     feed);
             }
 
+            if (imgUrl) {
+                ret += render.tag("img", {
+                    "style" : "max-width: 300px;",
+                    "src": imgUrl.value
+                }, null, false);
+            }
+
             return ret;
         }
 
         export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+          debugger;
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);

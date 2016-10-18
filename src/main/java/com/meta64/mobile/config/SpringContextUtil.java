@@ -22,9 +22,6 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 	@Autowired
 	private OakRepository oakRepository;
-	
-	@Autowired
-	private RssService rssService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {

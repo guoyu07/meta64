@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.util.JcrUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndImage;
 
 /* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
  * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
@@ -61,6 +61,13 @@ public class RssDbWriter {
 		newNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
 		// 2016 -> write(id, feed.getImage());
 
+		SyndImage image = feed.getImage();
+		if (image!=null) {
+			if (image.getUrl()!=null) {
+				newNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+			}
+		}
+		
 		return newNode;
 	}
 
@@ -122,7 +129,7 @@ public class RssDbWriter {
 		newNode.setProperty(JcrProp.RSS_ENTRY_URI, entry.getUri());
 		newNode.setProperty(JcrProp.RSS_ENTRY_LINK, entry.getLink());
 		newNode.setProperty(JcrProp.RSS_ENTRY_AUTHOR, entry.getAuthor());
-
+		
 		// entry.getPublishedDate();
 		// entry.getUpdatedDate();
 

@@ -218,7 +218,7 @@ namespace m64 {
                  */
                 if (!renderComplete) {
                     let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
-                    if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                    if (rssLink) {
                         renderComplete = true;
                         ret += podcast.renderEntryNode(node, rowStyling);
                     }

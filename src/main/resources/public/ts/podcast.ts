@@ -50,7 +50,7 @@ namespace m64 {
 
             if (imgUrl) {
                 ret += render.tag("img", {
-                    "style" : "max-width: 300px;",
+                    "style": "max-width: 300px;",
                     "src": imgUrl.value
                 }, null, false);
             }
@@ -59,7 +59,7 @@ namespace m64 {
         }
 
         export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
-          debugger;
+            debugger;
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);
@@ -80,13 +80,19 @@ namespace m64 {
                 }, "By: " + rssAuthor.value);
             }
 
-            // entry += render.tag("div", {
-            // }, "Link: " + rssLink.value);
-            entry += render.tag("paper-button", {
-                "raised": "raised",
-                "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
-            }, //
-                "Play");
+            if (rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                entry += render.tag("paper-button", {
+                    "raised": "raised",
+                    "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
+                }, //
+                    "Play");
+            }
+            else {
+                entry += render.tag("a", {
+                    "href": rssLink.value
+                }, //
+                    "Link");
+            }
 
             if (rowStyling) {
                 ret += render.tag("div", {

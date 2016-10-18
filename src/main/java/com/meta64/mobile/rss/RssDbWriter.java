@@ -62,12 +62,12 @@ public class RssDbWriter {
 		// 2016 -> write(id, feed.getImage());
 
 		SyndImage image = feed.getImage();
-		if (image!=null) {
-			if (image.getUrl()!=null) {
+		if (image != null) {
+			if (image.getUrl() != null) {
 				newNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
 			}
 		}
-		
+
 		return newNode;
 	}
 
@@ -124,12 +124,14 @@ public class RssDbWriter {
 		newNode.setProperty(JcrProp.RSS_ENTRY_TITLE, entry.getTitle());
 
 		if (entry.getDescription() != null) {
-			newNode.setProperty(JcrProp.RSS_ENTRY_DESC, entry.getDescription().getValue());
+			String desc = entry.getDescription().getValue();
+			desc = desc.replaceAll("[^\\p{ASCII}]", "");
+			newNode.setProperty(JcrProp.RSS_ENTRY_DESC, desc);
 		}
 		newNode.setProperty(JcrProp.RSS_ENTRY_URI, entry.getUri());
 		newNode.setProperty(JcrProp.RSS_ENTRY_LINK, entry.getLink());
 		newNode.setProperty(JcrProp.RSS_ENTRY_AUTHOR, entry.getAuthor());
-		
+
 		// entry.getPublishedDate();
 		// entry.getUpdatedDate();
 

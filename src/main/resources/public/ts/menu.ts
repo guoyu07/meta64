@@ -3,12 +3,28 @@ console.log("running module: menuPanel.js");
 namespace m64 {
     export namespace menuPanel {
 
-        let makeTopLevelMenu = function(title: string, content: string): string {
-            return render.tag("paper-submenu", {
-                "label": title,
+        let makeTopLevelMenu = function(title: string, content: string, id?: string): string {
+            let paperItemAttrs = {
+                class: "menu-trigger"
+            };
+
+            let paperItem = render.tag("paper-item", paperItemAttrs, title);
+
+            let paperSubmenuAttrs = {
+                "label": title
+            };
+
+            if (id) {
+                (<any>paperSubmenuAttrs).id = id;
+            }
+
+            return render.tag("paper-submenu", paperSubmenuAttrs
+                //{
+                //"label": title,
                 //"class": "meta64-menu-heading",
                 //"class": "menu-content sublist"
-            }, "<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
+                //}
+                , paperItem + //"<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
                 makeSecondLevelList(content), true);
         }
 
@@ -69,7 +85,7 @@ namespace m64 {
             var searchMenuItems = //
                 menuItem("Content", "contentSearchDlgButton", "(new m64.SearchContentDlg()).open();") +//
                 //todo-0: make a version of the dialog that does a tag search
-                menuItem("Tags", "tagSearchDlgButton", "(new m64.SearchTagsDlg()).open();")+ //
+                menuItem("Tags", "tagSearchDlgButton", "(new m64.SearchTagsDlg()).open();") + //
                 menuItem("Files", "fileSearchDlgButton", "(new m64.SearchFilesDlg()).open();");
 
             var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
@@ -99,12 +115,16 @@ namespace m64 {
             // edit.fullRepositoryExport();") + //
             var myAccountMenu = makeTopLevelMenu("Account", myAccountItems);
 
+            var adminItems = //
+                menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();");
+            var adminMenu = makeTopLevelMenu("Admin", adminItems);
+
             var helpItems = //
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
-            var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
+            var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems, "adminMenu");
 
             var content = /* pageMenu+ */ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
-                + mainMenuHelp;
+                + adminMenu + mainMenuHelp;
 
             util.setHtml(domId, content);
         }

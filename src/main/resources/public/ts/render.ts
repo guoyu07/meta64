@@ -229,6 +229,7 @@ namespace m64 {
 
                     //console.log("contentProp: " + contentProp);
                     if (contentProp) {
+                        renderComplete = true;
                         let jcrContent = props.renderProperty(contentProp);
                         jcrContent = "<div>" + jcrContent + "</div>";
 
@@ -296,15 +297,17 @@ namespace m64 {
                          * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
                          * class='corner-style'/></a>" + jcrContent); } }
                          */
-                    } else {
-                        if (node.path.trim() == "/") {
-                            ret += "Root Node";
-                        }
-                        // ret += "<div>[No Content Property]</div>";
-                        let properties: string = props.renderProperties(node.properties);
-                        if (properties) {
-                            ret += /* "<br>" + */properties;
-                        }
+                    }
+                }
+
+                if (!renderComplete) {
+                    if (node.path.trim() == "/") {
+                        ret += "Root Node";
+                    }
+                    // ret += "<div>[No Content Property]</div>";
+                    let properties: string = props.renderProperties(node.properties);
+                    if (properties) {
+                        ret += /* "<br>" + */properties;
                     }
                 }
             }

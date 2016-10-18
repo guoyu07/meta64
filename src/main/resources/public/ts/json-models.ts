@@ -74,6 +74,9 @@ namespace m64 {
         export interface CloseAccountRequest {
         }
 
+        export interface GenerateRSSRequest {
+        }
+
         export interface CreateSubNodeRequest {
             nodeId: string;
             newNodeName: string;
@@ -242,6 +245,9 @@ namespace m64 {
         }
 
         export interface CloseAccountResponse extends OakResponseBase {
+        }
+
+        export interface GenerateRSSResponse extends OakResponseBase {
         }
 
         export interface CreateSubNodeResponse extends OakResponseBase {

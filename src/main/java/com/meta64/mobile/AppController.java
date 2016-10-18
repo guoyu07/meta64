@@ -37,6 +37,7 @@ import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExpandAbbreviatedNodeRequest;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.FileSearchRequest;
+import com.meta64.mobile.request.GenerateRSSRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.GetSharedNodesRequest;
@@ -71,6 +72,7 @@ import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExpandAbbreviatedNodeResponse;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.FileSearchResponse;
+import com.meta64.mobile.response.GenerateRSSResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.GetSharedNodesResponse;
@@ -102,6 +104,7 @@ import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
 import com.meta64.mobile.service.NodeSearchService;
+import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.service.SolrSearchService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
@@ -174,6 +177,9 @@ public class AppController {
 
 	@Autowired
 	private SolrSearchService solrSearchService;
+	
+	@Autowired
+	private RssService rssService;
 
 	private static final boolean logRequests = false;
 
@@ -604,6 +610,17 @@ public class AppController {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
 		res.setServerInfo(systemService.getSystemInfo());
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/generateRSS", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) throws Exception {
+		logRequest("generateRSS", req);
+		GenerateRSSResponse res = new GenerateRSSResponse();
+		rssService.readFeeds();
 		res.setSuccess(true);
 		checkHttpSession();
 		return res;

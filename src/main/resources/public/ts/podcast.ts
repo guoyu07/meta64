@@ -9,7 +9,16 @@ namespace m64 {
         let node: json.NodeInfo = null;
         let adSegments: AdSegment[] = null;
 
-        export let renderFeedNode = function(node: json.NodeInfo, rowStyling:boolean): string {
+        export let generateRSS = function(): void {
+            util.json<json.GenerateRSSRequest, json.GenerateRSSResponse>("generateRSS", {
+            }, generateRSSResponse);
+        }
+
+        let generateRSSResponse = function(): void {
+            alert('rss complete.');
+        }
+
+        export let renderFeedNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
             let title: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
             let desc: json.PropertyInfo = props.getNodeProperty("rssFeedDesc", node);
@@ -40,7 +49,7 @@ namespace m64 {
             return ret;
         }
 
-        export let renderEntryNode = function(node: json.NodeInfo, rowStyling:boolean): string {
+        export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);

@@ -171,6 +171,9 @@ public class RssReader {
 					/* write the entry into db */
 					dbWriter.write(session, feedNode, entry);
 				}
+				else {
+					log.debug("entry already existed." + entry.getTitle());
+				}
 			}
 			catch (Exception e) {
 				log.error("Failed writing feed.", e);

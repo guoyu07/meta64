@@ -179,7 +179,7 @@ namespace m64 {
          *
          * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
          */
-        export let encodeOnClick = function(callback: any, ctx?:any) {
+        export let encodeOnClick = function(callback: any, ctx?: any) {
             if (typeof callback == "string") {
                 return callback;
             } //
@@ -517,7 +517,8 @@ namespace m64 {
             util.setEnablement("changePasswordPgButton", !isAnonUser);
             util.setEnablement("accountPreferencesButton", !isAnonUser);
             util.setEnablement("manageAccountButton", !isAnonUser);
-            util.setEnablement("insertBookWarAndPeaceButton", isAdminUser || user.isTestUserAccount() && selNodeIsMine);
+            util.setEnablement("insertBookWarAndPeaceButton", isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
+            util.setEnablement("generateRSSButton", isAdminUser);
             util.setEnablement("uploadFromFileButton", !isAnonUser && highlightNode != null && selNodeIsMine);
             util.setEnablement("uploadFromUrlButton", !isAnonUser && highlightNode != null && selNodeIsMine);
             util.setEnablement("deleteAttachmentsButton", !isAnonUser && highlightNode != null
@@ -536,6 +537,8 @@ namespace m64 {
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
 
+            util.setEnablement("adminMenu", isAdminUser);
+
             //VISIBILITY
 
             util.setVisibility("openImportDlg", importAllowed && selNodeIsMine);
@@ -543,7 +546,8 @@ namespace m64 {
             util.setVisibility("navHomeButton", !isAnonUser);
             util.setVisibility("editModeButton", allowEditMode);
             util.setVisibility("upLevelButton", currentNode && nav.parentVisibleToUser());
-            util.setVisibility("insertBookWarAndPeaceButton", isAdminUser || user.isTestUserAccount() && selNodeIsMine);
+            util.setVisibility("insertBookWarAndPeaceButton", isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
+            util.setVisibility("generateRSSButton", isAdminUser);
             util.setVisibility("propsToggleButton", !isAnonUser);
             util.setVisibility("openLoginDlgButton", isAnonUser);
             util.setVisibility("navLogoutButton", !isAnonUser);
@@ -552,6 +556,8 @@ namespace m64 {
             util.setVisibility("timelineMainAppButton", !isAnonUser && highlightNode != null);
             util.setVisibility("userPreferencesMainAppButton", !isAnonUser);
             util.setVisibility("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
+
+            util.setVisibility("adminMenu", isAdminUser);
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();

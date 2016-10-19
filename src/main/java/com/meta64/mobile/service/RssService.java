@@ -9,17 +9,21 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.rss.RssReader;
+import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.XString;
 
 /* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
  * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
@@ -36,11 +40,16 @@ import com.meta64.mobile.util.JcrUtil;
 public class RssService {
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
 
+	@Value("${feed.list}")
+	private String feedList;
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
 	private Node rssRoot;
 	private Node feedsRootNode;
+
+	private List<String> urlsList;
 
 	/* List of nodes and hashmap for looking them up quickly by URI */
 	private List<Node> feedNodes = new LinkedList<Node>();
@@ -49,15 +58,20 @@ public class RssService {
 	private HashMap<String, Node> entriesByLink = new HashMap<String, Node>();
 
 	public void readFeeds() throws Exception {
-		
+
 		adminRunner.run((Session session) -> {
 			try {
 				init(session);
 				session.save();
-				
+
+				if (urlsList == null) {
+					// no feed urls defined, nothing to do.
+					return;
+				}
+
 				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
 				try {
-					reader.run(session);
+					reader.run(session, urlsList);
 				}
 				catch (Exception e) {
 					log.error("Failed processing RSS feeds", e);
@@ -91,8 +105,34 @@ public class RssService {
 
 	public void init(Session session) throws Exception {
 		rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
-		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "RSS Feeds");
+		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "#RSS Feeds");
+		ensureFeedsAdded();
+		AccessControlUtil.makeNodePublic(session, feedsRootNode);
+		/* todo-1: not sure if I need disable_insert here or not */
+		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
 		cacheCurrentFeedNodes();
+	}
+
+	public void ensureFeedsAdded() throws Exception {
+		String urls = JcrUtil.safeGetStringProp(feedsRootNode, JcrProp.RSS_FEED_ROOT_URLS);
+
+		/*
+		 * If property exists in the DB use it's content, else we use 'feedList' property to get the
+		 * default from the properties file and store it.
+		 */
+		if (urls == null) {
+			urls = feedList;
+			feedsRootNode.setProperty(JcrProp.RSS_FEED_ROOT_URLS, urls);
+		}
+
+		if (!StringUtils.isEmpty(urls)) {
+			urlsList = XString.tokenize(urls, ",", true);
+			// if (urlsList != null) {
+			// for (String url : urlsList) {
+			// log.debug("url[" + url + "]");
+			// }
+			// }
+		}
 	}
 
 	private void cacheCurrentFeedNodes() throws Exception {
@@ -128,7 +168,7 @@ public class RssService {
 				Node entryNode = nodeIter.nextNode();
 				String linkProp = JcrUtil.safeGetStringProp(entryNode, JcrProp.RSS_ENTRY_LINK);
 				if (linkProp != null) {
-					log.debug("CACHING ENTRY: link="+linkProp);
+					log.debug("CACHING ENTRY: link=" + linkProp);
 					entriesByLink.put(linkProp, entryNode);
 				}
 			}

@@ -44,14 +44,11 @@ public class RssReader {
 	public RssReader() {
 	}
 
-	public void run(Session session) throws Exception {
-		/* and next read the actual feed RSS from the internet */
-		// readFeedsFromNet();
-		// 2016 let's just read one feed for now:
-		readFeed("http://theadamcarollashow.libsyn.com/rss");
-		readFeed("http://www.dailywire.com/rss.xml");
-		readFeed("http://feeds.twit.tv/twit.xml");
-
+	public void run(Session session, List<String> urlsList) throws Exception {
+		for (String feedUrl : urlsList) {
+			readFeed(feedUrl);
+		}
+		
 		/* write the feeds & entries to the db */
 		writeFeeds(session);
 	}
@@ -69,36 +66,6 @@ public class RssReader {
 			}
 		}
 	}
-
-	// private void readFeedsFromNet() throws Exception {
-	// int counter = 0;
-	// for (String feed : feedUrlList) {
-	// jpaUtil.commitAndRestart(Constants.ONE_SECOND_SLEEP);
-	// // if (ServiceCore.isShuttingDown()) {
-	// // break;
-	// // }
-	//
-	// try {
-	// if (!feed.startsWith("#")) {
-	// readFeed(feed);
-	// } else {
-	// if (Constants.debug_rss) {
-	// ALog.log("ignoring comment line: " + feed);
-	// }
-	// }
-	// // db().ping();
-	// } catch (Exception e) {
-	// //e.printStackTrace();
-	//
-	// /* message to user */
-	// addMessage("Failed to process feed: " + feed + " Error: " + e.getMessage());
-	// }
-	// counter++;
-	// if (counter >= Constants.MAX_RSS_FEEDS) {
-	// break;
-	// }
-	// }
-	// }
 
 	private void readFeed(String feedUrl) throws Exception {
 		log.debug("processing RSS url: " + feedUrl);

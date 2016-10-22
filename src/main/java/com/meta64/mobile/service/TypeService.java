@@ -41,13 +41,12 @@ public class TypeService {
 	private RunAsJcrAdmin adminRunner;
 
 	private boolean dumpTypesAtStartup = false;
-	
+
 	/* New experimental code, to create types. Not using this yet */
 	public void initNodeTypes() throws Exception {
 		adminRunner.run((Session session) -> {
 
 			Workspace workspace = session.getWorkspace();
-
 			NamespaceRegistry registry = workspace.getNamespaceRegistry();
 
 			if (!Arrays.asList(registry.getPrefixes()).contains("meta64")) {
@@ -55,12 +54,9 @@ public class TypeService {
 			}
 
 			NodeTypeManager mgr = workspace.getNodeTypeManager();
-
-			//createPodcastTypes(mgr);
-			loadCNDTypeFile(session);	
-
+			loadCNDTypeFile(session);
 			session.save();
-			
+
 			if (dumpTypesAtStartup) {
 				log.info("Dumping NodeTypes:");
 				NodeTypeIterator iter = mgr.getAllNodeTypes();
@@ -72,7 +68,10 @@ public class TypeService {
 			}
 		});
 	}
-	
+
+	/**
+	 * http://jackrabbit.apache.org/jcr/node-type-notation.html
+	 */
 	public void loadCNDTypeFile(Session session) throws Exception {
 		Resource resource = SpringContextUtil.getApplicationContext().getResource("classpath:jcr-types.txt");
 		InputStream is = resource.getInputStream();
@@ -80,8 +79,8 @@ public class TypeService {
 
 		try {
 			NodeType[] nodeTypes = CndImporter.registerNodeTypes(in, session, true /* reregisterExisting */);
-			if (nodeTypes!=null) {
-				log.info("Registered "+nodeTypes.length+" JCR types.");
+			if (nodeTypes != null) {
+				log.info("Registered " + nodeTypes.length + " JCR types.");
 			}
 		}
 		finally {
@@ -90,10 +89,12 @@ public class TypeService {
 			}
 		}
 	}
-	
-	/* This method was experimental way of creating a type without using the CND file (jcr-types.txt), but now that we have 
-	 * all types being defined in jcr-types.txt file we don't need any Java-based registration other than what the CndImporter
-	 * already does with the Type file
+
+	/**
+	 * This method was experimental way of creating a type without using the CND file
+	 * (jcr-types.txt), but now that we have all types being defined in jcr-types.txt file we don't
+	 * need any Java-based registration other than what the CndImporter already does with the Type
+	 * file
 	 */
 	public void createPodcastTypes(NodeTypeManager mgr) throws Exception {
 		String typeName = "podcast";

@@ -39,6 +39,7 @@ import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.FileSearchRequest;
 import com.meta64.mobile.request.GenerateRSSRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
+import com.meta64.mobile.request.GetPlayerInfoRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.GetSharedNodesRequest;
 import com.meta64.mobile.request.ImportRequest;
@@ -58,6 +59,7 @@ import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
+import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.request.SplitNodeRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
@@ -74,6 +76,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.FileSearchResponse;
 import com.meta64.mobile.response.GenerateRSSResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
+import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.ImportResponse;
@@ -85,6 +88,7 @@ import com.meta64.mobile.response.LogoutResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.response.OpenSystemFileResponse;
+import com.meta64.mobile.response.SetPlayerInfoResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
@@ -177,7 +181,7 @@ public class AppController {
 
 	@Autowired
 	private SolrSearchService solrSearchService;
-	
+
 	@Autowired
 	private RssService rssService;
 
@@ -614,13 +618,36 @@ public class AppController {
 		checkHttpSession();
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/generateRSS", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) throws Exception {
 		logRequest("generateRSS", req);
 		GenerateRSSResponse res = new GenerateRSSResponse();
 		rssService.readFeeds();
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+
+	/* Currently only used to update TIME offset of the video player */
+	@RequestMapping(value = API_PATH + "/setPlayerInfo", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) throws Exception {
+		logRequest("setPlayerInfo", req);
+		SetPlayerInfoResponse res = new SetPlayerInfoResponse();
+		rssService.setPlayerInfo(req);
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+
+	@RequestMapping(value = API_PATH + "/getPlayerInfo", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GetPlayerInfoResponse getPlayerInfo(@RequestBody GetPlayerInfoRequest req) throws Exception {
+		logRequest("getPlayerInfo", req);
+		GetPlayerInfoResponse res = new GetPlayerInfoResponse();
+		rssService.getPlayerInfo(req, res);
 		res.setSuccess(true);
 		checkHttpSession();
 		return res;

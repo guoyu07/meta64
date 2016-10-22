@@ -77,6 +77,15 @@ namespace m64 {
         export interface GenerateRSSRequest {
         }
 
+        export interface SetPlayerInfoRequest {
+            url: string;
+            timeOffset: number;
+        }
+
+        export interface GetPlayerInfoRequest {
+            url: string;
+        }
+
         export interface CreateSubNodeRequest {
             nodeId: string;
             newNodeName: string;
@@ -248,6 +257,13 @@ namespace m64 {
         }
 
         export interface GenerateRSSResponse extends OakResponseBase {
+        }
+
+        export interface SetPlayerInfoResponse extends OakResponseBase {
+        }
+
+        export interface GetPlayerInfoResponse extends OakResponseBase {
+            timeOffset:number;
         }
 
         export interface CreateSubNodeResponse extends OakResponseBase {

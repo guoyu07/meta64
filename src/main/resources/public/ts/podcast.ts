@@ -1,9 +1,14 @@
 console.log("running module: podcast.js");
 
-/* NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate */
+/*
+NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
+
+Reference: https://www.w3.org/2010/05/video/mediaevents.html
+*/
 namespace m64 {
     export namespace podcast {
         export let player: any = null;
+        export let startTimePending: number = null;
 
         let uid: string = null;
         let node: json.NodeInfo = null;
@@ -19,7 +24,6 @@ namespace m64 {
         }
 
         export let renderFeedNode = function(node: json.NodeInfo, rowStyling: boolean): string {
-            debugger;
             let ret: string = "";
             let title: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
             let desc: json.PropertyInfo = props.getNodeProperty("rssFeedDesc", node);
@@ -35,8 +39,6 @@ namespace m64 {
                 }, desc.value);
             }
 
-            // ret += render.tag("div", {
-            // }, feed);
             if (rowStyling) {
                 ret += render.tag("div", {
                     "class": "jcr-content"
@@ -59,7 +61,6 @@ namespace m64 {
         }
 
         export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
-            debugger;
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);
@@ -114,9 +115,15 @@ namespace m64 {
             if (node) {
                 let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
                 if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
-                    parseAdSegmentUid(uid);
-                    let dlg = new AudioPlayerDlg(rssLink.value, uid);
-                    dlg.open();
+
+                    //queryServerAndOpenPlayer(rssLink.value, uid);
+                    util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
+                        "url": rssLink.value
+                    }, function(res: json.GetPlayerInfoResponse) {
+                        parseAdSegmentUid(uid);
+                        let dlg = new AudioPlayerDlg(rssLink.value, uid, res.timeOffset);
+                        dlg.open();
+                    });
                 }
             }
         }
@@ -167,11 +174,32 @@ namespace m64 {
             return minutes * 60 + seconds;
         }
 
+        export let restoreStartTime = function() {
+            /* makes player always start wherever the user last was when they clicked "pause" */
+            if (player && startTimePending) {
+                player.currentTime = startTimePending;
+                startTimePending = null;
+            }
+        }
+
+        export let onCanPlay = function(uid: string, elm: any): void {
+            player = elm;
+            restoreStartTime();
+            player.play();
+        }
+
         //This podcast handling hack is only in this file temporarily
-        export let podcastOnTimeUpdate = function(uid: string, elm: any): void {
+        export let onTimeUpdate = function(uid: string, elm: any): void {
             console.log("CurrentTime=" + elm.currentTime);
             player = elm;
 
+            /* todo-1: we call restoreStartTime upon loading of the component but it doesn't seem to have the effect doing anything at all
+            and can't even update the slider displayed position, until playins is STARTED. Need to come back and fix this because users
+            currently have the glitch of always hearing the first fraction of a second of video, which of course another way to fix
+            would be by altering the volumn to zero until restoreStartTime has gone into effect */
+            restoreStartTime();
+
+            if (!adSegments) return;
             for (let seg of adSegments) {
                 /* endTime of -1 means the rest of the media should be considered ADs */
                 if (player.currentTime >= seg.beginTime && //
@@ -195,17 +223,41 @@ namespace m64 {
         }
 
         //This podcast handling hack is only in this file temporarily
-        export let podcastSpeed = function(rate: number): void {
+        export let pause = function(): void {
+            if (player) {
+                player.pause();
+                savePlayerInfo(player.src, player.currentTime);
+            }
+        }
+
+        export let play = function(): void {
+            if (player) {
+                player.play();
+            }
+        }
+
+        export let speed = function(rate: number): void {
             if (player) {
                 player.playbackRate = rate;
             }
         }
 
         //This podcast handling hack is only in this file temporarily
-        export let podcast30SecSkip = function(): void {
+        export let skip = function(delta: number): void {
             if (player) {
-                player.currentTime += 30;
+                player.currentTime += delta;
             }
+        }
+
+        export let savePlayerInfo = function(url: string, timeOffset: number): void {
+            util.json<json.SetPlayerInfoRequest, json.SetPlayerInfoResponse>("setPlayerInfo", {
+                "url": url,
+                "timeOffset": timeOffset
+            }, setPlayerInfoResponse);
+        }
+
+        let setPlayerInfoResponse = function(): void {
+            //alert('save complete.');
         }
     }
 }

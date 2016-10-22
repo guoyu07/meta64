@@ -44,7 +44,7 @@ public class RssReader {
 	public RssReader() {
 	}
 
-	public void run(Session session, List<String> urlsList) throws Exception {
+	public void run(Session session, List<String> urlsList) throws Exception {	
 		for (String feedUrl : urlsList) {
 			readFeed(feedUrl);
 		}

@@ -18,8 +18,13 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.request.GetPlayerInfoRequest;
+import com.meta64.mobile.request.SetPlayerInfoRequest;
+import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.rss.RssReader;
+import com.meta64.mobile.rss.model.PlayerInfo;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
@@ -45,6 +50,9 @@ public class RssService {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
+	
+	@Autowired
+	private SessionContext sessionContext;
 
 	private Node rssRoot;
 	private Node feedsRootNode;
@@ -56,7 +64,32 @@ public class RssService {
 	private HashMap<String, Node> feedsByUri = new HashMap<String, Node>();
 	private HashMap<String, Node> feedsByLink = new HashMap<String, Node>();
 	private HashMap<String, Node> entriesByLink = new HashMap<String, Node>();
+	
+	/* We cache all the PlayerInfo in memory, so that the API calls from the client have zero lag, but we will
+	 * have a deamon thread that goes thru this map and persists all of it intermittently. If we didn't do it
+	 * this way the only other alternative would be to perform a DB write EVERY TIME any user clicks Pause in
+	 * a media player, and we want to be much more scalable than that.
+	 */
+	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
+	public void setPlayerInfo(SetPlayerInfoRequest req) {
+		String currentUser = sessionContext.getUserName();
+		String key = currentUser+":"+req.getUrl();
+		PlayerInfo info = new PlayerInfo();
+		info.setTimeOffset(req.getTimeOffset());
+		playerInfoMap.put(key, info);
+	}
+	
+	public void getPlayerInfo(GetPlayerInfoRequest req, GetPlayerInfoResponse res) {
+		String currentUser = sessionContext.getUserName();
+		String key = currentUser+":"+req.getUrl();
+		PlayerInfo info = playerInfoMap.get(key);
+		if (info != null) {
+			res.setTimeOffset(info.getTimeOffset());
+		}
+	}
+	
+	
 	public void readFeeds() throws Exception {
 
 		adminRunner.run((Session session) -> {

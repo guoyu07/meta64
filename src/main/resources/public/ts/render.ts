@@ -1012,10 +1012,10 @@ namespace m64 {
                 ret += " ";
                 $.each(attributes, function(k, v) {
                     if (v) {
-                        if (!v.contains) {
-                            debugger;
-                            throw "failed rendering tag " + tag + " with attrubutes object: " + attributes + ". Should be string attributes only.";
+                        if (typeof v !== 'string') {
+                            v = String(v);
                         }
+                      
                         /*
                          * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                          */
@@ -1063,7 +1063,8 @@ namespace m64 {
                 "type": "password",
                 "name": fieldId,
                 "label": fieldName,
-                "id": fieldId
+                "id": fieldId,
+                "class" : "meta64-input"
             }, "", true);
         }
 

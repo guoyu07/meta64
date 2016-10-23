@@ -34,12 +34,15 @@ namespace m64 {
         init = (): void => {
         }
 
+        closeEvent = (): void => {
+        }
+
         build = (): string => {
             return ""
         };
 
         open = (): void => {
-
+            let thiz = this;
             /*
              * get container where all dialogs are created (true polymer dialogs)
              */
@@ -105,6 +108,13 @@ namespace m64 {
             //polyElm.node.center();
             polyElm.node.open();
 
+            //var dialog = document.getElementById('loginDialog');
+            node.addEventListener('iron-overlay-closed', function(customEvent) {
+                //var id = (<any>customEvent.currentTarget).id;
+                //console.log("****************** Dialog: " + id + " is closed!");
+                thiz.closeEvent();
+            });
+
             /* I'm doing this in desparation. nothing else seems to get rid of the margin */
             // setTimeout(function() {
             //     polyElm.node.style.margin = "0px";
@@ -163,7 +173,7 @@ namespace m64 {
             let attribs = {
                 "raised": "raised",
                 "id": this.id(id),
-                "class" : "standardButton"
+                "class": "standardButton"
             };
 
             if (callback != undefined) {
@@ -180,7 +190,7 @@ namespace m64 {
                 // warning: this dialog-confirm is required (logic fails without)
                 "dialog-confirm": "dialog-confirm",
                 "id": this.id(id),
-                "class" : "standardButton"
+                "class": "standardButton"
             };
 
             let onClick = "";

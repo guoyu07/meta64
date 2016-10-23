@@ -38,10 +38,13 @@ namespace m64 {
             let description = render.tag("p", {
             }, rssTitle.value);
 
+            //references:
+            //http://www.w3schools.com/tags/ref_av_dom.asp
+            //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
             let playerAttribs: any = {
                 "src": this.sourceUrl,
                 "id": this.id("audioPlayer"),
-                "style": "width: 90%;",
+                "style": "width: 95%;",
                 "ontimeupdate": "m64.podcast.onTimeUpdate('" + this.nodeUid + "', this);",
                 "oncanplay": "m64.podcast.onCanPlay('" + this.nodeUid + "', this);",
                 "controls": "controls"
@@ -111,6 +114,10 @@ namespace m64 {
             let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
 
             return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+        }
+
+        closeEvent = (): void => {
+            podcast.destroyPlayer(null);
         }
 
         closeBtn = (): void => {

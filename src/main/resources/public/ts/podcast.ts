@@ -14,6 +14,8 @@ namespace m64 {
         let node: json.NodeInfo = null;
         let adSegments: AdSegment[] = null;
 
+        let pushTimer: any = null;
+
         export let generateRSS = function(): void {
             util.json<json.GenerateRSSRequest, json.GenerateRSSResponse>("generateRSS", {
             }, generateRSSResponse);
@@ -189,9 +191,12 @@ namespace m64 {
             player.play();
         }
 
-        //This podcast handling hack is only in this file temporarily
         export let onTimeUpdate = function(uid: string, elm: any): void {
-            console.log("CurrentTime=" + elm.currentTime);
+            if (!pushTimer) {
+                /* ping server once per minute */
+                pushTimer = setInterval(pushTimerFunction, 60000);
+            }
+            //console.log("CurrentTime=" + elm.currentTime);
             player = elm;
 
             /* todo-1: we call restoreStartTime upon loading of the component but it doesn't seem to have the effect doing anything at all
@@ -223,6 +228,28 @@ namespace m64 {
             }
         }
 
+        /* todo-0: for production, boost this up to one minute */
+        export let pushTimerFunction = function(): void {
+            //console.log("pushTimer");
+            //debugger;
+            /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
+            but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
+            contact the server during this timer to update the time on the server AND keep session from timing out
+
+            todo-0: would everything work if 'player' WAS the jquery object always.
+            */
+            if (player && !player.paused) {
+                /* this safety check to be sure no hidden audio can still be playing should no longer be needed
+                now that I have the close litener even on the dialog, but i'll leave this here anyway. Can't hurt. */
+                if (!$(player).is(":visible")) {
+                    console.log("closing player, because it was detected as not visible. player dialog get hidden?");
+                    player.pause();
+                }
+                //console.log("Autosave player info.");
+                savePlayerInfo(player.src, player.currentTime);
+            }
+        }
+
         //This podcast handling hack is only in this file temporarily
         export let pause = function(): void {
             if (player) {
@@ -240,7 +267,10 @@ namespace m64 {
                     let localPlayer = $(player);
                     player = null;
                     localPlayer.remove();
-                    dlg.cancel();
+
+                    if (dlg) {
+                        dlg.cancel();
+                    }
                 }, 750);
             }
         }

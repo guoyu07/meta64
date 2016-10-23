@@ -29,5 +29,7 @@ namespace m64 {
         /* showing path on rows just wastes space for ordinary users. Not really needed */
         export let SHOW_PATH_ON_ROWS: boolean = true;
         export let SHOW_PATH_IN_DLGS: boolean = true;
+
+        export let SHOW_CLEAR_BUTTON_IN_EDITOR: boolean = false;
     }
 }

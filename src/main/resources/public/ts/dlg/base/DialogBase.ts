@@ -162,7 +162,8 @@ namespace m64 {
         makeButton = (text: string, id: string, callback: any, ctx?: any): string => {
             let attribs = {
                 "raised": "raised",
-                "id": this.id(id)
+                "id": this.id(id),
+                "class" : "standardButton"
             };
 
             if (callback != undefined) {
@@ -178,7 +179,8 @@ namespace m64 {
                 "raised": "raised",
                 // warning: this dialog-confirm is required (logic fails without)
                 "dialog-confirm": "dialog-confirm",
-                "id": this.id(id)
+                "id": this.id(id),
+                "class" : "standardButton"
             };
 
             let onClick = "";

@@ -528,9 +528,10 @@ namespace m64 {
             util.setEnablement("contentSearchDlgButton", !isAnonUser && highlightNode != null);
             util.setEnablement("tagSearchDlgButton", !isAnonUser && highlightNode != null);
             util.setEnablement("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
-            util.setEnablement("timelineButton", !isAnonUser && highlightNode != null);
             util.setEnablement("searchMainAppButton", !isAnonUser && highlightNode != null);
             util.setEnablement("timelineMainAppButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("timelineCreatedButton", !isAnonUser && highlightNode != null);
+            util.setEnablement("timelineModifiedButton", !isAnonUser && highlightNode != null);
             util.setEnablement("showServerInfoButton", isAdminUser);
             util.setEnablement("showFullNodeUrlButton", highlightNode != null);
             util.setEnablement("refreshPageButton", !isAnonUser);
@@ -543,7 +544,6 @@ namespace m64 {
 
             util.setVisibility("openImportDlg", importAllowed && selNodeIsMine);
             util.setVisibility("openExportDlg", exportAllowed && selNodeIsMine);
-            util.setVisibility("navHomeButton", !isAnonUser);
             util.setVisibility("editModeButton", allowEditMode);
             util.setVisibility("upLevelButton", currentNode && nav.parentVisibleToUser());
             util.setVisibility("insertBookWarAndPeaceButton", isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
@@ -557,6 +557,8 @@ namespace m64 {
             util.setVisibility("userPreferencesMainAppButton", !isAnonUser);
             util.setVisibility("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
 
+
+            //Top Level Menu Visibility
             util.setVisibility("adminMenu", isAdminUser);
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3

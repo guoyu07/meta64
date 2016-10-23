@@ -252,11 +252,11 @@ namespace m64 {
         makePropertyEditButtonBar = (prop: any, fieldId: string): string => {
             var buttonBar = "";
 
-            var clearButton = render.tag("paper-button", {
+            var clearButton = cnst.SHOW_CLEAR_BUTTON_IN_EDITOR ? render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.meta64.getObjectByGuid(" + this.guid + ").clearProperty('" + fieldId + "');" //
             }, //
-                "Clear");
+                "Clear") : "";
 
             var addMultiButton = "";
             var deleteButton = "";

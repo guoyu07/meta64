@@ -68,10 +68,26 @@ namespace m64 {
             let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
 
             let entry: string = "";
-            if (rssTitle) {
-                entry += render.tag("h3", {
-                }, rssTitle.value);
+
+            if (rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                if (rssTitle) {
+                    entry += render.tag("h3", {
+                    }, rssTitle.value);
+                }
+
+                entry += render.tag("paper-button", {
+                    "raised": "raised",
+                    "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');",
+                    "class": "standardButton"
+                }, //
+                    "Play");
             }
+            else {
+                entry += render.tag("a", {
+                    "href": rssLink.value
+                }, render.tag("h3", {}, rssTitle.value));
+            }
+
             if (rssDesc) {
                 entry += render.tag("p", {
                 }, rssDesc.value);
@@ -79,20 +95,6 @@ namespace m64 {
             if (rssAuthor && rssAuthor.value) {
                 entry += render.tag("div", {
                 }, "By: " + rssAuthor.value);
-            }
-
-            if (rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
-                entry += render.tag("paper-button", {
-                    "raised": "raised",
-                    "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');"
-                }, //
-                    "Play");
-            }
-            else {
-                entry += render.tag("a", {
-                    "href": rssLink.value
-                }, //
-                    "Link");
             }
 
             if (rowStyling) {
@@ -229,7 +231,7 @@ namespace m64 {
             }
         }
 
-        export let destroyPlayer = function(dlg:AudioPlayerDlg): void {
+        export let destroyPlayer = function(dlg: AudioPlayerDlg): void {
             if (player) {
                 player.pause();
 
@@ -239,7 +241,7 @@ namespace m64 {
                     player = null;
                     localPlayer.remove();
                     dlg.cancel();
-                }, 1000);
+                }, 750);
             }
         }
 

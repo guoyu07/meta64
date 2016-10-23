@@ -165,7 +165,6 @@
                         onClick="m64.nav.navPublicHome();"
                         id="headerAppName">m64</span>
                     <paper-icon-button
-                        style="display:none;"
                         icon="icons:home"
                         id="navHomeButton"
                         onClick="m64.nav.navHome();">Home</paper-icon-button>

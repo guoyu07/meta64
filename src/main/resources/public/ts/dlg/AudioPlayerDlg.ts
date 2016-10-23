@@ -27,10 +27,16 @@ namespace m64 {
         build = (): string => {
             let header = this.makeHeader("Audio Player");
 
+            let node: json.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
+            if (!node) {
+                throw "unknown node uid: "+this.nodeUid;
+            }
+
+            let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
+
             /* This is where I need a short name of the media being played */
-            let description = "";
-            // render.tag("p", {
-            //  }, "Source: " + this.sourceUrl);
+            let description = render.tag("p", {
+            }, rssTitle.value);
 
             let playerAttribs: any = {
                 "src": this.sourceUrl,
@@ -46,13 +52,15 @@ namespace m64 {
             //Skipping Buttons
             let skipBack30Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.skip(-30, '" + this.nodeUid + "', this);"
+                "onClick": "m64.podcast.skip(-30, '" + this.nodeUid + "', this);",
+                "class" : "standardButton"
             }, //
                 "< 30s");
 
             let skipForward30Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.skip(30, '" + this.nodeUid + "', this);"
+                "onClick": "m64.podcast.skip(30, '" + this.nodeUid + "', this);",
+                "class" : "standardButton"
             }, //
                 "30s >");
 
@@ -61,19 +69,22 @@ namespace m64 {
             //Speed Buttons
             let speedNormalButton = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.speed(1.0);"
+                "onClick": "m64.podcast.speed(1.0);",
+                "class" : "standardButton"
             }, //
                 "Normal Speed");
 
             let speed15Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.speed(1.5);"
+                "onClick": "m64.podcast.speed(1.5);",
+                "class" : "standardButton"
             }, //
                 "1.5X");
 
             let speed2xButton = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.speed(2);"
+                "onClick": "m64.podcast.speed(2);",
+                "class" : "standardButton"
             }, //
                 "2X");
 
@@ -82,13 +93,15 @@ namespace m64 {
             //Dialog Buttons
             let pauseButton = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.pause();"
+                "onClick": "m64.podcast.pause();",
+                "class" : "standardButton"
             }, //
                 "Pause");
 
             let playButton = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.play();"
+                "onClick": "m64.podcast.play();",
+                "class" : "playButton"
             }, //
                 "Play");
 
@@ -101,7 +114,6 @@ namespace m64 {
         }
 
         closeBtn = (): void => {
-            debugger;
             podcast.destroyPlayer(this);
         }
 

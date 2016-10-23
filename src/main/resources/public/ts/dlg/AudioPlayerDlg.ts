@@ -93,11 +93,16 @@ namespace m64 {
                 "Play");
 
             //todo-0: even if this button appears to work, I need it to explicitly enforce the saving of the timevalue AND the removel of the AUDIO element from the DOM */
-            let closeButton = this.makeCloseButton("Close", "closeAudioPlayerDlgButton", "m64.podcast.pause();");
+            let closeButton = this.makeButton("Close", "closeAudioPlayerDlgButton", this.closeBtn);
 
             let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
 
             return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+        }
+
+        closeBtn = (): void => {
+            debugger;
+            podcast.destroyPlayer(this);
         }
 
         init = (): void => {

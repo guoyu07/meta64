@@ -63,7 +63,7 @@ namespace m64 {
             modalsContainer.node.appendChild(node);
 
             // todo-3: put in CSS now
-            //node.style.border = "4px solid gray";
+            node.style.border = "3px solid gray";
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();
@@ -97,7 +97,7 @@ namespace m64 {
             //polyElm.node.modal = true;
 
             //polyElm.node.refit();
-            //polyElm.node.noCancelOnOutsideClick = true;
+            polyElm.node.noCancelOnOutsideClick = true;
             //polyElm.node.horizontalOffset = 0;
             //polyElm.node.verticalOffset = 0;
             //polyElm.node.fitInto = ironPages.node;

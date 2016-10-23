@@ -12,6 +12,14 @@ namespace m64 {
             }, navPageNodeResponse);
         }
 
+        export let openRssFeedsNode = function(): void {
+            util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+                "nodeId": "/rss/feeds",
+                "upLevel": null,
+                "renderParentIfLeaf": null
+            }, navPageNodeResponse);
+        }
+
         export let expandMore = function(nodeId: string): void {
 
             /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button

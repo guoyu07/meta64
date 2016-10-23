@@ -80,6 +80,9 @@ public class RssService {
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
 	public void setPlayerInfo(SetPlayerInfoRequest req) {
+		if (sessionContext.isAnonUser()) {
+			return;
+		}
 		String currentUser = sessionContext.getUserName();
 		String key = currentUser + ":" + req.getUrl();
 		PlayerInfo info = new PlayerInfo();

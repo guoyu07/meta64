@@ -83,6 +83,10 @@ public class SessionContext {
 		return JcrPrincipal.ADMIN.equalsIgnoreCase(userName);
 	}
 
+	public boolean isAnonUser() {
+		return JcrPrincipal.ANONYMOUS.equalsIgnoreCase(userName);
+	}
+	
 	public boolean isTestAccount() {
 		return oak.isTestAccountName(userName);
 	}

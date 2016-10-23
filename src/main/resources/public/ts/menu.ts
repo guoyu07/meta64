@@ -54,6 +54,10 @@ namespace m64 {
             //     menuItem("Timeline", "timelinePageButton", "m64.meta64.selectTab('timelineTabName');");
             // var pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
+            var rssItems = //
+                menuItem("Feeds", "mainMenuRss", "m64.nav.openRssFeedsNode();");
+            var mainMenuRss = makeTopLevelMenu("RSS", rssItems);
+
             var editMenuItems = //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
                 menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();") + //
@@ -123,7 +127,7 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = /* pageMenu+ */ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
+            var content = /* pageMenu+ */ mainMenuRss + editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + adminMenu + mainMenuHelp;
 
             util.setHtml(domId, content);

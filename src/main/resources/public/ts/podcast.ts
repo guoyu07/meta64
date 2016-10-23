@@ -229,6 +229,20 @@ namespace m64 {
             }
         }
 
+        export let destroyPlayer = function(dlg:AudioPlayerDlg): void {
+            if (player) {
+                player.pause();
+
+                setTimeout(function() {
+                    savePlayerInfo(player.src, player.currentTime);
+                    let localPlayer = $(player);
+                    player = null;
+                    localPlayer.remove();
+                    dlg.cancel();
+                }, 1000);
+            }
+        }
+
         export let play = function(): void {
             if (player) {
                 player.play();
@@ -249,10 +263,12 @@ namespace m64 {
         }
 
         export let savePlayerInfo = function(url: string, timeOffset: number): void {
+            if (meta64.isAnonUser) return;
+
             util.json<json.SetPlayerInfoRequest, json.SetPlayerInfoResponse>("setPlayerInfo", {
                 "url": url,
                 "timeOffset": timeOffset,
-                "nodePath" : node.path
+                "nodePath": node.path
             }, setPlayerInfoResponse);
         }
 

@@ -1,6 +1,7 @@
 console.log("running module: SignupDlg.js");
 
 declare var BRANDING_TITLE;
+declare var BRANDING_TITLE_SHORT;
 
 namespace m64 {
     export class SignupDlg extends DialogBase {

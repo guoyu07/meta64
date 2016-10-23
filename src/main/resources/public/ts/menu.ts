@@ -117,11 +117,11 @@ namespace m64 {
 
             var adminItems = //
                 menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();");
-            var adminMenu = makeTopLevelMenu("Admin", adminItems);
+            var adminMenu = makeTopLevelMenu("Admin", adminItems, "adminMenu");
 
             var helpItems = //
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
-            var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems, "adminMenu");
+            var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
             var content = /* pageMenu+ */ editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
                 + adminMenu + mainMenuHelp;

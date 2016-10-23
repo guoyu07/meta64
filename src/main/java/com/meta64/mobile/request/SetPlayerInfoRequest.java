@@ -9,6 +9,9 @@ public class SetPlayerInfoRequest extends OakResponseBase {
 	
 	/* current time offset user was last positioned at */
 	private Integer timeOffset;
+	
+	/* Node path of node that is playing the media */
+	private String nodePath;
 
 	public String getUrl() {
 		return url;
@@ -24,5 +27,13 @@ public class SetPlayerInfoRequest extends OakResponseBase {
 
 	public void setTimeOffset(Integer timeOffset) {
 		this.timeOffset = timeOffset;
+	}
+
+	public String getNodePath() {
+		return nodePath;
+	}
+
+	public void setNodePath(String nodePath) {
+		this.nodePath = nodePath;
 	}
 }

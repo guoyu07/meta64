@@ -1,8 +1,10 @@
 package com.meta64.mobile.service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
@@ -14,12 +16,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.GetPlayerInfoRequest;
 import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
@@ -50,7 +55,7 @@ public class RssService {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
-	
+
 	@Autowired
 	private SessionContext sessionContext;
 
@@ -64,32 +69,39 @@ public class RssService {
 	private HashMap<String, Node> feedsByUri = new HashMap<String, Node>();
 	private HashMap<String, Node> feedsByLink = new HashMap<String, Node>();
 	private HashMap<String, Node> entriesByLink = new HashMap<String, Node>();
-	
-	/* We cache all the PlayerInfo in memory, so that the API calls from the client have zero lag, but we will
-	 * have a deamon thread that goes thru this map and persists all of it intermittently. If we didn't do it
-	 * this way the only other alternative would be to perform a DB write EVERY TIME any user clicks Pause in
-	 * a media player, and we want to be much more scalable than that.
+
+	/*
+	 * We cache all the PlayerInfo in memory, so that the API calls from the client have zero lag,
+	 * but we will have a deamon thread that goes thru this map and persists all of it
+	 * intermittently. If we didn't do it this way the only other alternative would be to perform a
+	 * DB write EVERY TIME any user clicks Pause in a media player, and we want to be much more
+	 * scalable than that.
 	 */
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
 	public void setPlayerInfo(SetPlayerInfoRequest req) {
 		String currentUser = sessionContext.getUserName();
-		String key = currentUser+":"+req.getUrl();
+		String key = currentUser + ":" + req.getUrl();
 		PlayerInfo info = new PlayerInfo();
 		info.setTimeOffset(req.getTimeOffset());
-		playerInfoMap.put(key, info);
+		info.setNodePath(req.getNodePath());
+		synchronized (playerInfoMap) {
+			playerInfoMap.put(key, info);
+		}
 	}
-	
+
 	public void getPlayerInfo(GetPlayerInfoRequest req, GetPlayerInfoResponse res) {
 		String currentUser = sessionContext.getUserName();
-		String key = currentUser+":"+req.getUrl();
-		PlayerInfo info = playerInfoMap.get(key);
+		String key = currentUser + ":" + req.getUrl();
+		PlayerInfo info = null;
+		synchronized (playerInfoMap) {
+			info = playerInfoMap.get(key);
+		}
 		if (info != null) {
 			res.setTimeOffset(info.getTimeOffset());
 		}
 	}
-	
-	
+
 	public void readFeeds() throws Exception {
 
 		adminRunner.run((Session session) -> {
@@ -209,5 +221,54 @@ public class RssService {
 		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
 		}
+	}
+
+	//uncomment annotation to activate this code.
+	//@Scheduled(fixedDelay = 10 * 1000)
+	public void run() {
+		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
+
+		try {
+			adminRunner.run((Session session) -> {
+				if (persistPlayerInfo(session)) {
+					session.save();
+				}
+			});
+		}
+		catch (Exception e) {
+			log.debug("Failed processing mail.", e);
+		}
+	}
+
+	/* This code is not complete. I'm stopping work on it for now. What it WILL do once completed
+	 * is read all the cached PlayerInfo paris from the hashmap and persist them permanently into the db
+	 * so that even after a server restart the time offsets where each person's podcast was left off will still
+	 * be available after reboot. For now a server restart/redeploy wipes out everyone's info regarding
+	 * where the were last listening to any given podcast.
+	 */
+	private boolean persistPlayerInfo(Session session) throws Exception {
+		boolean workDone = false;
+		Iterator it = playerInfoMap.entrySet().iterator();
+		
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			System.out.println(pair.getKey() + " = " + pair.getValue());
+			String key = (String) pair.getKey();
+			PlayerInfo info = (PlayerInfo)pair.getValue();
+			int urlStart = key.indexOf(":");
+			if (urlStart != -1) {
+				String url = key.substring(urlStart);
+				String path = info.getNodePath();
+				log.debug("URL CACHED=" + url+" path="+info.getNodePath());
+				//Node node = JcrUtil.findNode(session, path);
+				
+				//////////////////
+//				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+//				prefsNode.setProperty(JcrProp.*, advancedMode);
+//				workDone = true;
+				//////////////////
+			}
+		}
+		return workDone;
 	}
 }

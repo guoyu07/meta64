@@ -47,12 +47,13 @@ public class NotificationDaemon {
 	private int runCounter = 0;
 
 	/*
-	 * Runs every 10 seconds. Note: Spring does correctly protect against concurrent runs. It will
-	 * always wait until the last run of this function is completed before running again. So we can
-	 * always assume only one thread/deamon of this class is running at at time, because this is a
-	 * singleton class.
+	 * Note: Spring does correctly protect against concurrent runs. It will always wait until the
+	 * last run of this function is completed before running again. So we can always assume only one
+	 * thread/deamon of this class is running at at time, because this is a singleton class.
 	 * 
 	 * see also: @EnableScheduling (in this project)
+	 * 
+	 * @Scheduled value is in milliseconds.
 	 */
 	@Scheduled(fixedDelay = 60 * 1000)
 	public void run() {

@@ -63,12 +63,19 @@ namespace m64 {
             modalsContainer.node.appendChild(node);
 
             // todo-3: put in CSS now
-            node.style.border = "4px solid gray";
+            //node.style.border = "4px solid gray";
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();
 
+            /* todo-0: lookup paper-dialog-scrollable, for examples on how we can implement header and footer to build
+            a much better dialog. */
             let content = this.build();
+            // render.tag("div", {
+            //     "class" : "main-dialog-content"
+            // },
+            // this.build());
+
             util.setHtml(id, content);
             this.built = true;
 
@@ -89,14 +96,20 @@ namespace m64 {
             //the case where it hangs if model=true
             //polyElm.node.modal = true;
 
-            polyElm.node.refit();
-            polyElm.node.noCancelOnOutsideClick = true;
-            polyElm.node.horizontalOffset = 0;
-            polyElm.node.verticalOffset = 0;
+            //polyElm.node.refit();
+            //polyElm.node.noCancelOnOutsideClick = true;
+            //polyElm.node.horizontalOffset = 0;
+            //polyElm.node.verticalOffset = 0;
             //polyElm.node.fitInto = ironPages.node;
             //polyElm.node.constrain();
-            polyElm.node.center();
+            //polyElm.node.center();
             polyElm.node.open();
+
+            /* I'm doing this in desparation. nothing else seems to get rid of the margin */
+            // setTimeout(function() {
+            //     polyElm.node.style.margin = "0px";
+            //     polyElm.node.refit();
+            // }, 1000);
         }
 
         /* todo: need to cleanup the registered IDs that are in maps for this dialog */

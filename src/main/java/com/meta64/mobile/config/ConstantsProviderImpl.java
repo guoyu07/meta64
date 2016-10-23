@@ -24,6 +24,9 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Value("${brandingTitle}")
 	private String brandingTitle;
+	
+	@Value("${brandingTitleShort}")
+	private String brandingTitleShort;
 
 	@Value("${brandingMetaContent}")
 	private String brandingMetaContent;
@@ -46,6 +49,11 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 	@Override
 	public String getBrandingTitle() {
 		return brandingTitle;
+	}
+	
+	@Override
+	public String getBrandingTitleShort() {
+		return brandingTitleShort;
 	}
 
 	@Override

@@ -21,10 +21,13 @@ namespace m64 {
         }
 
         export let setTitleUsingLoginResponse = function(res): void {
-            var title = BRANDING_TITLE;
-            if (!meta64.isAnonUser) {
-                title += " - " + res.userName;
-            }
+            var title = BRANDING_TITLE_SHORT;
+
+            /* todo-0: I'm removing username from titlebar, but I need to be sure and display it on the user's home node (root node) now instead
+            so they do have a way to see who they're logged in as by going HOME */
+            // if (!meta64.isAnonUser) {
+            //     title += ":" + res.userName;
+            // }
 
             $("#headerAppName").html(title);
         }

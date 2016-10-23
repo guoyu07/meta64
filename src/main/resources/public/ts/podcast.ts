@@ -112,11 +112,10 @@ namespace m64 {
         export let openPlayerDialog = function(_uid: string) {
             uid = _uid;
             node = meta64.uidToNodeMap[uid];
+
             if (node) {
                 let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
                 if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
-
-                    //queryServerAndOpenPlayer(rssLink.value, uid);
                     util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
                         "url": rssLink.value
                     }, function(res: json.GetPlayerInfoResponse) {
@@ -252,7 +251,8 @@ namespace m64 {
         export let savePlayerInfo = function(url: string, timeOffset: number): void {
             util.json<json.SetPlayerInfoRequest, json.SetPlayerInfoResponse>("setPlayerInfo", {
                 "url": url,
-                "timeOffset": timeOffset
+                "timeOffset": timeOffset,
+                "nodePath" : node.path
             }, setPlayerInfoResponse);
         }
 

@@ -384,16 +384,18 @@ public class UserManagerService {
 		adminRunner.run((Session session) -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
+			UserPreferences reqUserPrefs = req.getUserPreferences();
+			
 			/*
 			 * Assign preferences as properties on this node,
 			 */
-			boolean advancedMode = req.getUserPreferences().isAdvancedMode();
+			boolean advancedMode = reqUserPrefs.isAdvancedMode();
 			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, advancedMode);
 
-			boolean editMode = req.getUserPreferences().isEditMode();
+			boolean editMode = reqUserPrefs.isEditMode();
 			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, editMode);
 
-			boolean showMetaData = req.getUserPreferences().isShowMetaData();
+			boolean showMetaData = reqUserPrefs.isShowMetaData();
 			prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
 			
 			session.save();

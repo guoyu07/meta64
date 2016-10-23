@@ -80,6 +80,7 @@ namespace m64 {
         export interface SetPlayerInfoRequest {
             url: string;
             timeOffset: number;
+            nodePath : string;
         }
 
         export interface GetPlayerInfoRequest {

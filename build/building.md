@@ -1,6 +1,8 @@
 # Batch File Notes
 
-I have included this little set of shell scripts mainly just to make it more clear exactly how I (Clay Ferguson) personally build the meta64 app. This is just standard maven stuff, but it may be helpful to see exactly how I'm calling Tidy, Bower, and the Google Closure Compiler (included in this folder), which is what minifies and combines all the JavaScript files into a single minified jar for production builds.
+#Note from the Meta64 developer:
+
+I have included this little set of shell scripts mainly just to make it more clear exactly how I build the meta64 app. This is just standard maven stuff, but it may be helpful to see exactly how I'm calling Tidy, Bower, Typescript compiler, etc.
 
 The uber jar that we generate does contain all the JS files individually, but they are not requested at runtime, if the spring profile in use is "PROD". Also, of course it's obvious but you will need to edit **setenv.sh** and make it match the locations and versions of Java and Maven installations on your own machine before you can actually run.
 

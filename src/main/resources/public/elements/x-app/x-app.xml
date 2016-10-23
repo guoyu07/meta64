@@ -163,7 +163,7 @@
                     <span
                         class="title"
                         onClick="m64.nav.navPublicHome();"
-                        id="headerAppName">Meta64</span>
+                        id="headerAppName">m64</span>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:home"

@@ -27,8 +27,10 @@ namespace m64 {
         build = (): string => {
             let header = this.makeHeader("Audio Player");
 
-            let description = render.tag("p", {
-            }, "Source: " + this.sourceUrl);
+            /* This is where I need a short name of the media being played */
+            let description = "";
+            // render.tag("p", {
+            //  }, "Source: " + this.sourceUrl);
 
             let playerAttribs: any = {
                 "src": this.sourceUrl,

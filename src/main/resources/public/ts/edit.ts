@@ -3,6 +3,10 @@ console.log("running module: edit.js");
 namespace m64 {
     export namespace edit {
 
+        export let createNode = function(): void {
+            (new m64.CreateNodeDlg()).open();
+        }
+
         let insertBookResponse = function(res: json.InsertBookResponse): void {
             console.log("insertBookResponse running.");
 
@@ -326,7 +330,7 @@ namespace m64 {
             }, initNodeEditResponse);
         }
 
-        export let insertNode = function(uid: any): void {
+        export let insertNode = function(uid?: any): void {
 
             parentOfNewNode = meta64.currentNode;
             if (!parentOfNewNode) {
@@ -351,32 +355,20 @@ namespace m64 {
             }
         }
 
-        export let createSubNodeUnderHighlight = function(): void {
-
-            parentOfNewNode = meta64.getHighlightedNode();
-            if (!parentOfNewNode) {
-                (new MessageDlg("Tap a node to insert under.")).open();
-                return;
-            }
+        export let createSubNode = function(uid?: any): void {
 
             /*
-             * this indicates we are NOT inserting inline. An inline insert would always have a target.
-             */
-            nodeInsertTarget = null;
-            startEditingNewNode();
-        }
-
-        export let replyToComment = function(uid: any): void {
-            createSubNode(uid);
-        }
-
-        export let createSubNode = function(uid: any): void {
-
-            /*
-             * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page)
+             * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page), or any selected
+             * node if there is a selected node.
              */
             if (!uid) {
-                parentOfNewNode = meta64.currentNode;
+                let highlightNode: json.NodeInfo = meta64.getHighlightedNode();
+                if (highlightNode) {
+                    parentOfNewNode = highlightNode;
+                }
+                else {
+                    parentOfNewNode = meta64.currentNode;
+                }
             } else {
                 parentOfNewNode = meta64.uidToNodeMap[uid];
                 if (!parentOfNewNode) {
@@ -390,6 +382,10 @@ namespace m64 {
              */
             nodeInsertTarget = null;
             startEditingNewNode();
+        }
+
+        export let replyToComment = function(uid: any): void {
+            createSubNode(uid);
         }
 
         export let clearSelections = function(): void {

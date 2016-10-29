@@ -7,6 +7,7 @@ public class InsertNodeRequest {
 	private String parentId;
 	private String targetName;
 	private String newNodeName;
+	private String typeName;
 
 	public String getParentId() {
 		return parentId;
@@ -30,5 +31,13 @@ public class InsertNodeRequest {
 
 	public void setNewNodeName(String newNodeName) {
 		this.newNodeName = newNodeName;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 }

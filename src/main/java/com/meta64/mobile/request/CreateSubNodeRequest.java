@@ -3,6 +3,7 @@ package com.meta64.mobile.request;
 public class CreateSubNodeRequest {
 	private String nodeId;
 	private String newNodeName;
+	private String typeName;
 
 	public String getNodeId() {
 		return nodeId;

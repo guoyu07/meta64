@@ -59,6 +59,7 @@ namespace m64 {
             var mainMenuRss = makeTopLevelMenu("RSS", rssItems);
 
             var editMenuItems = //
+                menuItem("Create", "createNodeButton", "m64.edit.createNode();") + //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
                 menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();") + //
                 menuItem("Clear Selections", "clearSelectionsButton", "m64.edit.clearSelections();") + //

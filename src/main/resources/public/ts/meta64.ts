@@ -180,8 +180,12 @@ namespace m64 {
          * function.
          *
          * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
+         *
+         * payload is any data object that needs to be passed at runtime
+         *
+         * note: doesn't currently support havingn a null ctx and non-null payload.
          */
-        export let encodeOnClick = function(callback: any, ctx?: any) {
+        export let encodeOnClick = function(callback: any, ctx?: any, payload?: any) {
             if (typeof callback == "string") {
                 return callback;
             } //
@@ -190,7 +194,13 @@ namespace m64 {
 
                 if (ctx) {
                     registerDataObject(ctx);
-                    return "m64.meta64.runCallback(" + callback.guid + "," + ctx.guid + ");";
+
+                    if (payload) {
+                        registerDataObject(payload);
+                    }
+                    let payloadStr = payload ? payload.guid : "null";
+
+                    return "m64.meta64.runCallback(" + callback.guid + "," + ctx.guid + "," + payloadStr + ");";
                 } else {
                     return "m64.meta64.runCallback(" + callback.guid + ");";
                 }
@@ -200,7 +210,7 @@ namespace m64 {
             }
         }
 
-        export let runCallback = function(guid, ctx) {
+        export let runCallback = function(guid, ctx, payload) {
             var dataObj = getObjectByGuid(guid);
 
             // if this is an object, we expect it to have a 'callback' property
@@ -213,7 +223,8 @@ namespace m64 {
             else if (typeof dataObj == 'function') {
                 if (ctx) {
                     var thiz = getObjectByGuid(ctx);
-                    dataObj.call(thiz);
+                    var payloadObj = payload ? getObjectByGuid(payload) : null;
+                    dataObj.call(thiz, payloadObj);
                 } else {
                     dataObj();
                 }
@@ -491,6 +502,9 @@ namespace m64 {
             let canMoveUp: boolean = highlightOrdinal > 0 && numChildNodes > 1;
             let canMoveDown: boolean = highlightOrdinal < numChildNodes - 1 && numChildNodes > 1;
 
+            //todo-0: need to add to this selNodeIsMine || selParentIsMine;
+            let canCreateNode = userPreferences.editMode && (isAdminUser || (!isAnonUser && selNodeIsMine));
+
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 
             util.setEnablement("navLogoutButton", !isAnonUser);
@@ -539,6 +553,7 @@ namespace m64 {
             util.setEnablement("refreshPageButton", !isAnonUser);
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
+            util.setEnablement("createNodeButton", canCreateNode);
 
             util.setEnablement("adminMenu", isAdminUser);
 

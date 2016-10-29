@@ -1,7 +1,23 @@
-
 :root { 
 	--paper-tab-ink: var(--paper-blue-900); 
 	--paper-tabs-selection-bar-color: var(--paper-blue-900);
+}
+
+.listBox {
+	width: 60%;
+	height: 40%;
+	overflow: scroll;
+	border: 4px solid lightGray;
+}
+
+.listItem {
+	cursor: pointer;
+	border-bottom: 1px dotted gray;
+	padding: 14px;
+}
+
+.selectedListItem {
+	background-color: lightGray;
 }
 
 .standardButton {

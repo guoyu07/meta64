@@ -90,6 +90,7 @@ namespace m64 {
         export interface CreateSubNodeRequest {
             nodeId: string;
             newNodeName: string;
+            typeName: string;
         }
 
         export interface DeleteAttachmentRequest {
@@ -146,6 +147,7 @@ namespace m64 {
             parentId: string;
             targetName: string;
             newNodeName: string;
+            typeName: string;
         }
 
         export interface LoginRequest {

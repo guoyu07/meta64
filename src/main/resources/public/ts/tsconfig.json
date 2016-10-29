@@ -63,6 +63,7 @@
       "./dlg/SharingDlg.ts",
       "./dlg/RenameNodeDlg.ts",
       "./dlg/AudioPlayerDlg.ts",
+      "./dlg/CreateNodeDlg.ts",
       "./panel/searchResultsPanel.ts",
       "./panel/timelineResultsPanel.ts"
     ],

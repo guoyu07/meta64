@@ -429,12 +429,14 @@ namespace m64 {
                 util.json<json.InsertNodeRequest, json.InsertNodeResponse>("insertNode", {
                     "parentId": edit.parentOfNewNode.id,
                     "targetName": edit.nodeInsertTarget.name,
-                    "newNodeName": newNodeName
+                    "newNodeName": newNodeName,
+                    "typeName" : "nt:unstructured"
                 }, edit.insertNodeResponse, edit);
             } else {
                 util.json<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
-                    "newNodeName": newNodeName
+                    "newNodeName": newNodeName,
+                    "typeName" : "nt:unstructured"
                 }, edit.createSubNodeResponse, edit);
             }
         }

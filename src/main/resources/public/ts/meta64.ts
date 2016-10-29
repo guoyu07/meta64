@@ -133,6 +133,8 @@ namespace m64 {
         /* Maps from guid to Data Object */
         export let dataObjMap: any = {};
 
+        export let renderFunctionsByJcrType: { [key: string]: Function } = {};
+
         export let userPreferences: json.UserPreferences = {
             "editMode": false,
             "advancedMode": false,
@@ -557,7 +559,6 @@ namespace m64 {
             util.setVisibility("userPreferencesMainAppButton", !isAnonUser);
             util.setVisibility("fileSearchDlgButton", !isAnonUser && allowFileSystemSearch);
 
-
             //Top Level Menu Visibility
             util.setVisibility("adminMenu", isAdminUser);
 
@@ -577,7 +578,7 @@ namespace m64 {
         }
 
         export let getOrdinalOfNode = function(node: json.NodeInfo): number {
-            if (!currentNodeData || !currentNodeData.children)
+            if (!node || !currentNodeData || !currentNodeData.children)
                 return -1;
 
             for (var i = 0; i < currentNodeData.children.length; i++) {

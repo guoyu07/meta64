@@ -203,24 +203,13 @@ namespace m64 {
                 }
 
                 /*
-                 * Special Rendering for RSS Feed node
+                 * Special Rendering for Nodes that have a plugin-renderer
                  */
                 if (!renderComplete) {
-                    let rssFeedTitle: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
-                    if (rssFeedTitle) {
+                    let func: Function = meta64.renderFunctionsByJcrType[node.primaryTypeName];
+                    if (func) {
                         renderComplete = true;
-                        ret += podcast.renderFeedNode(node, rowStyling);
-                    }
-                }
-
-                /*
-                 * Special Rendering for RSS Entry
-                 */
-                if (!renderComplete) {
-                    let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
-                    if (rssLink) {
-                        renderComplete = true;
-                        ret += podcast.renderEntryNode(node, rowStyling);
+                        ret += func(node, rowStyling)
                     }
                 }
 
@@ -364,7 +353,8 @@ namespace m64 {
                 }
             }
             catch (e) {
-                content = "[render failed]";
+                util.logAndReThrow("render failed", e);
+                content = "[render failed]"
             }
             return content;
         }
@@ -1015,7 +1005,7 @@ namespace m64 {
                         if (typeof v !== 'string') {
                             v = String(v);
                         }
-                      
+
                         /*
                          * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                          */
@@ -1064,7 +1054,7 @@ namespace m64 {
                 "name": fieldId,
                 "label": fieldName,
                 "id": fieldId,
-                "class" : "meta64-input"
+                "class": "meta64-input"
             }, "", true);
         }
 

@@ -6,20 +6,30 @@ package com.meta64.mobile.config;
 public class JcrProp {
 
 	public static final String RSS_FEED_ROOT_URLS = "rssFeedRootUrls";
-	
-	public static final String RSS_FEED_TITLE = "rssFeedTitle";
-	public static final String RSS_FEED_DESC = "rssFeedDesc";
-	public static final String RSS_FEED_URI = "rssFeedUri";
-	public static final String RSS_FEED_LINK = "rssFeedLink";
-	public static final String RSS_FEED_IMAGE_URL = "rssFeedImageUrl";
-	
-	public static final String RSS_ENTRY_TITLE = "rssEntryTitle";
-	public static final String RSS_ENTRY_DESC = "rssEntryDesc";
-	public static final String RSS_ENTRY_URI = "rssEntryUri";
-	public static final String RSS_ENTRY_LINK = "rssEntryLink";
-	public static final String RSS_ENTRY_AUTHOR = "rssEntryAuthor";
-	//public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
-	
+
+	// ---------------------------------------------
+	// BEGIN jcr-types.txt file
+	// ---------------------------------------------
+
+	public static final String TYPE_RSS_FEED = "meta64:rssfeed";
+	public static final String RSS_FEED_TITLE = "meta64:rssFeedTitle";
+	public static final String RSS_FEED_DESC = "meta64:rssFeedDesc";
+	public static final String RSS_FEED_URI = "meta64:rssFeedUri";
+	public static final String RSS_FEED_LINK = "meta64:rssFeedLink";
+	public static final String RSS_FEED_IMAGE_URL = "meta64:rssFeedImageUrl";
+
+	public static final String TYPE_RSS_ITEM = "meta64:rssitem";
+	public static final String RSS_ITEM_TITLE = "meta64:rssItemTitle";
+	public static final String RSS_ITEM_DESC = "meta64:rssItemDesc";
+	public static final String RSS_ITEM_URI = "meta64:rssItemUri";
+	public static final String RSS_ITEM_LINK = "meta64:rssItemLink";
+	public static final String RSS_ITEM_AUTHOR = "meta64:rssItemAuthor";
+	// public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
+
+	// ---------------------------------------------
+	// END jcr-types.txt file
+	// ---------------------------------------------
+
 	/*
 	 * "true" means any user can add subnode under the node that has this property
 	 */

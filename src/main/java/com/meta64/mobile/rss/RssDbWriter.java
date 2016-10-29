@@ -51,8 +51,7 @@ public class RssDbWriter {
 		String name = JcrUtil.getGUID();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
-		Node newNode = feedRoot.addNode(name, JcrConstants.NT_UNSTRUCTURED);
-		newNode.setProperty(JcrProp.CONTENT, "Feed");
+		Node newNode = feedRoot.addNode(name, JcrProp.TYPE_RSS_FEED);
 		JcrUtil.timestampNewNode(session, newNode);
 
 		newNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
@@ -117,20 +116,19 @@ public class RssDbWriter {
 		String name = JcrUtil.getGUID();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
-		Node newNode = feedNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
-		newNode.setProperty(JcrProp.CONTENT, "Feed");
+		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
 		JcrUtil.timestampNewNode(session, newNode);
 
-		newNode.setProperty(JcrProp.RSS_ENTRY_TITLE, entry.getTitle());
+		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
 
 		if (entry.getDescription() != null) {
 			String desc = entry.getDescription().getValue();
 			desc = desc.replaceAll("[^\\p{ASCII}]", "");
-			newNode.setProperty(JcrProp.RSS_ENTRY_DESC, desc);
+			newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
 		}
-		newNode.setProperty(JcrProp.RSS_ENTRY_URI, entry.getUri());
-		newNode.setProperty(JcrProp.RSS_ENTRY_LINK, entry.getLink());
-		newNode.setProperty(JcrProp.RSS_ENTRY_AUTHOR, entry.getAuthor());
+		newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
+		newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
+		newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
 
 		// entry.getPublishedDate();
 		// entry.getUpdatedDate();

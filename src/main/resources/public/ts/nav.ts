@@ -125,7 +125,7 @@ namespace m64 {
                     console.log("no node highlighted");
                 }
             } catch (e) {
-                console.log("getSelectedPolyElement failed.");
+                util.logAndThrow("getSelectedPolyElement failed.");
             }
             return null;
         }

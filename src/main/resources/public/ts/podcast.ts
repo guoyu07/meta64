@@ -27,9 +27,9 @@ namespace m64 {
 
         export let renderFeedNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
-            let title: json.PropertyInfo = props.getNodeProperty("rssFeedTitle", node);
-            let desc: json.PropertyInfo = props.getNodeProperty("rssFeedDesc", node);
-            let imgUrl: json.PropertyInfo = props.getNodeProperty("rssFeedImageUrl", node);
+            let title: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedTitle", node);
+            let desc: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedDesc", node);
+            let imgUrl: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedImageUrl", node);
 
             let feed: string = "";
             if (title) {
@@ -64,10 +64,10 @@ namespace m64 {
 
         export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
-            let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
-            let rssDesc: json.PropertyInfo = props.getNodeProperty("rssEntryDesc", node);
-            let rssAuthor: json.PropertyInfo = props.getNodeProperty("rssEntryAuthor", node);
-            let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+            let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
+            let rssDesc: json.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
+            let rssAuthor: json.PropertyInfo = props.getNodeProperty("meta64:rssItemAuthor", node);
+            let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
 
             let entry: string = "";
 
@@ -118,7 +118,7 @@ namespace m64 {
             node = meta64.uidToNodeMap[uid];
 
             if (node) {
-                let rssLink: json.PropertyInfo = props.getNodeProperty("rssEntryLink", node);
+                let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
                 if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
                     util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
                         "url": rssLink.value
@@ -194,7 +194,7 @@ namespace m64 {
         export let onTimeUpdate = function(uid: string, elm: any): void {
             if (!pushTimer) {
                 /* ping server once per minute */
-                pushTimer = setInterval(pushTimerFunction, 60000);
+                pushTimer = setInterval(pushTimerFunction, 10000);
             }
             //console.log("CurrentTime=" + elm.currentTime);
             player = elm;
@@ -230,7 +230,7 @@ namespace m64 {
 
         /* todo-0: for production, boost this up to one minute */
         export let pushTimerFunction = function(): void {
-            //console.log("pushTimer");
+            console.log("pushTimer");
             //debugger;
             /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
             but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
@@ -309,3 +309,6 @@ namespace m64 {
         }
     }
 }
+
+m64.meta64.renderFunctionsByJcrType["meta64:rssfeed"] = m64.podcast.renderFeedNode;
+m64.meta64.renderFunctionsByJcrType["meta64:rssitem"] = m64.podcast.renderEntryNode;

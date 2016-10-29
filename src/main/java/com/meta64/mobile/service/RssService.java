@@ -59,7 +59,10 @@ public class RssService {
 	@Autowired
 	private SessionContext sessionContext;
 
+	/* topmost node where everything related to RSS is stored. contains the main feed root node */
 	private Node rssRoot;
+	
+	/* note that contains all the feed definition nodes */
 	private Node feedsRootNode;
 
 	private List<String> urlsList;
@@ -214,7 +217,7 @@ public class RssService {
 		try {
 			while (true) {
 				Node entryNode = nodeIter.nextNode();
-				String linkProp = JcrUtil.safeGetStringProp(entryNode, JcrProp.RSS_ENTRY_LINK);
+				String linkProp = JcrUtil.safeGetStringProp(entryNode, JcrProp.RSS_ITEM_LINK);
 				if (linkProp != null) {
 					log.debug("CACHING ENTRY: link=" + linkProp);
 					entriesByLink.put(linkProp, entryNode);

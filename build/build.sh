@@ -44,7 +44,9 @@ cp $META64/readme.md $META64/src/main/resources/public/doc/landing-page.md
 #go back to folder with this script in it. sort of 'home' for this script
 cd $META64/build
 
-java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
+#This command is the normal build command for minification, but i'm currently deploying NON-Minified builds so I can debug 
+#java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
+cp ../src/main/resources/public/js/meta64-app.js ../src/main/resources/public/js/meta64-app.min.js
 
 #java -jar google-compiler.jar --help
 read -p "Google compiler done."

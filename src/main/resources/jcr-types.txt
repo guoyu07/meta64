@@ -1,8 +1,21 @@
 <'meta64'='http://meta64.com/jcr/'>
  
-[meta64:podcast] > nt:base orderable
+[meta64:podcast] 
+	> nt:unstructured orderable
  
-[meta64:rssfeed] > nt:base orderable
+[meta64:rssfeed] 
+	> nt:unstructured orderable
+	- meta64:rssFeedTitle (string)
+	- meta64:rssFeedDesc (string)
+	- meta64:rssFeedUri (string)
+	- meta64:rssFeedLink (string)
+	- meta64:rssFeedImageUrl (string)
  
-[meta64:rssitem] > nt:base orderable 
+[meta64:rssitem] 
+	> nt:unstructured orderable
+	- meta64:rssItemTitle (string)
+	- meta64:rssItemDesc (string)
+	- meta64:rssItemUri (string)
+	- meta64:rssItemLink (string)
+	- meta64:rssItemAuthor (string)	
  

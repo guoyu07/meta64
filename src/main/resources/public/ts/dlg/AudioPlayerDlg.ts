@@ -32,7 +32,7 @@ namespace m64 {
                 throw "unknown node uid: "+this.nodeUid;
             }
 
-            let rssTitle: json.PropertyInfo = props.getNodeProperty("rssEntryTitle", node);
+            let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
 
             /* This is where I need a short name of the media being played */
             let description = render.tag("p", {
@@ -67,7 +67,7 @@ namespace m64 {
             }, //
                 "30s >");
 
-            let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
+            //let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
 
             //Speed Buttons
             let speedNormalButton = render.tag("paper-button", {
@@ -75,7 +75,7 @@ namespace m64 {
                 "onClick": "m64.podcast.speed(1.0);",
                 "class" : "standardButton"
             }, //
-                "Normal Speed");
+                "Normal");
 
             let speed15Button = render.tag("paper-button", {
                 "raised": "raised",
@@ -91,7 +91,7 @@ namespace m64 {
             }, //
                 "2X");
 
-            let speedButtonBar = render.centeredButtonBar(speedNormalButton + speed15Button + speed2xButton);
+            let speedButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button + speedNormalButton + speed15Button + speed2xButton);
 
             //Dialog Buttons
             let pauseButton = render.tag("paper-button", {
@@ -113,7 +113,7 @@ namespace m64 {
 
             let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
 
-            return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+            return header + description + player /* + skipButtonBar */ + speedButtonBar + buttonBar;
         }
 
         closeEvent = (): void => {

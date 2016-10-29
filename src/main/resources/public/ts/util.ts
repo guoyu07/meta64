@@ -267,8 +267,7 @@ namespace m64 {
                 _ajaxCounter++;
                 ironRequest = ironAjax.generateRequest();
             } catch (ex) {
-                console.log("Failed starting request: " + postName);
-                throw ex;
+                util.logAndReThrow("Failed starting request: " + postName, ex);
             }
 
             /**
@@ -327,7 +326,7 @@ namespace m64 {
                             }
                         }
                     } catch (ex) {
-                        throw "Failed handling result of: " + postName + " ex=" + ex;
+                        logAndReThrow("Failed handling result of: " + postName, ex);
                     }
 
                 },
@@ -374,11 +373,31 @@ namespace m64 {
                         // }
                         (new MessageDlg(msg)).open();
                     } catch (ex) {
-                        throw "Failed processing server-side fail of: " + postName;
+                        logAndReThrow("Failed processing server-side fail of: " + postName, ex);
                     }
                 });
 
             return ironRequest;
+        }
+
+        export let logAndThrow = function(message: string) {
+            let stack = "[stack, not supported]";
+            try {
+                stack = (<any>new Error()).stack;
+            }
+            catch (e) { }
+            console.error(message + "STACK: " + stack);
+            throw message;
+        }
+
+        export let logAndReThrow = function(message: string, exception: any) {
+            let stack = "[stack, not supported]";
+            try {
+                stack = (<any>new Error()).stack;
+            }
+            catch (e) { }
+            console.error(message + "STACK: " + stack);
+            throw exception;
         }
 
         export let ajaxReady = function(requestName): boolean {

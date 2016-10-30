@@ -11,7 +11,8 @@ namespace m64 {
             let paperItem = render.tag("paper-item", paperItemAttrs, title);
 
             let paperSubmenuAttrs = {
-                "label": title
+                "label": title,
+                "selectable": ""
             };
 
             if (id) {
@@ -31,6 +32,7 @@ namespace m64 {
         let makeSecondLevelList = function(content: string): string {
             return render.tag("paper-menu", {
                 "class": "menu-content sublist my-menu-section",
+                "selectable": ""
                 //,
                 //"multi": "multi"
             }, content, true);
@@ -39,7 +41,8 @@ namespace m64 {
         let menuItem = function(name: string, id: string, onClick: any): string {
             return render.tag("paper-item", {
                 "id": id,
-                "onclick": onClick
+                "onclick": onClick,
+                "selectable": ""
             }, name, true);
         }
 

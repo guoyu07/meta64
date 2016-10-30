@@ -2,14 +2,21 @@ package com.meta64.mobile.rss.model;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 public class RssEntryWrapper {
+	private static final Logger log = LoggerFactory.getLogger(RssEntryWrapper.class);
 	private SyndEntry entry;
 
 	public RssEntryWrapper(SyndEntry entry) {
 		this.entry = entry;
+		StringBuilder sb = new StringBuilder();
+		dump("  ", sb);
+		log.debug(sb.toString());
 	}
 
 	public void dump(String indent, StringBuilder sb) {

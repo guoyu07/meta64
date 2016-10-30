@@ -62,16 +62,32 @@ namespace m64 {
             return ret;
         }
 
+        export let getMediaPlayerUrlFromNode = function(node: json.NodeInfo): string {
+            let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+            let rssUri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+            let mp3Url = null;
+
+            if (rssLink.value.toLowerCase().contains(".mp3")) {
+                mp3Url = rssLink.value;
+            }
+            else if (rssUri.value.toLowerCase().contains(".mp3")) {
+                mp3Url = rssUri.value;
+            }
+            return mp3Url;
+        }
+
         export let renderItemNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
             let rssAuthor: json.PropertyInfo = props.getNodeProperty("meta64:rssItemAuthor", node);
             let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+            let rssUri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
 
             let entry: string = "";
+            let mp3Url = getMediaPlayerUrlFromNode(node);
 
-            if (rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+            if (mp3Url) {
                 if (rssTitle) {
                     entry += render.tag("h3", {
                     }, rssTitle.value);
@@ -160,13 +176,13 @@ namespace m64 {
             node = meta64.uidToNodeMap[uid];
 
             if (node) {
-                let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
-                if (rssLink && rssLink.value.toLowerCase().indexOf(".mp3") != -1) {
+                let mp3Url = getMediaPlayerUrlFromNode(node);
+                if (mp3Url) {
                     util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
-                        "url": rssLink.value
+                        "url": mp3Url
                     }, function(res: json.GetPlayerInfoResponse) {
                         parseAdSegmentUid(uid);
-                        let dlg = new AudioPlayerDlg(rssLink.value, uid, res.timeOffset);
+                        let dlg = new AudioPlayerDlg(mp3Url, uid, res.timeOffset);
                         dlg.open();
                     });
                 }

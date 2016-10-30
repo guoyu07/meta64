@@ -30,7 +30,6 @@ import com.sun.syndication.io.XmlReader;
 @Component
 @Scope("prototype")
 public class RssReader {
-
 	private static final Logger log = LoggerFactory.getLogger(RssReader.class);
 
 	public static final int MAX_RSS_ENTRIES = 10;
@@ -47,7 +46,6 @@ public class RssReader {
 	public void run(Session session, List<Node> feedNodes) throws Exception {
 		for (Node feedNode : feedNodes) {
 			RssFeedWrapper wFeed = readFeed(feedNode);
-
 			try {
 				writeFeedToDb(session, wFeed, feedNode);
 			}

@@ -24,7 +24,7 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Value("${brandingTitle}")
 	private String brandingTitle;
-	
+
 	@Value("${brandingTitleShort}")
 	private String brandingTitleShort;
 
@@ -50,7 +50,7 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 	public String getBrandingTitle() {
 		return brandingTitle;
 	}
-	
+
 	@Override
 	public String getBrandingTitleShort() {
 		return brandingTitleShort;

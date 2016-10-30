@@ -10,6 +10,7 @@
 	- meta64:rssFeedUri (string) = '' autocreated 
 	- meta64:rssFeedLink (string) = '' autocreated 
 	- meta64:rssFeedImageUrl (string) = '' autocreated 
+	- meta64:rssFeedSrc (string) = '' autocreated 
  
 [meta64:rssitem] 
 	> nt:unstructured orderable

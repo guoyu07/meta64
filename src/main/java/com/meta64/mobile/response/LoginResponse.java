@@ -21,7 +21,7 @@ public class LoginResponse extends OakResponseBase {
 	private String homeNodeOverride;
 
 	private UserPreferences userPreferences;
-	
+
 	private boolean allowFileSystemSearch;
 
 	public String getUserName() {

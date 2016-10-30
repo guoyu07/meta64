@@ -94,8 +94,9 @@ public class NodeRenderService {
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
-		//boolean showMetaData = userPreferences != null ? userPreferences.isShowMetaData() : false;
-		
+		// boolean showMetaData = userPreferences != null ? userPreferences.isShowMetaData() :
+		// false;
+
 		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
 			res.setDisplayedParent(true);
 			req.setUpLevel(1);

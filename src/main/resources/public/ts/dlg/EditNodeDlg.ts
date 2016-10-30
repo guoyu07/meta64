@@ -86,7 +86,7 @@ namespace m64 {
 
                 /* iterator function will have the wrong 'this' so we save the right one */
                 var thiz = this;
-                var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode.properties);
+                var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
 
                 var aceFields = [];
 
@@ -261,7 +261,7 @@ namespace m64 {
             var addMultiButton = "";
             var deleteButton = "";
 
-            if (prop.name !== jcrCnst.CONTENT) {
+            if (prop.name !== jcrCnst.CONTENT && !prop.name.startsWith("meta64:")) {
                 /*
                  * For now we just go with the design where the actual content property cannot be deleted. User can leave
                  * content blank but not delete it.

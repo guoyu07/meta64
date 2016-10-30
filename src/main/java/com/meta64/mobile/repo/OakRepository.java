@@ -69,7 +69,7 @@ import com.mongodb.MongoTimeoutException;
 public class OakRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
-	
+
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
 
@@ -137,7 +137,7 @@ public class OakRepository {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
-	
+
 	@Autowired
 	private TypeService typeService;
 

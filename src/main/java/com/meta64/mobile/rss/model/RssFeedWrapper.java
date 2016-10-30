@@ -1,7 +1,6 @@
 package com.meta64.mobile.rss.model;
 
 import java.util.HashSet;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,41 +22,6 @@ public class RssFeedWrapper {
 	public RssFeedWrapper(SyndFeed feed, String url) {
 		this.feed = feed;
 		this.url = url;
-		ensureUriExists();
-	}
-
-	private void ensureUriExists() {
-		// 2016 comment
-		//
-		// String uri = feed.getUri();
-		//
-		// /*
-		// * if feed entry has no uri, then force in one
-		// *
-		// * WARNING: you CANNOT change the format of this auto-built uri, because
-		// * it is in the database, and you would also have to reformat all the
-		// * database uris if you do this. But I have added 'auto-uri' as a tag
-		// * that will make this at least possible if the need ever does arise,
-		// * which actually should never happen
-		// */
-		// if (GuiUtil.isEmpty(uri)) {
-		// String title = feed.getTitle();
-		// String link = feed.getLink();
-		//
-		// if (title == null) {
-		// title = "";
-		// }
-		//
-		// if (link == null) {
-		// link = "";
-		// }
-		//
-		// if (GuiUtil.isEmpty(title) && GuiUtil.isEmpty(link)) {
-		// throw new RuntimeException("malformed entry rejected.");
-		// }
-		//
-		// feed.setUri("auto-uri:" + title + ":" + link);
-		// }
 	}
 
 	public void dump(String indent, StringBuilder sb) {

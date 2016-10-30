@@ -10,7 +10,6 @@ public class RssEntryWrapper {
 
 	public RssEntryWrapper(SyndEntry entry) {
 		this.entry = entry;
-		ensureUriExists();
 	}
 
 	public void dump(String indent, StringBuilder sb) {
@@ -75,39 +74,6 @@ public class RssEntryWrapper {
 	public void dump(String indent, SyndEntry entry, StringBuilder sb) {
 		indent += "    ";
 		new RssEntryWrapper(entry).dump(indent, sb);
-	}
-
-	private void ensureUriExists() {
-		// 2016 comment
-		// String uri = entry.getUri();
-		//
-		// /*
-		// * if feed entry has no uri, then force in one
-		// *
-		// * WARNING: you CANNOT change the format of this auto-built uri, because
-		// * it is in the database, and you would also have to reformat all the
-		// * database uris if you do this. But I have added 'auto-uri' as a tag
-		// * that will make this at least possible if the need ever does arise,
-		// * which actually should never happen
-		// */
-		// if (GuiUtil.isEmpty(uri)) {
-		// String title = entry.getTitle();
-		// String link = entry.getLink();
-		//
-		// if (title == null) {
-		// title = "";
-		// }
-		//
-		// if (link == null) {
-		// link = "";
-		// }
-		//
-		// if (GuiUtil.isEmpty(title) && GuiUtil.isEmpty(link)) {
-		// throw new RuntimeException("malformed entry rejected.");
-		// }
-		//
-		// entry.setUri("auto-uri:" + title + ":" + link);
-		// }
 	}
 
 	public SyndEntry getEntry() {

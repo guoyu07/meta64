@@ -3,7 +3,6 @@ package com.meta64.mobile.rss;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +32,7 @@ public class RssDbWriter {
 	 * 
 	 * returns the Node of the new feed node created
 	 */
-	public Node write(Session session, SyndFeed feed) throws Exception {
+	public void updateFeedNode(Session session, SyndFeed feed, Node feedNode) throws Exception {
 
 		/* build node text */
 		// String feedNodeText = render(feed, msgCollector);
@@ -47,27 +46,25 @@ public class RssDbWriter {
 		 * If this is a publicly appendable node, then we always use admin to append a comment type
 		 * node under it. No other type of child node creation is allowed.
 		 */
-		Node feedRoot = rssService.getFeedsRootNode();
-		String name = JcrUtil.getGUID();
+		// Node feedRoot = rssService.getFeedsRootNode();
+		// String name = JcrUtil.getGUID();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
-		Node newNode = feedRoot.addNode(name, JcrProp.TYPE_RSS_FEED);
-		JcrUtil.timestampNewNode(session, newNode);
+		// Node newNode = feedRoot.addNode(name, JcrProp.TYPE_RSS_FEED);
+		// JcrUtil.timestampNewNode(session, feedNode);
 
-		newNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
-		newNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
-		newNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
-		newNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
+		feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
+		feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
+		feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
+		feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
 		// 2016 -> write(id, feed.getImage());
 
 		SyndImage image = feed.getImage();
 		if (image != null) {
 			if (image.getUrl() != null) {
-				newNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+				feedNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
 			}
 		}
-
-		return newNode;
 	}
 
 	/*

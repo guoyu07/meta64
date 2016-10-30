@@ -134,6 +134,7 @@ namespace m64 {
         export let dataObjMap: any = {};
 
         export let renderFunctionsByJcrType: { [key: string]: Function } = {};
+        export let propOrderingFunctionsByJcrType: { [key: string]: Function } = {};
 
         export let userPreferences: json.UserPreferences = {
             "editMode": false,
@@ -660,7 +661,7 @@ namespace m64 {
              * prototype-related approach
              */
             node.uid = updateMaps ? util.getUidForId(identToUidMap, node.id) : identToUidMap[node.id];
-            node.properties = props.getPropertiesInEditingOrder(node.properties);
+            node.properties = props.getPropertiesInEditingOrder(node, node.properties);
 
             /*
              * For these two properties that are accessed frequently we go ahead and lookup the properties in the

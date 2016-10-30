@@ -6,7 +6,7 @@ public class FileSearchResult {
 	public FileSearchResult(String fileName) {
 		this.fileName = fileName;
 	}
-	
+
 	public String getFileName() {
 		return fileName;
 	}

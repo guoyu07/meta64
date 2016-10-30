@@ -67,7 +67,7 @@ public class PreProcFilter implements Filter {
 
 	@Value("${brandingTitle}")
 	private String brandingTitle;
-	
+
 	@Value("${brandingTitleShort}")
 	private String brandingTitleShort;
 
@@ -106,7 +106,7 @@ public class PreProcFilter implements Filter {
 				ver = "";
 				warning = "WARNING: NO VERSION!!!";
 			}
-			//log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
+			// log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
 			if (uri.equals("/") || //
 					uri.toLowerCase().contains(".html")) {
@@ -126,7 +126,7 @@ public class PreProcFilter implements Filter {
 
 		content = insertProps(content);
 
-		//content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
+		// content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
 		content = content.replace("{{jqueryJs}}", jqueryJs);
 		content = content.replace("{{brandingTitle}}", brandingTitle);

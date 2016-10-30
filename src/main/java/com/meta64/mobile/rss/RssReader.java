@@ -1,7 +1,6 @@
 package com.meta64.mobile.rss;
 
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -13,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.rss.model.RssEntryWrapper;
 import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.service.RssService;
+import com.meta64.mobile.util.JcrUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -33,8 +34,7 @@ public class RssReader {
 	private static final Logger log = LoggerFactory.getLogger(RssReader.class);
 
 	public static final int MAX_RSS_ENTRIES = 10;
-	private List<RssFeedWrapper> feedList = new LinkedList<RssFeedWrapper>();
-	
+
 	@Autowired
 	private RssService rssService;
 
@@ -44,22 +44,12 @@ public class RssReader {
 	public RssReader() {
 	}
 
-	public void run(Session session, List<String> urlsList) throws Exception {	
-		for (String feedUrl : urlsList) {
-			readFeed(feedUrl);
-		}
-		
-		/* write the feeds & entries to the db */
-		writeFeeds(session);
-	}
-
-	private void writeFeeds(Session session) throws Exception {
-		log.debug("Processing " + feedList.size() + " feeds.");
-
-		for (RssFeedWrapper wFeed : feedList) {
+	public void run(Session session, List<Node> feedNodes) throws Exception {
+		for (Node feedNode : feedNodes) {
+			RssFeedWrapper wFeed = readFeed(feedNode);
 
 			try {
-				writeFeedToDb(session, wFeed);
+				writeFeedToDb(session, wFeed, feedNode);
 			}
 			catch (Exception e) {
 				log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
@@ -67,17 +57,18 @@ public class RssReader {
 		}
 	}
 
-	private void readFeed(String feedUrl) throws Exception {
+	private RssFeedWrapper readFeed(Node feedNode) throws Exception {
+		String feedUrl = JcrUtil.safeGetStringProp(feedNode, JcrProp.RSS_FEED_SRC);
 		log.debug("processing RSS url: " + feedUrl);
 
 		URL url = new URL(feedUrl);
 		XmlReader reader = null;
+		RssFeedWrapper wFeed = null;
 
 		try {
 			reader = new XmlReader(url);
 			SyndFeed feed = new SyndFeedInput().build(reader);
-			RssFeedWrapper wFeed = new RssFeedWrapper(feed, feedUrl);
-			feedList.add(wFeed);
+			wFeed = new RssFeedWrapper(feed, feedUrl);
 			int entryCounter = 0;
 
 			for (Object e : feed.getEntries()) {
@@ -98,33 +89,15 @@ public class RssReader {
 				reader.close();
 			}
 		}
+		return wFeed;
 	}
 
 	/* Writes all the entries in the specific RssFeedWrapper to the db */
-	private void writeFeedToDb(Session session, RssFeedWrapper wFeed) throws Exception {
+	private void writeFeedToDb(Session session, RssFeedWrapper wFeed, Node feedNode) throws Exception {
 		SyndFeed feed = wFeed.getFeed();
 
 		log.debug("writing feed: " + feed.getTitle());
-
-		/*
-		 * look up this feedNode by uri, because it may already exist. It WILL exist unless this is
-		 * the first time we are ever reading this feed
-		 */
-		Node feedNode = rssService.getFeedNodeByUri(feed.getUri());
-		
-		/* if not found by uri, try looking up by link */
-		if (feedNode==null) {
-			feedNode = rssService.getFeedNodeByLink(feed.getLink());
-		}
-
-		/*
-		 * if feed URI is not found, that means this feed is not in db, so we add a new feed and
-		 * assign the feedId from that.
-		 */
-		if (feedNode == null) {
-			log.debug("Feed not found, must be new feed.");
-			feedNode = dbWriter.write(session, feed);
-		}
+		dbWriter.updateFeedNode(session, feed, feedNode);
 
 		/*
 		 * now we have the Feed node in place so we can write all RSS entries to the db
@@ -134,7 +107,7 @@ public class RssReader {
 
 			try {
 				/* if this entry doesn't already exist in our DB */
-				if (rssService.getEntryByLink(entry.getLink())==null) {
+				if (rssService.getEntryByLink(entry.getLink()) == null) {
 					log.debug("writing new entry." + entry.getTitle());
 
 					/* write the entry into db */

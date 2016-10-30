@@ -61,7 +61,7 @@ public class UserManagerService {
 
 	@Autowired
 	private Environment env;
-	
+
 	@Value("${anonUserLandingPageNode}")
 	private String anonUserLandingPageNode;
 
@@ -385,7 +385,7 @@ public class UserManagerService {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
 			UserPreferences reqUserPrefs = req.getUserPreferences();
-			
+
 			/*
 			 * Assign preferences as properties on this node,
 			 */
@@ -397,7 +397,7 @@ public class UserManagerService {
 
 			boolean showMetaData = reqUserPrefs.isShowMetaData();
 			prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
-			
+
 			session.save();
 
 			/*

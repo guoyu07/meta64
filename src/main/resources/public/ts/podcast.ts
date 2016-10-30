@@ -62,7 +62,7 @@ namespace m64 {
             return ret;
         }
 
-        export let renderEntryNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+        export let renderItemNode = function(node: json.NodeInfo, rowStyling: boolean): string {
             let ret: string = "";
             let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
             let rssDesc: json.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
@@ -111,6 +111,48 @@ namespace m64 {
             }
 
             return ret;
+        }
+
+        export let propOrderingFeedNode = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propOrder: string[] = [//
+                "meta64:rssFeedTitle",
+                "meta64:rssFeedDesc",
+                "meta64:rssFeedLink",
+                "meta64:rssFeedUri",
+                "meta64:rssFeedSrc",
+                "meta64:rssFeedImageUrl"];
+
+            return orderProps(propOrder, props);
+        }
+
+        export let propOrderingItemNode = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propOrder: string[] = [//
+                "meta64:rssItemTitle",
+                "meta64:rssItemDesc",
+                "meta64:rssItemLink",
+                "meta64:rssItemUri",
+                "meta64:rssItemAuthor"];
+
+            return orderProps(propOrder, props);
+        }
+
+        export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propsNew: json.PropertyInfo[] = props.clone();
+            let targetIdx: number = 0;
+
+            for (let prop of propOrder) {
+                targetIdx = moveNodePosition(propsNew, targetIdx, prop);
+            }
+
+            return propsNew;
+        }
+
+        let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
+            let tagIdx: number = props.indexOfItemByProp("name", typeName);
+            if (tagIdx != -1) {
+                props.arrayMoveItem(tagIdx, idx++);
+            }
+            return idx;
         }
 
         export let openPlayerDialog = function(_uid: string) {
@@ -310,4 +352,6 @@ namespace m64 {
 }
 
 m64.meta64.renderFunctionsByJcrType["meta64:rssfeed"] = m64.podcast.renderFeedNode;
-m64.meta64.renderFunctionsByJcrType["meta64:rssitem"] = m64.podcast.renderEntryNode;
+m64.meta64.renderFunctionsByJcrType["meta64:rssitem"] = m64.podcast.renderItemNode;
+m64.meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = m64.podcast.propOrderingFeedNode;
+m64.meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = m64.podcast.propOrderingItemNode;

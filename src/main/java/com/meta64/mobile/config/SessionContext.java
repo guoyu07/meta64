@@ -86,7 +86,7 @@ public class SessionContext {
 	public boolean isAnonUser() {
 		return JcrPrincipal.ANONYMOUS.equalsIgnoreCase(userName);
 	}
-	
+
 	public boolean isTestAccount() {
 		return oak.isTestAccountName(userName);
 	}

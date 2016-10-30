@@ -5,7 +5,7 @@ package com.meta64.mobile.config;
  */
 public class JcrProp {
 
-	public static final String RSS_FEED_ROOT_URLS = "rssFeedRootUrls";
+	// public static final String RSS_FEED_ROOT_URLS = "rssFeedRootUrls";
 
 	// ---------------------------------------------
 	// BEGIN jcr-types.txt file
@@ -17,6 +17,7 @@ public class JcrProp {
 	public static final String RSS_FEED_URI = "meta64:rssFeedUri";
 	public static final String RSS_FEED_LINK = "meta64:rssFeedLink";
 	public static final String RSS_FEED_IMAGE_URL = "meta64:rssFeedImageUrl";
+	public static final String RSS_FEED_SRC = "meta64:rssFeedSrc";
 
 	public static final String TYPE_RSS_ITEM = "meta64:rssitem";
 	public static final String RSS_ITEM_TITLE = "meta64:rssItemTitle";

@@ -65,7 +65,7 @@ public class JcrUtil {
 			return null;
 		}
 	}
-	
+
 	public static boolean isPublicAppend(Node node) {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}

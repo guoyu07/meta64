@@ -35,7 +35,14 @@ namespace m64 {
          * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
          * node and puts it on the top, and then does same for 'jctCnst.TAGS'
          */
-        export let getPropertiesInEditingOrder = function(props: json.PropertyInfo[]): json.PropertyInfo[] {
+        export let getPropertiesInEditingOrder = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+
+            let func:Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
+            debugger;
+            if (func) {
+                return func(node, props);
+            }
+
             let propsNew: json.PropertyInfo[] = props.clone();
             let targetIdx: number = 0;
 

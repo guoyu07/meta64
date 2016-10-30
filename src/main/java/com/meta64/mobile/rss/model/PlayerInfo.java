@@ -2,7 +2,7 @@ package com.meta64.mobile.rss.model;
 
 public class PlayerInfo {
 	private Integer timeOffset;
-	
+
 	/* todo-0: I ended up not needing this so can delete now */
 	private String nodePath;
 

@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.repo.OakRepository;
-import com.meta64.mobile.service.RssService;
 
 /**
  * Manages certain aspects of Spring application context.

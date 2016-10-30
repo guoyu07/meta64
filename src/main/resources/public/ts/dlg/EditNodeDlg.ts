@@ -14,7 +14,7 @@ namespace m64 {
         propEntries: Array<PropEntry> = new Array<PropEntry>();
         editPropertyDlgInst: any;
 
-        constructor() {
+        constructor(private typeName?: string) {
             super("EditNodeDlg");
 
             /*
@@ -430,13 +430,13 @@ namespace m64 {
                     "parentId": edit.parentOfNewNode.id,
                     "targetName": edit.nodeInsertTarget.name,
                     "newNodeName": newNodeName,
-                    "typeName" : "nt:unstructured"
+                    "typeName": this.typeName ? this.typeName : "nt:unstructured"
                 }, edit.insertNodeResponse, edit);
             } else {
                 util.json<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName,
-                    "typeName" : "nt:unstructured"
+                    "typeName": this.typeName ? this.typeName : "nt:unstructured"
                 }, edit.createSubNodeResponse, edit);
             }
         }

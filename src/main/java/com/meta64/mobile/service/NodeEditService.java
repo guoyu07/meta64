@@ -92,9 +92,15 @@ public class NodeEditService {
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
+		Node newNode = null;
 		/* NT_UNSTRUCTURED IS ORDERABLE */
-		Node newNode = node.addNode(name, JcrConstants.NT_UNSTRUCTURED);
-		newNode.setProperty(JcrProp.CONTENT, "");
+		if (req.getTypeName() != null) {
+			newNode = node.addNode(name, req.getTypeName());
+		}
+		else {
+			newNode = node.addNode(name, JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.CONTENT, "");
+		}
 		JcrUtil.timestampNewNode(session, newNode);
 
 		if (publicAppend) {
@@ -124,8 +130,15 @@ public class NodeEditService {
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
-		Node newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
-		newNode.setProperty(JcrProp.CONTENT, "");
+		Node newNode = null;
+		if (req.getTypeName() != null) {
+			newNode = parentNode.addNode(name, req.getTypeName());
+		}
+		else {
+			newNode = parentNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.CONTENT, "");
+		}
+
 		JcrUtil.timestampNewNode(session, newNode);
 
 		if (!StringUtils.isEmpty(req.getTargetName())) {

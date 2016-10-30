@@ -20,4 +20,12 @@ public class CreateSubNodeRequest {
 	public void setNewNodeName(String newNodeName) {
 		this.newNodeName = newNodeName;
 	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
 }

@@ -5,17 +5,17 @@
  
 [meta64:rssfeed] 
 	> nt:unstructured orderable
-	- meta64:rssFeedTitle (string)
-	- meta64:rssFeedDesc (string)
-	- meta64:rssFeedUri (string)
-	- meta64:rssFeedLink (string)
-	- meta64:rssFeedImageUrl (string)
+	- meta64:rssFeedTitle (string) = '' autocreated 
+	- meta64:rssFeedDesc (string) = '' autocreated 
+	- meta64:rssFeedUri (string) = '' autocreated 
+	- meta64:rssFeedLink (string) = '' autocreated 
+	- meta64:rssFeedImageUrl (string) = '' autocreated 
  
 [meta64:rssitem] 
 	> nt:unstructured orderable
-	- meta64:rssItemTitle (string)
-	- meta64:rssItemDesc (string)
-	- meta64:rssItemUri (string)
-	- meta64:rssItemLink (string)
-	- meta64:rssItemAuthor (string)	
+	- meta64:rssItemTitle (string) = '' autocreated 
+	- meta64:rssItemDesc (string) = '' autocreated 
+	- meta64:rssItemUri (string) = '' autocreated 
+	- meta64:rssItemLink (string) = '' autocreated 
+	- meta64:rssItemAuthor (string)	= '' autocreated 
  

@@ -230,8 +230,7 @@ namespace m64 {
 
         /* todo-0: for production, boost this up to one minute */
         export let pushTimerFunction = function(): void {
-            console.log("pushTimer");
-            //debugger;
+            //console.log("pushTimer");
             /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
             but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
             contact the server during this timer to update the time on the server AND keep session from timing out

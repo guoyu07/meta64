@@ -34,7 +34,6 @@ namespace m64 {
         }
 
         makeListItem(val: string, typeName: string, typeIdx: number): string {
-            debugger;
             let payload: Object = {
                 "typeName": typeName,
                 "typeIdx": typeIdx
@@ -51,8 +50,7 @@ namespace m64 {
                 alert("choose a type.");
                 return;
             }
-            debugger;
-            edit.createSubNode();
+            edit.createSubNode(null, this.lastSelTypeName);
         }
 
         createInline = (): void => {
@@ -60,12 +58,10 @@ namespace m64 {
                 alert("choose a type.");
                 return;
             }
-            debugger;
-            edit.insertNode();
+            edit.insertNode(null, this.lastSelTypeName);
         }
 
         onRowClick = (payload: any): void => {
-            debugger;
             let divId = this.id("typeRow" + payload.typeIdx);
             this.lastSelTypeName = payload.typeName;
 

@@ -93,14 +93,15 @@ namespace m64 {
             let rssUri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
 
             let entry: string = "";
-            let mp3Url = getMediaPlayerUrlFromNode(node);
 
-            if (mp3Url) {
-                if (rssTitle) {
-                    entry += render.tag("h3", {
-                    }, rssTitle.value);
-                }
+            if (rssLink && rssLink.value && rssTitle && rssTitle.value) {
+                entry += render.tag("a", {
+                    "href": rssLink.value
+                }, render.tag("h3", {}, rssTitle.value));
+            }
 
+            let playerUrl = getMediaPlayerUrlFromNode(node);
+            if (playerUrl) {
                 entry += render.tag("paper-button", {
                     "raised": "raised",
                     "onClick": "m64.podcast.openPlayerDialog('" + node.uid + "');",
@@ -108,16 +109,12 @@ namespace m64 {
                 }, //
                     "Play");
             }
-            else {
-                entry += render.tag("a", {
-                    "href": rssLink.value
-                }, render.tag("h3", {}, rssTitle.value));
-            }
 
-            if (rssDesc) {
+            if (rssDesc && rssDesc.value) {
                 entry += render.tag("p", {
                 }, rssDesc.value);
             }
+            
             if (rssAuthor && rssAuthor.value) {
                 entry += render.tag("div", {
                 }, "By: " + rssAuthor.value);

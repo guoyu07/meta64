@@ -38,7 +38,6 @@ namespace m64 {
         export let getPropertiesInEditingOrder = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
 
             let func:Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
-            debugger;
             if (func) {
                 return func(node, props);
             }

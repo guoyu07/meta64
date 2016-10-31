@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-Switched to DropzoneJS API for Drag&Drop uploading support!
+Beta version of an RSS reader and Podcast player!
 
 ## Technology Stack
 * Web App: Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
@@ -87,6 +87,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
 * Solr Desktop Search (Find and open files on native filesystem)
 * Automatic Type Registration from CND file
+* RSS Reader with Podcast Player (implemented in HTML5)
 * For future planned features see file: **/docs/bugs-and-todos.md**
 
 ## Technology Stack and APIs

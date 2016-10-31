@@ -25,6 +25,9 @@ public class JcrProp {
 	public static final String RSS_ITEM_URI = "meta64:rssItemUri";
 	public static final String RSS_ITEM_LINK = "meta64:rssItemLink";
 	public static final String RSS_ITEM_AUTHOR = "meta64:rssItemAuthor";
+	public static final String RSS_ITEM_ENC_TYPE = "meta64:rssItemEncType";
+	public static final String RSS_ITEM_ENC_LENGTH = "meta64:rssItemEncLength";
+	public static final String RSS_ITEM_ENC_URL = "meta64:rssItemEncUrl";
 	// public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
 
 	// ---------------------------------------------

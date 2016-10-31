@@ -63,17 +63,25 @@ namespace m64 {
         }
 
         export let getMediaPlayerUrlFromNode = function(node: json.NodeInfo): string {
-            let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
-            let rssUri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
-            let mp3Url = null;
+            let link: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+            if (link && link.value && link.value.toLowerCase().contains(".mp3")) {
+                return link.value;
+            }
 
-            if (rssLink.value.toLowerCase().contains(".mp3")) {
-                mp3Url = rssLink.value;
+            let uri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+            if (uri && uri.value && uri.value.toLowerCase().contains(".mp3")) {
+                return uri.value;
             }
-            else if (rssUri.value.toLowerCase().contains(".mp3")) {
-                mp3Url = rssUri.value;
+
+            let encUrl: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncUrl", node);
+            if (encUrl && encUrl.value) {
+                let encType: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncType", node);
+                if (encType && encType.value && encType.value.startsWith("audio/")) {
+                    return encUrl.value;
+                }
             }
-            return mp3Url;
+
+            return null;
         }
 
         export let renderItemNode = function(node: json.NodeInfo, rowStyling: boolean): string {

@@ -174,6 +174,7 @@ public class RssService {
 		}
 	}
 
+	// Work in progress -- this is not yet complete.
 	// uncomment annotation to activate this code.
 	// @Scheduled(fixedDelay = 10 * 1000)
 	public void run() {

@@ -3,12 +3,11 @@ package com.meta64.mobile.rss;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.util.JcrUtil;
+import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndImage;
@@ -21,9 +20,6 @@ import com.sun.syndication.feed.synd.SyndImage;
 @Component
 public class RssDbWriter {
 
-	@Autowired
-	private RssService rssService;
-
 	//
 	// private static ImageInfoSorter sorter = new ImageInfoSorter();
 	//
@@ -34,30 +30,10 @@ public class RssDbWriter {
 	 */
 	public void updateFeedNode(Session session, SyndFeed feed, Node feedNode) throws Exception {
 
-		/* build node text */
-		// String feedNodeText = render(feed, msgCollector);
-
-		/* insert node with this text */
-		// int id = insertContainerNode(parentId, AllTypes.TYPE_RSS_FEED, feedNodeText, null);
-
-		// log.debug("********************* FeedId inserted: "+id+" under parent "+parentId);
-
-		/*
-		 * If this is a publicly appendable node, then we always use admin to append a comment type
-		 * node under it. No other type of child node creation is allowed.
-		 */
-		// Node feedRoot = rssService.getFeedsRootNode();
-		// String name = JcrUtil.getGUID();
-
-		/* NT_UNSTRUCTURED IS ORDERABLE */
-		// Node newNode = feedRoot.addNode(name, JcrProp.TYPE_RSS_FEED);
-		// JcrUtil.timestampNewNode(session, feedNode);
-
 		feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
 		feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
 		feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
 		feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
-		// 2016 -> write(id, feed.getImage());
 
 		SyndImage image = feed.getImage();
 		if (image != null) {
@@ -68,47 +44,9 @@ public class RssDbWriter {
 	}
 
 	/*
-	 * Write SyndImage
-	 * 
-	 * returns the ID of the new feed node created
-	 */
-	// @Modifying
-	// @Transactional
-	// public static int write(int parentId, SyndImage image) throws Exception {
-	//
-	// if (image == null) {
-	// return -1;
-	// }
-	//
-	// int id = insertContainerNode(parentId, AllTypes.TYPE_RSS_IMAGE, render(image), null);
-	// writeSubProperty(id, AllTypes.TYPE_RSS_IMAGE_TITLE, image.getTitle());
-	// writeSubProperty(id, AllTypes.TYPE_RSS_IMAGE_DESCRIPTION, image.getDescription());
-	// writeSubProperty(id, AllTypes.TYPE_RSS_IMAGE_URL, image.getUrl());
-	// return id;
-	// }
-
-	/*
 	 * Write a specific SyndEntry
 	 */
-
 	public Node write(Session session, Node feedNode, SyndEntry entry) throws Exception {
-
-		// String published = DateUtil.formatDate(entry.getPublishedDate());
-		// String updated = DateUtil.formatDate(entry.getUpdatedDate());
-
-		/* force this timestamp onto our node, in our database */
-
-		// Runtime runtime = Runtime.getRuntime();
-		// ALog.log("FreeMem: " + runtime.freeMemory());
-
-		// long timeNow = new Date().getTime(); // entry.getPublishedDate() != null
-		// ?
-		// entry.getPublishedDate().getTime()
-		// : null;
-
-		/* insert main RSS_ENTRY node, containing the rendered content */
-		// int id = insertContainerNode(parentId, AllTypes.TYPE_RSS_ENTRY, render(entry, wFeed,
-		// msgCollector), timeNow);
 
 		String name = JcrUtil.getGUID();
 
@@ -130,13 +68,19 @@ public class RssDbWriter {
 		// entry.getPublishedDate();
 		// entry.getUpdatedDate();
 
-		// 2016
-		// for (Object encObj : entry.getEnclosures()) {
-		// if (encObj instanceof SyndEnclosureImpl) {
-		// write(id, (SyndEnclosureImpl) encObj);
-		// // service().getDb().tranCommit();
-		// }
-		// }
+		for (Object encObj : entry.getEnclosures()) {
+			if (encObj instanceof SyndEnclosureImpl) {
+				SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
+				
+				/* todo-0: for now we just support the first enclosure which will for for all known situations, and will 
+				 * normally just be the pointer to the media content of a podcast.
+				 */
+				break;
+			}
+		}
 		return null;
 	}
 

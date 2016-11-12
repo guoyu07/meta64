@@ -88,15 +88,17 @@ namespace m64 {
             /* now open and display polymer dialog we just created */
             let polyElm = util.polyElm(id);
 
-            //i tried to tweak the placement of teh dialog using fitInto, and it didn't work
-            //so I'm just using the paper-dialog CSS styling to alter the dialog size to fullscreen
-            //let ironPages = util.polyElm("mainIronPages");
+            /*
+            i tried to tweak the placement of the dialog using fitInto, and it didn't work
+            so I'm just using the paper-dialog CSS styling to alter the dialog size to fullscreen
+            let ironPages = util.polyElm("mainIronPages");
 
-            //After the TypeScript conversion I noticed having a modal flag will cause
-            //an infinite loop (completely hang) Chrome browser, but this issue is most likely
-            //not related to TypeScript at all, but i'm just mention TS just in case, because
-            //that's when I noticed it. Dialogs are fine but not a dialog on top of another dialog, which is
-            //the case where it hangs if model=true
+            After the TypeScript conversion I noticed having a modal flag will cause
+            an infinite loop (completely hang) Chrome browser, but this issue is most likely
+            not related to TypeScript at all, but i'm just mention TS just in case, because
+            that's when I noticed it. Dialogs are fine but not a dialog on top of another dialog, which is
+            the case where it hangs if model=true
+            */
             //polyElm.node.modal = true;
 
             //polyElm.node.refit();
@@ -115,11 +117,25 @@ namespace m64 {
                 thiz.closeEvent();
             });
 
+            /*
+            setting to zero margin immediately, and then almost immediately, and then afte 1.5 seconds
+            is a really ugly hack, but I couldn't find the right style class or way of doing this in the google
+            docs on the dialog class.
+            */
+            polyElm.node.style.margin = "0px";
+            polyElm.node.refit();
+
             /* I'm doing this in desparation. nothing else seems to get rid of the margin */
-            // setTimeout(function() {
-            //     polyElm.node.style.margin = "0px";
-            //     polyElm.node.refit();
-            // }, 1000);
+            setTimeout(function() {
+                polyElm.node.style.margin = "0px";
+                polyElm.node.refit();
+            }, 10);
+
+            /* I'm doing this in desparation. nothing else seems to get rid of the margin */
+            setTimeout(function() {
+                polyElm.node.style.margin = "0px";
+                polyElm.node.refit();
+            }, 1500);
         }
 
         /* todo: need to cleanup the registered IDs that are in maps for this dialog */

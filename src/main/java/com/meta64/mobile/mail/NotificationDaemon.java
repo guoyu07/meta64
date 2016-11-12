@@ -55,7 +55,7 @@ public class NotificationDaemon {
 	 * 
 	 * @Scheduled value is in milliseconds.
 	 */
-	@Scheduled(fixedDelay = 60 * 1000)
+	@Scheduled(fixedDelay = 10 * 60 * 1000)
 	public void run() {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 

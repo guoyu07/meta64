@@ -1,6 +1,7 @@
 package com.meta64.mobile.repo;
 
 import static com.google.common.collect.Lists.newArrayList;
+
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 
 import java.util.HashMap;
@@ -72,6 +73,9 @@ public class OakRepository {
 
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
+
+	@Value("${db.store.type}")
+	private String dbStoreType;
 
 	@Autowired
 	private UserManagerService userManagerService;
@@ -192,9 +196,13 @@ public class OakRepository {
 			if (initialized) return;
 
 			try {
-				log.info("Initializing repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
-				db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
-				nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+				if ("mongo".equalsIgnoreCase(dbStoreType)) {
+					log.info("Initializing Mongo Repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
+					db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
+					nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+				}
+				else if ("derby".equalsIgnoreCase(dbStoreType)) {
+				}
 
 				root = nodeStore.getRoot();
 

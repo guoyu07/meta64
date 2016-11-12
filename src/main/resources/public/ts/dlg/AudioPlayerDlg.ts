@@ -29,7 +29,7 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
             if (!node) {
-                throw "unknown node uid: "+this.nodeUid;
+                throw "unknown node uid: " + this.nodeUid;
             }
 
             let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
@@ -44,10 +44,11 @@ namespace m64 {
             let playerAttribs: any = {
                 "src": this.sourceUrl,
                 "id": this.id("audioPlayer"),
-                "style": "width: 95%;",
+                "style": "width: 100%; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
                 "ontimeupdate": "m64.podcast.onTimeUpdate('" + this.nodeUid + "', this);",
                 "oncanplay": "m64.podcast.onCanPlay('" + this.nodeUid + "', this);",
-                "controls": "controls"
+                "controls": "controls",
+                "preload" : "auto"
             };
 
             let player = render.tag("audio", playerAttribs);
@@ -56,55 +57,55 @@ namespace m64 {
             let skipBack30Button = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.skip(-30, '" + this.nodeUid + "', this);",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "< 30s");
 
             let skipForward30Button = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.skip(30, '" + this.nodeUid + "', this);",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "30s >");
 
-            //let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
+            let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
 
             //Speed Buttons
             let speedNormalButton = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.speed(1.0);",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "Normal");
 
             let speed15Button = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.speed(1.5);",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "1.5X");
 
             let speed2xButton = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.speed(2);",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "2X");
 
-            let speedButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button + speedNormalButton + speed15Button + speed2xButton);
+            let speedButtonBar = render.centeredButtonBar(speedNormalButton + speed15Button + speed2xButton);
 
             //Dialog Buttons
             let pauseButton = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.pause();",
-                "class" : "standardButton"
+                "class": "standardButton"
             }, //
                 "Pause");
 
             let playButton = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": "m64.podcast.play();",
-                "class" : "playButton"
+                "class": "playButton"
             }, //
                 "Play");
 
@@ -113,7 +114,7 @@ namespace m64 {
 
             let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
 
-            return header + description + player /* + skipButtonBar */ + speedButtonBar + buttonBar;
+            return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
         }
 
         closeEvent = (): void => {

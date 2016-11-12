@@ -94,7 +94,7 @@ public class NodeEditService {
 
 		Node newNode = null;
 		/* NT_UNSTRUCTURED IS ORDERABLE */
-		if (req.getTypeName() != null) {
+		if (req.getTypeName() != null && !JcrConstants.NT_UNSTRUCTURED.equalsIgnoreCase(req.getTypeName())) {
 			newNode = node.addNode(name, req.getTypeName());
 		}
 		else {
@@ -131,7 +131,7 @@ public class NodeEditService {
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
 		Node newNode = null;
-		if (req.getTypeName() != null) {
+		if (req.getTypeName() != null && !JcrConstants.NT_UNSTRUCTURED.equalsIgnoreCase(req.getTypeName())) {
 			newNode = parentNode.addNode(name, req.getTypeName());
 		}
 		else {

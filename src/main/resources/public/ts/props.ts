@@ -36,7 +36,6 @@ namespace m64 {
          * node and puts it on the top, and then does same for 'jctCnst.TAGS'
          */
         export let getPropertiesInEditingOrder = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
-
             let func:Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
             if (func) {
                 return func(node, props);

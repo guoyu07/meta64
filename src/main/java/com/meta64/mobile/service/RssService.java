@@ -14,6 +14,7 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
@@ -28,6 +29,7 @@ import com.meta64.mobile.rss.RssReader;
 import com.meta64.mobile.rss.model.PlayerInfo;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.JcrUtil;
 
 /* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
@@ -37,13 +39,15 @@ import com.meta64.mobile.util.JcrUtil;
 
 /**
  * RSS Feed Processing
- * 
- * This class is experimental and is not yet complete!
  *
  */
 @Component
 public class RssService {
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
+
+	/* State when feeds are currently being processed */
+	private boolean processing = false;
+	private Object processingLock = new Object();
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
@@ -79,6 +83,7 @@ public class RssService {
 		PlayerInfo info = new PlayerInfo();
 		info.setTimeOffset(req.getTimeOffset());
 		info.setNodePath(req.getNodePath());
+		// log.debug("SetPlayer info: offset="+req.getTimeOffset());
 		synchronized (playerInfoMap) {
 			playerInfoMap.put(key, info);
 		}
@@ -96,27 +101,35 @@ public class RssService {
 		}
 	}
 
+	@Scheduled(fixedDelay = 12 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
+		if (processing) return;
 
-		adminRunner.run((Session session) -> {
-			try {
-				init(session);
-				session.save();
-
-				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
+		synchronized (processingLock) {
+			adminRunner.run((Session session) -> {
 				try {
-					reader.run(session, feedNodes);
+					processing = true;
+					init(session);
+					session.save();
+
+					RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
+					try {
+						reader.run(session, feedNodes);
+					}
+					catch (Exception e) {
+						log.error("Failed processing RSS feeds", e);
+					}
+
+					session.save();
 				}
 				catch (Exception e) {
-					log.error("Failed processing RSS feeds", e);
+					log.debug("failed processing RSS", e);
 				}
-
-				session.save();
-			}
-			catch (Exception e) {
-				log.debug("failed processing RSS", e);
-			}
-		});
+				finally {
+					processing = false;
+				}
+			});
+		}
 	}
 
 	public Node getFeedsRootNode() {

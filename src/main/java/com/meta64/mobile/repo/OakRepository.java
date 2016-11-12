@@ -1,9 +1,10 @@
 package com.meta64.mobile.repo;
 
 import static com.google.common.collect.Lists.newArrayList;
-
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.sql.DataSource;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.Oak;
@@ -24,6 +26,8 @@ import org.apache.jackrabbit.oak.jcr.repository.RepositoryImpl;
 import org.apache.jackrabbit.oak.plugins.document.DocumentMK;
 import org.apache.jackrabbit.oak.plugins.document.DocumentNodeState;
 import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
+import org.apache.jackrabbit.oak.plugins.document.rdb.RDBDataSourceFactory;
+import org.apache.jackrabbit.oak.plugins.document.rdb.RDBOptions;
 import org.apache.jackrabbit.oak.plugins.index.aggregate.NodeAggregator;
 import org.apache.jackrabbit.oak.plugins.index.aggregate.SimpleNodeAggregator;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexEditorProvider;
@@ -77,6 +81,21 @@ public class OakRepository {
 	@Value("${db.store.type}")
 	private String dbStoreType;
 
+	@Value("${rdb.driver}")
+	private String rdbDriver;
+
+	@Value("${rdb.url}")
+	private String rdbUrl;
+
+	@Value("${rdb.shutdown}")
+	private String rdbShutdown;
+
+	@Value("${rdb.user}")
+	private String rdbUser;
+
+	@Value("${rdb.password}")
+	private String rdbPassword;
+
 	@Autowired
 	private UserManagerService userManagerService;
 
@@ -89,7 +108,13 @@ public class OakRepository {
 	private Repository repository;
 	private ConfigurationParameters securityParams;
 	private SecurityProvider securityProvider;
-	private DB db;
+	private DB mongoDb;
+
+	// TODO: move this string to properties file.
+	public static final String TABLEPREFIX = "jcr_";
+
+	private RDBOptions options;
+	private DataSource dataSource;
 
 	/*
 	 * Because of the criticality of this variable, I am not using the Spring getter to get it, but
@@ -198,10 +223,34 @@ public class OakRepository {
 			try {
 				if ("mongo".equalsIgnoreCase(dbStoreType)) {
 					log.info("Initializing Mongo Repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
-					db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
-					nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+					mongoDb = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
+					nodeStore = new DocumentMK.Builder().setMongoDB(mongoDb).getNodeStore();
 				}
-				else if ("derby".equalsIgnoreCase(dbStoreType)) {
+				else if ("rdb".equalsIgnoreCase(dbStoreType)) {
+					log.debug("Initializing RDB.");
+					options = new RDBOptions().tablePrefix(TABLEPREFIX);
+					// options = options.dropTablesOnClose(true);
+
+					// String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+					Class.forName(rdbDriver).newInstance();
+
+					String userDir = System.getProperty("user.dir");
+					String url = rdbUrl.replace("{user.dir}", userDir);
+
+					// todo-0: investigate if we are supposed to call 'close' on something to
+					// release this dataSource ?
+					dataSource = RDBDataSourceFactory.forJdbcUrl(url, rdbUser, rdbPassword);
+
+					DocumentMK.Builder builder = new DocumentMK.Builder().setClusterId(1)//
+							.memoryCacheSize(64 * 1024 * 1024)//
+							.setPersistentCache("target/persistentCache,time")//
+							.setRDBConnection(dataSource, options);
+
+					nodeStore = builder.getNodeStore();
+
+					// This was ORIGINAL way of getting 'repository' with RDB
+					// repository = new Jcr(nodeStore)/* .with(getQueryEngineSettings())
+					// */.with(getSecurityProvider()).createRepository();
 				}
 
 				root = nodeStore.getRoot();
@@ -380,12 +429,26 @@ public class OakRepository {
 				repository = null;
 			}
 
-			if (db != null) {
+			if (mongoDb != null) {
 				log.info("Closing mongo.");
-				if (db.getMongo() != null) {
-					db.getMongo().close();
+				if (mongoDb.getMongo() != null) {
+					mongoDb.getMongo().close();
 				}
-				db = null;
+				mongoDb = null;
+			}
+
+			if (dataSource != null && rdbShutdown != null) {
+				dataSource = null;
+				try {
+					DriverManager.getConnection(rdbShutdown);
+				}
+				catch (SQLException e) {
+					/*
+					 * This exception is the normal flow, and is expected always, and so we log a
+					 * message (not an error)
+					 */
+					log.info("RDB Shutdown complete.");
+				}
 			}
 		}
 	}

@@ -14,6 +14,7 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,9 @@ import com.meta64.mobile.util.JcrUtil;
  */
 @Component
 public class RssService {
+	@Value("${profileName}")
+	private String profileName;
+	
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
 
 	/* State when feeds are currently being processed */
@@ -103,7 +107,7 @@ public class RssService {
 
 	@Scheduled(fixedDelay = 12 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
-		if (processing) return;
+		if (processing || !"prod".equalsIgnoreCase(profileName)) return;
 
 		synchronized (processingLock) {
 			adminRunner.run((Session session) -> {

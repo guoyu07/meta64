@@ -88,10 +88,10 @@ public class AppServerTests {
 			/*
 			 * Signup a new user
 			 */
-			String userName = "wclayf";
+			String userName = "beavis";
 			signupReq.setUserName(userName);
 			signupReq.setPassword(userName);
-			signupReq.setEmail("wclayf@gmail.com");
+			signupReq.setEmail("beavis@gmail.com");
 			signupReq.setCaptcha(fakeCaptcha);
 			SignupResponse signupRes = controller.signup(signupReq);
 			assertTrue(signupRes.isSuccess());

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -24,6 +25,7 @@ import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.lucene.FileIndexer;
 import com.meta64.mobile.model.FileSearchResult;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.request.FileSearchRequest;
@@ -41,9 +43,22 @@ public class LuceneService {
 
 	@Autowired
 	private UserManagerService userManagerService;
+	
+	@Autowired
+	private FileIndexer fileIndexer;
 
 	public void reindex(Session session, FileSearchRequest req, FileSearchResponse res) throws Exception {
-		log.info("Reindex runing on server: "+req.getNodeId());
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+		String nodeId = req.getNodeId();
+		log.info("Reindex runing on server: "+nodeId);
+		Node node = JcrUtil.findNode(session, nodeId);
+		String path = JcrUtil.safeGetStringProp(node, "meta64:path");
+		if (StringUtils.isEmpty(path)) {
+			throw new Exception("No path specified to be indexed.");
+		}
+		fileIndexer.index(path, "txt");
 	}
 	
 	public void search(Session session, FileSearchRequest req, FileSearchResponse res) throws Exception {

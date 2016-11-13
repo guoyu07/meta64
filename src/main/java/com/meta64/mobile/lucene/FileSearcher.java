@@ -3,6 +3,9 @@ package com.meta64.mobile.lucene;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.PreDestroy;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -20,7 +23,10 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FileSearcher {
 	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
 
@@ -36,19 +42,26 @@ public class FileSearcher {
 	private static final QueryParser PARSER = new QueryParser(VERSION, "contents", new StandardAnalyzer(VERSION));
 
 	/** lucene directory */
-	public static final String LUCENE_DIR = "/home/clay/ferguson/lucene-index";
+	@Value("${lucene.index.dir}")
+	private String LUCENE_DIR;
 	
-	public FileSearcher() throws Exception {
-		init();
-	}
+	public boolean initialized = false;
 
 	private void init() throws Exception {
+		if (initialized) return;
+		initialized = true;
+		
+		if (StringUtils.isEmpty(LUCENE_DIR)) {
+			throw new Exception("Lucend Data Dir is not configured.");
+		}
+		
 		fsDir = FSDirectory.open(new File(LUCENE_DIR));
 		reader = DirectoryReader.open(fsDir);
 		searcher = new IndexSearcher(reader);
 	}
 
 	public Document findByFileName(String filePath) throws Exception {
+		init();
 		BooleanQuery matchingQuery = new BooleanQuery();
 
 		// todo-0: do we really need the 'SHOULD' there. Is that simplest way ?
@@ -68,6 +81,7 @@ public class FileSearcher {
 	 * Search the index for given query and return only specified hits.
 	 */
 	public void search(final String queryStr, final int maxHits) throws Exception {
+		init();
 		final long now = System.currentTimeMillis();
 
 		final Query query = PARSER.parse(queryStr);
@@ -91,6 +105,7 @@ public class FileSearcher {
 		}
 	}
 
+	@PreDestroy
 	public void close() {
 		closeIndexReader();
 		closeFSDirectory();
@@ -101,6 +116,7 @@ public class FileSearcher {
 			log.info("closing lucene index reader");
 			try {
 				reader.close();
+				reader = null;
 			}
 			catch (final IOException e) {
 				throw new RuntimeException(e);
@@ -112,6 +128,7 @@ public class FileSearcher {
 		if (fsDir != null) {
 			log.info("closing FSDirectory");
 			fsDir.close();
+			fsDir = null;
 		}
 	}
 }

@@ -8,7 +8,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.UserPrincipal;
 import java.text.SimpleDateFormat;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -18,37 +21,46 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FileIndexer {
 	private final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
 	private IndexWriter writer;
 	private FSDirectory fsDir;
+	
+	/** lucene directory */
+	@Value("${lucene.index.dir}")
+	private String LUCENE_DIR;
 
 	/* This searcher is used for searching to avoid duplicates before each insert */
+	@Autowired
 	private FileSearcher searcher;
+	
+	private boolean initialized = false;
 
-	public FileIndexer() throws Exception {
+	public void index(final String dirToIndex, final String suffix) throws Exception {
 		init();
-	}
-
-	private void init() throws Exception {
-		fsDir = FSDirectory.open(new File(FileSearcher.LUCENE_DIR));
-		writer = new IndexWriter(fsDir, FileSearcher.CONFIG);
-
-		File luceneDir = new File(FileSearcher.LUCENE_DIR);
-		if (luceneDir.exists()) {
-			searcher = new FileSearcher();
-		}
-	}
-
-	public void index(final String dirToIndex, final String suffix) {
 		final long now = System.currentTimeMillis();
 
 		indexDirectory(new File(dirToIndex), suffix);
 
 		log.info("Indexing completed in {} milliseconds.", System.currentTimeMillis() - now);
+	}
+	
+	private void init() throws Exception {
+		if (initialized) return;
+		initialized = true;
+		if (StringUtils.isEmpty(LUCENE_DIR)) {
+			throw new Exception("Lucend Data Dir is not configured.");
+		}
+		
+		fsDir = FSDirectory.open(new File(LUCENE_DIR));
+		writer = new IndexWriter(fsDir, FileSearcher.CONFIG);
 	}
 
 	/**
@@ -174,6 +186,7 @@ public class FileIndexer {
 		return doc;
 	}
 	
+	@PreDestroy
 	public void close() {
 		closeSearcher();
 		closeIndexWriter();

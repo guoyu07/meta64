@@ -49,6 +49,8 @@ namespace m64 {
             }
 
             util.json<json.FileSearchRequest, json.FileSearchResponse>("fileSearch", {
+                "nodeId" : null,
+                "reindex": false,
                 "searchText": searchText
             }, srch.searchFilesResponse, srch);
         }

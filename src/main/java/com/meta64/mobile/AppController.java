@@ -104,6 +104,7 @@ import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
 import com.meta64.mobile.service.ImportBookService;
 import com.meta64.mobile.service.ImportExportService;
+import com.meta64.mobile.service.LuceneService;
 import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
@@ -181,6 +182,9 @@ public class AppController {
 
 	@Autowired
 	private SolrSearchService solrSearchService;
+
+	@Autowired
+	private LuceneService luceneService;
 
 	@Autowired
 	private RssService rssService;
@@ -582,7 +586,18 @@ public class AppController {
 		logRequest("fileSearch", req);
 		FileSearchResponse res = new FileSearchResponse();
 		checkHttpSession();
-		solrSearchService.search(null, req, res);
+
+		if (req.isReindex()) {
+			luceneService.reindex(null, req, res);
+		}
+		/*
+		 * SolrSearch Service works perfectly, but I'm just disabling it for now, in to use
+		 * FileSystem search instead which directly creates a Lucene index on the local machine
+		 * (server machine)
+		 * 
+		 * solrSearchService.search(null, req, res);
+		 * 
+		 */
 		return res;
 	}
 

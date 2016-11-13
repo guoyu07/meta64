@@ -80,7 +80,7 @@ namespace m64 {
         export interface SetPlayerInfoRequest {
             url: string;
             timeOffset: number;
-            nodePath : string;
+            nodePath: string;
         }
 
         export interface GetPlayerInfoRequest {
@@ -175,7 +175,9 @@ namespace m64 {
         }
 
         export interface FileSearchRequest {
+            nodeId: string;
             searchText: string;
+            reindex: boolean
         }
 
         export interface RemovePrivilegeRequest {
@@ -266,7 +268,7 @@ namespace m64 {
         }
 
         export interface GetPlayerInfoResponse extends OakResponseBase {
-            timeOffset:number;
+            timeOffset: number;
         }
 
         export interface CreateSubNodeResponse extends OakResponseBase {

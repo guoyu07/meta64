@@ -12,18 +12,67 @@ namespace m64 {
                 }, pathProp.value);
             }
 
+            let reindexButton: string = render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.systemfolder.reindex('" + node.uid + "');",
+                "class": "standardButton"
+            }, //
+                "Reindex");
+
+            let searchButton: string = render.tag("paper-button", {
+                "raised": "raised",
+                "onClick": "m64.systemfolder.search('" + node.uid + "');",
+                "class": "standardButton"
+            }, //
+                "Search");
+
+            let buttonBar = render.centeredButtonBar(reindexButton + searchButton);
+
             if (rowStyling) {
                 ret += render.tag("div", {
                     "class": "jcr-content"
-                }, path);
+                }, path + buttonBar);
             } else {
                 ret += render.tag("div", {
                     "class": "jcr-root-content"
                 },
-                    path);
+                    path + buttonBar);
             }
 
             return ret;
+        }
+
+        export let reindex = function(_uid: string) {
+            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            if (selNode) {
+                util.json<json.FileSearchRequest, json.FileSearchResponse>("fileSearch", {
+                    "nodeId": selNode.id,
+                    "reindex": true,
+                    "searchText": null
+                }, reindexResponse, systemfolder);
+            }
+        }
+
+        export let reindexResponse = function(res: json.FileSearchResponse) {
+            alert("Reindex complete.");
+        }
+
+        export let search = function(_uid: string) {
+            // uid = _uid;
+            // node = meta64.uidToNodeMap[uid];
+            //
+            // if (node) {
+            //     let mp3Url = getMediaPlayerUrlFromNode(node);
+            //     if (mp3Url) {
+            //         util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
+            //             "url": mp3Url
+            //         }, function(res: json.GetPlayerInfoResponse) {
+            //             parseAdSegmentUid(uid);
+            //             let dlg = new AudioPlayerDlg(mp3Url, uid, res.timeOffset);
+            //             dlg.open();
+            //         });
+            //     }
+            // }
         }
 
         export let propOrdering = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {

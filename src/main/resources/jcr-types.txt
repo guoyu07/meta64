@@ -1,5 +1,9 @@
 <'meta64'='http://meta64.com/jcr/'>
- 
+
+[meta64:system-folder]
+	> nt:unstructured orderable
+ 	- meta64:path (string) = '' autocreated 
+ 	
 [meta64:podcast] 
 	> nt:unstructured orderable
  

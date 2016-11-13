@@ -7,7 +7,7 @@ public class DateUtil {
 	public static final int SECOND_MILLIS = 1000;
 	public static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
 	public static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
-	
+
 	/** Used to format date values */
 	// public static final String ECMA_DATE_FORMAT = "EEE MMM dd yyyy HH:mm:ss
 	// 'GMT'Z";

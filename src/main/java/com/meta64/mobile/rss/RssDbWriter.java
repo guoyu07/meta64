@@ -74,9 +74,11 @@ public class RssDbWriter {
 				newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
 				newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
 				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
-				
-				/* todo-0: for now we just support the first enclosure which will for for all known situations, and will 
-				 * normally just be the pointer to the media content of a podcast.
+
+				/*
+				 * todo-0: for now we just support the first enclosure which will for for all known
+				 * situations, and will normally just be the pointer to the media content of a
+				 * podcast.
 				 */
 				break;
 			}

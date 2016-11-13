@@ -46,7 +46,7 @@ import com.meta64.mobile.util.JcrUtil;
 public class RssService {
 	@Value("${profileName}")
 	private String profileName;
-	
+
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
 
 	/* State when feeds are currently being processed */

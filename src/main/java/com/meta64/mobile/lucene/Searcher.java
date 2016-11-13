@@ -5,9 +5,13 @@ public class Searcher {
 		final String query = "coolant";
 		final int hits = 100;
 
-		FileSearcher searcher = new FileSearcher();
+		FileSearcher searcher = null;
 		try {
+			searcher = new FileSearcher();
 			searcher.search(query, hits);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		finally {
 			if (searcher != null) {

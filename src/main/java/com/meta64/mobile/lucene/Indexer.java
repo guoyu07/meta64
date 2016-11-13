@@ -10,7 +10,6 @@ public class Indexer {
 			indexer.index(dirToIndex, suffix);
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		finally {

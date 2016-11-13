@@ -6,9 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.UserPrincipal;
+import java.text.SimpleDateFormat;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.FSDirectory;
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FileIndexer {
+	private final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
 	private IndexWriter writer;
@@ -29,10 +34,10 @@ public class FileIndexer {
 	}
 
 	private void init() throws Exception {
-		fsDir = FSDirectory.open(new File(LuceneUtils.LUCENE_DIR));
-		writer = new IndexWriter(fsDir, LuceneUtils.CONFIG);
+		fsDir = FSDirectory.open(new File(FileSearcher.LUCENE_DIR));
+		writer = new IndexWriter(fsDir, FileSearcher.CONFIG);
 
-		File luceneDir = new File(LuceneUtils.LUCENE_DIR);
+		File luceneDir = new File(FileSearcher.LUCENE_DIR);
 		if (luceneDir.exists()) {
 			searcher = new FileSearcher();
 		}
@@ -78,7 +83,7 @@ public class FileIndexer {
 			final Path paths = Paths.get(file.getCanonicalPath());
 			final BasicFileAttributes attr = Files.readAttributes(paths, BasicFileAttributes.class);
 
-			final String lastModified = DocumentUtil.getAttrVal(attr, FileProperties.MODIFIED);
+			final String lastModified = getAttrVal(attr, FileProperties.MODIFIED);
 			final String path = file.getCanonicalPath();
 			final String name = file.getName();
 
@@ -108,14 +113,14 @@ public class FileIndexer {
 				}
 			}
 
-			final String created = DocumentUtil.getAttrVal(attr, FileProperties.CREATED);
+			final String created = getAttrVal(attr, FileProperties.CREATED);
 			final String size = String.valueOf(attr.size());
 			final String content = FileUtils.readFileToString(file);
 
 			final UserPrincipal owner = Files.getOwner(paths);
 			final String username = owner.getName();
 
-			Document newDoc = DocumentUtil.newLuceneDoc(content, path, name, username, lastModified, size, created, DocumentUtil.getDocType(file));
+			Document newDoc = newLuceneDoc(content, path, name, username, lastModified, size, created, getDocType(file));
 			writer.addDocument(newDoc);
 			
 			if (deletedExisting) {
@@ -129,19 +134,59 @@ public class FileIndexer {
 			log.error("Failed indexing file", e);
 		}
 	}
-
-	public void close() {
-		if (searcher != null) {
-			searcher.close();
-			searcher = null;
+	
+	/**
+	 * Get date attributes
+	 */
+	public static String getAttrVal(final BasicFileAttributes attr, final FileProperties prop) {
+		switch (prop) {
+		case MODIFIED:
+			return DATE_FORMATTER.format((attr.lastModifiedTime().toMillis()));
+		case CREATED:
+			return DATE_FORMATTER.format((attr.creationTime().toMillis()));
+		default:
+			throw new IllegalArgumentException(prop.toString() + "is not supported.");
 		}
+	}
+
+	/**
+	 * Get document type
+	 */
+	public static String getDocType(final File f) {
+		final int start = f.getName().lastIndexOf(".");
+		return f.getName().substring(start + 1);
+	}
+
+	/**
+	 * Create lucene document from file attributes
+	 */
+	public static Document newLuceneDoc(final String content, final String path, final String name, final String username, final String modified, final String size,
+			final String created, final String docType) {
+		final Document doc = new Document();
+		doc.add(new Field("contents", content, TextField.TYPE_NOT_STORED));
+		doc.add(new StringField("filepath", path, Field.Store.YES));
+		doc.add(new StringField("author", username, Field.Store.YES));
+		doc.add(new StringField("lastModified", modified, Field.Store.YES));
+		doc.add(new StringField("size", size, Field.Store.YES));
+		doc.add(new StringField("created", created, Field.Store.YES));
+		doc.add(new StringField("doctype", docType, Field.Store.YES));
+
+		return doc;
+	}
+	
+	public void close() {
+		closeSearcher();
 		closeIndexWriter();
 		closeFSDirectory();
 	}
 
-	/**
-	 * close index writer
-	 */
+	private void closeSearcher() {
+		if (searcher != null) {
+			searcher.close();
+			searcher = null;
+		}
+	}
+
 	private void closeIndexWriter() {
 		if (writer != null) {
 			log.info("Shutting down index writer");
@@ -155,9 +200,6 @@ public class FileIndexer {
 		}
 	}
 
-	/**
-	 * close fs directory index
-	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {
 			log.info("closing FSDirectory");

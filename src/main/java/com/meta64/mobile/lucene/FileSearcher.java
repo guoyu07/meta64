@@ -2,6 +2,8 @@ package com.meta64.mobile.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.PreDestroy;
 
@@ -26,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.model.FileSearchResult;
+
 @Component
 public class FileSearcher {
 	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
@@ -37,13 +41,13 @@ public class FileSearcher {
 	private DirectoryReader reader;
 	private IndexSearcher searcher;
 	
-	public static final IndexWriterConfig CONFIG = new IndexWriterConfig(VERSION, new StandardAnalyzer(VERSION));
+	public static final IndexWriterConfig config = new IndexWriterConfig(VERSION, new StandardAnalyzer(VERSION));
 
-	private static final QueryParser PARSER = new QueryParser(VERSION, "contents", new StandardAnalyzer(VERSION));
+	private static final QueryParser parser = new QueryParser(VERSION, "contents", new StandardAnalyzer(VERSION));
 
 	/** lucene directory */
 	@Value("${lucene.index.dir}")
-	private String LUCENE_DIR;
+	private String luceneDir;
 	
 	public boolean initialized = false;
 
@@ -51,11 +55,11 @@ public class FileSearcher {
 		if (initialized) return;
 		initialized = true;
 		
-		if (StringUtils.isEmpty(LUCENE_DIR)) {
+		if (StringUtils.isEmpty(luceneDir)) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
 		
-		fsDir = FSDirectory.open(new File(LUCENE_DIR));
+		fsDir = FSDirectory.open(new File(luceneDir));
 		reader = DirectoryReader.open(fsDir);
 		searcher = new IndexSearcher(reader);
 	}
@@ -80,30 +84,28 @@ public class FileSearcher {
 	/**
 	 * Search the index for given query and return only specified hits.
 	 */
-	public void search(final String queryStr, final int maxHits) throws Exception {
+	public List<FileSearchResult> search(final String queryStr, final int maxHits) throws Exception {
 		init();
 		final long now = System.currentTimeMillis();
 
-		final Query query = PARSER.parse(queryStr);
+		List<FileSearchResult> results = new LinkedList<FileSearchResult>();
+		final Query query = parser.parse(queryStr);
 		final ScoreDoc[] hits = searcher.search(query, null, maxHits).scoreDocs;
 
 		log.info("Search took {} milli seconds...found {} documents matching the query: {}", System.currentTimeMillis() - now, hits.length, queryStr);
-
-		printSearchResults(hits);
-	}
-
-	/**
-	 * Log the search results
-	 */
-	private void printSearchResults(final ScoreDoc[] hits) throws Exception {
+		
 		if (hits.length > 0) {
-			log.info("Search results:");
 			for (final ScoreDoc d : hits) {
 				Document doc = searcher.doc(d.doc);
-				log.info(doc.get("filepath"));
+				FileSearchResult fsr = new FileSearchResult();
+				fsr.setFileName(doc.get("filepath"));
+				results.add(fsr);
 			}
 		}
+		
+		return results;
 	}
+
 
 	@PreDestroy
 	public void close() {

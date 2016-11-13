@@ -58,21 +58,7 @@ namespace m64 {
         }
 
         export let search = function(_uid: string) {
-            // uid = _uid;
-            // node = meta64.uidToNodeMap[uid];
-            //
-            // if (node) {
-            //     let mp3Url = getMediaPlayerUrlFromNode(node);
-            //     if (mp3Url) {
-            //         util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
-            //             "url": mp3Url
-            //         }, function(res: json.GetPlayerInfoResponse) {
-            //             parseAdSegmentUid(uid);
-            //             let dlg = new AudioPlayerDlg(mp3Url, uid, res.timeOffset);
-            //             dlg.open();
-            //         });
-            //     }
-            // }
+            (new m64.SearchFilesDlg(true)).open();
         }
 
         export let propOrdering = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {

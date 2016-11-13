@@ -3,7 +3,7 @@ console.log("running module: SearchFilesDlg.js");
 namespace m64 {
     export class SearchFilesDlg extends DialogBase {
 
-        constructor() {
+        constructor(private lucene: boolean) {
             super("SearchFilesDlg");
         }
 
@@ -48,8 +48,14 @@ namespace m64 {
                 return;
             }
 
+            let nodeId: string = null;
+            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            if (selNode) {
+                nodeId = selNode.id;
+            }
+
             util.json<json.FileSearchRequest, json.FileSearchResponse>("fileSearch", {
-                "nodeId" : null,
+                "nodeId": nodeId,
                 "reindex": false,
                 "searchText": searchText
             }, srch.searchFilesResponse, srch);

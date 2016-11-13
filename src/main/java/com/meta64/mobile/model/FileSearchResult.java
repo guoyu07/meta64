@@ -3,6 +3,9 @@ package com.meta64.mobile.model;
 public class FileSearchResult {
 	private String fileName;
 
+	public FileSearchResult() {
+	}
+	
 	public FileSearchResult(String fileName) {
 		this.fileName = fileName;
 	}

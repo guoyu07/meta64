@@ -94,7 +94,7 @@ namespace m64 {
                 menuItem("Content", "contentSearchDlgButton", "(new m64.SearchContentDlg()).open();") +//
                 //todo-0: make a version of the dialog that does a tag search
                 menuItem("Tags", "tagSearchDlgButton", "(new m64.SearchTagsDlg()).open();") + //
-                menuItem("Files", "fileSearchDlgButton", "(new m64.SearchFilesDlg()).open();");
+                menuItem("Files", "fileSearchDlgButton", "(new m64.SearchFilesDlg(true)).open();");
 
             var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
 

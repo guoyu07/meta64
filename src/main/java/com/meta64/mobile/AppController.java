@@ -5,6 +5,7 @@ import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -589,6 +590,9 @@ public class AppController {
 
 		if (req.isReindex()) {
 			luceneService.reindex(null, req, res);
+		}
+		else if (!StringUtils.isEmpty(req.getSearchText())) {
+			luceneService.search(null, req, res);
 		}
 		/*
 		 * SolrSearch Service works perfectly, but I'm just disabling it for now, in to use

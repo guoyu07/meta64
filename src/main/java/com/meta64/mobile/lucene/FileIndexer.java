@@ -35,7 +35,7 @@ public class FileIndexer {
 	
 	/** lucene directory */
 	@Value("${lucene.index.dir}")
-	private String LUCENE_DIR;
+	private String luceneDir;
 
 	/* This searcher is used for searching to avoid duplicates before each insert */
 	@Autowired
@@ -55,12 +55,12 @@ public class FileIndexer {
 	private void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
-		if (StringUtils.isEmpty(LUCENE_DIR)) {
+		if (StringUtils.isEmpty(luceneDir)) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
 		
-		fsDir = FSDirectory.open(new File(LUCENE_DIR));
-		writer = new IndexWriter(fsDir, FileSearcher.CONFIG);
+		fsDir = FSDirectory.open(new File(luceneDir));
+		writer = new IndexWriter(fsDir, FileSearcher.config);
 	}
 
 	/**

@@ -32,6 +32,7 @@ import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
+/* Performs searching against some Solr Client (over the network, like a microservice) */
 @Component
 public class SolrSearchService {
 	private static final Logger log = LoggerFactory.getLogger(SolrSearchService.class);

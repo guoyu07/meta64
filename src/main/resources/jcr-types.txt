@@ -1,6 +1,6 @@
 <'meta64'='http://meta64.com/jcr/'>
 
-[meta64:system-folder]
+[meta64:systemfolder]
 	> nt:unstructured orderable
  	- meta64:path (string) = '' autocreated 
  	

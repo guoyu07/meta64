@@ -18,9 +18,6 @@ public class LuceneUtils {
 	/** lucene directory */
 	public static final String LUCENE_DIR = "/home/clay/ferguson/lucene-index";
 
-	/**
-	 * @return {@link QueryParser} to parse query
-	 */
 	public static QueryParser getQueryParser() {
 		return PARSER;
 	}

@@ -40,26 +40,12 @@ public class FileSearcher {
 		searcher = new IndexSearcher(iReader);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.search.FileSearcher#search(java.lang.String, int)
-	 */
 	public void search(final String queryStr, final int maxHits) {
 		searchIndex(queryStr, maxHits);
 	}
 
 	/**
 	 * Search the index for given query and return only specified hits.
-	 *
-	 * @param queryStr
-	 *            the plain query string
-	 * @param maxHits
-	 *            max hits to limit search to
-	 * @throws IOException
-	 *             if error reading from disk
-	 * @throws ParseException
-	 *             if error parsing queryStr
 	 */
 	private void searchIndex(final String queryStr, final int maxHits) {
 		final long now = System.currentTimeMillis();
@@ -96,11 +82,6 @@ public class FileSearcher {
 
 	/**
 	 * Log the search results
-	 *
-	 * @param hits
-	 *            results array
-	 * @throws IOException
-	 *             if error reading from disk
 	 */
 	private void printSearchResults(final ScoreDoc[] hits) {
 		if (hits.length > 0) {
@@ -124,8 +105,6 @@ public class FileSearcher {
 
 	/**
 	 * close lucene index reader
-	 *
-	 * @throws IOException
 	 */
 	private void closeIndexReader() {
 		if (iReader != null) {
@@ -141,8 +120,6 @@ public class FileSearcher {
 
 	/**
 	 * close fs directory index
-	 *
-	 * @throws IOException
 	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {

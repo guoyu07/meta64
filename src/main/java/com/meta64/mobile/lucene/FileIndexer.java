@@ -42,13 +42,6 @@ public class FileIndexer {
 
 	/**
 	 * Method to index a directory recursively.
-	 *
-	 * @param dataDir
-	 *            the directory to index
-	 * @param suffix
-	 *            the file type
-	 * @throws IOException
-	 *             if errors trying to read file
 	 */
 	private void indexDirectory(final File dataDir, final String suffix) {
 		final File[] files = dataDir.listFiles();
@@ -64,13 +57,6 @@ public class FileIndexer {
 
 	/**
 	 * Index a file by creating a Document and adding fields
-	 *
-	 * @param f
-	 *            the file to index
-	 * @param suffix
-	 *            the file type
-	 * @throws IOException
-	 *             if errors trying to read file
 	 */
 	private void indexFile(final File f, final String suffix) {
 		if (f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists() || (suffix != null && !f.getName().endsWith(suffix))) {
@@ -98,8 +84,6 @@ public class FileIndexer {
 
 	/**
 	 * close index writer
-	 *
-	 * @throws IOException
 	 */
 	private void closeIndexWriter() {
 		if (iWriter != null) {
@@ -115,8 +99,6 @@ public class FileIndexer {
 
 	/**
 	 * close fs directory index
-	 *
-	 * @throws IOException
 	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {

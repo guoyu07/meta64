@@ -22,11 +22,6 @@ public class DocumentUtil {
 	/**
 	 * Get file attributes and create lucene document.
 	 *
-	 * @param file
-	 *            the file
-	 * @return lucene document
-	 * @throws IOException
-	 *             if errors
 	 */
 	public static Document fileToLuceneDoc(final File file) throws IOException {
 		final Path paths = Paths.get(file.getCanonicalPath());
@@ -46,24 +41,6 @@ public class DocumentUtil {
 
 	/**
 	 * Create lucene document from file attributes
-	 *
-	 * @param content
-	 *            the file content
-	 * @param path
-	 *            the file path
-	 * @param name
-	 *            the file name
-	 * @param username
-	 *            the owner of the file
-	 * @param modified
-	 *            last modified date
-	 * @param size
-	 *            the file size
-	 * @param created
-	 *            the file created date
-	 * @param docType
-	 *            the file type
-	 * @return lucene document with the fields
 	 */
 	private static Document newLuceneDoc(final String content, final String path, final String name, final String username, final String modified, final String size,
 			final String created, final String docType) {
@@ -82,12 +59,6 @@ public class DocumentUtil {
 
 	/**
 	 * Get date attributes
-	 *
-	 * @param attr
-	 *            basic file attributes object
-	 * @param prop
-	 *            property to get
-	 * @return property
 	 */
 	private static String getAttrVal(final BasicFileAttributes attr, final FileProperties prop) {
 		switch (prop) {
@@ -102,10 +73,6 @@ public class DocumentUtil {
 
 	/**
 	 * Get document type
-	 *
-	 * @param f
-	 *            the file
-	 * @return the file type
 	 */
 	private static String getDocType(final File f) {
 		final int start = f.getName().lastIndexOf(".");

@@ -44,10 +44,13 @@ public class FileSearcher {
 		searchIndex(queryStr, maxHits);
 	}
 
-	public Document findByFileName(String filePath, String fileName) throws Exception {
+	public Document findByFileName(String filePath) throws Exception {
 		BooleanQuery matchingQuery = new BooleanQuery();
+		
+		/* path includes filename so it's unique, we don't need fileName */
+		//todo-0: do we really need the 'SHOULD' there. Is that simplest way ?
 		matchingQuery.add(new TermQuery(new Term("filepath", filePath)), Occur.SHOULD);
-		matchingQuery.add(new TermQuery(new Term("filename", fileName)), Occur.SHOULD);
+		//matchingQuery.add(new TermQuery(new Term("filename", fileName)), Occur.SHOULD);
 
 		TopDocs topDocs = searcher.search(matchingQuery, 1);
 

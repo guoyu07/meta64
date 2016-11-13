@@ -10,17 +10,13 @@ import java.nio.file.attribute.UserPrincipal;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FileIndexer {
 	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
-
-	/*
-	 * todo-0: I saw online someone said the lass IndexModifier is better because it combines being
-	 * a reader and a writer into one class. Check if using that is better.
-	 */
 
 	private IndexWriter writer;
 	private FSDirectory fsDir;
@@ -47,7 +43,7 @@ public class FileIndexer {
 
 		indexDirectory(new File(dirToIndex), suffix);
 
-		log.info("Indexed {} files in {} milli seconds.", writer.maxDoc(), System.currentTimeMillis() - now);
+		log.info("Indexing completed in {} milliseconds.", System.currentTimeMillis() - now);
 	}
 
 	/**
@@ -78,6 +74,7 @@ public class FileIndexer {
 
 	private void index(final File file) {
 		try {
+			boolean deletedExisting = false;
 			final Path paths = Paths.get(file.getCanonicalPath());
 			final BasicFileAttributes attr = Files.readAttributes(paths, BasicFileAttributes.class);
 
@@ -90,7 +87,7 @@ public class FileIndexer {
 			 * file added with an identical timestamp.
 			 */
 			if (searcher != null) {
-				Document docFound = searcher.findByFileName(path, name);
+				Document docFound = searcher.findByFileName(path);
 				if (docFound != null) {
 					/*
 					 * If our index has this document with same lastModified time, then return
@@ -105,8 +102,8 @@ public class FileIndexer {
 					 * below
 					 */
 					else {
-						log.info("REMOVING EXISTING. file: {}", file.getCanonicalPath());
-						//&&& This is not done yet.
+						deletedExisting = true;
+						writer.deleteDocuments(new Term("filepath", path));
 					}
 				}
 			}
@@ -119,10 +116,14 @@ public class FileIndexer {
 			final String username = owner.getName();
 
 			Document newDoc = DocumentUtil.newLuceneDoc(content, path, name, username, lastModified, size, created, DocumentUtil.getDocType(file));
-
-			log.info("ADDED file: {}", file.getCanonicalPath());
 			writer.addDocument(newDoc);
-
+			
+			if (deletedExisting) {
+				log.info("UPDATED file: {}", file.getCanonicalPath());
+			}
+			else {
+				log.info("ADDED file: {}", file.getCanonicalPath());
+			}
 		}
 		catch (final Exception e) {
 			log.error("Failed indexing file", e);

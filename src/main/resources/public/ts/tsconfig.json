@@ -39,6 +39,7 @@
       "view.ts",
       "menu.ts",
       "podcast.ts",
+      "systemfolder.ts",
       "./dlg/base/DialogBase.ts",
       "./dlg/ConfirmDlg.ts",
       "./dlg/ProgressDlg.ts",

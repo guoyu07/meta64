@@ -114,7 +114,7 @@ namespace m64 {
                 entry += render.tag("p", {
                 }, rssDesc.value);
             }
-            
+
             if (rssAuthor && rssAuthor.value) {
                 entry += render.tag("div", {
                 }, "By: " + rssAuthor.value);
@@ -134,7 +134,7 @@ namespace m64 {
             return ret;
         }
 
-        export let propOrderingFeedNode = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+        export let propOrderingFeedNode = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
             let propOrder: string[] = [//
                 "meta64:rssFeedTitle",
                 "meta64:rssFeedDesc",
@@ -143,10 +143,10 @@ namespace m64 {
                 "meta64:rssFeedSrc",
                 "meta64:rssFeedImageUrl"];
 
-            return orderProps(propOrder, props);
+            return props.orderProps(propOrder, properties);
         }
 
-        export let propOrderingItemNode = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+        export let propOrderingItemNode = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
             let propOrder: string[] = [//
                 "meta64:rssItemTitle",
                 "meta64:rssItemDesc",
@@ -154,26 +154,7 @@ namespace m64 {
                 "meta64:rssItemUri",
                 "meta64:rssItemAuthor"];
 
-            return orderProps(propOrder, props);
-        }
-
-        export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
-            let propsNew: json.PropertyInfo[] = props.clone();
-            let targetIdx: number = 0;
-
-            for (let prop of propOrder) {
-                targetIdx = moveNodePosition(propsNew, targetIdx, prop);
-            }
-
-            return propsNew;
-        }
-
-        let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
-            let tagIdx: number = props.indexOfItemByProp("name", typeName);
-            if (tagIdx != -1) {
-                props.arrayMoveItem(tagIdx, idx++);
-            }
-            return idx;
+            return props.orderProps(propOrder, properties);
         }
 
         export let openPlayerDialog = function(_uid: string) {

@@ -23,8 +23,10 @@ namespace m64 {
 
             let content = "";
             let typeIdx = 0;
+            /* todo-1: need a better way to enumerate and add the types we want to be able to search */
             content += this.makeListItem("Standard Type", "nt:unstructured", typeIdx++);
             content += this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++);
+            content += this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++);
 
             var mainContent = render.tag("div", {
                 "class": "listBox"

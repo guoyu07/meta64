@@ -3,6 +3,25 @@ console.log("running module: props.js");
 namespace m64 {
     export namespace props {
 
+      export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
+          let propsNew: json.PropertyInfo[] = props.clone();
+          let targetIdx: number = 0;
+
+          for (let prop of propOrder) {
+              targetIdx = moveNodePosition(propsNew, targetIdx, prop);
+          }
+
+          return propsNew;
+      }
+
+      let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
+          let tagIdx: number = props.indexOfItemByProp("name", typeName);
+          if (tagIdx != -1) {
+              props.arrayMoveItem(tagIdx, idx++);
+          }
+          return idx;
+      }
+
         /*
          * Toggles display of properties in the gui.
          */

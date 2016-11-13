@@ -9,27 +9,21 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.meta64.mobile.config.AppFilter;
+
 public class FileIndexer {
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
-	/** lucene index writer */
 	private IndexWriter iWriter;
-
-	/** lucene file system directory */
 	private FSDirectory fsDir;
 
-	public FileIndexer() {
+	public FileIndexer() throws Exception {
 		init();
 	}
 
-	private void init() {
-		try {
-			fsDir = FSDirectory.open(new File(LuceneUtils.LUCENE_DIR));
-			iWriter = new IndexWriter(fsDir, LuceneUtils.CONFIG);
-		}
-		catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
+	private void init() throws Exception {
+		fsDir = FSDirectory.open(new File(LuceneUtils.LUCENE_DIR));
+		iWriter = new IndexWriter(fsDir, LuceneUtils.CONFIG);
 	}
 
 	public void index(final String dirToIndex, final String suffix) {
@@ -37,7 +31,7 @@ public class FileIndexer {
 
 		indexDirectory(new File(dirToIndex), suffix);
 
-		LOG.info("Indexed {} files in {} milli seconds.", iWriter.maxDoc(), System.currentTimeMillis() - now);
+		log.info("Indexed {} files in {} milli seconds.", iWriter.maxDoc(), System.currentTimeMillis() - now);
 	}
 
 	/**
@@ -68,7 +62,7 @@ public class FileIndexer {
 
 	private void index(final File f) {
 		try {
-			LOG.info("Indexing file: {}", f.getCanonicalPath());
+			log.info("Indexing file: {}", f.getCanonicalPath());
 			final Document doc = DocumentUtil.fileToLuceneDoc(f);
 			iWriter.addDocument(doc);
 		}
@@ -87,7 +81,7 @@ public class FileIndexer {
 	 */
 	private void closeIndexWriter() {
 		if (iWriter != null) {
-			LOG.info("Shutting down index writer...");
+			log.info("Shutting down index writer...");
 			try {
 				iWriter.close();
 			}
@@ -102,7 +96,7 @@ public class FileIndexer {
 	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {
-			LOG.info("closing FSDirectory...");
+			log.info("closing FSDirectory...");
 			fsDir.close();
 		}
 	}

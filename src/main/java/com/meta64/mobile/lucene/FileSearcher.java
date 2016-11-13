@@ -13,8 +13,10 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.meta64.mobile.config.AppFilter;
+
 public class FileSearcher {
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
+	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
 
 	/** lucene file system directory */
 	private FSDirectory fsDir;
@@ -53,7 +55,7 @@ public class FileSearcher {
 		final Query query = parseQuery(queryStr);
 		final ScoreDoc[] hits = search(query, maxHits);
 
-		LOG.info("Search took {} milli seconds...found {} documents matching the query: {}", System.currentTimeMillis() - now, hits.length, queryStr);
+		log.info("Search took {} milli seconds...found {} documents matching the query: {}", System.currentTimeMillis() - now, hits.length, queryStr);
 
 		printSearchResults(hits);
 	}
@@ -85,11 +87,11 @@ public class FileSearcher {
 	 */
 	private void printSearchResults(final ScoreDoc[] hits) {
 		if (hits.length > 0) {
-			LOG.info("Search results:");
+			log.info("Search results:");
 			for (final ScoreDoc d : hits) {
 				try {
 					Document doc = searcher.doc(d.doc);
-					LOG.info(doc.get("filepath"));
+					log.info(doc.get("filepath"));
 				}
 				catch (final IOException e) {
 					throw new RuntimeException(e);
@@ -108,7 +110,7 @@ public class FileSearcher {
 	 */
 	private void closeIndexReader() {
 		if (iReader != null) {
-			LOG.info("closing lucene index reader...");
+			log.info("closing lucene index reader...");
 			try {
 				iReader.close();
 			}
@@ -123,7 +125,7 @@ public class FileSearcher {
 	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {
-			LOG.info("closing FSDirectory...");
+			log.info("closing FSDirectory...");
 			fsDir.close();
 		}
 	}

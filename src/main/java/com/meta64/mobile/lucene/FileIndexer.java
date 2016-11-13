@@ -1,21 +1,32 @@
 package com.meta64.mobile.lucene;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.UserPrincipal;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meta64.mobile.config.AppFilter;
-
 public class FileIndexer {
 	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
-	private IndexWriter iWriter;
+	/*
+	 * todo-0: I saw online someone said the lass IndexModifier is better because it combines being
+	 * a reader and a writer into one class. Check if using that is better.
+	 */
+
+	private IndexWriter writer;
 	private FSDirectory fsDir;
+
+	/* This searcher is used for searching to avoid duplicates before each insert */
+	private FileSearcher searcher;
 
 	public FileIndexer() throws Exception {
 		init();
@@ -23,7 +34,12 @@ public class FileIndexer {
 
 	private void init() throws Exception {
 		fsDir = FSDirectory.open(new File(LuceneUtils.LUCENE_DIR));
-		iWriter = new IndexWriter(fsDir, LuceneUtils.CONFIG);
+		writer = new IndexWriter(fsDir, LuceneUtils.CONFIG);
+
+		File luceneDir = new File(LuceneUtils.LUCENE_DIR);
+		if (luceneDir.exists()) {
+			searcher = new FileSearcher();
+		}
 	}
 
 	public void index(final String dirToIndex, final String suffix) {
@@ -31,7 +47,7 @@ public class FileIndexer {
 
 		indexDirectory(new File(dirToIndex), suffix);
 
-		log.info("Indexed {} files in {} milli seconds.", iWriter.maxDoc(), System.currentTimeMillis() - now);
+		log.info("Indexed {} files in {} milli seconds.", writer.maxDoc(), System.currentTimeMillis() - now);
 	}
 
 	/**
@@ -60,18 +76,64 @@ public class FileIndexer {
 		index(f);
 	}
 
-	private void index(final File f) {
+	private void index(final File file) {
 		try {
-			log.info("Indexing file: {}", f.getCanonicalPath());
-			final Document doc = DocumentUtil.fileToLuceneDoc(f);
-			iWriter.addDocument(doc);
+			final Path paths = Paths.get(file.getCanonicalPath());
+			final BasicFileAttributes attr = Files.readAttributes(paths, BasicFileAttributes.class);
+
+			final String lastModified = DocumentUtil.getAttrVal(attr, FileProperties.MODIFIED);
+			final String path = file.getCanonicalPath();
+			final String name = file.getName();
+
+			/*
+			 * If a searcher is provided it means we need to use it to avoid if we already have this
+			 * file added with an identical timestamp.
+			 */
+			if (searcher != null) {
+				Document docFound = searcher.findByFileName(path, name);
+				if (docFound != null) {
+					/*
+					 * If our index has this document with same lastModified time, then return
+					 * because the index is up to date, and there's nothing we need to do
+					 */
+					if (lastModified.equals(docFound.get("lastModified"))) {
+						log.info("NO CHANGE. file: {}", file.getCanonicalPath());
+						return;
+					}
+					/*
+					 * If we found this doc, and it's out of date, we delete the old doc and re-add
+					 * below
+					 */
+					else {
+						log.info("REMOVING EXISTING. file: {}", file.getCanonicalPath());
+						//&&& This is not done yet.
+					}
+				}
+			}
+
+			final String created = DocumentUtil.getAttrVal(attr, FileProperties.CREATED);
+			final String size = String.valueOf(attr.size());
+			final String content = FileUtils.readFileToString(file);
+
+			final UserPrincipal owner = Files.getOwner(paths);
+			final String username = owner.getName();
+
+			Document newDoc = DocumentUtil.newLuceneDoc(content, path, name, username, lastModified, size, created, DocumentUtil.getDocType(file));
+
+			log.info("ADDED file: {}", file.getCanonicalPath());
+			writer.addDocument(newDoc);
+
 		}
-		catch (final IOException e) {
-			throw new RuntimeException(e);
+		catch (final Exception e) {
+			log.error("Failed indexing file", e);
 		}
 	}
 
 	public void close() {
+		if (searcher != null) {
+			searcher.close();
+			searcher = null;
+		}
 		closeIndexWriter();
 		closeFSDirectory();
 	}
@@ -80,13 +142,14 @@ public class FileIndexer {
 	 * close index writer
 	 */
 	private void closeIndexWriter() {
-		if (iWriter != null) {
-			log.info("Shutting down index writer...");
+		if (writer != null) {
+			log.info("Shutting down index writer");
 			try {
-				iWriter.close();
+				writer.close();
+				writer = null;
 			}
-			catch (final IOException e) {
-				throw new RuntimeException(e);
+			catch (final Exception e) {
+				log.error("Failed closing writer", e);
 			}
 		}
 	}
@@ -96,8 +159,9 @@ public class FileIndexer {
 	 */
 	private void closeFSDirectory() {
 		if (fsDir != null) {
-			log.info("closing FSDirectory...");
+			log.info("closing FSDirectory");
 			fsDir.close();
+			fsDir = null;
 		}
 	}
 }

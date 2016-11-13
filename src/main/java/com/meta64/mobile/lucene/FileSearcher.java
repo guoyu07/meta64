@@ -5,26 +5,24 @@ import java.io.IOException;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meta64.mobile.config.AppFilter;
-
 public class FileSearcher {
 	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
 
-	/** lucene file system directory */
 	private FSDirectory fsDir;
-
-	/** lucene directory reader */
-	private DirectoryReader iReader;
-
-	/** lucene index searcher */
+	private DirectoryReader reader;
 	private IndexSearcher searcher;
 
 	public FileSearcher() {
@@ -34,16 +32,32 @@ public class FileSearcher {
 	private void init() {
 		try {
 			fsDir = FSDirectory.open(new File(LuceneUtils.LUCENE_DIR));
-			iReader = DirectoryReader.open(fsDir);
+			reader = DirectoryReader.open(fsDir);
 		}
 		catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
-		searcher = new IndexSearcher(iReader);
+		searcher = new IndexSearcher(reader);
 	}
 
 	public void search(final String queryStr, final int maxHits) {
 		searchIndex(queryStr, maxHits);
+	}
+
+	public Document findByFileName(String filePath, String fileName) throws Exception {
+		BooleanQuery matchingQuery = new BooleanQuery();
+		matchingQuery.add(new TermQuery(new Term("filepath", filePath)), Occur.SHOULD);
+		matchingQuery.add(new TermQuery(new Term("filename", fileName)), Occur.SHOULD);
+
+		TopDocs topDocs = searcher.search(matchingQuery, 1);
+
+		if (topDocs.totalHits > 0) {
+			for (final ScoreDoc d : topDocs.scoreDocs) {
+				Document doc = searcher.doc(d.doc);
+				return doc;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -109,10 +123,10 @@ public class FileSearcher {
 	 * close lucene index reader
 	 */
 	private void closeIndexReader() {
-		if (iReader != null) {
+		if (reader != null) {
 			log.info("closing lucene index reader...");
 			try {
-				iReader.close();
+				reader.close();
 			}
 			catch (final IOException e) {
 				throw new RuntimeException(e);

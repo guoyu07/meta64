@@ -1,7 +1,6 @@
 package com.meta64.mobile.lucene;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,33 +15,12 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
 public class DocumentUtil {
-	/** date formatter */
 	private final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-	/**
-	 * Get file attributes and create lucene document.
-	 *
-	 */
-	public static Document fileToLuceneDoc(final File file) throws IOException {
-		final Path paths = Paths.get(file.getCanonicalPath());
-		final UserPrincipal owner = Files.getOwner(paths);
-		final String username = owner.getName();
-		final BasicFileAttributes attr = Files.readAttributes(paths, BasicFileAttributes.class);
-
-		final String lastModified = getAttrVal(attr, FileProperties.MODIFIED);
-		final String created = getAttrVal(attr, FileProperties.CREATED);
-		final String size = String.valueOf(attr.size());
-		final String content = FileUtils.readFileToString(file);
-		final String path = file.getCanonicalPath();
-		final String name = file.getName();
-
-		return newLuceneDoc(content, path, name, username, lastModified, size, created, getDocType(file));
-	}
 
 	/**
 	 * Create lucene document from file attributes
 	 */
-	private static Document newLuceneDoc(final String content, final String path, final String name, final String username, final String modified, final String size,
+	public static Document newLuceneDoc(final String content, final String path, final String name, final String username, final String modified, final String size,
 			final String created, final String docType) {
 		final Document doc = new Document();
 		doc.add(new Field("contents", content, TextField.TYPE_NOT_STORED));
@@ -60,7 +38,7 @@ public class DocumentUtil {
 	/**
 	 * Get date attributes
 	 */
-	private static String getAttrVal(final BasicFileAttributes attr, final FileProperties prop) {
+	public static String getAttrVal(final BasicFileAttributes attr, final FileProperties prop) {
 		switch (prop) {
 		case MODIFIED:
 			return DATE_FORMATTER.format((attr.lastModifiedTime().toMillis()));
@@ -74,7 +52,7 @@ public class DocumentUtil {
 	/**
 	 * Get document type
 	 */
-	private static String getDocType(final File f) {
+	public static String getDocType(final File f) {
 		final int start = f.getName().lastIndexOf(".");
 		return f.getName().substring(start + 1);
 	}

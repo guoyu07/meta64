@@ -85,7 +85,8 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Smart dynamic image sizing. Images are sized to look best on your device regardless of screen size or orientation.
 * Soft "Branding". Can rebrand portal by a properties file entry. Includes Search Engine Optimization text.
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
-* Solr Desktop Search (Find and open files on native filesystem)
+* Solr Remote Desktop Search (Connects to Solr Instances)
+* Lucene/Tika-based Local Desktop Search (search files on local filesystem)
 * Automatic Type Registration from CND file
 * RSS Reader with Podcast Player (implemented in HTML5)
 * For future planned features see file: **/docs/bugs-and-todos.md**

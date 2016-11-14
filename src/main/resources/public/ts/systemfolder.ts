@@ -42,6 +42,35 @@ namespace m64 {
             return ret;
         }
 
+        export let renderFileListNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+            let ret: string = "";
+
+            let searchResultProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
+            if (searchResultProp) {
+                let jcrContent = render.renderJsonFileSearchResultProperty(searchResultProp.value);
+
+                if (rowStyling) {
+                    ret += render.tag("div", {
+                        "class": "jcr-content"
+                    }, jcrContent);
+                } else {
+                    ret += render.tag("div", {
+                        "class": "jcr-root-content"
+                    },
+                        jcrContent);
+                }
+            }
+
+            return ret;
+        }
+
+        export let fileListPropOrdering = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propOrder: string[] = [//
+                "meta64:json"];
+
+            return props.orderProps(propOrder, properties);
+        }
+
         export let reindex = function(_uid: string) {
             let selNode: json.NodeInfo = meta64.getHighlightedNode();
             if (selNode) {
@@ -72,3 +101,6 @@ namespace m64 {
 
 m64.meta64.renderFunctionsByJcrType["meta64:systemfolder"] = m64.systemfolder.renderNode;
 m64.meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = m64.systemfolder.propOrdering;
+
+m64.meta64.renderFunctionsByJcrType["meta64:filelist"] = m64.systemfolder.renderFileListNode;
+m64.meta64.propOrderingFunctionsByJcrType["meta64:filelist"] = m64.systemfolder.fileListPropOrdering;

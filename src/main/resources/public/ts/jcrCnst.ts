@@ -21,7 +21,7 @@ namespace m64 {
         export let UUID: string = "jcr:uuid";
         export let LAST_MODIFIED: string = "jcr:lastModified";
         export let LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
-        export let JSON_FILE_SEARCH_RESULT: string = "jsonFileSearchResult";
+        export let JSON_FILE_SEARCH_RESULT: string = "meta64:json";
 
         export let DISABLE_INSERT: string = "disableInsert";
 

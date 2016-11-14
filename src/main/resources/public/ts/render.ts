@@ -183,26 +183,6 @@ namespace m64 {
                 let renderComplete: boolean = false;
 
                 /*
-                 * Special Rendering for Search Result
-                 */
-                let searchResultProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
-                if (searchResultProp) {
-                    let jcrContent = renderJsonFileSearchResultProperty(searchResultProp.value);
-                    renderComplete = true;
-
-                    if (rowStyling) {
-                        ret += tag("div", {
-                            "class": "jcr-content"
-                        }, jcrContent);
-                    } else {
-                        ret += tag("div", {
-                            "class": "jcr-root-content"
-                        },
-                            jcrContent);
-                    }
-                }
-
-                /*
                  * Special Rendering for Nodes that have a plugin-renderer
                  */
                 if (!renderComplete) {
@@ -337,13 +317,17 @@ namespace m64 {
                         "class": "systemFile",
                     }, entry.fileName);
 
-                    let localOpenLink = tag("a", {
+                    let localOpenLink = tag("paper-button", {
+                        "raised": "raised",
                         "onclick": "m64.meta64.openSystemFile('" + entry.fileName + "')"
-                    }, "Local Open")
+                    }, "Local Open");
 
-                    let downloadLink = tag("a", {
-                        "onclick": "m64.meta64.downloadSystemFile('" + entry.fileName + "')"
-                    }, "Download")
+                    let downloadLink = "";
+                    //haven't implemented download capability yet.
+                    // tag("paper-button", {
+                    //     "raised": "raised",
+                    //     "onclick": "m64.meta64.downloadSystemFile('" + entry.fileName + "')"
+                    // }, "Download")
 
                     let linksDiv = tag("div", {
                     }, localOpenLink + downloadLink);

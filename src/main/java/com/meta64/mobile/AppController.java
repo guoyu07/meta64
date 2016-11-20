@@ -643,7 +643,7 @@ public class AppController {
 	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) throws Exception {
 		logRequest("generateRSS", req);
 		GenerateRSSResponse res = new GenerateRSSResponse();
-		rssService.readFeeds();
+		rssService.readFeedsNow();
 		res.setSuccess(true);
 		checkHttpSession();
 		return res;

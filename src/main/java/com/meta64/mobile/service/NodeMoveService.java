@@ -45,6 +45,23 @@ public class NodeMoveService {
 	private RunAsJcrAdmin adminRunner;
 
 	/*
+	 * Ensures this node is the first child under its parent, moving it and does nothing if this
+	 * node already IS the first child.
+	 */
+	public void moveNodeToTop(Session session, Node node) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+
+		Node parentNode = node.getParent();
+		Node firstChild = JcrUtil.getFirstChild(session, parentNode);
+		if (firstChild.getIdentifier().equals(node.getIdentifier())) {
+			return;
+		}
+		setNodePosition(session, parentNode, node.getName(), firstChild.getName());
+	}
+
+	/*
 	 * Moves the the node to a new ordinal/position location (relative to parent)
 	 */
 	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res) throws Exception {
@@ -52,8 +69,16 @@ public class NodeMoveService {
 			session = ThreadLocals.getJcrSession();
 		}
 		String parentNodeId = req.getParentNodeId();
+		String nodeId = req.getNodeId();
+		String siblingId = req.getSiblingId();
 
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
+		setNodePosition(session, parentNode, nodeId, siblingId);
+
+		res.setSuccess(true);
+	}
+
+	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath) throws Exception {
 		String parentPath = parentNode.getPath() + "/";
 
 		/*
@@ -62,19 +87,17 @@ public class NodeMoveService {
 		 */
 		if (parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
 			adminRunner.run((Session adminSession) -> {
-				Node parentNode2 = JcrUtil.findNode(adminSession, parentNodeId);
+				Node parentNode2 = JcrUtil.findNode(adminSession, parentNode.getIdentifier());
 				JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());
-				parentNode2.orderBefore(req.getNodeId(), req.getSiblingId());
+				parentNode2.orderBefore(nodePath, siblingPath);
 				adminSession.save();
 			});
 		}
 		else {
 			JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
-			parentNode.orderBefore(req.getNodeId(), req.getSiblingId());
+			parentNode.orderBefore(nodePath, siblingPath);
 			session.save();
 		}
-
-		res.setSuccess(true);
 	}
 
 	/*

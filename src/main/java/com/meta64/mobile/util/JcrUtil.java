@@ -110,6 +110,12 @@ public class JcrUtil {
 		}
 	}
 
+	public static Node getFirstChild(Session session, Node parentNode) throws Exception {
+		NodeIterator nodeIter = parentNode.getNodes();
+		Node node = nodeIter.nextNode();
+		return node;	
+	}
+	
 	/*
 	 * Returns the node that is below this node in the siblings list. If parent node happens to
 	 * already be available you can pass it in, but if you pass a null parent instead that works too

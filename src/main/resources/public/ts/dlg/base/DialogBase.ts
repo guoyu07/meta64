@@ -13,6 +13,8 @@ namespace m64 {
      */
     export class DialogBase {
 
+        private horizCenterDlgContent: boolean = true;
+
         data: any;
         built: boolean;
         guid: string;
@@ -71,15 +73,51 @@ namespace m64 {
             Polymer.dom.flush(); // <---- is this needed ? todo-3
             Polymer.updateStyles();
 
-            /* todo-0: lookup paper-dialog-scrollable, for examples on how we can implement header and footer to build
-            a much better dialog. */
-            let content = this.build();
-            // render.tag("div", {
-            //     "class" : "main-dialog-content"
-            // },
-            // this.build());
 
-            util.setHtml(id, content);
+            if (this.horizCenterDlgContent) {
+
+                let content: string =
+                    render.tag("div", {
+                      //howto: example of how to center a div in another div. This div is the one being centered.
+                        "style" : "margin: 0 auto; width: 800px;"
+                    },
+                        this.build());
+                util.setHtml(id, content);
+
+                // let left = render.tag("div", {
+                //     "display": "table-column",
+                //     "style": "border: 1px solid black;"
+                // }, "left");
+                // let center = render.tag("div", {
+                //     "display": "table-column",
+                //     "style": "border: 1px solid black;"
+                // }, this.build());
+                // let right = render.tag("div", {
+                //     "display": "table-column",
+                //     "style": "border: 1px solid black;"
+                // }, "right");
+                //
+                // let row = render.tag("div", { "display": "table-row" }, left + center + right);
+                //
+                // let table: string = render.tag("div",
+                //     {
+                //         "display": "table",
+                //     }, row);
+                //
+                // util.setHtml(id, table);
+            }
+            else {
+                /* todo-0: lookup paper-dialog-scrollable, for examples on how we can implement header and footer to build
+                a much better dialog. */
+                let content = this.build();
+                // render.tag("div", {
+                //     "class" : "main-dialog-content"
+                // },
+                // this.build());
+                util.setHtml(id, content);
+            }
+
+
             this.built = true;
 
             this.init();

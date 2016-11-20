@@ -496,8 +496,8 @@ namespace m64 {
             let selNodeIsMine: boolean = highlightNode && (highlightNode.createdBy === userName || "admin" === userName);
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
             let homeNodeSelected: boolean = highlightNode && homeNodeId == highlightNode.id;
-            let importAllowed = isAdminUser || userPreferences.importAllowed;
-            let exportAllowed = isAdminUser || userPreferences.exportAllowed;
+            let importFeatureEnabled = isAdminUser || userPreferences.importAllowed;
+            let exportFeatureEnabled = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
             let numChildNodes: number = getNumChildNodes();
             let canMoveUp: boolean = highlightOrdinal > 0 && numChildNodes > 1;
@@ -510,8 +510,6 @@ namespace m64 {
 
             util.setEnablement("navLogoutButton", !isAnonUser);
             util.setEnablement("openSignupPgButton", isAnonUser);
-            util.setEnablement("openExportDlg", exportAllowed);
-            util.setEnablement("openImportDlg", importAllowed);
 
             let propsToggle: boolean = currentNode && !isAnonUser;
             util.setEnablement("propsToggleButton", propsToggle);
@@ -555,13 +553,14 @@ namespace m64 {
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
             util.setEnablement("createNodeButton", canCreateNode);
-
+            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || homeNodeId==highlightNode.id));
+            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || homeNodeId==highlightNode.id));
             util.setEnablement("adminMenu", isAdminUser);
 
             //VISIBILITY
 
-            util.setVisibility("openImportDlg", importAllowed && selNodeIsMine);
-            util.setVisibility("openExportDlg", exportAllowed && selNodeIsMine);
+            util.setVisibility("openImportDlg", importFeatureEnabled);
+            util.setVisibility("openExportDlg", exportFeatureEnabled);
             util.setVisibility("editModeButton", allowEditMode);
             util.setVisibility("upLevelButton", currentNode && nav.parentVisibleToUser());
             util.setVisibility("insertBookWarAndPeaceButton", isAdminUser || (user.isTestUserAccount() && selNodeIsMine));

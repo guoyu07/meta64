@@ -3,9 +3,11 @@ package com.meta64.mobile.rss;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.util.JcrUtil;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -20,6 +22,9 @@ import com.sun.syndication.feed.synd.SyndImage;
 @Component
 public class RssDbWriter {
 
+	@Autowired 
+	private NodeMoveService nodeMoveService;
+	
 	//
 	// private static ImageInfoSorter sorter = new ImageInfoSorter();
 	//
@@ -52,6 +57,8 @@ public class RssDbWriter {
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
+		//session.save();
+		nodeMoveService.moveNodeToTop(session, newNode);
 		JcrUtil.timestampNewNode(session, newNode);
 
 		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());

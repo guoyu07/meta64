@@ -49,7 +49,7 @@ public class LuceneService {
 		if (StringUtils.isEmpty(path)) {
 			throw new Exception("No path specified to be indexed.");
 		}
-		fileIndexer.index(path, "txt");
+		fileIndexer.index(path, null);
 	}
 
 	public void search(Session session, FileSearchRequest req, FileSearchResponse res) throws Exception {

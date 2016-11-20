@@ -44,8 +44,8 @@ import com.meta64.mobile.util.JcrUtil;
  */
 @Component
 public class RssService {
-	@Value("${profileName}")
-	private String profileName;
+	@Value("${enableRssDaemon}")
+	private String enableRssDaemon;
 
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
 
@@ -105,9 +105,14 @@ public class RssService {
 		}
 	}
 
-	@Scheduled(fixedDelay = 12 * DateUtil.HOUR_MILLIS)
+	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
-		if (processing || !"prod".equalsIgnoreCase(profileName)) return;
+		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
+		readFeedsNow();
+	}
+
+	public void readFeedsNow() throws Exception {
+		if (processing) return;
 
 		synchronized (processingLock) {
 			adminRunner.run((Session session) -> {

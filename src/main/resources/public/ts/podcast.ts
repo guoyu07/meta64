@@ -54,7 +54,7 @@ namespace m64 {
 
             if (imgUrl) {
                 ret += render.tag("img", {
-                    "style": "max-width: 300px;",
+                    "style": "max-width: 200px;",
                     "src": imgUrl.value
                 }, null, false);
             }

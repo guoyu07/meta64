@@ -9,8 +9,8 @@ The **meta64.com** website is currently geared towards the web developer audienc
 Beta version of an RSS reader and Podcast player!
 
 ## Technology Stack
-* Web App: Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
-* Server: Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb, Tomcat Embedded
+* Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
+* Server (Back End): Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb or RDB, Tomcat Embedded
 
 ## Links
 [GitHub Main Page](https://github.com/Clay-Ferguson/meta64)   
@@ -85,10 +85,13 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Smart dynamic image sizing. Images are sized to look best on your device regardless of screen size or orientation.
 * Soft "Branding". Can rebrand portal by a properties file entry. Includes Search Engine Optimization text.
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
-* Solr Desktop Search (Find and open files on native filesystem)
+* Solr Remote Desktop Search (Connects to Solr Instances)
+* Lucene/Tika-based Local Desktop Search (search files on local filesystem)
 * Automatic Type Registration from CND file
 * RSS Reader with Podcast Player (implemented in HTML5)
 * For future planned features see file: **/docs/bugs-and-todos.md**
+* Supports either MongoDB or an RDBMS as backing store (provided by Jackrabbit/Oak)
+* Can run with Derby embedded DB for completely self-contained installation.
 
 ## Technology Stack and APIs
 
@@ -98,6 +101,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * JSON-Ajax for Server Communication
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)
+* RDBMS Support (Derby is pre-configured in DEV environment)
 * Apache Jackrabbit Oak, for JCR interface (https://jackrabbit.apache.org/oak/)
 * Spring MVC, SpringBoot (http://projects.spring.io/spring-boot/)
 * App is "Mobile First", meaning a primary objective is to run well on mobile

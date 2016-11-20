@@ -32,7 +32,7 @@ public class FileIndexer {
 
 	private IndexWriter writer;
 	private FSDirectory fsDir;
-	
+
 	/** lucene directory */
 	@Value("${lucene.index.dir}")
 	private String luceneDir;
@@ -40,25 +40,26 @@ public class FileIndexer {
 	/* This searcher is used for searching to avoid duplicates before each insert */
 	@Autowired
 	private FileSearcher searcher;
-	
+
 	private boolean initialized = false;
 
 	public void index(final String dirToIndex, final String suffix) throws Exception {
 		init();
 		final long now = System.currentTimeMillis();
 
+		log.info("Indexing directory: " + dirToIndex);
 		indexDirectory(new File(dirToIndex), suffix);
 
 		log.info("Indexing completed in {} milliseconds.", System.currentTimeMillis() - now);
 	}
-	
+
 	private void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
 		if (StringUtils.isEmpty(luceneDir)) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
-		
+
 		fsDir = FSDirectory.open(new File(luceneDir));
 		writer = new IndexWriter(fsDir, FileSearcher.config);
 	}
@@ -82,7 +83,7 @@ public class FileIndexer {
 	 * Index a file by creating a Document and adding fields
 	 */
 	private void indexFile(final File f, final String suffix) {
-		if (f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists() || (suffix != null && !f.getName().endsWith(suffix))) {
+		if (f.length() > 2 * 1024 * 1024 || f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists() || (suffix != null && !f.getName().endsWith(suffix))) {
 			return;
 		}
 
@@ -134,7 +135,7 @@ public class FileIndexer {
 
 			Document newDoc = newLuceneDoc(content, path, name, username, lastModified, size, created, getDocType(file));
 			writer.addDocument(newDoc);
-			
+
 			if (deletedExisting) {
 				log.info("UPDATED file: {}", file.getCanonicalPath());
 			}
@@ -146,7 +147,7 @@ public class FileIndexer {
 			log.error("Failed indexing file", e);
 		}
 	}
-	
+
 	/**
 	 * Get date attributes
 	 */
@@ -166,6 +167,7 @@ public class FileIndexer {
 	 */
 	public static String getDocType(final File f) {
 		final int start = f.getName().lastIndexOf(".");
+		if (start == -1) return "";
 		return f.getName().substring(start + 1);
 	}
 
@@ -185,7 +187,7 @@ public class FileIndexer {
 
 		return doc;
 	}
-	
+
 	@PreDestroy
 	public void close() {
 		closeSearcher();

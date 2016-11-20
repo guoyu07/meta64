@@ -30,6 +30,9 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.model.FileSearchResult;
 
+/* 
+ * Take another look at synchornized blocks in this code. I'm troubleshooting and putting in temporary sync code right now.
+ */
 @Component
 public class FileSearcher {
 	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
@@ -51,7 +54,7 @@ public class FileSearcher {
 	
 	public boolean initialized = false;
 
-	private void init() throws Exception {
+	private synchronized void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
 		
@@ -62,9 +65,12 @@ public class FileSearcher {
 		fsDir = FSDirectory.open(new File(luceneDir));
 		reader = DirectoryReader.open(fsDir);
 		searcher = new IndexSearcher(reader);
+		if (searcher!=null) {
+			log.debug("Searcher is created ok.");
+		}
 	}
 
-	public Document findByFileName(String filePath) throws Exception {
+	public synchronized Document findByFileName(String filePath) throws Exception {
 		init();
 		BooleanQuery matchingQuery = new BooleanQuery();
 
@@ -84,7 +90,7 @@ public class FileSearcher {
 	/**
 	 * Search the index for given query and return only specified hits.
 	 */
-	public List<FileSearchResult> search(final String queryStr, final int maxHits) throws Exception {
+	public synchronized List<FileSearchResult> search(final String queryStr, final int maxHits) throws Exception {
 		init();
 		final long now = System.currentTimeMillis();
 
@@ -108,7 +114,7 @@ public class FileSearcher {
 
 
 	@PreDestroy
-	public void close() {
+	public synchronized void close() {
 		closeIndexReader();
 		closeFSDirectory();
 	}

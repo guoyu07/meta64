@@ -43,7 +43,7 @@ namespace m64 {
 
             /* todo: need something better for this when supporting mobile */
             var width = 800; //window.innerWidth * 0.6;
-            var height = 400; //window.innerHeight * 0.4;
+            var height = 600; //window.innerHeight * 0.4;
 
             var internalMainContent = "";
 

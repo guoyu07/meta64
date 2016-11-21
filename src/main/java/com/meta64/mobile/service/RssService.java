@@ -28,6 +28,7 @@ import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.rss.RssReader;
 import com.meta64.mobile.rss.model.PlayerInfo;
+import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.DateUtil;
@@ -208,6 +209,10 @@ public class RssService {
 	// Work in progress -- this is not yet complete.
 	// uncomment annotation to activate this code.
 	// @Scheduled(fixedDelay = 10 * 1000)
+	//
+	// NOTE: By not having this complete all it means is that when we restart the server all
+	// information is lost
+	// that would allow a user to resume listening to a podcast right where they left off.
 	public void run() {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 
@@ -220,6 +225,18 @@ public class RssService {
 		}
 		catch (Exception e) {
 			log.debug("Failed processing mail.", e);
+		}
+	}
+
+	public void parseTest(String url) {
+		try {
+			RssReader rssReader = (RssReader) SpringContextUtil.getBean(RssReader.class);
+			// RssFeedWrapper wFeed =
+			rssReader.readFeed(url);
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

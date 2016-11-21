@@ -8,6 +8,10 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +39,7 @@ import com.sun.syndication.io.XmlReader;
 public class RssReader {
 	private static final Logger log = LoggerFactory.getLogger(RssReader.class);
 
-	private static final String FAKE_USER_AGENT = "Mozilla/5.0";
+	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36";
 	private static final int maxFileSize = 10 * 1024 * 1024;
 	public static final int MAX_RSS_ENTRIES = 10;
 
@@ -62,8 +66,73 @@ public class RssReader {
 		}
 	}
 
-	private RssFeedWrapper readFeed(Node feedNode) throws Exception {
+	public RssFeedWrapper readFeed(Node feedNode) throws Exception {
 		String feedUrl = JcrUtil.safeGetStringProp(feedNode, JcrProp.RSS_FEED_SRC);
+		return readFeed(feedUrl);
+	}
+
+	public RssFeedWrapper readFeed(String feedUrl) throws Exception {
+		log.debug("processing RSS url: " + feedUrl);
+
+		XmlReader reader = null;
+		RssFeedWrapper wFeed = null;
+		InputStream is = null;
+
+		try {
+			/* TODO-0: HttpClient is better than URLConnection, so I need to also look for other places in the code (like image downloading) 
+			 * where I'm streaming from arbitrary internet URLs and change them over to HttpClient.
+			 */
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(feedUrl);
+			request.addHeader("User-Agent", FAKE_USER_AGENT);
+			HttpResponse response = client.execute(request);
+
+			log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
+
+			is = response.getEntity().getContent();
+			reader = new XmlReader(is);
+
+			SyndFeed feed = new SyndFeedInput().build(reader);
+			wFeed = new RssFeedWrapper(feed, feedUrl);
+			int entryCounter = 0;
+
+			for (Object e : feed.getEntries()) {
+				SyndEntry entry = (SyndEntry) e;
+
+				log.debug("RSS Entry in Feed: " + entry.getLink());
+				wFeed.getEntryList().add(new RssEntryWrapper(entry));
+
+				if (++entryCounter >= MAX_RSS_ENTRIES) break;
+			}
+		}
+		catch (Exception e) {
+			log.error("*** ERROR reading feed: " + feedUrl, e);
+
+			/*
+			 * It is by design that we don't rethrow this exception, because if a feed fails we
+			 * return null, and let the system continue processing the rest of the feeds.
+			 */
+			return null;
+		}
+		finally {
+			if (reader != null) {
+				reader.close();
+			}
+
+			if (is != null) {
+				is.close();
+				is = null;
+			}
+		}
+		return wFeed;
+	}
+
+	/* This method is no longer being used. This was failing on several RSS feeds, and I never figured out why, but in the process
+	 * of researching it I decided using Apache HttpClient could be better anyway, and by the time I got HttpClient in place it started
+	 * working on all Feeds, BUT it may have been the addition of the longer FAKE_USER_AGENT that was the real fix. I don't know, but
+	 * I do consider this method dead and will eventually delete it.
+	 */
+	public RssFeedWrapper readFeed_original(String feedUrl) throws Exception {
 		log.debug("processing RSS url: " + feedUrl);
 
 		URL url = new URL(feedUrl);
@@ -80,7 +149,12 @@ public class RssReader {
 			is = httpcon.getInputStream();
 			uis = new LimitedInputStreamEx(is, maxFileSize);
 
+			// String content = IOUtils.toString(uis, "UTF-8");
+			// log.debug("content: "+content);
+
 			reader = new XmlReader(uis);
+			// reader = new XmlReader(httpcon);
+
 			SyndFeed feed = new SyndFeedInput().build(reader);
 			wFeed = new RssFeedWrapper(feed, feedUrl);
 			int entryCounter = 0;
@@ -96,9 +170,10 @@ public class RssReader {
 		}
 		catch (Exception e) {
 			log.error("*** ERROR reading feed: " + feedUrl, e);
-			
-			/* It is by design that we don't rethrow this exception, because if a feed fails we return null, and let
-			 * the system continue processing the rest of the feeds.
+
+			/*
+			 * It is by design that we don't rethrow this exception, because if a feed fails we
+			 * return null, and let the system continue processing the rest of the feeds.
 			 */
 			return null;
 		}

@@ -151,26 +151,35 @@ public class RssService {
 		return entry;
 	}
 
-	public void init(Session session) throws Exception {
+	private void init(Session session) throws Exception {
 		rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
 		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "#RSS Feeds");
 		AccessControlUtil.makeNodePublic(session, feedsRootNode);
 		/* todo-1: not sure if I need disable_insert here or not */
 		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
-		cacheCurrentFeedNodes();
+
+		feedNodes.clear();
+		scanForFeedNodes(feedsRootNode);
 	}
 
-	private void cacheCurrentFeedNodes() throws Exception {
-		feedNodes.clear();
+	/*
+	 * NOTE: We use a simple recursion algorithm here, but it would be more efficient to actually do
+	 * a query for the rssfeed type itself, and just process the results of the query. Leaving that
+	 * as a future enhancement (todo-1)
+	 */
+	private void scanForFeedNodes(Node node) throws Exception {
 
-		NodeIterator nodeIter = feedsRootNode.getNodes();
+		if (node.getPrimaryNodeType().getName().equals("meta64:rssfeed")) {
+			feedNodes.add(node);
+			cacheFeedItems(node);
+			return;
+		}
+
+		NodeIterator nodeIter = node.getNodes();
 		try {
 			while (true) {
-				Node feedNode = nodeIter.nextNode();
-				if (!feedNode.getPrimaryNodeType().getName().equals("meta64:rssfeed")) continue;
-
-				feedNodes.add(feedNode);
-				cacheFeedItems(feedNode);
+				Node nextNode = nodeIter.nextNode();
+				scanForFeedNodes(nextNode);
 			}
 		}
 		catch (NoSuchElementException ex) {

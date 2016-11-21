@@ -51,11 +51,13 @@ public class RssReader {
 	public void run(Session session, List<Node> feedNodes) throws Exception {
 		for (Node feedNode : feedNodes) {
 			RssFeedWrapper wFeed = readFeed(feedNode);
-			try {
-				writeFeedToDb(session, wFeed, feedNode);
-			}
-			catch (Exception e) {
-				log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
+			if (wFeed != null) {
+				try {
+					writeFeedToDb(session, wFeed, feedNode);
+				}
+				catch (Exception e) {
+					log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
+				}
 			}
 		}
 	}
@@ -70,15 +72,15 @@ public class RssReader {
 		InputStream uis = null;
 		InputStream is = null;
 		HttpURLConnection httpcon = null;
-		
+
 		try {
 			httpcon = (HttpURLConnection) url.openConnection();
 			httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
 			httpcon.connect();
 			is = httpcon.getInputStream();
 			uis = new LimitedInputStreamEx(is, maxFileSize);
-			
-			reader = new XmlReader(uis); 
+
+			reader = new XmlReader(uis);
 			SyndFeed feed = new SyndFeedInput().build(reader);
 			wFeed = new RssFeedWrapper(feed, feedUrl);
 			int entryCounter = 0;
@@ -94,18 +96,22 @@ public class RssReader {
 		}
 		catch (Exception e) {
 			log.error("*** ERROR reading feed: " + feedUrl, e);
-			throw e;
+			
+			/* It is by design that we don't rethrow this exception, because if a feed fails we return null, and let
+			 * the system continue processing the rest of the feeds.
+			 */
+			return null;
 		}
 		finally {
 			if (reader != null) {
 				reader.close();
 			}
-			
+
 			if (uis != null) {
 				uis.close();
 				uis = null;
 			}
-			
+
 			if (is != null) {
 				is.close();
 				is = null;

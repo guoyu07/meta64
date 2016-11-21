@@ -1,6 +1,8 @@
 package com.meta64.mobile.rss;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -71,6 +73,26 @@ public class RssReader {
 		return readFeed(feedUrl);
 	}
 
+	public void readUrl(String url) throws Exception {
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url);
+
+		// add request header
+		request.addHeader("User-Agent", FAKE_USER_AGENT);
+		HttpResponse response = client.execute(request);
+
+		log.debug("RawRead of " + url + " -> Response Code : " + response.getStatusLine().getStatusCode());
+
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+		StringBuilder result = new StringBuilder();
+		String line = null;
+		while ((line = rd.readLine()) != null) {
+			result.append(line);
+		}
+		log.debug("CONTENT: "+result.toString());
+	}
+
 	public RssFeedWrapper readFeed(String feedUrl) throws Exception {
 		log.debug("processing RSS url: " + feedUrl);
 
@@ -79,8 +101,10 @@ public class RssReader {
 		InputStream is = null;
 
 		try {
-			/* TODO-0: HttpClient is better than URLConnection, so I need to also look for other places in the code (like image downloading) 
-			 * where I'm streaming from arbitrary internet URLs and change them over to HttpClient.
+			/*
+			 * TODO-0: HttpClient is better than URLConnection, so I need to also look for other
+			 * places in the code (like image downloading) where I'm streaming from arbitrary
+			 * internet URLs and change them over to HttpClient.
 			 */
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(feedUrl);
@@ -105,8 +129,12 @@ public class RssReader {
 				if (++entryCounter >= MAX_RSS_ENTRIES) break;
 			}
 		}
+		//Still haven't figured out why some RSS feeds result in this error.
+		//javax.net.ssl.SSLException: java.lang.RuntimeException: Unexpected error: java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be non-empty
 		catch (Exception e) {
 			log.error("*** ERROR reading feed: " + feedUrl, e);
+			//log.debug("Calling readUrl to double check streamability.");
+			//readUrl(feedUrl);
 
 			/*
 			 * It is by design that we don't rethrow this exception, because if a feed fails we
@@ -127,10 +155,12 @@ public class RssReader {
 		return wFeed;
 	}
 
-	/* This method is no longer being used. This was failing on several RSS feeds, and I never figured out why, but in the process
-	 * of researching it I decided using Apache HttpClient could be better anyway, and by the time I got HttpClient in place it started
-	 * working on all Feeds, BUT it may have been the addition of the longer FAKE_USER_AGENT that was the real fix. I don't know, but
-	 * I do consider this method dead and will eventually delete it.
+	/*
+	 * This method is no longer being used. This was failing on several RSS feeds, and I never
+	 * figured out why, but in the process of researching it I decided using Apache HttpClient could
+	 * be better anyway, and by the time I got HttpClient in place it started working on all Feeds,
+	 * BUT it may have been the addition of the longer FAKE_USER_AGENT that was the real fix. I
+	 * don't know, but I do consider this method dead and will eventually delete it.
 	 */
 	public RssFeedWrapper readFeed_original(String feedUrl) throws Exception {
 		log.debug("processing RSS url: " + feedUrl);

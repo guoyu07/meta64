@@ -23,8 +23,8 @@ public class SpringContextUtil implements ApplicationContextAware {
 	@Autowired
 	private OakRepository oakRepository;
 	
-//	@Autowired
-//	private RssService rssService;
+	@Autowired
+	private RssService rssService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -33,7 +33,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 		try {
 			oakRepository.init();
-			//rssService.parseTest("http://www.buzzfeed.com/tech.xml");
+			rssService.parseTest("https://twit.tv/node/feed");
 		}
 		catch (Exception e) {
 			log.error("application startup failed.");

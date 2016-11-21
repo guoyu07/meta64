@@ -231,8 +231,7 @@ public class RssService {
 	public void parseTest(String url) {
 		try {
 			RssReader rssReader = (RssReader) SpringContextUtil.getBean(RssReader.class);
-			// RssFeedWrapper wFeed =
-			rssReader.readFeed(url);
+			rssReader.readUrl(url);
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block

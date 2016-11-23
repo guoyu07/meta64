@@ -3,6 +3,7 @@ package com.meta64.mobile.rss;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,6 @@ public class RssDbWriter {
 	 * returns the Node of the new feed node created
 	 */
 	public void updateFeedNode(Session session, SyndFeed feed, Node feedNode) throws Exception {
-
 		feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
 		feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
 		feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
@@ -57,14 +57,21 @@ public class RssDbWriter {
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
-		//session.save();
-		nodeMoveService.moveNodeToTop(session, newNode);
+		nodeMoveService.moveNodeToTop(session, newNode, false, false);
 		JcrUtil.timestampNewNode(session, newNode);
 
+		if (StringUtils.isEmpty(entry.getTitle())) {
+			throw new Exception("SyndEntry.title is empty.");
+		}
+		
 		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
 
 		if (entry.getDescription() != null) {
 			String desc = entry.getDescription().getValue();
+			if (StringUtils.isEmpty(desc)) {
+				throw new Exception("SyndEntry.desc is empty.");
+			}
+			
 			desc = desc.replaceAll("[^\\p{ASCII}]", "");
 			newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
 		}

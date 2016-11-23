@@ -33,6 +33,7 @@ import com.meta64.mobile.util.ThreadLocals;
  * other technology in the world in it's power.
  * 
  * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev- should-know/
+ * http://docs.jboss.org/modeshape/0.7/manuals/reference/html/jcr-query-and-search.html
  */
 @Component
 public class NodeSearchService {
@@ -123,15 +124,15 @@ public class NodeSearchService {
 			whereCount++;
 
 			if (useContains && useLike) {
-				throw new Exception("oops. Like + Contains.");
+				throw new Exception("oops. Like + Contains. Use one or the other, not both.");
 			}
 
 			/*
-			 * WARNING: BREAKS LUCENE. DOESN'T WORK. Only LIKE works in lucene.
+			 * WARNING: BREAKS LUCENE. CONTAINS DOESN'T WORK with lucene. Only LIKE works in lucene.
 			 */
 			if (useContains) {
 				queryStr.append("contains(t.[");
-				queryStr.append(req.getSearchProp()); // JcrProp.CONTENT);
+				queryStr.append(req.getSearchProp()); 
 				queryStr.append("], '");
 				queryStr.append(escapeQueryString(searchText));
 				queryStr.append("')");
@@ -145,7 +146,7 @@ public class NodeSearchService {
 				}
 				else {
 					queryStr.append("t.[");
-					queryStr.append(req.getSearchProp()); // JcrProp.CONTENT);
+					queryStr.append(req.getSearchProp()); 
 					queryStr.append("]");
 				}
 
@@ -157,8 +158,8 @@ public class NodeSearchService {
 
 		if (!StringUtils.isEmpty(req.getSortField())) {
 			queryStr.append(" ORDER BY [");
-			queryStr.append(req.getSortField()); // JcrProp.LAST_MODIFIED);
-			queryStr.append("] " + req.getSortDir()); // DESC
+			queryStr.append(req.getSortField()); 
+			queryStr.append("] " + req.getSortDir()); 
 		}
 
 		Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);

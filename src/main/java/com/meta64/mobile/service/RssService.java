@@ -11,6 +11,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.rss.RssReader;
 import com.meta64.mobile.rss.model.PlayerInfo;
-import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.DateUtil;
@@ -160,7 +160,10 @@ public class RssService {
 		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
 
 		feedNodes.clear();
-		scanForFeedNodes(feedsRootNode);
+		feedItemsByLink.clear();
+		scanForFeedNodes(session, feedsRootNode);
+		
+		session.save();
 	}
 
 	/*
@@ -168,7 +171,7 @@ public class RssService {
 	 * a query for the rssfeed type itself, and just process the results of the query. Leaving that
 	 * as a future enhancement (todo-1)
 	 */
-	private void scanForFeedNodes(Node node) throws Exception {
+	private void scanForFeedNodes(Session session, Node node) throws Exception {
 
 		if (node.getPrimaryNodeType().getName().equals("meta64:rssfeed")) {
 			feedNodes.add(node);
@@ -180,7 +183,7 @@ public class RssService {
 		try {
 			while (true) {
 				Node nextNode = nodeIter.nextNode();
-				scanForFeedNodes(nextNode);
+				scanForFeedNodes(session, nextNode);
 			}
 		}
 		catch (NoSuchElementException ex) {
@@ -193,9 +196,9 @@ public class RssService {
 		NodeIterator nodeIter = feedNode.getNodes();
 		try {
 			while (true) {
-				Node itemNode = nodeIter.nextNode();
+				Node itemNode = nodeIter.nextNode();				
 				String linkProp = JcrUtil.safeGetStringProp(itemNode, JcrProp.RSS_ITEM_LINK);
-				if (linkProp != null) {
+				if (!StringUtils.isEmpty(linkProp)) {
 					log.debug("CACHING ENTRY: link=" + linkProp);
 					feedItemsByLink.put(linkProp, itemNode);
 				}

@@ -48,7 +48,7 @@ public class NodeMoveService {
 	 * Ensures this node is the first child under its parent, moving it and does nothing if this
 	 * node already IS the first child.
 	 */
-	public void moveNodeToTop(Session session, Node node) throws Exception {
+	public void moveNodeToTop(Session session, Node node, boolean immediateSave, boolean isSessionThread) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -58,7 +58,7 @@ public class NodeMoveService {
 		if (firstChild.getIdentifier().equals(node.getIdentifier())) {
 			return;
 		}
-		setNodePosition(session, parentNode, node.getName(), firstChild.getName());
+		setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread);
 	}
 
 	/*
@@ -73,30 +73,34 @@ public class NodeMoveService {
 		String siblingId = req.getSiblingId();
 
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
-		setNodePosition(session, parentNode, nodeId, siblingId);
+		setNodePosition(session, parentNode, nodeId, siblingId, true, true);
 
 		res.setSuccess(true);
 	}
 
-	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath) throws Exception {
+	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread) throws Exception {
 		String parentPath = parentNode.getPath() + "/";
 
 		/*
 		 * if we are moving nodes around on the root, the root belongs to admin and needs special
 		 * access (adminRunner)
 		 */
-		if (parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+		if (isSessionThread && parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
 			adminRunner.run((Session adminSession) -> {
 				Node parentNode2 = JcrUtil.findNode(adminSession, parentNode.getIdentifier());
 				JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());
 				parentNode2.orderBefore(nodePath, siblingPath);
-				adminSession.save();
+				if (immediateSave) {
+					adminSession.save();
+				}
 			});
 		}
 		else {
 			JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
 			parentNode.orderBefore(nodePath, siblingPath);
-			session.save();
+			if (immediateSave) {
+				session.save();
+			}
 		}
 	}
 

@@ -127,12 +127,15 @@ public class NodeSearchService {
 				throw new Exception("oops. Like + Contains. Use one or the other, not both.");
 			}
 
+			//For now the general search can just be made to search all properties, and so we are ignoring searchProp
+			String searchProp = "*"; //req.getSearchProp()
+			
 			/*
 			 * WARNING: BREAKS LUCENE. CONTAINS DOESN'T WORK with lucene. Only LIKE works in lucene.
 			 */
 			if (useContains) {
 				queryStr.append("contains(t.[");
-				queryStr.append(req.getSearchProp()); 
+				queryStr.append(searchProp); 
 				queryStr.append("], '");
 				queryStr.append(escapeQueryString(searchText));
 				queryStr.append("')");
@@ -146,7 +149,7 @@ public class NodeSearchService {
 				}
 				else {
 					queryStr.append("t.[");
-					queryStr.append(req.getSearchProp()); 
+					queryStr.append(searchProp); 
 					queryStr.append("]");
 				}
 

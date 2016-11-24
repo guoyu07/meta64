@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 /*
  * This type of index configuration is very good for "ORDER BY" sorting or also for exact match 
- * queries that lookup an exact value.
+ * queries that lookup an exact value. 
+ * 
+ * https://jackrabbit.apache.org/oak/docs/query/lucene.html
  */
 class LuceneSortInitializer implements RepositoryInitializer {
 
@@ -27,8 +29,12 @@ class LuceneSortInitializer implements RepositoryInitializer {
 		this.propertyName = propertyName;
 	}
 
+	//<param name="enableConsistencyCheck" value="true"/>
+	//<param name="forceConsistencyCheck" value="true"/>
+	
 	@Override
 	public void initialize(NodeBuilder builder) {
+		// I think it's possible to comment out this 'if' condition, to cause an index rebuild but I'm really not sure.
 		if (builder.hasChildNode(IndexConstants.INDEX_DEFINITIONS_NAME) && //
 				builder.getChildNode(IndexConstants.INDEX_DEFINITIONS_NAME).hasChildNode(name)) {
 			log.debug("Index node already exists: " + IndexConstants.INDEX_DEFINITIONS_NAME + "/" + name + " so it will not be created.");
@@ -48,7 +54,7 @@ class LuceneSortInitializer implements RepositoryInitializer {
 				 * Using ASYNC appears to completely disable the index. Not sure what else I need to
 				 * do here or how badly this will impact performance, to have 'synchronous'.
 				 */
-				// .setProperty(IndexConstants.ASYNC_PROPERTY_NAME, "async") //
+				.setProperty(IndexConstants.ASYNC_PROPERTY_NAME, "async") //
 
 				// .setProperty(LuceneIndexConstants.TEST_MODE, true)
 				.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true)//
@@ -61,14 +67,14 @@ class LuceneSortInitializer implements RepositoryInitializer {
 		// Type.NAMES);
 
 		NodeBuilder props = rulesNode//
-				.child("jcr:content")// nt:base
+				.child("jcr:base")// nt:base
 				.child(LuceneIndexConstants.PROP_NODE);
 
 		// props.setProperty(TreeConstants.OAK_CHILD_ORDER,
 		// ImmutableList.of("nt:unstructured"),
 		// Type.NAMES);
 
-		enableFulltextIndex(props.child("allProps"));
+		//enableFulltextIndex(props.child("allProps"));
 	}
 
 	private void enableFulltextIndex(NodeBuilder propNode) {

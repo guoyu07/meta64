@@ -273,12 +273,15 @@ public class OakRepository {
 					 */
 					indexProvider = new LuceneIndexProvider();
 					indexProvider = indexProvider.with(getNodeAggregator());
+					
 					jcr = jcr.with(new LuceneFullTextInitializer("contentIndex", "jcr:content"));
 					jcr = jcr.with(new LuceneFullTextInitializer("tagsIndex", "tags"));
 
+					jcr = jcr.with(new LuceneSortInitializer("createdIndex", "jcr:created"));
 					jcr = jcr.with(new LuceneSortInitializer("lastModifiedIndex", "jcr:lastModified"));
 					jcr = jcr.with(new LuceneSortInitializer("codeIndex", JcrProp.CODE));
 					jcr = jcr.with(new LuceneSortInitializer("pwdResetAuthIndex", JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE));
+					
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
 					jcr = jcr.with((Observer) indexProvider);
 					jcr = jcr.with(new LuceneIndexEditorProvider());

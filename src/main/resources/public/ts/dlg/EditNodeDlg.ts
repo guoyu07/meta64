@@ -59,7 +59,9 @@ namespace m64 {
             }) + render.tag("div", {
                 id: this.id("propertyEditFieldContainer"),
                 // todo-0: create CSS class for this.
-                style: "padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
+                style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
+                class : "vertical-layout-row"
+                //"padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
             }, "Loading...");
 
             return header + internalMainContent + buttonBar;

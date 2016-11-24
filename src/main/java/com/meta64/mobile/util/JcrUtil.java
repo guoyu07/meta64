@@ -113,9 +113,9 @@ public class JcrUtil {
 	public static Node getFirstChild(Session session, Node parentNode) throws Exception {
 		NodeIterator nodeIter = parentNode.getNodes();
 		Node node = nodeIter.nextNode();
-		return node;	
+		return node;
 	}
-	
+
 	/*
 	 * Returns the node that is below this node in the siblings list. If parent node happens to
 	 * already be available you can pass it in, but if you pass a null parent instead that works too
@@ -277,7 +277,7 @@ public class JcrUtil {
 		}
 
 		// log.debug("Looking up node by path: "+(parentPath+name));
-		Node node = JcrUtil.getNodeByPath(session, parentPath + name);
+		Node node = JcrUtil.getNodeByPath(session, fixPath(parentPath + name));
 		if (node != null) {
 			return node;
 		}
@@ -295,8 +295,9 @@ public class JcrUtil {
 		boolean nodesCreated = false;
 		for (String nameToken : nameTokens) {
 
-			log.debug("ensuring node exists: parentPath=" + parentPath + "/" + nameToken);
-			node = JcrUtil.getNodeByPath(session, parentPath + nameToken);
+			String path = fixPath(parentPath + nameToken);
+			log.debug("ensuring node exists: parentPath=" + path);
+			node = JcrUtil.getNodeByPath(session, path);
 
 			/*
 			 * if this node is found continue on, using it as current parent to build on
@@ -326,6 +327,10 @@ public class JcrUtil {
 			session.save();
 		}
 		return parent;
+	}
+
+	public static String fixPath(String path) {
+		return path.replace("//", "/");
 	}
 
 	public static Node getNodeByPath(Session session, String path) {

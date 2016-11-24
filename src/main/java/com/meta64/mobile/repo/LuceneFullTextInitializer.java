@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 /*
  * Creates an index on propertyName thats able to do "Full Text" searching.
+ * 
+ * todo-1: research this and see if my approach to indexing is correct:
+ * https://svn.apache.org/repos/asf/jackrabbit/oak/trunk/oak-lucene/src/test/java/org/apache/jackrabbit/oak/jcr/LuceneOakRepositoryStub.java
  */
 class LuceneFullTextInitializer implements RepositoryInitializer {
 	private static final Logger log = LoggerFactory.getLogger(LuceneFullTextInitializer.class);

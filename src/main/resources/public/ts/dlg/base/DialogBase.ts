@@ -79,7 +79,9 @@ namespace m64 {
                 let content: string =
                     render.tag("div", {
                       //howto: example of how to center a div in another div. This div is the one being centered.
-                        "style" : "margin: 0 auto; width: 800px;"
+                      //The trick to getting the layout working was NOT setting this width to 100% even though somehow
+                      //the layout does result in it being 100% i think.
+                        "style" : "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
                     },
                         this.build());
                 util.setHtml(id, content);
@@ -327,7 +329,7 @@ namespace m64 {
 
         makeHeader = (text: string, id?: string, centered?: boolean): string => {
             var attrs = {
-                "class": "dialog-header " + (centered ? "horizontal center-justified layout" : "")
+                "class": /*"dialog-header " +*/ (centered ? "horizontal center-justified layout" : "")+" dialog-header"
             };
 
             //add id if one was provided
@@ -335,7 +337,8 @@ namespace m64 {
                 attrs["id"] = this.id(id);
             }
 
-            return render.tag("h2", attrs, text);
+            /* making this H2 tag causes google to drag in a bunch of its own styles and are hard to override */
+            return render.tag("div", attrs, text);
         }
 
         focus = (id: string): void => {

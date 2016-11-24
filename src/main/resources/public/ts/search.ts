@@ -97,7 +97,7 @@ namespace m64 {
                 "searchText": "",
                 "sortDir": "DESC",
                 "sortField": jcrCnst.LAST_MODIFIED,
-                "searchProp": jcrCnst.CONTENT
+                "searchProp": null
             }, timelineResponse);
         }
 
@@ -113,7 +113,7 @@ namespace m64 {
                 "searchText": "",
                 "sortDir": "DESC",
                 "sortField": jcrCnst.CREATED,
-                "searchProp": jcrCnst.CONTENT
+                "searchProp": null
             }, timelineResponse);
         }
 

@@ -8,6 +8,7 @@
 	height: 40%;
 	overflow: scroll;
 	border: 4px solid lightGray;
+	margin-bottom: 16px;
 }
 
 .listItem {
@@ -186,6 +187,10 @@ tr td div p {
 	margin-left: 16px;
 }
 
+.vertical-layout-row {
+	margin-bottom: 16px;
+}
+
 .page-top-button-bar {
 	margin-top: 0;
 }
@@ -219,12 +224,10 @@ tr td div p {
 }
 
 .dialog-header {
-	/* for now i'll go with dialog headers that are just basic H2 style
-	background: lightGray;
-	padding: 4px;
-	margin-left: 24px;
-	margin-right: 24px;
-	*/
+	font-weight: bold;
+	font-size: large;
+	margin-top: 16px;
+	margin-bottom: 16px;
 }
 
 .dialog-content {

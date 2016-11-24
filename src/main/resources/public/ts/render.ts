@@ -436,7 +436,7 @@ namespace m64 {
             classes = classes || "";
 
             return tag("div", {
-                "class": "horizontal center-justified layout " + classes
+                "class": "horizontal center-justified layout vertical-layout-row " + classes
             }, buttons);
         }
 
@@ -444,7 +444,7 @@ namespace m64 {
             classes = classes || "";
 
             return tag("div", {
-                "class": "horizontal left-justified layout " + classes
+                "class": "horizontal left-justified layout vertical-layout-row " + classes
             }, buttons);
         }
 

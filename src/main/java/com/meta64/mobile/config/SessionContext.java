@@ -50,13 +50,8 @@ public class SessionContext {
 	private String timeZoneAbbrev;
 
 	private UserPreferences userPreferences;
-
-	/*
-	 * For extreme scalability we 'could' hold a formatter in a blobal map where there is basically
-	 * one fomratter per timezone/DST combination, but until we have hundreds of concurrent users
-	 * this won't be an issue. Having one date format per session should really never be a
-	 * scalability issue but there nonetheless *is* very slight wasted memory here.
-	 */
+	
+	/* Note: this object is Session-specific to the timezone will be per user */
 	private SimpleDateFormat dateFormat;
 
 	/* Initial id param parsed from first URL request */

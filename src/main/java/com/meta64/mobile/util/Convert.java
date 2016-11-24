@@ -39,9 +39,6 @@ import com.meta64.mobile.model.UserPreferences;
 @Component
 public class Convert {
 
-	public static final int MAX_INLINE_CHARS = 500;
-	public static final boolean ALLOW_ROW_TRUCATION = false;
-
 	/*
 	 * We have to use full annotation here because we already have a different Value class in the
 	 * imports section
@@ -263,70 +260,27 @@ public class Convert {
 
 				String val = prop.getValue().getString();
 
-				/*
-				 * truncate text if too long, and allowAbbreviated=true
-				 * 
-				 * I have this disabled ALLOW_ROW_TRUCATION=false, becasue I decided truncating text
-				 * is not something that can really cleanly be done. What I'll do instead,
-				 * eventually, is just make each node hight be limited wherever it would make sense
-				 * but will still contain the full rendered content if the DIV its in is resized.
-				 */
-				if (ALLOW_ROW_TRUCATION && allowAbbreviated && val.length() > MAX_INLINE_CHARS) {
-					abbreviated = true;
-					val = XString.truncateAfter(val, "\n");
-					val = XString.truncateAfter(val, "\r");
-					if (val.length() > MAX_INLINE_CHARS) {
-						val = val.substring(0, MAX_INLINE_CHARS);
-					}
-					val = StringEscapeUtils.escapeHtml4(val);
-					val += "..." + buildMoreLink(node);
+				// log.trace(String.format("prop[%s] isContent", prop.getName()) + "
+				// useMarkdown=" + useMarkdown);
+				if (htmlOnly) {
+					htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
+					/*
+					 * I can't remember what this n/r is for but it BREAKS rendering if it's not set
+					 * to this
+					 */
+					value = "n/r";
 
-					/* log.trace(String.format("prop[%s] isContent", prop.getName())); */
-					if (htmlOnly) {
-						htmlValue = val;
-						/*
-						 * I can't remember what this n/r is for but it BREAKS app if it's not set
-						 * to this
-						 */
-						value = "n/r";
-
-						/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
-					}
-					else {
-						/*
-						 * I can't remember what this n/r is for but it BREAKS app if it's not set
-						 * to this
-						 */
-						htmlValue = "n/r";
-
-						value = val;
-						/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
-					}
+					/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
 				}
-				/* otherwise render full text */
 				else {
-					// log.trace(String.format("prop[%s] isContent", prop.getName()) + "
-					// useMarkdown=" + useMarkdown);
-					if (htmlOnly) {
-						htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
-						/*
-						 * I can't remember what this n/r is for but it BREAKS app if it's not set
-						 * to this
-						 */
-						value = "n/r";
+					/*
+					 * I can't remember what this n/r is for but it BREAKS app if it's not set to
+					 * this
+					 */
+					htmlValue = "n/r";
 
-						/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
-					}
-					else {
-						/*
-						 * I can't remember what this n/r is for but it BREAKS app if it's not set
-						 * to this
-						 */
-						htmlValue = "n/r";
-
-						value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
-						/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
-					}
+					value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
+					/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
 				}
 			}
 			else {
@@ -363,12 +317,12 @@ public class Convert {
 					ret = StringEscapeUtils.escapeHtml4(value.getString());
 
 					if (useMarkdown) {
+						ret = convertLinksToMarkdown(ret);
 						ret = getMarkdownProc().markdownToHtml(ret);
 					}
 					else {
 						ret = basicTextFormatting(ret);
 					}
-
 				}
 				else {
 					ret = value.getString();
@@ -386,6 +340,59 @@ public class Convert {
 		catch (Exception e) {
 			return "";
 		}
+	}
+
+	/**
+	 * Searches in 'val' anywhere there is a line that begins with http:// (or https), and replaces
+	 * that with the normal way of doing a link in markdown. So we are injecting a snippet of
+	 * markdown (not html)
+	 * 
+	 * todo-0: i noticed this method gets called during the 'saveNode' processing and then is called again when the server
+	 * refreshes the whole page. This is something that is a slight bit of wasted processing.
+	 */
+	public static String convertLinksToMarkdown(String val) {
+		while (true) {
+			/* find http after newline character */
+			int startOfLink = val.indexOf("\nhttp://");
+
+			/* or else find one after return char */
+			if (startOfLink == -1) {
+				startOfLink = val.indexOf("\rhttp://");
+			}
+
+			/* or else find one after return char */
+			if (startOfLink == -1) {
+				startOfLink = val.indexOf("\nhttps://");
+			}
+
+			/* or else find one after return char */
+			if (startOfLink == -1) {
+				startOfLink = val.indexOf("\rhttps://");
+			}
+
+			/* nothing found we're all done here */
+			if (startOfLink == -1) break;
+
+			/*
+			 * locate end of link via \n or \r
+			 * 
+			 * (todo-0: actually should match whichever type n or r was found above)
+			 */
+			int endOfLink = val.indexOf("\n", startOfLink + 1);
+			if (endOfLink == -1) {
+				endOfLink = val.indexOf("\r", startOfLink + 1);
+			}
+			if (endOfLink == -1) {
+				endOfLink = val.length() - 1;
+			}
+
+			String link = val.substring(startOfLink + 1, endOfLink);
+
+			String left = val.substring(0, startOfLink + 1);
+			String right = val.substring(endOfLink);
+			val = left + "[" + link + "](" + link + ")" + right;
+		}
+		return val;
 	}
 
 	public static String finalTagReplace(String val) {

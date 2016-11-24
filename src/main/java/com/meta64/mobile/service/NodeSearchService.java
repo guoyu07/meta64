@@ -173,7 +173,8 @@ public class NodeSearchService {
 		res.setSearchResults(searchResults);
 
 		while (nodes.hasNext()) {
-			searchResults.add(convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true));
+			NodeInfo info = convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true);
+			searchResults.add(info);
 			if (counter++ > MAX_NODES) {
 				break;
 			}

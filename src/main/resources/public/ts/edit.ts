@@ -61,6 +61,7 @@ namespace m64 {
         let moveNodesResponse = function(res: json.MoveNodesResponse): void {
             if (util.checkSuccess("Move nodes", res)) {
                 nodesToMove = null; // reset
+                nodesToMoveSet = {};
                 view.refreshTree(null, false);
             }
         }
@@ -76,6 +77,11 @@ namespace m64 {
          * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
          */
         export let nodesToMove: any = null;
+
+        /* todo-1: need to find out if there's a better way to do an ordered set in javascript so I don't need
+        both nodesToMove and nodesToMoveSet
+        */
+        export let nodesToMoveSet: Object = {};
 
         export let parentOfNewNode: json.NodeInfo = null;
 
@@ -125,7 +131,7 @@ namespace m64 {
             return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
         }
 
-        export let startEditingNewNode = function(typeName?:string): void {
+        export let startEditingNewNode = function(typeName?: string): void {
             editingUnsavedNode = false;
             editNode = null;
             editNodeDlgInst = new EditNodeDlg(typeName);
@@ -448,28 +454,40 @@ namespace m64 {
             return bestNode;
         }
 
-        export let moveSelNodes = function(): void {
+        export let cutSelNodes = function(): void {
 
             var selNodesArray = meta64.getSelectedNodeIdsArray();
             if (!selNodesArray || selNodesArray.length == 0) {
-                (new MessageDlg("You have not selected any nodes. Select nodes to move first.")).open();
+                (new MessageDlg("You have not selected any nodes. Select nodes first.")).open();
                 return;
             }
 
             (new ConfirmDlg(
-                "Confirm Paste",
-                "Paste " + selNodesArray.length + " node(s) to new location ?",
-                "Yes, move.",
+                "Confirm Cut",
+                "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?",
+                "Yes",
                 function() {
                     nodesToMove = selNodesArray;
+                    loadNodesToMoveSet(selNodesArray);
+                    /* todo-0: need to have a way to find all selected checkboxes in the gui and reset them all to unchecked */
                     meta64.selectedNodes = {}; // clear selections.
+
+                    /* now we render again and the nodes that were cut will disappear from view */
+                    render.renderPageFromData();
                     meta64.refreshAllGuiEnablement();
                 })).open();
         }
 
-        export let finishMovingSelNodes = function(): void {
-            (new ConfirmDlg("Confirm Move", "Move " + nodesToMove.length + " node(s) to selected location ?",
-                "Yes, move.", function() {
+        let loadNodesToMoveSet = function(nodeIds: string[]) {
+            nodesToMoveSet = {};
+            for (let id of nodeIds) {
+                nodesToMoveSet[id] = true;
+            }
+        }
+
+        export let pasteSelNodes = function(): void {
+            (new ConfirmDlg("Confirm Paste", "Paste " + nodesToMove.length + " node(s) under selected parent node ?",
+                "Yes, paste.", function() {
 
                     var highlightNode = meta64.getHighlightedNode();
 

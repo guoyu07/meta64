@@ -64,15 +64,15 @@ namespace m64 {
             var editMenuItems = //
                 menuItem("Create", "createNodeButton", "m64.edit.createNode();") + //
                 menuItem("Rename", "renameNodePgButton", "(new m64.RenameNodeDlg()).open();") + //
-                menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();") + //
+                menuItem("Cut", "cutSelNodesButton", "m64.edit.cutSelNodes();") + //
+                menuItem("Paste", "pasteSelNodesButton", "m64.edit.pasteSelNodes();") + //
                 menuItem("Clear Selections", "clearSelectionsButton", "m64.edit.clearSelections();") + //
                 menuItem("Import", "openImportDlg", "(new m64.ImportDlg()).open();") + //
-                menuItem("Export", "openExportDlg", "(new m64.ExportDlg()).open();"); //
+                menuItem("Export", "openExportDlg", "(new m64.ExportDlg()).open();") + //
+                menuItem("Delete", "deleteSelNodesButton", "m64.edit.deleteSelNodes();");
             var editMenu = makeTopLevelMenu("Edit", editMenuItems);
 
             var moveMenuItems = //
-                menuItem("Cut", "moveSelNodesButton", "m64.edit.moveSelNodes();") + //
-                menuItem("Paste", "finishMovingSelNodesButton", "m64.edit.finishMovingSelNodes();") + //
                 menuItem("Up", "moveNodeUpButton", "m64.edit.moveNodeUp();") + //
                 menuItem("Down", "moveNodeDownButton", "m64.edit.moveNodeDown();") + //
                 menuItem("to Top", "moveNodeToTopButton", "m64.edit.moveNodeToTop();") + //

@@ -319,18 +319,21 @@ namespace m64 {
         }
 
         export let getSelectedNodeUidsArray = function(): string[] {
-            var selArray = [], idx = 0, uid;
+            let selArray:string[] = [], uid;
 
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
-                    selArray[idx++] = uid;
+                    selArray.push(uid);
                 }
             }
             return selArray;
         }
 
+        /**
+        Returns a newly cloned array of all the selected nodes each time it's called.
+        */
         export let getSelectedNodeIdsArray = function(): string[] {
-            var selArray = [], idx = 0, uid;
+            let selArray:string[] = [], uid;
 
             if (!selectedNodes) {
                 console.log("no selected nodes.");
@@ -344,7 +347,7 @@ namespace m64 {
                     if (!node) {
                         console.log("unable to find uidToNodeMap for uid=" + uid);
                     } else {
-                        selArray[idx++] = node.id;
+                        selArray.push(node.id);
                     }
                 }
             }
@@ -518,11 +521,10 @@ namespace m64 {
 
             util.setEnablement("editModeButton", allowEditMode);
             util.setEnablement("upLevelButton", currentNode && nav.parentVisibleToUser());
-            util.setEnablement("moveSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
+            util.setEnablement("cutSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
             util.setEnablement("deleteSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
             util.setEnablement("clearSelectionsButton", !isAnonUser && selNodeCount > 0);
-            util.setEnablement("moveSelNodesButton", !isAnonUser && selNodeCount > 0 && selNodeIsMine);
-            util.setEnablement("finishMovingSelNodesButton", !isAnonUser && edit.nodesToMove != null && (selNodeIsMine || homeNodeSelected));
+            util.setEnablement("pasteSelNodesButton", !isAnonUser && edit.nodesToMove != null && (selNodeIsMine || homeNodeSelected));
 
             util.setEnablement("moveNodeUpButton", canMoveUp);
             util.setEnablement("moveNodeDownButton", canMoveDown);
@@ -553,8 +555,8 @@ namespace m64 {
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
             util.setEnablement("createNodeButton", canCreateNode);
-            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || homeNodeId==highlightNode.id));
-            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || homeNodeId==highlightNode.id));
+            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || homeNodeId == highlightNode.id));
+            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || homeNodeId == highlightNode.id));
             util.setEnablement("adminMenu", isAdminUser);
 
             //VISIBILITY

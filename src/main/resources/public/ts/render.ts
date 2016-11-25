@@ -806,13 +806,14 @@ namespace m64 {
                  * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
                  * the client side for various reasons.
                  */
-
                 for (var i = 0; i < data.children.length; i++) {
                     let node: json.NodeInfo = data.children[i];
-                    let row: string = generateRow(i, node, newData, childCount, rowCount);
-                    if (row.length != 0) {
-                        output += row;
-                        rowCount++;
+                    if (!edit.nodesToMoveSet[node.id]) {
+                        let row: string = generateRow(i, node, newData, childCount, rowCount);
+                        if (row.length != 0) {
+                            output += row;
+                            rowCount++;
+                        }
                     }
                 }
             }

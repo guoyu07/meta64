@@ -237,8 +237,8 @@ namespace m64 {
 
         export let onTimeUpdate = function(uid: string, elm: any): void {
             if (!pushTimer) {
-                /* ping server once per minute */
-                pushTimer = setInterval(pushTimerFunction, 10000);
+                /* ping server once every five minutes */
+                pushTimer = setInterval(pushTimerFunction, 5*60*1000);
             }
             //console.log("CurrentTime=" + elm.currentTime);
             player = elm;

@@ -537,7 +537,7 @@ public class AppController {
 		return attachmentService.getBinary(null, nodeId);
 	}
 
-	/* todo-0: make these parametes required. this was only testing making them optional */
+	/* todo-0: make these parameters required. this was only testing making them optional */
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ResponseEntity<?> upload(//

@@ -56,12 +56,15 @@ public class AppServer {
 			br = new BufferedReader(isr);
 			while (loopz) {
 				String userInput = br.readLine();
-				System.out.println("input => " + userInput);
 				if (userInput.equalsIgnoreCase("q")) {
+					System.out.println("Terminating, at user request.");
+					// despite call to exit(0), this does cause a graceful shutdown, because of
+					// shutdown hook.
 					shuttingDown = true;
 					System.exit(0);
 				}
 			}
+			Thread.sleep(3000);
 		}
 		catch (Exception er) {
 			er.printStackTrace();

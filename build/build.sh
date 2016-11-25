@@ -4,7 +4,7 @@ source ./setenv.sh
 #
 # Trouble with Tidy? Check for "- -" where "--" was needed.
 #
-# Nodejs is required for the build for typescript compiler
+# Nodejs is required for the build for typescript compiler and less compiler
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 #
 
@@ -34,6 +34,17 @@ else
   read -p "FAIL. TypeScript compiler reported ERRORS."
 fi
 
+# To install Less CSS compiler run these commands:
+#    sudo npm install -g less
+cd $META64/src/main/resources/public/css
+lessc meta64.less meta64.css
+if [ $? -eq 0 ]
+then
+  read -p "LESS CSS generating successful."
+else
+  read -p "FAIL. LESS compiler reported ERRORS."
+fi
+
 cd $META64/build
 
 #copy the readme.md from project root to published location (landing-page.md) where the app will
@@ -50,7 +61,6 @@ cp ../src/main/resources/public/js/meta64-app.js ../src/main/resources/public/js
 
 #java -jar google-compiler.jar --help
 read -p "Google compiler done."
-
 
 cd $META64
 

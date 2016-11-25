@@ -45,6 +45,9 @@ public class RssReader {
 	private static final int maxFileSize = 10 * 1024 * 1024;
 	public static final int MAX_RSS_ENTRIES = 100;
 
+	/* this is untested... reusing the instance over and over again */
+	private HttpClient client = HttpClientBuilder.create().build();
+	
 	@Autowired
 	private RssService rssService;
 
@@ -73,8 +76,12 @@ public class RssReader {
 		return readFeed(feedUrl);
 	}
 
+	/*
+	 * todo-0: there is no finally block in this method. will be memory leak.
+	 */
 	public void readUrl(String url) throws Exception {
-		HttpClient client = HttpClientBuilder.create().build();
+		if (true) throw new Exception("don't call this until you fix missing finally block memory leak.");
+		//HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 
 		// add request header
@@ -106,7 +113,7 @@ public class RssReader {
 			 * places in the code (like image downloading) where I'm streaming from arbitrary
 			 * internet URLs and change them over to HttpClient.
 			 */
-			HttpClient client = HttpClientBuilder.create().build();
+			//HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(feedUrl);
 			request.addHeader("User-Agent", FAKE_USER_AGENT);
 			HttpResponse response = client.execute(request);

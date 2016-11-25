@@ -67,8 +67,8 @@ public class RssService {
 	private Node feedsRootNode;
 
 	/* List of nodes and hashmap for looking them up quickly by various types of keys */
-	private List<Node> feedNodes = new LinkedList<Node>();
-	private HashMap<String, Node> feedItemsByLink = new HashMap<String, Node>();
+	private final List<Node> feedNodes = new LinkedList<Node>();
+	private final HashMap<String, Node> feedItemsByLink = new HashMap<String, Node>();
 
 	/*
 	 * We cache all the PlayerInfo in memory, so that the API calls from the client have zero lag,
@@ -130,6 +130,13 @@ public class RssService {
 						log.error("Failed processing RSS feeds", e);
 					}
 
+					/*
+					 * We do all the adding of new nodes all in a set of operations without calling
+					 * 'save' until we get here so the mechanism of rollingback any added nodes that
+					 * end up ultimately failing will be deleted back out in finally blocks, rather
+					 * than the much slower alternative which would be to open a session for each
+					 * new node we save.
+					 */
 					session.save();
 				}
 				catch (Exception e) {
@@ -137,6 +144,10 @@ public class RssService {
 				}
 				finally {
 					processing = false;
+
+					/* release some memory */
+					feedNodes.clear();
+					feedItemsByLink.clear();
 				}
 			});
 		}
@@ -162,7 +173,7 @@ public class RssService {
 		feedNodes.clear();
 		feedItemsByLink.clear();
 		scanForFeedNodes(session, feedsRootNode);
-		
+
 		session.save();
 	}
 
@@ -196,7 +207,7 @@ public class RssService {
 		NodeIterator nodeIter = feedNode.getNodes();
 		try {
 			while (true) {
-				Node itemNode = nodeIter.nextNode();				
+				Node itemNode = nodeIter.nextNode();
 				String linkProp = JcrUtil.safeGetStringProp(itemNode, JcrProp.RSS_ITEM_LINK);
 				if (!StringUtils.isEmpty(linkProp)) {
 					log.debug("CACHING ENTRY: link=" + linkProp);

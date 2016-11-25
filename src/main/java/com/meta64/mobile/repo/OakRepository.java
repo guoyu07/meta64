@@ -221,14 +221,31 @@ public class OakRepository {
 			if (initialized) return;
 
 			try {
+				DocumentMK.Builder builder = new DocumentMK.Builder()//
+						/*
+						 * I'm really now sure how to use ClusterID but seems to run fine with just
+						 * one node and without setting this.
+						 */
+						// .setClusterId(1)//
+						.memoryCacheSize(64 * 1024 * 1024)//
+						.setPersistentCache("target/persistentCache,time");
+
+				/*
+				 * Initialize Mongo DB
+				 */
 				if ("mongo".equalsIgnoreCase(dbStoreType)) {
 					log.info("Initializing Mongo Repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
 					mongoDb = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
-					nodeStore = new DocumentMK.Builder().setMongoDB(mongoDb).getNodeStore();
+					builder = builder.setMongoDB(mongoDb);
 				}
+				/*
+				 * or else initialize RDBMS
+				 */
 				else if ("rdb".equalsIgnoreCase(dbStoreType)) {
 					log.debug("Initializing RDB.");
 					options = new RDBOptions().tablePrefix(TABLEPREFIX);
+
+					// For test cases, we could drop tables on close, but this is not a test case
 					// options = options.dropTablesOnClose(true);
 
 					// String driver = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -240,19 +257,14 @@ public class OakRepository {
 					// todo-0: investigate if we are supposed to call 'close' on something to
 					// release this dataSource ?
 					dataSource = RDBDataSourceFactory.forJdbcUrl(url, rdbUser, rdbPassword);
-
-					DocumentMK.Builder builder = new DocumentMK.Builder().setClusterId(1)//
-							.memoryCacheSize(64 * 1024 * 1024)//
-							.setPersistentCache("target/persistentCache,time")//
-							.setRDBConnection(dataSource, options);
-
-					nodeStore = builder.getNodeStore();
+					builder = builder.setRDBConnection(dataSource, options);
 
 					// This was ORIGINAL way of getting 'repository' with RDB
 					// repository = new Jcr(nodeStore)/* .with(getQueryEngineSettings())
 					// */.with(getSecurityProvider()).createRepository();
 				}
 
+				nodeStore = builder.getNodeStore();
 				root = nodeStore.getRoot();
 
 				/* can shutdown during startup. */
@@ -273,7 +285,7 @@ public class OakRepository {
 					 */
 					indexProvider = new LuceneIndexProvider();
 					indexProvider = indexProvider.with(getNodeAggregator());
-					
+
 					jcr = jcr.with(new LuceneFullTextInitializer("contentIndex", "jcr:content"));
 					jcr = jcr.with(new LuceneFullTextInitializer("tagsIndex", "tags"));
 
@@ -281,7 +293,7 @@ public class OakRepository {
 					jcr = jcr.with(new LuceneSortInitializer("lastModifiedIndex", "jcr:lastModified"));
 					jcr = jcr.with(new LuceneSortInitializer("codeIndex", JcrProp.CODE));
 					jcr = jcr.with(new LuceneSortInitializer("pwdResetAuthIndex", JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE));
-					
+
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
 					jcr = jcr.with((Observer) indexProvider);
 					jcr = jcr.with(new LuceneIndexEditorProvider());

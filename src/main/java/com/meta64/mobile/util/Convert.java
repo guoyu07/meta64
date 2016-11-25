@@ -347,7 +347,7 @@ public class Convert {
 	 * that with the normal way of doing a link in markdown. So we are injecting a snippet of
 	 * markdown (not html)
 	 * 
-	 * todo-0: i noticed this method gets called during the 'saveNode' processing and then is called again when the server
+	 * todo-1: i noticed this method gets called during the 'saveNode' processing and then is called again when the server
 	 * refreshes the whole page. This is something that is a slight bit of wasted processing.
 	 */
 	public static String convertLinksToMarkdown(String val) {
@@ -375,8 +375,6 @@ public class Convert {
 
 			/*
 			 * locate end of link via \n or \r
-			 * 
-			 * (todo-0: actually should match whichever type n or r was found above)
 			 */
 			int endOfLink = val.indexOf("\n", startOfLink + 1);
 			if (endOfLink == -1) {

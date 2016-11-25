@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
+import com.meta64.mobile.util.DateUtil;
 
 /**
  * This is a "Background Thread" which saves user settings for all users (who are logged in)
@@ -33,7 +34,11 @@ public class UserSettingsDaemon {
 	private Object lock = new Object();
 	private HashMap<String, UnsavedUserSettings> mapByUser = null;
 
-	@Scheduled(fixedDelay = 20 * 1000)
+	/*
+	 * I had this running every 20 seconds, and I think it is leaking memory and bringing the server down, so i'm boosting up to a full 10min delay
+	 * to see if there is still noticeable server memory creep.
+	 */
+	@Scheduled(fixedDelay = 30 * DateUtil.MINUTE_MILLIS)
 	public void run() {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 

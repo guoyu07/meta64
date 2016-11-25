@@ -129,7 +129,14 @@
             /*<![CDATA[*/
                 :host {
                     display: block;
-                }   
+                    --paper-tab-ink: var(--paper-blue-900);
+                    --paper-tabs-selection-bar-color: var(--paper-blue-900);
+                }
+                
+                paper-ripple {
+                    color: var(--paper-tab-ink, --paper-blue-900);
+                }
+ 
             /*]]>*/
         </style>
         <iron-ajax id="ironAjax"></iron-ajax>

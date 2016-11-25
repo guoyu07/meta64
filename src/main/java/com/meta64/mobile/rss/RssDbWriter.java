@@ -4,6 +4,8 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +24,11 @@ import com.sun.syndication.feed.synd.SyndImage;
 
 @Component
 public class RssDbWriter {
+	private static final Logger log = LoggerFactory.getLogger(RssDbWriter.class);
 
-	@Autowired 
+	@Autowired
 	private NodeMoveService nodeMoveService;
-	
+
 	//
 	// private static ImageInfoSorter sorter = new ImageInfoSorter();
 	//
@@ -53,206 +56,66 @@ public class RssDbWriter {
 	 */
 	public Node write(Session session, Node feedNode, SyndEntry entry) throws Exception {
 
+		boolean success = false;
 		String name = JcrUtil.getGUID();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
-		nodeMoveService.moveNodeToTop(session, newNode, false, false);
-		JcrUtil.timestampNewNode(session, newNode);
+		try {
+			nodeMoveService.moveNodeToTop(session, newNode, false, false);
+			JcrUtil.timestampNewNode(session, newNode);
 
-		if (StringUtils.isEmpty(entry.getTitle())) {
-			throw new Exception("SyndEntry.title is empty.");
-		}
-		
-		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
-
-		if (entry.getDescription() != null) {
-			String desc = entry.getDescription().getValue();
-			if (StringUtils.isEmpty(desc)) {
-				throw new Exception("SyndEntry.desc is empty.");
+			if (StringUtils.isEmpty(entry.getTitle())) {
+				throw new Exception("SyndEntry.title is empty.");
 			}
-			
-			desc = desc.replaceAll("[^\\p{ASCII}]", "");
-			newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
+
+			newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
+
+			if (entry.getDescription() != null) {
+				String desc = entry.getDescription().getValue();
+				if (StringUtils.isEmpty(desc)) {
+					throw new Exception("SyndEntry.desc is empty.");
+				}
+
+				desc = desc.replaceAll("[^\\p{ASCII}]", "");
+				newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
+			}
+			newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
+			newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
+			newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
+
+			// entry.getPublishedDate();
+			// entry.getUpdatedDate();
+
+			for (Object encObj : entry.getEnclosures()) {
+				if (encObj instanceof SyndEnclosureImpl) {
+					SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
+
+					/*
+					 * todo-0: for now we just support the first enclosure which will work for for
+					 * all known situations, and will normally just be the pointer to the media
+					 * content of a podcast.
+					 */
+					// break out of for loop
+					break;
+				}
+			}
+			success = true;
+			return null;
 		}
-		newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
-		newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
-		newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
-
-		// entry.getPublishedDate();
-		// entry.getUpdatedDate();
-
-		for (Object encObj : entry.getEnclosures()) {
-			if (encObj instanceof SyndEnclosureImpl) {
-				SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
-
-				/*
-				 * todo-0: for now we just support the first enclosure which will for for all known
-				 * situations, and will normally just be the pointer to the media content of a
-				 * podcast.
-				 */
-				break;
+		finally {
+			if (!success) {
+				if (newNode != null) {
+					log.error("removing node, before save. error encountered before completly initialized. name=" + name);
+					newNode.remove();
+				}
 			}
 		}
-		return null;
 	}
 
-	//
-	// @Modifying
-	// @Transactional
-	// public static int write(int parentId, SyndEnclosureImpl enc) throws Exception {
-	// int id = insertContainerNode(parentId, AllTypes.TYPE_RSS_ENCLOSURE, render(true, enc), null);
-	//
-	// writeSubProperty(id, AllTypes.TYPE_RSS_ENCLOSURE_URL, enc.getUrl());
-	// writeSubProperty(id, AllTypes.TYPE_RSS_ENCLOSURE_TYPE, enc.getType());
-	// writeSubProperty(id, AllTypes.TYPE_RSS_ENCLOSURE_LENGTH, String.valueOf(enc.getLength()));
-	// return id;
-	// }
-	//
-	// public static int insertContainerNode(int parentId, int typeId, String val, Long timeStamp)
-	// throws Exception {
-	// int ownerId = Factory.acntService().getAdminAccount().getId();
-	// InsertResultInfo ret = Factory.createNodeService().attachNode(0, val, parentId, typeId,
-	// false, InsertType.ATTACH_TOP, false,
-	// ownerId, null, null, null, null, true, timeStamp, null, null, true, false, true, false);
-	// return ret.getModel().getRecordId();
-	// }
-	//
-	// public static void writeSubProperty(int parentId, int typeId, String value) throws Exception
-	// {
-	// if (GuiUtil.isEmpty(value)) {
-	// return;
-	// }
-	// int ownerId = Factory.acntService().getAdminAccount().getId();
-	//
-	// Factory.createNodeService().attachNode(0, value, parentId, typeId, false,
-	// InsertType.ATTACH_BOTTOM, false, ownerId, null, null,
-	// null, null, true, null, null, null, true, false, true, false);
-	// }
-	//
-	// public static String render(SyndFeed feed, MessageCollector msgCollector) {
-	// StringBuilder sb = new StringBuilder();
-	//
-	// if (feed.getTitle() != null) {
-	// sb.append("<div class='rss-feed-title'>");
-	// sb.append(feed.getTitle());
-	// sb.append("</div>");
-	// sb.append("\n");
-	// }
-	//
-	// if (feed.getDescription() != null) {
-	//
-	// /*
-	// * some feeds have same description as title, so don't show it twice
-	// * if it does
-	// */
-	// if (!feed.getDescription().equals(feed.getTitle())) {
-	// sb.append("<div class='rss-feed-description'>");
-	// sb.append(feed.getDescription());
-	// // sb.append("<br>");
-	// // sb.append("Feed Type: "+feed.getFeedType());
-	// sb.append("</div>");
-	// }
-	// }
-	//
-	// if (feed.getImage() != null) {
-	// sb.append("<br>");
-	// sb.append(render(feed.getImage()));
-	// }
-	//
-	// return sb.toString();
-	// }
-	//
-	// public static String render(SyndImage image) {
-	// StringBuilder sb = new StringBuilder();
-	//
-	// if (!GuiUtil.isEmpty(image.getTitle())) {
-	// sb.append(image.getTitle());
-	// sb.append("<br>");
-	// }
-	//
-	// if (!GuiUtil.isEmpty(image.getDescription())) {
-	// sb.append(image.getDescription());
-	// sb.append("<br>");
-	// }
-	//
-	// if (image.getUrl() != null) {
-	// sb.append("<img class='rhs-image' src='");
-	// sb.append(image.getUrl());
-	// sb.append("'>");
-	// }
-	//
-	// return sb.toString();
-	// }
-	//
-	// /* Renders a specific SyndEntry */
-	// public static String render(SyndEntry entry, RssFeedWrapper wFeed, MessageCollector
-	// msgCollector) throws Exception {
-	// StringBuilder sb = new StringBuilder();
-	//
-	// if (Constants.debug_rss) {
-	// ALog.log("Rendering Entry: " + entry.getTitle());
-	// }
-	//
-	// HashSet<String> mediaUrls = new HashSet<String>();
-	// renderMediaModules(entry, msgCollector, sb, mediaUrls);
-	//
-	// /* if no title given, use link as title */
-	// if (entry.getTitle() == null) {
-	// entry.setTitle(entry.getLink());
-	// }
-	//
-	// String description = null;
-	// if (entry.getDescription() != null) {
-	// SyndContent content = entry.getDescription();
-	// if (Constants.MIME_HTML.equalsIgnoreCase(content.getType())) {
-	// description = content.getValue();
-	// }
-	// }
-	//
-	// boolean wroteTitle = false;
-	//
-	// /* append title if one is specified */
-	// String titleHtm = makeTitleHtm(entry, wFeed);
-	// if (titleHtm != null) {
-	// if (sb.length() > 0) {
-	// sb.append("<p>");
-	// }
-	// wroteTitle = true;
-	// sb.append(titleHtm);
-	// }
-	//
-	// /* append description if we have it */
-	// if (description != null) {
-	// if (wroteTitle) {
-	// sb.append("<br>");
-	// }
-	//
-	// String title = entry.getTitle();
-	//
-	// /*
-	// * some feeds have a title and also embed the title into the
-	// * description, which would make it appear twice in the text and
-	// * look strange, so we detect the title in the description and then
-	// * just transform it into the word the word Description:, hoping
-	// * that will always look ok.
-	// */
-	// if (title != null && description.contains(title)) {
-	// description = description.replace(title, "Description:");
-	// }
-	//
-	// /*
-	// * try to fix any foreign html so that it opens links in a separate
-	// * browser tab
-	// */
-	// description = description.replace("<a ", "<a target='_blank' ");
-	// sb.append("<div class='rss-desc-content'>");
-	// sb.append(description);
-	// sb.append("</div>");
-	// }
 	//
 	// /* construct the 6-pack of images */
 	// StringBuilder imgBlock = new StringBuilder();

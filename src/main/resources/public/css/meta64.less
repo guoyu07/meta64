@@ -1,0 +1,455 @@
+/*
+NOTE: This file uses "Less CSS Compiler" (lesscss.org)
+
+WARNING: I (Clay Ferguson) personally use Atom editor for editing this file in addition to the TypeScript files,
+because Eclipse hasn't caught up with the rest of the modern world on their tooling, and has no good support yet.
+*/
+@highlightBtnBkColor: #4caf50;
+@highlightBtnTxtColor: white;
+@btnBkColor: lightGray;
+@btnTxtColor: black;
+
+@smallGapSize: 16px;
+
+@nodeIndicatorBarWidth: 10px;
+
+:host {
+	display: block;
+	--paper-tab-ink: var(--paper-blue-900);
+	--paper-tabs-selection-bar-color: var(--paper-blue-900);
+}
+
+.borderedElm {
+	border: 4px solid lightGray;
+}
+
+:root {
+	- -paper-tab-ink: var(- -paper-blue-900);
+	- -paper-tabs-selection-bar-color: var(- -paper-blue-900);
+}
+
+.listBox {
+	width: 60%;
+	height: 40%;
+	overflow: scroll;
+	margin-bottom: @smallGapSize;
+	.borderedElm;
+}
+
+.listItem {
+	cursor: pointer;
+	border-bottom: 1px dotted gray;
+	padding: @smallGapSize;
+}
+
+.selectedListItem {
+	background-color: lightGray;
+}
+
+.standardButton {
+	background-color: @btnBkColor;
+	color: @btnTxtColor;
+}
+
+.playButton {
+	background-color: @highlightBtnBkColor;
+	color: @highlightBtnTxtColor;
+}
+/*
+.main-dialog-content {
+	overflow-y: auto;
+	width: 100%;
+    height: 100%;
+    padding: 10px;
+    margin: 0px;
+}
+*/
+.meta64-input {
+	max-width: 50%;
+}
+/* somehow polymer is overriding the margin to be some amount like 50px or something, and I don't know
+why. I am setting the margins properly to zero in the API code also, so i'm not sure how to get rid of
+the margin around a fullscreen polymer dialog yet */
+paper-dialog {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 0;
+	margin: 0;
+	overflow-y: auto;
+}
+
+paper-item {
+	cursor: pointer;
+}
+
+paper-menu {
+	cursor: pointer;
+}
+
+paper-submenu {
+	cursor: pointer;
+}
+/*
+code {
+	white-space: pre;
+}
+*/
+/* Dropzone message */
+.dz-message {
+	font-size: large;
+	background-image: url('/js/dropzone/upload.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
+	width: 500px;
+	height: 200px;
+}
+
+.dropzone {
+	border: 4px dashed lightGray;
+	margin: @smallGapSize;
+	width: 600px;
+	height: 300px;
+	padding: 0;
+	overflow-y: auto;
+	/* min-height: 0px !important; */
+}
+
+.customPre {
+	background: lightGray;
+	padding: 10px;
+}
+
+.moreLinkStyle {
+	cursor: pointer;
+	background: lightGray;
+	padding: 4px;
+}
+
+.systemFileRow {
+	margin-botom: @smallGapSize;
+}
+
+.systemFileActionLink {
+	cursor: pointer;
+	margin-right: @smallGapSize;
+	border-bottom: 1px dotted gray;
+}
+
+.systemFile {
+	font-family: Courier New, Courier, Roboto, Tahoma, Verdana, Arial;
+	/* cursor: pointer; */
+	/* background: lightGray; */
+	padding-bottom: 5px;
+}
+
+.ace-edit-panel {
+	margin-top: @smallGapSize;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 200px;
+}
+
+.vert-space {
+	display: block;
+	height: 0.5em;
+}
+
+.meta64-menu-heading {
+	cursor: pointer;
+}
+
+.mainNodeContentStyle {
+	background-color: lightGray;
+}
+
+.propertyEditListItem {
+	padding-left: @smallGapSize;
+}
+
+.propertyEditListItemHidden {
+	padding-left: @smallGapSize;
+	display: none;
+}
+
+body {
+	font-family: Roboto, Tahoma, Verdana, Arial;
+}
+
+tr td div p {
+	margin: 1px;
+	padding: 1px;
+}
+
+.content-area {
+	padding-top: 0;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.close-account-bar {
+	margin-top: 100px;
+	margin-left: 16px;
+}
+
+.vertical-layout-row {
+	margin-bottom: @smallGapSize;
+}
+
+.page-top-button-bar {
+	margin-top: 0;
+}
+
+.property-edit-button-bar {
+	margin-top: 0;
+}
+
+.property-edit-field {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: @smallGapSize;
+	padding-right: @smallGapSize;
+}
+
+.property-edit-field:nth-child(odd) {
+	background: #efefef;
+}
+
+.property-edit-field:nth-child(even) {
+	background: #dedede;
+}
+
+.compact-field-contain {
+	margin-bottom: 0;
+	margin-left: @smallGapSize;
+}
+
+.dialog-message {
+	width: 400px;
+}
+
+.dialog-header {
+	font-weight: bold;
+	font-size: large;
+	margin-top: @smallGapSize;
+	margin-bottom: @smallGapSize;
+}
+
+.dialog-content {}
+
+.created-by-me {
+	background: green;
+	color: white;
+	/*
+	padding: 4px;
+	margin-top: 2px;
+	*/
+}
+
+.created-by-other {
+	background: lightGray;
+	/*
+	padding: 4px;
+	margin-top: 2px;
+	*/
+}
+
+.path-display {
+	margin-bottom: 4px;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.captcha-image {
+	text-align: center;
+}
+
+.page-node-header {
+	border-left: 10px solid transparent;
+}
+
+.header-text {
+	font-size: small;
+	margin-left: @smallGapSize;
+	padding-top: 10px;
+}
+
+.captcha {
+	margin-top: 20px;
+	border: 1px solid black;
+}
+
+.privilege-list {
+	background: lightGray;
+}
+
+.binary-link {}
+
+.privilege-entry {
+	margin: @smallGapSize;
+	padding: @smallGapSize;
+	background: lightGray;
+	border-left: 4px solid gray;
+}
+
+.jcr-content {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide
+		becomes difficult to read.
+	*/
+	max-width: 800px;
+}
+
+.jcr-root-content {
+	margin-top: 8px;
+	margin-bottom: 5px;
+	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide
+		becomes difficult to read.
+	*/
+	/*
+	padding-top: 8px;
+	*/
+	padding-bottom: 5px;
+	max-width: 800px;
+	background: lightGray;
+}
+
+.tags-content {
+	margin-left: 1em;
+	/* we limit page width of text content, because text that goes to wide
+		becomes difficult to read.
+	*/
+	border: 1px dotted lightGray;
+	max-width: 800px;
+	background: #f9e79f;
+}
+
+.corner-style {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.property-table {
+	margin-left: 1em;
+}
+
+.prop-table-row {
+	width: 100%;
+}
+
+.prop-table-name-col {
+	width: 25%;
+}
+
+.prop-table-val-col {
+	width: 70%;
+}
+
+.prop-table {
+	width: 100%;
+}
+
+.path-display-in-editor {
+	font-weight: bold;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.node-table-row {
+	position: relative;
+	border-bottom: 6px solid #d6d6d6;
+	padding-right: 1.5em;
+}
+
+.page-parent-node {
+	background: #ededed;
+	padding-top: 10px;
+}
+
+.node-table-row .top-right-image {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.my-container img {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: auto;
+	opacity: 0.6;
+}
+
+.active-row {
+	border-left: @nodeIndicatorBarWidth solid red;
+}
+
+.inactive-row {
+	border-left: @nodeIndicatorBarWidth solid transparent;
+}
+
+.property-column {
+	width: 20%;
+}
+
+.value-column {
+	width: 80%;
+}
+
+.modelessDialog {
+	padding-left: @smallGapSize;
+	padding-right: @smallGapSize;
+	padding-bottom: @smallGapSize
+}
+
+/*
+.mainNodeContent {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        background-color: lightGray;
+        border: 1px solid green;
+}
+*/
+
+.nav {
+	border-right: 1px solid #ccc;
+}
+
+.main {
+	background-color: #eee;
+}
+
+/* paper-item */
+.my-menu-section {
+	padding-left: @smallGapSize * 2;
+	background-color: white;
+	color: black;
+}
+
+/* paper-submenu */
+.meta64-menu-heading {
+	background-color: lightGray;
+	color: black;
+}
+
+.page-title {
+	@apply (--paper-font-display2);
+}
+
+@media ( max-width : 600px) {
+	.page-title {
+		font-size: 24px !important;
+	}
+}

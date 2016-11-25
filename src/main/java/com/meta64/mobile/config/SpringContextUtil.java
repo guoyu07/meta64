@@ -33,7 +33,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 		try {
 			oakRepository.init();
-			rssService.parseTest("https://twit.tv/node/feed");
+			//rssService.parseTest("https://twit.tv/node/feed");
 		}
 		catch (Exception e) {
 			log.error("application startup failed.");

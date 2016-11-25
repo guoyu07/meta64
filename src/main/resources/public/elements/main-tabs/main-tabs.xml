@@ -47,25 +47,19 @@
     <template>
         <style is="custom-style">
             /*<![CDATA[*/
-                
                 :host {
                     display: block;
-    
                     --paper-tab-ink: var(--paper-blue-900);
                     --paper-tabs-selection-bar-color: var(--paper-blue-900);
                 }
-    
+                
                 paper-ripple {
                     color: var(--paper-tab-ink, --paper-blue-900);
                 }
     
-                /* this style doesn't work, so I put a a god damn fucking 'style' directly into the HTML instead */
-                paper-button.green{
-                    background-color: var(--paper-green-500);
-                    color: white;
-                }
             /*]]>*/
         </style>
+        
         <paper-tabs
             id="mainPaperTabs"
             attr-for-selected="name"

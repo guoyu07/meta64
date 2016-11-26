@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.AppServer;
 import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.rss.model.RssEntryWrapper;
 import com.meta64.mobile.rss.model.RssFeedWrapper;
@@ -63,6 +64,7 @@ public class RssReader {
 
 		int counter = 0;
 		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
+			AppServer.shutdownCheck();
 			RssFeedWrapper wFeed = readFeed(feedNodeInfo.getUrl());
 			if (wFeed != null) {
 				try {
@@ -281,6 +283,7 @@ public class RssReader {
 
 			int entryCounter = 0;
 			for (RssEntryWrapper wEntry : entries) {
+				AppServer.shutdownCheck();
 				SyndEntry entry = (SyndEntry) wEntry.getEntry();
 
 				try {

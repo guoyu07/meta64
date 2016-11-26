@@ -133,6 +133,7 @@ public class RssService {
 
 	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
+		if (AppServer.isShuttingDown()) return;
 		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
 		readFeedsNow();
 	}
@@ -147,6 +148,7 @@ public class RssService {
 				adminRunner.run((Session session) -> {
 					init(session);
 				});
+				AppServer.shutdownCheck();
 
 				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
 				reader.run(feedNodeInfos);

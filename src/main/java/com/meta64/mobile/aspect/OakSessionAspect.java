@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
@@ -57,7 +58,10 @@ public class OakSessionAspect {
 
 	@Around("@annotation(com.meta64.mobile.aspect.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
-
+		if (AppServer.isShuttingDown()) {
+			throw new Exception("Server is shutting down.");
+		}
+		
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
 		// RequestContextHolder.currentRequestAttributes();
 		// HttpSession httpSession = attr.getRequest().getSession();

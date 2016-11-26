@@ -176,7 +176,6 @@ public class OakRepository {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				AppServer.setShuttingDown(true);
 				instance.close();
 			}
 		}));
@@ -406,62 +405,69 @@ public class OakRepository {
 	}
 
 	public void close() {
+		AppServer.setShuttingDown(true);
+		if (instance==null) return;
+		
 		synchronized (lock) {
+			try {
+				if (executor != null) {
+					log.info("Shutting down Oak Executor");
+					executor.shutdown();
 
-			if (executor != null) {
-				log.info("Shutting down Oak Executor");
-				executor.shutdown();
+					log.info("Awaiting executor shutdown");
+					try {
+						executor.awaitTermination(5, TimeUnit.MINUTES);
+						log.info("Executor shutdown completed ok.");
+					}
+					catch (InterruptedException ex) {
+						log.error("Executor failed to shutdown gracefully.", ex);
+					}
 
-				log.info("Awaiting executor shutdown");
-				try {
-					executor.awaitTermination(5, TimeUnit.MINUTES);
-					log.info("Executor shutdown completed ok.");
+					executor = null;
 				}
-				catch (InterruptedException ex) {
-					log.error("Executor failed to shutdown gracefully.", ex);
+
+				if (nodeStore != null) {
+					log.info("disposing nodeStore.");
+					nodeStore.dispose();
+					nodeStore = null;
 				}
 
-				executor = null;
-			}
-
-			if (nodeStore != null) {
-				log.info("disposing nodeStore.");
-				nodeStore.dispose();
-				nodeStore = null;
-			}
-
-			if (indexProvider != null) {
-				log.info("Closing indexProvider.");
-				indexProvider.close();
-				indexProvider = null;
-			}
-
-			if (repository != null) {
-				log.info("Shutting down repository.");
-				((RepositoryImpl) repository).shutdown();
-				repository = null;
-			}
-
-			if (mongoDb != null) {
-				log.info("Closing mongo.");
-				if (mongoDb.getMongo() != null) {
-					mongoDb.getMongo().close();
+				if (indexProvider != null) {
+					log.info("Closing indexProvider.");
+					indexProvider.close();
+					indexProvider = null;
 				}
-				mongoDb = null;
-			}
 
-			if (dataSource != null && rdbShutdown != null) {
-				dataSource = null;
-				try {
-					DriverManager.getConnection(rdbShutdown);
+				if (repository != null) {
+					log.info("Shutting down repository.");
+					((RepositoryImpl) repository).shutdown();
+					repository = null;
 				}
-				catch (SQLException e) {
-					/*
-					 * This exception is the normal flow, and is expected always, and so we log a
-					 * message (not an error)
-					 */
-					log.info("RDB Shutdown complete.");
+
+				if (mongoDb != null) {
+					log.info("Closing mongo.");
+					if (mongoDb.getMongo() != null) {
+						mongoDb.getMongo().close();
+					}
+					mongoDb = null;
 				}
+
+				if (dataSource != null && rdbShutdown != null) {
+					dataSource = null;
+					try {
+						DriverManager.getConnection(rdbShutdown);
+					}
+					catch (SQLException e) {
+						/*
+						 * This exception is the normal flow, and is expected always, and so we log
+						 * a message (not an error)
+						 */
+						log.info("RDB Shutdown complete.");
+					}
+				}
+			}
+			finally {
+				instance = null;
 			}
 		}
 	}

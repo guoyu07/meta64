@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppFilter;
 import com.meta64.mobile.config.AppSessionListener;
 import com.meta64.mobile.util.DateUtil;
@@ -27,6 +28,7 @@ public class SystemService {
 	 */
 	@Scheduled(fixedDelay = 5 * DateUtil.MINUTE_MILLIS)
 	public void runGarbageCollector() {
+		if (AppServer.isShuttingDown()) return;
 		System.gc();
 		
 		/* GC is async so we can just wait a reasonable 5 seconds */

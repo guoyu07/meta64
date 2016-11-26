@@ -71,8 +71,6 @@ mvn clean package -DskipTests=true
 rm -f $META64/build/all.js
 rm -f $META64/build/*.sh~
 rm -f $META64/src/main/resources/public/js/meta64.min.js
-rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-out.html
-rm -f $META64/src/main/resources/public/elements/main-tabs/main-tabs-20*.html
 rm -f $META64/src/main/resources/templates/index-out.html
 rm -f $META64/src/main/resources/templates/index-20*.html
 rm -f $META64/src/main/resources/public/*.md~

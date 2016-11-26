@@ -10,3 +10,4 @@ git-tools
 run-root
 run-bat
 *.min.js
+/derby.log

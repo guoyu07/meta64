@@ -2,6 +2,7 @@ package com.meta64.mobile.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,9 @@ import com.meta64.mobile.util.DateUtil;
 public class SystemService {
 	private static final long ONE_MB = 1024*1024;
 	private static final Logger log = LoggerFactory.getLogger(SystemService.class);
+	
+	@Autowired
+	private RssService rssService;
 
 	/* We are using VisualVM to monitor memory usage on the server and so for now I want to be able to have GC called regularly (despite that being
 	 * completely unnecessary from a functional perspective), so that I get a more flat line looking chart of memory consumption unless memory is
@@ -32,6 +36,10 @@ public class SystemService {
 		catch (InterruptedException e) {
 			//do nothing here, intentionally
 		}
+		logMemory();
+	}
+	
+	public static void logMemory() {
 		Runtime runtime = Runtime.getRuntime();
 		long freeMem = runtime.freeMemory() / ONE_MB;
 		long maxMem = runtime.maxMemory() / ONE_MB;
@@ -45,6 +53,9 @@ public class SystemService {
 		long freeMem = runtime.freeMemory() / ONE_MB;
 		sb.append(String.format("Free Memory %dMB<br>", freeMem));
 		sb.append(String.format("Session Count: %d<br>", AppSessionListener.getSessionCounter()));
+		sb.append("<hr>");
+		sb.append(rssService.getStatusText());
+		sb.append("<hr>");
 		sb.append(getIpReport());
 		return sb.toString();
 	}

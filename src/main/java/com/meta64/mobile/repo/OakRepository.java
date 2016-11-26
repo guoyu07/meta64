@@ -227,7 +227,7 @@ public class OakRepository {
 						 * one node and without setting this.
 						 */
 						// .setClusterId(1)//
-						.memoryCacheSize(64 * 1024 * 1024)//
+						.memoryCacheSize(10 * 1024 * 1024)//
 						.setPersistentCache("target/persistentCache,time");
 
 				/*
@@ -254,8 +254,6 @@ public class OakRepository {
 					String userDir = System.getProperty("user.dir");
 					String url = rdbUrl.replace("{user.dir}", userDir);
 
-					// todo-0: investigate if we are supposed to call 'close' on something to
-					// release this dataSource ?
 					dataSource = RDBDataSourceFactory.forJdbcUrl(url, rdbUser, rdbPassword);
 					builder = builder.setRDBConnection(dataSource, options);
 

@@ -651,7 +651,11 @@ public class AppController {
 
 	/* Currently only used to update TIME offset of the video player */
 	@RequestMapping(value = API_PATH + "/setPlayerInfo", method = RequestMethod.POST)
-	@OakSession
+	/*
+	 * We don't want @OakSession here, because this is called at regular interval and also because it
+	 * should respond fast (being a background operation of the browser)
+	 */
+	// @OakSession
 	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) throws Exception {
 		logRequest("setPlayerInfo", req);
 		SetPlayerInfoResponse res = new SetPlayerInfoResponse();

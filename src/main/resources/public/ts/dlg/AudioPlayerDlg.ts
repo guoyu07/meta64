@@ -109,7 +109,7 @@ namespace m64 {
             }, //
                 "Play");
 
-            //todo-0: even if this button appears to work, I need it to explicitly enforce the saving of the timevalue AND the removel of the AUDIO element from the DOM */
+            //todo-0: even if this button appears to work, I need it to explicitly enforce the saving of the timevalue AND the removal of the AUDIO element from the DOM */
             let closeButton = this.makeButton("Close", "closeAudioPlayerDlgButton", this.closeBtn);
 
             let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);

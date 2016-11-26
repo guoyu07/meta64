@@ -20,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.rss.model.RssEntryWrapper;
 import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.service.RssService;
+import com.meta64.mobile.service.SystemService;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -45,47 +47,58 @@ public class RssReader {
 	private static final int maxFileSize = 10 * 1024 * 1024;
 	public static final int MAX_RSS_ENTRIES = 100;
 
-	/* this is untested... reusing the instance over and over again */
-	private HttpClient client = HttpClientBuilder.create().build();
-	
 	@Autowired
 	private RssService rssService;
 
 	@Autowired
 	private RssDbWriter dbWriter;
 
+	@Autowired
+	private RunAsJcrAdmin adminRunner;
+
 	public RssReader() {
 	}
 
-	public void run(Session session, List<Node> feedNodes) throws Exception {
-		for (Node feedNode : feedNodes) {
-			RssFeedWrapper wFeed = readFeed(feedNode);
+	public void run(List<FeedNodeInfo> feedNodeInfos) throws Exception {
+
+		int counter = 0;
+		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
+			RssFeedWrapper wFeed = readFeed(feedNodeInfo.getUrl());
 			if (wFeed != null) {
 				try {
-					writeFeedToDb(session, wFeed, feedNode);
+					feedNodeInfo.setInProgress(true);
+					writeFeedToDb(wFeed, feedNodeInfo);
+
+					/*
+					 * remove this once troubleshooting memory and performance is complete: todo-0
+					 */
+					// if (++counter >= 3) {
+					// log.info("Terminating after 3");
+					// break;
+					// }
 				}
 				catch (Exception e) {
 					log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
+				}
+				finally {
+					feedNodeInfo.setInProgress(false);
 				}
 			}
 		}
 	}
 
-	public RssFeedWrapper readFeed(Node feedNode) throws Exception {
-		String feedUrl = JcrUtil.safeGetStringProp(feedNode, JcrProp.RSS_FEED_SRC);
-		return readFeed(feedUrl);
-	}
-
 	/*
-	 * todo-0: there is no finally block in this method. will be memory leak.
+	 * todo-0: there is no finally block in this method. will be memory leak. Currently this method isn't being used
+	 * so i'm not worrying about it for now.
 	 */
 	public void readUrl(String url) throws Exception {
 		if (true) throw new Exception("don't call this until you fix missing finally block memory leak.");
-		//HttpClient client = HttpClientBuilder.create().build();
+		// HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 
 		// add request header
 		request.addHeader("User-Agent", FAKE_USER_AGENT);
+		HttpClient client = HttpClientBuilder.create().build();
 		HttpResponse response = client.execute(request);
 
 		log.debug("RawRead of " + url + " -> Response Code : " + response.getStatusLine().getStatusCode());
@@ -97,7 +110,7 @@ public class RssReader {
 		while ((line = rd.readLine()) != null) {
 			result.append(line);
 		}
-		log.debug("CONTENT: "+result.toString());
+		log.debug("CONTENT: " + result.toString());
 	}
 
 	public RssFeedWrapper readFeed(String feedUrl) throws Exception {
@@ -107,13 +120,14 @@ public class RssReader {
 		RssFeedWrapper wFeed = null;
 		InputStream is = null;
 
+		long startTime = System.currentTimeMillis();
 		try {
 			/*
 			 * TODO-0: HttpClient is better than URLConnection, so I need to also look for other
 			 * places in the code (like image downloading) where I'm streaming from arbitrary
 			 * internet URLs and change them over to HttpClient.
 			 */
-			//HttpClient client = HttpClientBuilder.create().build();
+			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(feedUrl);
 			request.addHeader("User-Agent", FAKE_USER_AGENT);
 			HttpResponse response = client.execute(request);
@@ -136,12 +150,16 @@ public class RssReader {
 				if (++entryCounter >= MAX_RSS_ENTRIES) break;
 			}
 		}
-		//Still haven't figured out why some RSS feeds result in this error.
-		//javax.net.ssl.SSLException: java.lang.RuntimeException: Unexpected error: java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be non-empty
+		// NOTE: When we get the following exception there is a fix that needs to be run on the
+		// server and I have it
+		// documented in my notes and working fine. Need to add to github docs. (todo-00)
+		// javax.net.ssl.SSLException: java.lang.RuntimeException: Unexpected error:
+		// java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be
+		// non-empty
 		catch (Exception e) {
 			log.error("*** ERROR reading feed: " + feedUrl, e);
-			//log.debug("Calling readUrl to double check streamability.");
-			//readUrl(feedUrl);
+			// log.debug("Calling readUrl to double check streamability.");
+			// readUrl(feedUrl);
 
 			/*
 			 * It is by design that we don't rethrow this exception, because if a feed fails we
@@ -158,6 +176,8 @@ public class RssReader {
 				is.close();
 				is = null;
 			}
+
+			log.info("Stream read took: " + (System.currentTimeMillis() - startTime) + "ms");
 		}
 		return wFeed;
 	}
@@ -241,33 +261,62 @@ public class RssReader {
 	}
 
 	/* Writes all the entries in the specific RssFeedWrapper to the db */
-	private void writeFeedToDb(Session session, RssFeedWrapper wFeed, Node feedNode) throws Exception {
+	private void writeFeedToDb(RssFeedWrapper wFeed, FeedNodeInfo feedNodeInfo) throws Exception {
 		SyndFeed feed = wFeed.getFeed();
 
 		log.debug("writing feed: " + feed.getTitle());
-		dbWriter.updateFeedNode(session, feed, feedNode);
+		dbWriter.updateFeedNode(feed, feedNodeInfo);
 
-		/*
-		 * now we have the Feed node in place so we can write all RSS entries to the db
-		 */
-		for (RssEntryWrapper wEntry : wFeed.getEntryList()) {
-			SyndEntry entry = (SyndEntry) wEntry.getEntry();
+		adminRunner.run((Session session) -> {
 
-			try {
-				/* if this entry doesn't already exist in our DB */
-				if (rssService.getEntryByLink(entry.getLink()) == null) {
-					log.debug("writing new entry." + entry.getTitle());
+			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
+			if (feedNode == null) {
+				throw new Exception("unable to find feed node id: " + feedNodeInfo.getNodeId());
+			}
+			/*
+			 * now we have the Feed node in place so we can write all RSS entries to the db
+			 */
+			List<RssEntryWrapper> entries = wFeed.getEntryList();
+			feedNodeInfo.setEntryCount(entries.size());
 
-					/* write the entry into db */
-					dbWriter.write(session, feedNode, entry);
+			int entryCounter = 0;
+			for (RssEntryWrapper wEntry : entries) {
+				SyndEntry entry = (SyndEntry) wEntry.getEntry();
+
+				try {
+					/* if this entry doesn't already exist in our DB */
+					if (!rssService.linkExists(entry.getLink())) {
+						log.debug("writing new entry." + entry.getTitle());
+						dbWriter.write(session, feedNode, feedNodeInfo, entry);
+					}
+					else {
+						log.debug("entry already existed." + entry.getTitle());
+					}
 				}
-				else {
-					log.debug("entry already existed." + entry.getTitle());
+				catch (Exception e) {
+					log.error("Failed writing entry. Continuing to next entry...", e);
+				}
+				finally {
+					entryCounter++;
+					feedNodeInfo.setEntriesComplete(entryCounter);
+					
+					/*
+					 * I'm seeing up to 1GB appear to be used by VisualVM monitor, and to see if
+					 * that's real, for now, I want to agressively cleanup garbage after every 10
+					 * row inserts, and make sure JCR isn't truely eating that much memory, up but
+					 * just in reality releasing it all.
+					 */
+					if (entryCounter % 10 == 0) {
+						System.gc();
+					}
 				}
 			}
-			catch (Exception e) {
-				log.error("Failed writing entry. Continuing to next entry...", e);
-			}
-		}
+
+			/* We need to save often or else the JCR will start using way too much memory */
+			session.save();
+			SystemService.logMemory();
+		});
+
+		System.gc();
 	}
 }

@@ -17,6 +17,8 @@ public class JcrProp {
 	public static final String RSS_FEED_URI = "meta64:rssFeedUri";
 	public static final String RSS_FEED_LINK = "meta64:rssFeedLink";
 	public static final String RSS_FEED_IMAGE_URL = "meta64:rssFeedImageUrl";
+	
+	/* this is the one entered by the admin which DEFINES the feed, and is not to be overwritten ever by the code */
 	public static final String RSS_FEED_SRC = "meta64:rssFeedSrc";
 
 	public static final String TYPE_RSS_ITEM = "meta64:rssitem";

@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.service.NodeMoveService;
+import com.meta64.mobile.service.SystemService;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -29,6 +32,9 @@ public class RssDbWriter {
 	@Autowired
 	private NodeMoveService nodeMoveService;
 
+	@Autowired
+	private RunAsJcrAdmin adminRunner;
+
 	//
 	// private static ImageInfoSorter sorter = new ImageInfoSorter();
 	//
@@ -37,83 +43,86 @@ public class RssDbWriter {
 	 * 
 	 * returns the Node of the new feed node created
 	 */
-	public void updateFeedNode(Session session, SyndFeed feed, Node feedNode) throws Exception {
-		feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
-		feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
-		feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
-		feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
+	public void updateFeedNode(SyndFeed feed, FeedNodeInfo feedNodeInfo) throws Exception {
 
-		SyndImage image = feed.getImage();
-		if (image != null) {
-			if (image.getUrl() != null) {
-				feedNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+		adminRunner.run((Session session) -> {
+
+			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
+			if (feedNode == null) {
+				throw new Exception("unable to find feed node id: " + feedNodeInfo.getNodeId());
 			}
-		}
+
+			// todo-1: need to check these and see if they are changed before we expend the cycles
+			// to do an update/save. For now we just always resave.
+
+			feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
+			feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
+			feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
+			feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
+
+			SyndImage image = feed.getImage();
+			if (image != null) {
+				if (image.getUrl() != null) {
+					feedNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+				}
+			}
+
+			session.save();
+		});
 	}
 
 	/*
 	 * Write a specific SyndEntry
 	 */
-	public Node write(Session session, Node feedNode, SyndEntry entry) throws Exception {
+	public void write(Session session, Node feedNode, final FeedNodeInfo feedNodeInfo, final SyndEntry entry) throws Exception {
 
-		boolean success = false;
 		String name = JcrUtil.getGUID();
 
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
-		try {
-			nodeMoveService.moveNodeToTop(session, newNode, false, false);
-			JcrUtil.timestampNewNode(session, newNode);
 
-			if (StringUtils.isEmpty(entry.getTitle())) {
-				throw new Exception("SyndEntry.title is empty.");
-			}
+		nodeMoveService.moveNodeToTop(session, newNode, false, false);
+		JcrUtil.timestampNewNode(session, newNode);
 
-			newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
-
-			if (entry.getDescription() != null) {
-				String desc = entry.getDescription().getValue();
-				if (StringUtils.isEmpty(desc)) {
-					throw new Exception("SyndEntry.desc is empty.");
-				}
-
-				desc = desc.replaceAll("[^\\p{ASCII}]", "");
-				newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
-			}
-			newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
-			newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
-			newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
-
-			// entry.getPublishedDate();
-			// entry.getUpdatedDate();
-
-			for (Object encObj : entry.getEnclosures()) {
-				if (encObj instanceof SyndEnclosureImpl) {
-					SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
-					newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
-					newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
-					newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
-
-					/*
-					 * todo-0: for now we just support the first enclosure which will work for for
-					 * all known situations, and will normally just be the pointer to the media
-					 * content of a podcast.
-					 */
-					// break out of for loop
-					break;
-				}
-			}
-			success = true;
-			return null;
+		if (StringUtils.isEmpty(entry.getTitle())) {
+			throw new Exception("SyndEntry.title is empty.");
 		}
-		finally {
-			if (!success) {
-				if (newNode != null) {
-					log.error("removing node, before save. error encountered before completly initialized. name=" + name);
-					newNode.remove();
-				}
+
+		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
+
+		if (entry.getDescription() != null) {
+			String desc = entry.getDescription().getValue();
+			if (StringUtils.isEmpty(desc)) {
+				throw new Exception("SyndEntry.desc is empty.");
+			}
+
+			desc = desc.replaceAll("[^\\p{ASCII}]", "");
+			newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
+		}
+		newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
+		newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
+		newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
+
+		// entry.getPublishedDate();
+		// entry.getUpdatedDate();
+
+		for (Object encObj : entry.getEnclosures()) {
+			if (encObj instanceof SyndEnclosureImpl) {
+				SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
+				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
+
+				/*
+				 * todo-0: for now we just support the first enclosure which will work for for all
+				 * known situations, and will normally just be the pointer to the media content of a
+				 * podcast.
+				 */
+				// break out of for loop
+				break;
 			}
 		}
+
 	}
 
 	//

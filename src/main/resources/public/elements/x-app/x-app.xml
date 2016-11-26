@@ -117,23 +117,13 @@
            
                 :host {
                     display: block;
-                    --paper-tab-ink: var(--paper-blue-900);
-                    --paper-tabs-selection-bar-color: var(--paper-blue-900);
                 }
-                
-                paper-ripple {
-                    color: var(--paper-tab-ink, --paper-blue-900);
-                }
-                
-                paper-toolbar {
-                    --paper-toolbar-background: var(--paper-blue-900);
-                  }
-                
-                  .self-end {
+                                
+                .self-end {
                     /* This mixin (from iron-flex-layout) aligns the tabs to the
                        bottom of the toolbar. */
                     @apply(--layout-self-end);
-                  }
+                }
  
             /*]]>*/
         </style>

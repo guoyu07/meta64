@@ -1,6 +1,7 @@
 package com.meta64.mobile.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.meta64.mobile.request.GetPlayerInfoRequest;
 import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.rss.RssReader;
+import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.rss.model.PlayerInfo;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
@@ -67,8 +69,13 @@ public class RssService {
 	private Node feedsRootNode;
 
 	/* List of nodes and hashmap for looking them up quickly by various types of keys */
-	private final List<Node> feedNodes = new LinkedList<Node>();
-	private final HashMap<String, Node> feedItemsByLink = new HashMap<String, Node>();
+	private final List<FeedNodeInfo> feedNodeInfos = new LinkedList<FeedNodeInfo>();
+
+	/*
+	 * todo-1: If we wanted to be super efficient we could store a checksum/hash of the String,
+	 * because that would be sufficient
+	 */
+	private final HashSet<String> feedItemsByLink = new HashSet<String>();
 
 	/*
 	 * We cache all the PlayerInfo in memory, so that the API calls from the client have zero lag,
@@ -106,6 +113,24 @@ public class RssService {
 		}
 	}
 
+	/*
+	 * Returns HTML that represents the status of the RSS engine, like what it's doing and how far
+	 * along it is.
+	 */
+	public String getStatusText() {
+		if (!processing) {
+			return "RSS engine idle.<br>";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("Feed Node count=" + feedNodeInfos.size() + "<br>");
+		int counter = 0;
+		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
+			sb.append("Feed Node[" + counter + "] Status: "+feedNodeInfo.getStatus());
+			counter++;
+		}
+		return sb.toString();
+	}
+
 	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
 		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
@@ -116,40 +141,25 @@ public class RssService {
 		if (processing) return;
 
 		synchronized (processingLock) {
-			adminRunner.run((Session session) -> {
-				try {
-					processing = true;
+			try {
+				processing = true;
+
+				adminRunner.run((Session session) -> {
 					init(session);
-					session.save();
+				});
 
-					RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
-					try {
-						reader.run(session, feedNodes);
-					}
-					catch (Exception e) {
-						log.error("Failed processing RSS feeds", e);
-					}
-
-					/*
-					 * We do all the adding of new nodes all in a set of operations without calling
-					 * 'save' until we get here so the mechanism of rollingback any added nodes that
-					 * end up ultimately failing will be deleted back out in finally blocks, rather
-					 * than the much slower alternative which would be to open a session for each
-					 * new node we save.
-					 */
-					session.save();
-				}
-				catch (Exception e) {
-					log.debug("failed processing RSS", e);
-				}
-				finally {
-					processing = false;
-
-					/* release some memory */
-					feedNodes.clear();
-					feedItemsByLink.clear();
-				}
-			});
+				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
+				reader.run(feedNodeInfos);
+				log.info("All RSS processing complete.");
+			}
+			catch (Exception e) {
+				log.error("Failed processing RSS feeds", e);
+			}
+			finally {
+				feedNodeInfos.clear();
+				feedItemsByLink.clear();
+				processing = false;
+			}
 		}
 	}
 
@@ -157,10 +167,10 @@ public class RssService {
 		return feedsRootNode;
 	}
 
-	public Node getEntryByLink(String link) {
-		Node entry = feedItemsByLink.get(link);
-		log.debug("Looked up link[" + link + "] found=" + (entry != null));
-		return entry;
+	public boolean linkExists(String link) {
+		boolean found = feedItemsByLink.contains(link);
+		log.debug("Looked up link[" + link + "] found=" + found);
+		return found;
 	}
 
 	private void init(Session session) throws Exception {
@@ -170,11 +180,12 @@ public class RssService {
 		/* todo-1: not sure if I need disable_insert here or not */
 		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
 
-		feedNodes.clear();
+		feedNodeInfos.clear();
 		feedItemsByLink.clear();
 		scanForFeedNodes(session, feedsRootNode);
 
 		session.save();
+		log.info("RSS init complete.");
 	}
 
 	/*
@@ -185,7 +196,12 @@ public class RssService {
 	private void scanForFeedNodes(Session session, Node node) throws Exception {
 
 		if (node.getPrimaryNodeType().getName().equals("meta64:rssfeed")) {
-			feedNodes.add(node);
+			String nodeId = node.getIdentifier();
+			String url = JcrUtil.getRequiredStringProp(node, JcrProp.RSS_FEED_SRC);
+			FeedNodeInfo feedNodeInfo = new FeedNodeInfo();
+			feedNodeInfo.setUrl(url);
+			feedNodeInfo.setNodeId(nodeId);
+			feedNodeInfos.add(feedNodeInfo);
 			cacheFeedItems(node);
 			return;
 		}
@@ -211,7 +227,7 @@ public class RssService {
 				String linkProp = JcrUtil.safeGetStringProp(itemNode, JcrProp.RSS_ITEM_LINK);
 				if (!StringUtils.isEmpty(linkProp)) {
 					log.debug("CACHING ENTRY: link=" + linkProp);
-					feedItemsByLink.put(linkProp, itemNode);
+					feedItemsByLink.add(linkProp);
 				}
 			}
 		}

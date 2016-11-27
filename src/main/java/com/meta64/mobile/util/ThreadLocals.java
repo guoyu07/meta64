@@ -3,8 +3,6 @@ package com.meta64.mobile.util;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
 
-import org.pegdown.PegDownProcessor;
-
 import com.meta64.mobile.response.base.OakResponseBase;
 
 /**
@@ -21,14 +19,12 @@ public class ThreadLocals {
 	private static final ThreadLocal<Boolean> initialSessionExisted = new ThreadLocal<Boolean>();
 	private static final ThreadLocal<Session> jcrSession = new ThreadLocal<Session>();
 	private static final ThreadLocal<OakResponseBase> oakResponse = new ThreadLocal<OakResponseBase>();
-	private static final ThreadLocal<PegDownProcessor> markdownProc = new ThreadLocal<PegDownProcessor>();
 
 	public static void removeAll() {
 		servletResponse.remove();
 		initialSessionExisted.remove();
 		jcrSession.remove();
 		oakResponse.remove();
-		markdownProc.remove();
 	}
 
 	public static void setServletResponse(HttpServletResponse res) {
@@ -45,14 +41,6 @@ public class ThreadLocals {
 
 	public static Session getJcrSession() {
 		return jcrSession.get();
-	}
-
-	public static void setMarkdownProc(PegDownProcessor session) {
-		markdownProc.set(session);
-	}
-
-	public static PegDownProcessor getMarkdownProc() {
-		return markdownProc.get();
 	}
 
 	public static void setResponse(OakResponseBase response) {

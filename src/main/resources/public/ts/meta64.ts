@@ -14,7 +14,6 @@ namespace m64 {
         export let homeNodeOverride: string;
 
         export let codeFormatDirty: boolean = false;
-        export let serverMarkdown: boolean = true;
 
         /* used as a kind of 'sequence' in the app, when unique vals a needed */
         export let nextGuid: number = 0;

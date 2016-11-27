@@ -12,5 +12,5 @@ then
   echo "TypeScript generating successful."
 else
   echo "********** FAIL. TypeScript compiler reported ERRORS. **********"
-  sleep 5s
+  sleep 7s
 fi

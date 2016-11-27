@@ -14,9 +14,6 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.security.AccessControlEntry;
 import javax.jcr.security.Privilege;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.pegdown.Extensions;
-import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,9 +42,6 @@ public class Convert {
 	 */
 	@org.springframework.beans.factory.annotation.Value("${donateButton}")
 	private String donateButton;
-
-	public static final boolean serverMarkdown = true;
-	public static final boolean defaultToMarkdown = true;
 
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 
@@ -164,38 +158,11 @@ public class Convert {
 				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 	}
 
-	/*
-	 * todo-0: need to document what's going on in this method, and eventually add a checkbox called
-	 * "plaintext" to set ext=txt
-	 */
-	public boolean shouldUseMarkdownRendering(Node node) throws Exception {
-		String fileName = JcrUtil.safeGetStringProp(node, JcrProp.FILENAME);
-
-		/* if there's a file name it's extension takes precidence */
-		if (fileName == null) {
-
-			/* otherwise look for just ext property alone and use it if found */
-			String ext = JcrUtil.safeGetStringProp(node, JcrProp.MIME_EXT);
-			if ("md".equalsIgnoreCase(ext)) {
-				return true;
-			}
-			if ("txt".equalsIgnoreCase(ext)) {
-				return false;
-			}
-			return defaultToMarkdown;
-		}
-		else {
-			return fileName.toLowerCase().endsWith(".md");
-		}
-	}
-
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
 			boolean htmlOnly, boolean allowAbbreviated) throws Exception {
 		List<PropertyInfo> props = null;
 		PropertyIterator propsIter = node.getProperties();
 		PropertyInfo contentPropInfo = null;
-
-		boolean useMarkdown = shouldUseMarkdownRendering(node);
 
 		while (propsIter.hasNext()) {
 			/* lazy create props */
@@ -204,7 +171,7 @@ public class Convert {
 			}
 			Property p = propsIter.nextProperty();
 
-			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, useMarkdown);
+			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated);
 			// log.debug(" PROP Name: " + p.getName());
 
 			/*
@@ -230,10 +197,9 @@ public class Convert {
 		return props;
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean useMarkdown)
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated)
 			throws Exception {
 		String value = null;
-		String htmlValue = null;
 		boolean abbreviated = false;
 		List<String> values = null;
 
@@ -244,7 +210,7 @@ public class Convert {
 
 			// int valIdx = 0;
 			for (Value v : prop.getValues()) {
-				String strVal = formatValue(sessionContext, v, false, useMarkdown);
+				String strVal = formatValue(sessionContext, v, false);
 				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
 				values.add(strVal);
 				// valIdx++;
@@ -257,38 +223,15 @@ public class Convert {
 				value = "[binary data]";
 			}
 			else if (prop.getName().equals(JcrProp.CONTENT)) {
-
-				String val = prop.getValue().getString();
-
-				// log.trace(String.format("prop[%s] isContent", prop.getName()) + "
-				// useMarkdown=" + useMarkdown);
-				if (htmlOnly) {
-					htmlValue = formatValue(sessionContext, prop.getValue(), true, useMarkdown);
-					/*
-					 * I can't remember what this n/r is for but it BREAKS rendering if it's not set
-					 * to this
-					 */
-					value = "n/r";
-
-					/* log.trace("prop[" + prop.getName() + "]=HTML: " + htmlValue); */
-				}
-				else {
-					/*
-					 * I can't remember what this n/r is for but it BREAKS app if it's not set to
-					 * this
-					 */
-					htmlValue = "n/r";
-
-					value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
-					/* log.trace("prop[" + prop.getName() + "]=NON-HTML:" + value); */
-				}
+				value = formatValue(sessionContext, prop.getValue(), htmlOnly);
+				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 			else {
-				value = formatValue(sessionContext, prop.getValue(), false, useMarkdown);
+				value = formatValue(sessionContext, prop.getValue(), false);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 		}
-		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, htmlValue, abbreviated, values);
+		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated, values);
 		return propInfo;
 	}
 
@@ -305,35 +248,19 @@ public class Convert {
 		return val;
 	}
 
-	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml, boolean useMarkdown) {
+	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml) {
 		try {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
 			}
 			else {
-				String ret = null;
-
-				if (convertToHtml && serverMarkdown) {
-					ret = StringEscapeUtils.escapeHtml4(value.getString());
-
-					if (useMarkdown) {
-						ret = convertLinksToMarkdown(ret);
-						ret = getMarkdownProc().markdownToHtml(ret);
-					}
-					else {
-						ret = basicTextFormatting(ret);
-					}
-				}
-				else {
-					ret = value.getString();
-				}
-
-				/* need this to go only on the renderable text. not the SAVED text. */
-				if (convertToHtml) {
-					ret = ret.replace("{{donateButton}}", donateButton);
-					ret = finalTagReplace(ret);
-				}
-
+				String ret = value.getString();
+				ret = convertLinksToMarkdown(ret);
+				
+				//may need to revisit this (todo-0)
+				//ret = finalTagReplace(ret);
+				//ret = basicTextFormatting(ret);
+				
 				return ret;
 			}
 		}
@@ -399,19 +326,5 @@ public class Convert {
 		val = val.replace("[pre]", "<pre class='customPre'>");
 		val = val.replace("[/pre]", "</pre>");
 		return val;
-	}
-
-	/*
-	 * PegDownProcessor is not threadsafe, and also I don't want to create more of them than
-	 * necessary so we simply attach one to each thread, and the thread-safety is no longer an
-	 * issue.
-	 */
-	public static PegDownProcessor getMarkdownProc() {
-		PegDownProcessor proc = ThreadLocals.getMarkdownProc();
-		if (proc == null) {
-			proc = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS);
-			ThreadLocals.setMarkdownProc(proc);
-		}
-		return proc;
 	}
 }

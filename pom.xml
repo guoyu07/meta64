@@ -62,11 +62,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.pegdown</groupId>
-			<artifactId>pegdown</artifactId>
-			<version>1.5.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -172,11 +167,21 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
 				</plugin>
+				
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
 					<configuration>
 						<executable>./build/compile-typescript.sh</executable>
+						<workingDirectory>./build</workingDirectory>
+					</configuration>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<configuration>
+						<executable>./build/compile-less-css.sh</executable>
 						<workingDirectory>./build</workingDirectory>
 					</configuration>
 				</plugin>

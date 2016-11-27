@@ -12,7 +12,7 @@ Each JS file has a variable that is creates and returns as a function. This is d
 
 ## Markdown
 
-Meta64 allows markdown text to be entered into content fields and renders them using standard markdown syntax. The markdown formatter api we use is PageDown.
+Meta64 allows markdown text to be entered into content fields and renders them using standard markdown syntax.
 
 https://code.google.com/p/pagedown/
 

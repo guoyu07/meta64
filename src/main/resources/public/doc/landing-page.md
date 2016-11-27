@@ -107,7 +107,6 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * App is "Mobile First", meaning a primary objective is to run well on mobile
 * Using Google Closure Compiler for JS Minification (https://developers.google.com/closure/compiler/)
 * Pure Java on Server (https://www.oracle.com/java/index.html)
-* Markdown support provided by PegDown (https://github.com/sirthias/pegdown)
 * DropzoneJS API for Drag&Drop uploading (http://dropzonejs.com)
 * Google Code Prettifier (https://github.com/google/code-prettify)
 * Ace Editor for code editing (https://ace.c9.io/#nav=about)

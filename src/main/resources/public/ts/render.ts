@@ -199,73 +199,31 @@ namespace m64 {
                     //console.log("contentProp: " + contentProp);
                     if (contentProp) {
                         renderComplete = true;
+
                         let jcrContent = props.renderProperty(contentProp);
-                        jcrContent = "<div>" + jcrContent + "</div>";
+                        //console.log("**************** jcrContent for MARKDOWN:\n"+jcrContent);
 
-                        if (meta64.serverMarkdown) {
-                            jcrContent = injectCodeFormatting(jcrContent);
-                            jcrContent = injectSubstitutions(jcrContent);
+                        let markedContent = "<marked-element sanitize='true'>" +
+                            "<div class='markdown-html'></div>" +
+                            "<script type='text/markdown'>\n" +
+                            jcrContent +
+                            "</script>" +
+                            "</marked-element>";
 
-                            if (rowStyling) {
-                                ret += tag("div", {
-                                    "class": "jcr-content"
-                                }, jcrContent);
-                            } else {
-                                ret += tag("div", {
-                                    "class": "jcr-root-content"
-                                },
-                                    // probably could use
-                                    // "img.top.right" feature for
-                                    // (Also need to make this a configurable option, because other clones of meta64 don't
-                                    // want my github link!)
-                                    //
-                                    //I decided for now I don't want to show the fork-me-on-github image at upper right of app, but uncommenting this line is al
-                                    //that's required to bring it back.
-                                    //"<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"+
-                                    jcrContent);
-                            }
+                        //When doing server-side markdown we had this processing the HTML that was generated
+                        //but I haven't looked into how to get this back now that we are doing markdown on client.    
+                        //jcrContent = injectCodeFormatting(jcrContent);
+                        //jcrContent = injectSubstitutions(jcrContent);
+
+                        if (rowStyling) {
+                            ret += tag("div", {
+                                "class": "jcr-content"
+                            }, markedContent);
+                        } else {
+                            ret += tag("div", {
+                                "class": "jcr-root-content"
+                            }, markedContent);
                         }
-                        /*
-                         * I spent hours trying to get marked-element to work. Unsuccessful still, so I just have
-                         * serverMarkdown flag that I can set to true, and turn this experimental feature off for now.
-                         */
-                        else {
-
-                            /* alternate attribute way */
-                            // jcrContent = jcrContent.replaceAll("'",
-                            // "{{quot}}");
-                            // ret += "<marked-element sanitize='true'
-                            // markdown='" +
-                            // jcrContent
-                            // + "'><div class='markdown-html jcr-content'>";
-                            // ret += "</div></marked-element>";
-                            if (rowStyling) {
-                                ret += "<marked-element sanitize='true'><div class='markdown-html'>";
-                                ret += tag("script", {
-                                    "type": "text/markdown"
-                                }, jcrContent);
-                            } else {
-                                ret += "<marked-element sanitize='true'><div class='markdown-html'>";
-                                ret += tag("script", {
-                                    "type": "text/markdown"
-                                },
-                                    // probably could
-                                    // "img.top.right" feature for
-                                    // this
-                                    // // if we wanted to. oops.
-                                    "<a href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png' class='corner-style'/></a>"
-                                    + jcrContent);
-                            }
-                            ret += "</div></marked-element>";
-                        }
-
-                        /*
-                         * if (jcrContent.length > 0) { if (rowStyling) { ret += tag("div", { "class" : "jcr-content" },
-                         * jcrContent); } else { ret += tag("div", { "class" : "jcr-root-content" }, // probably could
-                         * "img.top.right" feature for this // if we wanted to. oops. "<a
-                         * href='https://github.com/Clay-Ferguson/meta64'><img src='/fork-me-on-github.png'
-                         * class='corner-style'/></a>" + jcrContent); } }
-                         */
                     }
                 }
 

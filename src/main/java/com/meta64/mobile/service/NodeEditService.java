@@ -235,7 +235,7 @@ public class NodeEditService {
 		node.setProperty(req.getPropertyName(), req.getPropertyValue());
 		session.save();
 
-		PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), null, false, null);
+		PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), false, null);
 		res.setPropertySaved(propertySaved);
 		res.setSuccess(true);
 	}

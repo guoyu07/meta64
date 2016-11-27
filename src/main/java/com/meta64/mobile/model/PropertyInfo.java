@@ -15,22 +15,16 @@ public class PropertyInfo {
 	private String value;
 	private List<String> values;
 
-	/*
-	 * For content nodes, the htmlValue will be the output from converting from markdown into HTML
-	 */
-	private String htmlValue;
-
 	private boolean abbreviated;
 
 	public PropertyInfo() {
 	}
 
-	public PropertyInfo(int type, String name, String value, String htmlValue, boolean abbreviated, List<String> values) {
+	public PropertyInfo(int type, String name, String value, boolean abbreviated, List<String> values) {
 		this.type = type;
 		this.name = name;
 		this.value = value;
 		this.values = values;
-		this.htmlValue = htmlValue;
 		this.abbreviated = abbreviated;
 	}
 
@@ -64,14 +58,6 @@ public class PropertyInfo {
 
 	public void setValues(List<String> values) {
 		this.values = values;
-	}
-
-	public String getHtmlValue() {
-		return htmlValue;
-	}
-
-	public void setHtmlValue(String htmlValue) {
-		this.htmlValue = htmlValue;
 	}
 
 	public boolean isAbbreviated() {

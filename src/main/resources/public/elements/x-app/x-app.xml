@@ -106,9 +106,11 @@
     rel="import"
     href="/polymer/marked-element/marked-element.html" />
 
+<!--  
 <link
     rel="stylesheet"
     href="/css/meta64.css?ver={{cacheVersion}}" />
+-->
 
 <dom-module id="x-app">
     <template>
@@ -123,6 +125,12 @@
                     /* This mixin (from iron-flex-layout) aligns the tabs to the
                        bottom of the toolbar. */
                     @apply(--layout-self-end);
+                }
+                
+                code {
+                    white-space: pre;
+                    word-break: normal;
+                    word-wrap: normal; /* also 'initial' is available */
                 }
  
             /*]]>*/

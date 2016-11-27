@@ -37,7 +37,6 @@ namespace m64 {
             name: string;
             value: string;
             values: string[];
-            htmlValue: string;
             abbreviated: boolean;
         }
 

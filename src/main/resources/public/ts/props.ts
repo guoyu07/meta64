@@ -3,24 +3,24 @@ console.log("running module: props.js");
 namespace m64 {
     export namespace props {
 
-      export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
-          let propsNew: json.PropertyInfo[] = props.clone();
-          let targetIdx: number = 0;
+        export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
+            let propsNew: json.PropertyInfo[] = props.clone();
+            let targetIdx: number = 0;
 
-          for (let prop of propOrder) {
-              targetIdx = moveNodePosition(propsNew, targetIdx, prop);
-          }
+            for (let prop of propOrder) {
+                targetIdx = moveNodePosition(propsNew, targetIdx, prop);
+            }
 
-          return propsNew;
-      }
+            return propsNew;
+        }
 
-      let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
-          let tagIdx: number = props.indexOfItemByProp("name", typeName);
-          if (tagIdx != -1) {
-              props.arrayMoveItem(tagIdx, idx++);
-          }
-          return idx;
-      }
+        let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
+            let tagIdx: number = props.indexOfItemByProp("name", typeName);
+            if (tagIdx != -1) {
+                props.arrayMoveItem(tagIdx, idx++);
+            }
+            return idx;
+        }
 
         /*
          * Toggles display of properties in the gui.
@@ -55,7 +55,7 @@ namespace m64 {
          * node and puts it on the top, and then does same for 'jctCnst.TAGS'
          */
         export let getPropertiesInEditingOrder = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
-            let func:Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
+            let func: Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
             if (func) {
                 return func(node, props);
             }
@@ -97,7 +97,7 @@ namespace m64 {
                         if (isBinaryProp) {
                             val = "[binary]";
                         } else if (!property.values) {
-                            val = render.wrapHtml(property.htmlValue ? property.htmlValue : property.value);
+                            val = render.wrapHtml(property.value);
                         } else {
                             val = props.renderPropertyValues(property.values);
                         }
@@ -184,13 +184,18 @@ namespace m64 {
          * Returns string representation of property value, even if multiple properties
          */
         export let renderProperty = function(property): string {
+            /* If this is a single-value type property */
             if (!property.values) {
+
+                /* if property is missing return empty string */
                 if (!property.value || property.value.length == 0) {
                     return "";
                 }
-                // todo-1: make sure this wrapHtml isn't creating an unnecessary DIV element.
-                return render.wrapHtml(property.htmlValue);
-            } else {
+
+                return property.value;
+            }
+            /* else render multi-value property */
+            else {
                 return renderPropertyValues(property.values);
             }
         }

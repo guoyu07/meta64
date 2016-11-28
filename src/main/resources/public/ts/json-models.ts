@@ -193,6 +193,7 @@ namespace m64 {
         export interface RenderNodeRequest {
             nodeId: string;
             upLevel: number;
+            offset: number;
             renderParentIfLeaf: boolean;
         }
 
@@ -352,6 +353,10 @@ namespace m64 {
         export interface RenderNodeResponse extends OakResponseBase {
             node: NodeInfo;
             children: NodeInfo[];
+
+            /* holds true if we hit the end of the list of child nodes */
+            endReached: boolean;
+
             displayedParent: boolean;
         }
 

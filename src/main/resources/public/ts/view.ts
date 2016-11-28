@@ -24,6 +24,7 @@ namespace m64 {
          * render.
          */
         export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any): void {
+            debugger;
             render.renderPageFromData(res);
 
             if (targetId) {
@@ -49,10 +50,16 @@ namespace m64 {
                 highlightId = currentSelNode != null ? currentSelNode.id : nodeId;
             }
 
+            /*
+            I don't know of any reason 'refreshTree' should itself reset the offset, but I leave this comment here
+            as a hint for the future. 
+            nav.mainOffset = 0;
+            */
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": nodeId,
                 "upLevel": null,
-                "renderParentIfLeaf": renderParentIfLeaf ? true : false
+                "renderParentIfLeaf": renderParentIfLeaf ? true : false,
+                "offset" : nav.mainOffset
             }, function(res: json.RenderNodeResponse) {
                 refreshTreeResponse(res, highlightId);
 
@@ -60,6 +67,32 @@ namespace m64 {
                     edit.editMode(true);
                     edit.createSubNode(meta64.currentNode.uid);
                 }
+            });
+        }
+
+        export let prevPage = function(): void {
+            console.log("Running prevPage Query");
+            nav.mainOffset -= nav.ROWS_PER_PAGE;
+            if (nav.mainOffset < 0) {
+                nav.mainOffset = 0;
+            }
+            loadPage();
+        }
+
+        export let nextPage = function(): void {
+            console.log("Running nextPage Query");
+            nav.mainOffset += nav.ROWS_PER_PAGE;
+            loadPage();
+        }
+
+        let loadPage = function() : void {
+            util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+                "nodeId": meta64.currentNodeId,
+                "upLevel": null,
+                "renderParentIfLeaf": true,
+                "offset" : nav.mainOffset
+            }, function(res: json.RenderNodeResponse) {
+                refreshTreeResponse(res, null);
             });
         }
 

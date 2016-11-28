@@ -12,6 +12,9 @@ namespace m64 {
         export let searchPageTitle: string = "Search Results";
         export let timelinePageTitle: string = "Timeline";
 
+        export let searchOffset = 0;
+        export let timelineOffset = 0;
+
         /*
          * Holds the NodeSearchResponse.java JSON, or null if no search has been done.
          */
@@ -78,10 +81,12 @@ namespace m64 {
         }
 
         export let searchFilesResponse = function(res: json.FileSearchResponse) {
+          nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": res.searchResultNodeId,
                 "upLevel": null,
-                "renderParentIfLeaf": null
+                "renderParentIfLeaf": null,
+                "offset" : searchOffset
             }, nav.navPageNodeResponse);
         }
 

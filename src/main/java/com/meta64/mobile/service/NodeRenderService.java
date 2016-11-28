@@ -55,6 +55,9 @@ public class NodeRenderService {
 	@Autowired
 	private SessionContext sessionContext;
 
+	/* Note: this should match nav.ROWS_PER_PAGE variable in TypeScript */
+	private static int nodesPerPage = 25;
+
 	/*
 	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
 	 * page, this method gets called once per page and retrieves all the data for that page.
@@ -116,39 +119,56 @@ public class NodeRenderService {
 		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
 		res.setNode(nodeInfo);
 
+		int offset = req.getOffset();
 		NodeIterator nodeIter = node.getNodes();
-		int nodeCount = 0;
+		int idx = 0, count = 0;
+		boolean endReached = false;
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
 
 				// Filter on server now too
 				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
+					idx++;
 
-					children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
+					if (idx > offset) {
+						count++;
+						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
 
-					/*
-					 * Instead of crashing browser with too much load, just fail a bit more
-					 * gracefully when the limits of this application are exceeded.
-					 */
-					if (++nodeCount > 1000) {
-						throw new Exception("Node has too many children (> 1000)");
+						if (count >= nodesPerPage) {
+							try {
+								Node finalNode = nodeIter.nextNode();
+								if (!advancedMode && !JcrUtil.nodeVisibleInSimpleMode(finalNode)) {
+									endReached = true;
+								}
+							}
+							catch (Exception e) {
+								endReached = true;
+								// we don't rethrow or log this exception. It's normal flow
+							}
+
+							/* break out of while loop, we have enough children to send back */
+							break;
+						}
 					}
 
 					// log.trace(" node[" + nodeCount + "] path: " + n.getPath());
 				}
 				else {
-					log.trace("    MODE-REJECT node[" + nodeCount + "] path: " + n.getPath());
+					log.trace("    MODE-REJECT node[" + idx + "] path: " + n.getPath());
 				}
 			}
 		}
 		catch (NoSuchElementException ex) {
+			endReached = true;
 			// not an error. Normal iterator end condition.
 		}
 
-		if (nodeCount == 0) {
+		if (idx == 0) {
 			log.trace("    no child nodes found.");
 		}
+
+		res.setEndReached(endReached);
 	}
 
 	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) throws Exception {

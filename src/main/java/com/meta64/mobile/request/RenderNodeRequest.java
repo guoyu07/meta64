@@ -8,6 +8,12 @@ public class RenderNodeRequest {
 	private String nodeId;
 
 	/*
+	 * offset for render of a child node which works like OFFSET on RDBMS. It's the point at which
+	 * we start gathering nodes to return (or the number to skip over), use for pagination support.
+	 */
+	private int offset;
+
+	/*
 	 * holds number of levels to move up the parent chain from 'nodeId' before rendering, or zero to
 	 * render at nodeId itself
 	 */
@@ -37,5 +43,13 @@ public class RenderNodeRequest {
 
 	public void setRenderParentIfLeaf(boolean renderParentIfLeaf) {
 		this.renderParentIfLeaf = renderParentIfLeaf;
+	}
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 }

@@ -172,6 +172,9 @@ tr td div p {
 .vertical-layout-row {
   margin-bottom: 16px;
 }
+.paging-button-bar {
+  margin-top: 16px;
+}
 .page-top-button-bar {
   margin-top: 0;
 }

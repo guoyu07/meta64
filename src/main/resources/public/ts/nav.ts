@@ -4,19 +4,28 @@ namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
+        export let mainOffset:number = 0;
+
+        /* todo-0: need to have this value passed from server rather than coded in TypeScript */
+        export let ROWS_PER_PAGE:number = 25;
+
         export let openMainMenuHelp = function(): void {
+          nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": "/meta64/public/help",
                 "upLevel": null,
-                "renderParentIfLeaf": null
+                "renderParentIfLeaf": null,
+                "offset" : mainOffset
             }, navPageNodeResponse);
         }
 
         export let openRssFeedsNode = function(): void {
+          nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": "/rss/feeds",
                 "upLevel": null,
-                "renderParentIfLeaf": null
+                "renderParentIfLeaf": null,
+                "offset" : mainOffset
             }, navPageNodeResponse);
         }
 
@@ -67,10 +76,15 @@ namespace m64 {
                 return;
             }
 
+            /* todo-0: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
+            remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
+            drilled down from */
+            mainOffset = 0;
             var ironRes = util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.currentNodeId,
                 "upLevel": 1,
-                "renderParentIfLeaf": false
+                "renderParentIfLeaf": false,
+                "offset" : mainOffset
             }, function(res: json.RenderNodeResponse) {
                 upLevelResponse(ironRes.response, meta64.currentNodeId);
             });
@@ -200,10 +214,12 @@ namespace m64 {
                 meta64.loadAnonPageHome(true);
                 // window.location.href = window.location.origin;
             } else {
+                mainOffset = 0;
                 util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                     "nodeId": meta64.homeNodeId,
                     "upLevel": null,
-                    "renderParentIfLeaf": null
+                    "renderParentIfLeaf": null,
+                    "offset": mainOffset
                 }, navPageNodeResponse);
             }
         }

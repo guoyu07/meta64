@@ -211,7 +211,7 @@ namespace m64 {
                             "</marked-element>";
 
                         //When doing server-side markdown we had this processing the HTML that was generated
-                        //but I haven't looked into how to get this back now that we are doing markdown on client.    
+                        //but I haven't looked into how to get this back now that we are doing markdown on client.
                         //jcrContent = injectCodeFormatting(jcrContent);
                         //jcrContent = injectSubstitutions(jcrContent);
 
@@ -623,6 +623,7 @@ namespace m64 {
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
         export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
+            debugger;
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
@@ -756,6 +757,11 @@ namespace m64 {
             // console.log("update status bar.");
             view.updateStatusBar();
 
+            if (nav.mainOffset > 0) {
+                let prevButton: string = makeButton("Prev Page", "prevPageButton", prevPage);
+                output += centeredButtonBar(prevButton, "paging-button-bar");
+            }
+
             let rowCount: number = 0;
             if (data.children) {
                 let childCount: number = data.children.length;
@@ -782,6 +788,11 @@ namespace m64 {
                 }
             }
 
+            if (!data.endReached) {
+                let nextButton = makeButton("Next Page", "nextPageButton", nextPage);
+                output += centeredButtonBar(nextButton, "paging-button-bar");
+            }
+
             util.setHtml("listView", output);
 
             if (meta64.codeFormatDirty) {
@@ -802,6 +813,16 @@ namespace m64 {
             } else {
                 view.scrollToSelectedNode();
             }
+        }
+
+        export let prevPage = function(): void {
+            console.log("Prev page button click.");
+            view.prevPage();
+        }
+
+        export let nextPage = function(): void {
+            console.log("Next page button click.");
+            view.nextPage();
         }
 
         export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
@@ -1001,33 +1022,18 @@ namespace m64 {
             }, "", true);
         }
 
-        export let makeButton = function(text: string, id: string, callback: any): string {
-            let attribs: Object = {
+        export let makeButton = function(text: string, id: string, callback: any, ctx?: any): string {
+            let attribs = {
                 "raised": "raised",
-                "id": id
+                "id": id,
+                "class": "standardButton"
             };
 
             if (callback != undefined) {
-                attribs["onClick"] = callback;
+                attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
             }
 
-            return tag("paper-button", attribs, text, true);
-        }
-
-        /*
-         * domId is id of dialog being closed.
-         */
-        export let makeBackButton = function(text: string, id: string, domId: string, callback: any): string {
-
-            if (callback === undefined) {
-                callback = "";
-            }
-
-            return tag("paper-button", {
-                "raised": "raised",
-                "id": id,
-                "onClick": "m64.meta64.cancelDialog('" + domId + "');" + callback
-            }, text, true);
+            return render.tag("paper-button", attribs, text, true);
         }
 
         export let allowPropertyToDisplay = function(propName: string): boolean {

@@ -623,7 +623,6 @@ namespace m64 {
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
         export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
-            debugger;
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 

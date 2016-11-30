@@ -36,9 +36,10 @@ namespace m64 {
             var addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
                 this.addTagsProperty, this);
             var splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent, this);
+            var deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick, this);
             var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit, this);
 
-            var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton
+            var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
                 + splitContentButton + cancelEditButton, "buttons");
 
             /* todo: need something better for this when supporting mobile */
@@ -60,7 +61,7 @@ namespace m64 {
                 id: this.id("propertyEditFieldContainer"),
                 // todo-0: create CSS class for this.
                 style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
-                class : "vertical-layout-row"
+                class: "vertical-layout-row"
                 //"padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
             }, "Loading...");
 
@@ -89,7 +90,6 @@ namespace m64 {
                 /* iterator function will have the wrong 'this' so we save the right one */
                 var thiz = this;
                 var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
-
                 var aceFields = [];
 
                 // Iterate PropertyInfo.java objects
@@ -119,9 +119,9 @@ namespace m64 {
                     thiz.propEntries.push(propEntry);
 
                     var buttonBar = "";
-                    if (!isReadOnlyProp && !isBinaryProp) {
-                        buttonBar = thiz.makePropertyEditButtonBar(prop, fieldId);
-                    }
+                    // if (!isReadOnlyProp && !isBinaryProp) {
+                    //     buttonBar = thiz.makePropertyEditButtonBar(prop, fieldId);
+                    // }
 
                     var field = buttonBar;
 
@@ -163,7 +163,7 @@ namespace m64 {
                     }, '', true);
 
                     // todo-0: I can remove this div now ?
-                    fields += render.tag("div", {}, field);
+                    fields += render.tag("div", { "display": "table-row" }, field);
                 }
             }
 
@@ -176,7 +176,15 @@ namespace m64 {
             //
             // fields += toggleReadonlyVisButton;
 
-            util.setHtml(this.id("propertyEditFieldContainer"), fields);
+            //let row = render.tag("div", { "display": "table-row" }, left + center + right);
+
+            let propTable: string = render.tag("div",
+                {
+                    "display": "table",
+                }, fields);
+
+
+            util.setHtml(this.id("propertyEditFieldContainer"), propTable);
 
             if (cnst.USE_ACE_EDITOR) {
                 for (var i = 0; i < aceFields.length; i++) {
@@ -242,14 +250,16 @@ namespace m64 {
             edit.editNode.properties.push(res.propertySaved);
             meta64.treeDirty = true;
 
-            if (this.domId != "EditNodeDlg") {
-                console.log("error: incorrect object for EditNodeDlg");
-            }
+            // if (this.domId != "EditNodeDlg") {
+            //     console.log("error: incorrect object for EditNodeDlg");
+            // }
             this.populateEditNodePg();
         }
 
         /*
          * Note: fieldId parameter is already dialog-specific and doesn't need id() wrapper function
+         *
+         * todo-0: this function can be deleted once the checkbox and  action buttons are implemented.
          */
         makePropertyEditButtonBar = (prop: any, fieldId: string): string => {
             var buttonBar = "";
@@ -342,12 +352,13 @@ namespace m64 {
             });
         }
 
+        /* &&& */
         deletePropertyResponse = (res: any, propertyToDelete: any) => {
 
             if (util.checkSuccess("Delete property", res)) {
 
                 /*
-                 * remove deleted property from client side storage, so we can re-render screen without making another call to
+                 * remove deleted property from client side data, so we can re-render screen without making another call to
                  * server
                  */
                 props.deletePropertyFromLocalData(propertyToDelete);
@@ -575,7 +586,12 @@ namespace m64 {
                     }, '', true);
                 }
             }
-            return fields;
+
+            let col = render.tag("div", {
+                "style": "display: table-cell;"
+            }, fields);
+
+            return col;
         }
 
         makeSinglePropEditor = (propEntry: PropEntry, aceFields: any): string => {
@@ -590,6 +606,8 @@ namespace m64 {
             console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
                 + "] fieldId=" + propEntry.id);
 
+            let propSelCheckbox: string = "";
+
             if (propEntry.readOnly || propEntry.binary) {
                 field += render.tag("paper-textarea", {
                     "id": propEntry.id,
@@ -599,6 +617,8 @@ namespace m64 {
                     "value": propValStr
                 }, "", true);
             } else {
+                propSelCheckbox = this.makeCheckBox("", "selProp_" + propEntry.id, false);
+
                 if (propEntry.property.name == jcrCnst.CONTENT) {
                     this.contentFieldDomId = propEntry.id;
                 }
@@ -621,7 +641,53 @@ namespace m64 {
                     });
                 }
             }
-            return field;
+
+            let selCol = render.tag("div", {
+                "style": "width: 40px; display: table-cell; padding: 10px;"
+            }, propSelCheckbox);
+
+            let editCol = render.tag("div", {
+                "style": "display: table-cell; padding: 10px;"
+            }, field);
+
+            return selCol + editCol;
+        }
+
+        deletePropertyButtonClick = (): void => {
+
+            /* Iterate over all properties */
+            for (let id in this.fieldIdToPropMap) {
+                if (this.fieldIdToPropMap.hasOwnProperty(id)) {
+
+                    /* get PropEntry for this item */
+                    let propEntry: PropEntry = this.fieldIdToPropMap[id];
+                    if (propEntry) {
+                        //console.log("prop=" + propEntry.property.name);
+                        let selPropDomId = "selProp_" + propEntry.id;
+
+                        /*
+                        Get checkbox control and its value
+                        todo-1: getting value of checkbox should be in some shared utility method
+                        */
+                        let selCheckbox = util.polyElm(this.id(selPropDomId));
+                        if (selCheckbox) {
+                            let checked: boolean = selCheckbox.node.checked;
+                            if (checked) {
+                                //console.log("prop IS CHECKED=" + propEntry.property.name);
+                                this.deleteProperty(propEntry.property.name);
+
+                                /* for now lets' just support deleting one property at a time, and so we can return once we found a
+                                checked one to delete. Would be easy to extend to allow multiple-selects in the future */
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        throw "propEntry not found for id: " + id;
+                    }
+                }
+            }
+            console.log("Delete property: ")
         }
 
         splitContent = (): void => {

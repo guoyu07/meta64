@@ -61,19 +61,30 @@ namespace m64 {
             }
 
             let propsNew: json.PropertyInfo[] = props.clone();
-            let targetIdx: number = 0;
-
-            let tagIdx: number = propsNew.indexOfItemByProp("name", jcrCnst.CONTENT);
-            if (tagIdx != -1) {
-                propsNew.arrayMoveItem(tagIdx, targetIdx++);
-            }
-
-            tagIdx = propsNew.indexOfItemByProp("name", jcrCnst.TAGS);
-            if (tagIdx != -1) {
-                propsNew.arrayMoveItem(tagIdx, targetIdx++);
-            }
+            movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
+            movePropsToEnd([jcrCnst.CREATED, jcrCnst.CREATED_BY, jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY], propsNew);
 
             return propsNew;
+        }
+
+        /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
+        let movePropsToTop = function(propsList: string[], props: json.PropertyInfo[]) {
+            for (let prop of propsList) {
+                let tagIdx = props.indexOfItemByProp("name", prop);
+                if (tagIdx != -1) {
+                    props.arrayMoveItem(tagIdx, 0);
+                }
+            }
+        }
+
+        /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
+        let movePropsToEnd = function(propsList: string[], props: json.PropertyInfo[]) {
+            for (let prop of propsList) {
+                let tagIdx = props.indexOfItemByProp("name", prop);
+                if (tagIdx != -1) {
+                    props.arrayMoveItem(tagIdx, props.length);
+                }
+            }
         }
 
         /*

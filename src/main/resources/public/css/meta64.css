@@ -148,9 +148,11 @@ code {
 }
 .propertyEditListItem {
   padding-left: 16px;
+  display: table-row;
 }
 .propertyEditListItemHidden {
   padding-left: 16px;
+  display: table-row;
   display: none;
 }
 body {

@@ -6,9 +6,7 @@ console.log("running module: EditPropertyDlg.js");
 namespace m64 {
     export class EditPropertyDlg extends DialogBase {
 
-        private editNodeDlg: any;
-
-        constructor(editNodeDlg: any) {
+        constructor(private editNodeDlg: any) {
             super("EditPropertyDlg");
         }
 
@@ -80,16 +78,15 @@ namespace m64 {
             util.json<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
         }
 
-        /* Warning: don't confuse with EditNodeDlg */
         savePropertyResponse = (res: json.SavePropertyResponse): void => {
             util.checkSuccess("Save properties", res);
 
             edit.editNode.properties.push(res.propertySaved);
             meta64.treeDirty = true;
 
-            if (this.editNodeDlg.domId != "EditNodeDlg") {
-                console.log("error: incorrect object for EditNodeDlg");
-            }
+            // if (this.editNodeDlg.domId != "EditNodeDlg") {
+            //     console.log("error: incorrect object for EditNodeDlg");
+            // }
             this.editNodeDlg.populateEditNodePg();
         }
 

@@ -24,7 +24,6 @@ namespace m64 {
          * render.
          */
         export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any): void {
-            debugger;
             render.renderPageFromData(res);
 
             if (targetId) {
@@ -52,7 +51,7 @@ namespace m64 {
 
             /*
             I don't know of any reason 'refreshTree' should itself reset the offset, but I leave this comment here
-            as a hint for the future. 
+            as a hint for the future.
             nav.mainOffset = 0;
             */
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {

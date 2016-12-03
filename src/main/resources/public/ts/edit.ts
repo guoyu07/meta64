@@ -131,10 +131,10 @@ namespace m64 {
             return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
         }
 
-        export let startEditingNewNode = function(typeName?: string): void {
+        export let startEditingNewNode = function(typeName?: string, createAtTop?:boolean): void {
             editingUnsavedNode = false;
             editNode = null;
-            editNodeDlgInst = new EditNodeDlg(typeName);
+            editNodeDlgInst = new EditNodeDlg(typeName, createAtTop);
             editNodeDlgInst.saveNewNode("");
         }
 
@@ -361,7 +361,7 @@ namespace m64 {
             }
         }
 
-        export let createSubNode = function(uid?: any, typeName?: string): void {
+        export let createSubNode = function(uid?: any, typeName?: string, createAtTop?: boolean): void {
 
             /*
              * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page), or any selected
@@ -387,7 +387,7 @@ namespace m64 {
              * this indicates we are NOT inserting inline. An inline insert would always have a target.
              */
             nodeInsertTarget = null;
-            startEditingNewNode(typeName);
+            startEditingNewNode(typeName, createAtTop);
         }
 
         export let replyToComment = function(uid: any): void {

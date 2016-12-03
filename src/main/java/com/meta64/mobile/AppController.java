@@ -661,7 +661,7 @@ public class AppController {
 		SetPlayerInfoResponse res = new SetPlayerInfoResponse();
 		rssService.setPlayerInfo(req);
 		res.setSuccess(true);
-		checkHttpSession();
+		//checkHttpSession();
 		return res;
 	}
 

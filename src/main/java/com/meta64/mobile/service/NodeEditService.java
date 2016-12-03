@@ -62,6 +62,9 @@ public class NodeEditService {
 
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
+	
+	@Autowired
+	private NodeMoveService nodeMoveService;
 
 	/*
 	 * Creates a new node as a *child* node of the node specified in the request.
@@ -100,6 +103,10 @@ public class NodeEditService {
 		else {
 			newNode = node.addNode(name, JcrConstants.NT_UNSTRUCTURED);
 			newNode.setProperty(JcrProp.CONTENT, "");
+		}
+		
+		if (req.isCreateAtTop()) {
+			nodeMoveService.moveNodeToTop(session, newNode, false, true);
 		}
 		JcrUtil.timestampNewNode(session, newNode);
 

@@ -495,9 +495,9 @@ namespace m64 {
             /* multiple select nodes */
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine: boolean = highlightNode && (highlightNode.createdBy === userName || "admin" === userName);
+            let selNodeIsMine: boolean = highlightNode!=null && (highlightNode.createdBy === userName || "admin" === userName);
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
-            let homeNodeSelected: boolean = highlightNode && homeNodeId == highlightNode.id;
+            let homeNodeSelected: boolean = highlightNode!=null && homeNodeId == highlightNode.id;
             let importFeatureEnabled = isAdminUser || userPreferences.importAllowed;
             let exportFeatureEnabled = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
@@ -554,8 +554,8 @@ namespace m64 {
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
             util.setEnablement("createNodeButton", canCreateNode);
-            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || homeNodeId == highlightNode.id));
-            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || homeNodeId == highlightNode.id));
+            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || (highlightNode!=null && homeNodeId == highlightNode.id)));
+            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || (highlightNode!=null && homeNodeId == highlightNode.id)));
             util.setEnablement("adminMenu", isAdminUser);
 
             //VISIBILITY

@@ -284,7 +284,7 @@ public class UserManagerService {
 		final String email = req.getEmail();
 		final String captcha = req.getCaptcha() == null ? "" : req.getCaptcha();
 
-		log.debug("Signup: userName=" + userName + " email=" + email + " captcha=" + captcha);
+		log.trace("Signup: userName=" + userName + " email=" + email + " captcha=" + captcha);
 
 		/* throw exceptions of the username or password are not valid */
 		Validator.checkUserName(userName);

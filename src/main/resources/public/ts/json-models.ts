@@ -90,6 +90,7 @@ namespace m64 {
             nodeId: string;
             newNodeName: string;
             typeName: string;
+            createAtTop: boolean;
         }
 
         export interface DeleteAttachmentRequest {

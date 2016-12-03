@@ -65,7 +65,7 @@ public class UserManagerUtil {
 			 * to be the normal flow. Test accounts already exist, etc.
 			 */
 			if (automated) {
-				log.info("Account Verified to Exist: " + userName);
+				log.trace("Account Verified to Exist: " + userName);
 			}
 			else {
 				throw new Exception("UserName is already taken.");

@@ -14,7 +14,7 @@ namespace m64 {
         propEntries: Array<PropEntry> = new Array<PropEntry>();
         editPropertyDlgInst: any;
 
-        constructor(private typeName?: string) {
+        constructor(private typeName?: string, private createAtTop?:boolean) {
             super("EditNodeDlg");
 
             /*
@@ -449,7 +449,8 @@ namespace m64 {
                 util.json<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName,
-                    "typeName": this.typeName ? this.typeName : "nt:unstructured"
+                    "typeName": this.typeName ? this.typeName : "nt:unstructured",
+                    "createAtTop" : this.createAtTop
                 }, edit.createSubNodeResponse, edit);
             }
         }
@@ -647,7 +648,7 @@ namespace m64 {
             }, propSelCheckbox);
 
             let editCol = render.tag("div", {
-                "style": "display: table-cell; padding: 10px;"
+                "style": "width: 100%; display: table-cell; padding: 10px;"
             }, field);
 
             return selCol + editCol;

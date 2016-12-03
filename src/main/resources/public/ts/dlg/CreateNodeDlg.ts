@@ -16,10 +16,11 @@ namespace m64 {
         build = (): string => {
             let header = this.makeHeader("Create New Node");
 
-            let createChildButton = this.makeCloseButton("Create Child", "createChildButton", this.createChild, this);
+            let createFirstChildButton = this.makeCloseButton("Create First Child", "createFirstChildButton", this.createFirstChild, this);
+            let createLastChildButton = this.makeCloseButton("Create Last Child", "createLastChildButton", this.createLastChild, this);
             let createInlineButton = this.makeCloseButton("Create Inline", "createInlineButton", this.createInline, this);
             let backButton = this.makeCloseButton("Cancel", "cancelButton");
-            let buttonBar = render.centeredButtonBar(createChildButton + createInlineButton + backButton);
+            let buttonBar = render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
 
             let content = "";
             let typeIdx = 0;
@@ -47,12 +48,21 @@ namespace m64 {
             }, val);
         }
 
-        createChild = (): void => {
+        /* todo-00: not implemented yet: currently just does 'create last child' functionality */
+        createFirstChild = (): void => {
             if (!this.lastSelTypeName) {
                 alert("choose a type.");
                 return;
             }
-            edit.createSubNode(null, this.lastSelTypeName);
+            edit.createSubNode(null, this.lastSelTypeName, true);
+        }
+
+        createLastChild = (): void => {
+            if (!this.lastSelTypeName) {
+                alert("choose a type.");
+                return;
+            }
+            edit.createSubNode(null, this.lastSelTypeName, false);
         }
 
         createInline = (): void => {

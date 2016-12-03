@@ -149,10 +149,12 @@ code {
 .propertyEditListItem {
   padding-left: 16px;
   display: table-row;
+  width: 100%;
 }
 .propertyEditListItemHidden {
   padding-left: 16px;
   display: table-row;
+  width: 100%;
   display: none;
 }
 body {

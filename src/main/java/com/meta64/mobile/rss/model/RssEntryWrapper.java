@@ -14,9 +14,9 @@ public class RssEntryWrapper {
 
 	public RssEntryWrapper(SyndEntry entry) {
 		this.entry = entry;
-		//StringBuilder sb = new StringBuilder();
-		//dump("  ", sb);
-		//log.debug(sb.toString());
+		// StringBuilder sb = new StringBuilder();
+		// dump(" ", sb);
+		// log.debug(sb.toString());
 	}
 
 	public void dump(String indent, StringBuilder sb) {

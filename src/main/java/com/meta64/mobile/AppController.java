@@ -652,8 +652,8 @@ public class AppController {
 	/* Currently only used to update TIME offset of the video player */
 	@RequestMapping(value = API_PATH + "/setPlayerInfo", method = RequestMethod.POST)
 	/*
-	 * We don't want @OakSession here, because this is called at regular interval and also because it
-	 * should respond fast (being a background operation of the browser)
+	 * We don't want @OakSession here, because this is called at regular interval and also because
+	 * it should respond fast (being a background operation of the browser)
 	 */
 	// @OakSession
 	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) throws Exception {
@@ -661,7 +661,7 @@ public class AppController {
 		SetPlayerInfoResponse res = new SetPlayerInfoResponse();
 		rssService.setPlayerInfo(req);
 		res.setSuccess(true);
-		//checkHttpSession();
+		// checkHttpSession();
 		return res;
 	}
 

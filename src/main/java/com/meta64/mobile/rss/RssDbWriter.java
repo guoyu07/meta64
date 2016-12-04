@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.service.NodeMoveService;
-import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;

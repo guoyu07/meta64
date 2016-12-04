@@ -4,7 +4,7 @@ public class FileSearchRequest {
 
 	private String searchText;
 	private boolean reindex;
-	
+
 	/* Node user has selected when running the command */
 	private String nodeId;
 

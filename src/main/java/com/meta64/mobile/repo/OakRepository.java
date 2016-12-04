@@ -3,6 +3,7 @@ package com.meta64.mobile.repo;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 
+import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import org.apache.jackrabbit.oak.plugins.document.rdb.RDBDataSourceFactory;
 import org.apache.jackrabbit.oak.plugins.document.rdb.RDBOptions;
 import org.apache.jackrabbit.oak.plugins.index.aggregate.NodeAggregator;
 import org.apache.jackrabbit.oak.plugins.index.aggregate.SimpleNodeAggregator;
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexConstants;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexEditorProvider;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider;
 import org.apache.jackrabbit.oak.security.SecurityProviderImpl;
@@ -39,6 +41,7 @@ import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 import org.apache.jackrabbit.oak.spi.security.user.UserConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
+import org.h2.store.fs.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,7 @@ import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
+import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.XString;
 import com.mongodb.DB;
@@ -75,8 +79,14 @@ public class OakRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
 
+	// todo-000: don't leave this on in production!
+	private static final boolean forceIndexRebuild = false;
+
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
+
+	@Value("${adminDataFolder}")
+	private String adminDataFolder;
 
 	@Value("${db.store.type}")
 	private String dbStoreType;
@@ -260,6 +270,17 @@ public class OakRepository {
 					// repository = new Jcr(nodeStore)/* .with(getQueryEngineSettings())
 					// */.with(getSecurityProvider()).createRepository();
 				}
+				else if ("filesystem".equalsIgnoreCase(dbStoreType)) {
+					/*
+					 * The below code is just a sample of what I found online which I think works
+					 * but I've never tested. Since Java includes DerbyDB support alread built-in, i
+					 * haven't seen the need yet to try any filesystem storage for anything nor have
+					 * i reserached any capabilities of FileStore yet.
+					 */
+					// FileStore fileStore = FileStore.newFileStore(new
+					// File("target/"+System.currentTimeMillis())).create();
+					// nodeStore = new SegmentNodeStore(fileStore);
+				}
 
 				nodeStore = builder.getNodeStore();
 				root = nodeStore.getRoot();
@@ -275,26 +296,18 @@ public class OakRepository {
 				jcr = jcr.with(getSecurityProvider());
 
 				if (indexingEnabled) {
-					/*
-					 * WARNING: Not all valid SQL will work with these lucene queries. Namely the
-					 * contains() method fails so always use '=' operator for exact string matches
-					 * or LIKE %something%, instead of using the contains method.
-					 */
 					indexProvider = new LuceneIndexProvider();
-					indexProvider = indexProvider.with(getNodeAggregator());
 
-					jcr = jcr.with(new LuceneFullTextInitializer("contentIndex", "jcr:content"));
-					jcr = jcr.with(new LuceneFullTextInitializer("tagsIndex", "tags"));
-
-					jcr = jcr.with(new LuceneSortInitializer("createdIndex", "jcr:created"));
-					jcr = jcr.with(new LuceneSortInitializer("lastModifiedIndex", "jcr:lastModified"));
-					jcr = jcr.with(new LuceneSortInitializer("codeIndex", JcrProp.CODE));
-					jcr = jcr.with(new LuceneSortInitializer("pwdResetAuthIndex", JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE));
-
+					/*
+					 * todo-0 I have withAsyncIndexing called TWICE because that's how chetan did it
+					 * that way. Need to post a question to him about this, or else just verify it
+					 * works with just one call.
+					 */
+					jcr = jcr.withAsyncIndexing();
+					jcr = jcr.with(new LuceneIndexEditorProvider());
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
 					jcr = jcr.with((Observer) indexProvider);
-					jcr = jcr.with(new LuceneIndexEditorProvider());
-					jcr = jcr.withAsyncIndexing();
+					// jcr = jcr.withAsyncIndexing();
 				}
 
 				/* can shutdown during startup. */
@@ -314,6 +327,7 @@ public class OakRepository {
 				initialized = true;
 
 				UserManagerUtil.verifyAdminAccountReady(this);
+				createIndexes();
 				initRequiredNodes();
 				createTestAccounts();
 				typeService.initNodeTypes();
@@ -324,6 +338,116 @@ public class OakRepository {
 				log.error("********** Is the MongoDb Server reachable ? **********", e);
 				throw e;
 			}
+		}
+	}
+
+	public void createIndexes() throws Exception {
+		adminRunner.run((Session session) -> {
+			FileUtils.createDirectories(adminDataFolder + File.separator + "luceneIndexes");
+
+			/* Create indexes to support timeline query (order by dates) */
+			createIndex(session, "lastModified", true, false, "jcr:lastModified", "Date", "nt:base");
+			createIndex(session, "created", true, false, "jcr:created", "Date", "nt:base");
+
+			/* Indexes for lookups involved in user registration and password changes */
+			createIndex(session, "codeIndex", false, false, JcrProp.CODE, null, "nt:base");
+			createIndex(session, "pwdResetAuthIndex", false, false, JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, null, "nt:base");
+
+			/* Index all properties of all nodes for fulltext search capability */
+			createIndex(session, "fullText", false, true, null, null, "nt:base");
+		});
+	}
+
+	/**
+	 * Creates the index definition. This code is capable of creating property indexes that do
+	 * sorting or searching for exact matches of properties OR else defining an index that does full
+	 * text search on ALL properties.
+	 * 
+	 * For sorting capability to make "ORDER BY" queries work on the specified 'sortPropName',
+	 * specify ordered=true, otherwise false.
+	 * 
+	 * If you have ordered=false, then you can specify fulltext=true, and it will configure for a
+	 * fulltext index on ALL properties, so in that case the sortPropName can be null, and will be
+	 * ignored.
+	 * 
+	 * You must specify one of ordered or fulltext as true but not both.
+	 * 
+	 * You can remove the 'persistence' and 'path' properties if you want the data stored in the
+	 * repository rather than on the file system. This code currently uses file system so that
+	 * forcing a rebuild of indexes is as simple as deleting the index folders and restarting the
+	 * server. (i.e. deleting folders WHILE server is shutdown first) Indexes get rebuild when the
+	 * server starts if the folders are missing.
+	 */
+	public void createIndex(Session session, String indexName, boolean ordered, boolean fulltext, String sortPropName, String sortPropType, String targetType)
+			throws Exception {
+		Node indexNode = JcrUtil.findNode(session, JcrConst.PATH_INDEX);
+		Node indexDefNode = JcrUtil.safeFindNode(session, JcrConst.PATH_INDEX + "/" + indexName);
+		if (indexDefNode != null) {
+			if (forceIndexRebuild) {
+				log.info("Forcing new index definition for " + indexName + " and overwriting previous definition");
+				indexDefNode.remove();
+			}
+			else {
+				log.info("Index definition for " + indexName + " exists. Not creating.");
+				return;
+			}
+		}
+		log.info("Creating index definition: " + indexName);
+
+		indexDefNode = indexNode.addNode(indexName, "oak:QueryIndexDefinition");
+
+		/* properties required for all indexes */
+		indexDefNode.setProperty("compatVersion", 2);
+		indexDefNode.setProperty("type", "lucene");
+		indexDefNode.setProperty("async", "async");
+		indexDefNode.setProperty("reindex", true);
+
+		// needed for non-fulltext??? todo-0 ... did it even BLOW UP when i tried on non-fulltext?
+		if (fulltext) {
+			indexDefNode.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true);
+		}
+
+		/* using filesystem */
+		indexDefNode.setProperty("persistence", "file");
+		indexDefNode.setProperty("path", adminDataFolder + File.separator + "luceneIndexes" + File.separator + indexName);
+
+		Node indexRulesNode = indexDefNode.addNode("indexRules", "nt:unstructured");
+		Node ntBaseNode = indexRulesNode.addNode(targetType);
+		Node propertiesNode = ntBaseNode.addNode("properties", "nt:unstructured");
+
+		Node propNode = propertiesNode.addNode(indexName);
+
+		if (!fulltext) {
+			propNode.setProperty("name", sortPropName);
+			propNode.setProperty("propertyIndex", true);
+
+			if (ordered) {
+				propNode.setProperty("ordered", true);
+			}
+
+			if (sortPropType != null) {
+				propNode.setProperty("type", sortPropType);
+			}
+		}
+		else {
+			enableFulltextIndex(propNode, null);
+		}
+
+		session.save();
+	}
+
+	private void enableFulltextIndex(Node propNode, String propertyName) throws Exception {
+		propNode.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true);
+
+		if (propertyName == null) {
+			/* This codepath IS tested */
+			propNode.setProperty(LuceneIndexConstants.PROP_NAME, LuceneIndexConstants.REGEX_ALL_PROPS);
+			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, true);
+		}
+		else {
+			/* WARNING: this codepath is untested */
+			propNode.setProperty(LuceneIndexConstants.PROP_NAME, propertyName);
+			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
 		}
 	}
 
@@ -406,8 +530,8 @@ public class OakRepository {
 
 	public void close() {
 		AppServer.setShuttingDown(true);
-		if (instance==null) return;
-		
+		if (instance == null) return;
+
 		synchronized (lock) {
 			try {
 				if (executor != null) {
@@ -453,6 +577,7 @@ public class OakRepository {
 				}
 
 				if (dataSource != null && rdbShutdown != null) {
+					log.info("Closing RDBMS.");
 					dataSource = null;
 					try {
 						DriverManager.getConnection(rdbShutdown);

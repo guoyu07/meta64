@@ -90,8 +90,8 @@ public class RssReader {
 	}
 
 	/*
-	 * todo-0: there is no finally block in this method. will be memory leak. Currently this method isn't being used
-	 * so i'm not worrying about it for now.
+	 * todo-0: there is no finally block in this method. will be memory leak. Currently this method
+	 * isn't being used so i'm not worrying about it for now.
 	 */
 	public void readUrl(String url) throws Exception {
 		if (true) throw new Exception("don't call this until you fix missing finally block memory leak.");
@@ -302,7 +302,7 @@ public class RssReader {
 				finally {
 					entryCounter++;
 					feedNodeInfo.setEntriesComplete(entryCounter);
-					
+
 					/*
 					 * I'm seeing up to 1GB appear to be used by VisualVM monitor, and to see if
 					 * that's real, for now, I want to agressively cleanup garbage after every 10

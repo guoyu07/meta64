@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ServletComponentScan
 public class AppServer {
 	private static final Logger log = LoggerFactory.getLogger(AppServer.class);
-	
+
 	private static boolean shuttingDown;
 	private static boolean enableScheduling;
 
@@ -40,15 +40,15 @@ public class AppServer {
 	}
 
 	@EventListener
-    public void handleContextRefresh(ContextRefreshedEvent event) {
+	public void handleContextRefresh(ContextRefreshedEvent event) {
 		log.info("ContextRefreshedEvent.");
-    }
-	
+	}
+
 	@EventListener
-    public void handleContextRefresh(ContextClosedEvent event) {
+	public void handleContextRefresh(ContextClosedEvent event) {
 		log.info("ContextClosedEvent");
-    }
-	
+	}
+
 	/*
 	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possible
 	 * and portable to share with other java developers and able to work just from calling this one
@@ -108,7 +108,7 @@ public class AppServer {
 	public static void shutdownCheck() throws Exception {
 		if (shuttingDown) throw new Exception("Server is shutting down.");
 	}
-	
+
 	public static boolean isShuttingDown() {
 		return shuttingDown;
 	}

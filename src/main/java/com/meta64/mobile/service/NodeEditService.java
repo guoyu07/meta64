@@ -62,7 +62,7 @@ public class NodeEditService {
 
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
-	
+
 	@Autowired
 	private NodeMoveService nodeMoveService;
 
@@ -104,7 +104,7 @@ public class NodeEditService {
 			newNode = node.addNode(name, JcrConstants.NT_UNSTRUCTURED);
 			newNode.setProperty(JcrProp.CONTENT, "");
 		}
-		
+
 		if (req.isCreateAtTop()) {
 			nodeMoveService.moveNodeToTop(session, newNode, false, true);
 		}

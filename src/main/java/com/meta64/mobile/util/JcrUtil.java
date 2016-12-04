@@ -28,7 +28,6 @@ import com.meta64.mobile.model.RefInfo;
  * Assorted general utility functions related to JCR nodes.
  */
 public class JcrUtil {
-
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
 
 	/*

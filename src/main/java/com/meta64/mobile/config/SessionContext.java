@@ -50,7 +50,7 @@ public class SessionContext {
 	private String timeZoneAbbrev;
 
 	private UserPreferences userPreferences;
-	
+
 	/* Note: this object is Session-specific to the timezone will be per user */
 	private SimpleDateFormat dateFormat;
 

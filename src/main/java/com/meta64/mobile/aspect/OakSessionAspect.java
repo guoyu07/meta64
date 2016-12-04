@@ -61,7 +61,7 @@ public class OakSessionAspect {
 		if (AppServer.isShuttingDown()) {
 			throw new Exception("Server is shutting down.");
 		}
-		
+
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
 		// RequestContextHolder.currentRequestAttributes();
 		// HttpSession httpSession = attr.getRequest().getSession();

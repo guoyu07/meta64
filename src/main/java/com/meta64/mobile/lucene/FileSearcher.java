@@ -39,11 +39,11 @@ public class FileSearcher {
 
 	/** lucene version */
 	private static final Version VERSION = Version.LUCENE_47;
-	
+
 	private FSDirectory fsDir;
 	private DirectoryReader reader;
 	private IndexSearcher searcher;
-	
+
 	public static final IndexWriterConfig config = new IndexWriterConfig(VERSION, new StandardAnalyzer(VERSION));
 
 	private static final QueryParser parser = new QueryParser(VERSION, "contents", new StandardAnalyzer(VERSION));
@@ -51,21 +51,21 @@ public class FileSearcher {
 	/** lucene directory */
 	@Value("${lucene.index.dir}")
 	private String luceneDir;
-	
+
 	public boolean initialized = false;
 
 	private synchronized void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
-		
+
 		if (StringUtils.isEmpty(luceneDir)) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
-		
+
 		fsDir = FSDirectory.open(new File(luceneDir));
 		reader = DirectoryReader.open(fsDir);
 		searcher = new IndexSearcher(reader);
-		if (searcher!=null) {
+		if (searcher != null) {
 			log.debug("Searcher is created ok.");
 		}
 	}
@@ -99,7 +99,7 @@ public class FileSearcher {
 		final ScoreDoc[] hits = searcher.search(query, null, maxHits).scoreDocs;
 
 		log.info("Search took {} milli seconds...found {} documents matching the query: {}", System.currentTimeMillis() - now, hits.length, queryStr);
-		
+
 		if (hits.length > 0) {
 			for (final ScoreDoc d : hits) {
 				Document doc = searcher.doc(d.doc);
@@ -108,10 +108,9 @@ public class FileSearcher {
 				results.add(fsr);
 			}
 		}
-		
+
 		return results;
 	}
-
 
 	@PreDestroy
 	public synchronized void close() {

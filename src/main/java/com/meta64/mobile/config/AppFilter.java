@@ -40,14 +40,15 @@ public class AppFilter implements Filter {
 				log.debug("******** NO SESSION.");
 			}
 			else {
-				//log.debug("******** SESSION existed: lastAccessed: "+((System.currentTimeMillis()-session.getLastAccessedTime())/1000)+"secs ago.");
+				// log.debug("******** SESSION existed: lastAccessed:
+				// "+((System.currentTimeMillis()-session.getLastAccessedTime())/1000)+"secs ago.");
 				initialSessionExisted = true;
 			}
 
 			updateHitCounter(httpReq);
 		}
 		else {
-			//log.debug("******* req class: "+req.getClass().getName());
+			// log.debug("******* req class: "+req.getClass().getName());
 		}
 
 		ThreadLocals.setInitialSessionExisted(initialSessionExisted);

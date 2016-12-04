@@ -125,7 +125,7 @@ public class RssService {
 		sb.append("Feed Node count=" + feedNodeInfos.size() + "<br>");
 		int counter = 0;
 		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
-			sb.append("Feed Node[" + counter + "] Status: "+feedNodeInfo.getStatus());
+			sb.append("Feed Node[" + counter + "] Status: " + feedNodeInfo.getStatus());
 			counter++;
 		}
 		return sb.toString();

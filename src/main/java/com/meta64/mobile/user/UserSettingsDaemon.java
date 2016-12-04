@@ -35,8 +35,9 @@ public class UserSettingsDaemon {
 	private HashMap<String, UnsavedUserSettings> mapByUser = null;
 
 	/*
-	 * I had this running every 20 seconds, and I think it is leaking memory and bringing the server down, so i'm boosting up to a full 10min delay
-	 * to see if there is still noticeable server memory creep.
+	 * I had this running every 20 seconds, and I think it is leaking memory and bringing the server
+	 * down, so i'm boosting up to a full 10min delay to see if there is still noticeable server
+	 * memory creep.
 	 */
 	@Scheduled(fixedDelay = 30 * DateUtil.MINUTE_MILLIS)
 	public void run() {

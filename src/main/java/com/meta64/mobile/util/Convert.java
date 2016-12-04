@@ -197,8 +197,7 @@ public class Convert {
 		return props;
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated)
-			throws Exception {
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated) throws Exception {
 		String value = null;
 		boolean abbreviated = false;
 		List<String> values = null;
@@ -256,11 +255,11 @@ public class Convert {
 			else {
 				String ret = value.getString();
 				ret = convertLinksToMarkdown(ret);
-				
-				//may need to revisit this (todo-0)
-				//ret = finalTagReplace(ret);
-				//ret = basicTextFormatting(ret);
-				
+
+				// may need to revisit this (todo-0)
+				// ret = finalTagReplace(ret);
+				// ret = basicTextFormatting(ret);
+
 				return ret;
 			}
 		}
@@ -274,8 +273,9 @@ public class Convert {
 	 * that with the normal way of doing a link in markdown. So we are injecting a snippet of
 	 * markdown (not html)
 	 * 
-	 * todo-1: i noticed this method gets called during the 'saveNode' processing and then is called again when the server
-	 * refreshes the whole page. This is something that is a slight bit of wasted processing.
+	 * todo-1: i noticed this method gets called during the 'saveNode' processing and then is called
+	 * again when the server refreshes the whole page. This is something that is a slight bit of
+	 * wasted processing.
 	 */
 	public static String convertLinksToMarkdown(String val) {
 		while (true) {

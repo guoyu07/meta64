@@ -39,8 +39,14 @@ import com.meta64.mobile.util.ThreadLocals;
 public class NodeSearchService {
 	private static final Logger log = LoggerFactory.getLogger(NodeSearchService.class);
 
-	private static boolean useLike = true;
-	private static boolean useContains = false;
+	private static boolean useLike = false;
+
+	/*
+	 * WARNING: Currently the useContains=true searching appears to successfully use Lucene
+	 * fulltext, and useLike=true does NOT work
+	 */
+	private static boolean useContains = true;
+
 	private static boolean searchAllProps = false;
 
 	@Autowired
@@ -127,20 +133,19 @@ public class NodeSearchService {
 				throw new Exception("oops. Like + Contains. Use one or the other, not both.");
 			}
 
-			//For now the general search can just be made to search all properties, and so we are ignoring searchProp
-			String searchProp = "*"; //req.getSearchProp()
-			
-			/*
-			 * WARNING: BREAKS LUCENE. CONTAINS DOESN'T WORK with lucene. Only LIKE works in lucene.
-			 */
+			// For now the general search can just be made to search all properties, and so we are
+			// ignoring searchProp
+			String searchProp = "*"; // req.getSearchProp()
+
 			if (useContains) {
 				queryStr.append("contains(t.[");
-				queryStr.append(searchProp); 
+				queryStr.append(searchProp);
 				queryStr.append("], '");
 				queryStr.append(escapeQueryString(searchText));
 				queryStr.append("')");
 			}
 
+			/* Lucene doesn't work with this. Searching will be BRUTE FORCE. Don't do this. */
 			if (useLike) {
 				queryStr.append("lower(");
 
@@ -149,7 +154,7 @@ public class NodeSearchService {
 				}
 				else {
 					queryStr.append("t.[");
-					queryStr.append(searchProp); 
+					queryStr.append(searchProp);
 					queryStr.append("]");
 				}
 
@@ -161,9 +166,11 @@ public class NodeSearchService {
 
 		if (!StringUtils.isEmpty(req.getSortField())) {
 			queryStr.append(" ORDER BY [");
-			queryStr.append(req.getSortField()); 
-			queryStr.append("] " + req.getSortDir()); 
+			queryStr.append(req.getSortField());
+			queryStr.append("] " + req.getSortDir());
 		}
+
+		log.debug("Search: " + queryStr.toString());
 
 		Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);
 		QueryResult r = q.execute();

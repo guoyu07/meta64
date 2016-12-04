@@ -308,7 +308,7 @@ public class Convert {
 				endOfLink = val.indexOf("\r", startOfLink + 1);
 			}
 			if (endOfLink == -1) {
-				endOfLink = val.length() - 1;
+				endOfLink = val.length();
 			}
 
 			String link = val.substring(startOfLink + 1, endOfLink);

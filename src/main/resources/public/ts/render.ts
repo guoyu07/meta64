@@ -310,7 +310,8 @@ namespace m64 {
         export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number): string {
 
             let uid: string = node.uid;
-            let canMoveUp: boolean = index > 0 && rowCount > 1;
+            let prevButtonExists: boolean = nav.mainOffset > 0;
+            let canMoveUp: boolean = (index > 0 && rowCount > 1) || prevButtonExists;
             let canMoveDown: boolean = index < count - 1;
 
             let isRep: boolean = node.name.startsWith("rep:") || /*

@@ -157,6 +157,44 @@ public class JcrUtil {
 	}
 
 	/*
+	 * You can either pass node, or nodeName.
+	 */
+	public static Node getNodeAbove(Session session, Node parentNode, Node node, String nodeName) throws Exception {
+		Node ret = null;
+		if (parentNode == null) {
+			parentNode = node.getParent();
+		}
+
+		if (nodeName == null) {
+			nodeName = node.getName();
+		}
+		
+		// log.debug("Finding node below node: " + nodeName);
+		NodeIterator nodeIter = parentNode.getNodes();
+		Node lastNode = null;
+
+		try {
+			while (true) {
+				Node n = nodeIter.nextNode();
+				// log.debug(" NAME: " + n.getName());
+				if (n.getName().equals(nodeName)) {
+					ret = lastNode;
+					break;
+				}
+				lastNode = n;
+			}
+		}
+		catch (NoSuchElementException ex) {
+			// not an error. Normal iterator end condition.
+		}
+
+		if (ret == null) {
+			log.debug("didn't find a node above: " + nodeName);
+		}
+		return ret;
+	}
+
+	/*
 	 * Currently there's a bug in the client code where it sends nulls for some nonsavable types, so
 	 * before even fixing the client I decided to just make the server side block those. This is
 	 * more secure to always have the server allow misbehaving javascript for security reasons.

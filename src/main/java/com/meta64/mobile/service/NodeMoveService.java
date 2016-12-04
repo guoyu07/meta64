@@ -77,12 +77,20 @@ public class NodeMoveService {
 
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
-		if (siblingId.equalsIgnoreCase("[topNode]")) {
-			Node firstChild = JcrUtil.getFirstChild(session, parentNode);
-			if (firstChild == null) {
+		if (siblingId.equalsIgnoreCase("[nodeAbove]")) {
+			//Node node = JcrUtil.findNode(session, nodeId);
+			Node nodeAbove = JcrUtil.getNodeAbove(session, parentNode, null, nodeId);
+			if (nodeAbove == null) {
+				throw new Exception("no previous sibling found.");
+			}
+			siblingId = nodeAbove.getName();
+		}
+		else if (siblingId.equalsIgnoreCase("[topNode]")) {
+			Node topNode = JcrUtil.getFirstChild(session, parentNode);
+			if (topNode == null) {
 				throw new Exception("no first child found under parent node.");
 			}
-			siblingId = firstChild.getName();
+			siblingId = topNode.getName();
 		}
 
 		setNodePosition(session, parentNode, nodeId, siblingId, true, true);

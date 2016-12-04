@@ -213,15 +213,15 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                var nodeAbove = getNodeAbove(node);
-                if (nodeAbove == null) {
-                    return;
-                }
+                // var nodeAbove = getNodeAbove(node);
+                // if (nodeAbove == null) {
+                //     return;
+                // }
 
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
-                    "siblingId": nodeAbove.name
+                    "siblingId": "[nodeAbove]" //nodeAbove.name
                 }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);

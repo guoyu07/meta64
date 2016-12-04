@@ -204,7 +204,7 @@ public class NodeEditService {
 		 * Because we support renaming of the root node of a page (GUI page) we cannot expect the
 		 * client to be able so send the 'nodeBelow' so we have to find that on the server side.
 		 */
-		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node);
+		Node nodeBelow = JcrUtil.getNodeBelow(session, null, node, null);
 		session.move(node.getPath(), newPath);
 
 		/*

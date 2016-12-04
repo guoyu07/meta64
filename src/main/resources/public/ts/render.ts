@@ -310,9 +310,10 @@ namespace m64 {
         export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number): string {
 
             let uid: string = node.uid;
-            let prevButtonExists: boolean = nav.mainOffset > 0;
-            let canMoveUp: boolean = (index > 0 && rowCount > 1) || prevButtonExists;
-            let canMoveDown: boolean = index < count - 1;
+            let prevPageExists: boolean = nav.mainOffset > 0;
+            let nextPageExists: boolean = !nav.endReached;
+            let canMoveUp: boolean = (index > 0 && rowCount > 1) || prevPageExists;
+            let canMoveDown: boolean = (index < count - 1) || nextPageExists;
 
             let isRep: boolean = node.name.startsWith("rep:") || /*
 														 * meta64.currentNodeData. bug?
@@ -625,6 +626,7 @@ namespace m64 {
          */
         export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
             meta64.codeFormatDirty = false;
+            nav.endReached = data.endReached;
             console.log("m64.render.renderPageFromData()");
 
             let newData: boolean = false;

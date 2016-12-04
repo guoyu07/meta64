@@ -123,13 +123,16 @@ public class JcrUtil {
 	 * Note: We don't support or expect to find multiple nodes of the same name under any given
 	 * parent even though that's technically supported by the JCR (for some strange reason)
 	 */
-	public static Node getNodeBelow(Session session, Node parentNode, Node node) throws Exception {
+	public static Node getNodeBelow(Session session, Node parentNode, Node node, String nodeName) throws Exception {
 		Node ret = null;
 		if (parentNode == null) {
 			parentNode = node.getParent();
 		}
 
-		String nodeName = node.getName();
+		if (nodeName == null) {
+			nodeName = node.getName();
+		}
+		
 		// log.debug("Finding node below node: " + nodeName);
 		NodeIterator nodeIter = parentNode.getNodes();
 		boolean foundNode = false;

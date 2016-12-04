@@ -4,7 +4,9 @@ namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
+        /* todo-0: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
         export let mainOffset:number = 0;
+        export let endReached:boolean = true;
 
         /* todo-0: need to have this value passed from server rather than coded in TypeScript */
         export let ROWS_PER_PAGE:number = 25;

@@ -77,27 +77,40 @@ public class NodeMoveService {
 
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
 
-		if (siblingId.equalsIgnoreCase("[nodeAbove]")) {
-			//Node node = JcrUtil.findNode(session, nodeId);
-			Node nodeAbove = JcrUtil.getNodeAbove(session, parentNode, null, nodeId);
-			if (nodeAbove == null) {
-				throw new Exception("no previous sibling found.");
-			}
-			siblingId = nodeAbove.getName();
-		}
-		else if (siblingId.equalsIgnoreCase("[topNode]")) {
-			Node topNode = JcrUtil.getFirstChild(session, parentNode);
-			if (topNode == null) {
-				throw new Exception("no first child found under parent node.");
-			}
-			siblingId = topNode.getName();
-		}
+		nodeId = translateNodeName(session, parentNode, siblingId, nodeId);
+		siblingId = translateNodeName(session, parentNode, nodeId, siblingId);
 
 		setNodePosition(session, parentNode, nodeId, siblingId, true, true);
 
 		res.setSuccess(true);
 	}
 
+	public String translateNodeName(Session session, Node parentNode, String nodeId, String translateName) throws Exception {
+		if (translateName==null) return null;
+		if (translateName.equalsIgnoreCase("[nodeBelow]")) {
+			Node nodeBelow = JcrUtil.getNodeBelow(session, parentNode, null, nodeId);
+			if (nodeBelow == null) {
+				throw new Exception("no next sibling found.");
+			}
+			translateName = nodeBelow.getName();
+		}
+		else if (translateName.equalsIgnoreCase("[nodeAbove]")) {
+			Node nodeAbove = JcrUtil.getNodeAbove(session, parentNode, null, nodeId);
+			if (nodeAbove == null) {
+				throw new Exception("no previous sibling found.");
+			}
+			translateName = nodeAbove.getName();
+		}
+		else if (translateName.equalsIgnoreCase("[topNode]")) {
+			Node topNode = JcrUtil.getFirstChild(session, parentNode);
+			if (topNode == null) {
+				throw new Exception("no first child found under parent node.");
+			}
+			translateName = topNode.getName();
+		}
+		return translateName;
+	}
+	
 	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread) throws Exception {
 		String parentPath = parentNode.getPath() + "/";
 

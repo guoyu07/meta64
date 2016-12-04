@@ -213,15 +213,10 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                // var nodeAbove = getNodeAbove(node);
-                // if (nodeAbove == null) {
-                //     return;
-                // }
-
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
-                    "siblingId": "[nodeAbove]" //nodeAbove.name
+                    "siblingId": "[nodeAbove]" 
                 }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);
@@ -237,14 +232,9 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                let nodeBelow: json.NodeInfo = getNodeBelow(node);
-                if (nodeBelow == null) {
-                    return;
-                }
-
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeData.node.id,
-                    "nodeId": nodeBelow.name,
+                    "nodeId": "[nodeBelow]", 
                     "siblingId": node.name
                 }, setNodePositionResponse);
             } else {
@@ -261,15 +251,10 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[uid];
             if (node) {
-                // var topNode = getFirstChildNode();
-                // if (topNode == null) {
-                //     return;
-                // }
-
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
-                    "siblingId": "[topNode]" //topNode.name
+                    "siblingId": "[topNode]" 
                 }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);

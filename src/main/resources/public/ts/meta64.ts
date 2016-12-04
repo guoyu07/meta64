@@ -493,7 +493,8 @@ namespace m64 {
          */
         export let refreshAllGuiEnablement = function() {
             /* multiple select nodes */
-            let prevButtonExists: boolean = nav.mainOffset > 0;
+            let prevPageExists: boolean = nav.mainOffset > 0;
+            let nextPageExists:boolean = !nav.endReached;
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
             let selNodeIsMine: boolean = highlightNode!=null && (highlightNode.createdBy === userName || "admin" === userName);
@@ -503,8 +504,8 @@ namespace m64 {
             let exportFeatureEnabled = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
             let numChildNodes: number = getNumChildNodes();
-            let canMoveUp: boolean = (highlightOrdinal > 0 || prevButtonExists) && numChildNodes > 1;
-            let canMoveDown: boolean = highlightOrdinal < numChildNodes - 1 && numChildNodes > 1;
+            let canMoveUp: boolean = (highlightOrdinal > 0 && numChildNodes > 1) || prevPageExists;
+            let canMoveDown: boolean = (highlightOrdinal < numChildNodes - 1 && numChildNodes > 1) || nextPageExists;
 
             //todo-0: need to add to this selNodeIsMine || selParentIsMine;
             let canCreateNode = userPreferences.editMode && (isAdminUser || (!isAnonUser && selNodeIsMine));

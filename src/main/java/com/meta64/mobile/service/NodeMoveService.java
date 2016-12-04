@@ -63,6 +63,9 @@ public class NodeMoveService {
 
 	/*
 	 * Moves the the node to a new ordinal/position location (relative to parent)
+	 * 
+	 * We allow the special case of req.siblingId="[topNode]" and that indicates move the node to be
+	 * the first node under its parent.
 	 */
 	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res) throws Exception {
 		if (session == null) {
@@ -73,6 +76,15 @@ public class NodeMoveService {
 		String siblingId = req.getSiblingId();
 
 		Node parentNode = JcrUtil.findNode(session, parentNodeId);
+
+		if (siblingId.equalsIgnoreCase("[topNode]")) {
+			Node firstChild = JcrUtil.getFirstChild(session, parentNode);
+			if (firstChild == null) {
+				throw new Exception("no first child found under parent node.");
+			}
+			siblingId = firstChild.getName();
+		}
+
 		setNodePosition(session, parentNode, nodeId, siblingId, true, true);
 
 		res.setSuccess(true);

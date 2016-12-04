@@ -20,6 +20,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.sql.DataSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.Jcr;
@@ -41,7 +42,6 @@ import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 import org.apache.jackrabbit.oak.spi.security.user.UserConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
-import org.h2.store.fs.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +61,7 @@ import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
+import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.XString;
@@ -79,9 +80,9 @@ public class OakRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
 
-	// todo-000: don't leave this on in production!
-	private static final boolean forceIndexRebuild = false;
-
+	@Value("${forceIndexRebuild}")
+	private boolean forceIndexRebuild;
+	
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
 
@@ -343,7 +344,17 @@ public class OakRepository {
 
 	public void createIndexes() throws Exception {
 		adminRunner.run((Session session) -> {
-			FileUtils.createDirectories(adminDataFolder + File.separator + "luceneIndexes");
+			
+			String luceneIndexesDir = adminDataFolder + File.separator + "luceneIndexes";
+			
+			/* If we are going to be rebuilding indexes, let's blow away the actual files also. Probably not required but 
+			 * definitely will be sure no outdated indexes can ever be used again!
+			 */
+			if (forceIndexRebuild) {
+				FileUtils.deleteDirectory(new File(luceneIndexesDir));
+			}
+			
+			FileTools.createDirectory(luceneIndexesDir);
 
 			/* Create indexes to support timeline query (order by dates) */
 			createIndex(session, "lastModified", true, false, "jcr:lastModified", "Date", "nt:base");

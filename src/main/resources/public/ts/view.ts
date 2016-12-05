@@ -117,6 +117,7 @@ namespace m64 {
                 // If we couldn't find a selected node on this page, scroll to
                 // top instead.
                 else {
+                    $("#mainContainer").scrollTop(0);
                     //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
                     // elm = util.polyElm("mainPaperTabs");
                     // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {

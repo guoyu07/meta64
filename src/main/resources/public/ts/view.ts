@@ -23,14 +23,17 @@ namespace m64 {
          * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
          * render.
          */
-        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any): void {
-            render.renderPageFromData(res);
+        export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
+            render.renderPageFromData(res, scrollToTop);
 
-            if (targetId) {
-                meta64.highlightRowById(targetId, true);
-            } else {
-                scrollToSelectedNode();
-            }
+            if (scrollToTop) {
+
+            } else
+                if (targetId) {
+                    meta64.highlightRowById(targetId, true);
+                } else {
+                    scrollToSelectedNode();
+                }
 
             meta64.refreshAllGuiEnablement();
         }
@@ -58,7 +61,7 @@ namespace m64 {
                 "nodeId": nodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false,
-                "offset" : nav.mainOffset
+                "offset": nav.mainOffset
             }, function(res: json.RenderNodeResponse) {
                 refreshTreeResponse(res, highlightId);
 
@@ -84,14 +87,14 @@ namespace m64 {
             loadPage();
         }
 
-        let loadPage = function() : void {
+        let loadPage = function(): void {
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.currentNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": true,
-                "offset" : nav.mainOffset
+                "offset": nav.mainOffset
             }, function(res: json.RenderNodeResponse) {
-                refreshTreeResponse(res, null);
+                refreshTreeResponse(res, null, true);
             });
         }
 
@@ -114,7 +117,7 @@ namespace m64 {
                 // If we couldn't find a selected node on this page, scroll to
                 // top instead.
                 else {
-                  //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
+                    //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
                     // elm = util.polyElm("mainPaperTabs");
                     // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                     //     elm.node.scrollIntoView();
@@ -123,23 +126,19 @@ namespace m64 {
             }, 1000);
         }
 
-        /*
-         * todo-3: The following was in a polymer example (can I use this?): app.$.headerPanelMain.scrollToTop(true);
-         */
         export let scrollToTop = function() {
             if (scrollToSelNodePending)
                 return;
 
-                //todo-0: not using mainPaperTabs any longer so shw should go here now ?
-            // setTimeout(function() {
-            //     if (scrollToSelNodePending)
-            //         return;
-            //
-            //     let elm: any = util.polyElm("mainPaperTabs");
-            //     if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
-            //         elm.node.scrollIntoView();
-            //     }
-            // }, 1000);
+            //let e = $("#mainContainer");
+            $("#mainContainer").scrollTop(0);
+
+            //todo-0: not using mainPaperTabs any longer so shw should go here now ?
+            setTimeout(function() {
+                if (scrollToSelNodePending)
+                    return;
+                $("#mainContainer").scrollTop(0);
+            }, 1000);
         }
 
         export let initEditPathDisplayById = function(domId: string) {

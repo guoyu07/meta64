@@ -2,7 +2,7 @@ console.log("running module: cnst.js");
 
 declare var cookiePrefix;
 
-//todo-0: typescript will now let us just do this: const var='value';
+//todo-1: typescript will now let us just do this: const var='value';
 
 namespace m64 {
     export namespace cnst {
@@ -16,8 +16,8 @@ namespace m64 {
         export let COOKIE_LOGIN_STATE: string = cookiePrefix + "loginState";
         export let BR: "<div class='vert-space'></div>";
         export let INSERT_ATTACHMENT: string = "{{insert-attachment}}";
-        export let NEW_ON_TOOLBAR: boolean = true;
-        export let INS_ON_TOOLBAR: boolean = true;
+        export let NEW_ON_TOOLBAR: boolean = false;
+        export let INS_ON_TOOLBAR: boolean = false;
         export let MOVE_UPDOWN_ON_TOOLBAR: boolean = true;
 
         /*

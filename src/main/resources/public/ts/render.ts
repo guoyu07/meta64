@@ -624,7 +624,7 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = function(data?: json.RenderNodeResponse): string {
+        export let renderPageFromData = function(data?: json.RenderNodeResponse, scrollToTop?:boolean): string {
             meta64.codeFormatDirty = false;
             nav.endReached = data.endReached;
             console.log("m64.render.renderPageFromData()");
@@ -810,7 +810,7 @@ namespace m64 {
              */
             meta64.screenSizeChange();
 
-            if (!meta64.getHighlightedNode()) {
+            if (scrollToTop || !meta64.getHighlightedNode()) {
                 view.scrollToTop();
             } else {
                 view.scrollToSelectedNode();

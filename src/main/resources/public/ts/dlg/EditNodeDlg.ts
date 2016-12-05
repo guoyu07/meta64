@@ -117,13 +117,7 @@ namespace m64 {
 
                     thiz.fieldIdToPropMap[fieldId] = propEntry;
                     thiz.propEntries.push(propEntry);
-
-                    var buttonBar = "";
-                    // if (!isReadOnlyProp && !isBinaryProp) {
-                    //     buttonBar = thiz.makePropertyEditButtonBar(prop, fieldId);
-                    // }
-
-                    var field = buttonBar;
+                    var field = "";
 
                     if (isMulti) {
                         field += thiz.makeMultiPropEditor(propEntry);
@@ -162,7 +156,6 @@ namespace m64 {
                         "label": "New Node Name"
                     }, '', true);
 
-                    // todo-0: I can remove this div now ?
                     fields += render.tag("div", { "display": "table-row" }, field);
                 }
             }
@@ -254,58 +247,6 @@ namespace m64 {
             //     console.log("error: incorrect object for EditNodeDlg");
             // }
             this.populateEditNodePg();
-        }
-
-        /*
-         * Note: fieldId parameter is already dialog-specific and doesn't need id() wrapper function
-         *
-         * todo-0: this function can be deleted once the checkbox and  action buttons are implemented.
-         */
-        makePropertyEditButtonBar = (prop: any, fieldId: string): string => {
-            var buttonBar = "";
-
-            var clearButton = cnst.SHOW_CLEAR_BUTTON_IN_EDITOR ? render.tag("paper-button", {
-                "raised": "raised",
-                "onClick": "m64.meta64.getObjectByGuid(" + this.guid + ").clearProperty('" + fieldId + "');" //
-            }, //
-                "Clear") : "";
-
-            var addMultiButton = "";
-            var deleteButton = "";
-
-            if (prop.name !== jcrCnst.CONTENT && !prop.name.startsWith("meta64:")) {
-                /*
-                 * For now we just go with the design where the actual content property cannot be deleted. User can leave
-                 * content blank but not delete it.
-                 */
-                deleteButton = render.tag("paper-button", {
-                    "raised": "raised",
-                    "onClick": "m64.meta64.getObjectByGuid(" + this.guid + ").deleteProperty('" + prop.name + "');" //
-                }, //
-                    "Del");
-
-                /*
-                 * I don't think it really makes sense to allow a jcr:content property to be multivalued. I may be wrong but
-                 * this is my current assumption
-                 */
-                //todo-0: There's a bug in editing multiple-valued properties, and so i'm just turning it off for now
-                //while i complete testing of the rest of the app.
-                //
-                // addMultiButton = render.tag("paper-button", {
-                //     "raised": "raised",
-                //     "onClick": "meta64.getObjectByGuid(" + this.guid + ").addSubProperty('" + fieldId + "');" //
-                // }, //
-                //     "Add Multi");
-            }
-
-            var allButtons = addMultiButton + clearButton + deleteButton;
-            if (allButtons.length > 0) {
-                buttonBar = render.makeHorizontalFieldSet(allButtons, "property-edit-button-bar");
-            } else {
-                buttonBar = "";
-            }
-
-            return buttonBar;
         }
 
         addSubProperty = (fieldId: string): void => {

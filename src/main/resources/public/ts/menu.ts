@@ -107,9 +107,7 @@ namespace m64 {
                 menuItem("Toggle Properties", "propsToggleButton", "m64.props.propsToggle();") + //
                 menuItem("Refresh", "refreshPageButton", "m64.meta64.refresh();") + //
                 menuItem("Show URL", "showFullNodeUrlButton", "m64.render.showNodeUrl();") + //
-                menuItem("Preferences", "accountPreferencesButton", "(new m64.PrefsDlg()).open();") + //
-                //todo-0: bug: server info menu item is showing up (although correctly disabled) for non-admin users.
-                menuItem("Server Info", "showServerInfoButton", "m64.view.showServerInfo();"); //
+                menuItem("Preferences", "accountPreferencesButton", "(new m64.PrefsDlg()).open();"); //
             var viewOptionsMenu = makeTopLevelMenu("View", viewOptionsMenuItems);
 
             /*
@@ -124,7 +122,8 @@ namespace m64 {
             var myAccountMenu = makeTopLevelMenu("Account", myAccountItems);
 
             var adminItems = //
-                menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();");
+                menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();")+
+                menuItem("Server Info", "showServerInfoButton", "m64.view.showServerInfo();")
             var adminMenu = makeTopLevelMenu("Admin", adminItems, "adminMenu");
 
             var helpItems = //

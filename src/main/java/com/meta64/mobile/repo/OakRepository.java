@@ -357,8 +357,8 @@ public class OakRepository {
 			FileTools.createDirectory(luceneIndexesDir);
 
 			/* Create indexes to support timeline query (order by dates) */
-			createIndex(session, "lastModified", true, false, "jcr:lastModified", "Date", "nt:base");
-			createIndex(session, "created", true, false, "jcr:created", "Date", "nt:base");
+			createIndex(session, "lastModified", true, false, JcrProp.LAST_MODIFIED, "Date", "nt:base");
+			createIndex(session, "created", true, false, JcrProp.CREATED, "Date", "nt:base");
 
 			/* Indexes for lookups involved in user registration and password changes */
 			createIndex(session, "codeIndex", false, false, JcrProp.CODE, null, "nt:base");

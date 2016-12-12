@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.request.GetSharedNodesRequest;
@@ -168,6 +169,11 @@ public class NodeSearchService {
 			queryStr.append(" ORDER BY [");
 			queryStr.append(req.getSortField());
 			queryStr.append("] " + req.getSortDir());
+		}
+		else {
+			queryStr.append(" ORDER BY [");
+			queryStr.append(JcrProp.LAST_MODIFIED);
+		 	queryStr.append("] DESC");
 		}
 
 		log.debug("Search: " + queryStr.toString());

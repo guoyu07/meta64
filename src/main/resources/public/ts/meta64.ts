@@ -508,7 +508,7 @@ namespace m64 {
             let canMoveDown: boolean = (highlightOrdinal < numChildNodes - 1 && numChildNodes > 1) || nextPageExists;
 
             //todo-0: need to add to this selNodeIsMine || selParentIsMine;
-            let canCreateNode = userPreferences.editMode && (isAdminUser || (!isAnonUser && selNodeIsMine));
+            let canCreateNode = userPreferences.editMode && (isAdminUser || (!isAnonUser /* && selNodeIsMine */));
 
             console.log("enablement: isAnonUser=" + isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
 

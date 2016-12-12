@@ -34,7 +34,7 @@ public class CaptchaMaker {
 
 	public static final int CAPTCHA_MAX_REQUESTS = 5;
 	public static final int CAPTCHA_CHAR_SIZE = 40;
-	public static final int CAPTCHA_NUM_CHARS = 6;
+	public static final int CAPTCHA_NUM_CHARS = 4;
 
 	private static Font fontKnown = null;
 
@@ -43,7 +43,7 @@ public class CaptchaMaker {
 
 		/* set some parameters */
 		int len = captchaCode.length();
-		int imgWidth = (len - 1) * CAPTCHA_CHAR_SIZE;
+		int imgWidth = len * CAPTCHA_CHAR_SIZE;
 		int imgHeight = CAPTCHA_CHAR_SIZE * 3;
 
 		/* setup image to draw into */
@@ -111,17 +111,12 @@ public class CaptchaMaker {
 			g.rotate(-angle, x, y);
 
 			/*
-			 * draw a line only once for every other character, and onec more at end
+			 * note lineIdx remainder controls back and forth tilt angle of line
 			 */
-			if (i % 2 == 0 || i == len - 1) {
-				/*
-				 * note lineIdx remainder controls back and forth tilt angle of line
-				 */
-				int delta = (lineIdx % 2 == 0) ? rand.nextInt(imgHeight) : -rand.nextInt(imgHeight);
+			int delta = (lineIdx % 2 == 0) ? rand.nextInt(imgHeight) : -rand.nextInt(imgHeight);
 
-				g.drawLine(0, y - delta, imgWidth, y + delta);
-				lineIdx++;
-			}
+			g.drawLine(0, y - delta, imgWidth, y + delta);
+			lineIdx++;
 		}
 
 		ByteArrayOutputStream tmp = null;

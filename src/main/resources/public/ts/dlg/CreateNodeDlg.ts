@@ -92,6 +92,18 @@ namespace m64 {
         }
 
         init = (): void => {
+            debugger;
+            let node: json.NodeInfo = meta64.getHighlightedNode();
+            if (node) {
+                let canInsertInline: boolean = meta64.homeNodeId != node.id;
+                if (canInsertInline) {
+                    $(this.id("#createInlineButton")).show();
+                }
+                else {
+                    $(this.id("#createInlineButton")).hide();
+                }
+            }
+
         }
     }
 }

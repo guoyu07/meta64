@@ -562,7 +562,7 @@ namespace m64 {
             let allButtons: string = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
                 + addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton + replyButton;
 
-            return allButtons.length > 0 ? makeHorizontalFieldSet(allButtons) : "";
+            return allButtons.length > 0 ? makeHorizontalFieldSet(allButtons, "row-toolbar") : "";
         }
 
         export let makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
@@ -711,7 +711,6 @@ namespace m64 {
                 if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
                     createSubNodeButton = tag("paper-icon-button", {
                         "icon": "icons:picture-in-picture-alt", //icons:more-vert",
-                        // "id" : "addNodeButtonId" + node.uid,
                         "raised": "raised",
                         "onClick": "m64.edit.createSubNode('" + uid + "');"
                     }, "Add");

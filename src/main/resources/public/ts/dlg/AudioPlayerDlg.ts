@@ -56,7 +56,7 @@ namespace m64 {
             //Skipping Buttons
             let skipBack30Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": `"m64.podcast.skip(-30, '${this.nodeUid}', this);`,
+                "onClick": `m64.podcast.skip(-30, '${this.nodeUid}', this);`,
                 "class": "standardButton"
             }, //
                 "< 30s");

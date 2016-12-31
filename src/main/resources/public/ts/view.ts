@@ -62,9 +62,10 @@ namespace m64 {
                 "nodeId": nodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false,
-                "offset": nav.mainOffset
+                "offset": nav.mainOffset,
+                "goToLastPage": false
             }, function(res: json.RenderNodeResponse) {
-                if (res.offsetOfNodeFound) {
+                if (res.offsetOfNodeFound > -1) {
                     nav.mainOffset = res.offsetOfNodeFound;
                 }
                 refreshTreeResponse(res, highlightId);
@@ -76,28 +77,46 @@ namespace m64 {
             });
         }
 
+        export let firstPage = function(): void {
+            console.log("Running firstPage Query");
+            nav.mainOffset = 0;
+            loadPage(false);
+        }
+
         export let prevPage = function(): void {
             console.log("Running prevPage Query");
             nav.mainOffset -= nav.ROWS_PER_PAGE;
             if (nav.mainOffset < 0) {
                 nav.mainOffset = 0;
             }
-            loadPage();
+            loadPage(false);
         }
 
         export let nextPage = function(): void {
             console.log("Running nextPage Query");
             nav.mainOffset += nav.ROWS_PER_PAGE;
-            loadPage();
+            loadPage(false);
         }
 
-        let loadPage = function(): void {
+        export let lastPage = function(): void {
+            console.log("Running lastPage Query");
+            //nav.mainOffset += nav.ROWS_PER_PAGE;
+            loadPage(true);
+        }
+
+        let loadPage = function(goToLastPage: boolean): void {
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.currentNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": true,
-                "offset": nav.mainOffset
+                "offset": nav.mainOffset,
+                "goToLastPage": goToLastPage
             }, function(res: json.RenderNodeResponse) {
+                if (goToLastPage) {
+                    if (res.offsetOfNodeFound > -1) {
+                        nav.mainOffset = res.offsetOfNodeFound;
+                    }
+                }
                 refreshTreeResponse(res, null, true);
             });
         }

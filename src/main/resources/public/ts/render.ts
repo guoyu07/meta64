@@ -624,7 +624,7 @@ namespace m64 {
         /*
          * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
          */
-        export let renderPageFromData = function(data?: json.RenderNodeResponse, scrollToTop?:boolean): string {
+        export let renderPageFromData = function(data?: json.RenderNodeResponse, scrollToTop?: boolean): string {
             meta64.codeFormatDirty = false;
             console.log("m64.render.renderPageFromData()");
 
@@ -760,8 +760,9 @@ namespace m64 {
             view.updateStatusBar();
 
             if (nav.mainOffset > 0) {
+                let firstButton: string = makeButton("First Page", "firstPageButton", firstPage);
                 let prevButton: string = makeButton("Prev Page", "prevPageButton", prevPage);
-                output += centeredButtonBar(prevButton, "paging-button-bar");
+                output += centeredButtonBar(firstButton + prevButton, "paging-button-bar");
             }
 
             let rowCount: number = 0;
@@ -792,7 +793,8 @@ namespace m64 {
 
             if (!data.endReached) {
                 let nextButton = makeButton("Next Page", "nextPageButton", nextPage);
-                output += centeredButtonBar(nextButton, "paging-button-bar");
+                let lastButton = makeButton("Last Page", "lastPageButton", lastPage);
+                output += centeredButtonBar(nextButton + lastButton, "paging-button-bar");
             }
 
             util.setHtml("listView", output);
@@ -817,6 +819,11 @@ namespace m64 {
             }
         }
 
+        export let firstPage = function(): void {
+            console.log("First page button click.");
+            view.firstPage();
+        }
+
         export let prevPage = function(): void {
             console.log("Prev page button click.");
             view.prevPage();
@@ -825,6 +832,11 @@ namespace m64 {
         export let nextPage = function(): void {
             console.log("Next page button click.");
             view.nextPage();
+        }
+
+        export let lastPage = function(): void {
+            console.log("Last page button click.");
+            view.lastPage();
         }
 
         export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {

@@ -17,7 +17,8 @@ namespace m64 {
                 "nodeId": "/meta64/public/help",
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset" : mainOffset
+                "offset" : mainOffset,
+                "goToLastPage" : false
             }, navPageNodeResponse);
         }
 
@@ -27,7 +28,8 @@ namespace m64 {
                 "nodeId": "/rss/feeds",
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset" : mainOffset
+                "offset" : mainOffset,
+                "goToLastPage" : false
             }, navPageNodeResponse);
         }
 
@@ -86,7 +88,8 @@ namespace m64 {
                 "nodeId": meta64.currentNodeId,
                 "upLevel": 1,
                 "renderParentIfLeaf": false,
-                "offset" : mainOffset
+                "offset" : mainOffset,
+                "goToLastPage" : false
             }, function(res: json.RenderNodeResponse) {
                 upLevelResponse(ironRes.response, meta64.currentNodeId);
             });
@@ -221,7 +224,8 @@ namespace m64 {
                     "nodeId": meta64.homeNodeId,
                     "upLevel": null,
                     "renderParentIfLeaf": null,
-                    "offset": mainOffset
+                    "offset": mainOffset,
+                    "goToLastPage" : false
                 }, navPageNodeResponse);
             }
         }

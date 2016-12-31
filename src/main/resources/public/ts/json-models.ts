@@ -196,6 +196,7 @@ namespace m64 {
             upLevel: number;
             offset: number;
             renderParentIfLeaf: boolean;
+            goToLastPage: boolean;
         }
 
         export interface ResetPasswordRequest {

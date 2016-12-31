@@ -19,6 +19,8 @@ public class RenderNodeRequest {
 	 */
 	private int upLevel;
 	private boolean renderParentIfLeaf;
+	
+	private boolean goToLastPage;
 
 	public String getNodeId() {
 		return nodeId;
@@ -51,5 +53,13 @@ public class RenderNodeRequest {
 
 	public void setOffset(int offset) {
 		this.offset = offset;
+	}
+
+	public boolean isGoToLastPage() {
+		return goToLastPage;
+	}
+
+	public void setGoToLastPage(boolean goToLastPage) {
+		this.goToLastPage = goToLastPage;
 	}
 }

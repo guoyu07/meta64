@@ -67,6 +67,7 @@ public class NodeRenderService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
+		res.setOffsetOfNodeFound(-1);
 
 		List<NodeInfo> children = new LinkedList<NodeInfo>();
 		res.setChildren(children);
@@ -122,6 +123,7 @@ public class NodeRenderService {
 				levelsUpRemaining--;
 			}
 		}
+		
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
@@ -129,11 +131,34 @@ public class NodeRenderService {
 		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
 		res.setNode(nodeInfo);
 
-		int offset = req.getOffset();
+		/* If we are scanning to a node we no we need to start from zero offset, or else we use the offset passed in */
+		int offset = scanToNode ? 0 : req.getOffset();
+		
 		NodeIterator nodeIter = node.getNodes();
 		int idx = 0, count = 0, idxOfNodeFound = -1;
 		boolean endReached = false;
 		try {
+			if (req.isGoToLastPage()) {
+				offset = (int)nodeIter.getSize() - nodesPerPage;
+				if (offset < 0) {
+					offset = 0;
+				}
+				res.setOffsetOfNodeFound(offset);
+			}
+			
+			/*
+			 * Calling 'skip' here technically violates the fact that nodeVisibleInSimpleMode() can
+			 * return false for certain nodes, but because of the performance boost it offers i'm
+			 * doing it anyway. I don't think skipping to far or too little by one or two will ever
+			 * be a noticeable issue in the paginating so this should be fine, because there will be
+			 * a very small number of nodes that are not visible to the user, so I can't think of a
+			 * pathological case here.
+			 */
+			if (!scanToNode && offset > 0) {
+				nodeIter.skip(offset);
+				idx = offset;
+			}
+
 			while (true) {
 				Node n = nodeIter.nextNode();
 
@@ -199,7 +224,7 @@ public class NodeRenderService {
 			log.trace("    no child nodes found.");
 		}
 
-		if (idxOfNodeFound!=-1) {
+		if (idxOfNodeFound != -1) {
 			res.setOffsetOfNodeFound(idxOfNodeFound);
 		}
 		res.setEndReached(endReached);

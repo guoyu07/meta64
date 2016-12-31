@@ -10,6 +10,7 @@ public class RenderNodeResponse extends OakResponseBase {
 	/* child ordering flag is set in this node object and is correct */
 	private NodeInfo node;
 
+	/* todo-1: really need to rename this to 'newOffset', because it's used for more than when a node is found */
 	private Integer offsetOfNodeFound;
 	
 	/*

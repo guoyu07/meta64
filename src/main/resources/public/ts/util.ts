@@ -422,7 +422,7 @@ namespace m64 {
             /* we try again a full second later. Normally not required, but never undesirable */
             setTimeout(function() {
                 $(id).focus();
-            }, 1000);
+            }, 1300);
         }
 
 		/*

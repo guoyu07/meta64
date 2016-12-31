@@ -80,7 +80,7 @@ public class RssDbWriter {
 		/* NT_UNSTRUCTURED IS ORDERABLE */
 		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
 
-		nodeMoveService.moveNodeToTop(session, newNode, false, false);
+		nodeMoveService.moveNodeToTop(session, newNode, false, false, true);
 		JcrUtil.timestampNewNode(session, newNode);
 
 		if (StringUtils.isEmpty(entry.getTitle())) {

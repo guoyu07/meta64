@@ -109,9 +109,28 @@ public class JcrUtil {
 		}
 	}
 
-	public static Node getFirstChild(Session session, Node parentNode) throws Exception {
+	public static Node getFirstChild(Session session, Node parentNode, boolean includeSystemNodes) throws Exception {
 		NodeIterator nodeIter = parentNode.getNodes();
-		Node node = nodeIter.nextNode();
+		Node node = null;
+		try {
+			while (true) {
+				Node n = nodeIter.nextNode();
+
+				if (!includeSystemNodes) {
+					NodeType nodeType = n.getPrimaryNodeType();				
+					if (nodeType.getName().startsWith("rep:")) {
+						continue;
+					}
+				}
+
+				node = n;
+				break;
+			}
+		}
+		catch (NoSuchElementException ex) {
+			// not an error. Normal iterator end condition.
+		}
+
 		return node;
 	}
 
@@ -132,7 +151,7 @@ public class JcrUtil {
 		if (nodeName == null) {
 			nodeName = node.getName();
 		}
-		
+
 		// log.debug("Finding node below node: " + nodeName);
 		NodeIterator nodeIter = parentNode.getNodes();
 		boolean foundNode = false;
@@ -171,7 +190,7 @@ public class JcrUtil {
 		if (nodeName == null) {
 			nodeName = node.getName();
 		}
-		
+
 		// log.debug("Finding node below node: " + nodeName);
 		NodeIterator nodeIter = parentNode.getNodes();
 		Node lastNode = null;

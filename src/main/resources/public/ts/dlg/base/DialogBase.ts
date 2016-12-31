@@ -346,9 +346,10 @@ namespace m64 {
                 id = "#" + id;
             }
             id = this.id(id);
-            setTimeout(function() {
-                $(id).focus();
-            }, 1000);
+            util.delayedFocus(id);
+            // setTimeout(function() {
+            //     $(id).focus();
+            // }, 1000);
         }
     }
 }

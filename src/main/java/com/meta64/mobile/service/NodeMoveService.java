@@ -48,17 +48,17 @@ public class NodeMoveService {
 	 * Ensures this node is the first child under its parent, moving it and does nothing if this
 	 * node already IS the first child.
 	 */
-	public void moveNodeToTop(Session session, Node node, boolean immediateSave, boolean isSessionThread) throws Exception {
+	public void moveNodeToTop(Session session, Node node, boolean immediateSave, boolean isSessionThread, boolean allowPrivelegeEscalation) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
 
 		Node parentNode = node.getParent();
-		Node firstChild = JcrUtil.getFirstChild(session, parentNode);
+		Node firstChild = JcrUtil.getFirstChild(session, parentNode, false);
 		if (firstChild.getIdentifier().equals(node.getIdentifier())) {
 			return;
 		}
-		setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread);
+		setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread, allowPrivelegeEscalation);
 	}
 
 	/*
@@ -80,13 +80,13 @@ public class NodeMoveService {
 		nodeId = translateNodeName(session, parentNode, siblingId, nodeId);
 		siblingId = translateNodeName(session, parentNode, nodeId, siblingId);
 
-		setNodePosition(session, parentNode, nodeId, siblingId, true, true);
+		setNodePosition(session, parentNode, nodeId, siblingId, true, true, true);
 
 		res.setSuccess(true);
 	}
 
 	public String translateNodeName(Session session, Node parentNode, String nodeId, String translateName) throws Exception {
-		if (translateName==null) return null;
+		if (translateName == null) return null;
 		if (translateName.equalsIgnoreCase("[nodeBelow]")) {
 			Node nodeBelow = JcrUtil.getNodeBelow(session, parentNode, null, nodeId);
 			if (nodeBelow == null) {
@@ -102,7 +102,7 @@ public class NodeMoveService {
 			translateName = nodeAbove.getName();
 		}
 		else if (translateName.equalsIgnoreCase("[topNode]")) {
-			Node topNode = JcrUtil.getFirstChild(session, parentNode);
+			Node topNode = JcrUtil.getFirstChild(session, parentNode, false);
 			if (topNode == null) {
 				throw new Exception("no first child found under parent node.");
 			}
@@ -110,15 +110,22 @@ public class NodeMoveService {
 		}
 		return translateName;
 	}
-	
-	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread) throws Exception {
+
+	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread, boolean allowPrivalegeEscalation) throws Exception {
 		String parentPath = parentNode.getPath() + "/";
 
 		/*
 		 * if we are moving nodes around on the root, the root belongs to admin and needs special
 		 * access (adminRunner)
 		 */
-		if (isSessionThread && parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+		if (allowPrivalegeEscalation && isSessionThread && parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+			/*
+			 * Since we need to get access to this node on a different session we need to do a
+			 * 'save()' on the 'session'. This is similar to a commit on a RDBMS also where other
+			 * sessions won't see data until committed.
+			 */
+			session.save();
+
 			adminRunner.run((Session adminSession) -> {
 				Node parentNode2 = JcrUtil.findNode(adminSession, parentNode.getIdentifier());
 				JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
@@ -38,6 +39,7 @@ import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SplitNodeResponse;
+import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
@@ -66,6 +68,9 @@ public class NodeEditService {
 	@Autowired
 	private NodeMoveService nodeMoveService;
 
+	@Autowired
+	private RunAsJcrAdmin adminRunner;
+
 	/*
 	 * Creates a new node as a *child* node of the node specified in the request.
 	 */
@@ -78,6 +83,17 @@ public class NodeEditService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		String curUser = session.getUserID();
 
+		String parentPath = node.getPath() + "/";
+		boolean createUnderRoot = false;
+		/*
+		 * if we are moving nodes around on the root, the root belongs to admin and needs special
+		 * access (adminRunner)
+		 */
+		if (parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+			createUnderRoot = true;
+		}
+
+		///////////////////
 		/*
 		 * If this is a publicly appendable node, then we always use admin to append a comment type
 		 * node under it. No other type of child node creation is allowed.
@@ -105,19 +121,29 @@ public class NodeEditService {
 			newNode.setProperty(JcrProp.CONTENT, "");
 		}
 
-		if (req.isCreateAtTop()) {
-			nodeMoveService.moveNodeToTop(session, newNode, false, true);
-		}
 		JcrUtil.timestampNewNode(session, newNode);
 
 		if (publicAppend) {
 			newNode.setProperty(JcrProp.COMMENT_BY, curUser);
 			newNode.setProperty(JcrProp.PUBLIC_APPEND, true);
 		}
+
 		session.save();
 
 		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
 		res.setSuccess(true);
+
+		/*
+		 * We have to create a new session to run the move node because that is operating on a node
+		 * we do not own. Account root nodes are technically owned by admin
+		 */
+		if (createUnderRoot && req.isCreateAtTop()) {
+			String newNodeId = newNode.getIdentifier();
+			session.logout();
+			session = oak.newAdminSession();
+			Node newNode2 = JcrUtil.findNode(session, newNodeId);
+			nodeMoveService.moveNodeToTop(session, newNode2, true, true, false);
+		}
 	}
 
 	/*
@@ -147,6 +173,8 @@ public class NodeEditService {
 		}
 
 		JcrUtil.timestampNewNode(session, newNode);
+
+		// session.save();
 
 		if (!StringUtils.isEmpty(req.getTargetName())) {
 			parentNode.orderBefore(newNode.getName(), req.getTargetName());

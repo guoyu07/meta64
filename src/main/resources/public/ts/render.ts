@@ -626,7 +626,6 @@ namespace m64 {
          */
         export let renderPageFromData = function(data?: json.RenderNodeResponse, scrollToTop?:boolean): string {
             meta64.codeFormatDirty = false;
-            nav.endReached = data.endReached;
             console.log("m64.render.renderPageFromData()");
 
             let newData: boolean = false;
@@ -635,6 +634,8 @@ namespace m64 {
             } else {
                 newData = true;
             }
+
+            nav.endReached = data && data.endReached;
 
             if (!data || !data.node) {
                 util.setVisibility("#listView", false);

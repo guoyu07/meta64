@@ -58,7 +58,8 @@ namespace m64 {
         }
 
         init = (): void => {
-            util.delayedFocus(this.id("searchText"));
+            //util.delayedFocus(this.id("searchText"));
+            this.focus("searchText");
         }
     }
 }

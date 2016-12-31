@@ -115,15 +115,16 @@ namespace m64 {
              */
             var myAccountItems = //
                 menuItem("Change Password", "changePasswordPgButton", "(new m64.ChangePasswordDlg()).open();") + //
-                menuItem("Manage Account", "manageAccountButton", "(new m64.ManageAccountDlg()).open();") + //
-                menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", "m64.edit.insertBookWarAndPeace();"); //
+                menuItem("Manage Account", "manageAccountButton", "(new m64.ManageAccountDlg()).open();"); //
+
             // menuItem("Full Repository Export", "fullRepositoryExport", "
             // edit.fullRepositoryExport();") + //
             var myAccountMenu = makeTopLevelMenu("Account", myAccountItems);
 
             var adminItems = //
-                menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();")+
-                menuItem("Server Info", "showServerInfoButton", "m64.view.showServerInfo();")
+                menuItem("Generate RSS", "generateRSSButton", "m64.podcast.generateRSS();") +//
+                menuItem("Server Info", "showServerInfoButton", "m64.view.showServerInfo();") +//
+                menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", "m64.edit.insertBookWarAndPeace();"); //
             var adminMenu = makeTopLevelMenu("Admin", adminItems, "adminMenu");
 
             var helpItems = //

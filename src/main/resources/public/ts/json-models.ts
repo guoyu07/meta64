@@ -354,6 +354,7 @@ namespace m64 {
         export interface RenderNodeResponse extends OakResponseBase {
             node: NodeInfo;
             children: NodeInfo[];
+            offsetOfNodeFound: number;
 
             /* holds true if we hit the end of the list of child nodes */
             endReached: boolean;

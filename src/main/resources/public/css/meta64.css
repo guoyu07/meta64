@@ -382,6 +382,7 @@ tr td div p {
 }
 .page-title {
   @apply (--paper-font-display2);
+  margin-left: 16px;
 }
 @media (max-width: 600px) {
   .page-title {

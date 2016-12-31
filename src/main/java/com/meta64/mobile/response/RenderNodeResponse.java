@@ -10,6 +10,8 @@ public class RenderNodeResponse extends OakResponseBase {
 	/* child ordering flag is set in this node object and is correct */
 	private NodeInfo node;
 
+	private Integer offsetOfNodeFound;
+	
 	/*
 	 * This holds the actual number of children on the node, independent of how many at a time the
 	 * browser is requesting to see per page, and unrelated to size of 'children' list, on this
@@ -56,5 +58,13 @@ public class RenderNodeResponse extends OakResponseBase {
 
 	public void setEndReached(boolean endReached) {
 		this.endReached = endReached;
+	}
+
+	public Integer getOffsetOfNodeFound() {
+		return offsetOfNodeFound;
+	}
+
+	public void setOffsetOfNodeFound(Integer offsetOfNodeFound) {
+		this.offsetOfNodeFound = offsetOfNodeFound;
 	}
 }

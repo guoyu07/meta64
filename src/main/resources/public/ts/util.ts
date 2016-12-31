@@ -412,7 +412,7 @@ namespace m64 {
             return _ajaxCounter > 0;
         }
 
-        /* set focus to element by id (id must start with #) */
+        /* set focus to element by id (id must be actual jquery selector) */
         export let delayedFocus = function(id): void {
             /* so user sees the focus fast we try at .5 seconds */
             setTimeout(function() {
@@ -421,6 +421,7 @@ namespace m64 {
 
             /* we try again a full second later. Normally not required, but never undesirable */
             setTimeout(function() {
+                //console.log("Focusing ID: "+id);
                 $(id).focus();
             }, 1300);
         }

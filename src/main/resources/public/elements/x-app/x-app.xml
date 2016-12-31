@@ -234,7 +234,10 @@
                         attr-for-selected="name"
                         selected="{{selected}}">
                         <div name="mainTabName">
-                            <div id="mainNodeContent"></div>
+                            <!-- the reason we have tabindex here is so we can call jquery focus() and have the user able to use
+                            arrow key scrolling immediately without first having to click on the page 
+                            -->
+                            <div id="mainNodeContent" tabindex="-1"></div>
                             <div id="listView"></div>
                         </div>
                         <div

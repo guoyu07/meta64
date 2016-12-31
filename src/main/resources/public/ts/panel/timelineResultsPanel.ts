@@ -8,7 +8,7 @@ namespace m64 {
         visible: boolean = false;
 
         build = () => {
-            var header = "<h2 id='timelinePageTitle'></h2>";
+            var header = "<h2 id='timelinePageTitle' class='page-title'></h2>";
             var mainContent = "<div id='timelineView'></div>";
             return header + mainContent;
         }

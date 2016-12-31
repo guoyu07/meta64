@@ -100,18 +100,28 @@ public class NodeRenderService {
 		// boolean showMetaData = userPreferences != null ? userPreferences.isShowMetaData() :
 		// false;
 
+		/*
+		 * If this is true it means we need to keep scanning child nodes until we find the targetId,
+		 * so we can make that one be the first of the search results to display, and set that
+		 * offset upon return. During the scan once the node is found, we do set this scanToNode var
+		 * back to false, so it represents always if we're still scanning or not.
+		 */
+		boolean scanToNode = false;
+
 		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
 			res.setDisplayedParent(true);
 			req.setUpLevel(1);
 		}
 
 		int levelsUpRemaining = req.getUpLevel();
-		while (node != null && levelsUpRemaining > 0) {
-			node = node.getParent();
-			log.trace("   upLevel to nodeid: " + node.getPath());
-			levelsUpRemaining--;
+		if (levelsUpRemaining > 0) {
+			scanToNode = true;
+			while (node != null && levelsUpRemaining > 0) {
+				node = node.getParent();
+				log.trace("   upLevel to nodeid: " + node.getPath());
+				levelsUpRemaining--;
+			}
 		}
-
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
@@ -121,7 +131,7 @@ public class NodeRenderService {
 
 		int offset = req.getOffset();
 		NodeIterator nodeIter = node.getNodes();
-		int idx = 0, count = 0;
+		int idx = 0, count = 0, idxOfNodeFound = -1;
 		boolean endReached = false;
 		try {
 			while (true) {
@@ -132,6 +142,27 @@ public class NodeRenderService {
 					idx++;
 
 					if (idx > offset) {
+
+						if (scanToNode) {
+							String testPath = n.getPath();
+
+							/*
+							 * If this is the node we are scanning for turn off scan mode, but
+							 * record its index position
+							 */
+							if (testPath.equals(path)) {
+								scanToNode = false;
+								idxOfNodeFound = idx;
+							}
+							/*
+							 * else, we can continue while loop after we incremented 'idx'. Nothing
+							 * else to do on this iteration/node
+							 */
+							else {
+								continue;
+							}
+						}
+
 						count++;
 						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
 
@@ -168,6 +199,9 @@ public class NodeRenderService {
 			log.trace("    no child nodes found.");
 		}
 
+		if (idxOfNodeFound!=-1) {
+			res.setOffsetOfNodeFound(idxOfNodeFound);
+		}
 		res.setEndReached(endReached);
 	}
 

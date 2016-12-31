@@ -28,14 +28,15 @@ namespace m64 {
 
             if (scrollToTop) {
 
-            } else
+            } else {
                 if (targetId) {
                     meta64.highlightRowById(targetId, true);
                 } else {
                     scrollToSelectedNode();
                 }
-
+            }
             meta64.refreshAllGuiEnablement();
+            util.delayedFocus("#mainNodeContent");
         }
 
         /*
@@ -63,6 +64,9 @@ namespace m64 {
                 "renderParentIfLeaf": renderParentIfLeaf ? true : false,
                 "offset": nav.mainOffset
             }, function(res: json.RenderNodeResponse) {
+                if (res.offsetOfNodeFound) {
+                    nav.mainOffset = res.offsetOfNodeFound;
+                }
                 refreshTreeResponse(res, highlightId);
 
                 if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {

@@ -21,7 +21,7 @@ namespace m64 {
             width: number;
             height: number;
             childrenOrdered: boolean;
-            uid: number;
+            uid: string;
             createdBy: string;
             lastModified: Date;
             imgId: string;

@@ -342,8 +342,8 @@ namespace m64 {
 
             util.json<json.SetPlayerInfoRequest, json.SetPlayerInfoResponse>("setPlayerInfo", {
                 "url": url,
-                "timeOffset": timeOffset,
-                "nodePath": node.path
+                "timeOffset": timeOffset //,
+                //"nodePath": node.path
             }, setPlayerInfoResponse);
         }
 

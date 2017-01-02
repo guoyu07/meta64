@@ -256,7 +256,7 @@ public class Convert {
 				String ret = value.getString();
 				ret = convertLinksToMarkdown(ret);
 
-				// may need to revisit this (todo-0)
+				// may need to revisit this (todo-2)
 				// ret = finalTagReplace(ret);
 				// ret = basicTextFormatting(ret);
 

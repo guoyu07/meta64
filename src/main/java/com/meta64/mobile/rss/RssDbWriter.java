@@ -113,7 +113,7 @@ public class RssDbWriter {
 				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
 
 				/*
-				 * todo-0: for now we just support the first enclosure which will work for for all
+				 * todo-1: for now we just support the first enclosure which will work for for all
 				 * known situations, and will normally just be the pointer to the media content of a
 				 * podcast.
 				 */

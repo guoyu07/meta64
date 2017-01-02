@@ -299,16 +299,10 @@ public class OakRepository {
 				if (indexingEnabled) {
 					indexProvider = new LuceneIndexProvider();
 
-					/*
-					 * todo-0 I have withAsyncIndexing called TWICE because that's how chetan did it
-					 * that way. Need to post a question to him about this, or else just verify it
-					 * works with just one call.
-					 */
 					jcr = jcr.withAsyncIndexing();
 					jcr = jcr.with(new LuceneIndexEditorProvider());
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
 					jcr = jcr.with((Observer) indexProvider);
-					// jcr = jcr.withAsyncIndexing();
 				}
 
 				/* can shutdown during startup. */
@@ -413,7 +407,6 @@ public class OakRepository {
 		indexDefNode.setProperty("async", "async");
 		indexDefNode.setProperty("reindex", true);
 
-		// needed for non-fulltext??? todo-0 ... did it even BLOW UP when i tried on non-fulltext?
 		if (fulltext) {
 			indexDefNode.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true);
 		}

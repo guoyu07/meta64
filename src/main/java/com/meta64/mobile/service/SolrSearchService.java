@@ -92,8 +92,6 @@ public class SolrSearchService {
 		parentNode.setProperty(JcrProp.CREATED_BY, userName);
 		Node newNode = parentNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
 
-		// todo-0: need some type of way to make this kind of node not editable by user. It's
-		// presentation only, and not an editable node.
 		newNode.setProperty(JcrProp.CONTENT, "prop JSON_FILE_SEARCH_RESULT contains data.");
 		newNode.setProperty(JcrProp.CREATED_BY, userName);
 		newNode.setProperty(JcrProp.JSON_FILE_SEARCH_RESULT, json);

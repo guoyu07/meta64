@@ -79,7 +79,7 @@ public class LuceneService {
 		Node parentNode = JcrUtil.findNode(session, nodeId);
 
 		Node newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:filelist");
-		// todo-0: need some type of way to make this kind of node not editable by user. It's
+		// todo-1: need some type of way to make this kind of node not editable by user. It's
 		// presentation only, and not an editable node.
 		newNode.setProperty(JcrProp.CREATED_BY, userName);
 		newNode.setProperty("meta64:json", json);

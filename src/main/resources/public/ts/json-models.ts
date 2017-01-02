@@ -21,7 +21,7 @@ namespace m64 {
             width: number;
             height: number;
             childrenOrdered: boolean;
-            uid: string;
+            uid: number;
             createdBy: string;
             lastModified: Date;
             imgId: string;
@@ -79,7 +79,7 @@ namespace m64 {
         export interface SetPlayerInfoRequest {
             url: string;
             timeOffset: number;
-            nodePath: string;
+            //nodePath: string;
         }
 
         export interface GetPlayerInfoRequest {

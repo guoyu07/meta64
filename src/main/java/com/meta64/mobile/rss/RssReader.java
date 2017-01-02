@@ -70,14 +70,6 @@ public class RssReader {
 				try {
 					feedNodeInfo.setInProgress(true);
 					writeFeedToDb(wFeed, feedNodeInfo);
-
-					/*
-					 * remove this once troubleshooting memory and performance is complete: todo-0
-					 */
-					// if (++counter >= 3) {
-					// log.info("Terminating after 3");
-					// break;
-					// }
 				}
 				catch (Exception e) {
 					log.error("Failed to process feed: " + wFeed.getFeed().getTitle(), e);
@@ -90,10 +82,10 @@ public class RssReader {
 	}
 
 	/*
-	 * todo-0: there is no finally block in this method. will be memory leak. Currently this method
+	 * todo-3: there is no finally block in this method. will be memory leak. Currently this method
 	 * isn't being used so i'm not worrying about it for now.
 	 */
-	public void readUrl(String url) throws Exception {
+	public void readUrl__unused(String url) throws Exception {
 		if (true) throw new Exception("don't call this until you fix missing finally block memory leak.");
 		// HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
@@ -126,8 +118,8 @@ public class RssReader {
 		try {
 			/*
 			 * TODO-0: HttpClient is better than URLConnection, so I need to also look for other
-			 * places in the code (like image downloading) where I'm streaming from arbitrary
-			 * internet URLs and change them over to HttpClient.
+			 * places in the code (like image downloading) where I'm streaming from arbitrary URLs
+			 * and change them over to HttpClient.
 			 */
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(feedUrl);
@@ -152,12 +144,16 @@ public class RssReader {
 				if (++entryCounter >= MAX_RSS_ENTRIES) break;
 			}
 		}
-		// NOTE: When we get the following exception there is a fix that needs to be run on the
-		// server and I have it
-		// documented in my notes and working fine. Need to add to github docs. (todo-00)
-		// javax.net.ssl.SSLException: java.lang.RuntimeException: Unexpected error:
-		// java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be
-		// non-empty
+
+		/*
+		 * NOTE: When we get the following exception there is a fix that needs to be run on the
+		 * server and I have it documented in my notes and working fine.
+		 * 
+		 * Need to add to github docs. (todo-1) javax.net.ssl.SSLException:
+		 * java.lang.RuntimeException: Unexpected error:
+		 * java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be
+		 * non-empty
+		 */
 		catch (Exception e) {
 			log.error("*** ERROR reading feed: " + feedUrl, e);
 			// log.debug("Calling readUrl to double check streamability.");

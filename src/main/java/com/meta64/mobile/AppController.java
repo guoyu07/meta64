@@ -543,13 +543,12 @@ public class AppController {
 		return attachmentService.getBinary(null, nodeId);
 	}
 
-	/* todo-0: make these parameters required. this was only testing making them optional */
 	@RequestMapping(value = API_PATH + "/upload", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ResponseEntity<?> upload(//
-			@RequestParam(value = "nodeId", required = false) String nodeId, //
-			@RequestParam(value = "explodeZips", required = false) String explodeZips, //
-			@RequestParam(value = "files", required = false) MultipartFile[] uploadFiles) throws Exception {
+			@RequestParam(value = "nodeId", required = true) String nodeId, //
+			@RequestParam(value = "explodeZips", required = true) String explodeZips, //
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) throws Exception {
 		logRequest("upload", null);
 		if (nodeId == null) {
 			return new ResponseEntity<>(HttpStatus.OK);

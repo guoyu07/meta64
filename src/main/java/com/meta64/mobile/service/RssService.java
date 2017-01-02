@@ -94,7 +94,7 @@ public class RssService {
 		String key = currentUser + ":" + req.getUrl();
 		PlayerInfo info = new PlayerInfo();
 		info.setTimeOffset(req.getTimeOffset());
-		info.setNodePath(req.getNodePath());
+		//info.setNodePath(req.getNodePath());
 		// log.debug("SetPlayer info: offset="+req.getTimeOffset());
 		synchronized (playerInfoMap) {
 			playerInfoMap.put(key, info);
@@ -260,10 +260,10 @@ public class RssService {
 		}
 	}
 
-	public void parseTest(String url) {
+	public void parseTest__unused(String url) {
 		try {
 			RssReader rssReader = (RssReader) SpringContextUtil.getBean(RssReader.class);
-			rssReader.readUrl(url);
+			rssReader.readUrl__unused(url);
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -292,8 +292,8 @@ public class RssService {
 			int urlStart = key.indexOf(":");
 			if (urlStart != -1) {
 				String url = key.substring(urlStart);
-				String path = info.getNodePath();
-				log.debug("URL CACHED=" + url + " path=" + info.getNodePath());
+				//String path = info.getNodePath();
+				//log.debug("URL CACHED=" + url + " path=" + info.getNodePath());
 				// Node node = JcrUtil.findNode(session, path);
 
 				//////////////////

@@ -10,7 +10,7 @@ public class MimeUtil {
 
 		String ext = XString.parseAfterLast(fileName, ".");
 
-		// todo-0: will be getting these from a properties file eventually
+		// todo-2: will be getting these from a properties file eventually
 		if (ext.equalsIgnoreCase("txt") || //
 				ext.equalsIgnoreCase("md")) {
 			return true;

@@ -67,6 +67,7 @@ public class LuceneService {
 			return;
 		}
 
+		//&&& Basically need to load a json object for browsing folders also.
 		String json = jsonMapper.writeValueAsString(resultList);
 		log.debug("RESULT STRING: " + json);
 

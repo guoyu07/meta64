@@ -83,7 +83,8 @@ public class FileIndexer {
 	 * Index a file by creating a Document and adding fields
 	 */
 	private void indexFile(final File f, final String suffix) {
-		if (f.length() > 2 * 1024 * 1024 || f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists() || (suffix != null && !f.getName().endsWith(suffix))) {
+		if (f.length() > 2 * 1024 * 1024 || f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists() || //
+				(suffix != null && !f.getName().endsWith(suffix))) {
 			return;
 		}
 

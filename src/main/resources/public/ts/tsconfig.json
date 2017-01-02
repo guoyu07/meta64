@@ -42,6 +42,7 @@
       "systemfolder.ts",
       "./dlg/base/DialogBase.ts",
       "./dlg/ConfirmDlg.ts",
+      "./dlg/EditSystemFileDlg.ts",
       "./dlg/ProgressDlg.ts",
       "./dlg/MessageDlg.ts",
       "./dlg/LoginDlg.ts",

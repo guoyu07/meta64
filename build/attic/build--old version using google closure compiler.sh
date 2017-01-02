@@ -40,7 +40,7 @@ cp $META64/readme.md $META64/src/main/resources/public/doc/landing-page.md
 #go back to folder with this script in it. sort of 'home' for this script
 cd $META64/build
 
-# todo-0: Next step in updating build process to TypeScript will be to list these files in an ordering file
+# Next step in updating build process to TypeScript will be to list these files in an ordering file
 # and include it first, and use the reference directive to order the files below and also generate a single
 # output file with them in which case the google-compiler (Closure) wil no longer be needed.
 # http://www.typescriptlang.org/docs/handbook/triple-slash-directives.html

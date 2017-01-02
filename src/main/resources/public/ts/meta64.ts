@@ -847,6 +847,10 @@ namespace m64 {
                 "fileName": fileName
             });
         }
+
+        export let editSystemFile = function(fileName: string) {
+           new EditSystemFileDlg(fileName).open();
+        }
     }
 }
 

@@ -248,6 +248,10 @@ namespace m64 {
             sourceUrl: string;
         }
 
+        export interface BrowseFolderRequest {
+            nodeId: string;
+        }
+
         export interface AddPrivilegeResponse extends OakResponseBase {
         }
 
@@ -390,6 +394,10 @@ namespace m64 {
         }
 
         export interface UploadFromUrlResponse extends OakResponseBase {
+        }
+
+        export interface BrowseFolderResponse extends OakResponseBase {
+            listingJson: string;
         }
 
         export interface OakResponseBase {

@@ -110,6 +110,13 @@ namespace m64 {
                 menuItem("Preferences", "accountPreferencesButton", "(new m64.PrefsDlg()).open();"); //
             var viewOptionsMenu = makeTopLevelMenu("View", viewOptionsMenuItems);
 
+            // WORK IN PROGRESS ( do not delete)
+            // var fileSystemMenuItems = //
+            //     menuItem("Reindex", "fileSysReindexButton", "m64.systemfolder.reindex();") + //
+            //     menuItem("Search", "fileSysSearchButton", "m64.systemfolder.search();"); //
+            //     //menuItem("Browse", "fileSysBrowseButton", "m64.systemfolder.browse();");
+            // var fileSystemMenu = makeTopLevelMenu("FileSys", fileSystemMenuItems);
+
             /*
              * whatever is commented is only commented for polymer conversion
              */
@@ -131,7 +138,7 @@ namespace m64 {
                 menuItem("Main Menu Help", "mainMenuHelp", "m64.nav.openMainMenuHelp();");
             var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
 
-            var content = /* pageMenu+ */ mainMenuRss + editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu + searchMenu + timelineMenu + myAccountMenu
+            var content = /* pageMenu+ */ mainMenuRss + editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu /* + fileSystemMenu */ + searchMenu + timelineMenu + myAccountMenu
                 + adminMenu + mainMenuHelp;
 
             util.setHtml(domId, content);

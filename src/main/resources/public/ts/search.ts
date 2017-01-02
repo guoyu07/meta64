@@ -86,7 +86,8 @@ namespace m64 {
                 "nodeId": res.searchResultNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset" : searchOffset
+                "offset": 0,
+                "goToLastPage" : false
             }, nav.navPageNodeResponse);
         }
 

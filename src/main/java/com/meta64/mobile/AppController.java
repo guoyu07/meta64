@@ -29,6 +29,7 @@ import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
+import com.meta64.mobile.request.BrowseFolderRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.CloseAccountRequest;
 import com.meta64.mobile.request.CreateSubNodeRequest;
@@ -66,6 +67,7 @@ import com.meta64.mobile.request.SplitNodeRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.AddPrivilegeResponse;
 import com.meta64.mobile.response.AnonPageLoadResponse;
+import com.meta64.mobile.response.BrowseFolderResponse;
 import com.meta64.mobile.response.ChangePasswordResponse;
 import com.meta64.mobile.response.CloseAccountResponse;
 import com.meta64.mobile.response.CreateSubNodeResponse;
@@ -103,6 +105,7 @@ import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
 import com.meta64.mobile.service.ImportExportService;
 import com.meta64.mobile.service.LuceneService;
@@ -180,6 +183,9 @@ public class AppController {
 
 	@Autowired
 	private SystemService systemService;
+	
+	@Autowired
+	private FileSystemService fileSystemService;
 
 	@Autowired
 	private SolrSearchService solrSearchService;
@@ -581,6 +587,16 @@ public class AppController {
 		return res;
 	}
 
+	@RequestMapping(value = API_PATH + "/browseFolder", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody BrowseFolderResponse browseFolder(@RequestBody BrowseFolderRequest req) throws Exception {
+		logRequest("browseFolder", req);
+		BrowseFolderResponse res = new BrowseFolderResponse();
+		checkHttpSession();
+		fileSystemService.browseFolder(null, req, res);
+		return res;
+	}	
+	
 	@RequestMapping(value = API_PATH + "/fileSearch", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) throws Exception {
@@ -588,6 +604,7 @@ public class AppController {
 		FileSearchResponse res = new FileSearchResponse();
 		checkHttpSession();
 
+		/* todo-1: need to split these out into two separate methods on this controller */
 		if (req.isReindex()) {
 			luceneService.reindex(null, req, res);
 		}

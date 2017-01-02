@@ -2,6 +2,7 @@
 
 [meta64:systemfolder]
 	> nt:unstructured orderable
+	- meta64:json (string) = '' 
  	- meta64:path (string) = '' autocreated 
  	
 [meta64:filelist]

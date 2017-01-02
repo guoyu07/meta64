@@ -271,27 +271,29 @@ namespace m64 {
                 let list: any[] = JSON.parse(jsonContent);
 
                 for (let entry of list) {
-                    let fileNameDiv = tag("div", {
+                    content += tag("div", {
                         "class": "systemFile",
+                        "onclick": "m64.meta64.editSystemFile('" + entry.fileName + "')"
                     }, entry.fileName);
 
-                    let localOpenLink = tag("paper-button", {
-                        "raised": "raised",
-                        "onclick": "m64.meta64.openSystemFile('" + entry.fileName + "')"
-                    }, "Local Open");
-
-                    let downloadLink = "";
+                    /* openSystemFile worked on linux, but i'm switching to full text file edit capability only and doing that
+                    inside meta64 from now on, so openSystemFile is no longer being used */
+                    // let localOpenLink = tag("paper-button", {
+                    //     "raised": "raised",
+                    //     "onclick": "m64.meta64.openSystemFile('" + entry.fileName + "')"
+                    // }, "Local Open");
+                    //
+                    // let downloadLink = "";
                     //haven't implemented download capability yet.
                     // tag("paper-button", {
                     //     "raised": "raised",
                     //     "onclick": "m64.meta64.downloadSystemFile('" + entry.fileName + "')"
                     // }, "Download")
+                    // let linksDiv = tag("div", {
+                    // }, localOpenLink + downloadLink);
 
-                    let linksDiv = tag("div", {
-                    }, localOpenLink + downloadLink);
-
-                    content += tag("div", {
-                    }, fileNameDiv + linksDiv);
+                    // content += tag("div", {
+                    // }, fileNameDiv);
                 }
             }
             catch (e) {
@@ -450,7 +452,7 @@ namespace m64 {
                     //"class": "green",
                     "style": "background-color: #4caf50;color:white;",
                     "raised": "raised",
-                    "onClick": "m64.nav.openNode('" + node.uid + "');"//
+                    "onClick": `m64.nav.openNode('${node.uid}');`//
                 }, //
                     "Open");
             }

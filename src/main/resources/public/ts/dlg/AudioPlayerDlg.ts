@@ -6,7 +6,7 @@ namespace m64 {
 
         constructor(private sourceUrl: string, private nodeUid: string, private startTimePending: number) {
             super("AudioPlayerDlg");
-            console.log("startTimePending in constructor: " + startTimePending);
+            console.log(`startTimePending in constructor: ${startTimePending}`);
             podcast.startTimePending = startTimePending;
         }
 
@@ -29,7 +29,7 @@ namespace m64 {
 
             let node: json.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
             if (!node) {
-                throw "unknown node uid: " + this.nodeUid;
+                throw `unknown node uid: ${this.nodeUid}`;
             }
 
             let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
@@ -45,8 +45,8 @@ namespace m64 {
                 "src": this.sourceUrl,
                 "id": this.id("audioPlayer"),
                 "style": "width: 100%; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
-                "ontimeupdate": "m64.podcast.onTimeUpdate('" + this.nodeUid + "', this);",
-                "oncanplay": "m64.podcast.onCanPlay('" + this.nodeUid + "', this);",
+                "ontimeupdate": `m64.podcast.onTimeUpdate('${this.nodeUid}', this);`,
+                "oncanplay": `m64.podcast.onCanPlay('${this.nodeUid}', this);`,
                 "controls": "controls",
                 "preload" : "auto"
             };
@@ -56,14 +56,14 @@ namespace m64 {
             //Skipping Buttons
             let skipBack30Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.skip(-30, '" + this.nodeUid + "', this);",
+                "onClick": `m64.podcast.skip(-30, '${this.nodeUid}', this);`,
                 "class": "standardButton"
             }, //
                 "< 30s");
 
             let skipForward30Button = render.tag("paper-button", {
                 "raised": "raised",
-                "onClick": "m64.podcast.skip(30, '" + this.nodeUid + "', this);",
+                "onClick": `m64.podcast.skip(30, '${this.nodeUid}', this);`,
                 "class": "standardButton"
             }, //
                 "30s >");

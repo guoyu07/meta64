@@ -76,9 +76,9 @@ namespace m64 {
                 headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
             }
 
-            headerText += "<span id='ownerDisplay" + node.uid + "'></span>";
+            headerText += `<span id='ownerDisplay${node.uid}'></span>`;
             if (node.lastModified) {
-                headerText += "  Mod: " + node.lastModified;
+                headerText += `  Mod: ${node.lastModified}`;
             }
             headerText += "</div>";
 
@@ -93,7 +93,7 @@ namespace m64 {
              * name, so we don't need to show the path AND the name. One is a substring of the other.
              */
             if (showName && !showPath && node.name) {
-                headerText += "Name: " + node.name + " [uid=" + node.uid + "]";
+                headerText += `Name: ${node.name} [uid=${node.uid}]`;
             }
 
             headerText = tag("div", {
@@ -151,7 +151,7 @@ namespace m64 {
             //"id": uid + "_content"
             //to the value from renderNodeContent(node, true, true, true, true, true)));
             let uid: string = meta64.identToUidMap[node.id];
-            if (!uid) throw "Unable to find nodeId " + node.id + " in uid map";
+            if (!uid) throw `Unable to find nodeId ${node.id} in uid map`;
             meta64.initNode(node, false);
             if (uid != node.uid) throw "uid changed unexpectly after initNode";
             let rowContent: string = renderNodeContent(node, true, true, true, true, true);
@@ -273,7 +273,7 @@ namespace m64 {
                 for (let entry of list) {
                     content += tag("div", {
                         "class": "systemFile",
-                        "onclick": "m64.meta64.editSystemFile('" + entry.fileName + "')"
+                        "onclick": `m64.meta64.editSystemFile('${entry.fileName}')`
                     }, entry.fileName);
 
                     /* openSystemFile worked on linux, but i'm switching to full text file edit capability only and doing that
@@ -344,7 +344,7 @@ namespace m64 {
             let cssId: string = uid + "_row";
             return tag("div", {
                 "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
-                "onClick": "m64.nav.clickOnNodeRow(this, '" + uid + "');", //
+                "onClick": `m64.nav.clickOnNodeRow(this, '${uid}');`, //
                 "id": cssId,
                 "style": bkgStyle
             },//
@@ -389,7 +389,8 @@ namespace m64 {
             let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
             let bkgImgStyle: string = "";
             if (bkgImg) {
-                bkgImgStyle = "background-image: url(" + bkgImg + ");";
+                //todo-0: as I was convertingi some strings to backtick i noticed this URL missing the quotes around the string. Is this a bug?
+                bkgImgStyle = `background-image: url(${bkgImg});`;
             }
             return bkgImgStyle;
         }
@@ -432,7 +433,7 @@ namespace m64 {
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
                 replyButton = tag("paper-button", {
                     "raised": "raised",
-                    "onClick": "m64.edit.replyToComment('" + node.uid + "');" //
+                    "onClick": `m64.edit.replyToComment('${node.uid}');` //
                 }, //
                     "Reply");
             }
@@ -472,7 +473,7 @@ namespace m64 {
 
                 let css: Object = selected ? {
                     "id": node.uid + "_sel",//
-                    "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');",
+                    "onClick": `m64.nav.toggleNodeSel('${node.uid}');`,
                     "checked": "checked",
                     //padding is a back hack to make checkbox line up with other icons.
                     //(i will probably end up using a paper-icon-button that toggles here, instead of checkbox)
@@ -480,7 +481,7 @@ namespace m64 {
                 } : //
                     {
                         "id": node.uid + "_sel",//
-                        "onClick": "m64.nav.toggleNodeSel('" + node.uid + "');",
+                        "onClick": `m64.nav.toggleNodeSel('${node.uid}');`,
                         "style": "margin-top: 11px;"
                     };
 
@@ -493,7 +494,7 @@ namespace m64 {
                         "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                         "id": "addNodeButtonId" + node.uid,
                         "raised": "raised",
-                        "onClick": "m64.edit.createSubNode('" + node.uid + "');"
+                        "onClick": `m64.edit.createSubNode('${node.uid}');`
                     }, "Add");
                 }
 
@@ -504,7 +505,7 @@ namespace m64 {
                         "icon": "icons:picture-in-picture", //"icons:more-horiz",
                         "id": "insertNodeButtonId" + node.uid,
                         "raised": "raised",
-                        "onClick": "m64.edit.insertNode('" + node.uid + "');"
+                        "onClick": `m64.edit.insertNode('${node.uid}');`
                     }, "Ins");
                 }
             }
@@ -519,7 +520,7 @@ namespace m64 {
                         "alt": "Edit node.",
                         "icon": "editor:mode-edit",
                         "raised": "raised",
-                        "onClick": "m64.edit.runEditNode('" + node.uid + "');"
+                        "onClick": `m64.edit.runEditNode('${node.uid}');`
                     }, "Edit");
 
                 if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
@@ -530,7 +531,7 @@ namespace m64 {
                         moveNodeUpButton = tag("paper-icon-button", {
                             "icon": "icons:arrow-upward",
                             "raised": "raised",
-                            "onClick": "m64.edit.moveNodeUp('" + node.uid + "');"
+                            "onClick": `m64.edit.moveNodeUp('${node.uid}');`
                         }, "Up");
                     }
 
@@ -540,7 +541,7 @@ namespace m64 {
                         moveNodeDownButton = tag("paper-icon-button", {
                             "icon": "icons:arrow-downward",
                             "raised": "raised",
-                            "onClick": "m64.edit.moveNodeDown('" + node.uid + "');"
+                            "onClick": `m64.edit.moveNodeDown('${node.uid}');`
                         }, "Dn");
                     }
                 }
@@ -706,7 +707,7 @@ namespace m64 {
                 if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
                     replyButton = tag("paper-button", {
                         "raised": "raised",
-                        "onClick": "m64.edit.replyToComment('" + data.node.uid + "');" //
+                        "onClick": `m64.edit.replyToComment('${data.node.uid}');` //
                     }, //
                         "Reply");
                 }
@@ -715,7 +716,7 @@ namespace m64 {
                     createSubNodeButton = tag("paper-icon-button", {
                         "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                         "raised": "raised",
-                        "onClick": "m64.edit.createSubNode('" + uid + "');"
+                        "onClick": `m64.edit.createSubNode('${uid}');`
                     }, "Add");
                 }
 
@@ -726,7 +727,7 @@ namespace m64 {
                     editNodeButton = tag("paper-icon-button", {
                         "icon": "editor:mode-edit",
                         "raised": "raised",
-                        "onClick": "m64.edit.runEditNode('" + uid + "');"
+                        "onClick": `m64.edit.runEditNode('${uid}');`
                     }, "Edit");
                 }
 
@@ -741,7 +742,7 @@ namespace m64 {
 
                 let content: string = tag("div", {
                     "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
-                    "onClick": "m64.nav.clickOnNodeRow(this, '" + uid + "');",
+                    "onClick": `m64.nav.clickOnNodeRow(this, '${uid}');`,
                     "id": cssId
                 },//
                     buttonBar + mainNodeContent);
@@ -990,9 +991,11 @@ namespace m64 {
                          * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                          */
                         if (v.contains("'")) {
-                            ret += k + "=\"" + v + "\" ";
+                            //ret += k + "=\"" + v + "\" ";
+                            ret += `${k}="${v}" `;
                         } else {
-                            ret += k + "='" + v + "' ";
+                            //ret += k + "='" + v + "' ";
+                            ret += `${k}='${v}' `;
                         }
                     } else {
                         ret += k + " ";
@@ -1004,7 +1007,8 @@ namespace m64 {
                 if (!content) {
                     content = "";
                 }
-                ret += ">" + content + "</" + tag + ">";
+                //ret += ">" + content + "</" + tag + ">";
+                ret += `>${content}</${tag}>`;
             } else {
                 ret += "/>";
             }

@@ -171,7 +171,7 @@ namespace m64 {
 
             return render.tag("div", {
                 "class": "node-table-row inactive-row",
-                "onClick": "m64.srch.clickOnSearchResultRow(this, '" + uid + "');", //
+                "onClick": `m64.srch.clickOnSearchResultRow(this, '${uid}');`, //
                 "id": cssId
             },//
                 buttonBarHtml//
@@ -181,7 +181,7 @@ namespace m64 {
         }
 
         export let makeButtonBarHtml = function(uid) {
-            var gotoButton = render.makeButton("Go to Node", uid, "m64.srch.clickSearchNode('" + uid + "');");
+            var gotoButton = render.makeButton("Go to Node", uid, `m64.srch.clickSearchNode('${uid}');`);
             return render.makeHorizontalFieldSet(gotoButton);
         }
 

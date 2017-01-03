@@ -200,9 +200,10 @@ namespace m64 {
                     }
                     let payloadStr = payload ? payload.guid : "null";
 
-                    return "m64.meta64.runCallback(" + callback.guid + "," + ctx.guid + "," + payloadStr + ");";
+                    //todo-0: why isn't payloadStr in quotes? It was like this even before switching to backtick string
+                    return `m64.meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr});`;
                 } else {
-                    return "m64.meta64.runCallback(" + callback.guid + ");";
+                    return `m64.meta64.runCallback(${callback.guid});`;
                 }
             }
             else {

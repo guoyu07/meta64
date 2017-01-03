@@ -163,7 +163,6 @@ namespace m64 {
             meta64.highlightNode(node, false);
 
             if (meta64.userPreferences.editMode) {
-
                 /*
                  * if node.owner is currently null, that means we have not retrieved the owner from the server yet, but
                  * if non-null it's already displaying and we do nothing.

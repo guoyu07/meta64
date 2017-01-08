@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
@@ -25,6 +24,10 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,7 @@ import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -293,7 +297,6 @@ public class AttachmentService {
 
 		URL url = new URL(sourceUrl);
 		InputStream uis = null;
-		HttpURLConnection httpcon = null;
 
 		try {
 			String mimeType = URLConnection.guessContentTypeFromName(sourceUrl);
@@ -311,11 +314,13 @@ public class AttachmentService {
 				 * some sites don't want just any old stream reading from them. Leave this note here
 				 * as a warning and explanation
 				 */
-
-				httpcon = (HttpURLConnection) url.openConnection();
-				httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
-				httpcon.connect();
-				InputStream is = httpcon.getInputStream();
+				HttpClient client = HttpClientBuilder.create().build();
+				HttpGet request = new HttpGet(sourceUrl);
+				request.addHeader("User-Agent", FAKE_USER_AGENT);
+				HttpResponse response = client.execute(request);
+				log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
+				InputStream is = response.getEntity().getContent();
+				
 				uis = new LimitedInputStreamEx(is, maxFileSize);
 				attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
 			}
@@ -325,11 +330,13 @@ public class AttachmentService {
 			 * its an image we can handle it as one.
 			 */
 			else {
-				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {
-					httpcon = (HttpURLConnection) url.openConnection();
-					httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
-					httpcon.connect();
-					InputStream is = httpcon.getInputStream();
+				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {					
+					HttpClient client = HttpClientBuilder.create().build();
+					HttpGet request = new HttpGet(sourceUrl);
+					request.addHeader("User-Agent", FAKE_USER_AGENT);
+					HttpResponse response = client.execute(request);
+					log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
+					InputStream is = response.getEntity().getContent();
 					uis = new LimitedInputStreamEx(is, maxFileSize);
 					attachBinaryFromStream(session, null, nodeId, sourceUrl, is, "", -1, -1, false, false);
 				}
@@ -337,18 +344,7 @@ public class AttachmentService {
 		}
 		/* finally block just for extra safety */
 		finally {
-			if (uis != null) {
-				uis.close();
-				uis = null;
-			}
-
-			/*
-			 * I may not need this after the stream was close, but I'm calling it just in case
-			 */
-			if (httpcon != null) {
-				httpcon.disconnect();
-				httpcon = null;
-			}
+			StreamUtil.close(uis);
 		}
 		session.save();
 		res.setSuccess(true);
@@ -389,17 +385,7 @@ public class AttachmentService {
 			}
 		}
 		finally {
-			if (is != null) {
-				is.close();
-			}
-
-			if (is2 != null) {
-				is2.close();
-			}
-
-			if (reader != null) {
-				reader.dispose();
-			}
+			StreamUtil.close(is, is2, reader);
 		}
 		return false;
 	}

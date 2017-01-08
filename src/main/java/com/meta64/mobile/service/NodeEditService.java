@@ -133,16 +133,20 @@ public class NodeEditService {
 		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
 		res.setSuccess(true);
 
-		/*
-		 * We have to create a new session to run the move node because that is operating on a node
-		 * we do not own. Account root nodes are technically owned by admin
-		 */
-		if (createUnderRoot && req.isCreateAtTop()) {
-			String newNodeId = newNode.getIdentifier();
-			session.logout();
-			session = oak.newAdminSession();
-			Node newNode2 = JcrUtil.findNode(session, newNodeId);
-			nodeMoveService.moveNodeToTop(session, newNode2, true, true, false);
+		if (req.isCreateAtTop()) {
+			
+			/*
+			 * We have to create a new session to run the move node because that is operating on a node
+			 * we do not own. Account root nodes are technically owned by admin
+			 */
+			if (createUnderRoot) {
+				session.logout();
+				session = oak.newAdminSession();
+				
+				String newNodeId = newNode.getIdentifier();
+				newNode = JcrUtil.findNode(session, newNodeId);
+			}
+			nodeMoveService.moveNodeToTop(session, newNode, true, true, false);
 		}
 	}
 

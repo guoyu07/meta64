@@ -56,7 +56,7 @@ public class NodeRenderService {
 	private SessionContext sessionContext;
 
 	/* Note: this should match nav.ROWS_PER_PAGE variable in TypeScript */
-	private static int nodesPerPage = 25;
+	private static int ROWS_PER_PAGE = 25;
 
 	/*
 	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
@@ -123,7 +123,7 @@ public class NodeRenderService {
 				levelsUpRemaining--;
 			}
 		}
-		
+
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
@@ -131,27 +131,30 @@ public class NodeRenderService {
 		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
 		res.setNode(nodeInfo);
 
-		/* If we are scanning to a node we no we need to start from zero offset, or else we use the offset passed in */
+		/*
+		 * If we are scanning to a node we know we need to start from zero offset, or else we use
+		 * the offset passed in
+		 */
 		int offset = scanToNode ? 0 : req.getOffset();
-		
+
 		NodeIterator nodeIter = node.getNodes();
 		int idx = 0, count = 0, idxOfNodeFound = -1;
 		boolean endReached = false;
 		try {
 			if (req.isGoToLastPage()) {
-				offset = (int)nodeIter.getSize() - nodesPerPage;
+				offset = (int) nodeIter.getSize() - ROWS_PER_PAGE;
 				if (offset < 0) {
 					offset = 0;
 				}
 				res.setOffsetOfNodeFound(offset);
 			}
-			
+
 			/*
 			 * Calling 'skip' here technically violates the fact that nodeVisibleInSimpleMode() can
-			 * return false for certain nodes, but because of the performance boost it offers i'm
-			 * doing it anyway. I don't think skipping to far or too little by one or two will ever
-			 * be a noticeable issue in the paginating so this should be fine, because there will be
-			 * a very small number of nodes that are not visible to the user, so I can't think of a
+			 * return false for some nodes, but because of the performance boost it offers i'm doing
+			 * it anyway. I don't think skipping to far or too little by one or two will ever be a
+			 * noticeable issue in the paginating so this should be fine, because there will be a
+			 * very small number of nodes that are not visible to the user, so I can't think of a
 			 * pathological case here.
 			 */
 			if (!scanToNode && offset > 0) {
@@ -159,10 +162,22 @@ public class NodeRenderService {
 				idx = offset;
 			}
 
+			List<Node> slidingWindow = null;
+
+			/*
+			 * If we are scanning for a specific node, and starting at zero offset, then we need to
+			 * be capturing all the nodes as we go, in a sliding window, so that in case we find
+			 * this node on the first page then we can use the slidingWindow nodes to build the
+			 * entire first page, because we will need to send back these nodes starting from the
+			 * first one.
+			 */
+			if (offset == 0 && scanToNode) {
+				slidingWindow = new LinkedList<Node>();
+			}
+			
 			while (true) {
 				Node n = nodeIter.nextNode();
 
-				// Filter on server now too
 				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
 					idx++;
 
@@ -177,13 +192,32 @@ public class NodeRenderService {
 							 */
 							if (testPath.equals(path)) {
 								scanToNode = false;
-								idxOfNodeFound = idx;
+								
+								/* If we found our target node, and it's on the first page, then we don't need to set idxOfNodeFound,
+								 * but just leave it unset, and we need to load in the nodes we had collected so far, before continuing
+								 */
+								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
+									
+									/* loop over all our precached nodes */
+									for (Node sn : slidingWindow) {
+										count++;
+										children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true));
+									}
+								}
+								else {
+									idxOfNodeFound = idx;
+								}
 							}
 							/*
 							 * else, we can continue while loop after we incremented 'idx'. Nothing
 							 * else to do on this iteration/node
 							 */
 							else {
+								/* Are we still within the bounds of the first page ? */
+								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
+									slidingWindow.add(n);
+								}
+								
 								continue;
 							}
 						}
@@ -191,7 +225,7 @@ public class NodeRenderService {
 						count++;
 						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
 
-						if (count >= nodesPerPage) {
+						if (count >= ROWS_PER_PAGE) {
 							try {
 								Node finalNode = nodeIter.nextNode();
 								if (!advancedMode && !JcrUtil.nodeVisibleInSimpleMode(finalNode)) {

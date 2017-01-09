@@ -85,7 +85,7 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated) throws Exception {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;
@@ -106,7 +106,7 @@ public class Convert {
 		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
 		// log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
-		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly, allowAbbreviated);
+		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly, allowAbbreviated, initNodeEdit);
 
 		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
 		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
@@ -159,7 +159,7 @@ public class Convert {
 	}
 
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
-			boolean htmlOnly, boolean allowAbbreviated) throws Exception {
+			boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) throws Exception {
 		List<PropertyInfo> props = null;
 		PropertyIterator propsIter = node.getProperties();
 		PropertyInfo contentPropInfo = null;
@@ -171,7 +171,7 @@ public class Convert {
 			}
 			Property p = propsIter.nextProperty();
 
-			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated);
+			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, initNodeEdit);
 			// log.debug(" PROP Name: " + p.getName());
 
 			/*
@@ -197,7 +197,8 @@ public class Convert {
 		return props;
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated) throws Exception {
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit)
+			throws Exception {
 		String value = null;
 		boolean abbreviated = false;
 		List<String> values = null;
@@ -209,7 +210,7 @@ public class Convert {
 
 			// int valIdx = 0;
 			for (Value v : prop.getValues()) {
-				String strVal = formatValue(sessionContext, v, false);
+				String strVal = formatValue(sessionContext, v, false, initNodeEdit);
 				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
 				values.add(strVal);
 				// valIdx++;
@@ -222,11 +223,11 @@ public class Convert {
 				value = "[binary data]";
 			}
 			else if (prop.getName().equals(JcrProp.CONTENT)) {
-				value = formatValue(sessionContext, prop.getValue(), htmlOnly);
+				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 			else {
-				value = formatValue(sessionContext, prop.getValue(), false);
+				value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 		}
@@ -247,14 +248,21 @@ public class Convert {
 		return val;
 	}
 
-	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml) {
+	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml, boolean initNodeEdit) {
 		try {
 			if (value.getType() == PropertyType.DATE) {
 				return sessionContext.formatTime(value.getDate().getTime());
 			}
 			else {
 				String ret = value.getString();
-				ret = convertLinksToMarkdown(ret);
+
+				/*
+				 * If we are doing an initNodeEdit we don't do this, because we want the text to
+				 * render to the user exactly as they had typed it and not with links converted.
+				 */
+				if (!initNodeEdit) {
+					ret = convertLinksToMarkdown(ret);
+				}
 
 				// may need to revisit this (todo-2)
 				// ret = finalTagReplace(ret);

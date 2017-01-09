@@ -13,6 +13,7 @@ namespace m64 {
          */
         build = (): string => {
             var content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
+            content = render.centerContent(content, 300);
 
             var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
                 + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback);

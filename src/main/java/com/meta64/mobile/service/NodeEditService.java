@@ -130,7 +130,7 @@ public class NodeEditService {
 
 		session.save();
 
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
 		res.setSuccess(true);
 
 		if (req.isCreateAtTop()) {
@@ -185,7 +185,7 @@ public class NodeEditService {
 		}
 
 		session.save();
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
 		res.setSuccess(true);
 	}
 
@@ -341,7 +341,7 @@ public class NodeEditService {
 				}
 			}
 
-			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
+			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
 			res.setNode(nodeInfo);
 			session.save();
 		}

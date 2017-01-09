@@ -186,7 +186,7 @@ public class NodeSearchService {
 		res.setSearchResults(searchResults);
 
 		while (nodes.hasNext()) {
-			NodeInfo info = convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true);
+			NodeInfo info = convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true, false);
 			searchResults.add(info);
 			if (counter++ > MAX_NODES) {
 				break;
@@ -260,7 +260,7 @@ public class NodeSearchService {
 				continue;
 			}
 
-			searchResults.add(convert.convertToNodeInfo(sessionContext, session, parentNode, true, true));
+			searchResults.add(convert.convertToNodeInfo(sessionContext, session, parentNode, true, true, false));
 			if (counter++ > MAX_NODES) {
 				break;
 			}

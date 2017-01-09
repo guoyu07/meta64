@@ -403,6 +403,14 @@ namespace m64 {
             }, buttons);
         }
 
+        export let centerContent = function (content: string, width:number): string {
+            let div: string = render.tag("div", { "style": `width:${width}` }, content);
+
+            return render.tag("div", {
+                "class": "horizontal center-justified layout vertical-layout-row "
+            }, div, true);
+        }
+
         export let buttonBar = function(buttons: string, classes: string): string {
             classes = classes || "";
 

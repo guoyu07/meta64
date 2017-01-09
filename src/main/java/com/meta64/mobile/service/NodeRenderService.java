@@ -124,7 +124,7 @@ public class NodeRenderService {
 			}
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
 		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
 		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
 		nodeInfo.setChildrenOrdered(ordered);
@@ -201,7 +201,7 @@ public class NodeRenderService {
 									/* loop over all our precached nodes */
 									for (Node sn : slidingWindow) {
 										count++;
-										children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true));
+										children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true, false));
 									}
 								}
 								else {
@@ -223,7 +223,7 @@ public class NodeRenderService {
 						}
 
 						count++;
-						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true));
+						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true, false));
 
 						if (count >= ROWS_PER_PAGE) {
 							try {
@@ -279,7 +279,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false, false);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false, false, true);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}
@@ -299,7 +299,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, false);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, false, false);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

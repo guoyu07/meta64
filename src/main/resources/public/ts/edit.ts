@@ -216,7 +216,7 @@ namespace m64 {
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
-                    "siblingId": "[nodeAbove]" 
+                    "siblingId": "[nodeAbove]"
                 }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);
@@ -234,7 +234,7 @@ namespace m64 {
             if (node) {
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeData.node.id,
-                    "nodeId": "[nodeBelow]", 
+                    "nodeId": "[nodeBelow]",
                     "siblingId": node.name
                 }, setNodePositionResponse);
             } else {
@@ -254,7 +254,7 @@ namespace m64 {
                 util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
                     "parentNodeId": meta64.currentNodeId,
                     "nodeId": node.name,
-                    "siblingId": "[topNode]" 
+                    "siblingId": "[topNode]"
                 }, setNodePositionResponse);
             } else {
                 console.log("idToNodeMap does not contain " + uid);

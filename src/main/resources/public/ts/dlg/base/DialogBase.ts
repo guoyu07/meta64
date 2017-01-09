@@ -78,10 +78,10 @@ namespace m64 {
 
                 let content: string =
                     render.tag("div", {
-                      //howto: example of how to center a div in another div. This div is the one being centered.
-                      //The trick to getting the layout working was NOT setting this width to 100% even though somehow
-                      //the layout does result in it being 100% i think.
-                        "style" : "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
+                        //howto: example of how to center a div in another div. This div is the one being centered.
+                        //The trick to getting the layout working was NOT setting this width to 100% even though somehow
+                        //the layout does result in it being 100% i think.
+                        "style": "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
                     },
                         this.build());
                 util.setHtml(id, content);
@@ -239,12 +239,22 @@ namespace m64 {
             return render.tag("paper-button", attribs, text, true);
         }
 
-        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible?: boolean): string => {
+        /* The reason delayCloseCallback is here is so that we can encode a button to popup a new dialog over the top of
+        an existing dialog, and have that happen instantly, rather than letting it close, and THEN poping up a second dialog,
+        becasue using the delay means that the one being hidden is not able to become hidden before the one comes up because
+        that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case. */
+        makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
 
             let attribs = {
                 "raised": "raised",
-                // warning: this dialog-confirm is required (logic fails without)
+
+                /* warning: this dialog-confirm will cause google polymer to close the dialog instantly when the button
+                 is clicked and sometimes we don't want that, like for example, when we open a dialog over another dialog,
+                 we don't want the instantaneous close and display of background. It creates a flicker effect.
+
                 "dialog-confirm": "dialog-confirm",
+                */
+
                 "id": this.id(id),
                 "class": "standardButton"
             };
@@ -255,13 +265,13 @@ namespace m64 {
                 onClick = meta64.encodeOnClick(callback, ctx);
             }
 
-            onClick += ";" + meta64.encodeOnClick(this.cancel, this);
+            onClick += meta64.encodeOnClick(this.cancel, this, null, delayCloseCallback);
 
             if (onClick) {
                 attribs["onClick"] = onClick;
             }
 
-            if (initiallyVisible === false) {
+            if (!initiallyVisible) {
                 attribs["style"] = "display:none;"
             }
 
@@ -329,7 +339,7 @@ namespace m64 {
 
         makeHeader = (text: string, id?: string, centered?: boolean): string => {
             var attrs = {
-                "class": /*"dialog-header " +*/ (centered ? "horizontal center-justified layout" : "")+" dialog-header"
+                "class": /*"dialog-header " +*/ (centered ? "horizontal center-justified layout" : "") + " dialog-header"
             };
 
             //add id if one was provided

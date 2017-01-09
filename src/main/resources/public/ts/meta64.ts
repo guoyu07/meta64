@@ -185,7 +185,7 @@ namespace m64 {
          *
          * note: doesn't currently support havingn a null ctx and non-null payload.
          */
-        export let encodeOnClick = function(callback: any, ctx?: any, payload?: any) {
+        export let encodeOnClick = function(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
             if (typeof callback == "string") {
                 return callback;
             } //
@@ -201,9 +201,9 @@ namespace m64 {
                     let payloadStr = payload ? payload.guid : "null";
 
                     //todo-0: why isn't payloadStr in quotes? It was like this even before switching to backtick string
-                    return `m64.meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr});`;
+                    return `m64.meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr},${delayCallback});`;
                 } else {
-                    return `m64.meta64.runCallback(${callback.guid});`;
+                    return `m64.meta64.runCallback(${callback.guid},null,null,${delayCallback});`;
                 }
             }
             else {
@@ -211,7 +211,20 @@ namespace m64 {
             }
         }
 
-        export let runCallback = function(guid, ctx, payload) {
+        export let runCallback = function(guid, ctx, payload, delayCallback?: number) {
+            console.log("callback run: "+delayCallback);
+            /* depending on delayCallback, run the callback either immediately or with a delay */
+            if (delayCallback > 0) {
+                setTimeout(function() {
+                    runCallbackImmediate(guid, ctx, payload);
+                }, delayCallback);
+            }
+            else {
+                return runCallbackImmediate(guid, ctx, payload);
+            }
+        }
+
+        export let runCallbackImmediate = function(guid, ctx, payload) {
             var dataObj = getObjectByGuid(guid);
 
             // if this is an object, we expect it to have a 'callback' property
@@ -319,7 +332,7 @@ namespace m64 {
         }
 
         export let getSelectedNodeUidsArray = function(): string[] {
-            let selArray:string[] = [], uid;
+            let selArray: string[] = [], uid;
 
             for (uid in selectedNodes) {
                 if (selectedNodes.hasOwnProperty(uid)) {
@@ -333,7 +346,7 @@ namespace m64 {
         Returns a newly cloned array of all the selected nodes each time it's called.
         */
         export let getSelectedNodeIdsArray = function(): string[] {
-            let selArray:string[] = [], uid;
+            let selArray: string[] = [], uid;
 
             if (!selectedNodes) {
                 console.log("no selected nodes.");
@@ -495,12 +508,12 @@ namespace m64 {
         export let refreshAllGuiEnablement = function() {
             /* multiple select nodes */
             let prevPageExists: boolean = nav.mainOffset > 0;
-            let nextPageExists:boolean = !nav.endReached;
+            let nextPageExists: boolean = !nav.endReached;
             let selNodeCount: number = util.getPropertyCount(selectedNodes);
             let highlightNode: json.NodeInfo = getHighlightedNode();
-            let selNodeIsMine: boolean = highlightNode!=null && (highlightNode.createdBy === userName || "admin" === userName);
+            let selNodeIsMine: boolean = highlightNode != null && (highlightNode.createdBy === userName || "admin" === userName);
             //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
-            let homeNodeSelected: boolean = highlightNode!=null && homeNodeId == highlightNode.id;
+            let homeNodeSelected: boolean = highlightNode != null && homeNodeId == highlightNode.id;
             let importFeatureEnabled = isAdminUser || userPreferences.importAllowed;
             let exportFeatureEnabled = isAdminUser || userPreferences.exportAllowed;
             let highlightOrdinal: number = getOrdinalOfNode(highlightNode);
@@ -557,8 +570,8 @@ namespace m64 {
             util.setEnablement("findSharedNodesButton", !isAnonUser && highlightNode != null);
             util.setEnablement("userPreferencesMainAppButton", !isAnonUser);
             util.setEnablement("createNodeButton", canCreateNode);
-            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || (highlightNode!=null && homeNodeId == highlightNode.id)));
-            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || (highlightNode!=null && homeNodeId == highlightNode.id)));
+            util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || (highlightNode != null && homeNodeId == highlightNode.id)));
+            util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || (highlightNode != null && homeNodeId == highlightNode.id)));
             util.setEnablement("adminMenu", isAdminUser);
 
             //VISIBILITY
@@ -850,7 +863,7 @@ namespace m64 {
         }
 
         export let editSystemFile = function(fileName: string) {
-           new EditSystemFileDlg(fileName).open();
+            new EditSystemFileDlg(fileName).open();
         }
     }
 }

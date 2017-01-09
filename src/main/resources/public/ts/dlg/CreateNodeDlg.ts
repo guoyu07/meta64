@@ -16,7 +16,7 @@ namespace m64 {
         build = (): string => {
             let header = this.makeHeader("Create New Node");
 
-            let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, this);
+            let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, this, true, 1000);
             let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild, this);
             let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline, this);
             let backButton = this.makeCloseButton("Cancel", "cancelButton");
@@ -92,7 +92,6 @@ namespace m64 {
         }
 
         init = (): void => {
-            debugger;
             let node: json.NodeInfo = meta64.getHighlightedNode();
             if (node) {
                 let canInsertInline: boolean = meta64.homeNodeId != node.id;

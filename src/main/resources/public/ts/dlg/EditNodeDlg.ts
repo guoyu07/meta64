@@ -293,7 +293,6 @@ namespace m64 {
             });
         }
 
-        /* &&& */
         deletePropertyResponse = (res: any, propertyToDelete: any) => {
 
             if (util.checkSuccess("Delete property", res)) {

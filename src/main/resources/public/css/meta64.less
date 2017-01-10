@@ -38,10 +38,21 @@ because Eclipse hasn't caught up with the rest of the modern world on their tool
 	- -paper-tabs-selection-bar-color: var(- -paper-blue-900);
 }
 
+.centeredTitle {
+	width: 500px;
+	
+	/* This margin trick causes horizontal centering */
+	margin: 0 auto;
+}
+
 .listBox {
-	width: 60%;
-	height: 40%;
+	width: 500px;
+	height: 200px;
 	overflow: scroll;
+	
+	/* This margin trick causes horizontal centering */
+	margin: 0 auto;
+	
 	margin-bottom: @smallGapSize;
 	.borderedElm;
 }

@@ -29,11 +29,17 @@ namespace m64 {
             content += this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++, false);
             content += this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++, false);
 
-            var mainContent = render.tag("div", {
+            var listBox = render.tag("div", {
                 "class": "listBox"
             }, content);
 
-            return header + mainContent + buttonBar;
+            var mainContent: string = listBox; 
+
+            var centeredHeader: string = render.tag("div", {
+                "class": "centeredTitle"
+            }, header);
+
+            return centeredHeader + mainContent + buttonBar;
         }
 
         makeListItem(val: string, typeName: string, typeIdx: number, initiallySelected: boolean): string {

@@ -33,7 +33,7 @@ namespace m64 {
                 "class": "listBox"
             }, content);
 
-            var mainContent: string = listBox; 
+            var mainContent: string = listBox;
 
             var centeredHeader: string = render.tag("div", {
                 "class": "centeredTitle"
@@ -91,10 +91,10 @@ namespace m64 {
             this.lastSelTypeName = payload.typeName;
 
             if (this.lastSelDomId) {
-                $("#" + this.lastSelDomId).removeClass("selectedListItem");
+                this.el(this.lastSelDomId).removeClass("selectedListItem");
             }
             this.lastSelDomId = divId;
-            $("#" + divId).addClass("selectedListItem");
+            this.el(divId).addClass("selectedListItem");
         }
 
         init = (): void => {
@@ -102,13 +102,12 @@ namespace m64 {
             if (node) {
                 let canInsertInline: boolean = meta64.homeNodeId != node.id;
                 if (canInsertInline) {
-                    $(this.id("#createInlineButton")).show();
+                    this.el("createInlineButton").show();
                 }
                 else {
-                    $(this.id("#createInlineButton")).hide();
+                    this.el("createInlineButton").hide();
                 }
             }
-
         }
     }
 }

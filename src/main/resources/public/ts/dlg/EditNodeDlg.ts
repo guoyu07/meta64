@@ -192,7 +192,7 @@ namespace m64 {
                 : //
                 "";
 
-            $("#" + this.id("editNodeInstructions")).html(instr);
+            this.el("editNodeInstructions").html(instr);
 
             /*
              * Allow adding of new properties as long as this is a saved node we are editing, because we don't want to start

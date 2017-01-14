@@ -29,7 +29,6 @@ namespace m64 {
             console.log("cancel.");
         }
 
-
         init = (): void => {
         }
     }

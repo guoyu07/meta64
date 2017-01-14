@@ -21,7 +21,7 @@ namespace m64 {
             });
 
             var barContainer = render.tag("div", {
-                "style": "width:280px; margin:24px;",
+                "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
                 "class": "horizontal center-justified layout"
             }, progressBar);
 

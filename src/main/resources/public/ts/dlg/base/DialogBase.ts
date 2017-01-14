@@ -199,6 +199,15 @@ namespace m64 {
             return id + "_dlgId" + this.data.guid;
         }
 
+        el = (id): any => {
+            if (!id.startsWith("#")) {
+                return $("#" + this.id(id));
+            }
+            else {
+                return $(this.id(id));
+            }
+        }
+
         makePasswordField = (text: string, id: string): string => {
             return render.makePasswordField(text, this.id(id));
         }

@@ -4,6 +4,15 @@
 declare var Polymer;
 declare var Dropzone;
 declare var ace;
+declare var cookiePrefix;
+declare var postTargetUrl;
+declare var prettyPrint;
+declare var BRANDING_TITLE;
+declare var BRANDING_TITLE_SHORT;
+
+interface _HasSelect {
+    select?: any;
+}
 
 /// <reference path="./tyepdefs/jquery/jquery.d.ts" />
 /// <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
@@ -415,55 +424,6 @@ namespace m64 {
 
     }
 
-}
-
-console.log("running app.js");
-
-// var onresize = window.onresize;
-// window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
-
-var addEvent = function(object, type, callback) {
-    if (object == null || typeof (object) == 'undefined')
-        return;
-    if (object.addEventListener) {
-        object.addEventListener(type, callback, false);
-    } else if (object.attachEvent) {
-        object.attachEvent("on" + type, callback);
-    } else {
-        object["on" + type] = callback;
-    }
-};
-
-/*
- * WARNING: This is called in realtime while user is resizing so always throttle back any processing so that you don't
- * do any actual processing in here unless you want it VERY live, because it is.
- */
-function windowResize() {
-    // console.log("WindowResize: w=" + window.innerWidth + " h=" + window.innerHeight);
-}
-
-addEvent(window, "resize", windowResize);
-
-// this commented section is not working in my new x-app code, but it's ok to comment it out for now.
-//
-// This is our template element in index.html
-// var app = document.querySelector('#x-app');
-// // Listen for template bound event to know when bindings
-// // have resolved and content has been stamped to the page
-// app.addEventListener('dom-change', function() {
-//     console.log('app ready event!');
-// });
-
-window.addEventListener('polymer-ready', function(e) {
-    console.log('polymer-ready event!');
-});
-console.log("running module: cnst.js");
-
-declare var cookiePrefix;
-
-//todo-1: typescript will now let us just do this: const var='value';
-
-namespace m64 {
     export namespace cnst {
 
         export let ANON: string = "anonymous";
@@ -491,9 +451,7 @@ namespace m64 {
 
         export let SHOW_CLEAR_BUTTON_IN_EDITOR: boolean = false;
     }
-}
 
-namespace m64 {
     /* These are Client-side only models, and are not seen on the server side ever */
 
     /* Models a time-range in some media where an AD starts and stops */
@@ -518,14 +476,7 @@ namespace m64 {
             public val: string) {
         }
     }
-}
-console.log("running module: util.js");
 
-interface _HasSelect {
-    select?: any;
-}
-
-namespace m64 {
     export namespace util {
 
         export let logAjax: boolean = false;
@@ -535,46 +486,46 @@ namespace m64 {
         export let waitCounter: number = 0;
         export let pgrsDlg: any = null;
 
-		export let escapeRegExp = function(_) {
-    		return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-		}
-
-		export let escapeForAttrib = function(_) {
-        	return util.replaceAll(_, "\"", "&quot;");
-    	}
-
-   	 	export let unencodeHtml = function(_) {
-	        if (!util.contains(_, "&"))
-	            return _;
-
-			var ret = _;
-	        ret = util.replaceAll(ret, '&amp;', '&');
-	        ret = util.replaceAll(ret, '&gt;', '>');
-	        ret = util.replaceAll(ret, '&lt;', '<');
-	        ret = util.replaceAll(ret, '&quot;', '"');
-	        ret = util.replaceAll(ret, '&#39;', "'");
-
-	        return ret;
-    	}
-
-    	export let replaceAll = function(_, find, replace) {
-        	return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
-    	}
-
-    	export let contains = function(_, str) {
-        	return _.indexOf(str) != -1;
-    	}
-
-        export let startsWith = function(_,str) {
-              return _.indexOf(str) === 0;
+        export let escapeRegExp = function(_) {
+            return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
         }
 
-   	 	export let stripIfStartsWith = function(_,str) {
-        	if (_.startsWith(str)) {
-            	return _.substring(str.length);
-        	}
-        	return _;
-    	}
+        export let escapeForAttrib = function(_) {
+            return util.replaceAll(_, "\"", "&quot;");
+        }
+
+        export let unencodeHtml = function(_) {
+            if (!util.contains(_, "&"))
+                return _;
+
+            var ret = _;
+            ret = util.replaceAll(ret, '&amp;', '&');
+            ret = util.replaceAll(ret, '&gt;', '>');
+            ret = util.replaceAll(ret, '&lt;', '<');
+            ret = util.replaceAll(ret, '&quot;', '"');
+            ret = util.replaceAll(ret, '&#39;', "'");
+
+            return ret;
+        }
+
+        export let replaceAll = function(_, find, replace) {
+            return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
+        }
+
+        export let contains = function(_, str) {
+            return _.indexOf(str) != -1;
+        }
+
+        export let startsWith = function(_, str) {
+            return _.indexOf(str) === 0;
+        }
+
+        export let stripIfStartsWith = function(_, str) {
+            if (_.startsWith(str)) {
+                return _.substring(str.length);
+            }
+            return _;
+        }
 
         export let arrayClone = function(_: any[]) {
             return _.slice(0);
@@ -597,13 +548,13 @@ namespace m64 {
             _.splice(toIndex, 0, _.splice(fromIndex, 1)[0]);
         };
 
-        export let stdTimezoneOffset = function(_:Date) {
+        export let stdTimezoneOffset = function(_: Date) {
             var jan = new Date(_.getFullYear(), 0, 1);
             var jul = new Date(_.getFullYear(), 6, 1);
             return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
         }
 
-        export let dst = function(_:Date) {
+        export let dst = function(_: Date) {
             return _.getTimezoneOffset() < stdTimezoneOffset(_);
         }
 
@@ -1228,10 +1179,7 @@ namespace m64 {
             return <T>instance;
         }
     }
-}
-console.log("running module: jcrCnst.js");
 
-namespace m64 {
     export namespace jcrCnst {
 
         export let COMMENT_BY: string = "commentBy";
@@ -1268,17 +1216,13 @@ namespace m64 {
         export let IMG_WIDTH: string = "imgWidth";
         export let IMG_HEIGHT: string = "imgHeight";
     }
-}
-console.log("running module: attachment.js");
 
-namespace m64 {
     export namespace attachment {
         /* Node being uploaded to */
         export let uploadNode: any = null;
 
         export let openUploadFromFileDlg = function(): void {
             let node: json.NodeInfo = meta64.getHighlightedNode();
-            console.log("running m64.namespace version!");
             if (!node) {
                 uploadNode = null;
                 (new MessageDlg("No node is selected.")).open();
@@ -1329,10 +1273,7 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: edit.js");
 
-namespace m64 {
     export namespace edit {
 
         export let createNode = function(): void {
@@ -1367,7 +1308,7 @@ namespace m64 {
             if (util.checkSuccess("Editing node", res)) {
                 let node: json.NodeInfo = res.nodeInfo;
                 let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
-                util.contains(node.path, "/rep:");
+                    util.contains(node.path, "/rep:");
 
                 /* if this is a comment node and we are the commenter */
                 let editingAllowed: boolean = props.isOwnedCommentNode(node);
@@ -1840,14 +1781,7 @@ namespace m64 {
             })).open();
         }
     }
-}
-console.log("running module: meta64.js");
 
-/**
- * Main Application instance, and central root level object for all code, although each module generally contributes one
- * singleton variable to the global scope, with a name usually identical to that file.
- */
-namespace m64 {
     export namespace meta64 {
 
         export let appInitialized: boolean = false;
@@ -2573,6 +2507,65 @@ namespace m64 {
         export let initApp = function(): void {
             console.log("initApp running.");
 
+
+            meta64.renderFunctionsByJcrType["meta64:rssfeed"] = podcast.renderFeedNode;
+            meta64.renderFunctionsByJcrType["meta64:rssitem"] = podcast.renderItemNode;
+            meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = podcast.propOrderingFeedNode;
+            meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = podcast.propOrderingItemNode;
+
+            meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
+            meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
+
+            meta64.renderFunctionsByJcrType["meta64:filelist"] = systemfolder.renderFileListNode;
+            meta64.propOrderingFunctionsByJcrType["meta64:filelist"] = systemfolder.fileListPropOrdering;
+
+
+            /////////////////////////////////////
+            // var onresize = window.onresize;
+            // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
+
+            (<any>window).addEvent = function(object, type, callback) {
+                if (object == null || typeof (object) == 'undefined')
+                    return;
+                if (object.addEventListener) {
+                    object.addEventListener(type, callback, false);
+                } else if (object.attachEvent) {
+                    object.attachEvent("on" + type, callback);
+                } else {
+                    object["on" + type] = callback;
+                }
+            };
+
+            /*
+             * WARNING: This is called in realtime while user is resizing so always throttle back any processing so that you don't
+             * do any actual processing in here unless you want it VERY live, because it is.
+             */
+            // (<any>window).windowResize = function() {
+            //     // console.log("WindowResize: w=" + window.innerWidth + " h=" + window.innerHeight);
+            // }
+            //
+            // (<any>window).addEvent(window, "resize", (<any>window).windowResize);
+
+            // this commented section is not working in my new x-app code, but it's ok to comment it out for now.
+            //
+            // This is our template element in index.html
+            // var app = document.querySelector('#x-app');
+            // // Listen for template bound event to know when bindings
+            // // have resolved and content has been stamped to the page
+            // app.addEventListener('dom-change', function() {
+            //     console.log('app ready event!');
+            // });
+
+            (<any>window).addEventListener('polymer-ready', function(e) {
+                console.log('polymer-ready event!');
+            });
+            console.log("running module: cnst.js");
+
+            //todo-1: typescript will now let us just do this: const var='value';
+
+
+            ////////////////////////////////////
+
             if (appInitialized)
                 return;
 
@@ -2710,16 +2703,7 @@ namespace m64 {
             new EditSystemFileDlg(fileName).open();
         }
     }
-}
 
-/* todo-0: for now I'll just drop this into a global variable. I know there's a better way. This is the only variable
-we have on the global namespace, and is only required for application initialization in JS on the index.html page */
-if (!window["meta64"]) {
-    var meta64 = m64.meta64;
-}
-console.log("running module: nav.js");
-
-namespace m64 {
     export namespace nav {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
@@ -2952,10 +2936,7 @@ namespace m64 {
             meta64.loadAnonPageHome(true);
         }
     }
-}
-console.log("running module: prefs.js");
 
-namespace m64 {
     export namespace prefs {
 
         export let closeAccountResponse = function(res: json.CloseAccountResponse): void {
@@ -2975,10 +2956,7 @@ namespace m64 {
             })).open();
         }
     }
-}
-console.log("running module: props.js");
 
-namespace m64 {
     export namespace props {
 
         export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
@@ -3203,13 +3181,6 @@ namespace m64 {
             return ret;
         }
     }
-}
-console.log("running module: render.js");
-
-declare var postTargetUrl;
-declare var prettyPrint;
-
-namespace m64 {
     export namespace render {
         let debug: boolean = false;
 
@@ -4294,14 +4265,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: search.js");
-
-/*
- * todo-3: try to rename to 'search', but remember you had inexpliable problems the first time you tried to use 'search'
- * as the var name.
- */
-namespace m64 {
     export namespace srch {
         export let _UID_ROWID_SUFFIX: string = "_srch_row";
 
@@ -4521,10 +4484,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: share.js");
-
-namespace m64 {
     export namespace share {
 
         let findSharedNodesResponse = function(res: json.GetSharedNodesResponse) {
@@ -4560,10 +4519,6 @@ namespace m64 {
             }, findSharedNodesResponse);
         }
     }
-}
-console.log("running module: user.js");
-
-namespace m64 {
     export namespace user {
 
         let logoutResponse = function(res: json.LogoutResponse): void {
@@ -4796,10 +4751,6 @@ namespace m64 {
             meta64.loadAnonPageHome(false);
         }
     }
-}
-console.log("running module: view.js");
-
-namespace m64 {
     export namespace view {
 
         export let scrollToSelNodePending: boolean = false;
@@ -4993,10 +4944,6 @@ namespace m64 {
             });
         }
     }
-}
-console.log("running module: menuPanel.js");
-
-namespace m64 {
     export namespace menuPanel {
 
         let makeTopLevelMenu = function(title: string, content: string, id?: string): string {
@@ -5144,15 +5091,12 @@ namespace m64 {
             meta64.refreshAllGuiEnablement();
         }
     }
-}
-console.log("running module: podcast.js");
 
-/*
-NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
+    /*
+    NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
 
-Reference: https://www.w3.org/2010/05/video/mediaevents.html
-*/
-namespace m64 {
+    Reference: https://www.w3.org/2010/05/video/mediaevents.html
+    */
     export namespace podcast {
         export let player: any = null;
         export let startTimePending: number = null;
@@ -5498,15 +5442,6 @@ namespace m64 {
             //alert('save complete.');
         }
     }
-}
-
-m64.meta64.renderFunctionsByJcrType["meta64:rssfeed"] = m64.podcast.renderFeedNode;
-m64.meta64.renderFunctionsByJcrType["meta64:rssitem"] = m64.podcast.renderItemNode;
-m64.meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = m64.podcast.propOrderingFeedNode;
-m64.meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = m64.podcast.propOrderingItemNode;
-console.log("running module: systemfolder.js");
-
-namespace m64 {
     export namespace systemfolder {
 
         export let renderNode = function(node: json.NodeInfo, rowStyling: boolean): string {
@@ -5618,16 +5553,6 @@ namespace m64 {
             return props.orderProps(propOrder, properties);
         }
     }
-}
-
-m64.meta64.renderFunctionsByJcrType["meta64:systemfolder"] = m64.systemfolder.renderNode;
-m64.meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = m64.systemfolder.propOrdering;
-
-m64.meta64.renderFunctionsByJcrType["meta64:filelist"] = m64.systemfolder.renderFileListNode;
-m64.meta64.propOrderingFunctionsByJcrType["meta64:filelist"] = m64.systemfolder.fileListPropOrdering;
-console.log("running module: DialogBase.js");
-
-namespace m64 {
     /*
      * Base class for all dialog boxes.
      *
@@ -5998,10 +5923,6 @@ namespace m64 {
             // }, 1000);
         }
     }
-}
-console.log("running module: ProgressDlg.js");
-
-namespace m64 {
     export class ProgressDlg extends DialogBase {
 
         constructor() {
@@ -6029,11 +5950,6 @@ namespace m64 {
             return header + barContainer;
         }
     }
-}
-
-console.log("running module: ConfirmDlg.js");
-
-namespace m64 {
     export class ConfirmDlg extends DialogBase {
 
         constructor(private title: string, private message: string, private buttonText: string, private yesCallback: Function,
@@ -6061,11 +5977,7 @@ namespace m64 {
             this.setHtml(this.buttonText, "ConfirmDlgYesButton");
         }
     }
-}
-console.log("running module: EditSystemFile.js");
 
-/* This dialog is currenetly a work in progress and will eventually be able to edit a text file on the server */
-namespace m64 {
     export class EditSystemFileDlg extends DialogBase {
 
         constructor(private fileName: string) {
@@ -6096,13 +6008,10 @@ namespace m64 {
         init = (): void => {
         }
     }
-}
-console.log("running module: MessageDlg.js");
 
-/*
- * Callback can be null if you don't need to run any function when the dialog is closed
- */
-namespace m64 {
+    /*
+     * Callback can be null if you don't need to run any function when the dialog is closed
+     */
     export class MessageDlg extends DialogBase {
 
         constructor(private message?: any, private title?: any, private callback?: any) {
@@ -6123,10 +6032,6 @@ namespace m64 {
             return content;
         }
     }
-}
-console.log("running module: LoginDlg.js");
-
-namespace m64 {
     export class LoginDlg extends DialogBase {
         constructor() {
             super("LoginDlg");
@@ -6193,13 +6098,6 @@ namespace m64 {
                 })).open();
         }
     }
-}
-console.log("running module: SignupDlg.js");
-
-declare var BRANDING_TITLE;
-declare var BRANDING_TITLE_SHORT;
-
-namespace m64 {
     export class SignupDlg extends DialogBase {
 
         constructor() {
@@ -6302,10 +6200,6 @@ namespace m64 {
             util.delayedFocus("#" + this.id("signupUserName"));
         }
     }
-}
-console.log("running module: PrefsDlg.js");
-
-namespace m64 {
     export class PrefsDlg extends DialogBase {
         constructor() {
             super("PrefsDlg");
@@ -6383,10 +6277,6 @@ namespace m64 {
             Polymer.dom.flush();
         }
     }
-}
-console.log("running module: ManageAccountDlg.js");
-
-namespace m64 {
     export class ManageAccountDlg extends DialogBase {
 
         constructor() {
@@ -6412,10 +6302,6 @@ namespace m64 {
             return header + buttonBar + bottomButtonBarDiv;
         }
     }
-}
-console.log("running module: ExportDlg.js");
-
-namespace m64 {
     export class ExportDlg extends DialogBase {
         constructor() {
             super("ExportDlg");
@@ -6461,10 +6347,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: ImportDlg.js");
-
-namespace m64 {
     export class ImportDlg extends DialogBase {
         constructor() {
             super("ImportDlg");
@@ -6511,10 +6393,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: SearchContentDlg.js");
-
-namespace m64 {
     export class SearchContentDlg extends DialogBase {
 
         constructor() {
@@ -6576,10 +6454,6 @@ namespace m64 {
             this.focus("searchText");
         }
     }
-}
-console.log("running module: SearchTagsDlg.js");
-
-namespace m64 {
     export class SearchTagsDlg extends DialogBase {
 
         constructor() {
@@ -6640,10 +6514,6 @@ namespace m64 {
             util.delayedFocus(this.id("searchText"));
         }
     }
-}
-console.log("running module: SearchFilesDlg.js");
-
-namespace m64 {
     export class SearchFilesDlg extends DialogBase {
 
         constructor(private lucene: boolean) {
@@ -6708,10 +6578,6 @@ namespace m64 {
             util.delayedFocus(this.id("searchText"));
         }
     }
-}
-console.log("running module: ChangePasswordDlg.js");
-
-namespace m64 {
     export class ChangePasswordDlg extends DialogBase {
 
         pwd: string;
@@ -6786,10 +6652,6 @@ namespace m64 {
             this.focus("changePassword1");
         }
     }
-}
-console.log("running module: ResetPasswordDlg.js");
-
-namespace m64 {
     export class ResetPasswordDlg extends DialogBase {
 
         constructor(private user: string) {
@@ -6843,10 +6705,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: UploadFromFileDlg.js");
-
-namespace m64 {
     export class UploadFromFileDlg extends DialogBase {
 
         constructor() {
@@ -6987,10 +6845,6 @@ namespace m64 {
             $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
         }
     }
-}
-console.log("running module: UploadFromFileDropzoneDlg.js");
-
-namespace m64 {
     export class UploadFromFileDropzoneDlg extends DialogBase {
 
         constructor() {
@@ -7152,10 +7006,6 @@ namespace m64 {
             this.configureDropZone();
         }
     }
-}
-console.log("running module: UploadFromUrlDlg.js");
-
-namespace m64 {
     export class UploadFromUrlDlg extends DialogBase {
 
         constructor() {
@@ -7885,13 +7735,10 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: EditPropertyDlg.js");
 
-/*
- * Property Editor Dialog (Edits Node Properties)
- */
-namespace m64 {
+    /*
+     * Property Editor Dialog (Edits Node Properties)
+     */
     export class EditPropertyDlg extends DialogBase {
 
         constructor(private editNodeDlg: any) {
@@ -7982,10 +7829,6 @@ namespace m64 {
             this.populatePropertyEdit();
         }
     }
-}
-console.log("running module: ShareToPersonDlg.js");
-
-namespace m64 {
     export class ShareToPersonDlg extends DialogBase {
 
         constructor() {
@@ -8034,10 +7877,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: SharingDlg.js");
-
-namespace m64 {
     export class SharingDlg extends DialogBase {
 
         constructor() {
@@ -8220,10 +8059,6 @@ namespace m64 {
             }, this.reload, this);
         }
     }
-}
-console.log("running module: RenameNodeDlg.js");
-
-namespace m64 {
     export class RenameNodeDlg extends DialogBase {
         constructor() {
             super("RenameNodeDlg");
@@ -8295,11 +8130,8 @@ namespace m64 {
             $("#" + this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
         }
     }
-}
-console.log("running module: AudioPlayerDlg.js");
 
-/* This is an audio player dialog that has ad-skipping technology provided by podcast.ts */
-namespace m64 {
+    /* This is an audio player dialog that has ad-skipping technology provided by podcast.ts */
     export class AudioPlayerDlg extends DialogBase {
 
         constructor(private sourceUrl: string, private nodeUid: string, private startTimePending: number) {
@@ -8426,10 +8258,6 @@ namespace m64 {
         init = (): void => {
         }
     }
-}
-console.log("running module: CreateNodeDlg.js");
-
-namespace m64 {
     export class CreateNodeDlg extends DialogBase {
 
         lastSelDomId: string;
@@ -8539,10 +8367,6 @@ namespace m64 {
             }
         }
     }
-}
-console.log("running module: searchResultsPanel.js");
-
-namespace m64 {
     export class SearchResultsPanel {
 
         domId: string = "searchResultsPanel";
@@ -8560,10 +8384,6 @@ namespace m64 {
             srch.populateSearchResultsPage(srch.searchResults, "searchResultsView");
         }
     }
-}
-console.log("running module: timelineResultsPanel.js");
-
-namespace m64 {
     export class TimelineResultsPanel {
 
         domId: string = "timelineResultsPanel";

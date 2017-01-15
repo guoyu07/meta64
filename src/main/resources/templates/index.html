@@ -155,7 +155,10 @@
     
     					if (webComponentsReady) {
     						clearTimeout(webComponentsReadyTimer);
-    						meta64.initApp();
+                            if (!m64) {
+                                throw new "m64 is null";
+                            }
+    						m64.meta64.initApp();
     					}
     
     				}, 100);

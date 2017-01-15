@@ -535,7 +535,7 @@ namespace m64 {
         export let waitCounter: number = 0;
         export let pgrsDlg: any = null;
 
-		export let escapeRegExp(_) {
+		export let escapeRegExp = function(_) {
     		return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 		}
 
@@ -546,16 +546,16 @@ namespace m64 {
    	 	export let unencodeHtml = function(_) {
 	        if (!util.contains(_, "&"))
 	            return _;
-	
+
 			var ret = _;
 	        ret = util.replaceAll(ret, '&amp;', '&');
 	        ret = util.replaceAll(ret, '&gt;', '>');
 	        ret = util.replaceAll(ret, '&lt;', '<');
 	        ret = util.replaceAll(ret, '&quot;', '"');
 	        ret = util.replaceAll(ret, '&#39;', "'");
-	        
+
 	        return ret;
-    	}	
+    	}
 
     	export let replaceAll = function(_, find, replace) {
         	return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);

@@ -521,134 +521,8 @@ namespace m64 {
 }
 console.log("running module: util.js");
 
-function escapeRegExp(string) {
-    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
-
 interface _HasSelect {
     select?: any;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Array prototype
-///////////////////////////////////////////////////////////////////////////////
-
-//WARNING: These prototype functions must be defined outside any functions.
-interface Array<T> {
-    clone(): Array<T>;
-    indexOfItemByProp(propName, propVal): number;
-    arrayMoveItem(fromIndex, toIndex): void;
-    indexOfObject(obj: any): number;
-};
-
-Array.prototype.clone = function() {
-    return this.slice(0);
-};
-
-Array.prototype.indexOfItemByProp = function(propName, propVal) {
-    var len = this.length;
-    for (var i = 0; i < len; i++) {
-        if (this[i][propName] === propVal) {
-            return i;
-        }
-    }
-    return -1;
-};
-
-/* need to test all calls to this method because i noticed during TypeScript conversion i wasn't even returning
-a value from this function! todo-0
-*/
-Array.prototype.arrayMoveItem = function(fromIndex, toIndex) {
-    this.splice(toIndex, 0, this.splice(fromIndex, 1)[0]);
-};
-
-if (typeof Array.prototype.indexOfObject != 'function') {
-    Array.prototype.indexOfObject = function(obj) {
-        for (var i = 0; i < this.length; i++) {
-            if (this[i] === obj) {
-                return i;
-            }
-        }
-        return -1;
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Date prototype
-///////////////////////////////////////////////////////////////////////////////
-
-interface Date {
-    stdTimezoneOffset(): number;
-    dst(): boolean;
-};
-
-Date.prototype.stdTimezoneOffset = function() {
-    var jan = new Date(this.getFullYear(), 0, 1);
-    var jul = new Date(this.getFullYear(), 6, 1);
-    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-}
-
-Date.prototype.dst = function() {
-    return this.getTimezoneOffset() < this.stdTimezoneOffset();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// String prototype
-///////////////////////////////////////////////////////////////////////////////
-
-interface String {
-    startsWith(str: string): boolean;
-    stripIfStartsWith(str: string): string;
-    contains(str: string): boolean;
-    replaceAll(find: string, replace: string): string;
-    unencodeHtml(): string;
-    escapeForAttrib(): string;
-}
-
-if (typeof String.prototype.startsWith != 'function') {
-    String.prototype.startsWith = function(str) {
-        return this.indexOf(str) === 0;
-    };
-}
-
-if (typeof String.prototype.stripIfStartsWith != 'function') {
-    String.prototype.stripIfStartsWith = function(str) {
-        if (this.startsWith(str)) {
-            return this.substring(str.length);
-        }
-        return this;
-    };
-}
-
-if (typeof String.prototype.contains != 'function') {
-    String.prototype.contains = function(str) {
-        return this.indexOf(str) != -1;
-    };
-}
-
-if (typeof String.prototype.replaceAll != 'function') {
-    String.prototype.replaceAll = function(find, replace) {
-        return this.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-    }
-}
-
-if (typeof String.prototype.unencodeHtml != 'function') {
-    String.prototype.unencodeHtml = function() {
-        if (!this.contains("&"))
-            return this;
-
-        return this.replaceAll('&amp;', '&')//
-            .replaceAll('&gt;', '>')//
-            .replaceAll('&lt;', '<')//
-            .replaceAll('&quot;', '"')//
-            .replaceAll('&#39;', "'");
-    }
-}
-
-if (typeof String.prototype.escapeForAttrib != 'function') {
-    String.prototype.escapeForAttrib = function() {
-        return this.replaceAll("\"", "&quot;");
-    }
 }
 
 namespace m64 {
@@ -660,6 +534,87 @@ namespace m64 {
 
         export let waitCounter: number = 0;
         export let pgrsDlg: any = null;
+
+		export let escapeRegExp(_) {
+    		return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+		}
+
+		export let escapeForAttrib = function(_) {
+        	return util.replaceAll(_, "\"", "&quot;");
+    	}
+
+   	 	export let unencodeHtml = function(_) {
+	        if (!util.contains(_, "&"))
+	            return _;
+	
+			var ret = _;
+	        ret = util.replaceAll(ret, '&amp;', '&');
+	        ret = util.replaceAll(ret, '&gt;', '>');
+	        ret = util.replaceAll(ret, '&lt;', '<');
+	        ret = util.replaceAll(ret, '&quot;', '"');
+	        ret = util.replaceAll(ret, '&#39;', "'");
+	        
+	        return ret;
+    	}	
+
+    	export let replaceAll = function(_, find, replace) {
+        	return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
+    	}
+
+    	export let contains = function(_, str) {
+        	return _.indexOf(str) != -1;
+    	}
+
+        export let startsWith = function(_,str) {
+              return _.indexOf(str) === 0;
+        }
+
+   	 	export let stripIfStartsWith = function(_,str) {
+        	if (_.startsWith(str)) {
+            	return _.substring(str.length);
+        	}
+        	return _;
+    	}
+
+        export let arrayClone = function(_: any[]) {
+            return _.slice(0);
+        };
+
+        export let arrayIndexOfItemByProp = function(_: any[], propName, propVal) {
+            var len = _.length;
+            for (var i = 0; i < len; i++) {
+                if (_[i][propName] === propVal) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+
+        /* need to test all calls to this method because i noticed during TypeScript conversion i wasn't even returning
+        a value from this function! todo-0
+        */
+        export let arrayMoveItem = function(_: any[], fromIndex, toIndex) {
+            _.splice(toIndex, 0, _.splice(fromIndex, 1)[0]);
+        };
+
+        export let stdTimezoneOffset = function(_:Date) {
+            var jan = new Date(_.getFullYear(), 0, 1);
+            var jul = new Date(_.getFullYear(), 6, 1);
+            return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        }
+
+        export let dst = function(_:Date) {
+            return _.getTimezoneOffset() < stdTimezoneOffset(_);
+        }
+
+        export let indexOfObject = function(_: any[], obj) {
+            for (var i = 0; i < _.length; i++) {
+                if (_[i] === obj) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         //this blows the hell up, not sure why.
         //	Object.prototype.toJson = function() {
@@ -678,8 +633,7 @@ namespace m64 {
          */
         let _ajaxCounter: number = 0;
 
-
-        export let daylightSavingsTime: boolean = (new Date().dst()) ? true : false;
+        export let daylightSavingsTime: boolean = (util.dst(new Date())) ? true : false;
 
         export let toJson = function(obj) {
             return JSON.stringify(obj, null, 4);
@@ -987,11 +941,11 @@ namespace m64 {
         }
 
         export let elementExists = function(id): boolean {
-            if (id.startsWith("#")) {
+            if (util.startsWith(id, "#")) {
                 id = id.substring(1);
             }
 
-            if (id.contains("#")) {
+            if (util.contains(id, "#")) {
                 console.log("Invalid # in domElm");
                 return null;
             }
@@ -1010,11 +964,11 @@ namespace m64 {
 		 * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
 		 */
         export let domElm = function(id): any {
-            if (id.startsWith("#")) {
+            if (util.startsWith(id, "#")) {
                 id = id.substring(1);
             }
 
-            if (id.contains("#")) {
+            if (util.contains(id, "#")) {
                 console.log("Invalid # in domElm");
                 return null;
             }
@@ -1035,11 +989,11 @@ namespace m64 {
 		 */
         export let polyElm = function(id: string): any {
 
-            if (id.startsWith("#")) {
+            if (util.startsWith(id, "#")) {
                 id = id.substring(1);
             }
 
-            if (id.contains("#")) {
+            if (util.contains(id, "#")) {
                 console.log("Invalid # in domElm");
                 return null;
             }
@@ -1323,7 +1277,7 @@ namespace m64 {
         export let uploadNode: any = null;
 
         export let openUploadFromFileDlg = function(): void {
-            let node:json.NodeInfo = meta64.getHighlightedNode();
+            let node: json.NodeInfo = meta64.getHighlightedNode();
             console.log("running m64.namespace version!");
             if (!node) {
                 uploadNode = null;
@@ -1342,7 +1296,7 @@ namespace m64 {
         }
 
         export let openUploadFromUrlDlg = function(): void {
-            let node:json.NodeInfo = meta64.getHighlightedNode();
+            let node: json.NodeInfo = meta64.getHighlightedNode();
 
             if (!node) {
                 uploadNode = null;
@@ -1355,7 +1309,7 @@ namespace m64 {
         }
 
         export let deleteAttachment = function(): void {
-            let node:json.NodeInfo = meta64.getHighlightedNode();
+            let node: json.NodeInfo = meta64.getHighlightedNode();
 
             if (node) {
                 (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
@@ -1412,7 +1366,8 @@ namespace m64 {
         let initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
             if (util.checkSuccess("Editing node", res)) {
                 let node: json.NodeInfo = res.nodeInfo;
-                let isRep: boolean = node.name.startsWith("rep:") || /* meta64.currentNodeData. bug? */node.path.contains("/rep:");
+                let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
+                util.contains(node.path, "/rep:");
 
                 /* if this is a comment node and we are the commenter */
                 let editingAllowed: boolean = props.isOwnedCommentNode(node);
@@ -1509,7 +1464,7 @@ namespace m64 {
             return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
         }
 
-        export let startEditingNewNode = function(typeName?: string, createAtTop?:boolean): void {
+        export let startEditingNewNode = function(typeName?: string, createAtTop?: boolean): void {
             editingUnsavedNode = false;
             editNode = null;
             editNodeDlgInst = new EditNodeDlg(typeName, createAtTop);
@@ -2100,7 +2055,7 @@ namespace m64 {
         }
 
         export let runCallback = function(guid, ctx, payload, delayCallback?: number) {
-            console.log("callback run: "+delayCallback);
+            console.log("callback run: " + delayCallback);
             /* depending on delayCallback, run the callback either immediately or with a delay */
             if (delayCallback > 0) {
                 setTimeout(function() {
@@ -2211,7 +2166,7 @@ namespace m64 {
 
             let prop;
             for (prop in simpleModeNodePrefixBlackList) {
-                if (simpleModeNodePrefixBlackList.hasOwnProperty(prop) && node.name.startsWith(prop)) {
+                if (simpleModeNodePrefixBlackList.hasOwnProperty(prop) && util.startsWith(node.name, prop)) {
                     return true;
                 }
             }
@@ -2769,31 +2724,31 @@ namespace m64 {
         export let _UID_ROWID_SUFFIX: string = "_row";
 
         /* todo-0: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
-        export let mainOffset:number = 0;
-        export let endReached:boolean = true;
+        export let mainOffset: number = 0;
+        export let endReached: boolean = true;
 
         /* todo-0: need to have this value passed from server rather than coded in TypeScript */
-        export let ROWS_PER_PAGE:number = 25;
+        export let ROWS_PER_PAGE: number = 25;
 
         export let openMainMenuHelp = function(): void {
-          nav.mainOffset = 0;
+            nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": "/meta64/public/help",
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset" : mainOffset,
-                "goToLastPage" : false
+                "offset": mainOffset,
+                "goToLastPage": false
             }, navPageNodeResponse);
         }
 
         export let openRssFeedsNode = function(): void {
-          nav.mainOffset = 0;
+            nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": "/rss/feeds",
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset" : mainOffset,
-                "goToLastPage" : false
+                "offset": mainOffset,
+                "goToLastPage": false
             }, navPageNodeResponse);
         }
 
@@ -2852,8 +2807,8 @@ namespace m64 {
                 "nodeId": meta64.currentNodeId,
                 "upLevel": 1,
                 "renderParentIfLeaf": false,
-                "offset" : mainOffset,
-                "goToLastPage" : false
+                "offset": mainOffset,
+                "goToLastPage": false
             }, function(res: json.RenderNodeResponse) {
                 upLevelResponse(ironRes.response, meta64.currentNodeId);
             });
@@ -2988,7 +2943,7 @@ namespace m64 {
                     "upLevel": null,
                     "renderParentIfLeaf": null,
                     "offset": mainOffset,
-                    "goToLastPage" : false
+                    "goToLastPage": false
                 }, navPageNodeResponse);
             }
         }
@@ -3027,7 +2982,7 @@ namespace m64 {
     export namespace props {
 
         export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
-            let propsNew: json.PropertyInfo[] = props.clone();
+            let propsNew: json.PropertyInfo[] = util.arrayClone(props);
             let targetIdx: number = 0;
 
             for (let prop of propOrder) {
@@ -3038,9 +2993,9 @@ namespace m64 {
         }
 
         let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
-            let tagIdx: number = props.indexOfItemByProp("name", typeName);
+            let tagIdx: number = util.arrayIndexOfItemByProp(props, "name", typeName);
             if (tagIdx != -1) {
-                props.arrayMoveItem(tagIdx, idx++);
+                util.arrayMoveItem(props, tagIdx, idx++);
             }
             return idx;
         }
@@ -3083,7 +3038,7 @@ namespace m64 {
                 return func(node, props);
             }
 
-            let propsNew: json.PropertyInfo[] = props.clone();
+            let propsNew: json.PropertyInfo[] = util.arrayClone(props);
             movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
             movePropsToEnd([jcrCnst.CREATED, jcrCnst.CREATED_BY, jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY], propsNew);
 
@@ -3093,9 +3048,9 @@ namespace m64 {
         /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
         let movePropsToTop = function(propsList: string[], props: json.PropertyInfo[]) {
             for (let prop of propsList) {
-                let tagIdx = props.indexOfItemByProp("name", prop);
+                let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
                 if (tagIdx != -1) {
-                    props.arrayMoveItem(tagIdx, 0);
+                    util.arrayMoveItem(props, tagIdx, 0);
                 }
             }
         }
@@ -3103,9 +3058,9 @@ namespace m64 {
         /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
         let movePropsToEnd = function(propsList: string[], props: json.PropertyInfo[]) {
             for (let prop of propsList) {
-                let tagIdx = props.indexOfItemByProp("name", prop);
+                let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
                 if (tagIdx != -1) {
-                    props.arrayMoveItem(tagIdx, props.length);
+                    util.arrayMoveItem(props, tagIdx, props.length);
                 }
             }
         }
@@ -3367,17 +3322,17 @@ namespace m64 {
             // var y = "test";
             // ```
             //
-            if (content.contains("<code")) {
+            if (util.contains(content, "<code")) {
                 meta64.codeFormatDirty = true;
                 content = encodeLanguages(content);
-                content = content.replaceAll("</code>", "</pre>");
+                content = util.replaceAll(content, "</code>", "</pre>");
             }
 
             return content;
         }
 
         export let injectSubstitutions = function(content: string): string {
-            return content.replaceAll("{{locationOrigin}}", window.location.origin);
+            return util.replaceAll(content, "{{locationOrigin}}", window.location.origin);
         }
 
         export let encodeLanguages = function(content: string): string {
@@ -3387,10 +3342,10 @@ namespace m64 {
              */
             var langs = ["js", "html", "htm", "css"];
             for (var i = 0; i < langs.length; i++) {
-                content = content.replaceAll("<code class=\"" + langs[i] + "\">", //
+                content = util.replaceAll(content, "<code class=\"" + langs[i] + "\">", //
                     "<?prettify lang=" + langs[i] + "?><pre class='prettyprint'>");
             }
-            content = content.replaceAll("<code>", "<pre class='prettyprint'>");
+            content = util.replaceAll(content, "<code>", "<pre class='prettyprint'>");
 
             return content;
         }
@@ -3498,8 +3453,8 @@ namespace m64 {
                  * the user has put {{insert-attachment}} if they are using that to make the image appear in a specific
                  * locatio in the content text.
                  */
-                if (ret.contains(cnst.INSERT_ATTACHMENT)) {
-                    ret = ret.replaceAll(cnst.INSERT_ATTACHMENT, binary);
+                if (util.contains(ret, cnst.INSERT_ATTACHMENT)) {
+                    ret = util.replaceAll(ret, cnst.INSERT_ATTACHMENT, binary);
                 } else {
                     ret += binary;
                 }
@@ -3568,9 +3523,9 @@ namespace m64 {
             let canMoveUp: boolean = (index > 0 && rowCount > 1) || prevPageExists;
             let canMoveDown: boolean = (index < count - 1) || nextPageExists;
 
-            let isRep: boolean = node.name.startsWith("rep:") || /*
+            let isRep: boolean = util.startsWith(node.name, "rep:") || /*
 														 * meta64.currentNodeData. bug?
-														 */node.path.contains("/rep:");
+														 */util.contains(node.path, "/rep:");
 
             let editingAllowed: boolean = props.isOwnedCommentNode(node);
             if (!editingAllowed) {
@@ -3611,7 +3566,7 @@ namespace m64 {
                 return;
             }
 
-            let path: string = node.path.stripIfStartsWith("/root");
+            let path: string = util.stripIfStartsWith(node.path, "/root");
             let url: string = window.location.origin + "?id=" + path;
             meta64.selectTab("mainTabName");
 
@@ -3868,11 +3823,11 @@ namespace m64 {
             let path: string = node.path;
 
             /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
-            path = path.replaceAll("/", " / ");
+            path = util.replaceAll(path, "/", " / ");
             let shortPath: string = path.length < 50 ? path : path.substring(0, 40) + "...";
 
             let noRootPath: string = shortPath;
-            if (noRootPath.startsWith("/root")) {
+            if (util.startsWith(noRootPath, "/root")) {
                 noRootPath = noRootPath.substring(0, 5);
             }
 
@@ -4251,7 +4206,7 @@ namespace m64 {
                         /*
                          * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                          */
-                        if (v.contains("'")) {
+                        if (util.contains(v, "'")) {
                             //ret += k + "=\"" + v + "\" ";
                             ret += `${k}="${v}" `;
                         } else {
@@ -4423,13 +4378,13 @@ namespace m64 {
         }
 
         export let searchFilesResponse = function(res: json.FileSearchResponse) {
-          nav.mainOffset = 0;
+            nav.mainOffset = 0;
             util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
                 "nodeId": res.searchResultNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null,
                 "offset": 0,
-                "goToLastPage" : false
+                "goToLastPage": false
             }, nav.navPageNodeResponse);
         }
 
@@ -4581,8 +4536,8 @@ namespace m64 {
         /*
          * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
          */
-        export let editNodeSharing = function() : void {
-            let node:json.NodeInfo = meta64.getHighlightedNode();
+        export let editNodeSharing = function(): void {
+            let node: json.NodeInfo = meta64.getHighlightedNode();
 
             if (!node) {
                 (new MessageDlg("No node is selected.")).open();
@@ -4592,8 +4547,8 @@ namespace m64 {
             (new SharingDlg()).open();
         }
 
-        export let findSharedNodes = function() : void {
-            let focusNode:json.NodeInfo = meta64.getHighlightedNode();
+        export let findSharedNodes = function(): void {
+            let focusNode: json.NodeInfo = meta64.getHighlightedNode();
             if (focusNode == null) {
                 return;
             }
@@ -5256,19 +5211,19 @@ namespace m64 {
 
         export let getMediaPlayerUrlFromNode = function(node: json.NodeInfo): string {
             let link: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
-            if (link && link.value && link.value.toLowerCase().contains(".mp3")) {
+            if (link && link.value && util.contains(link.value.toLowerCase(), ".mp3")) {
                 return link.value;
             }
 
             let uri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
-            if (uri && uri.value && uri.value.toLowerCase().contains(".mp3")) {
+            if (uri && uri.value && util.contains(uri.value.toLowerCase(), ".mp3")) {
                 return uri.value;
             }
 
             let encUrl: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncUrl", node);
             if (encUrl && encUrl.value) {
                 let encType: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncType", node);
-                if (encType && encType.value && encType.value.startsWith("audio/")) {
+                if (encType && encType.value && util.startsWith(encType.value, "audio/")) {
                     return encUrl.value;
                 }
             }
@@ -5430,7 +5385,7 @@ namespace m64 {
         export let onTimeUpdate = function(uid: string, elm: any): void {
             if (!pushTimer) {
                 /* ping server once every five minutes */
-                pushTimer = setInterval(pushTimerFunction, 5*60*1000);
+                pushTimer = setInterval(pushTimerFunction, 5 * 60 * 1000);
             }
             //console.log("CurrentTime=" + elm.currentTime);
             player = elm;
@@ -5865,14 +5820,14 @@ namespace m64 {
                 return null;
 
             /* if dialog already suffixed */
-            if (id.contains("_dlgId")) {
+            if (util.contains(id, "_dlgId")) {
                 return id;
             }
             return id + "_dlgId" + this.data.guid;
         }
 
         el = (id): any => {
-            if (!id.startsWith("#")) {
+            if (!util.startsWith(id, "#")) {
                 return $("#" + this.id(id));
             }
             else {
@@ -6033,7 +5988,7 @@ namespace m64 {
         }
 
         focus = (id: string): void => {
-            if (!id.startsWith("#")) {
+            if (!util.startsWith(id, "#")) {
                 id = "#" + id;
             }
             id = this.id(id);
@@ -6082,7 +6037,7 @@ namespace m64 {
     export class ConfirmDlg extends DialogBase {
 
         constructor(private title: string, private message: string, private buttonText: string, private yesCallback: Function,
-         private noCallback?: Function) {
+            private noCallback?: Function) {
             super("ConfirmDlg");
         }
 
@@ -6305,7 +6260,7 @@ namespace m64 {
                 return;
             }
 
-            util.json<json.SignupRequest,json.SignupResponse>("signup", {
+            util.json<json.SignupRequest, json.SignupResponse>("signup", {
                 "userName": userName,
                 "password": password,
                 "email": email,
@@ -6540,7 +6495,7 @@ namespace m64 {
             }
 
             if (highlightNode) {
-                util.json<json.ImportRequest,json.ImportResponse>("import", {
+                util.json<json.ImportRequest, json.ImportResponse>("import", {
                     "nodeId": highlightNode.id,
                     "sourceFileName": sourceFileName
                 }, this.importResponse, this);
@@ -6795,7 +6750,7 @@ namespace m64 {
             this.pwd = this.getInputVal("changePassword1").trim();
 
             if (this.pwd && this.pwd.length >= 4) {
-                util.json<json.ChangePasswordRequest,json.ChangePasswordResponse>("changePassword", {
+                util.json<json.ChangePasswordRequest, json.ChangePasswordResponse>("changePassword", {
                     "newPassword": this.pwd,
                     "passCode": this.passCode
                 }, this.changePasswordResponse, this);
@@ -7277,7 +7232,7 @@ namespace m64 {
         propEntries: Array<PropEntry> = new Array<PropEntry>();
         editPropertyDlgInst: any;
 
-        constructor(private typeName?: string, private createAtTop?:boolean) {
+        constructor(private typeName?: string, private createAtTop?: boolean) {
             super("EditNodeDlg");
 
             /*
@@ -7445,7 +7400,7 @@ namespace m64 {
             if (cnst.USE_ACE_EDITOR) {
                 for (var i = 0; i < aceFields.length; i++) {
                     var editor = ace.edit(aceFields[i].id);
-                    editor.setValue(aceFields[i].val.unencodeHtml());
+                    editor.setValue(util.unencodeHtml(aceFields[i].val));
                     meta64.aceEditorsById[aceFields[i].id] = editor;
                 }
             }
@@ -7653,7 +7608,7 @@ namespace m64 {
                     "nodeId": edit.parentOfNewNode.id,
                     "newNodeName": newNodeName,
                     "typeName": this.typeName ? this.typeName : "nt:unstructured",
-                    "createAtTop" : this.createAtTop
+                    "createAtTop": this.createAtTop
                 }, edit.createSubNodeResponse, edit);
             }
         }
@@ -7766,7 +7721,7 @@ namespace m64 {
 
                 var propVal = propEntry.binary ? "[binary]" : propList[i];
                 var propValStr = propVal || '';
-                propValStr = propVal.escapeForAttrib();
+                propValStr = util.escapeForAttrib(propVal);
                 var label = (i == 0 ? propEntry.property.name : "*") + "." + i;
 
                 console.log("Creating textarea with id=" + id);
@@ -7806,7 +7761,7 @@ namespace m64 {
             var propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
             var label = render.sanitizePropertyName(propEntry.property.name);
             var propValStr = propVal ? propVal : '';
-            propValStr = propValStr.escapeForAttrib();
+            propValStr = util.escapeForAttrib(propValStr);
             console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
                 + "] fieldId=" + propEntry.id);
 
@@ -8069,7 +8024,7 @@ namespace m64 {
                 "nodeId": share.sharingNode.id,
                 "principal": targetUser,
                 "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],
-                "publicAppend" : false
+                "publicAppend": false
             }, thiz.reloadFromShareWithPerson, thiz);
         }
 
@@ -8190,8 +8145,8 @@ namespace m64 {
 
                 util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
                     "nodeId": share.sharingNode.id,
-                    "privileges" : null,
-                    "principal" : null,
+                    "privileges": null,
+                    "principal": null,
                     "publicAppend": (polyElm.node.checked ? true : false)
                 });
 
@@ -8391,7 +8346,7 @@ namespace m64 {
                 "ontimeupdate": `m64.podcast.onTimeUpdate('${this.nodeUid}', this);`,
                 "oncanplay": `m64.podcast.onCanPlay('${this.nodeUid}', this);`,
                 "controls": "controls",
-                "preload" : "auto"
+                "preload": "auto"
             };
 
             let player = render.tag("audio", playerAttribs);

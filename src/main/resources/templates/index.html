@@ -130,11 +130,15 @@
             (dev, prod, test) -->
         <script>
             /*<![CDATA[*/
+                console.log("registering WebComponentsReady listener.");
+                
     			var webComponentsReady = false;
     			addEventListener("WebComponentsReady", function() {
+                    console.log("WebComponentsReady event.");
     				webComponentsReady = true;
     			});
     
+                console.log("SystemJS.config()");
     			SystemJS.config({
     				baseURL : '/js'
     			});
@@ -142,6 +146,8 @@
     			//todo-1: need to get this from the properties (see html.scripts above)
     			//SystemJS.import("meta64-app.js");
     
+                console.log("SystemJS.import({{html.mainModule}})");
+                
     			System.import("{{html.mainModule}}").then(function(m) {
     				console.log("Adding WebComponentsReady event listener.");
     

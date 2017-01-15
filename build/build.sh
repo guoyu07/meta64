@@ -20,10 +20,21 @@ rm $META64/src/main/resources/public/js/meta64-app.min.js
 echo "Old JS files deleted."
 
 # To install typescript compiler (tsc) run these commands:
+#
+# Note: TSC Version 1.8.10, is the version i ended up with first time doing this.
+# (Once you already have NODE, installed and you perhaps want to just upgrade TSC version, you can 
+# just run the 'nmp install' shown here, and not the lines above it.
+#
+# Warning: Whenever you do update 'typescript' using the 'nmp install' below, you probably want to 
+# also go manually download and update the copy of 'system.js' you have in your source
+# folder of meta64, because using versions of typescript and system.js that are incompatable will 
+# cause failures that are extremely hard to diagnose.
+#
 #    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 #    sudo apt-get install -y nodejs
 #    sudo apt-get install -y build-essential
-#    npm install -g typescript
+#    sudo npm install -g typescript
+#    read -p "TypeScript install complete."
 
 cd $META64/src/main/resources/public/ts
 tsc

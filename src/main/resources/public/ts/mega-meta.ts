@@ -1,6 +1,3 @@
-// "use strict";
-
-//todo-0: need to find the DefinitelyTyped file for Polymer.
 declare var Polymer;
 declare var Dropzone;
 declare var ace;
@@ -17,439 +14,436 @@ interface _HasSelect {
 /// <reference path="./tyepdefs/jquery/jquery.d.ts" />
 /// <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
 
-namespace json {
-
-    export interface AccessControlEntryInfo {
-        principalName: string;
-        privileges: PrivilegeInfo[];
-    }
-
-    export interface NodeInfo {
-        id: string;
-        path: string;
-        name: string;
-        primaryTypeName: string;
-        properties: PropertyInfo[];
-        hasChildren: boolean;
-        hasBinary: boolean;
-        binaryIsImage: boolean;
-        binVer: number;
-        width: number;
-        height: number;
-        childrenOrdered: boolean;
-        uid: string;
-        createdBy: string;
-        lastModified: Date;
-        imgId: string;
-        owner: string;
-    }
-
-    export interface PrivilegeInfo {
-        privilegeName: string;
-    }
-
-    export interface PropertyInfo {
-        type: number;
-        name: string;
-        value: string;
-        values: string[];
-        abbreviated: boolean;
-    }
-
-    export interface RefInfo {
-        id: string;
-        path: string;
-    }
-
-    export interface UserPreferences {
-        editMode: boolean;
-        advancedMode: boolean;
-        lastNode: string;
-        importAllowed: boolean;
-        exportAllowed: boolean;
-        showMetaData: boolean;
-    }
-
-    export interface AddPrivilegeRequest {
-        nodeId: string;
-        privileges: string[];
-        principal: string;
-        publicAppend: boolean;
-    }
-
-    export interface AnonPageLoadRequest {
-        ignoreUrl: boolean;
-    }
-
-    export interface ChangePasswordRequest {
-        newPassword: string;
-        passCode: string;
-    }
-
-    export interface CloseAccountRequest {
-    }
-
-    export interface GenerateRSSRequest {
-    }
-
-    export interface SetPlayerInfoRequest {
-        url: string;
-        timeOffset: number;
-        //nodePath: string;
-    }
-
-    export interface GetPlayerInfoRequest {
-        url: string;
-    }
-
-    export interface CreateSubNodeRequest {
-        nodeId: string;
-        newNodeName: string;
-        typeName: string;
-        createAtTop: boolean;
-    }
-
-    export interface DeleteAttachmentRequest {
-        nodeId: string;
-    }
-
-    export interface DeleteNodesRequest {
-        nodeIds: string[];
-    }
-
-    export interface DeletePropertyRequest {
-        nodeId: string;
-        propName: string;
-    }
-
-    export interface ExpandAbbreviatedNodeRequest {
-        nodeId: string;
-    }
-
-    export interface ExportRequest {
-        nodeId: string;
-        targetFileName: string;
-    }
-
-    export interface GetNodePrivilegesRequest {
-        nodeId: string;
-        includeAcl: boolean;
-        includeOwners: boolean;
-    }
-
-    export interface GetServerInfoRequest {
-    }
-
-    export interface GetSharedNodesRequest {
-        nodeId: string;
-    }
-
-    export interface ImportRequest {
-        nodeId: string;
-        sourceFileName: string;
-    }
-
-    export interface InitNodeEditRequest {
-        nodeId: string;
-    }
-
-    export interface InsertBookRequest {
-        nodeId: string;
-        bookName: string;
-        truncated: boolean;
-    }
-
-    export interface InsertNodeRequest {
-        parentId: string;
-        targetName: string;
-        newNodeName: string;
-        typeName: string;
-    }
-
-    export interface LoginRequest {
-        userName: string;
-        password: string;
-        tzOffset: number;
-        dst: boolean;
-    }
-
-    export interface LogoutRequest {
-    }
-
-    export interface MoveNodesRequest {
-        targetNodeId: string;
-        targetChildId: string;
-        nodeIds: string[];
-    }
-
-    export interface NodeSearchRequest {
-        sortDir: string;
-        sortField: string;
-        nodeId: string;
-        searchText: string;
-        searchProp: string;
-    }
-
-    export interface FileSearchRequest {
-        nodeId: string;
-        searchText: string;
-        reindex: boolean
-    }
-
-    export interface RemovePrivilegeRequest {
-        nodeId: string;
-        principal: string;
-        privilege: string;
-    }
-
-    export interface RenameNodeRequest {
-        nodeId: string;
-        newName: string;
-    }
-
-    export interface RenderNodeRequest {
-        nodeId: string;
-        upLevel: number;
-        offset: number;
-        renderParentIfLeaf: boolean;
-        goToLastPage: boolean;
-    }
-
-    export interface ResetPasswordRequest {
-        user: string;
-        email: string;
-    }
-
-    export interface SaveNodeRequest {
-        nodeId: string;
-        properties: PropertyInfo[];
-        sendNotification: boolean;
-    }
-
-    export interface SavePropertyRequest {
-        nodeId: string;
-        propertyName: string;
-        propertyValue: string;
-    }
-
-    export interface SaveUserPreferencesRequest {
-        userPreferences: UserPreferences;
-    }
-
-    export interface OpenSystemFileRequest {
-        fileName: string;
-    }
-
-    export interface SetNodePositionRequest {
-        parentNodeId: string;
-        nodeId: string;
-        siblingId: string;
-    }
-
-    export interface SignupRequest {
-        userName: string;
-        password: string;
-        email: string;
-        captcha: string;
-    }
-
-    export interface SplitNodeRequest {
-        nodeId: string;
-        nodeBelowId: string;
-        delimiter: string;
-    }
-
-    export interface UploadFromUrlRequest {
-        nodeId: string;
-        sourceUrl: string;
-    }
-
-    export interface BrowseFolderRequest {
-        nodeId: string;
-    }
-
-    export interface AddPrivilegeResponse extends OakResponseBase {
-    }
-
-    export interface AnonPageLoadResponse extends OakResponseBase {
-        content: string;
-        renderNodeResponse: RenderNodeResponse;
-    }
-
-    export interface ChangePasswordResponse extends OakResponseBase {
-        user: string;
-    }
-
-    export interface CloseAccountResponse extends OakResponseBase {
-    }
-
-    export interface GenerateRSSResponse extends OakResponseBase {
-    }
-
-    export interface SetPlayerInfoResponse extends OakResponseBase {
-    }
-
-    export interface GetPlayerInfoResponse extends OakResponseBase {
-        timeOffset: number;
-    }
-
-    export interface CreateSubNodeResponse extends OakResponseBase {
-        newNode: NodeInfo;
-    }
-
-    export interface DeleteAttachmentResponse extends OakResponseBase {
-    }
-
-    export interface DeleteNodesResponse extends OakResponseBase {
-    }
-
-    export interface DeletePropertyResponse extends OakResponseBase {
-    }
-
-    export interface ExpandAbbreviatedNodeResponse extends OakResponseBase {
-        nodeInfo: NodeInfo;
-    }
-
-    export interface ExportResponse extends OakResponseBase {
-    }
-
-    export interface GetNodePrivilegesResponse extends OakResponseBase {
-        aclEntries: AccessControlEntryInfo[];
-        owners: string[];
-        publicAppend: boolean;
-    }
-
-    export interface GetServerInfoResponse extends OakResponseBase {
-        serverInfo: string;
-    }
-
-    export interface GetSharedNodesResponse extends OakResponseBase {
-        searchResults: NodeInfo[];
-    }
-
-    export interface ImportResponse extends OakResponseBase {
-    }
-
-    export interface InitNodeEditResponse extends OakResponseBase {
-        nodeInfo: NodeInfo;
-    }
-
-    export interface InsertBookResponse extends OakResponseBase {
-        newNode: NodeInfo;
-    }
-
-    export interface InsertNodeResponse extends OakResponseBase {
-        newNode: NodeInfo;
-    }
-
-    export interface LoginResponse extends OakResponseBase {
-        rootNode: RefInfo;
-        userName: string;
-        anonUserLandingPageNode: string;
-        homeNodeOverride: string;
-        userPreferences: UserPreferences;
-        allowFileSystemSearch: boolean;
-    }
-
-    export interface LogoutResponse extends OakResponseBase {
-    }
-
-    export interface MoveNodesResponse extends OakResponseBase {
-    }
-
-    export interface NodeSearchResponse extends OakResponseBase {
-        searchResults: NodeInfo[];
-    }
-
-    export interface FileSearchResponse extends OakResponseBase {
-        searchResultNodeId: string;
-    }
-
-    export interface RemovePrivilegeResponse extends OakResponseBase {
-    }
-
-    export interface RenameNodeResponse extends OakResponseBase {
-        newId: string;
-    }
-
-    export interface RenderNodeResponse extends OakResponseBase {
-        node: NodeInfo;
-        children: NodeInfo[];
-        offsetOfNodeFound: number;
-
-        /* holds true if we hit the end of the list of child nodes */
-        endReached: boolean;
-
-        displayedParent: boolean;
-    }
-
-    export interface ResetPasswordResponse extends OakResponseBase {
-    }
-
-    export interface SaveNodeResponse extends OakResponseBase {
-        node: NodeInfo;
-    }
-
-    export interface SavePropertyResponse extends OakResponseBase {
-        propertySaved: PropertyInfo;
-    }
-
-    export interface SaveUserPreferencesResponse extends OakResponseBase {
-    }
-
-    export interface OpenSystemFileResponse extends OakResponseBase {
-    }
-
-    export interface SetNodePositionResponse extends OakResponseBase {
-    }
-
-    export interface SignupResponse extends OakResponseBase {
-    }
-
-    export interface SplitNodeResponse extends OakResponseBase {
-    }
-
-    export interface UploadFromUrlResponse extends OakResponseBase {
-    }
-
-    export interface BrowseFolderResponse extends OakResponseBase {
-        listingJson: string;
-    }
-
-    export interface OakResponseBase {
-        success: boolean;
-        message: string;
-    }
-
+interface AccessControlEntryInfo {
+    principalName: string;
+    privileges: PrivilegeInfo[];
 }
 
-namespace cnst {
+interface NodeInfo {
+    id: string;
+    path: string;
+    name: string;
+    primaryTypeName: string;
+    properties: PropertyInfo[];
+    hasChildren: boolean;
+    hasBinary: boolean;
+    binaryIsImage: boolean;
+    binVer: number;
+    width: number;
+    height: number;
+    childrenOrdered: boolean;
+    uid: string;
+    createdBy: string;
+    lastModified: Date;
+    imgId: string;
+    owner: string;
+}
 
-    export let ANON: string = "anonymous";
-    export let COOKIE_LOGIN_USR: string = cookiePrefix + "loginUsr";
-    export let COOKIE_LOGIN_PWD: string = cookiePrefix + "loginPwd";
+interface PrivilegeInfo {
+    privilegeName: string;
+}
+
+interface PropertyInfo {
+    type: number;
+    name: string;
+    value: string;
+    values: string[];
+    abbreviated: boolean;
+}
+
+interface RefInfo {
+    id: string;
+    path: string;
+}
+
+interface UserPreferences {
+    editMode: boolean;
+    advancedMode: boolean;
+    lastNode: string;
+    importAllowed: boolean;
+    exportAllowed: boolean;
+    showMetaData: boolean;
+}
+
+interface AddPrivilegeRequest {
+    nodeId: string;
+    privileges: string[];
+    principal: string;
+    publicAppend: boolean;
+}
+
+interface AnonPageLoadRequest {
+    ignoreUrl: boolean;
+}
+
+interface ChangePasswordRequest {
+    newPassword: string;
+    passCode: string;
+}
+
+interface CloseAccountRequest {
+}
+
+interface GenerateRSSRequest {
+}
+
+interface SetPlayerInfoRequest {
+    url: string;
+    timeOffset: number;
+    //nodePath: string;
+}
+
+interface GetPlayerInfoRequest {
+    url: string;
+}
+
+interface CreateSubNodeRequest {
+    nodeId: string;
+    newNodeName: string;
+    typeName: string;
+    createAtTop: boolean;
+}
+
+interface DeleteAttachmentRequest {
+    nodeId: string;
+}
+
+interface DeleteNodesRequest {
+    nodeIds: string[];
+}
+
+interface DeletePropertyRequest {
+    nodeId: string;
+    propName: string;
+}
+
+interface ExpandAbbreviatedNodeRequest {
+    nodeId: string;
+}
+
+interface ExportRequest {
+    nodeId: string;
+    targetFileName: string;
+}
+
+interface GetNodePrivilegesRequest {
+    nodeId: string;
+    includeAcl: boolean;
+    includeOwners: boolean;
+}
+
+interface GetServerInfoRequest {
+}
+
+interface GetSharedNodesRequest {
+    nodeId: string;
+}
+
+interface ImportRequest {
+    nodeId: string;
+    sourceFileName: string;
+}
+
+interface InitNodeEditRequest {
+    nodeId: string;
+}
+
+interface InsertBookRequest {
+    nodeId: string;
+    bookName: string;
+    truncated: boolean;
+}
+
+interface InsertNodeRequest {
+    parentId: string;
+    targetName: string;
+    newNodeName: string;
+    typeName: string;
+}
+
+interface LoginRequest {
+    userName: string;
+    password: string;
+    tzOffset: number;
+    dst: boolean;
+}
+
+interface LogoutRequest {
+}
+
+interface MoveNodesRequest {
+    targetNodeId: string;
+    targetChildId: string;
+    nodeIds: string[];
+}
+
+interface NodeSearchRequest {
+    sortDir: string;
+    sortField: string;
+    nodeId: string;
+    searchText: string;
+    searchProp: string;
+}
+
+interface FileSearchRequest {
+    nodeId: string;
+    searchText: string;
+    reindex: boolean
+}
+
+interface RemovePrivilegeRequest {
+    nodeId: string;
+    principal: string;
+    privilege: string;
+}
+
+interface RenameNodeRequest {
+    nodeId: string;
+    newName: string;
+}
+
+interface RenderNodeRequest {
+    nodeId: string;
+    upLevel: number;
+    offset: number;
+    renderParentIfLeaf: boolean;
+    goToLastPage: boolean;
+}
+
+interface ResetPasswordRequest {
+    user: string;
+    email: string;
+}
+
+interface SaveNodeRequest {
+    nodeId: string;
+    properties: PropertyInfo[];
+    sendNotification: boolean;
+}
+
+interface SavePropertyRequest {
+    nodeId: string;
+    propertyName: string;
+    propertyValue: string;
+}
+
+interface SaveUserPreferencesRequest {
+    userPreferences: UserPreferences;
+}
+
+interface OpenSystemFileRequest {
+    fileName: string;
+}
+
+interface SetNodePositionRequest {
+    parentNodeId: string;
+    nodeId: string;
+    siblingId: string;
+}
+
+interface SignupRequest {
+    userName: string;
+    password: string;
+    email: string;
+    captcha: string;
+}
+
+interface SplitNodeRequest {
+    nodeId: string;
+    nodeBelowId: string;
+    delimiter: string;
+}
+
+interface UploadFromUrlRequest {
+    nodeId: string;
+    sourceUrl: string;
+}
+
+interface BrowseFolderRequest {
+    nodeId: string;
+}
+
+interface AddPrivilegeResponse extends OakResponseBase {
+}
+
+interface AnonPageLoadResponse extends OakResponseBase {
+    content: string;
+    renderNodeResponse: RenderNodeResponse;
+}
+
+interface ChangePasswordResponse extends OakResponseBase {
+    user: string;
+}
+
+interface CloseAccountResponse extends OakResponseBase {
+}
+
+interface GenerateRSSResponse extends OakResponseBase {
+}
+
+interface SetPlayerInfoResponse extends OakResponseBase {
+}
+
+interface GetPlayerInfoResponse extends OakResponseBase {
+    timeOffset: number;
+}
+
+interface CreateSubNodeResponse extends OakResponseBase {
+    newNode: NodeInfo;
+}
+
+interface DeleteAttachmentResponse extends OakResponseBase {
+}
+
+interface DeleteNodesResponse extends OakResponseBase {
+}
+
+interface DeletePropertyResponse extends OakResponseBase {
+}
+
+interface ExpandAbbreviatedNodeResponse extends OakResponseBase {
+    nodeInfo: NodeInfo;
+}
+
+interface ExportResponse extends OakResponseBase {
+}
+
+interface GetNodePrivilegesResponse extends OakResponseBase {
+    aclEntries: AccessControlEntryInfo[];
+    owners: string[];
+    publicAppend: boolean;
+}
+
+interface GetServerInfoResponse extends OakResponseBase {
+    serverInfo: string;
+}
+
+interface GetSharedNodesResponse extends OakResponseBase {
+    searchResults: NodeInfo[];
+}
+
+interface ImportResponse extends OakResponseBase {
+}
+
+interface InitNodeEditResponse extends OakResponseBase {
+    nodeInfo: NodeInfo;
+}
+
+interface InsertBookResponse extends OakResponseBase {
+    newNode: NodeInfo;
+}
+
+interface InsertNodeResponse extends OakResponseBase {
+    newNode: NodeInfo;
+}
+
+interface LoginResponse extends OakResponseBase {
+    rootNode: RefInfo;
+    userName: string;
+    anonUserLandingPageNode: string;
+    homeNodeOverride: string;
+    userPreferences: UserPreferences;
+    allowFileSystemSearch: boolean;
+}
+
+interface LogoutResponse extends OakResponseBase {
+}
+
+interface MoveNodesResponse extends OakResponseBase {
+}
+
+interface NodeSearchResponse extends OakResponseBase {
+    searchResults: NodeInfo[];
+}
+
+interface FileSearchResponse extends OakResponseBase {
+    searchResultNodeId: string;
+}
+
+interface RemovePrivilegeResponse extends OakResponseBase {
+}
+
+interface RenameNodeResponse extends OakResponseBase {
+    newId: string;
+}
+
+interface RenderNodeResponse extends OakResponseBase {
+    node: NodeInfo;
+    children: NodeInfo[];
+    offsetOfNodeFound: number;
+
+    /* holds true if we hit the end of the list of child nodes */
+    endReached: boolean;
+
+    displayedParent: boolean;
+}
+
+interface ResetPasswordResponse extends OakResponseBase {
+}
+
+interface SaveNodeResponse extends OakResponseBase {
+    node: NodeInfo;
+}
+
+interface SavePropertyResponse extends OakResponseBase {
+    propertySaved: PropertyInfo;
+}
+
+interface SaveUserPreferencesResponse extends OakResponseBase {
+}
+
+interface OpenSystemFileResponse extends OakResponseBase {
+}
+
+interface SetNodePositionResponse extends OakResponseBase {
+}
+
+interface SignupResponse extends OakResponseBase {
+}
+
+interface SplitNodeResponse extends OakResponseBase {
+}
+
+interface UploadFromUrlResponse extends OakResponseBase {
+}
+
+interface BrowseFolderResponse extends OakResponseBase {
+    listingJson: string;
+}
+
+interface OakResponseBase {
+    success: boolean;
+    message: string;
+}
+
+class Constants {
+
+    ANON: string = "anonymous";
+    COOKIE_LOGIN_USR: string = cookiePrefix + "loginUsr";
+    COOKIE_LOGIN_PWD: string = cookiePrefix + "loginPwd";
     /*
      * loginState="0" if user logged out intentionally. loginState="1" if last known state of user was 'logged in'
      */
-    export let COOKIE_LOGIN_STATE: string = cookiePrefix + "loginState";
-    export let BR: "<div class='vert-space'></div>";
-    export let INSERT_ATTACHMENT: string = "{{insert-attachment}}";
-    export let NEW_ON_TOOLBAR: boolean = false;
-    export let INS_ON_TOOLBAR: boolean = false;
-    export let MOVE_UPDOWN_ON_TOOLBAR: boolean = true;
+    COOKIE_LOGIN_STATE: string = cookiePrefix + "loginState";
+    BR: "<div class='vert-space'></div>";
+    INSERT_ATTACHMENT: string = "{{insert-attachment}}";
+    NEW_ON_TOOLBAR: boolean = false;
+    INS_ON_TOOLBAR: boolean = false;
+    MOVE_UPDOWN_ON_TOOLBAR: boolean = true;
 
     /*
      * This works, but I'm not sure I want it for ALL editing. Still thinking about design here, before I turn this
      * on.
      */
-    export let USE_ACE_EDITOR: boolean = false;
+    USE_ACE_EDITOR: boolean = false;
 
     /* showing path on rows just wastes space for ordinary users. Not really needed */
-    export let SHOW_PATH_ON_ROWS: boolean = true;
-    export let SHOW_PATH_IN_DLGS: boolean = true;
+    SHOW_PATH_ON_ROWS: boolean = true;
+    SHOW_PATH_IN_DLGS: boolean = true;
 
-    export let SHOW_CLEAR_BUTTON_IN_EDITOR: boolean = false;
+    SHOW_CLEAR_BUTTON_IN_EDITOR: boolean = false;
 }
+let cnst:Constants = new Constants();
 
 /* These are Client-side only models, and are not seen on the server side ever */
 
@@ -462,7 +456,7 @@ class AdSegment {
 
 class PropEntry {
     constructor(public id: string, //
-        public property: json.PropertyInfo, //
+        public property: PropertyInfo, //
         public multi: boolean, //
         public readOnly: boolean, //
         public binary: boolean, //
@@ -1178,51 +1172,52 @@ class Util {
         return <T>instance;
     }
 }
-let util:Util = new Util();
+let util: Util = new Util();
 
-namespace jcrCnst {
+class JCRConstants {
 
-    export let COMMENT_BY: string = "commentBy";
-    export let PUBLIC_APPEND: string = "publicAppend";
-    export let PRIMARY_TYPE: string = "jcr:primaryType";
-    export let POLICY: string = "rep:policy";
+    COMMENT_BY: string = "commentBy";
+    PUBLIC_APPEND: string = "publicAppend";
+    PRIMARY_TYPE: string = "jcr:primaryType";
+    POLICY: string = "rep:policy";
 
-    export let MIXIN_TYPES: string = "jcr:mixinTypes";
+    MIXIN_TYPES: string = "jcr:mixinTypes";
 
-    export let EMAIL_CONTENT: string = "jcr:content";
-    export let EMAIL_RECIP: string = "recip";
-    export let EMAIL_SUBJECT: string = "subject";
+    EMAIL_CONTENT: string = "jcr:content";
+    EMAIL_RECIP: string = "recip";
+    EMAIL_SUBJECT: string = "subject";
 
-    export let CREATED: string = "jcr:created";
-    export let CREATED_BY: string = "jcr:createdBy";
-    export let CONTENT: string = "jcr:content";
-    export let TAGS: string = "tags";
-    export let UUID: string = "jcr:uuid";
-    export let LAST_MODIFIED: string = "jcr:lastModified";
-    export let LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
-    export let JSON_FILE_SEARCH_RESULT: string = "meta64:json";
+    CREATED: string = "jcr:created";
+    CREATED_BY: string = "jcr:createdBy";
+    CONTENT: string = "jcr:content";
+    TAGS: string = "tags";
+    UUID: string = "jcr:uuid";
+    LAST_MODIFIED: string = "jcr:lastModified";
+    LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
+    JSON_FILE_SEARCH_RESULT: string = "meta64:json";
 
-    export let DISABLE_INSERT: string = "disableInsert";
+    DISABLE_INSERT: string = "disableInsert";
 
-    export let USER: string = "user";
-    export let PWD: string = "pwd";
-    export let EMAIL: string = "email";
-    export let CODE: string = "code";
+    USER: string = "user";
+    PWD: string = "pwd";
+    EMAIL: string = "email";
+    CODE: string = "code";
 
-    export let BIN_VER: string = "binVer";
-    export let BIN_DATA: string = "jcrData";
-    export let BIN_MIME: string = "jcr:mimeType";
+    BIN_VER: string = "binVer";
+    BIN_DATA: string = "jcrData";
+    BIN_MIME: string = "jcr:mimeType";
 
-    export let IMG_WIDTH: string = "imgWidth";
-    export let IMG_HEIGHT: string = "imgHeight";
+    IMG_WIDTH: string = "imgWidth";
+    IMG_HEIGHT: string = "imgHeight";
 }
+let jcrCnst:JCRConstants = new JCRConstants();
 
 class Attachment {
     /* Node being uploaded to */
     uploadNode: any = null;
 
     openUploadFromFileDlg = function(): void {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+        let node: NodeInfo = meta64.getHighlightedNode();
         if (!node) {
             attachment.uploadNode = null;
             (new MessageDlg("No node is selected.")).open();
@@ -1240,7 +1235,7 @@ class Attachment {
     }
 
     openUploadFromUrlDlg = function(): void {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+        let node: NodeInfo = meta64.getHighlightedNode();
 
         if (!node) {
             attachment.uploadNode = null;
@@ -1253,19 +1248,19 @@ class Attachment {
     }
 
     deleteAttachment = function(): void {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+        let node: NodeInfo = meta64.getHighlightedNode();
 
         if (node) {
             (new ConfirmDlg("Confirm Delete Attachment", "Delete the Attachment on the Node?", "Yes, delete.",
                 function() {
-                    util.json<json.DeleteAttachmentRequest, json.DeleteAttachmentResponse>("deleteAttachment", {
+                    util.json<DeleteAttachmentRequest, DeleteAttachmentResponse>("deleteAttachment", {
                         "nodeId": node.id
                     }, attachment.deleteAttachmentResponse, null, node.uid);
                 })).open();
         }
     }
 
-    deleteAttachmentResponse = function(res: json.DeleteAttachmentResponse, uid: any): void {
+    deleteAttachmentResponse = function(res: DeleteAttachmentResponse, uid: any): void {
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.
@@ -1273,7 +1268,7 @@ class Attachment {
         }
     }
 }
-let attachment:Attachment = new Attachment();
+let attachment: Attachment = new Attachment();
 
 class Edit {
 
@@ -1281,7 +1276,7 @@ class Edit {
         (new CreateNodeDlg()).open();
     }
 
-    private insertBookResponse = function(res: json.InsertBookResponse): void {
+    private insertBookResponse = function(res: InsertBookResponse): void {
         console.log("insertBookResponse running.");
 
         util.checkSuccess("Insert Book", res);
@@ -1290,7 +1285,7 @@ class Edit {
         view.scrollToSelectedNode();
     }
 
-    private deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
+    private deleteNodesResponse = function(res: DeleteNodesResponse, payload: Object): void {
         if (util.checkSuccess("Delete node", res)) {
             meta64.clearSelectedNodes();
             let highlightId: string = null;
@@ -1305,9 +1300,9 @@ class Edit {
         }
     }
 
-    private initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
+    private initNodeEditResponse = function(res: InitNodeEditResponse): void {
         if (util.checkSuccess("Editing node", res)) {
-            let node: json.NodeInfo = res.nodeInfo;
+            let node: NodeInfo = res.nodeInfo;
             let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
                 util.contains(node.path, "/rep:");
 
@@ -1333,7 +1328,7 @@ class Edit {
         }
     }
 
-    private moveNodesResponse = function(res: json.MoveNodesResponse): void {
+    private moveNodesResponse = function(res: MoveNodesResponse): void {
         if (util.checkSuccess("Move nodes", res)) {
             edit.nodesToMove = null; // reset
             edit.nodesToMoveSet = {};
@@ -1341,7 +1336,7 @@ class Edit {
         }
     }
 
-    private setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
+    private setNodePositionResponse = function(res: SetNodePositionResponse): void {
         if (util.checkSuccess("Change node position", res)) {
             meta64.refresh();
         }
@@ -1358,7 +1353,7 @@ class Edit {
     */
     nodesToMoveSet: Object = {};
 
-    parentOfNewNode: json.NodeInfo = null;
+    parentOfNewNode: NodeInfo = null;
 
     /*
      * indicates editor is displaying a node that is not yet saved on the server
@@ -1376,7 +1371,7 @@ class Edit {
      * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
      * coupling/responsibility?
      */
-    editNode: json.NodeInfo = null;
+    editNode: NodeInfo = null;
 
     /* Instance of EditNodeDialog: For now creating new one each time */
     editNodeDlgInst: EditNodeDlg = null;
@@ -1432,7 +1427,7 @@ class Edit {
         edit.editNodeDlgInst.open();
     }
 
-    insertNodeResponse = function(res: json.InsertNodeResponse): void {
+    insertNodeResponse = function(res: InsertNodeResponse): void {
         if (util.checkSuccess("Insert node", res)) {
             meta64.initNode(res.newNode, true);
             meta64.highlightNode(res.newNode, true);
@@ -1440,14 +1435,14 @@ class Edit {
         }
     }
 
-    createSubNodeResponse = function(res: json.CreateSubNodeResponse): void {
+    createSubNodeResponse = function(res: CreateSubNodeResponse): void {
         if (util.checkSuccess("Create subnode", res)) {
             meta64.initNode(res.newNode, true);
             edit.runEditNode(res.newNode.uid);
         }
     }
 
-    saveNodeResponse = function(res: json.SaveNodeResponse, payload: any): void {
+    saveNodeResponse = function(res: SaveNodeResponse, payload: any): void {
         if (util.checkSuccess("Save node", res)) {
             /* becasuse I don't understand 'editingUnsavedNode' variable any longer until i refresh my memory, i will use
             the old approach of refreshing entire tree rather than more efficient refresnNodeOnPage, becuase it requires
@@ -1482,13 +1477,13 @@ class Edit {
     moveNodeUp = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
-            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            let selNode: NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;
         }
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+            util.json<SetNodePositionRequest, SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[nodeAbove]"
@@ -1501,13 +1496,13 @@ class Edit {
     moveNodeDown = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
-            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            let selNode: NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;
         }
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+            util.json<SetNodePositionRequest, SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": "[nodeBelow]",
                 "siblingId": node.name
@@ -1520,13 +1515,13 @@ class Edit {
     moveNodeToTop = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
-            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            let selNode: NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;
         }
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+            util.json<SetNodePositionRequest, SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[topNode]"
@@ -1539,13 +1534,13 @@ class Edit {
     moveNodeToBottom = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
-            let selNode: json.NodeInfo = meta64.getHighlightedNode();
+            let selNode: NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;
         }
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<json.SetNodePositionRequest, json.SetNodePositionResponse>("setNodePosition", {
+            util.json<SetNodePositionRequest, SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": node.name,
                 "siblingId": null
@@ -1568,7 +1563,7 @@ class Edit {
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
-    getNodeBelow = function(node: any): json.NodeInfo {
+    getNodeBelow = function(node: any): NodeInfo {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
         if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -1583,7 +1578,7 @@ class Edit {
     }
 
     runEditNode = function(uid: any): void {
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             edit.editNode = null;
             (new MessageDlg("Unknown nodeId in editNodeClick: " + uid)).open();
@@ -1591,7 +1586,7 @@ class Edit {
         }
         edit.editingUnsavedNode = false;
 
-        util.json<json.InitNodeEditRequest, json.InitNodeEditResponse>("initNodeEdit", {
+        util.json<InitNodeEditRequest, InitNodeEditResponse>("initNodeEdit", {
             "nodeId": node.id
         }, edit.initNodeEditResponse);
     }
@@ -1608,7 +1603,7 @@ class Edit {
          * We get the node selected for the insert position by using the uid if one was passed in or using the
          * currently highlighted node if no uid was passed.
          */
-        let node: json.NodeInfo = null;
+        let node: NodeInfo = null;
         if (!uid) {
             node = meta64.getHighlightedNode();
         } else {
@@ -1628,7 +1623,7 @@ class Edit {
          * node if there is a selected node.
          */
         if (!uid) {
-            let highlightNode: json.NodeInfo = meta64.getHighlightedNode();
+            let highlightNode: NodeInfo = meta64.getHighlightedNode();
             if (highlightNode) {
                 edit.parentOfNewNode = highlightNode;
             }
@@ -1679,25 +1674,25 @@ class Edit {
 
         (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
             function() {
-                let postDeleteSelNode: json.NodeInfo = edit.getBestPostDeleteSelNode();
+                let postDeleteSelNode: NodeInfo = edit.getBestPostDeleteSelNode();
 
-                util.json<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
+                util.json<DeleteNodesRequest, DeleteNodesResponse>("deleteNodes", {
                     "nodeIds": selNodesArray
                 }, edit.deleteNodesResponse, null, { "postDeleteSelNode": postDeleteSelNode });
             })).open();
     }
 
     /* Gets the node we want to scroll to after a delete */
-    getBestPostDeleteSelNode = function(): json.NodeInfo {
+    getBestPostDeleteSelNode = function(): NodeInfo {
         /* Use a hashmap-type approach to saving all selected nodes into a looup map */
         let nodesMap: Object = meta64.getSelectedNodesAsMapById();
-        let bestNode: json.NodeInfo = null;
+        let bestNode: NodeInfo = null;
         let takeNextNode: boolean = false;
 
         /* now we scan the children, and the last child we encounterd up until we find the rist onen in nodesMap will be the
         node we will want to select and scroll the user to AFTER the deleting is done */
         for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
-            let node: json.NodeInfo = meta64.currentNodeData.children[i];
+            let node: NodeInfo = meta64.currentNodeData.children[i];
 
             if (takeNextNode) {
                 return node;
@@ -1756,7 +1751,7 @@ class Edit {
                  * page. Later on we can get more specific about allowing precise destination location for moved
                  * nodes.
                  */
-                util.json<json.MoveNodesRequest, json.MoveNodesResponse>("moveNodes", {
+                util.json<MoveNodesRequest, MoveNodesResponse>("moveNodes", {
                     "targetNodeId": highlightNode.id,
                     "targetChildId": highlightNode != null ? highlightNode.id : null,
                     "nodeIds": edit.nodesToMove
@@ -1773,7 +1768,7 @@ class Edit {
             if (!node) {
                 (new MessageDlg("No node is selected.")).open();
             } else {
-                util.json<json.InsertBookRequest, json.InsertBookResponse>("insertBook", {
+                util.json<InsertBookRequest, InsertBookResponse>("insertBook", {
                     "nodeId": node.id,
                     "bookName": "War and Peace",
                     "truncated": user.isTestUserAccount()
@@ -1782,7 +1777,7 @@ class Edit {
         })).open();
     }
 }
-let edit:Edit = new Edit();
+let edit: Edit = new Edit();
 
 class Meta64 {
 
@@ -1833,12 +1828,12 @@ class Meta64 {
      * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
      * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
      */
-    uidToNodeMap: { [key: string]: json.NodeInfo } = {};
+    uidToNodeMap: { [key: string]: NodeInfo } = {};
 
     /*
      * maps node.id values to NodeInfo.java objects
      */
-    idToNodeMap: { [key: string]: json.NodeInfo } = {};
+    idToNodeMap: { [key: string]: NodeInfo } = {};
 
     /* Maps from the DOM ID to the editor javascript instance (Ace Editor instance) */
     aceEditorsById: any = {};
@@ -1859,7 +1854,7 @@ class Meta64 {
      * selected node within that parent. Note this 'selection state' is only significant on the client, and only for
      * being able to scroll to the node during navigating around on the tree.
      */
-    parentUidToFocusNodeMap: { [key: string]: json.NodeInfo } = {};
+    parentUidToFocusNodeMap: { [key: string]: NodeInfo } = {};
 
     /* User-selectable user-account options each user can set on his account */
     MODE_ADVANCED: string = "advanced";
@@ -1903,7 +1898,7 @@ class Meta64 {
     /*
      * all variables derivable from currentNodeData, but stored directly for simpler code/access
      */
-    currentNode: json.NodeInfo = null;
+    currentNode: NodeInfo = null;
     currentNodeUid: any = null;
     currentNodeId: any = null;
     currentNodePath: any = null;
@@ -1914,7 +1909,7 @@ class Meta64 {
     renderFunctionsByJcrType: { [key: string]: Function } = {};
     propOrderingFunctionsByJcrType: { [key: string]: Function } = {};
 
-    userPreferences: json.UserPreferences = {
+    userPreferences: UserPreferences = {
         "editMode": false,
         "advancedMode": false,
         "lastNode": "",
@@ -2135,7 +2130,7 @@ class Meta64 {
 
         for (uid in meta64.selectedNodes) {
             if (meta64.selectedNodes.hasOwnProperty(uid)) {
-                let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+                let node: NodeInfo = meta64.uidToNodeMap[uid];
                 if (!node) {
                     console.log("unable to find uidToNodeMap for uid=" + uid);
                 } else {
@@ -2149,7 +2144,7 @@ class Meta64 {
     /* return an object with properties for each NodeInfo where the key is the id */
     getSelectedNodesAsMapById = function(): Object {
         let ret: Object = {};
-        let selArray: json.NodeInfo[] = this.getSelectedNodesArray();
+        let selArray: NodeInfo[] = this.getSelectedNodesArray();
         for (var i = 0; i < selArray.length; i++) {
             ret[selArray[i].id] = selArray[i];
         }
@@ -2157,8 +2152,8 @@ class Meta64 {
     }
 
     /* Gets selected nodes as NodeInfo.java objects array */
-    getSelectedNodesArray = function(): json.NodeInfo[] {
-        let selArray: json.NodeInfo[] = [];
+    getSelectedNodesArray = function(): NodeInfo[] {
+        let selArray: NodeInfo[] = [];
         let idx: number = 0;
         let uid: string = "";
         for (uid in meta64.selectedNodes) {
@@ -2204,23 +2199,23 @@ class Meta64 {
         }
     }
 
-    updateNodeInfo = function(node: json.NodeInfo) {
-        util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+    updateNodeInfo = function(node: NodeInfo) {
+        util.json<GetNodePrivilegesRequest, GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": node.id,
             "includeAcl": false,
             "includeOwners": true
-        }, function(res: json.GetNodePrivilegesResponse) {
+        }, function(res: GetNodePrivilegesResponse) {
             meta64.updateNodeInfoResponse(res, node);
         });
     }
 
     /* Returns the node with the given node.id value */
-    getNodeFromId = function(id: string): json.NodeInfo {
+    getNodeFromId = function(id: string): NodeInfo {
         return meta64.idToNodeMap[id];
     }
 
     getPathOfUid = function(uid: string): string {
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             return "[path error. invalid uid: " + uid + "]";
         } else {
@@ -2228,13 +2223,13 @@ class Meta64 {
         }
     }
 
-    getHighlightedNode = function(): json.NodeInfo {
-        let ret: json.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
+    getHighlightedNode = function(): NodeInfo {
+        let ret: NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
         return ret;
     }
 
     highlightRowById = function(id, scroll): void {
-        var node: json.NodeInfo = meta64.getNodeFromId(id);
+        var node: NodeInfo = meta64.getNodeFromId(id);
         if (node) {
             meta64.highlightNode(node, scroll);
         } else {
@@ -2246,14 +2241,14 @@ class Meta64 {
      * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
      * setting that value should go thru this function.
      */
-    highlightNode = function(node: json.NodeInfo, scroll: boolean): void {
+    highlightNode = function(node: NodeInfo, scroll: boolean): void {
         if (!node)
             return;
 
         let doneHighlighting: boolean = false;
 
         /* Unhighlight currently highlighted node if any */
-        let curHighlightedNode: json.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
+        let curHighlightedNode: NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
         if (curHighlightedNode) {
             if (curHighlightedNode.uid === node.uid) {
                 // console.log("already highlighted.");
@@ -2290,7 +2285,7 @@ class Meta64 {
         let prevPageExists: boolean = nav.mainOffset > 0;
         let nextPageExists: boolean = !nav.endReached;
         let selNodeCount: number = util.getPropertyCount(meta64.selectedNodes);
-        let highlightNode: json.NodeInfo = meta64.getHighlightedNode();
+        let highlightNode: NodeInfo = meta64.getHighlightedNode();
         let selNodeIsMine: boolean = highlightNode != null && (highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
         //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
         let homeNodeSelected: boolean = highlightNode != null && meta64.homeNodeId == highlightNode.id;
@@ -2378,7 +2373,7 @@ class Meta64 {
         Polymer.updateStyles();
     }
 
-    getSingleSelectedNode = function(): json.NodeInfo {
+    getSingleSelectedNode = function(): NodeInfo {
         let uid: string;
         for (uid in meta64.selectedNodes) {
             if (meta64.selectedNodes.hasOwnProperty(uid)) {
@@ -2389,7 +2384,7 @@ class Meta64 {
         return null;
     }
 
-    getOrdinalOfNode = function(node: json.NodeInfo): number {
+    getOrdinalOfNode = function(node: NodeInfo): number {
         if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
             return -1;
 
@@ -2416,7 +2411,7 @@ class Meta64 {
         meta64.currentNodePath = data.node.path;
     }
 
-    anonPageLoadResponse = function(res: json.AnonPageLoadResponse): void {
+    anonPageLoadResponse = function(res: AnonPageLoadResponse): void {
 
         if (res.renderNodeResponse) {
 
@@ -2435,7 +2430,7 @@ class Meta64 {
 
     removeBinaryByUid = function(uid): void {
         for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
-            let node: json.NodeInfo = meta64.currentNodeData.children[i];
+            let node: NodeInfo = meta64.currentNodeData.children[i];
             if (node.uid === uid) {
                 node.hasBinary = false;
                 break;
@@ -2447,7 +2442,7 @@ class Meta64 {
      * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
      * side code
      */
-    initNode = function(node: json.NodeInfo, updateMaps?: boolean): void {
+    initNode = function(node: NodeInfo, updateMaps?: boolean): void {
         if (!node) {
             console.log("initNode has null node");
             return;
@@ -2682,20 +2677,20 @@ class Meta64 {
     }
 
     loadAnonPageHome = function(ignoreUrl): void {
-        util.json<json.AnonPageLoadRequest, json.AnonPageLoadResponse>("anonPageLoad", {
+        util.json<AnonPageLoadRequest, AnonPageLoadResponse>("anonPageLoad", {
             "ignoreUrl": ignoreUrl
         }, meta64.anonPageLoadResponse);
     }
 
     saveUserPreferences = function(): void {
-        util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
+        util.json<SaveUserPreferencesRequest, SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": meta64.userPreferences
         });
     }
 
     openSystemFile = function(fileName: string) {
-        util.json<json.OpenSystemFileRequest, json.OpenSystemFileResponse>("openSystemFile", {
+        util.json<OpenSystemFileRequest, OpenSystemFileResponse>("openSystemFile", {
             "fileName": fileName
         });
     }
@@ -2704,59 +2699,59 @@ class Meta64 {
         new EditSystemFileDlg(fileName).open();
     }
 }
-let meta64:Meta64 = new Meta64();
+let meta64: Meta64 = new Meta64();
 
-namespace nav {
-    export let _UID_ROWID_SUFFIX: string = "_row";
+class Nav {
+    _UID_ROWID_SUFFIX: string = "_row";
 
     /* todo-0: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
-    export let mainOffset: number = 0;
-    export let endReached: boolean = true;
+    mainOffset: number = 0;
+    endReached: boolean = true;
 
     /* todo-0: need to have this value passed from server rather than coded in TypeScript */
-    export let ROWS_PER_PAGE: number = 25;
+    ROWS_PER_PAGE: number = 25;
 
-    export let openMainMenuHelp = function(): void {
+    openMainMenuHelp = function(): void {
         nav.mainOffset = 0;
-        util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": "/meta64/public/help",
             "upLevel": null,
             "renderParentIfLeaf": null,
-            "offset": mainOffset,
+            "offset": nav.mainOffset,
             "goToLastPage": false
-        }, navPageNodeResponse);
+        }, nav.navPageNodeResponse);
     }
 
-    export let openRssFeedsNode = function(): void {
+    openRssFeedsNode = function(): void {
         nav.mainOffset = 0;
-        util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": "/rss/feeds",
             "upLevel": null,
             "renderParentIfLeaf": null,
-            "offset": mainOffset,
+            "offset": nav.mainOffset,
             "goToLastPage": false
-        }, navPageNodeResponse);
+        }, nav.navPageNodeResponse);
     }
 
-    export let expandMore = function(nodeId: string): void {
+    expandMore = function(nodeId: string): void {
 
         /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button
         this is lower priority for now, so i'm not using it yet */
         meta64.expandedAbbrevNodeIds[nodeId] = true;
 
-        util.json<json.ExpandAbbreviatedNodeRequest, json.ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
+        util.json<ExpandAbbreviatedNodeRequest, ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
             "nodeId": nodeId
-        }, expandAbbreviatedNodeResponse);
+        }, nav.expandAbbreviatedNodeResponse);
     }
 
-    let expandAbbreviatedNodeResponse = function(res: json.ExpandAbbreviatedNodeResponse): void {
+    private expandAbbreviatedNodeResponse = function(res: ExpandAbbreviatedNodeResponse): void {
         if (util.checkSuccess("ExpandAbbreviatedNode", res)) {
             //console.log("VAL: "+JSON.stringify(res.nodeInfo));
             render.refreshNodeOnPage(res.nodeInfo);
         }
     }
 
-    export let displayingHome = function(): boolean {
+    displayingHome = function(): boolean {
         if (meta64.isAnonUser) {
             return meta64.currentNodeId === meta64.anonUserLandingPageNode;
         } else {
@@ -2764,11 +2759,11 @@ namespace nav {
         }
     }
 
-    export let parentVisibleToUser = function(): boolean {
-        return !displayingHome();
+    parentVisibleToUser = function(): boolean {
+        return !nav.displayingHome();
     }
 
-    export let upLevelResponse = function(res: json.RenderNodeResponse, id): void {
+    upLevelResponse = function(res: RenderNodeResponse, id): void {
         if (!res || !res.node) {
             (new MessageDlg("No data is visible to you above this node.")).open();
         } else {
@@ -2778,9 +2773,9 @@ namespace nav {
         }
     }
 
-    export let navUpLevel = function(): void {
+    navUpLevel = function(): void {
 
-        if (!parentVisibleToUser()) {
+        if (!nav.parentVisibleToUser()) {
             // Already at root. Can't go up.
             return;
         }
@@ -2788,34 +2783,34 @@ namespace nav {
         /* todo-0: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
         remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
         drilled down from */
-        mainOffset = 0;
-        var ironRes = util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        nav.mainOffset = 0;
+        var ironRes = util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": 1,
             "renderParentIfLeaf": false,
-            "offset": mainOffset,
+            "offset": nav.mainOffset,
             "goToLastPage": false
-        }, function(res: json.RenderNodeResponse) {
-            upLevelResponse(ironRes.response, meta64.currentNodeId);
+        }, function(res: RenderNodeResponse) {
+            nav.upLevelResponse(ironRes.response, meta64.currentNodeId);
         });
     }
 
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    export let getSelectedDomElement = function(): any {
+    getSelectedDomElement = function(): any {
 
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {
 
             /* get node by node identifier */
-            let node: json.NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
+            let node: NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
 
             if (node) {
                 console.log("found highlighted node.id=" + node.id);
 
                 /* now make CSS id from node */
-                let nodeId: string = node.uid + _UID_ROWID_SUFFIX;
+                let nodeId: string = node.uid + nav._UID_ROWID_SUFFIX;
                 // console.log("looking up using element id: "+nodeId);
 
                 return util.domElm(nodeId);
@@ -2828,19 +2823,19 @@ namespace nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    export let getSelectedPolyElement = function(): any {
+    getSelectedPolyElement = function(): any {
         try {
-            let currentSelNode: json.NodeInfo = meta64.getHighlightedNode();
+            let currentSelNode: NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode) {
 
                 /* get node by node identifier */
-                let node: json.NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
+                let node: NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
 
                 if (node) {
                     console.log("found highlighted node.id=" + node.id);
 
                     /* now make CSS id from node */
-                    let nodeId: string = node.uid + _UID_ROWID_SUFFIX;
+                    let nodeId: string = node.uid + nav._UID_ROWID_SUFFIX;
                     console.log("looking up using element id: " + nodeId);
 
                     return util.polyElm(nodeId);
@@ -2854,9 +2849,9 @@ namespace nav {
         return null;
     }
 
-    export let clickOnNodeRow = function(rowElm, uid): void {
+    clickOnNodeRow = function(rowElm, uid): void {
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);
             return;
@@ -2880,9 +2875,9 @@ namespace nav {
         meta64.refreshAllGuiEnablement();
     }
 
-    export let openNode = function(uid): void {
+    openNode = function(uid): void {
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[uid];
+        let node: NodeInfo = meta64.uidToNodeMap[uid];
         meta64.highlightNode(node, true);
 
         if (!node) {
@@ -2897,7 +2892,7 @@ namespace nav {
      * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
      * silly looking async timer here.
      */
-    export let toggleNodeSel = function(uid): void {
+    toggleNodeSel = function(uid): void {
         let toggleButton: any = util.polyElm(uid + "_sel");
         setTimeout(function() {
             if (toggleButton.node.checked) {
@@ -2911,37 +2906,38 @@ namespace nav {
         }, 500);
     }
 
-    export let navPageNodeResponse = function(res: json.RenderNodeResponse): void {
+    navPageNodeResponse = function(res: RenderNodeResponse): void {
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();
         meta64.refreshAllGuiEnablement();
     }
 
-    export let navHome = function(): void {
+    navHome = function(): void {
         if (meta64.isAnonUser) {
             meta64.loadAnonPageHome(true);
             // window.location.href = window.location.origin;
         } else {
-            mainOffset = 0;
-            util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+            nav.mainOffset = 0;
+            util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.homeNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset": mainOffset,
+                "offset": nav.mainOffset,
                 "goToLastPage": false
-            }, navPageNodeResponse);
+            }, nav.navPageNodeResponse);
         }
     }
 
-    export let navPublicHome = function(): void {
+    navPublicHome = function(): void {
         meta64.loadAnonPageHome(true);
     }
 }
+let nav: Nav = new Nav();
 
 class Prefs {
 
-    closeAccountResponse = function(res: json.CloseAccountResponse): void {
+    closeAccountResponse = function(res: CloseAccountResponse): void {
         /* Remove warning dialog to ask user about leaving the page */
         $(window).off("beforeunload");
 
@@ -2953,27 +2949,27 @@ class Prefs {
         (new ConfirmDlg("Oh No!", "Close your Account?<p> Are you sure?", "Yes, Close Account.", function() {
             (new ConfirmDlg("One more Click", "Your data will be deleted and can never be recovered.<p> Are you sure?", "Yes, Close Account.", function() {
                 user.deleteAllUserCookies();
-                util.json<json.CloseAccountRequest, json.CloseAccountResponse>("closeAccount", {}, prefs.closeAccountResponse);
+                util.json<CloseAccountRequest, CloseAccountResponse>("closeAccount", {}, prefs.closeAccountResponse);
             })).open();
         })).open();
     }
 }
-let prefs:Prefs = new Prefs();
+let prefs: Prefs = new Prefs();
 
-namespace props {
+class Props {
 
-    export let orderProps = function(propOrder: string[], props: json.PropertyInfo[]): json.PropertyInfo[] {
-        let propsNew: json.PropertyInfo[] = util.arrayClone(props);
+    orderProps = function(propOrder: string[], _props: PropertyInfo[]): PropertyInfo[] {
+        let propsNew: PropertyInfo[] = util.arrayClone(_props);
         let targetIdx: number = 0;
 
         for (let prop of propOrder) {
-            targetIdx = moveNodePosition(propsNew, targetIdx, prop);
+            targetIdx = props.moveNodePosition(propsNew, targetIdx, prop);
         }
 
         return propsNew;
     }
 
-    let moveNodePosition = function(props: json.PropertyInfo[], idx: number, typeName: string): number {
+    moveNodePosition = function(props: PropertyInfo[], idx: number, typeName: string): number {
         let tagIdx: number = util.arrayIndexOfItemByProp(props, "name", typeName);
         if (tagIdx != -1) {
             util.arrayMoveItem(props, tagIdx, idx++);
@@ -2984,7 +2980,7 @@ namespace props {
     /*
      * Toggles display of properties in the gui.
      */
-    export let propsToggle = function(): void {
+    propsToggle = function(): void {
         meta64.showProperties = meta64.showProperties ? false : true;
         // setDataIconUsingId("#editModeButton", editMode ? "edit" :
         // "forbidden");
@@ -2999,7 +2995,7 @@ namespace props {
         meta64.selectTab("mainTabName");
     }
 
-    export let deletePropertyFromLocalData = function(propertyName): void {
+    deletePropertyFromLocalData = function(propertyName): void {
         for (var i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
@@ -3013,21 +3009,21 @@ namespace props {
      * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
      * node and puts it on the top, and then does same for 'jctCnst.TAGS'
      */
-    export let getPropertiesInEditingOrder = function(node: json.NodeInfo, props: json.PropertyInfo[]): json.PropertyInfo[] {
+    getPropertiesInEditingOrder = function(node: NodeInfo, _props: PropertyInfo[]): PropertyInfo[] {
         let func: Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
         if (func) {
-            return func(node, props);
+            return func(node, _props);
         }
 
-        let propsNew: json.PropertyInfo[] = util.arrayClone(props);
-        movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
-        movePropsToEnd([jcrCnst.CREATED, jcrCnst.CREATED_BY, jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY], propsNew);
+        let propsNew: PropertyInfo[] = util.arrayClone(_props);
+        props.movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
+        props.movePropsToEnd([jcrCnst.CREATED, jcrCnst.CREATED_BY, jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY], propsNew);
 
         return propsNew;
     }
 
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    let movePropsToTop = function(propsList: string[], props: json.PropertyInfo[]) {
+    private movePropsToTop = function(propsList: string[], props: PropertyInfo[]) {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -3037,7 +3033,7 @@ namespace props {
     }
 
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    let movePropsToEnd = function(propsList: string[], props: json.PropertyInfo[]) {
+    private movePropsToEnd = function(propsList: string[], props: PropertyInfo[]) {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -3049,7 +3045,7 @@ namespace props {
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
-    export let renderProperties = function(properties): string {
+    renderProperties = function(properties): string {
         if (properties) {
             let table: string = "";
             let propCount: number = 0;
@@ -3102,12 +3098,12 @@ namespace props {
      * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
      * (PropertyInfo.java) with name matching propertyName, else null.
      */
-    export let getNodeProperty = function(propertyName, node): json.PropertyInfo {
+    getNodeProperty = function(propertyName, node): PropertyInfo {
         if (!node || !node.properties)
             return null;
 
         for (var i = 0; i < node.properties.length; i++) {
-            let prop: json.PropertyInfo = node.properties[i];
+            let prop: PropertyInfo = node.properties[i];
             if (prop.name === propertyName) {
                 return prop;
             }
@@ -3115,8 +3111,8 @@ namespace props {
         return null;
     }
 
-    export let getNodePropertyVal = function(propertyName, node): string {
-        let prop: json.PropertyInfo = getNodeProperty(propertyName, node);
+    getNodePropertyVal = function(propertyName, node): string {
+        let prop: PropertyInfo = props.getNodeProperty(propertyName, node);
         return prop ? prop.value : null;
     }
 
@@ -3124,8 +3120,8 @@ namespace props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    export let isNonOwnedNode = function(node): boolean {
-        let createdBy: string = getNodePropertyVal(jcrCnst.CREATED_BY, node);
+    isNonOwnedNode = function(node): boolean {
+        let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 
         // if we don't know who owns this node assume the admin owns it.
         if (!createdBy) {
@@ -3140,20 +3136,20 @@ namespace props {
      * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    export let isNonOwnedCommentNode = function(node): boolean {
-        let commentBy: string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+    isNonOwnedCommentNode = function(node): boolean {
+        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy != meta64.userName;
     }
 
-    export let isOwnedCommentNode = function(node): boolean {
-        let commentBy: string = getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+    isOwnedCommentNode = function(node): boolean {
+        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy == meta64.userName;
     }
 
     /*
      * Returns string representation of property value, even if multiple properties
      */
-    export let renderProperty = function(property): string {
+    renderProperty = function(property): string {
         /* If this is a single-value type property */
         if (!property.values) {
 
@@ -3166,11 +3162,11 @@ namespace props {
         }
         /* else render multi-value property */
         else {
-            return renderPropertyValues(property.values);
+            return props.renderPropertyValues(property.values);
         }
     }
 
-    export let renderPropertyValues = function(values): string {
+    renderPropertyValues = function(values): string {
         let ret: string = "<div>";
         let count: number = 0;
         $.each(values, function(i, value) {
@@ -3184,33 +3180,35 @@ namespace props {
         return ret;
     }
 }
-namespace render {
-    let debug: boolean = false;
+let props: Props = new Props();
+
+class Render {
+    private debug: boolean = false;
 
     /*
      * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
      * want to give them some instructions and the ability to add content.
      */
-    let getEmptyPagePrompt = function(): string {
+    private getEmptyPagePrompt = function(): string {
         return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
     }
 
-    let renderBinary = function(node: json.NodeInfo): string {
+    private renderBinary = function(node: NodeInfo): string {
         /*
          * If this is an image render the image directly onto the page as a visible image
          */
         if (node.binaryIsImage) {
-            return makeImageTag(node);
+            return render.makeImageTag(node);
         }
         /*
          * If not an image we render a link to the attachment, so that it can be downloaded.
          */
         else {
-            let anchor: string = tag("a", {
-                "href": getUrlForNodeAttachment(node)
+            let anchor: string = render.tag("a", {
+                "href": render.getUrlForNodeAttachment(node)
             }, "[Download Attachment]");
 
-            return tag("div", {
+            return render.tag("div", {
                 "class": "binary-link"
             }, anchor);
         }
@@ -3223,7 +3221,7 @@ namespace render {
      *
      * If 'data' is provided, this is the instance data for the dialog
      */
-    export let buidPage = function(pg, data): void {
+    buidPage = function(pg, data): void {
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -3236,13 +3234,13 @@ namespace render {
         }
     }
 
-    export let buildRowHeader = function(node: json.NodeInfo, showPath: boolean, showName: boolean): string {
+    buildRowHeader = function(node: NodeInfo, showPath: boolean, showName: boolean): string {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
         let headerText: string = "";
 
         if (cnst.SHOW_PATH_ON_ROWS) {
-            headerText += "<div class='path-display'>Path: " + formatPath(node) + "</div>";
+            headerText += "<div class='path-display'>Path: " + render.formatPath(node) + "</div>";
         }
 
         headerText += "<div>";
@@ -3276,7 +3274,7 @@ namespace render {
             headerText += `Name: ${node.name} [uid=${node.uid}]`;
         }
 
-        headerText = tag("div", {
+        headerText = render.tag("div", {
             "class": "header-text"
         }, headerText);
 
@@ -3288,7 +3286,7 @@ namespace render {
      * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
      * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
      */
-    export let injectCodeFormatting = function(content: string): string {
+    injectCodeFormatting = function(content: string): string {
         if (!content) return content;
         // example markdown:
         // ```js
@@ -3298,18 +3296,18 @@ namespace render {
         //
         if (util.contains(content, "<code")) {
             meta64.codeFormatDirty = true;
-            content = encodeLanguages(content);
+            content = render.encodeLanguages(content);
             content = util.replaceAll(content, "</code>", "</pre>");
         }
 
         return content;
     }
 
-    export let injectSubstitutions = function(content: string): string {
+    injectSubstitutions = function(content: string): string {
         return util.replaceAll(content, "{{locationOrigin}}", window.location.origin);
     }
 
-    export let encodeLanguages = function(content: string): string {
+    encodeLanguages = function(content: string): string {
         /*
          * todo-1: need to provide some way of having these language types configurable in a properties file
          * somewhere, and fill out a lot more file types.
@@ -3326,7 +3324,7 @@ namespace render {
 
     /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
     which is what's done in most of the app, which is much less efficient and snappy visually */
-    export let refreshNodeOnPage = function(node: json.NodeInfo): void {
+    refreshNodeOnPage = function(node: NodeInfo): void {
         //need to lookup uid from NodeInfo.id then set the content of this div.
         //"id": uid + "_content"
         //to the value from renderNodeContent(node, true, true, true, true, true)));
@@ -3334,7 +3332,7 @@ namespace render {
         if (!uid) throw `Unable to find nodeId ${node.id} in uid map`;
         meta64.initNode(node, false);
         if (uid != node.uid) throw "uid changed unexpectly after initNode";
-        let rowContent: string = renderNodeContent(node, true, true, true, true, true);
+        let rowContent: string = render.renderNodeContent(node, true, true, true, true, true);
         $("#" + uid + "_content").html(rowContent);
     }
 
@@ -3346,12 +3344,12 @@ namespace render {
      * of nodes, need a more pluggable design, where rendeing of different things is deletaged to some
      * appropriate object/service
      */
-    export let renderNodeContent = function(node: json.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
-        var ret: string = getTopRightImageTag(node);
+    renderNodeContent = function(node: NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
+        var ret: string = render.getTopRightImageTag(node);
 
         /* todo-2: enable headerText when appropriate here */
         if (meta64.showMetaData) {
-            ret += showHeader ? buildRowHeader(node, showPath, showName) : "";
+            ret += showHeader ? render.buildRowHeader(node, showPath, showName) : "";
         }
 
         if (meta64.showProperties) {
@@ -3374,7 +3372,7 @@ namespace render {
             }
 
             if (!renderComplete) {
-                let contentProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
+                let contentProp: PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
 
                 //console.log("contentProp: " + contentProp);
                 if (contentProp) {
@@ -3396,11 +3394,11 @@ namespace render {
                     //jcrContent = injectSubstitutions(jcrContent);
 
                     if (rowStyling) {
-                        ret += tag("div", {
+                        ret += render.tag("div", {
                             "class": "jcr-content"
                         }, markedContent);
                     } else {
-                        ret += tag("div", {
+                        ret += render.tag("div", {
                             "class": "jcr-root-content"
                         }, markedContent);
                     }
@@ -3420,7 +3418,7 @@ namespace render {
         }
 
         if (renderBin && node.hasBinary) {
-            let binary: string = renderBinary(node);
+            let binary: string = render.renderBinary(node);
 
             /*
              * We append the binary image or resource link either at the end of the text or at the location where
@@ -3436,7 +3434,7 @@ namespace render {
 
         let tags: string = props.getNodePropertyVal(jcrCnst.TAGS, node);
         if (tags) {
-            ret += tag("div", {
+            ret += render.tag("div", {
                 "class": "tags-content"
             }, "Tags: " + tags);
         }
@@ -3444,14 +3442,14 @@ namespace render {
         return ret;
     }
 
-    export let renderJsonFileSearchResultProperty = function(jsonContent: string): string {
+    renderJsonFileSearchResultProperty = function(jsonContent: string): string {
         let content: string = "";
         try {
             console.log("json: " + jsonContent);
             let list: any[] = JSON.parse(jsonContent);
 
             for (let entry of list) {
-                content += tag("div", {
+                content += render.tag("div", {
                     "class": "systemFile",
                     "onclick": `meta64.editSystemFile('${entry.fileName}')`
                 }, entry.fileName);
@@ -3489,7 +3487,7 @@ namespace render {
      *
      * node is a NodeInfo.java JSON
      */
-    export let renderNodeAsListItem = function(node: json.NodeInfo, index: number, count: number, rowCount: number): string {
+    renderNodeAsListItem = function(node: NodeInfo, index: number, count: number, rowCount: number): string {
 
         let uid: string = node.uid;
         let prevPageExists: boolean = nav.mainOffset > 0;
@@ -3515,26 +3513,26 @@ namespace render {
          */
         // console.log("test: [" + parentIdToFocusIdMap[currentNodeId]
         // +"]==["+ node.id + "]")
-        let focusNode: json.NodeInfo = meta64.getHighlightedNode();
+        let focusNode: NodeInfo = meta64.getHighlightedNode();
         let selected: boolean = (focusNode && focusNode.uid === uid);
 
-        let buttonBarHtmlRet: string = makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
-        let bkgStyle: string = getNodeBkgImageStyle(node);
+        let buttonBarHtmlRet: string = render.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
+        let bkgStyle: string = render.getNodeBkgImageStyle(node);
 
         let cssId: string = uid + "_row";
-        return tag("div", {
+        return render.tag("div", {
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
             "onClick": `nav.clickOnNodeRow(this, '${uid}');`, //
             "id": cssId,
             "style": bkgStyle
         },//
-            buttonBarHtmlRet + tag("div", {
+            buttonBarHtmlRet + render.tag("div", {
                 "id": uid + "_content"
-            }, renderNodeContent(node, true, true, true, true, true)));
+            }, render.renderNodeContent(node, true, true, true, true, true)));
     }
 
-    export let showNodeUrl = function() {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+    showNodeUrl = function() {
+        let node: NodeInfo = meta64.getHighlightedNode();
         if (!node) {
             (new MessageDlg("You must first click on a node.")).open();
             return;
@@ -3553,11 +3551,11 @@ namespace render {
         (new MessageDlg(message, "URL of Node")).open();
     }
 
-    export let getTopRightImageTag = function(node: json.NodeInfo) {
+    getTopRightImageTag = function(node: NodeInfo) {
         let topRightImg: string = props.getNodePropertyVal('img.top.right', node);
         let topRightImgTag: string = "";
         if (topRightImg) {
-            topRightImgTag = tag("img", {
+            topRightImgTag = render.tag("img", {
                 "src": topRightImg,
                 "class": "top-right-image"
             }, "", false);
@@ -3565,7 +3563,7 @@ namespace render {
         return topRightImgTag;
     }
 
-    export let getNodeBkgImageStyle = function(node: json.NodeInfo): string {
+    getNodeBkgImageStyle = function(node: NodeInfo): string {
         let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
         let bkgImgStyle: string = "";
         if (bkgImg) {
@@ -3575,15 +3573,15 @@ namespace render {
         return bkgImgStyle;
     }
 
-    export let centeredButtonBar = function(buttons?: string, classes?: string): string {
+    centeredButtonBar = function(buttons?: string, classes?: string): string {
         classes = classes || "";
 
-        return tag("div", {
+        return render.tag("div", {
             "class": "horizontal center-justified layout vertical-layout-row " + classes
         }, buttons);
     }
 
-    export let centerContent = function(content: string, width: number): string {
+    centerContent = function(content: string, width: number): string {
         let div: string = render.tag("div", { "style": `width:${width}px;` }, content);
 
         let attrs = {
@@ -3593,15 +3591,15 @@ namespace render {
         return render.tag("div", attrs, div, true);
     }
 
-    export let buttonBar = function(buttons: string, classes: string): string {
+    buttonBar = function(buttons: string, classes: string): string {
         classes = classes || "";
 
-        return tag("div", {
+        return render.tag("div", {
             "class": "horizontal left-justified layout vertical-layout-row " + classes
         }, buttons);
     }
 
-    export let makeRowButtonBarHtml = function(node: json.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
+    makeRowButtonBarHtml = function(node: NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
 
         let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -3621,7 +3619,7 @@ namespace render {
          * or having been added as comment by current user
          */
         if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-            replyButton = tag("paper-button", {
+            replyButton = render.tag("paper-button", {
                 "raised": "raised",
                 "onClick": `edit.replyToComment('${node.uid}');` //
             }, //
@@ -3631,10 +3629,10 @@ namespace render {
         let buttonCount: number = 0;
 
         /* Construct Open Button */
-        if (nodeHasChildren(node.uid)) {
+        if (render.nodeHasChildren(node.uid)) {
             buttonCount++;
 
-            openButton = tag("paper-button", {
+            openButton = render.tag("paper-button", {
 
                 /* For some unknown reason the ability to style this with the class broke, and even
                 after dedicating several hours trying to figure out why I'm still baffled. I checked everything
@@ -3675,12 +3673,12 @@ namespace render {
                     "style": "margin-top: 11px;"
                 };
 
-            selButton = tag("paper-checkbox", css, "");
+            selButton = render.tag("paper-checkbox", css, "");
 
             if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
                 buttonCount++;
-                createSubNodeButton = tag("paper-icon-button", {
+                createSubNodeButton = render.tag("paper-icon-button", {
                     "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                     "id": "addNodeButtonId" + node.uid,
                     "raised": "raised",
@@ -3691,7 +3689,7 @@ namespace render {
             if (cnst.INS_ON_TOOLBAR && !commentBy) {
                 buttonCount++;
                 /* Construct Create Subnode Button */
-                insertNodeButton = tag("paper-icon-button", {
+                insertNodeButton = render.tag("paper-icon-button", {
                     "icon": "icons:picture-in-picture", //"icons:more-horiz",
                     "id": "insertNodeButtonId" + node.uid,
                     "raised": "raised",
@@ -3705,7 +3703,7 @@ namespace render {
         if (meta64.userPreferences.editMode && editingAllowed) {
             buttonCount++;
             /* Construct Create Subnode Button */
-            editNodeButton = tag("paper-icon-button", //
+            editNodeButton = render.tag("paper-icon-button", //
                 {
                     "alt": "Edit node.",
                     "icon": "editor:mode-edit",
@@ -3718,7 +3716,7 @@ namespace render {
                 if (canMoveUp) {
                     buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeUpButton = tag("paper-icon-button", {
+                    moveNodeUpButton = render.tag("paper-icon-button", {
                         "icon": "icons:arrow-upward",
                         "raised": "raised",
                         "onClick": `edit.moveNodeUp('${node.uid}');`
@@ -3728,7 +3726,7 @@ namespace render {
                 if (canMoveDown) {
                     buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeDownButton = tag("paper-icon-button", {
+                    moveNodeDownButton = render.tag("paper-icon-button", {
                         "icon": "icons:arrow-downward",
                         "raised": "raised",
                         "onClick": `edit.moveNodeDown('${node.uid}');`
@@ -3755,26 +3753,26 @@ namespace render {
         let allButtons: string = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
             + addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton + replyButton;
 
-        return allButtons.length > 0 ? makeHorizontalFieldSet(allButtons, "row-toolbar") : "";
+        return allButtons.length > 0 ? render.makeHorizontalFieldSet(allButtons, "row-toolbar") : "";
     }
 
-    export let makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
+    makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
 
         /* Now build entire control bar */
-        return tag("div", //
+        return render.tag("div", //
             {
                 "class": "horizontal layout" + (extraClasses ? (" " + extraClasses) : "")
             }, content, true);
     }
 
-    export let makeHorzControlGroup = function(content: string): string {
-        return tag("div", {
+    makeHorzControlGroup = function(content: string): string {
+        return render.tag("div", {
             "class": "horizontal layout"
         }, content, true);
     }
 
-    export let makeRadioButton = function(label: string, id: string): string {
-        return tag("paper-radio-button", {
+    makeRadioButton = function(label: string, id: string): string {
+        return render.tag("paper-radio-button", {
             "id": id,
             "name": id
         }, label);
@@ -3783,8 +3781,8 @@ namespace render {
     /*
      * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
      */
-    export let nodeHasChildren = function(uid: string): boolean {
-        var node: json.NodeInfo = meta64.uidToNodeMap[uid];
+    nodeHasChildren = function(uid: string): boolean {
+        var node: NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("Unknown nodeId in nodeHasChildren: " + uid);
             return false;
@@ -3793,7 +3791,7 @@ namespace render {
         }
     }
 
-    export let formatPath = function(node: json.NodeInfo): string {
+    formatPath = function(node: NodeInfo): string {
         let path: string = node.path;
 
         /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -3810,14 +3808,14 @@ namespace render {
         return ret;
     }
 
-    export let wrapHtml = function(text: string): string {
+    wrapHtml = function(text: string): string {
         return "<div>" + text + "</div>";
     }
 
     /*
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
-    export let renderPageFromData = function(data?: json.RenderNodeResponse, scrollToTop?: boolean): string {
+    renderPageFromData = function(data?: RenderNodeResponse, scrollToTop?: boolean): string {
         meta64.codeFormatDirty = false;
         console.log("render.renderPageFromData()");
 
@@ -3858,18 +3856,18 @@ namespace render {
 
         let propCount: number = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
 
-        if (debug) {
+        if (render.debug) {
             console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
         }
 
         let output: string = "";
-        let bkgStyle: string = getNodeBkgImageStyle(data.node);
+        let bkgStyle: string = render.getNodeBkgImageStyle(data.node);
 
         /*
          * NOTE: mainNodeContent is the parent node of the page content, and is always the node displayed at the to
          * of the page above all the other nodes which are its child nodes.
          */
-        let mainNodeContent: string = renderNodeContent(data.node, true, true, true, false, true);
+        let mainNodeContent: string = render.renderNodeContent(data.node, true, true, true, false, true);
 
         //console.log("mainNodeContent: "+mainNodeContent);
 
@@ -3895,7 +3893,7 @@ namespace render {
              */
 
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-                replyButton = tag("paper-button", {
+                replyButton = render.tag("paper-button", {
                     "raised": "raised",
                     "onClick": `edit.replyToComment('${data.node.uid}');` //
                 }, //
@@ -3903,7 +3901,7 @@ namespace render {
             }
 
             if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
-                createSubNodeButton = tag("paper-icon-button", {
+                createSubNodeButton = render.tag("paper-icon-button", {
                     "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                     "raised": "raised",
                     "onClick": `edit.createSubNode('${uid}');`
@@ -3914,7 +3912,7 @@ namespace render {
             if (edit.isEditAllowed(data.node)) {
 
                 /* Construct Create Subnode Button */
-                editNodeButton = tag("paper-icon-button", {
+                editNodeButton = render.tag("paper-icon-button", {
                     "icon": "editor:mode-edit",
                     "raised": "raised",
                     "onClick": `edit.runEditNode('${uid}');`
@@ -3922,15 +3920,15 @@ namespace render {
             }
 
             /* Construct Create Subnode Button */
-            let focusNode: json.NodeInfo = meta64.getHighlightedNode();
+            let focusNode: NodeInfo = meta64.getHighlightedNode();
             let selected: boolean = focusNode && focusNode.uid === uid;
             // var rowHeader = buildRowHeader(data.node, true, true);
 
             if (createSubNodeButton || editNodeButton || replyButton) {
-                buttonBar = makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
+                buttonBar = render.makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
             }
 
-            let content: string = tag("div", {
+            let content: string = render.tag("div", {
                 "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
                 "onClick": `nav.clickOnNodeRow(this, '${uid}');`,
                 "id": cssId
@@ -3953,9 +3951,9 @@ namespace render {
         view.updateStatusBar();
 
         if (nav.mainOffset > 0) {
-            let firstButton: string = makeButton("First Page", "firstPageButton", firstPage);
-            let prevButton: string = makeButton("Prev Page", "prevPageButton", prevPage);
-            output += centeredButtonBar(firstButton + prevButton, "paging-button-bar");
+            let firstButton: string = render.makeButton("First Page", "firstPageButton", render.firstPage);
+            let prevButton: string = render.makeButton("Prev Page", "prevPageButton", render.prevPage);
+            output += render.centeredButtonBar(firstButton + prevButton, "paging-button-bar");
         }
 
         let rowCount: number = 0;
@@ -3967,9 +3965,9 @@ namespace render {
              * the client side for various reasons.
              */
             for (var i = 0; i < data.children.length; i++) {
-                let node: json.NodeInfo = data.children[i];
+                let node: NodeInfo = data.children[i];
                 if (!edit.nodesToMoveSet[node.id]) {
-                    let row: string = generateRow(i, node, newData, childCount, rowCount);
+                    let row: string = render.generateRow(i, node, newData, childCount, rowCount);
                     if (row.length != 0) {
                         output += row;
                         rowCount++;
@@ -3980,14 +3978,14 @@ namespace render {
 
         if (edit.isInsertAllowed(data.node)) {
             if (rowCount == 0 && !meta64.isAnonUser) {
-                output = getEmptyPagePrompt();
+                output = render.getEmptyPagePrompt();
             }
         }
 
         if (!data.endReached) {
-            let nextButton = makeButton("Next Page", "nextPageButton", nextPage);
-            let lastButton = makeButton("Last Page", "lastPageButton", lastPage);
-            output += centeredButtonBar(nextButton + lastButton, "paging-button-bar");
+            let nextButton = render.makeButton("Next Page", "nextPageButton", render.nextPage);
+            let lastButton = render.makeButton("Last Page", "lastPageButton", render.lastPage);
+            output += render.centeredButtonBar(nextButton + lastButton, "paging-button-bar");
         }
 
         util.setHtml("listView", output);
@@ -4012,27 +4010,27 @@ namespace render {
         }
     }
 
-    export let firstPage = function(): void {
+    firstPage = function(): void {
         console.log("First page button click.");
         view.firstPage();
     }
 
-    export let prevPage = function(): void {
+    prevPage = function(): void {
         console.log("Prev page button click.");
         view.prevPage();
     }
 
-    export let nextPage = function(): void {
+    nextPage = function(): void {
         console.log("Next page button click.");
         view.nextPage();
     }
 
-    export let lastPage = function(): void {
+    lastPage = function(): void {
         console.log("Last page button click.");
         view.lastPage();
     }
 
-    export let generateRow = function(i: number, node: json.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
+    generateRow = function(i: number, node: NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
 
         if (meta64.isNodeBlackListed(node))
             return "";
@@ -4040,23 +4038,23 @@ namespace render {
         if (newData) {
             meta64.initNode(node, true);
 
-            if (debug) {
+            if (render.debug) {
                 console.log(" RENDER ROW[" + i + "]: node.id=" + node.id);
             }
         }
 
         rowCount++; // warning: this is the local variable/parameter
-        var row = renderNodeAsListItem(node, i, childCount, rowCount);
+        var row = render.renderNodeAsListItem(node, i, childCount, rowCount);
         // console.log("row[" + rowCount + "]=" + row);
         return row;
     }
 
-    export let getUrlForNodeAttachment = function(node: json.NodeInfo): string {
+    getUrlForNodeAttachment = function(node: NodeInfo): string {
         return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
     }
 
     /* see also: makeImageTag() */
-    export let adjustImageSize = function(node: json.NodeInfo): void {
+    adjustImageSize = function(node: NodeInfo): void {
 
         var elm = $("#" + node.imgId);
         if (elm) {
@@ -4105,8 +4103,8 @@ namespace render {
     }
 
     /* see also: adjustImageSize() */
-    export let makeImageTag = function(node: json.NodeInfo) {
-        let src: string = getUrlForNodeAttachment(node);
+    makeImageTag = function(node: NodeInfo) {
+        let src: string = render.getUrlForNodeAttachment(node);
         node.imgId = "imgUid_" + node.uid;
 
         if (node.width && node.height) {
@@ -4132,7 +4130,7 @@ namespace render {
                  */
                 let height: number = width * node.height / node.width;
 
-                return tag("img", {
+                return render.tag("img", {
                     "src": src,
                     "id": node.imgId,
                     "width": width + "px",
@@ -4141,7 +4139,7 @@ namespace render {
             }
             /* Image does fit on screen so render it at it's exact size */
             else {
-                return tag("img", {
+                return render.tag("img", {
                     "src": src,
                     "id": node.imgId,
                     "width": node.width + "px",
@@ -4149,7 +4147,7 @@ namespace render {
                 }, null, false);
             }
         } else {
-            return tag("img", {
+            return render.tag("img", {
                 "src": src,
                 "id": node.imgId
             }, null, false);
@@ -4160,7 +4158,7 @@ namespace render {
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
      * content is non-null
      */
-    export let tag = function(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
+    tag = function(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
 
         /* default parameter values */
         if (typeof (closeTag) === 'undefined')
@@ -4206,24 +4204,24 @@ namespace render {
         return ret;
     }
 
-    export let makeTextArea = function(fieldName: string, fieldId: string): string {
-        return tag("paper-textarea", {
+    makeTextArea = function(fieldName: string, fieldId: string): string {
+        return render.tag("paper-textarea", {
             "name": fieldId,
             "label": fieldName,
             "id": fieldId
         }, "", true);
     }
 
-    export let makeEditField = function(fieldName: string, fieldId: string): string {
-        return tag("paper-input", {
+    makeEditField = function(fieldName: string, fieldId: string): string {
+        return render.tag("paper-input", {
             "name": fieldId,
             "label": fieldName,
             "id": fieldId
         }, "", true);
     }
 
-    export let makePasswordField = function(fieldName: string, fieldId: string): string {
-        return tag("paper-input", {
+    makePasswordField = function(fieldName: string, fieldId: string): string {
+        return render.tag("paper-input", {
             "type": "password",
             "name": fieldId,
             "label": fieldName,
@@ -4232,7 +4230,7 @@ namespace render {
         }, "", true);
     }
 
-    export let makeButton = function(text: string, id: string, callback: any, ctx?: any): string {
+    makeButton = function(text: string, id: string, callback: any, ctx?: any): string {
         let attribs = {
             "raised": "raised",
             "id": id,
@@ -4246,21 +4244,21 @@ namespace render {
         return render.tag("paper-button", attribs, text, true);
     }
 
-    export let allowPropertyToDisplay = function(propName: string): boolean {
+    allowPropertyToDisplay = function(propName: string): boolean {
         if (!meta64.inSimpleMode())
             return true;
         return meta64.simpleModePropertyBlackList[propName] == null;
     }
 
-    export let isReadOnlyProperty = function(propName: string): boolean {
+    isReadOnlyProperty = function(propName: string): boolean {
         return meta64.readOnlyPropertyList[propName];
     }
 
-    export let isBinaryProperty = function(propName: string): boolean {
+    isBinaryProperty = function(propName: string): boolean {
         return meta64.binaryPropertyList[propName];
     }
 
-    export let sanitizePropertyName = function(propName: string): string {
+    sanitizePropertyName = function(propName: string): string {
         if (meta64.editModeOption === "simple") {
             return propName === jcrCnst.CONTENT ? "Content" : propName;
         } else {
@@ -4268,36 +4266,38 @@ namespace render {
         }
     }
 }
-namespace srch {
-    export let _UID_ROWID_SUFFIX: string = "_srch_row";
+let render: Render = new Render();
 
-    export let searchNodes: any = null;
-    export let searchPageTitle: string = "Search Results";
-    export let timelinePageTitle: string = "Timeline";
+class Search {
+    _UID_ROWID_SUFFIX: string = "_srch_row";
 
-    export let searchOffset = 0;
-    export let timelineOffset = 0;
+    searchNodes: any = null;
+    searchPageTitle: string = "Search Results";
+    timelinePageTitle: string = "Timeline";
+
+    searchOffset = 0;
+    timelineOffset = 0;
 
     /*
      * Holds the NodeSearchResponse.java JSON, or null if no search has been done.
      */
-    export let searchResults: any = null;
+    searchResults: any = null;
 
     /*
      * Holds the NodeSearchResponse.java JSON, or null if no timeline has been done.
      */
-    export let timelineResults: any = null;
+    timelineResults: any = null;
 
     /*
      * Will be the last row clicked on (NodeInfo.java object) and having the red highlight bar
      */
-    export let highlightRowNode: json.NodeInfo = null;
+    highlightRowNode: NodeInfo = null;
 
     /*
      * maps node 'identifier' (assigned at server) to uid value which is a value based off local sequence, and uses
      * nextUid as the counter.
      */
-    export let identToUidMap: any = {};
+    identToUidMap: any = {};
 
     /*
      * maps node.uid values to the NodeInfo.java objects
@@ -4306,27 +4306,27 @@ namespace srch {
      * node. Limited lifetime however. The server is simply numbering nodes sequentially. Actually represents the
      * 'instance' of a model object. Very similar to a 'hashCode' on Java objects.
      */
-    export let uidToNodeMap: { [key: string]: json.NodeInfo } = {};
+    uidToNodeMap: { [key: string]: NodeInfo } = {};
 
-    export let numSearchResults = function() {
+    numSearchResults = function() {
         return srch.searchResults != null && //
             srch.searchResults.searchResults != null && //
             srch.searchResults.searchResults.length != null ? //
             srch.searchResults.searchResults.length : 0;
     }
 
-    export let searchTabActivated = function() {
+    searchTabActivated = function() {
         /*
          * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
          * and open up the search dialog.
          */
-        if (numSearchResults() == 0 && !meta64.isAnonUser) {
+        if (srch.numSearchResults() == 0 && !meta64.isAnonUser) {
             (new SearchContentDlg()).open();
         }
     }
 
-    export let searchNodesResponse = function(res: json.NodeSearchResponse) {
-        searchResults = res;
+    searchNodesResponse = function(res: NodeSearchResponse) {
+        srch.searchResults = res;
         let searchResultsPanel = new SearchResultsPanel();
         var content = searchResultsPanel.build();
         util.setHtml("searchResultsPanel", content);
@@ -4334,8 +4334,8 @@ namespace srch {
         meta64.changePage(searchResultsPanel);
     }
 
-    export let timelineResponse = function(res: json.NodeSearchResponse) {
-        timelineResults = res;
+    timelineResponse = function(res: NodeSearchResponse) {
+        srch.timelineResults = res;
         let timelineResultsPanel = new TimelineResultsPanel();
         var content = timelineResultsPanel.build();
         util.setHtml("timelineResultsPanel", content);
@@ -4343,9 +4343,9 @@ namespace srch {
         meta64.changePage(timelineResultsPanel);
     }
 
-    export let searchFilesResponse = function(res: json.FileSearchResponse) {
+    searchFilesResponse = function(res: FileSearchResponse) {
         nav.mainOffset = 0;
-        util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": res.searchResultNodeId,
             "upLevel": null,
             "renderParentIfLeaf": null,
@@ -4354,44 +4354,44 @@ namespace srch {
         }, nav.navPageNodeResponse);
     }
 
-    export let timelineByModTime = function() {
+    timelineByModTime = function() {
         var node = meta64.getHighlightedNode();
         if (!node) {
             (new MessageDlg("No node is selected to 'timeline' under.")).open();
             return;
         }
 
-        util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
+        util.json<NodeSearchRequest, NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
             "sortField": jcrCnst.LAST_MODIFIED,
             "searchProp": null
-        }, timelineResponse);
+        }, srch.timelineResponse);
     }
 
-    export let timelineByCreateTime = function() {
+    timelineByCreateTime = function() {
         var node = meta64.getHighlightedNode();
         if (!node) {
             (new MessageDlg("No node is selected to 'timeline' under.")).open();
             return;
         }
 
-        util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
+        util.json<NodeSearchRequest, NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
             "sortField": jcrCnst.CREATED,
             "searchProp": null
-        }, timelineResponse);
+        }, srch.timelineResponse);
     }
 
-    export let initSearchNode = function(node: json.NodeInfo) {
-        node.uid = util.getUidForId(identToUidMap, node.id);
-        uidToNodeMap[node.uid] = node;
+    initSearchNode = function(node: NodeInfo) {
+        node.uid = util.getUidForId(srch.identToUidMap, node.id);
+        srch.uidToNodeMap[node.uid] = node;
     }
 
-    export let populateSearchResultsPage = function(data, viewName) {
+    populateSearchResultsPage = function(data, viewName) {
         var output = '';
         var childCount = data.searchResults.length;
 
@@ -4405,10 +4405,10 @@ namespace srch {
             if (meta64.isNodeBlackListed(node))
                 return;
 
-            initSearchNode(node);
+            srch.initSearchNode(node);
 
             rowCount++;
-            output += renderSearchResultAsListItem(node, i, childCount, rowCount);
+            output += srch.renderSearchResultAsListItem(node, i, childCount, rowCount);
         });
 
         util.setHtml(viewName, output);
@@ -4419,15 +4419,15 @@ namespace srch {
      *
      * node is a NodeInfo.java JSON
      */
-    export let renderSearchResultAsListItem = function(node, index, count, rowCount) {
+    renderSearchResultAsListItem = function(node, index, count, rowCount) {
 
         var uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
-        var cssId = uid + _UID_ROWID_SUFFIX;
+        var cssId = uid + srch._UID_ROWID_SUFFIX;
         // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
-        var buttonBarHtml = makeButtonBarHtml("" + uid);
+        var buttonBarHtml = srch.makeButtonBarHtml("" + uid);
 
         console.log("buttonBarHtml=" + buttonBarHtml);
         var content = render.renderNodeContent(node, true, true, true, true, true);
@@ -4443,19 +4443,19 @@ namespace srch {
             }, content));
     }
 
-    export let makeButtonBarHtml = function(uid) {
+    makeButtonBarHtml = function(uid) {
         var gotoButton = render.makeButton("Go to Node", uid, `srch.clickSearchNode('${uid}');`);
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
-    export let clickOnSearchResultRow = function(rowElm, uid) {
-        unhighlightRow();
-        highlightRowNode = uidToNodeMap[uid];
+    clickOnSearchResultRow = function(rowElm, uid) {
+        srch.unhighlightRow();
+        srch.highlightRowNode = srch.uidToNodeMap[uid];
 
         util.changeOrAddClass(rowElm, "inactive-row", "active-row");
     }
 
-    export let clickSearchNode = function(uid: string) {
+    clickSearchNode = function(uid: string) {
         /*
          * update highlight node to point to the node clicked on, just to persist it for later
          */
@@ -4471,14 +4471,14 @@ namespace srch {
     /*
      * turn of row selection styling of whatever row is currently selected
      */
-    export let unhighlightRow = function() {
+    unhighlightRow = function() {
 
-        if (!highlightRowNode) {
+        if (!srch.highlightRowNode) {
             return;
         }
 
         /* now make CSS id from node */
-        var nodeId = highlightRowNode.uid + _UID_ROWID_SUFFIX;
+        var nodeId = srch.highlightRowNode.uid + srch._UID_ROWID_SUFFIX;
 
         var elm = util.domElm(nodeId);
         if (elm) {
@@ -4487,44 +4487,48 @@ namespace srch {
         }
     }
 }
-namespace share {
+let srch: Search = new Search();
 
-    let findSharedNodesResponse = function(res: json.GetSharedNodesResponse) {
+class Share {
+
+    private findSharedNodesResponse = function(res: GetSharedNodesResponse) {
         srch.searchNodesResponse(res);
     }
 
-    export let sharingNode: json.NodeInfo = null;
+    sharingNode: NodeInfo = null;
 
     /*
      * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
      */
-    export let editNodeSharing = function(): void {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+    editNodeSharing = function(): void {
+        let node: NodeInfo = meta64.getHighlightedNode();
 
         if (!node) {
             (new MessageDlg("No node is selected.")).open();
             return;
         }
-        sharingNode = node;
+        share.sharingNode = node;
         (new SharingDlg()).open();
     }
 
-    export let findSharedNodes = function(): void {
-        let focusNode: json.NodeInfo = meta64.getHighlightedNode();
+    findSharedNodes = function(): void {
+        let focusNode: NodeInfo = meta64.getHighlightedNode();
         if (focusNode == null) {
             return;
         }
 
         srch.searchPageTitle = "Shared Nodes";
 
-        util.json<json.GetSharedNodesRequest, json.GetSharedNodesResponse>("getSharedNodes", {
+        util.json<GetSharedNodesRequest, GetSharedNodesResponse>("getSharedNodes", {
             "nodeId": focusNode.id
-        }, findSharedNodesResponse);
+        }, share.findSharedNodesResponse);
     }
 }
-namespace user {
+let share: Share = new Share();
 
-    let logoutResponse = function(res: json.LogoutResponse): void {
+class User {
+
+    private logoutResponse = function(res: LogoutResponse): void {
         /* reloads browser with the query parameters stripped off the path */
         window.location.href = window.location.origin;
     }
@@ -4534,14 +4538,14 @@ namespace user {
      * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
      * use these names
      */
-    export let isTestUserAccount = function(): boolean {
+    isTestUserAccount = function(): boolean {
         return meta64.userName.toLowerCase() === "adam" || //
             meta64.userName.toLowerCase() === "bob" || //
             meta64.userName.toLowerCase() === "cory" || //
             meta64.userName.toLowerCase() === "dan";
     }
 
-    export let setTitleUsingLoginResponse = function(res): void {
+    setTitleUsingLoginResponse = function(res): void {
         var title = BRANDING_TITLE_SHORT;
 
         /* todo-0: If users go with very long usernames this is gonna be ugly */
@@ -4553,7 +4557,7 @@ namespace user {
     }
 
     /* TODO-3: move this into meta64 module */
-    export let setStateVarsUsingLoginResponse = function(res: json.LoginResponse): void {
+    setStateVarsUsingLoginResponse = function(res: LoginResponse): void {
         if (res.rootNode) {
             meta64.homeNodeId = res.rootNode.id;
             meta64.homeNodePath = res.rootNode.path;
@@ -4571,12 +4575,12 @@ namespace user {
         console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
     }
 
-    export let openSignupPg = function(): void {
+    openSignupPg = function(): void {
         (new SignupDlg()).open();
     }
 
     /* Write a cookie that expires in a year for all paths */
-    export let writeCookie = function(name, val): void {
+    writeCookie = function(name, val): void {
         $.cookie(name, val, {
             expires: 365,
             path: '/'
@@ -4586,13 +4590,13 @@ namespace user {
     /*
      * This method is ugly. It is the button that can be login *or* logout.
      */
-    export let openLoginPg = function(): void {
+    openLoginPg = function(): void {
         let loginDlg: LoginDlg = new LoginDlg();
         loginDlg.populateFromCookies();
         loginDlg.open();
     }
 
-    export let refreshLogin = function(): void {
+    refreshLogin = function(): void {
 
         console.log("refreshLogin.");
 
@@ -4638,22 +4642,22 @@ namespace user {
         if (!callUsr) {
             meta64.loadAnonPageHome(false);
         } else {
-            util.json<json.LoginRequest, json.LoginResponse>("login", {
+            util.json<LoginRequest, LoginResponse>("login", {
                 "userName": callUsr,
                 "password": callPwd,
                 "tzOffset": new Date().getTimezoneOffset(),
                 "dst": util.daylightSavingsTime
-            }, function(res: json.LoginResponse) {
+            }, function(res: LoginResponse) {
                 if (usingCookies) {
-                    loginResponse(res, callUsr, callPwd, usingCookies);
+                    user.loginResponse(res, callUsr, callPwd, usingCookies);
                 } else {
-                    refreshLoginResponse(res);
+                    user.refreshLoginResponse(res);
                 }
             });
         }
     }
 
-    export let logout = function(updateLoginStateCookie) {
+    logout = function(updateLoginStateCookie) {
         if (meta64.isAnonUser) {
             return;
         }
@@ -4662,44 +4666,44 @@ namespace user {
         $(window).off("beforeunload");
 
         if (updateLoginStateCookie) {
-            writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+            user.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
         }
 
-        util.json<json.LogoutRequest, json.LogoutResponse>("logout", {}, logoutResponse);
+        util.json<LogoutRequest, LogoutResponse>("logout", {}, user.logoutResponse);
     }
 
-    export let login = function(loginDlg, usr, pwd) {
-        util.json<json.LoginRequest, json.LoginResponse>("login", {
+    login = function(loginDlg, usr, pwd) {
+        util.json<LoginRequest, LoginResponse>("login", {
             "userName": usr,
             "password": pwd,
             "tzOffset": new Date().getTimezoneOffset(),
             "dst": util.daylightSavingsTime
-        }, function(res: json.LoginResponse) {
-            loginResponse(res, usr, pwd, null, loginDlg);
+        }, function(res: LoginResponse) {
+            user.loginResponse(res, usr, pwd, null, loginDlg);
         });
     }
 
-    export let deleteAllUserCookies = function() {
+    deleteAllUserCookies = function() {
         $.removeCookie(cnst.COOKIE_LOGIN_USR);
         $.removeCookie(cnst.COOKIE_LOGIN_PWD);
         $.removeCookie(cnst.COOKIE_LOGIN_STATE);
     }
 
-    export let loginResponse = function(res?: json.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
+    loginResponse = function(res?: LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
         if (util.checkSuccess("Login", res)) {
             console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
             if (usr != "anonymous") {
-                writeCookie(cnst.COOKIE_LOGIN_USR, usr);
-                writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
-                writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
+                user.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
+                user.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
+                user.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
             }
 
             if (loginDlg) {
                 loginDlg.cancel();
             }
 
-            setStateVarsUsingLoginResponse(res);
+            user.setStateVarsUsingLoginResponse(res);
 
             if (res.userPreferences.lastNode) {
                 console.log("lastNode: " + res.userPreferences.lastNode);
@@ -4725,7 +4729,7 @@ namespace user {
             }
 
             view.refreshTree(id, false, null, true);
-            setTitleUsingLoginResponse(res);
+            user.setTitleUsingLoginResponse(res);
         } else {
             if (usingCookies) {
                 (new MessageDlg("Cookie login failed.")).open();
@@ -4736,14 +4740,14 @@ namespace user {
                  */
                 $.removeCookie(cnst.COOKIE_LOGIN_USR);
                 $.removeCookie(cnst.COOKIE_LOGIN_PWD);
-                writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+                user.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
                 location.reload();
             }
         }
     }
 
     // res is JSON response object from server.
-    let refreshLoginResponse = function(res: json.LoginResponse): void {
+    private refreshLoginResponse = function(res: LoginResponse): void {
         console.log("refreshLoginResponse");
 
         if (res.success) {
@@ -4754,11 +4758,13 @@ namespace user {
         meta64.loadAnonPageHome(false);
     }
 }
-namespace view {
+let user: User = new User();
 
-    export let scrollToSelNodePending: boolean = false;
+class View {
 
-    export let updateStatusBar = function(): void {
+    scrollToSelNodePending: boolean = false;
+
+    updateStatusBar = function(): void {
         if (!meta64.currentNodeData)
             return;
         var statusLine = "";
@@ -4776,7 +4782,7 @@ namespace view {
      * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
      * render.
      */
-    export let refreshTreeResponse = function(res?: json.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
+    refreshTreeResponse = function(res?: RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
         render.renderPageFromData(res, scrollToTop);
 
         if (scrollToTop) {
@@ -4785,7 +4791,7 @@ namespace view {
             if (targetId) {
                 meta64.highlightRowById(targetId, true);
             } else {
-                scrollToSelectedNode();
+                view.scrollToSelectedNode();
             }
         }
         meta64.refreshAllGuiEnablement();
@@ -4795,14 +4801,14 @@ namespace view {
     /*
      * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
      */
-    export let refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
+    refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
         if (!nodeId) {
             nodeId = meta64.currentNodeId;
         }
 
         console.log("Refreshing tree: nodeId=" + nodeId);
         if (!highlightId) {
-            let currentSelNode: json.NodeInfo = meta64.getHighlightedNode();
+            let currentSelNode: NodeInfo = meta64.getHighlightedNode();
             highlightId = currentSelNode != null ? currentSelNode.id : nodeId;
         }
 
@@ -4811,17 +4817,17 @@ namespace view {
         as a hint for the future.
         nav.mainOffset = 0;
         */
-        util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": nodeId,
             "upLevel": null,
             "renderParentIfLeaf": renderParentIfLeaf ? true : false,
             "offset": nav.mainOffset,
             "goToLastPage": false
-        }, function(res: json.RenderNodeResponse) {
+        }, function(res: RenderNodeResponse) {
             if (res.offsetOfNodeFound > -1) {
                 nav.mainOffset = res.offsetOfNodeFound;
             }
-            refreshTreeResponse(res, highlightId);
+            view.refreshTreeResponse(res, highlightId);
 
             if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
                 edit.editMode(true);
@@ -4830,47 +4836,47 @@ namespace view {
         });
     }
 
-    export let firstPage = function(): void {
+    firstPage = function(): void {
         console.log("Running firstPage Query");
         nav.mainOffset = 0;
-        loadPage(false);
+        view.loadPage(false);
     }
 
-    export let prevPage = function(): void {
+    prevPage = function(): void {
         console.log("Running prevPage Query");
         nav.mainOffset -= nav.ROWS_PER_PAGE;
         if (nav.mainOffset < 0) {
             nav.mainOffset = 0;
         }
-        loadPage(false);
+        view.loadPage(false);
     }
 
-    export let nextPage = function(): void {
+    nextPage = function(): void {
         console.log("Running nextPage Query");
         nav.mainOffset += nav.ROWS_PER_PAGE;
-        loadPage(false);
+        view.loadPage(false);
     }
 
-    export let lastPage = function(): void {
+    lastPage = function(): void {
         console.log("Running lastPage Query");
         //nav.mainOffset += nav.ROWS_PER_PAGE;
-        loadPage(true);
+        view.loadPage(true);
     }
 
-    let loadPage = function(goToLastPage: boolean): void {
-        util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+    private loadPage = function(goToLastPage: boolean): void {
+        util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": null,
             "renderParentIfLeaf": true,
             "offset": nav.mainOffset,
             "goToLastPage": goToLastPage
-        }, function(res: json.RenderNodeResponse) {
+        }, function(res: RenderNodeResponse) {
             if (goToLastPage) {
                 if (res.offsetOfNodeFound > -1) {
                     nav.mainOffset = res.offsetOfNodeFound;
                 }
             }
-            refreshTreeResponse(res, null, true);
+            view.refreshTreeResponse(res, null, true);
         });
     }
 
@@ -4880,11 +4886,11 @@ namespace view {
      * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
      * and then scrolling to a different place a fraction of a second later)
      */
-    export let scrollToSelectedNode = function() {
-        scrollToSelNodePending = true;
+    scrollToSelectedNode = function() {
+        view.scrollToSelNodePending = true;
 
         setTimeout(function() {
-            scrollToSelNodePending = false;
+            view.scrollToSelNodePending = false;
 
             let elm: any = nav.getSelectedPolyElement();
             if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
@@ -4903,8 +4909,8 @@ namespace view {
         }, 1000);
     }
 
-    export let scrollToTop = function() {
-        if (scrollToSelNodePending)
+    scrollToTop = function() {
+        if (view.scrollToSelNodePending)
             return;
 
         //let e = $("#mainContainer");
@@ -4912,14 +4918,14 @@ namespace view {
 
         //todo-0: not using mainPaperTabs any longer so shw should go here now ?
         setTimeout(function() {
-            if (scrollToSelNodePending)
+            if (view.scrollToSelNodePending)
                 return;
             $("#mainContainer").scrollTop(0);
         }, 1000);
     }
 
-    export let initEditPathDisplayById = function(domId: string) {
-        let node: json.NodeInfo = edit.editNode;
+    initEditPathDisplayById = function(domId: string) {
+        let node: NodeInfo = edit.editNode;
         let e: any = $("#" + domId);
         if (!e)
             return;
@@ -4941,15 +4947,17 @@ namespace view {
         }
     }
 
-    export let showServerInfo = function() {
-        util.json<json.GetServerInfoRequest, json.GetServerInfoResponse>("getServerInfo", {}, function(res: json.GetServerInfoResponse) {
+    showServerInfo = function() {
+        util.json<GetServerInfoRequest, GetServerInfoResponse>("getServerInfo", {}, function(res: GetServerInfoResponse) {
             (new MessageDlg(res.serverInfo)).open();
         });
     }
 }
-namespace menuPanel {
+let view: View = new View();
 
-    let makeTopLevelMenu = function(title: string, content: string, id?: string): string {
+class MenuPanel {
+
+    private makeTopLevelMenu = function(title: string, content: string, id?: string): string {
         let paperItemAttrs = {
             class: "menu-trigger"
         };
@@ -4972,10 +4980,10 @@ namespace menuPanel {
             //"class": "menu-content sublist"
             //}
             , paperItem + //"<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
-            makeSecondLevelList(content), true);
+            menuPanel.makeSecondLevelList(content), true);
     }
 
-    let makeSecondLevelList = function(content: string): string {
+    private makeSecondLevelList = function(content: string): string {
         return render.tag("paper-menu", {
             "class": "menu-content sublist my-menu-section",
             "selectable": ""
@@ -4984,7 +4992,7 @@ namespace menuPanel {
         }, content, true);
     }
 
-    let menuItem = function(name: string, id: string, onClick: any): string {
+    private menuItem = function(name: string, id: string, onClick: any): string {
         return render.tag("paper-item", {
             "id": id,
             "onclick": onClick,
@@ -4992,9 +5000,9 @@ namespace menuPanel {
         }, name, true);
     }
 
-    let domId: string = "mainAppMenu";
+    private domId: string = "mainAppMenu";
 
-    export let build = function(): void {
+    build = function(): void {
 
         // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.
         // var pageMenuItems = //
@@ -5004,57 +5012,57 @@ namespace menuPanel {
         // var pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
         var rssItems = //
-            menuItem("Feeds", "mainMenuRss", "nav.openRssFeedsNode();");
-        var mainMenuRss = makeTopLevelMenu("RSS", rssItems);
+            menuPanel.menuItem("Feeds", "mainMenuRss", "nav.openRssFeedsNode();");
+        var mainMenuRss = menuPanel.makeTopLevelMenu("RSS", rssItems);
 
         var editMenuItems = //
-            menuItem("Create", "createNodeButton", "edit.createNode();") + //
-            menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
-            menuItem("Cut", "cutSelNodesButton", "edit.cutSelNodes();") + //
-            menuItem("Paste", "pasteSelNodesButton", "edit.pasteSelNodes();") + //
-            menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();") + //
-            menuItem("Import", "openImportDlg", "(new ImportDlg()).open();") + //
-            menuItem("Export", "openExportDlg", "(new ExportDlg()).open();") + //
-            menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();");
-        var editMenu = makeTopLevelMenu("Edit", editMenuItems);
+            menuPanel.menuItem("Create", "createNodeButton", "edit.createNode();") + //
+            menuPanel.menuItem("Rename", "renameNodePgButton", "(new RenameNodeDlg()).open();") + //
+            menuPanel.menuItem("Cut", "cutSelNodesButton", "edit.cutSelNodes();") + //
+            menuPanel.menuItem("Paste", "pasteSelNodesButton", "edit.pasteSelNodes();") + //
+            menuPanel.menuItem("Clear Selections", "clearSelectionsButton", "edit.clearSelections();") + //
+            menuPanel.menuItem("Import", "openImportDlg", "(new ImportDlg()).open();") + //
+            menuPanel.menuItem("Export", "openExportDlg", "(new ExportDlg()).open();") + //
+            menuPanel.menuItem("Delete", "deleteSelNodesButton", "edit.deleteSelNodes();");
+        var editMenu = menuPanel.makeTopLevelMenu("Edit", editMenuItems);
 
         var moveMenuItems = //
-            menuItem("Up", "moveNodeUpButton", "edit.moveNodeUp();") + //
-            menuItem("Down", "moveNodeDownButton", "edit.moveNodeDown();") + //
-            menuItem("to Top", "moveNodeToTopButton", "edit.moveNodeToTop();") + //
-            menuItem("to Bottom", "moveNodeToBottomButton", "edit.moveNodeToBottom();");//
-        var moveMenu = makeTopLevelMenu("Move", moveMenuItems);
+            menuPanel.menuItem("Up", "moveNodeUpButton", "edit.moveNodeUp();") + //
+            menuPanel.menuItem("Down", "moveNodeDownButton", "edit.moveNodeDown();") + //
+            menuPanel.menuItem("to Top", "moveNodeToTopButton", "edit.moveNodeToTop();") + //
+            menuPanel.menuItem("to Bottom", "moveNodeToBottomButton", "edit.moveNodeToBottom();");//
+        var moveMenu = menuPanel.makeTopLevelMenu("Move", moveMenuItems);
 
         var attachmentMenuItems = //
-            menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadFromFileDlg();") + //
-            menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadFromUrlDlg();") + //
-            menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");
-        var attachmentMenu = makeTopLevelMenu("Attach", attachmentMenuItems);
+            menuPanel.menuItem("Upload from File", "uploadFromFileButton", "attachment.openUploadFromFileDlg();") + //
+            menuPanel.menuItem("Upload from URL", "uploadFromUrlButton", "attachment.openUploadFromUrlDlg();") + //
+            menuPanel.menuItem("Delete Attachment", "deleteAttachmentsButton", "attachment.deleteAttachment();");
+        var attachmentMenu = menuPanel.makeTopLevelMenu("Attach", attachmentMenuItems);
 
         var sharingMenuItems = //
-            menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + //
-            menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");
-        var sharingMenu = makeTopLevelMenu("Share", sharingMenuItems);
+            menuPanel.menuItem("Edit Node Sharing", "editNodeSharingButton", "share.editNodeSharing();") + //
+            menuPanel.menuItem("Find Shared Subnodes", "findSharedNodesButton", "share.findSharedNodes();");
+        var sharingMenu = menuPanel.makeTopLevelMenu("Share", sharingMenuItems);
 
         var searchMenuItems = //
-            menuItem("Content", "contentSearchDlgButton", "(new SearchContentDlg()).open();") +//
+            menuPanel.menuItem("Content", "contentSearchDlgButton", "(new SearchContentDlg()).open();") +//
             //todo-0: make a version of the dialog that does a tag search
-            menuItem("Tags", "tagSearchDlgButton", "(new SearchTagsDlg()).open();") + //
-            menuItem("Files", "fileSearchDlgButton", "(new SearchFilesDlg(true)).open();");
+            menuPanel.menuItem("Tags", "tagSearchDlgButton", "(new SearchTagsDlg()).open();") + //
+            menuPanel.menuItem("Files", "fileSearchDlgButton", "(new SearchFilesDlg(true)).open();");
 
-        var searchMenu = makeTopLevelMenu("Search", searchMenuItems);
+        var searchMenu = menuPanel.makeTopLevelMenu("Search", searchMenuItems);
 
         var timelineMenuItems = //
-            menuItem("Created", "timelineCreatedButton", "srch.timelineByCreateTime();") +//
-            menuItem("Modified", "timelineModifiedButton", "srch.timelineByModTime();");//
-        var timelineMenu = makeTopLevelMenu("Timeline", timelineMenuItems);
+            menuPanel.menuItem("Created", "timelineCreatedButton", "srch.timelineByCreateTime();") +//
+            menuPanel.menuItem("Modified", "timelineModifiedButton", "srch.timelineByModTime();");//
+        var timelineMenu = menuPanel.makeTopLevelMenu("Timeline", timelineMenuItems);
 
         var viewOptionsMenuItems = //
-            menuItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + //
-            menuItem("Refresh", "refreshPageButton", "meta64.refresh();") + //
-            menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + //
-            menuItem("Preferences", "accountPreferencesButton", "(new PrefsDlg()).open();"); //
-        var viewOptionsMenu = makeTopLevelMenu("View", viewOptionsMenuItems);
+            menuPanel.menuItem("Toggle Properties", "propsToggleButton", "props.propsToggle();") + //
+            menuPanel.menuItem("Refresh", "refreshPageButton", "meta64.refresh();") + //
+            menuPanel.menuItem("Show URL", "showFullNodeUrlButton", "render.showNodeUrl();") + //
+            menuPanel.menuItem("Preferences", "accountPreferencesButton", "(new PrefsDlg()).open();"); //
+        var viewOptionsMenu = menuPanel.makeTopLevelMenu("View", viewOptionsMenuItems);
 
         // WORK IN PROGRESS ( do not delete)
         // var fileSystemMenuItems = //
@@ -5067,63 +5075,64 @@ namespace menuPanel {
          * whatever is commented is only commented for polymer conversion
          */
         var myAccountItems = //
-            menuItem("Change Password", "changePasswordPgButton", "(new ChangePasswordDlg()).open();") + //
-            menuItem("Manage Account", "manageAccountButton", "(new ManageAccountDlg()).open();"); //
+            menuPanel.menuItem("Change Password", "changePasswordPgButton", "(new ChangePasswordDlg()).open();") + //
+            menuPanel.menuItem("Manage Account", "manageAccountButton", "(new ManageAccountDlg()).open();"); //
 
         // menuItem("Full Repository Export", "fullRepositoryExport", "
         // edit.fullRepositoryExport();") + //
-        var myAccountMenu = makeTopLevelMenu("Account", myAccountItems);
+        var myAccountMenu = menuPanel.makeTopLevelMenu("Account", myAccountItems);
 
         var adminItems = //
-            menuItem("Generate RSS", "generateRSSButton", "podcast.generateRSS();") +//
-            menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();") +//
-            menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", "edit.insertBookWarAndPeace();"); //
-        var adminMenu = makeTopLevelMenu("Admin", adminItems, "adminMenu");
+            menuPanel.menuItem("Generate RSS", "generateRSSButton", "podcast.generateRSS();") +//
+            menuPanel.menuItem("Server Info", "showServerInfoButton", "view.showServerInfo();") +//
+            menuPanel.menuItem("Insert Book: War and Peace", "insertBookWarAndPeaceButton", "edit.insertBookWarAndPeace();"); //
+        var adminMenu = menuPanel.makeTopLevelMenu("Admin", adminItems, "adminMenu");
 
         var helpItems = //
-            menuItem("Main Menu Help", "mainMenuHelp", "nav.openMainMenuHelp();");
-        var mainMenuHelp = makeTopLevelMenu("Help/Docs", helpItems);
+            menuPanel.menuItem("Main Menu Help", "mainMenuHelp", "nav.openMainMenuHelp();");
+        var mainMenuHelp = menuPanel.makeTopLevelMenu("Help/Docs", helpItems);
 
         var content = /* pageMenu+ */ mainMenuRss + editMenu + moveMenu + attachmentMenu + sharingMenu + viewOptionsMenu /* + fileSystemMenu */ + searchMenu + timelineMenu + myAccountMenu
             + adminMenu + mainMenuHelp;
 
-        util.setHtml(domId, content);
+        util.setHtml(menuPanel.domId, content);
     }
 
-    export let init = function(): void {
+    init = function(): void {
         meta64.refreshAllGuiEnablement();
     }
 }
+let menuPanel: MenuPanel = new MenuPanel();
 
 /*
 NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
-namespace podcast {
-    export let player: any = null;
-    export let startTimePending: number = null;
+class Podcast {
+    player: any = null;
+    startTimePending: number = null;
 
-    let uid: string = null;
-    let node: json.NodeInfo = null;
-    let adSegments: AdSegment[] = null;
+    private uid: string = null;
+    private node: NodeInfo = null;
+    private adSegments: AdSegment[] = null;
 
-    let pushTimer: any = null;
+    private pushTimer: any = null;
 
-    export let generateRSS = function(): void {
-        util.json<json.GenerateRSSRequest, json.GenerateRSSResponse>("generateRSS", {
-        }, generateRSSResponse);
+    generateRSS = function(): void {
+        util.json<GenerateRSSRequest, GenerateRSSResponse>("generateRSS", {
+        }, podcast.generateRSSResponse);
     }
 
-    let generateRSSResponse = function(): void {
+    private generateRSSResponse = function(): void {
         alert('rss complete.');
     }
 
-    export let renderFeedNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+    renderFeedNode = function(node: NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
-        let title: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedTitle", node);
-        let desc: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedDesc", node);
-        let imgUrl: json.PropertyInfo = props.getNodeProperty("meta64:rssFeedImageUrl", node);
+        let title: PropertyInfo = props.getNodeProperty("meta64:rssFeedTitle", node);
+        let desc: PropertyInfo = props.getNodeProperty("meta64:rssFeedDesc", node);
+        let imgUrl: PropertyInfo = props.getNodeProperty("meta64:rssFeedImageUrl", node);
 
         let feed: string = "";
         if (title) {
@@ -5156,20 +5165,20 @@ namespace podcast {
         return ret;
     }
 
-    export let getMediaPlayerUrlFromNode = function(node: json.NodeInfo): string {
-        let link: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+    getMediaPlayerUrlFromNode = function(node: NodeInfo): string {
+        let link: PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
         if (link && link.value && util.contains(link.value.toLowerCase(), ".mp3")) {
             return link.value;
         }
 
-        let uri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+        let uri: PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
         if (uri && uri.value && util.contains(uri.value.toLowerCase(), ".mp3")) {
             return uri.value;
         }
 
-        let encUrl: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncUrl", node);
+        let encUrl: PropertyInfo = props.getNodeProperty("meta64:rssItemEncUrl", node);
         if (encUrl && encUrl.value) {
-            let encType: json.PropertyInfo = props.getNodeProperty("meta64:rssItemEncType", node);
+            let encType: PropertyInfo = props.getNodeProperty("meta64:rssItemEncType", node);
             if (encType && encType.value && util.startsWith(encType.value, "audio/")) {
                 return encUrl.value;
             }
@@ -5178,13 +5187,13 @@ namespace podcast {
         return null;
     }
 
-    export let renderItemNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+    renderItemNode = function(node: NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
-        let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
-        let rssDesc: json.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
-        let rssAuthor: json.PropertyInfo = props.getNodeProperty("meta64:rssItemAuthor", node);
-        let rssLink: json.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
-        let rssUri: json.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+        let rssTitle: PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
+        let rssDesc: PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
+        let rssAuthor: PropertyInfo = props.getNodeProperty("meta64:rssItemAuthor", node);
+        let rssLink: PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+        let rssUri: PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
 
         let entry: string = "";
 
@@ -5194,7 +5203,7 @@ namespace podcast {
             }, render.tag("h3", {}, rssTitle.value));
         }
 
-        let playerUrl = getMediaPlayerUrlFromNode(node);
+        let playerUrl = podcast.getMediaPlayerUrlFromNode(node);
         if (playerUrl) {
             entry += render.tag("paper-button", {
                 "raised": "raised",
@@ -5228,7 +5237,7 @@ namespace podcast {
         return ret;
     }
 
-    export let propOrderingFeedNode = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
+    propOrderingFeedNode = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:rssFeedTitle",
             "meta64:rssFeedDesc",
@@ -5240,7 +5249,7 @@ namespace podcast {
         return props.orderProps(propOrder, properties);
     }
 
-    export let propOrderingItemNode = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
+    propOrderingItemNode = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:rssItemTitle",
             "meta64:rssItemDesc",
@@ -5251,36 +5260,36 @@ namespace podcast {
         return props.orderProps(propOrder, properties);
     }
 
-    export let openPlayerDialog = function(_uid: string) {
-        uid = _uid;
-        node = meta64.uidToNodeMap[uid];
+    openPlayerDialog = function(_uid: string) {
+        podcast.uid = _uid;
+        podcast.node = meta64.uidToNodeMap[podcast.uid];
 
-        if (node) {
-            let mp3Url = getMediaPlayerUrlFromNode(node);
+        if (podcast.node) {
+            let mp3Url = podcast.getMediaPlayerUrlFromNode(podcast.node);
             if (mp3Url) {
-                util.json<json.GetPlayerInfoRequest, json.GetPlayerInfoResponse>("getPlayerInfo", {
+                util.json<GetPlayerInfoRequest, GetPlayerInfoResponse>("getPlayerInfo", {
                     "url": mp3Url
-                }, function(res: json.GetPlayerInfoResponse) {
-                    parseAdSegmentUid(uid);
-                    let dlg = new AudioPlayerDlg(mp3Url, uid, res.timeOffset);
+                }, function(res: GetPlayerInfoResponse) {
+                    podcast.parseAdSegmentUid(podcast.uid);
+                    let dlg = new AudioPlayerDlg(mp3Url, podcast.uid, res.timeOffset);
                     dlg.open();
                 });
             }
         }
     }
 
-    let parseAdSegmentUid = function(_uid: string) {
-        if (node) {
-            let adSegs: json.PropertyInfo = props.getNodeProperty("ad-segments", node);
+    private parseAdSegmentUid = function(_uid: string) {
+        if (podcast.node) {
+            let adSegs: PropertyInfo = props.getNodeProperty("ad-segments", podcast.node);
             if (adSegs) {
-                parseAdSegmentText(adSegs.value);
+                podcast.parseAdSegmentText(adSegs.value);
             }
         }
-        else throw "Unable to find node uid: " + uid;
+        else throw "Unable to find node uid: " + podcast.uid;
     }
 
-    let parseAdSegmentText = function(adSegs: string) {
-        adSegments = [];
+    private parseAdSegmentText = function(adSegs: string) {
+        podcast.adSegments = [];
 
         let segList: string[] = adSegs.split("\n");
         for (let seg of segList) {
@@ -5290,10 +5299,10 @@ namespace podcast {
                 continue;
             }
 
-            let beginSecs: number = convertToSeconds(segTimes[0]);
-            let endSecs: number = convertToSeconds(segTimes[1]);
+            let beginSecs: number = podcast.convertToSeconds(segTimes[0]);
+            let endSecs: number = podcast.convertToSeconds(segTimes[1]);
 
-            adSegments.push(new AdSegment(beginSecs, endSecs));
+            podcast.adSegments.push(new AdSegment(beginSecs, endSecs));
         }
     }
 
@@ -5302,7 +5311,7 @@ namespace podcast {
     * todo-0: make this accept just seconds, or min:sec, or hour:min:sec, and be able to
     * parse any of them correctly.
     */
-    let convertToSeconds = function(timeVal: string) {
+    private convertToSeconds = function(timeVal: string) {
         /* end time is designated with asterisk by user, and represented by -1 in variables */
         if (timeVal == '*') return -1;
         let timeParts: string[] = timeVal.split(":");
@@ -5315,51 +5324,51 @@ namespace podcast {
         return minutes * 60 + seconds;
     }
 
-    export let restoreStartTime = function() {
+    restoreStartTime = function() {
         /* makes player always start wherever the user last was when they clicked "pause" */
-        if (player && startTimePending) {
-            player.currentTime = startTimePending;
-            startTimePending = null;
+        if (podcast.player && podcast.startTimePending) {
+            podcast.player.currentTime = podcast.startTimePending;
+            podcast.startTimePending = null;
         }
     }
 
-    export let onCanPlay = function(uid: string, elm: any): void {
-        player = elm;
-        restoreStartTime();
-        player.play();
+    onCanPlay = function(uid: string, elm: any): void {
+        podcast.player = elm;
+        podcast.restoreStartTime();
+        podcast.player.play();
     }
 
-    export let onTimeUpdate = function(uid: string, elm: any): void {
-        if (!pushTimer) {
+    onTimeUpdate = function(uid: string, elm: any): void {
+        if (!podcast.pushTimer) {
             /* ping server once every five minutes */
-            pushTimer = setInterval(pushTimerFunction, 5 * 60 * 1000);
+            podcast.pushTimer = setInterval(podcast.pushTimerFunction, 5 * 60 * 1000);
         }
         //console.log("CurrentTime=" + elm.currentTime);
-        player = elm;
+        podcast.player = elm;
 
         /* todo-1: we call restoreStartTime upon loading of the component but it doesn't seem to have the effect doing anything at all
         and can't even update the slider displayed position, until playins is STARTED. Need to come back and fix this because users
         currently have the glitch of always hearing the first fraction of a second of video, which of course another way to fix
         would be by altering the volumn to zero until restoreStartTime has gone into effect */
-        restoreStartTime();
+        podcast.restoreStartTime();
 
-        if (!adSegments) return;
-        for (let seg of adSegments) {
+        if (!podcast.adSegments) return;
+        for (let seg of podcast.adSegments) {
             /* endTime of -1 means the rest of the media should be considered ADs */
-            if (player.currentTime >= seg.beginTime && //
-                (player.currentTime <= seg.endTime || seg.endTime < 0)) {
+            if (podcast.player.currentTime >= seg.beginTime && //
+                (podcast.player.currentTime <= seg.endTime || seg.endTime < 0)) {
 
                 /* jump to end of audio if rest is an add, with logic of -3 to ensure we don't
                 go into a loop jumping to end over and over again */
-                if (seg.endTime < 0 && player.currentTime < player.duration - 3) {
+                if (seg.endTime < 0 && podcast.player.currentTime < podcast.player.duration - 3) {
                     /* jump to last to seconds of audio, i'll do this instead of pausing, in case
                      there are is more audio automatically about to play, we don't want to halt it all */
-                    player.loop = false;
-                    player.currentTime = player.duration - 2;
+                    podcast.player.loop = false;
+                    podcast.player.currentTime = podcast.player.duration - 2;
                 }
                 /* or else we are in a comercial segment so jump to one second past it */
                 else {
-                    player.currentTime = seg.endTime + 1
+                    podcast.player.currentTime = seg.endTime + 1;
                 }
                 return;
             }
@@ -5367,7 +5376,7 @@ namespace podcast {
     }
 
     /* todo-0: for production, boost this up to one minute */
-    export let pushTimerFunction = function(): void {
+    pushTimerFunction = function(): void {
         //console.log("pushTimer");
         /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
         but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
@@ -5375,34 +5384,34 @@ namespace podcast {
 
         todo-0: would everything work if 'player' WAS the jquery object always.
         */
-        if (player && !player.paused) {
+        if (podcast.player && !podcast.player.paused) {
             /* this safety check to be sure no hidden audio can still be playing should no longer be needed
             now that I have the close litener even on the dialog, but i'll leave this here anyway. Can't hurt. */
-            if (!$(player).is(":visible")) {
+            if (!$(podcast.player).is(":visible")) {
                 console.log("closing player, because it was detected as not visible. player dialog get hidden?");
-                player.pause();
+                podcast.player.pause();
             }
             //console.log("Autosave player info.");
-            savePlayerInfo(player.src, player.currentTime);
+            podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
         }
     }
 
     //This podcast handling hack is only in this file temporarily
-    export let pause = function(): void {
-        if (player) {
-            player.pause();
-            savePlayerInfo(player.src, player.currentTime);
+    pause = function(): void {
+        if (podcast.player) {
+            podcast.player.pause();
+            podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
         }
     }
 
-    export let destroyPlayer = function(dlg: AudioPlayerDlg): void {
-        if (player) {
-            player.pause();
+    destroyPlayer = function(dlg: AudioPlayerDlg): void {
+        if (podcast.player) {
+            podcast.player.pause();
 
             setTimeout(function() {
-                savePlayerInfo(player.src, player.currentTime);
-                let localPlayer = $(player);
-                player = null;
+                podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
+                let localPlayer = $(podcast.player);
+                podcast.player = null;
                 localPlayer.remove();
 
                 if (dlg) {
@@ -5412,44 +5421,46 @@ namespace podcast {
         }
     }
 
-    export let play = function(): void {
-        if (player) {
-            player.play();
+    play = function(): void {
+        if (podcast.player) {
+            podcast.player.play();
         }
     }
 
-    export let speed = function(rate: number): void {
-        if (player) {
-            player.playbackRate = rate;
+    speed = function(rate: number): void {
+        if (podcast.player) {
+            podcast.player.playbackRate = rate;
         }
     }
 
     //This podcast handling hack is only in this file temporarily
-    export let skip = function(delta: number): void {
-        if (player) {
-            player.currentTime += delta;
+    skip = function(delta: number): void {
+        if (podcast.player) {
+            podcast.player.currentTime += delta;
         }
     }
 
-    export let savePlayerInfo = function(url: string, timeOffset: number): void {
+    savePlayerInfo = function(url: string, timeOffset: number): void {
         if (meta64.isAnonUser) return;
 
-        util.json<json.SetPlayerInfoRequest, json.SetPlayerInfoResponse>("setPlayerInfo", {
+        util.json<SetPlayerInfoRequest, SetPlayerInfoResponse>("setPlayerInfo", {
             "url": url,
             "timeOffset": timeOffset //,
             //"nodePath": node.path
-        }, setPlayerInfoResponse);
+        }, podcast.setPlayerInfoResponse);
     }
 
-    let setPlayerInfoResponse = function(): void {
+    private setPlayerInfoResponse = function(): void {
         //alert('save complete.');
     }
 }
-namespace systemfolder {
+let podcast: Podcast = new Podcast();
 
-    export let renderNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+class SystemFolder {
+
+    renderNode = function(node: NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
-        let pathProp: json.PropertyInfo = props.getNodeProperty("meta64:path", node);
+        let pathProp: PropertyInfo = props.getNodeProperty("meta64:path", node);
         let path: string = "";
 
         if (pathProp) {
@@ -5460,7 +5471,7 @@ namespace systemfolder {
         /* This was an experiment to load a node property with the results of a directory listing, but I decided that
         really if I want to have a file browser, the right way to do that is to have a dedicated tab that can do it
         just like the other top-level tabs */
-        //let fileListingProp: json.PropertyInfo = props.getNodeProperty("meta64:json", node);
+        //let fileListingProp: PropertyInfo = props.getNodeProperty("meta64:json", node);
         //let fileListing = fileListingProp ? render.renderJsonFileSearchResultProperty(fileListingProp.value) : "";
 
         if (rowStyling) {
@@ -5477,10 +5488,10 @@ namespace systemfolder {
         return ret;
     }
 
-    export let renderFileListNode = function(node: json.NodeInfo, rowStyling: boolean): string {
+    renderFileListNode = function(node: NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
 
-        let searchResultProp: json.PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
+        let searchResultProp: PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
         if (searchResultProp) {
             let jcrContent = render.renderJsonFileSearchResultProperty(searchResultProp.value);
 
@@ -5499,40 +5510,40 @@ namespace systemfolder {
         return ret;
     }
 
-    export let fileListPropOrdering = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
+    fileListPropOrdering = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:json"];
 
         return props.orderProps(propOrder, properties);
     }
 
-    export let reindex = function() {
-        let selNode: json.NodeInfo = meta64.getHighlightedNode();
+    reindex = function() {
+        let selNode: NodeInfo = meta64.getHighlightedNode();
         if (selNode) {
-            util.json<json.FileSearchRequest, json.FileSearchResponse>("fileSearch", {
+            util.json<FileSearchRequest, FileSearchResponse>("fileSearch", {
                 "nodeId": selNode.id,
                 "reindex": true,
                 "searchText": null
-            }, reindexResponse, systemfolder);
+            }, systemfolder.reindexResponse, systemfolder);
         }
     }
 
-    export let browse = function() {
+    browse = function() {
         // This browse function works, but i'm disabling it, for now because what I'll be doing instead is making it
         // switch to a FileBrowser Tab (main tab) where browsing will all be done. No JCR nodes will be updated during
         // the process of browsing and editing files on the server.
         //
-        // let selNode: json.NodeInfo = meta64.getHighlightedNode();
+        // let selNode: NodeInfo = meta64.getHighlightedNode();
         // if (selNode) {
-        //     util.json<json.BrowseFolderRequest, json.BrowseFolderResponse>("browseFolder", {
+        //     util.json<BrowseFolderRequest, BrowseFolderResponse>("browseFolder", {
         //         "nodeId": selNode.path
         //     }, systemfolder.refreshResponse, systemfolder);
         // }
     }
 
-    export let refreshResponse = function(res: json.BrowseFolderResponse) {
+    refreshResponse = function(res: BrowseFolderResponse) {
         //nav.mainOffset = 0;
-        // util.json<json.RenderNodeRequest, json.RenderNodeResponse>("renderNode", {
+        // util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
         //     "nodeId": res.searchResultNodeId,
         //     "upLevel": null,
         //     "renderParentIfLeaf": null,
@@ -5541,21 +5552,22 @@ namespace systemfolder {
         // }, nav.navPageNodeResponse);
     }
 
-    export let reindexResponse = function(res: json.FileSearchResponse) {
+    reindexResponse = function(res: FileSearchResponse) {
         alert("Reindex complete.");
     }
 
-    export let search = function() {
+    search = function() {
         (new SearchFilesDlg(true)).open();
     }
 
-    export let propOrdering = function(node: json.NodeInfo, properties: json.PropertyInfo[]): json.PropertyInfo[] {
+    propOrdering = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:path"];
 
         return props.orderProps(propOrder, properties);
     }
 }
+let systemfolder: SystemFolder = new SystemFolder();
 /*
  * Base class for all dialog boxes.
  *
@@ -6161,7 +6173,7 @@ class SignupDlg extends DialogBase {
             return;
         }
 
-        util.json<json.SignupRequest, json.SignupResponse>("signup", {
+        util.json<SignupRequest, SignupResponse>("signup", {
             "userName": userName,
             "password": password,
             "email": email,
@@ -6169,7 +6181,7 @@ class SignupDlg extends DialogBase {
         }, this.signupResponse, this);
     }
 
-    signupResponse = (res: json.SignupResponse): void => {
+    signupResponse = (res: SignupResponse): void => {
         if (util.checkSuccess("Signup new user", res)) {
 
             /* close the signup dialog */
@@ -6245,7 +6257,7 @@ class PrefsDlg extends DialogBase {
         let showMetaDataCheckbox = util.polyElm(this.id("showMetaData"));
         meta64.showMetaData = showMetaDataCheckbox.node.checked;
 
-        util.json<json.SaveUserPreferencesRequest, json.SaveUserPreferencesResponse>("saveUserPreferences", {
+        util.json<SaveUserPreferencesRequest, SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": {
                 "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
@@ -6259,7 +6271,7 @@ class PrefsDlg extends DialogBase {
         }, this.savePreferencesResponse, this);
     }
 
-    savePreferencesResponse = (res: json.SaveUserPreferencesResponse): void => {
+    savePreferencesResponse = (res: SaveUserPreferencesResponse): void => {
         if (util.checkSuccess("Saving Preferences", res)) {
             meta64.selectTab("mainTabName");
             meta64.refresh();
@@ -6335,14 +6347,14 @@ class ExportDlg extends DialogBase {
         }
 
         if (highlightNode) {
-            util.json<json.ExportRequest, json.ExportResponse>("exportToXml", {
+            util.json<ExportRequest, ExportResponse>("exportToXml", {
                 "nodeId": highlightNode.id,
                 "targetFileName": targetFileName
             }, this.exportResponse, this);
         }
     }
 
-    exportResponse = (res: json.ExportResponse): void => {
+    exportResponse = (res: ExportResponse): void => {
         if (util.checkSuccess("Export", res)) {
             (new MessageDlg("Export Successful.")).open();
             meta64.selectTab("mainTabName");
@@ -6380,14 +6392,14 @@ class ImportDlg extends DialogBase {
         }
 
         if (highlightNode) {
-            util.json<json.ImportRequest, json.ImportResponse>("import", {
+            util.json<ImportRequest, ImportResponse>("import", {
                 "nodeId": highlightNode.id,
                 "sourceFileName": sourceFileName
             }, this.importResponse, this);
         }
     }
 
-    importResponse = (res: json.ImportResponse): void => {
+    importResponse = (res: ImportResponse): void => {
         if (util.checkSuccess("Import", res)) {
             (new MessageDlg("Import Successful.")).open();
             view.refreshTree(null, false);
@@ -6443,7 +6455,7 @@ class SearchContentDlg extends DialogBase {
             return;
         }
 
-        util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
+        util.json<NodeSearchRequest, NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": searchText,
             "sortDir": "",
@@ -6504,7 +6516,7 @@ class SearchTagsDlg extends DialogBase {
             return;
         }
 
-        util.json<json.NodeSearchRequest, json.NodeSearchResponse>("nodeSearch", {
+        util.json<NodeSearchRequest, NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": searchText,
             "sortDir": "",
@@ -6565,12 +6577,12 @@ class SearchFilesDlg extends DialogBase {
         }
 
         let nodeId: string = null;
-        let selNode: json.NodeInfo = meta64.getHighlightedNode();
+        let selNode: NodeInfo = meta64.getHighlightedNode();
         if (selNode) {
             nodeId = selNode.id;
         }
 
-        util.json<json.FileSearchRequest, json.FileSearchResponse>("fileSearch", {
+        util.json<FileSearchRequest, FileSearchResponse>("fileSearch", {
             "nodeId": nodeId,
             "reindex": false,
             "searchText": searchText
@@ -6619,7 +6631,7 @@ class ChangePasswordDlg extends DialogBase {
         this.pwd = this.getInputVal("changePassword1").trim();
 
         if (this.pwd && this.pwd.length >= 4) {
-            util.json<json.ChangePasswordRequest, json.ChangePasswordResponse>("changePassword", {
+            util.json<ChangePasswordRequest, ChangePasswordResponse>("changePassword", {
                 "newPassword": this.pwd,
                 "passCode": this.passCode
             }, this.changePasswordResponse, this);
@@ -6628,7 +6640,7 @@ class ChangePasswordDlg extends DialogBase {
         }
     }
 
-    changePasswordResponse = (res: json.ChangePasswordResponse) => {
+    changePasswordResponse = (res: ChangePasswordResponse) => {
         if (util.checkSuccess("Change password", res)) {
 
             var msg = "Password changed successfully.";
@@ -6687,7 +6699,7 @@ class ResetPasswordDlg extends DialogBase {
         var emailAddress = this.getInputVal("emailAddress").trim();
 
         if (userName && emailAddress) {
-            util.json<json.ResetPasswordRequest, json.ResetPasswordResponse>("resetPassword", {
+            util.json<ResetPasswordRequest, ResetPasswordResponse>("resetPassword", {
                 "user": userName,
                 "email": emailAddress
             }, this.resetPasswordResponse, this);
@@ -6696,7 +6708,7 @@ class ResetPasswordDlg extends DialogBase {
         }
     }
 
-    resetPasswordResponse = (res: json.ResetPasswordResponse): void => {
+    resetPasswordResponse = (res: ResetPasswordResponse): void => {
         if (util.checkSuccess("Reset password", res)) {
             (new MessageDlg("Password reset email was sent. Check your inbox.")).open();
         }
@@ -7050,14 +7062,14 @@ class UploadFromUrlDlg extends DialogBase {
 
         /* if uploading from URL */
         if (sourceUrl) {
-            util.json<json.UploadFromUrlRequest, json.UploadFromUrlResponse>("uploadFromUrl", {
+            util.json<UploadFromUrlRequest, UploadFromUrlResponse>("uploadFromUrl", {
                 "nodeId": attachment.uploadNode.id,
                 "sourceUrl": sourceUrl
             }, this.uploadFromUrlResponse, this);
         }
     }
 
-    uploadFromUrlResponse = (res: json.UploadFromUrlResponse): void => {
+    uploadFromUrlResponse = (res: UploadFromUrlResponse): void => {
         if (util.checkSuccess("Upload from URL", res)) {
             meta64.refresh();
         }
@@ -7291,10 +7303,10 @@ class EditNodeDlg extends DialogBase {
             propertyName: "tags",
             propertyValue: ""
         };
-        util.json<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse, this);
+        util.json<SavePropertyRequest, SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse, this);
     }
 
-    addTagsPropertyResponse = (res: json.SavePropertyResponse): void => {
+    addTagsPropertyResponse = (res: SavePropertyResponse): void => {
         if (util.checkSuccess("Add Tags Property", res)) {
             this.savePropertyResponse(res);
         }
@@ -7348,10 +7360,10 @@ class EditNodeDlg extends DialogBase {
     deletePropertyImmediate = (propName: string) => {
 
         var thiz = this;
-        util.json<json.DeletePropertyRequest, json.DeletePropertyResponse>("deleteProperty", {
+        util.json<DeletePropertyRequest, DeletePropertyResponse>("deleteProperty", {
             "nodeId": edit.editNode.id,
             "propName": propName
-        }, function(res: json.DeletePropertyResponse) {
+        }, function(res: DeletePropertyResponse) {
             thiz.deletePropertyResponse(res, propName);
         });
     }
@@ -7442,14 +7454,14 @@ class EditNodeDlg extends DialogBase {
 
         meta64.treeDirty = true;
         if (edit.nodeInsertTarget) {
-            util.json<json.InsertNodeRequest, json.InsertNodeResponse>("insertNode", {
+            util.json<InsertNodeRequest, InsertNodeResponse>("insertNode", {
                 "parentId": edit.parentOfNewNode.id,
                 "targetName": edit.nodeInsertTarget.name,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured"
             }, edit.insertNodeResponse, edit);
         } else {
-            util.json<json.CreateSubNodeRequest, json.CreateSubNodeResponse>("createSubNode", {
+            util.json<CreateSubNodeRequest, CreateSubNodeResponse>("createSubNode", {
                 "nodeId": edit.parentOfNewNode.id,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured",
@@ -7538,7 +7550,7 @@ class EditNodeDlg extends DialogBase {
                 sendNotification: edit.sendNotificationPendingSave
             };
             console.log("calling saveNode(). PostData=" + util.toJson(postData));
-            util.json<json.SaveNodeRequest, json.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
+            util.json<SaveNodeRequest, SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
                 savedId: edit.editNode.id
             });
             edit.sendNotificationPendingSave = false;
@@ -7695,15 +7707,15 @@ class EditNodeDlg extends DialogBase {
     }
 
     splitContent = (): void => {
-        let nodeBelow: json.NodeInfo = edit.getNodeBelow(edit.editNode);
-        util.json<json.SplitNodeRequest, json.SplitNodeResponse>("splitNode", {
+        let nodeBelow: NodeInfo = edit.getNodeBelow(edit.editNode);
+        util.json<SplitNodeRequest, SplitNodeResponse>("splitNode", {
             "nodeId": edit.editNode.id,
             "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
             "delimiter": null
         }, this.splitContentResponse);
     }
 
-    splitContentResponse = (res: json.SplitNodeResponse): void => {
+    splitContentResponse = (res: SplitNodeResponse): void => {
         if (util.checkSuccess("Split content", res)) {
             this.cancel();
             view.refreshTree(null, false);
@@ -7805,10 +7817,10 @@ class EditPropertyDlg extends DialogBase {
             propertyName: propertyNameData,
             propertyValue: propertyValueData
         };
-        util.json<json.SavePropertyRequest, json.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
+        util.json<SavePropertyRequest, SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
     }
 
-    savePropertyResponse = (res: json.SavePropertyResponse): void => {
+    savePropertyResponse = (res: SavePropertyResponse): void => {
         util.checkSuccess("Save properties", res);
 
         edit.editNode.properties.push(res.propertySaved);
@@ -7858,7 +7870,7 @@ class ShareToPersonDlg extends DialogBase {
          */
         meta64.treeDirty = true;
         var thiz = this;
-        util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+        util.json<AddPrivilegeRequest, AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,
             "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],
@@ -7866,7 +7878,7 @@ class ShareToPersonDlg extends DialogBase {
         }, thiz.reloadFromShareWithPerson, thiz);
     }
 
-    reloadFromShareWithPerson = (res: json.AddPrivilegeResponse): void => {
+    reloadFromShareWithPerson = (res: AddPrivilegeResponse): void => {
         if (util.checkSuccess("Share Node with Person", res)) {
             (new SharingDlg()).open();
         }
@@ -7912,7 +7924,7 @@ class SharingDlg extends DialogBase {
     reload = (): void => {
         console.log("Loading node sharing info.");
 
-        util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+        util.json<GetNodePrivilegesRequest, GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": share.sharingNode.id,
             "includeAcl": true,
             "includeOwners": true
@@ -7926,14 +7938,14 @@ class SharingDlg extends DialogBase {
      *
      * res.aclEntries = list of AccessControlEntryInfo.java json objects
      */
-    getNodePrivilegesResponse = (res: json.GetNodePrivilegesResponse): void => {
+    getNodePrivilegesResponse = (res: GetNodePrivilegesResponse): void => {
         this.populateSharingPg(res);
     }
 
     /*
      * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
      */
-    populateSharingPg = (res: json.GetNodePrivilegesResponse): void => {
+    populateSharingPg = (res: GetNodePrivilegesResponse): void => {
         var html = "";
         var This = this;
 
@@ -7977,7 +7989,7 @@ class SharingDlg extends DialogBase {
 
             meta64.treeDirty = true;
 
-            util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+            util.json<AddPrivilegeRequest, AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "privileges": null,
                 "principal": null,
@@ -7993,16 +8005,16 @@ class SharingDlg extends DialogBase {
          */
         meta64.treeDirty = true;
 
-        util.json<json.RemovePrivilegeRequest, json.RemovePrivilegeResponse>("removePrivilege", {
+        util.json<RemovePrivilegeRequest, RemovePrivilegeResponse>("removePrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": principal,
             "privilege": privilege
         }, this.removePrivilegeResponse, this);
     }
 
-    removePrivilegeResponse = (res: json.RemovePrivilegeResponse): void => {
+    removePrivilegeResponse = (res: RemovePrivilegeResponse): void => {
 
-        util.json<json.GetNodePrivilegesRequest, json.GetNodePrivilegesResponse>("getNodePrivileges", {
+        util.json<GetNodePrivilegesRequest, GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": share.sharingNode.path,
             "includeAcl": true,
             "includeOwners": true
@@ -8046,7 +8058,7 @@ class SharingDlg extends DialogBase {
          *
          * TODO: this additional call can be avoided as an optimization
          */
-        util.json<json.AddPrivilegeRequest, json.AddPrivilegeResponse>("addPrivilege", {
+        util.json<AddPrivilegeRequest, AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": "everyone",
             "privileges": ["read"],
@@ -8097,15 +8109,15 @@ class RenameNodeDlg extends DialogBase {
         var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
         var thiz = this;
-        util.json<json.RenameNodeRequest, json.RenameNodeResponse>("renameNode", {
+        util.json<RenameNodeRequest, RenameNodeResponse>("renameNode", {
             "nodeId": highlightNode.id,
             "newName": newName
-        }, function(res: json.RenameNodeResponse) {
+        }, function(res: RenameNodeResponse) {
             thiz.renameNodeResponse(res, renamingRootNode);
         });
     }
 
-    renameNodeResponse = (res: json.RenameNodeResponse, renamingPageRoot: boolean): void => {
+    renameNodeResponse = (res: RenameNodeResponse, renamingPageRoot: boolean): void => {
         if (util.checkSuccess("Rename node", res)) {
             if (renamingPageRoot) {
                 view.refreshTree(res.newId, true);
@@ -8152,12 +8164,12 @@ class AudioPlayerDlg extends DialogBase {
     build = (): string => {
         let header = this.makeHeader("Audio Player");
 
-        let node: json.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
+        let node: NodeInfo = meta64.uidToNodeMap[this.nodeUid];
         if (!node) {
             throw `unknown node uid: ${this.nodeUid}`;
         }
 
-        let rssTitle: json.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
+        let rssTitle: PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
 
         /* This is where I need a short name of the media being played */
         let description = render.tag("p", {
@@ -8350,7 +8362,7 @@ class CreateNodeDlg extends DialogBase {
     }
 
     init = (): void => {
-        let node: json.NodeInfo = meta64.getHighlightedNode();
+        let node: NodeInfo = meta64.getHighlightedNode();
         if (node) {
             let canInsertInline: boolean = meta64.homeNodeId != node.id;
             if (canInsertInline) {

@@ -132,38 +132,23 @@
             /*<![CDATA[*/
                 console.log("registering WebComponentsReady listener.");
                 
-    			var webComponentsReady = false;
+    			//var webComponentsReady = false;
     			addEventListener("WebComponentsReady", function() {
                     console.log("WebComponentsReady event.");
-    				webComponentsReady = true;
-    			});
-    
-                console.log("SystemJS.config()");
-    			SystemJS.config({
-    				baseURL : '/js'
-    			});
-    
-    			//todo-1: need to get this from the properties (see html.scripts above)
-    			//SystemJS.import("meta64-app.js");
-    
-                console.log("SystemJS.import({{html.mainModule}})");
+                                 console.log("SystemJS.config()");
+                    SystemJS.config({
+                        baseURL : '/js'
+                    });
+       
+                    console.log("SystemJS.import({{html.mainModule}})");
                 
-    			System.import("{{html.mainModule}}").then(function(m) {
-    				console.log("Adding WebComponentsReady event listener.");
+                    System.import("{{html.mainModule}}").then(function(init) {
+                        console.log("Main Module Loaded.");    
+                    });
     
-    				var webComponentsReadyTimer = setInterval(function() {
-    
-    					if (webComponentsReady) {
-    						clearTimeout(webComponentsReadyTimer);
-                            if (!m64) {
-                                throw new "m64 is null";
-                            }
-    						m64.meta64.initApp();
-    					}
-    
-    				}, 100);
+                    /////////////////////////////////////
     			});
-    
+   
     			// Tell RequireJS where ace is located
     			   /*
     			   require.config({

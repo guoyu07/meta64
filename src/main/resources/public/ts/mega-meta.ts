@@ -476,24 +476,24 @@ class SubProp {
     }
 }
 
-namespace util {
+class Util {
 
-    export let logAjax: boolean = false;
-    export let timeoutMessageShown: boolean = false;
-    export let offline: boolean = false;
+    logAjax: boolean = false;
+    timeoutMessageShown: boolean = false;
+    offline: boolean = false;
 
-    export let waitCounter: number = 0;
-    export let pgrsDlg: any = null;
+    waitCounter: number = 0;
+    pgrsDlg: any = null;
 
-    export let escapeRegExp = function(_) {
+    escapeRegExp = function(_) {
         return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
-    export let escapeForAttrib = function(_) {
+    escapeForAttrib = function(_) {
         return util.replaceAll(_, "\"", "&quot;");
     }
 
-    export let unencodeHtml = function(_) {
+    unencodeHtml = function(_) {
         if (!util.contains(_, "&"))
             return _;
 
@@ -507,30 +507,30 @@ namespace util {
         return ret;
     }
 
-    export let replaceAll = function(_, find, replace) {
+    replaceAll = function(_, find, replace) {
         return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
     }
 
-    export let contains = function(_, str) {
+    contains = function(_, str) {
         return _.indexOf(str) != -1;
     }
 
-    export let startsWith = function(_, str) {
+    startsWith = function(_, str) {
         return _.indexOf(str) === 0;
     }
 
-    export let stripIfStartsWith = function(_, str) {
+    stripIfStartsWith = function(_, str) {
         if (_.startsWith(str)) {
             return _.substring(str.length);
         }
         return _;
     }
 
-    export let arrayClone = function(_: any[]) {
+    arrayClone = function(_: any[]) {
         return _.slice(0);
     };
 
-    export let arrayIndexOfItemByProp = function(_: any[], propName, propVal) {
+    arrayIndexOfItemByProp = function(_: any[], propName, propVal) {
         var len = _.length;
         for (var i = 0; i < len; i++) {
             if (_[i][propName] === propVal) {
@@ -543,21 +543,21 @@ namespace util {
     /* need to test all calls to this method because i noticed during TypeScript conversion i wasn't even returning
     a value from this function! todo-0
     */
-    export let arrayMoveItem = function(_: any[], fromIndex, toIndex) {
+    arrayMoveItem = function(_: any[], fromIndex, toIndex) {
         _.splice(toIndex, 0, _.splice(fromIndex, 1)[0]);
     };
 
-    export let stdTimezoneOffset = function(_: Date) {
+    static stdTimezoneOffset = function(_: Date) {
         var jan = new Date(_.getFullYear(), 0, 1);
         var jul = new Date(_.getFullYear(), 6, 1);
         return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
     }
 
-    export let dst = function(_: Date) {
-        return _.getTimezoneOffset() < stdTimezoneOffset(_);
+    static dst = function(_: Date) {
+        return _.getTimezoneOffset() < Util.stdTimezoneOffset(_);
     }
 
-    export let indexOfObject = function(_: any[], obj) {
+    indexOfObject = function(_: any[], obj) {
         for (var i = 0; i < _.length; i++) {
             if (_[i] === obj) {
                 return i;
@@ -571,7 +571,7 @@ namespace util {
     //		return JSON.stringify(this, null, 4);
     //	};
 
-    export let assertNotNull = function(varName) {
+    assertNotNull = function(varName) {
         if (typeof eval(varName) === 'undefined') {
             (new MessageDlg("Variable not found: " + varName)).open()
         }
@@ -581,11 +581,11 @@ namespace util {
      * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
      * session is only allowed one concurrent call and simultaneous calls would just "queue up".
      */
-    let _ajaxCounter: number = 0;
+    private _ajaxCounter: number = 0;
 
-    export let daylightSavingsTime: boolean = (util.dst(new Date())) ? true : false;
+    daylightSavingsTime: boolean = (Util.dst(new Date())) ? true : false;
 
-    export let toJson = function(obj) {
+    toJson = function(obj) {
         return JSON.stringify(obj, null, 4);
     }
 
@@ -593,7 +593,7 @@ namespace util {
      * This came from here:
      * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    export let getParameterByName = function(name?: any, url?: any): string {
+    getParameterByName = function(name?: any, url?: any): string {
         if (!url)
             url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -610,36 +610,36 @@ namespace util {
      * child so that methods can be added to it, which will behave like member functions in classic OOP with
      * inheritance hierarchies.
      */
-    export let inherit = function(parent, child): any {
+    inherit = function(parent, child): any {
         child.prototype.constructor = child;
         child.prototype = Object.create(parent.prototype);
         return child.prototype;
     }
 
-    export let initProgressMonitor = function(): void {
-        setInterval(progressInterval, 1000);
+    initProgressMonitor = function(): void {
+        setInterval(util.progressInterval, 1000);
     }
 
-    export let progressInterval = function(): void {
-        var isWaiting = isAjaxWaiting();
+    progressInterval = function(): void {
+        var isWaiting = util.isAjaxWaiting();
         if (isWaiting) {
-            waitCounter++;
-            if (waitCounter >= 3) {
-                if (!pgrsDlg) {
-                    pgrsDlg = new ProgressDlg();
-                    pgrsDlg.open();
+            util.waitCounter++;
+            if (util.waitCounter >= 3) {
+                if (!util.pgrsDlg) {
+                    util.pgrsDlg = new ProgressDlg();
+                    util.pgrsDlg.open();
                 }
             }
         } else {
-            waitCounter = 0;
-            if (pgrsDlg) {
-                pgrsDlg.cancel();
-                pgrsDlg = null;
+            util.waitCounter = 0;
+            if (util.pgrsDlg) {
+                util.pgrsDlg.cancel();
+                util.pgrsDlg = null;
             }
         }
     }
 
-    export let json = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
+    json = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
         callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, callbackPayload?: any) {
 
         if (callbackThis === window) {
@@ -650,12 +650,12 @@ namespace util {
         var ironRequest;
 
         try {
-            if (offline) {
+            if (util.offline) {
                 console.log("offline: ignoring call for " + postName);
                 return;
             }
 
-            if (logAjax) {
+            if (util.logAjax) {
                 console.log("JSON-POST[gen]: [" + postName + "]" + JSON.stringify(postData));
             }
 
@@ -663,7 +663,7 @@ namespace util {
             // var ironAjax = this.$$("#myIronAjax");
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
 
-            ironAjax = polyElmNode("ironAjax");
+            ironAjax = util.polyElmNode("ironAjax");
 
             ironAjax.url = postTargetUrl + postName;
             ironAjax.verbose = true;
@@ -683,7 +683,7 @@ namespace util {
             ironAjax.debounceDuration = "300"; // debounce-duration (is
             // prop)
 
-            _ajaxCounter++;
+            util._ajaxCounter++;
             ironRequest = ironAjax.generateRequest();
         } catch (ex) {
             util.logAndReThrow("Failed starting request: " + postName, ex);
@@ -711,10 +711,10 @@ namespace util {
             // Handle Success
             function() {
                 try {
-                    _ajaxCounter--;
-                    progressInterval();
+                    util._ajaxCounter--;
+                    util.progressInterval();
 
-                    if (logAjax) {
+                    if (util.logAjax) {
                         console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
                             + JSON.stringify(ironRequest.response));
                     }
@@ -745,23 +745,23 @@ namespace util {
                         }
                     }
                 } catch (ex) {
-                    logAndReThrow("Failed handling result of: " + postName, ex);
+                    util.logAndReThrow("Failed handling result of: " + postName, ex);
                 }
 
             },
             // Handle Fail
             function() {
                 try {
-                    _ajaxCounter--;
-                    progressInterval();
+                    util._ajaxCounter--;
+                    util.progressInterval();
                     console.log("Error in util.json");
 
                     if (ironRequest.status == "403") {
                         console.log("Not logged in detected in util.");
-                        offline = true;
+                        util.offline = true;
 
-                        if (!timeoutMessageShown) {
-                            timeoutMessageShown = true;
+                        if (!util.timeoutMessageShown) {
+                            util.timeoutMessageShown = true;
                             (new MessageDlg("Session timed out. Page will refresh.")).open();
                         }
 
@@ -792,14 +792,14 @@ namespace util {
                     // }
                     (new MessageDlg(msg)).open();
                 } catch (ex) {
-                    logAndReThrow("Failed processing server-side fail of: " + postName, ex);
+                    util.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
                 }
             });
 
         return ironRequest;
     }
 
-    export let logAndThrow = function(message: string) {
+    logAndThrow = function(message: string) {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -809,7 +809,7 @@ namespace util {
         throw message;
     }
 
-    export let logAndReThrow = function(message: string, exception: any) {
+    logAndReThrow = function(message: string, exception: any) {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -819,20 +819,20 @@ namespace util {
         throw exception;
     }
 
-    export let ajaxReady = function(requestName): boolean {
-        if (_ajaxCounter > 0) {
+    ajaxReady = function(requestName): boolean {
+        if (util._ajaxCounter > 0) {
             console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
             return false;
         }
         return true;
     }
 
-    export let isAjaxWaiting = function(): boolean {
-        return _ajaxCounter > 0;
+    isAjaxWaiting = function(): boolean {
+        return util._ajaxCounter > 0;
     }
 
     /* set focus to element by id (id must be actual jquery selector) */
-    export let delayedFocus = function(id): void {
+    delayedFocus = function(id): void {
         /* so user sees the focus fast we try at .5 seconds */
         setTimeout(function() {
             $(id).focus();
@@ -852,7 +852,7 @@ namespace util {
      *
      * requires: res.success res.message
      */
-    export let checkSuccess = function(opFriendlyName, res): boolean {
+    checkSuccess = function(opFriendlyName, res): boolean {
         if (!res.success) {
             (new MessageDlg(opFriendlyName + " failed: " + res.message)).open();
         }
@@ -860,7 +860,7 @@ namespace util {
     }
 
     /* adds all array objects to obj as a set */
-    export let addAll = function(obj, a): void {
+    addAll = function(obj, a): void {
         for (var i = 0; i < a.length; i++) {
             if (!a[i]) {
                 console.error("null element in addAll at idx=" + i);
@@ -870,7 +870,7 @@ namespace util {
         }
     }
 
-    export let nullOrUndef = function(obj): boolean {
+    nullOrUndef = function(obj): boolean {
         return obj === null || obj === undefined;
     }
 
@@ -878,7 +878,7 @@ namespace util {
      * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
      * 'hashset-type' implementation
      */
-    export let getUidForId = function(map: { [key: string]: string }, id): string {
+    getUidForId = function(map: { [key: string]: string }, id): string {
         /* look for uid in map */
         let uid: string = map[id];
 
@@ -890,7 +890,7 @@ namespace util {
         return uid;
     }
 
-    export let elementExists = function(id): boolean {
+    elementExists = function(id): boolean {
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
         }
@@ -905,15 +905,15 @@ namespace util {
     }
 
     /* Takes textarea dom Id (# optional) and returns its value */
-    export let getTextAreaValById = function(id): string {
-        var de: HTMLElement = domElm(id);
+    getTextAreaValById = function(id): string {
+        var de: HTMLElement = util.domElm(id);
         return (<HTMLInputElement>de).value;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    export let domElm = function(id): any {
+    domElm = function(id): any {
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
         }
@@ -930,14 +930,14 @@ namespace util {
         return e;
     }
 
-    export let poly = function(id): any {
-        return polyElm(id).node;
+    poly = function(id): any {
+        return util.polyElm(id).node;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    export let polyElm = function(id: string): any {
+    polyElm = function(id: string): any {
 
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
@@ -955,15 +955,15 @@ namespace util {
         return Polymer.dom(e);
     }
 
-    export let polyElmNode = function(id: string): any {
-        var e = polyElm(id);
+    polyElmNode = function(id: string): any {
+        var e = util.polyElm(id);
         return e.node;
     }
 
     /*
      * Gets the element and displays an error message if it's not found
      */
-    export let getRequiredElement = function(id: string): any {
+    getRequiredElement = function(id: string): any {
         var e = $(id);
         if (e == null) {
             console.log("getRequiredElement. Required element id not found: " + id);
@@ -971,39 +971,39 @@ namespace util {
         return e;
     }
 
-    export let isObject = function(obj: any): boolean {
+    isObject = function(obj: any): boolean {
         return obj && obj.length != 0;
     }
 
-    export let currentTimeMillis = function(): number {
+    currentTimeMillis = function(): number {
         return new Date().getMilliseconds();
     }
 
-    export let emptyString = function(val: string): boolean {
+    emptyString = function(val: string): boolean {
         return !val || val.length == 0;
     }
 
-    export let getInputVal = function(id: string): any {
-        return polyElm(id).node.value;
+    getInputVal = function(id: string): any {
+        return util.polyElm(id).node.value;
     }
 
     /* returns true if element was found, or false if element not found */
-    export let setInputVal = function(id: string, val: string): boolean {
+    setInputVal = function(id: string, val: string): boolean {
         if (val == null) {
             val = "";
         }
-        var elm = polyElm(id);
+        var elm = util.polyElm(id);
         if (elm) {
             elm.node.value = val;
         }
         return elm != null;
     }
 
-    export let bindEnterKey = function(id: string, func: any) {
-        bindKey(id, func, 13);
+    bindEnterKey = function(id: string, func: any) {
+        util.bindKey(id, func, 13);
     }
 
-    export let bindKey = function(id: string, func: any, keyCode: any): boolean {
+    bindKey = function(id: string, func: any, keyCode: any): boolean {
         $(id).keypress(function(e) {
             if (e.which == keyCode) { // 13==enter key code
                 func();
@@ -1018,7 +1018,7 @@ namespace util {
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
      */
-    export let changeOrAddClass = function(elm: string, oldClass: string, newClass: string) {
+    changeOrAddClass = function(elm: string, oldClass: string, newClass: string) {
         var elmement = $(elm);
         elmement.toggleClass(oldClass, false);
         elmement.toggleClass(newClass, true);
@@ -1027,7 +1027,7 @@ namespace util {
     /*
      * displays message (msg) of object is not of specified type
      */
-    export let verifyType = function(obj: any, type: any, msg: string) {
+    verifyType = function(obj: any, type: any, msg: string) {
         if (typeof obj !== type) {
             (new MessageDlg(msg)).open();
             return false;
@@ -1035,12 +1035,12 @@ namespace util {
         return true;
     }
 
-    export let setHtml = function(id: string, content: string): void {
+    setHtml = function(id: string, content: string): void {
         if (content == null) {
             content = "";
         }
 
-        var elm = domElm(id);
+        var elm = util.domElm(id);
         var polyElm = Polymer.dom(elm);
 
         //For Polymer 1.0.0, you need this...
@@ -1052,7 +1052,7 @@ namespace util {
         Polymer.updateStyles();
     }
 
-    export let getPropertyCount = function(obj: Object): number {
+    getPropertyCount = function(obj: Object): number {
         var count = 0;
         var prop;
 
@@ -1067,7 +1067,7 @@ namespace util {
     /*
      * iterates over an object creating a string containing it's keys and values
      */
-    export let printObject = function(obj: Object): string {
+    printObject = function(obj: Object): string {
         if (!obj) {
             return "null";
         }
@@ -1092,7 +1092,7 @@ namespace util {
     }
 
     /* iterates over an object creating a string containing it's keys */
-    export let printKeys = function(obj: Object): string {
+    printKeys = function(obj: Object): string {
         if (!obj)
             return "null";
 
@@ -1115,11 +1115,11 @@ namespace util {
      *
      * eleId can be a DOM element or the ID of a dom element, with or without leading #
      */
-    export let setEnablement = function(elmId: string, enable: boolean): void {
+    setEnablement = function(elmId: string, enable: boolean): void {
 
         var elm = null;
         if (typeof elmId == "string") {
-            elm = domElm(elmId);
+            elm = util.domElm(elmId);
         } else {
             elm = elmId;
         }
@@ -1143,11 +1143,11 @@ namespace util {
      *
      * eleId can be a DOM element or the ID of a dom element, with or without leading #
      */
-    export let setVisibility = function(elmId: string, vis: boolean): void {
+    setVisibility = function(elmId: string, vis: boolean): void {
 
         var elm = null;
         if (typeof elmId == "string") {
-            elm = domElm(elmId);
+            elm = util.domElm(elmId);
         } else {
             elm = elmId;
         }
@@ -1172,12 +1172,13 @@ namespace util {
 
     * ex: var example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
     */
-    export let getInstance = function <T>(context: Object, name: string, ...args: any[]): T {
+    getInstance = function <T>(context: Object, name: string, ...args: any[]): T {
         var instance = Object.create(context[name].prototype);
         instance.constructor.apply(instance, args);
         return <T>instance;
     }
 }
+let util:Util = new Util();
 
 namespace jcrCnst {
 
@@ -1216,19 +1217,19 @@ namespace jcrCnst {
     export let IMG_HEIGHT: string = "imgHeight";
 }
 
-namespace attachment {
+class Attachment {
     /* Node being uploaded to */
-    export let uploadNode: any = null;
+    uploadNode: any = null;
 
-    export let openUploadFromFileDlg = function(): void {
+    openUploadFromFileDlg = function(): void {
         let node: json.NodeInfo = meta64.getHighlightedNode();
         if (!node) {
-            uploadNode = null;
+            attachment.uploadNode = null;
             (new MessageDlg("No node is selected.")).open();
             return;
         }
 
-        uploadNode = node;
+        attachment.uploadNode = node;
         (new UploadFromFileDropzoneDlg()).open();
 
         /* Note: To run legacy uploader just put this version of the dialog here, and
@@ -1238,20 +1239,20 @@ namespace attachment {
         */
     }
 
-    export let openUploadFromUrlDlg = function(): void {
+    openUploadFromUrlDlg = function(): void {
         let node: json.NodeInfo = meta64.getHighlightedNode();
 
         if (!node) {
-            uploadNode = null;
+            attachment.uploadNode = null;
             (new MessageDlg("No node is selected.")).open();
             return;
         }
 
-        uploadNode = node;
+        attachment.uploadNode = node;
         (new UploadFromUrlDlg()).open();
     }
 
-    export let deleteAttachment = function(): void {
+    deleteAttachment = function(): void {
         let node: json.NodeInfo = meta64.getHighlightedNode();
 
         if (node) {
@@ -1259,12 +1260,12 @@ namespace attachment {
                 function() {
                     util.json<json.DeleteAttachmentRequest, json.DeleteAttachmentResponse>("deleteAttachment", {
                         "nodeId": node.id
-                    }, deleteAttachmentResponse, null, node.uid);
+                    }, attachment.deleteAttachmentResponse, null, node.uid);
                 })).open();
         }
     }
 
-    export let deleteAttachmentResponse = function(res: json.DeleteAttachmentResponse, uid: any): void {
+    deleteAttachmentResponse = function(res: json.DeleteAttachmentResponse, uid: any): void {
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.
@@ -1272,14 +1273,15 @@ namespace attachment {
         }
     }
 }
+let attachment:Attachment = new Attachment();
 
-namespace edit {
+class Edit {
 
-    export let createNode = function(): void {
+    createNode = function(): void {
         (new CreateNodeDlg()).open();
     }
 
-    let insertBookResponse = function(res: json.InsertBookResponse): void {
+    private insertBookResponse = function(res: json.InsertBookResponse): void {
         console.log("insertBookResponse running.");
 
         util.checkSuccess("Insert Book", res);
@@ -1288,7 +1290,7 @@ namespace edit {
         view.scrollToSelectedNode();
     }
 
-    let deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
+    private deleteNodesResponse = function(res: json.DeleteNodesResponse, payload: Object): void {
         if (util.checkSuccess("Delete node", res)) {
             meta64.clearSelectedNodes();
             let highlightId: string = null;
@@ -1303,7 +1305,7 @@ namespace edit {
         }
     }
 
-    let initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
+    private initNodeEditResponse = function(res: json.InitNodeEditResponse): void {
         if (util.checkSuccess("Editing node", res)) {
             let node: json.NodeInfo = res.nodeInfo;
             let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
@@ -1322,51 +1324,51 @@ namespace edit {
                  * Server will have sent us back the raw text content, that should be markdown instead of any HTML, so
                  * that we can display this and save.
                  */
-                editNode = res.nodeInfo;
-                editNodeDlgInst = new EditNodeDlg();
-                editNodeDlgInst.open();
+                edit.editNode = res.nodeInfo;
+                edit.editNodeDlgInst = new EditNodeDlg();
+                edit.editNodeDlgInst.open();
             } else {
                 (new MessageDlg("You cannot edit nodes that you don't own.")).open();
             }
         }
     }
 
-    let moveNodesResponse = function(res: json.MoveNodesResponse): void {
+    private moveNodesResponse = function(res: json.MoveNodesResponse): void {
         if (util.checkSuccess("Move nodes", res)) {
-            nodesToMove = null; // reset
-            nodesToMoveSet = {};
+            edit.nodesToMove = null; // reset
+            edit.nodesToMoveSet = {};
             view.refreshTree(null, false);
         }
     }
 
-    let setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
+    private setNodePositionResponse = function(res: json.SetNodePositionResponse): void {
         if (util.checkSuccess("Change node position", res)) {
             meta64.refresh();
         }
     }
 
-    export let showReadOnlyProperties: boolean = true;
+    showReadOnlyProperties: boolean = true;
     /*
      * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
      */
-    export let nodesToMove: any = null;
+    nodesToMove: any = null;
 
     /* todo-1: need to find out if there's a better way to do an ordered set in javascript so I don't need
     both nodesToMove and nodesToMoveSet
     */
-    export let nodesToMoveSet: Object = {};
+    nodesToMoveSet: Object = {};
 
-    export let parentOfNewNode: json.NodeInfo = null;
+    parentOfNewNode: json.NodeInfo = null;
 
     /*
      * indicates editor is displaying a node that is not yet saved on the server
      */
-    export let editingUnsavedNode: boolean = false;
+    editingUnsavedNode: boolean = false;
 
     /*
      * node (NodeInfo.java) that is being created under when new node is created
      */
-    export let sendNotificationPendingSave: boolean = false;
+    sendNotificationPendingSave: boolean = false;
 
     /*
      * Node being edited
@@ -1374,10 +1376,10 @@ namespace edit {
      * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
      * coupling/responsibility?
      */
-    export let editNode: json.NodeInfo = null;
+    editNode: json.NodeInfo = null;
 
     /* Instance of EditNodeDialog: For now creating new one each time */
-    export let editNodeDlgInst: EditNodeDlg = null;
+    editNodeDlgInst: EditNodeDlg = null;
 
     /*
      * type=NodeInfo.java
@@ -1387,10 +1389,10 @@ namespace edit {
      * creating in a 'create under parent' mode, versus non-null meaning 'insert inline' type of insert.
      *
      */
-    export let nodeInsertTarget: any = null;
+    nodeInsertTarget: any = null;
 
     /* returns true if we can 'try to' insert under 'node' or false if not */
-    export let isEditAllowed = function(node: any): boolean {
+    isEditAllowed = function(node: any): boolean {
         return meta64.userPreferences.editMode && node.path != "/" &&
             /*
              * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
@@ -1400,15 +1402,15 @@ namespace edit {
     }
 
     /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
-    export let isInsertAllowed = function(node: any): boolean {
+    isInsertAllowed = function(node: any): boolean {
         return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
     }
 
-    export let startEditingNewNode = function(typeName?: string, createAtTop?: boolean): void {
-        editingUnsavedNode = false;
-        editNode = null;
-        editNodeDlgInst = new EditNodeDlg(typeName, createAtTop);
-        editNodeDlgInst.saveNewNode("");
+    startEditingNewNode = function(typeName?: string, createAtTop?: boolean): void {
+        edit.editingUnsavedNode = false;
+        edit.editNode = null;
+        edit.editNodeDlgInst = new EditNodeDlg(typeName, createAtTop);
+        edit.editNodeDlgInst.saveNewNode("");
     }
 
     /*
@@ -1423,29 +1425,29 @@ namespace edit {
      * that will cause the GUI to always prompt for the node name before creating the node. This was the original
      * functionality and still works.
      */
-    export let startEditingNewNodeWithName = function(): void {
-        editingUnsavedNode = true;
-        editNode = null;
-        editNodeDlgInst = new EditNodeDlg();
-        editNodeDlgInst.open();
+    startEditingNewNodeWithName = function(): void {
+        edit.editingUnsavedNode = true;
+        edit.editNode = null;
+        edit.editNodeDlgInst = new EditNodeDlg();
+        edit.editNodeDlgInst.open();
     }
 
-    export let insertNodeResponse = function(res: json.InsertNodeResponse): void {
+    insertNodeResponse = function(res: json.InsertNodeResponse): void {
         if (util.checkSuccess("Insert node", res)) {
             meta64.initNode(res.newNode, true);
             meta64.highlightNode(res.newNode, true);
-            runEditNode(res.newNode.uid);
+            edit.runEditNode(res.newNode.uid);
         }
     }
 
-    export let createSubNodeResponse = function(res: json.CreateSubNodeResponse): void {
+    createSubNodeResponse = function(res: json.CreateSubNodeResponse): void {
         if (util.checkSuccess("Create subnode", res)) {
             meta64.initNode(res.newNode, true);
-            runEditNode(res.newNode.uid);
+            edit.runEditNode(res.newNode.uid);
         }
     }
 
-    export let saveNodeResponse = function(res: json.SaveNodeResponse, payload: any): void {
+    saveNodeResponse = function(res: json.SaveNodeResponse, payload: any): void {
         if (util.checkSuccess("Save node", res)) {
             /* becasuse I don't understand 'editingUnsavedNode' variable any longer until i refresh my memory, i will use
             the old approach of refreshing entire tree rather than more efficient refresnNodeOnPage, becuase it requires
@@ -1457,7 +1459,7 @@ namespace edit {
         }
     }
 
-    export let editMode = function(modeVal?: boolean): void {
+    editMode = function(modeVal?: boolean): void {
         if (typeof modeVal != 'undefined') {
             meta64.userPreferences.editMode = modeVal;
         }
@@ -1477,7 +1479,7 @@ namespace edit {
         meta64.saveUserPreferences();
     }
 
-    export let moveNodeUp = function(uid?: string): void {
+    moveNodeUp = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: json.NodeInfo = meta64.getHighlightedNode();
@@ -1490,13 +1492,13 @@ namespace edit {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[nodeAbove]"
-            }, setNodePositionResponse);
+            }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    export let moveNodeDown = function(uid?: string): void {
+    moveNodeDown = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: json.NodeInfo = meta64.getHighlightedNode();
@@ -1509,13 +1511,13 @@ namespace edit {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": "[nodeBelow]",
                 "siblingId": node.name
-            }, setNodePositionResponse);
+            }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    export let moveNodeToTop = function(uid?: string): void {
+    moveNodeToTop = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: json.NodeInfo = meta64.getHighlightedNode();
@@ -1528,13 +1530,13 @@ namespace edit {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[topNode]"
-            }, setNodePositionResponse);
+            }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    export let moveNodeToBottom = function(uid?: string): void {
+    moveNodeToBottom = function(uid?: string): void {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: json.NodeInfo = meta64.getHighlightedNode();
@@ -1547,7 +1549,7 @@ namespace edit {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": node.name,
                 "siblingId": null
-            }, setNodePositionResponse);
+            }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
@@ -1556,7 +1558,7 @@ namespace edit {
     /*
      * Returns the node above the specified node or null if node is itself the top node
      */
-    export let getNodeAbove = function(node): any {
+    getNodeAbove = function(node): any {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)
             return null;
@@ -1566,7 +1568,7 @@ namespace edit {
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
-    export let getNodeBelow = function(node: any): json.NodeInfo {
+    getNodeBelow = function(node: any): json.NodeInfo {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
         if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -1575,29 +1577,29 @@ namespace edit {
         return meta64.currentNodeData.children[ordinal + 1];
     }
 
-    export let getFirstChildNode = function(): any {
+    getFirstChildNode = function(): any {
         if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
         return meta64.currentNodeData.children[0];
     }
 
-    export let runEditNode = function(uid: any): void {
+    runEditNode = function(uid: any): void {
         let node: json.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
-            editNode = null;
+            edit.editNode = null;
             (new MessageDlg("Unknown nodeId in editNodeClick: " + uid)).open();
             return;
         }
-        editingUnsavedNode = false;
+        edit.editingUnsavedNode = false;
 
         util.json<json.InitNodeEditRequest, json.InitNodeEditResponse>("initNodeEdit", {
             "nodeId": node.id
-        }, initNodeEditResponse);
+        }, edit.initNodeEditResponse);
     }
 
-    export let insertNode = function(uid?: any, typeName?: string): void {
+    insertNode = function(uid?: any, typeName?: string): void {
 
-        parentOfNewNode = meta64.currentNode;
-        if (!parentOfNewNode) {
+        edit.parentOfNewNode = meta64.currentNode;
+        if (!edit.parentOfNewNode) {
             console.log("Unknown parent");
             return;
         }
@@ -1614,12 +1616,12 @@ namespace edit {
         }
 
         if (node) {
-            nodeInsertTarget = node;
-            startEditingNewNode(typeName);
+            edit.nodeInsertTarget = node;
+            edit.startEditingNewNode(typeName);
         }
     }
 
-    export let createSubNode = function(uid?: any, typeName?: string, createAtTop?: boolean): void {
+    createSubNode = function(uid?: any, typeName?: string, createAtTop?: boolean): void {
 
         /*
          * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page), or any selected
@@ -1628,14 +1630,14 @@ namespace edit {
         if (!uid) {
             let highlightNode: json.NodeInfo = meta64.getHighlightedNode();
             if (highlightNode) {
-                parentOfNewNode = highlightNode;
+                edit.parentOfNewNode = highlightNode;
             }
             else {
-                parentOfNewNode = meta64.currentNode;
+                edit.parentOfNewNode = meta64.currentNode;
             }
         } else {
-            parentOfNewNode = meta64.uidToNodeMap[uid];
-            if (!parentOfNewNode) {
+            edit.parentOfNewNode = meta64.uidToNodeMap[uid];
+            if (!edit.parentOfNewNode) {
                 console.log("Unknown nodeId in createSubNode: " + uid);
                 return;
             }
@@ -1644,15 +1646,15 @@ namespace edit {
         /*
          * this indicates we are NOT inserting inline. An inline insert would always have a target.
          */
-        nodeInsertTarget = null;
-        startEditingNewNode(typeName, createAtTop);
+        edit.nodeInsertTarget = null;
+        edit.startEditingNewNode(typeName, createAtTop);
     }
 
-    export let replyToComment = function(uid: any): void {
-        createSubNode(uid);
+    replyToComment = function(uid: any): void {
+        edit.createSubNode(uid);
     }
 
-    export let clearSelections = function(): void {
+    clearSelections = function(): void {
         meta64.clearSelectedNodes();
 
         /*
@@ -1668,7 +1670,7 @@ namespace edit {
      * Delete the single node identified by 'uid' parameter if uid parameter is passed, and if uid parameter is not
      * passed then use the node selections for multiple selections on the page.
      */
-    export let deleteSelNodes = function(): void {
+    deleteSelNodes = function(): void {
         var selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             (new MessageDlg("You have not selected any nodes. Select nodes to delete first.")).open();
@@ -1677,16 +1679,16 @@ namespace edit {
 
         (new ConfirmDlg("Confirm Delete", "Delete " + selNodesArray.length + " node(s) ?", "Yes, delete.",
             function() {
-                let postDeleteSelNode: json.NodeInfo = getBestPostDeleteSelNode();
+                let postDeleteSelNode: json.NodeInfo = edit.getBestPostDeleteSelNode();
 
                 util.json<json.DeleteNodesRequest, json.DeleteNodesResponse>("deleteNodes", {
                     "nodeIds": selNodesArray
-                }, deleteNodesResponse, null, { "postDeleteSelNode": postDeleteSelNode });
+                }, edit.deleteNodesResponse, null, { "postDeleteSelNode": postDeleteSelNode });
             })).open();
     }
 
     /* Gets the node we want to scroll to after a delete */
-    export let getBestPostDeleteSelNode = function(): json.NodeInfo {
+    getBestPostDeleteSelNode = function(): json.NodeInfo {
         /* Use a hashmap-type approach to saving all selected nodes into a looup map */
         let nodesMap: Object = meta64.getSelectedNodesAsMapById();
         let bestNode: json.NodeInfo = null;
@@ -1712,7 +1714,7 @@ namespace edit {
         return bestNode;
     }
 
-    export let cutSelNodes = function(): void {
+    cutSelNodes = function(): void {
 
         var selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
@@ -1725,8 +1727,8 @@ namespace edit {
             "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?",
             "Yes",
             function() {
-                nodesToMove = selNodesArray;
-                loadNodesToMoveSet(selNodesArray);
+                edit.nodesToMove = selNodesArray;
+                edit.loadNodesToMoveSet(selNodesArray);
                 /* todo-0: need to have a way to find all selected checkboxes in the gui and reset them all to unchecked */
                 meta64.selectedNodes = {}; // clear selections.
 
@@ -1736,15 +1738,15 @@ namespace edit {
             })).open();
     }
 
-    let loadNodesToMoveSet = function(nodeIds: string[]) {
-        nodesToMoveSet = {};
+    private loadNodesToMoveSet = function(nodeIds: string[]) {
+        edit.nodesToMoveSet = {};
         for (let id of nodeIds) {
-            nodesToMoveSet[id] = true;
+            edit.nodesToMoveSet[id] = true;
         }
     }
 
-    export let pasteSelNodes = function(): void {
-        (new ConfirmDlg("Confirm Paste", "Paste " + nodesToMove.length + " node(s) under selected parent node ?",
+    pasteSelNodes = function(): void {
+        (new ConfirmDlg("Confirm Paste", "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?",
             "Yes, paste.", function() {
 
                 var highlightNode = meta64.getHighlightedNode();
@@ -1757,12 +1759,12 @@ namespace edit {
                 util.json<json.MoveNodesRequest, json.MoveNodesResponse>("moveNodes", {
                     "targetNodeId": highlightNode.id,
                     "targetChildId": highlightNode != null ? highlightNode.id : null,
-                    "nodeIds": nodesToMove
-                }, moveNodesResponse);
+                    "nodeIds": edit.nodesToMove
+                }, edit.moveNodesResponse);
             })).open();
     }
 
-    export let insertBookWarAndPeace = function(): void {
+    insertBookWarAndPeace = function(): void {
         (new ConfirmDlg("Confirm", "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!", "Yes, insert book.", function() {
 
             /* inserting under whatever node user has focused */
@@ -1775,11 +1777,12 @@ namespace edit {
                     "nodeId": node.id,
                     "bookName": "War and Peace",
                     "truncated": user.isTestUserAccount()
-                }, insertBookResponse);
+                }, edit.insertBookResponse);
             }
         })).open();
     }
 }
+let edit:Edit = new Edit();
 
 class Meta64 {
 

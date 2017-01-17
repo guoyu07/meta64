@@ -183,36 +183,36 @@
                         style="display:none;"
                         icon="editor:mode-edit"
                         id="editModeButton"
-                        onClick="edit.editMode();">Edit</paper-icon-button>
+                        onClick="nav.editMode();">Edit</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:search"
                         id="searchMainAppButton"
-                        onClick="(new SearchContentDlg()).open();">Search</paper-icon-button>
+                        onClick="nav.search();">Search</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:schedule"
                         id="timelineMainAppButton"
-                        onClick="srch.timelineByModTime();">Timeline</paper-icon-button>
+                        onClick="nav.timelineByModTime();">Timeline</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:settings"
                         id="userPreferencesMainAppButton"
-                        onClick="(new PrefsDlg()).open();">Preferences</paper-icon-button>
+                        onClick="nav.preferences();">Preferences</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
                         id="openLoginDlgButton"
-                        onClick="(new LoginDlg()).open();">Login</paper-icon-button>
+                        onClick="nav.login();">Login</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
                         id="navLogoutButton"
-                        onClick="user.logout(true);">Logout</paper-icon-button>
+                        onClick="nav.logout();">Logout</paper-icon-button>
                     <paper-button
                         style="display:none;"
                         id="openSignupPgButton"
-                        onClick="user.openSignupPg();">Signup</paper-button>
+                        onClick="nav.signup();">Signup</paper-button>
 
                     <paper-tabs
                         id="mainPaperTabs"

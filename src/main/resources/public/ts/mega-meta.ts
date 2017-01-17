@@ -443,7 +443,7 @@ class Constants {
 
     SHOW_CLEAR_BUTTON_IN_EDITOR: boolean = false;
 }
-let cnst:Constants = new Constants();
+let cnst: Constants = new Constants();
 
 /* These are Client-side only models, and are not seen on the server side ever */
 
@@ -1210,7 +1210,7 @@ class JCRConstants {
     IMG_WIDTH: string = "imgWidth";
     IMG_HEIGHT: string = "imgHeight";
 }
-let jcrCnst:JCRConstants = new JCRConstants();
+let jcrCnst: JCRConstants = new JCRConstants();
 
 class Attachment {
     /* Node being uploaded to */
@@ -2711,6 +2711,34 @@ class Nav {
     /* todo-0: need to have this value passed from server rather than coded in TypeScript */
     ROWS_PER_PAGE: number = 25;
 
+    search = function(): void {
+        (new SearchContentDlg()).open();
+    }
+
+    editMode = function(): void {
+        edit.editMode();
+    }
+
+    timelineByModTime = function(): void {
+        srch.timelineByModTime();
+    }
+
+    login = function(): void {
+        (new LoginDlg()).open();
+    }
+
+    logout = function(): void {
+        user.logout(true);
+    }
+
+    signup = function(): void {
+        user.openSignupPg();
+    }
+
+    preferences = function(): void {
+        (new PrefsDlg()).open();
+    }
+
     openMainMenuHelp = function(): void {
         nav.mainOffset = 0;
         util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
@@ -2934,6 +2962,7 @@ class Nav {
     }
 }
 let nav: Nav = new Nav();
+window["nav"] = nav;
 
 class Prefs {
 

@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-Beta version of an RSS reader and Podcast player!
+Changed to using ES6 Module syntax in the TypeScript code, and using SystemJS module loader. 
 
 ## Technology Stack
 * Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
@@ -97,8 +97,11 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 
 * Single Page Application (SPA)
 * JavaScript/HTML/CSS Client
-* All JavaScript, coded as TypeScript
-* JSON-Ajax for Server Communication
+* Leverages Advanced Java 8 Language Features
+* All JavaScript, coded as TypeScript (https://www.typescriptlang.org/)
+* JSON-based Ajax for Server Communication
+* ES6 JS Module syntax, with ES5 support
+* SystemJS module loader, supporting bundled or non-bundles builds (https://github.com/systemjs/systemjs)
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)
 * RDBMS Support (Derby is pre-configured in DEV environment)

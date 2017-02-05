@@ -106,11 +106,7 @@
     rel="import"
     href="/polymer/marked-element/marked-element.html" />
 
-<!--  
-<link
-    rel="stylesheet"
-    href="/css/meta64.css?ver={{cacheVersion}}" />
--->
+<!-- <link rel="stylesheet" href="/css/meta64.css?ver={{cacheVersion}}" /> -->
 
 <dom-module id="x-app">
     <template>
@@ -168,52 +164,41 @@
                         paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
                     <span
                         class="title"
-                        onClick="nav.navPublicHome();"
                         id="headerAppName">m64</span>
                     <paper-icon-button
                         icon="icons:home"
-                        id="navHomeButton"
-                        onClick="nav.navHome();">Home</paper-icon-button>
+                        id="navHomeButton">Home</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:change-history"
-                        id="upLevelButton"
-                        onClick="nav.navUpLevel();">Parent</paper-icon-button>
+                        id="upLevelButton">Parent</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="editor:mode-edit"
-                        id="editModeButton"
-                        onClick="nav.editMode();">Edit</paper-icon-button>
+                        id="editModeButton">Edit</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:search"
-                        id="searchMainAppButton"
-                        onClick="nav.search();">Search</paper-icon-button>
+                        id="searchMainAppButton">Search</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:schedule"
-                        id="timelineMainAppButton"
-                        onClick="nav.timelineByModTime();">Timeline</paper-icon-button>
+                        id="timelineMainAppButton">Timeline</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:settings"
-                        id="userPreferencesMainAppButton"
-                        onClick="nav.preferences();">Preferences</paper-icon-button>
+                        id="userPreferencesMainAppButton">Preferences</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
-                        id="openLoginDlgButton"
-                        onClick="nav.login();">Login</paper-icon-button>
+                        id="openLoginDlgButton">Login</paper-icon-button>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
-                        id="navLogoutButton"
-                        onClick="nav.logout();">Logout</paper-icon-button>
+                        id="navLogoutButton">Logout</paper-icon-button>
                     <paper-button
                         style="display:none;"
-                        id="openSignupPgButton"
-                        onClick="nav.signup();">Signup</paper-button>
-
+                        id="openSignupPgButton">Signup</paper-button>
                     <paper-tabs
                         id="mainPaperTabs"
                         attr-for-selected="name"
@@ -234,10 +219,12 @@
                         attr-for-selected="name"
                         selected="{{selected}}">
                         <div name="mainTabName">
-                            <!-- the reason we have tabindex here is so we can call jquery focus() and have the user able to use
-                            arrow key scrolling immediately without first having to click on the page 
-                            -->
-                            <div id="mainNodeContent" tabindex="-1"></div>
+                            <!-- the reason we have tabindex here is so we 
+                                can call jquery focus() and have the user able to use arrow key scrolling 
+                                immediately without first having to click on the page -->
+                            <div
+                                id="mainNodeContent"
+                                tabindex="-1"></div>
                             <div id="listView"></div>
                         </div>
                         <div
@@ -259,7 +246,7 @@
             id="modalsContainer"
             style="position: absolute; top: 0; left: 0"></div>
     </template>
-    <script>
+    <script type="text/javascript">
         /*<![CDATA[*/
             (function() { 
             	 'use strict'; 

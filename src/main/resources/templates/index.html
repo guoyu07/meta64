@@ -42,6 +42,7 @@
             content="Meta64" />
         <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
         <script
+            type="text/javascript"
             src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
         <link
             rel="import"
@@ -55,43 +56,20 @@
         <link
             rel="stylesheet"
             href="/css/meta64.css?ver={{cacheVersion}}" />
-        <script>
+        <script type="text/javascript">
             /*<![CDATA[*/            
-            	/*
-            	Old browsers may not have the console.log/console.error functions.
-            	 */
-            	if (!window.console) {
-            		console = {
-            			log : function() {
-            			},
-            			error : function() {
-            			}
-            		};
-            	}
-            
-            	window.onerror = function(message, url, line, col, err) {
-            		var msg = "ERROR: " + message + " [url:" + url + "] line " + line + " col: " + col;
-            		if (err.stack) {
-            			msg += " err: " + err.stack;
-            		}
-            		console.log(msg);
-            	}
-            
+                //These values are injected by a servlet filter. PreProcFilter.java
             	var cookiePrefix = "{{cookiePrefix}}";
             	var BRANDING_TITLE = "{{brandingTitle}}";
                 var BRANDING_TITLE_SHORT = "{{brandingTitleShort}}";
             	var cacheVersion = "{{cacheVersion}}";
             	var profileName = "{{profileName}}";
-            	console.log("cacheVersion: " + cacheVersion);
-            
-            	/**
-            	 * IMPORTANT: "Same Origin Policy" is very very strict on the precise text of the name even if
-            	 * it maps in DNS to same thing it must be a text match and may different to browser.
-            	 */
-            	var postTargetUrl = window.location.origin + "/mobile/api/";
+                var bundleFile = "{{html.bundle}}";
         	/*]]>*/
         </script>
-        <script src="/js/systemjs/system.js?ver={{cacheVersion}}"></script>
+        <script type="text/javascript" src="/js/systemjs/system.min.js"></script>   
+        <script type="text/javascript" src="/entry-point.js"></script>        
+                
         <script
             type="text/javascript"
             src="{{jqueryJs}}"></script>
@@ -116,65 +94,12 @@
             src="/js/ace/ace.js"
             type="text/javascript"
             charset="utf-8"></script>
-        <!-- requirejs is VERY finnicky. Every time I've ever tried to touch 
-            it, i end up regretting it for one reason or another. It's EXTREMELY un-userfriendly. 
-            <script src="/js/amd/require.js" type="text/javascript"></script> -->
+        
         <script 
+            type="text/javascript"
             src="/js/dropzone/dropzone.js?ver={{cacheVersion}}"></script>
     </head>
     <body unresolved="unresolved">
-
         <x-app></x-app>
-
-        <!-- PreProcFilter.java loads scripts here depending on spring profile 
-            (dev, prod, test) -->
-        <script>
-            /*<![CDATA[*/
-                console.log("registering WebComponentsReady listener.");
-                
-    			//var webComponentsReady = false;
-    			addEventListener("WebComponentsReady", function() {
-                    console.log("WebComponentsReady event.");
-                                 console.log("SystemJS.config()");
-                    SystemJS.config({
-                        baseURL : '/js'
-                    });
-       
-                    console.log("SystemJS.import({{html.mainModule}})");
-                
-                    System.import("{{html.mainModule}}").then(function(init) {
-                        console.log("Main Module Loaded.");    
-                    });
-    
-                    /////////////////////////////////////
-    			});
-   
-    			// Tell RequireJS where ace is located
-    			   /*
-    			   require.config({
-    			           //baseUrl: window.location.protocol + "//" + window.location.host
-    			       //+ window.location.pathname.split("/").slice(0, -1).join("/"),
-    			       
-    			       paths: {
-    			           'ace': '/js/ace'
-    			       }
-    			   });
-    
-    			   // Load the ace module
-    			   require(['ace/ace'], function(ace) {
-    			           console.log("Ace loaded!");
-    			           if (ace) {
-    			                   console.log("Ace successful, not null");
-    			           }
-    			       // Set up the editor
-    			       //var editor = ace.edit('editor');
-    			       //editor.setTheme('ace/theme/monokai');
-    			       //editor.getSession().setMode('ace/mode/javascript');
-    			       // etc...
-    			   });
-    			 */
-                 
-		      /*]]>*/
-        </script>
     </body>
 </html>

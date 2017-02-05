@@ -168,20 +168,15 @@
 					<artifactId>spring-boot-maven-plugin</artifactId>
 				</plugin>
 				
+				<!-- 
+				WARNING: It appears that only ONE exec-maven-plugin runs. Having two of these plugins won't work, because it ends up 
+				only running one of them. Don't know why. So just put ALL scripting stuff in this one file (run-webpack.sh)
+				-->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
 					<configuration>
-						<executable>./build/compile-typescript.sh</executable>
-						<workingDirectory>./build</workingDirectory>
-					</configuration>
-				</plugin>
-				
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<configuration>
-						<executable>./build/compile-less-css.sh</executable>
+						<executable>./build/run-eclipse-pom-exec.sh</executable>
 						<workingDirectory>./build</workingDirectory>
 					</configuration>
 				</plugin>

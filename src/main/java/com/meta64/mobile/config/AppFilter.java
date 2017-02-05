@@ -36,8 +36,11 @@ public class AppFilter implements Filter {
 		if (req instanceof HttpServletRequest) {
 			HttpServletRequest httpReq = (HttpServletRequest) req;
 			HttpSession session = httpReq.getSession(false);
+			String queryString = httpReq.getQueryString();
+			queryString = queryString != null ? queryString : "";
+			log.debug("REQ: " + httpReq.getRequestURI() + " QUERY: " + queryString);
 			if (session == null) {
-				log.debug("******** NO SESSION.");
+				// log.debug("******** NO SESSION.");
 			}
 			else {
 				// log.debug("******** SESSION existed: lastAccessed:

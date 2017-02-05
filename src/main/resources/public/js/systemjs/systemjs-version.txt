@@ -1,9 +1,0 @@
-This version of system.js came from:
-
-Known to be compatible with TypeScript: 1.8.10
-
-systemjs-0.20.0-rc.4.zip
-
-Warning: Whenever you update either TypeScript or SystemJS versions, go ahead and upgrade the other one as well
-because these two can easily become incompatible versions of they are not compatible versions, and the only
-way to best ensure compatibility is get both updated at same time.

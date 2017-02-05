@@ -237,7 +237,7 @@ public class Convert {
 
 	public String buildMoreLink(Node node) throws Exception {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<a class=\"moreLinkStyle\" onclick=\"nav.expandMore('" + node.getIdentifier() + "');\">[more]</a>");
+		sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav', function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
 		return sb.toString();
 	}
 

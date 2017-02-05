@@ -10,15 +10,16 @@ source ./setenv.sh
 
 export timestamp=`eval date +%Y-%m-%d-%s`
 export backupFolder=$META64_BAK
+export NODE_PATH=$META64/build/node_modules
 
 #Delete old JS files and MAP files. We also have jsconfig.json set to not emit on error
 #find $META64/src/main/resources/public/js/meta64 -name "*.js" -type f -delete
 #find $META64/src/main/resources/public/js/meta64 -name "*.map" -type f -delete
-
-rm $META64/src/main/resources/public/js/meta64-app.js
-rm $META64/src/main/resources/public/js/meta64-app.min.js
+rm -f $META64/src/main/resources/public/js/*.js
+rm -f $META64/src/main/resources/public/js/*.map
 echo "Old JS files deleted."
 
+# ===================================================================
 # To install typescript compiler (tsc) run these commands:
 #
 # Note: TSC Version 1.8.10, is the version i ended up with first time doing this.
@@ -35,7 +36,7 @@ echo "Old JS files deleted."
 #    sudo apt-get install -y build-essential
 #    sudo npm install -g typescript
 #    read -p "TypeScript install complete."
-
+# =====================================================================
 cd $META64/src/main/resources/public/ts
 tsc
 if [ $? -eq 0 ]
@@ -44,6 +45,24 @@ then
 else
   read -p "FAIL. TypeScript compiler reported ERRORS."
 fi
+
+# To install WEBPACK
+# (I experimented with webpack, and decided not to use it for now. TypeScript is capable of making a bundled file 
+#  and that bundling of my own code is all I need for now)
+#  I'm leaving these webpack commands in here just for future reference:
+#
+#     sudo npm install -g webpack
+#     npm install --save-dev typescript awesome-typescript-loader source-map-loader
+#     read -p "WebPack install complete."
+#
+#   Note: in the above you DO need 'typescipt' in the command even if you already have it, because --save-dev is there.      
+#
+# NOTE: awesome-typescript-loader is not the only loader for typescript. You could instead use ts-loader.
+#       see: https://github.com/s-panferov/awesome-typescript-loader#differences-between-ts-loader
+#
+# cd $META64/src/main/resources/public/ts
+# webpack 
+# read -p "WebPack bundle complete."
 
 # To install Less CSS compiler run these commands:
 #    sudo npm install -g less
@@ -69,11 +88,20 @@ cd $META64/build
 #This command is the normal build command for minification, but i'm currently deploying NON-Minified builds so I can debug 
 java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
 
+# This command was run just once to minify the SystemJS after the following hack I made to the source:
+# Inside the 'fetchFetch()' function I added this:
+# if (systemJsCacheBuster) {
+#	  url += systemJsCacheBuster;
+#  }
+# This checks for existence of global variable for cache busting and uses it if found
+#
+# java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/systemjs/system.min.js" ../src/main/resources/public/js/systemjs/system.src.js
+
 #Run only this command and not the one above for non-minified deployment
 #cp ../src/main/resources/public/js/meta64-app.js ../src/main/resources/public/js/meta64-app.min.js
 
 #java -jar google-compiler.jar --help
-read -p "Google compiler done."
+#read -p "Google compiler done."
 
 cd $META64
 
@@ -81,11 +109,7 @@ mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
 mvn clean package -DskipTests=true
 
-rm -f $META64/build/all.js
 rm -f $META64/build/*.sh~
-rm -f $META64/src/main/resources/public/js/meta64.min.js
-rm -f $META64/src/main/resources/templates/index-out.html
-rm -f $META64/src/main/resources/templates/index-20*.html
 rm -f $META64/src/main/resources/public/*.md~
 rm -f $META64/*.md~
 

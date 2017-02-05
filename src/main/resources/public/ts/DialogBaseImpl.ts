@@ -3,6 +3,7 @@ console.log("DialogBaseImpl.ts");
 import {meta64} from "./Meta64"
 import {util} from "./Util";
 import {render} from "./Render";
+import {DialogBase} from "./DialogBase";
 
 declare var Polymer;
 declare var $;
@@ -17,7 +18,7 @@ declare var $;
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-export class DialogBaseImpl {
+export class DialogBaseImpl implements DialogBase {
 
     private horizCenterDlgContent: boolean = true;
 
@@ -241,11 +242,11 @@ export class DialogBaseImpl {
 
     // todo: there's a makeButton (and other similar methods) that don't have the
     // encodeCallback capability yet
-    makeButton = (text: string, id: string, callback: any, ctx?: any): string => {
+    makeButton = (text: string, id: string, callback: any, ctx?: any, clazz?:string): string => {
         let attribs = {
             "raised": "raised",
             "id": this.id(id),
-            "class": "standardButton"
+            "class": clazz || "standardButton"
         };
 
         if (callback != undefined) {

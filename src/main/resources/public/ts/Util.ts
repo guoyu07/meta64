@@ -165,7 +165,7 @@ class Util {
             util.waitCounter++;
             if (util.waitCounter >= 3) {
                 if (!util.pgrsDlg) {
-                    Factory.create("ProgressDlg", (dlg: ProgressDlg) => {
+                    Factory.createDefault("ProgressDlgImpl", (dlg: ProgressDlg) => {
                         util.pgrsDlg = dlg;
                         util.pgrsDlg.open();
                     })
@@ -405,7 +405,7 @@ class Util {
     }
 
     showMessage = function(message: string): void {
-        Factory.create("MessageDlg", (dlg: MessageDlg) => {
+        Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
             dlg.open();
         }, { "message": message });
     }

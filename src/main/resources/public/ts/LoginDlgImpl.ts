@@ -69,7 +69,7 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
         var thiz = this;
         var usr = this.getInputVal("userName");
 
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm Reset Password",
@@ -77,7 +77,7 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
                 "buttonText": "Yes, reset.", "yesCallback":
                 function() {
                     thiz.cancel();
-                    Factory.create("ResetPasswordDlg", (dlg: ResetPasswordDlg) => {
+                    Factory.createDefault("ResetPasswordDlgImpl", (dlg: ResetPasswordDlg) => {
                         dlg.open();
                     }, { "user": usr });
                 }

@@ -26,19 +26,19 @@ class Nav {
     ROWS_PER_PAGE: number = 25;
 
     search = function(): void {
-        Factory.create("SearchContentDlg", (dlg: SearchContentDlg) => {
+        Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
             dlg.open();
         });
     }
 
     searchTags = function(): void {
-        Factory.create("SearchTagsDlg", (dlg: SearchTagsDlg) => {
+        Factory.createDefault("SearchTagsDlgImpl", (dlg: SearchTagsDlg) => {
             dlg.open();
         });
     }
 
     searchFiles = function(): void {
-        Factory.create("SearchFilesDlg", (dlg: SearchFilesDlg) => {
+        Factory.createDefault("SearchFilesDlgImpl", (dlg: SearchFilesDlg) => {
             dlg.open();
         });
     }
@@ -48,7 +48,7 @@ class Nav {
     }
 
     login = function(): void {
-        Factory.create("LoginDlg", (dlg: LoginDlg) => {
+        Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
             //todo-0: this call was always missing pupulateFromCookies, is this right ?
             //dlg.populateFromCookies();
             dlg.open();
@@ -65,7 +65,7 @@ class Nav {
 
 
     preferences = function(): void {
-        Factory.create("PrefsDlg", (dlg: PrefsDlg) => {
+        Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
             dlg.open();
         });
     }

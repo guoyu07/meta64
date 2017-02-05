@@ -129,7 +129,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
         for each file */
         if (!this.zipQuestionAnswered && this.hasAnyZipFiles()) {
             this.zipQuestionAnswered = true;
-            Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+            Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
                 dlg.open();
             }, {
                     "title": "Explode Zips?",

@@ -15,7 +15,7 @@ class Prefs {
     }
 
     closeAccount = function(): void {
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Oh No!",
@@ -23,7 +23,7 @@ class Prefs {
                 "buttonText": "Yes, Close Account.",
                 "yesCallback":
                 function() {
-                    Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+                    Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
                         dlg.open();
                     }, {
                             "title": "One more Click",

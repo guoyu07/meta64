@@ -41,98 +41,82 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
      * Returns a string that is the HTML content of the dialog
      */
     build = (): string => {
-        throw "onclicks, not defined";
+        let header = this.makeHeader("Audio Player");
 
-        //     let header = this.makeHeader("Audio Player");
-        //
-        //     let node: I.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
-        //     if (!node) {
-        //         throw `unknown node uid: ${this.nodeUid}`;
-        //     }
-        //
-        //     let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
-        //
-        //     /* This is where I need a short name of the media being played */
-        //     let description = render.tag("p", {
-        //     }, rssTitle.value);
-        //
-        //     //references:
-        //     //http://www.w3schools.com/tags/ref_av_dom.asp
-        //     //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
-        //     let playerAttribs: any = {
-        //         "src": this.sourceUrl,
-        //         "id": this.id("audioPlayer"),
-        //         "style": "width: 100%; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
-        //         "ontimeupdate": `podcast.onTimeUpdate('${this.nodeUid}', this);`,
-        //         "oncanplay": `podcast.onCanPlay('${this.nodeUid}', this);`,
-        //         "controls": "controls",
-        //         "preload": "auto"
-        //     };
-        //
-        //     let player = render.tag("audio", playerAttribs);
-        //
-        //     //Skipping Buttons
-        //     let skipBack30Button = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": `podcast.skip(-30, '${this.nodeUid}', this);`,
-        //         "class": "standardButton"
-        //     }, //
-        //         "< 30s");
-        //
-        //     let skipForward30Button = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": `podcast.skip(30, '${this.nodeUid}', this);`,
-        //         "class": "standardButton"
-        //     }, //
-        //         "30s >");
-        //
-        //     let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
-        //
-        //     //Speed Buttons
-        //     let speedNormalButton = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": "podcast.speed(1.0);",
-        //         "class": "standardButton"
-        //     }, //
-        //         "Normal");
-        //
-        //     let speed15Button = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": "podcast.speed(1.5);",
-        //         "class": "standardButton"
-        //     }, //
-        //         "1.5X");
-        //
-        //     let speed2xButton = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": "podcast.speed(2);",
-        //         "class": "standardButton"
-        //     }, //
-        //         "2X");
-        //
-        //     let speedButtonBar = render.centeredButtonBar(speedNormalButton + speed15Button + speed2xButton);
-        //
-        //     //Dialog Buttons
-        //     let pauseButton = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": "podcast.pause();",
-        //         "class": "standardButton"
-        //     }, //
-        //         "Pause");
-        //
-        //     let playButton = render.tag("paper-button", {
-        //         "raised": "raised",
-        //         "onClick": "podcast.play();",
-        //         "class": "playButton"
-        //     }, //
-        //         "Play");
-        //
-        //     //todo-0: even if this button appears to work, I need it to explicitly enforce the saving of the timevalue AND the removal of the AUDIO element from the DOM */
-        //     let closeButton = this.makeButton("Close", "closeAudioPlayerDlgButton", this.closeBtn);
-        //
-        //     let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
-        //
-        //     return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+        let node: I.NodeInfo = meta64.uidToNodeMap[this.nodeUid];
+        if (!node) {
+            throw `unknown node uid: ${this.nodeUid}`;
+        }
+
+        let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
+
+        /* This is where I need a short name of the media being played */
+        let description = render.tag("p", {
+        }, rssTitle.value);
+
+        //references:
+        //http://www.w3schools.com/tags/ref_av_dom.asp
+        //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+        let playerAttribs: any = {
+            "src": this.sourceUrl,
+            "id": this.id("audioPlayer"),
+            "style": "width: 100%; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
+            "ontimeupdate": `podcast.onTimeUpdate('${this.nodeUid}', this);`,
+            "oncanplay": `podcast.onCanPlay('${this.nodeUid}', this);`,
+            "controls": "controls",
+            "preload": "auto"
+        };
+
+        let player = render.tag("audio", playerAttribs);
+
+        //Skipping Buttons
+        let skipBack30Button = this.makeButton("< 30s", "skipBackButton", this.skipBack30Button, this);
+        let skipForward30Button = this.makeButton("30s >", "skipForwardButton", this.skipForward30Button, this);
+        let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
+
+        //Speed Buttons
+        let speedNormalButton = this.makeButton("Normal", "normalSpeedButton", this.normalSpeedButton, this);
+        let speed15Button = this.makeButton("1.5X", "speed15Button", this.speed15Button, this);
+        let speed2Button = this.makeButton("2X", "speed2Button", this.speed2Button, this);
+        let speedButtonBar = render.centeredButtonBar(speedNormalButton + speed15Button + speed2Button);
+
+        //Dialog Buttons
+        let pauseButton = this.makeButton("Pause", "pauseButton", this.pauseButton, this);
+        let playButton = this.makeButton("Play", "playButton", this.playButton, this, "playButton");
+        //todo-1: even if this button appears to work, I need it to explicitly enforce the saving of the time value AND the removal of the AUDIO element from the DOM */
+        let closeButton = this.makeButton("Close", "closeAudioPlayerDlgButton", this.closeBtn);
+
+        let buttonBar = render.centeredButtonBar(playButton + pauseButton + closeButton);
+
+        return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+    }
+
+    pauseButton = (): void => {
+        podcast.pause();
+    }
+
+    playButton = (): void => {
+        podcast.play();
+    }
+
+    speed2Button = (): void => {
+        podcast.speed(2);
+    }
+
+    speed15Button = (): void => {
+        podcast.speed(1.5);
+    }
+
+    normalSpeedButton = (): void => {
+        podcast.speed(1.0);
+    }
+
+    skipBack30Button = (): void => {
+        podcast.skip(-30);
+    }
+
+    skipForward30Button = (): void => {
+        podcast.skip(30);
     }
 
     closeEvent = (): void => {

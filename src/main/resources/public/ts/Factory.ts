@@ -4,16 +4,13 @@ declare const System: any;
 
 export class Factory {
 
-    /*
-     * This 'create' is used for createing our Dialogs, which follow a special pattern of using a 'default' export and
-     * all having a class ending in "Impl" that's based of an interface
-     *
-     * todo-1: I will eventually use some form of a generic to reference an actual type for the args
-     * object using the constructor function itself rather than a separately defined Interface
-     * for the parameters, but i just haven't designed that code yet.
-     */
-    static create = function(className: string, callback?: any, args?: Object): void {
-        System.import( /* "/js/" + */ className + "Impl").then(function(mod) {
+    /* Note that for running as un-bundles (individual files) afaik the filePrefix might need to be "/js/" which is the path where all the modules are located,
+    but when running in single large bundle file the className along is suffixient without a path */
+    private static filePrefix: string = "";
+
+    /* Creates an instance of an object exported as 'default' */
+    static createDefault = function(className: string, callback?: any, args?: Object): void {
+        System.import(Factory.filePrefix + className).then(function(mod) {
             let obj = new (<any>mod).default(args || {});
             if (callback) {
                 callback(obj);
@@ -21,11 +18,9 @@ export class Factory {
         });
     }
 
-    /* todo-1: This is a bit confusing, the createPanel is same as 'create' but without expecting "Impl" suffix. It's just TechDebt and I
-    know it's bad right now as I'm doing it.
-    */
-    static createPanel = function(className: string, callback?: any, args?: Object): void {
-        System.import( /* "/js/" + */ className).then(function(mod) {
+    /* Create an instance of an object assuming the naming convention is followed by having the module name be the same as the class name. */
+    static create = function(className: string, callback?: any, args?: Object): void {
+        System.import(Factory.filePrefix + className).then(function(mod) {
             let obj = new (<any>mod)[className](args || {});
             if (callback) {
                 callback(obj);

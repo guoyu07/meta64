@@ -175,7 +175,7 @@ class Podcast {
                 }, function(res: I.GetPlayerInfoResponse) {
                     podcast.parseAdSegmentUid(podcast.uid);
 
-                    Factory.create("AudioPlayerDlg", (dlg:AudioPlayerDlg) => {
+                    Factory.createDefault("AudioPlayerDlgImpl", (dlg:AudioPlayerDlg) => {
                       dlg.open();
                     }, {"sourceUrl":mp3Url, "nodeUid":podcast.uid, "startTimePending": res.timeOffset});
                 });

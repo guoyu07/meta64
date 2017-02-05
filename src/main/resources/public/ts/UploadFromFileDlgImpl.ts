@@ -128,7 +128,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
         };
 
         if (this.hasAnyZipFiles()) {
-            Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+            Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
                 dlg.open();
             }, {
                     "title": "Explode Zips?",

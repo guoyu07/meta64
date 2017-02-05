@@ -22,7 +22,7 @@ class Attachment {
 
         attachment.uploadNode = node;
 
-        Factory.create("UploadFromFileDropzoneDlg", (dlg: UploadFromFileDropzoneDlg) => {
+        Factory.createDefault("UploadFromFileDropzoneDlgImpl", (dlg: UploadFromFileDropzoneDlg) => {
           dlg.open();
         })
 
@@ -43,7 +43,7 @@ class Attachment {
 
         attachment.uploadNode = node;
 
-        Factory.create("UploadFromUrlDlg", (dlg: UploadFromUrlDlg) => {
+        Factory.createDefault("UploadFromUrlDlgImpl", (dlg: UploadFromUrlDlg) => {
           dlg.open();
         })
     }
@@ -52,7 +52,7 @@ class Attachment {
         let node: I.NodeInfo = meta64.getHighlightedNode();
 
         if (node) {
-          Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+          Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
               dlg.open();
           }, {
                   "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback":

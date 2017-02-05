@@ -229,7 +229,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     addProperty = (): void => {
-        Factory.create("EditPropertyDlg", (dlg: EditPropertyDlg) => {
+        Factory.createDefault("EditPropertyDlgImpl", (dlg: EditPropertyDlg) => {
             this.editPropertyDlgInst = dlg;
             this.editPropertyDlgInst.open();
         }, { "EditNodeDlgInstance": this });
@@ -294,7 +294,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
      */
     deleteProperty = (propName: string) => {
       var thiz = this;
-      Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+      Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
           dlg.open();
       }, {
               "title": "Confirm Delete", "message": "Delete the Property: " + propName,

@@ -218,8 +218,6 @@ class Meta64 {
                     meta64.registerDataObject(payload);
                 }
                 let payloadStr = payload ? payload.guid : "null";
-
-                //todo-0: why isn't payloadStr in quotes? It was like this even before switching to backtick string
                 return `meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr},${delayCallback});`;
             } else {
                 return `meta64.runCallback(${callback.guid},null,null,${delayCallback});`;
@@ -747,7 +745,6 @@ class Meta64 {
         util.addAll(meta64.binaryPropertyList, [jcrCnst.BIN_DATA]);
     }
 
-    /* todo-0: this and every other method that's called by a litstener or a timer needs to have the 'fat arrow' syntax for this */
     initApp = function(): void {
         console.log("initApp running.");
 
@@ -756,7 +753,7 @@ class Meta64 {
         meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = podcast.propOrderingFeedNode;
         meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = podcast.propOrderingItemNode;
 
-        //wpack
+        //SystemFolder and File handling stuff is disabled for now (todo-0)
         // meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
         // meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
         //
@@ -885,7 +882,7 @@ class Meta64 {
         var passCode = util.getParameterByName("passCode");
         if (passCode) {
             setTimeout(function() {
-                Factory.create("ChangePasswordDlg", (dlg: ChangePasswordDlg) => {
+                Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
                     dlg.open();
                 }, { "passCode": passCode })
             }, 100);

@@ -52,7 +52,7 @@ export default class ShareToPersonDlgImpl  extends DialogBaseImpl implements Sha
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {
         if (util.checkSuccess("Share Node with Person", res)) {
-            Factory.create("SharingDlg", (dlg:SharingDlg) => {
+            Factory.createDefault("SharingDlgImpl", (dlg:SharingDlg) => {
               dlg.open();
             });
         }

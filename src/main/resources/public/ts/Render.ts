@@ -403,7 +403,7 @@ export class Render {
         let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
         let bkgImgStyle: string = "";
         if (bkgImg) {
-            //todo-0: as I was convertingi some strings to backtick i noticed this URL missing the quotes around the string. Is this a bug?
+            //todo-0: as I was converting some strings to backtick i noticed this URL missing the quotes around the string. Is this a bug?
             bkgImgStyle = `background-image: url(${bkgImg});`;
         }
         return bkgImgStyle;

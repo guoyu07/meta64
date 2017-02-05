@@ -68,7 +68,7 @@ export class Search {
          * and open up the search dialog.
          */
         if (srch.numSearchResults() == 0 && !meta64.isAnonUser) {
-            Factory.create("SearchContentDlg", (dlg: SearchContentDlg) => {
+            Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
                 dlg.open();
             });
         }
@@ -76,7 +76,7 @@ export class Search {
 
     searchNodesResponse = function(res: I.NodeSearchResponse) {
         srch.searchResults = res;
-        Factory.createPanel("SearchResultsPanel", (panel: SearchResultsPanel) => {
+        Factory.create("SearchResultsPanel", (panel: SearchResultsPanel) => {
             var content = panel.build();
             util.setHtml("searchResultsPanel", content);
             panel.init();
@@ -87,7 +87,7 @@ export class Search {
     timelineResponse = function(res: I.NodeSearchResponse) {
         debugger;
         srch.timelineResults = res;
-        Factory.createPanel("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
+        Factory.create("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
             var content = panel.build();
             util.setHtml("timelineResultsPanel", content);
             panel.init();

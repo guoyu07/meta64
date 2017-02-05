@@ -68,7 +68,7 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
             }
 
             let thiz = this;
-            Factory.create("MessageDlg", (dlg: MessageDlg) => {
+            Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
                 dlg.open();
             }
                 , {

@@ -145,16 +145,17 @@ System.register("Factory", [], function(exports_6, context_6) {
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.create = function (className, callback, args) {
-                    System.import(className + "Impl").then(function (mod) {
+                Factory.filePrefix = "";
+                Factory.createDefault = function (className, callback, args) {
+                    System.import(Factory.filePrefix + className).then(function (mod) {
                         var obj = new mod.default(args || {});
                         if (callback) {
                             callback(obj);
                         }
                     });
                 };
-                Factory.createPanel = function (className, callback, args) {
-                    System.import(className).then(function (mod) {
+                Factory.create = function (className, callback, args) {
+                    System.import(Factory.filePrefix + className).then(function (mod) {
                         var obj = new mod[className](args || {});
                         if (callback) {
                             callback(obj);
@@ -274,7 +275,7 @@ System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
                             util.waitCounter++;
                             if (util.waitCounter >= 3) {
                                 if (!util.pgrsDlg) {
-                                    Factory_1.Factory.create("ProgressDlg", function (dlg) {
+                                    Factory_1.Factory.createDefault("ProgressDlgImpl", function (dlg) {
                                         util.pgrsDlg = dlg;
                                         util.pgrsDlg.open();
                                     });
@@ -421,7 +422,7 @@ System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
                         return res.success;
                     };
                     this.showMessage = function (message) {
-                        Factory_1.Factory.create("MessageDlg", function (dlg) {
+                        Factory_1.Factory.createDefault("MessageDlgImpl", function (dlg) {
                             dlg.open();
                         }, { "message": message });
                     };
@@ -1879,14 +1880,14 @@ System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav
                     };
                     this.searchTabActivated = function () {
                         if (srch.numSearchResults() == 0 && !Meta64_5.meta64.isAnonUser) {
-                            Factory_2.Factory.create("SearchContentDlg", function (dlg) {
+                            Factory_2.Factory.createDefault("SearchContentDlgImpl", function (dlg) {
                                 dlg.open();
                             });
                         }
                     };
                     this.searchNodesResponse = function (res) {
                         srch.searchResults = res;
-                        Factory_2.Factory.createPanel("SearchResultsPanel", function (panel) {
+                        Factory_2.Factory.create("SearchResultsPanel", function (panel) {
                             var content = panel.build();
                             Util_4.util.setHtml("searchResultsPanel", content);
                             panel.init();
@@ -1896,7 +1897,7 @@ System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav
                     this.timelineResponse = function (res) {
                         debugger;
                         srch.timelineResults = res;
-                        Factory_2.Factory.createPanel("TimelineResultsPanel", function (panel) {
+                        Factory_2.Factory.create("TimelineResultsPanel", function (panel) {
                             var content = panel.build();
                             Util_4.util.setHtml("timelineResultsPanel", content);
                             panel.init();
@@ -2088,7 +2089,7 @@ System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], func
                         console.log("from server: meta64.editModeOption=" + Meta64_6.meta64.editModeOption);
                     };
                     this.openSignupPg = function () {
-                        Factory_3.Factory.create("SignupDlg", function (dlg) {
+                        Factory_3.Factory.createDefault("SignupDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -2099,7 +2100,7 @@ System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], func
                         });
                     };
                     this.openLoginPg = function () {
-                        Factory_3.Factory.create("LoginDlg", function (dlg) {
+                        Factory_3.Factory.createDefault("LoginDlgImpl", function (dlg) {
                             dlg.populateFromCookies();
                             dlg.open();
                         });
@@ -2302,17 +2303,17 @@ System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Fac
                     this.endReached = true;
                     this.ROWS_PER_PAGE = 25;
                     this.search = function () {
-                        Factory_4.Factory.create("SearchContentDlg", function (dlg) {
+                        Factory_4.Factory.createDefault("SearchContentDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.searchTags = function () {
-                        Factory_4.Factory.create("SearchTagsDlg", function (dlg) {
+                        Factory_4.Factory.createDefault("SearchTagsDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.searchFiles = function () {
-                        Factory_4.Factory.create("SearchFilesDlg", function (dlg) {
+                        Factory_4.Factory.createDefault("SearchFilesDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -2320,7 +2321,7 @@ System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Fac
                         Edit_4.edit.editMode();
                     };
                     this.login = function () {
-                        Factory_4.Factory.create("LoginDlg", function (dlg) {
+                        Factory_4.Factory.createDefault("LoginDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -2331,7 +2332,7 @@ System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Fac
                         User_1.user.openSignupPg();
                     };
                     this.preferences = function () {
-                        Factory_4.Factory.create("PrefsDlg", function (dlg) {
+                        Factory_4.Factory.createDefault("PrefsDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -2620,37 +2621,37 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
             Edit = (function () {
                 function Edit() {
                     this.createNode = function () {
-                        Factory_5.Factory.create("CreateNodeDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("CreateNodeDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.openChangePasswordDlg = function () {
-                        Factory_5.Factory.create("ChangePasswordDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ChangePasswordDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.openManageAccountDlg = function () {
-                        Factory_5.Factory.create("ManageAccountDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ManageAccountDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.editPreferences = function () {
-                        Factory_5.Factory.create("PrefsDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("PrefsDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.renameNode = function () {
-                        Factory_5.Factory.create("RenameNodeDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("RenameNodeDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.openImportDlg = function () {
-                        Factory_5.Factory.create("ImportDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ImportDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.openExportDlg = function () {
-                        Factory_5.Factory.create("ExportDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ExportDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -2686,7 +2687,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                             }
                             if (editingAllowed) {
                                 edit.editNode = res.nodeInfo;
-                                Factory_5.Factory.create("EditNodeDlg", function (dlg) {
+                                Factory_5.Factory.createDefault("EditNodeDlgImpl", function (dlg) {
                                     edit.editNodeDlgInst = dlg;
                                     dlg.open();
                                 });
@@ -2728,7 +2729,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                     this.startEditingNewNode = function (typeName, createAtTop) {
                         edit.editingUnsavedNode = false;
                         edit.editNode = null;
-                        Factory_5.Factory.create("EditNodeDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("EditNodeDlgImpl", function (dlg) {
                             edit.editNodeDlgInst = dlg;
                             dlg.saveNewNode("");
                         }, { "typeName": typeName, "createAtTop": createAtTop });
@@ -2736,7 +2737,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                     this.startEditingNewNodeWithName = function () {
                         edit.editingUnsavedNode = true;
                         edit.editNode = null;
-                        Factory_5.Factory.create("EditNodeDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("EditNodeDlgImpl", function (dlg) {
                             edit.editNodeDlgInst = dlg;
                             dlg.saveNewNode("");
                         });
@@ -2921,7 +2922,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                             Util_7.util.showMessage("You have not selected any nodes. Select nodes to delete first.");
                             return;
                         }
-                        Factory_5.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Delete", "message": "Delete " + selNodesArray.length + " node(s) ?", "buttonText": "Yes, delete.", "yesCallback": function () {
@@ -2956,7 +2957,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                             Util_7.util.showMessage("You have not selected any nodes. Select nodes first.");
                             return;
                         }
-                        Factory_5.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Cut", "message": "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?", "buttonText": "Yes", "yesCallback": function () {
@@ -2976,7 +2977,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                         }
                     };
                     this.pasteSelNodes = function () {
-                        Factory_5.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Paste", "message": "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback": function () {
@@ -2990,7 +2991,7 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                         });
                     };
                     this.insertBookWarAndPeace = function () {
-                        Factory_5.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_5.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm", "message": "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!",
@@ -3041,14 +3042,14 @@ System.register("Prefs", ["Factory", "User", "Util"], function(exports_31, conte
                         window.location.href = window.location.origin;
                     };
                     this.closeAccount = function () {
-                        Factory_6.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_6.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Oh No!",
                             "message": "Close your Account?<p> Are you sure?",
                             "buttonText": "Yes, Close Account.",
                             "yesCallback": function () {
-                                Factory_6.Factory.create("ConfirmDlg", function (dlg) {
+                                Factory_6.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                     dlg.open();
                                 }, {
                                     "title": "One more Click",
@@ -3112,7 +3113,7 @@ System.register("Share", ["Search", "Util", "Meta64", "Factory"], function(expor
                             return;
                         }
                         share.sharingNode = node;
-                        Factory_7.Factory.create("SharingDlg", function (dlg) {
+                        Factory_7.Factory.createDefault("SharingDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -3293,7 +3294,7 @@ System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Int
                                     "url": mp3Url_1
                                 }, function (res) {
                                     podcast.parseAdSegmentUid(podcast.uid);
-                                    Factory_8.Factory.create("AudioPlayerDlg", function (dlg) {
+                                    Factory_8.Factory.createDefault("AudioPlayerDlgImpl", function (dlg) {
                                         dlg.open();
                                     }, { "sourceUrl": mp3Url_1, "nodeUid": podcast.uid, "startTimePending": res.timeOffset });
                                 });
@@ -4208,7 +4209,7 @@ System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render"
                         var passCode = Util_12.util.getParameterByName("passCode");
                         if (passCode) {
                             setTimeout(function () {
-                                Factory_9.Factory.create("ChangePasswordDlg", function (dlg) {
+                                Factory_9.Factory.createDefault("ChangePasswordDlgImpl", function (dlg) {
                                     dlg.open();
                                 }, { "passCode": passCode });
                             }, 100);
@@ -4346,7 +4347,7 @@ System.register("Attachment", ["Meta64", "Util", "Factory"], function(exports_42
                             return;
                         }
                         attachment.uploadNode = node;
-                        Factory_10.Factory.create("UploadFromFileDropzoneDlg", function (dlg) {
+                        Factory_10.Factory.createDefault("UploadFromFileDropzoneDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
@@ -4358,14 +4359,14 @@ System.register("Attachment", ["Meta64", "Util", "Factory"], function(exports_42
                             return;
                         }
                         attachment.uploadNode = node;
-                        Factory_10.Factory.create("UploadFromUrlDlg", function (dlg) {
+                        Factory_10.Factory.createDefault("UploadFromUrlDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.deleteAttachment = function () {
                         var node = Meta64_12.meta64.getHighlightedNode();
                         if (node) {
-                            Factory_10.Factory.create("ConfirmDlg", function (dlg) {
+                            Factory_10.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback": function () {
@@ -4497,11 +4498,11 @@ System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports
                         }
                         return Render_9.render.tag("p", attrs, message);
                     };
-                    this.makeButton = function (text, id, callback, ctx) {
+                    this.makeButton = function (text, id, callback, ctx, clazz) {
                         var attribs = {
                             "raised": "raised",
                             "id": _this.id(id),
-                            "class": "standardButton"
+                            "class": clazz || "standardButton"
                         };
                         if (callback != undefined) {
                             attribs["onClick"] = Meta64_13.meta64.encodeOnClick(callback, ctx);
@@ -4597,10 +4598,10 @@ System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports
         }
     }
 });
-System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast"], function(exports_44, context_44) {
+System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "Render", "Props"], function(exports_44, context_44) {
     "use strict";
     var __moduleName = context_44 && context_44.id;
-    var DialogBaseImpl_1, Podcast_3;
+    var DialogBaseImpl_1, Podcast_3, Meta64_14, Render_10, Props_6;
     var AudioPlayerDlgImpl;
     return {
         setters:[
@@ -4609,6 +4610,15 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast"], function(ex
             },
             function (Podcast_3_1) {
                 Podcast_3 = Podcast_3_1;
+            },
+            function (Meta64_14_1) {
+                Meta64_14 = Meta64_14_1;
+            },
+            function (Render_10_1) {
+                Render_10 = Render_10_1;
+            },
+            function (Props_6_1) {
+                Props_6 = Props_6_1;
             }],
         execute: function() {
             console.log("AudioPlayerDlgImpl.ts");
@@ -4618,7 +4628,56 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast"], function(ex
                     var _this = this;
                     _super.call(this, "AudioPlayerDlg");
                     this.build = function () {
-                        throw "onclicks, not defined";
+                        var header = _this.makeHeader("Audio Player");
+                        var node = Meta64_14.meta64.uidToNodeMap[_this.nodeUid];
+                        if (!node) {
+                            throw "unknown node uid: " + _this.nodeUid;
+                        }
+                        var rssTitle = Props_6.props.getNodeProperty("meta64:rssItemTitle", node);
+                        var description = Render_10.render.tag("p", {}, rssTitle.value);
+                        var playerAttribs = {
+                            "src": _this.sourceUrl,
+                            "id": _this.id("audioPlayer"),
+                            "style": "width: 100%; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
+                            "ontimeupdate": "podcast.onTimeUpdate('" + _this.nodeUid + "', this);",
+                            "oncanplay": "podcast.onCanPlay('" + _this.nodeUid + "', this);",
+                            "controls": "controls",
+                            "preload": "auto"
+                        };
+                        var player = Render_10.render.tag("audio", playerAttribs);
+                        var skipBack30Button = _this.makeButton("< 30s", "skipBackButton", _this.skipBack30Button, _this);
+                        var skipForward30Button = _this.makeButton("30s >", "skipForwardButton", _this.skipForward30Button, _this);
+                        var skipButtonBar = Render_10.render.centeredButtonBar(skipBack30Button + skipForward30Button);
+                        var speedNormalButton = _this.makeButton("Normal", "normalSpeedButton", _this.normalSpeedButton, _this);
+                        var speed15Button = _this.makeButton("1.5X", "speed15Button", _this.speed15Button, _this);
+                        var speed2Button = _this.makeButton("2X", "speed2Button", _this.speed2Button, _this);
+                        var speedButtonBar = Render_10.render.centeredButtonBar(speedNormalButton + speed15Button + speed2Button);
+                        var pauseButton = _this.makeButton("Pause", "pauseButton", _this.pauseButton, _this);
+                        var playButton = _this.makeButton("Play", "playButton", _this.playButton, _this, "playButton");
+                        var closeButton = _this.makeButton("Close", "closeAudioPlayerDlgButton", _this.closeBtn);
+                        var buttonBar = Render_10.render.centeredButtonBar(playButton + pauseButton + closeButton);
+                        return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
+                    };
+                    this.pauseButton = function () {
+                        Podcast_3.podcast.pause();
+                    };
+                    this.playButton = function () {
+                        Podcast_3.podcast.play();
+                    };
+                    this.speed2Button = function () {
+                        Podcast_3.podcast.speed(2);
+                    };
+                    this.speed15Button = function () {
+                        Podcast_3.podcast.speed(1.5);
+                    };
+                    this.normalSpeedButton = function () {
+                        Podcast_3.podcast.speed(1.0);
+                    };
+                    this.skipBack30Button = function () {
+                        Podcast_3.podcast.skip(-30);
+                    };
+                    this.skipForward30Button = function () {
+                        Podcast_3.podcast.skip(30);
                     };
                     this.closeEvent = function () {
                         Podcast_3.podcast.destroyPlayer(null);
@@ -4651,15 +4710,15 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast"], function(ex
 System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory", "Util"], function(exports_45, context_45) {
     "use strict";
     var __moduleName = context_45 && context_45.id;
-    var DialogBaseImpl_2, Render_10, Factory_11, Util_15;
+    var DialogBaseImpl_2, Render_11, Factory_11, Util_15;
     var ChangePasswordDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_2_1) {
                 DialogBaseImpl_2 = DialogBaseImpl_2_1;
             },
-            function (Render_10_1) {
-                Render_10 = Render_10_1;
+            function (Render_11_1) {
+                Render_11 = Render_11_1;
             },
             function (Factory_11_1) {
                 Factory_11 = Factory_11_1;
@@ -4676,11 +4735,11 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
                     _super.call(this, "ChangePasswordDlg");
                     this.build = function () {
                         var header = _this.makeHeader(_this.passCode ? "Password Reset" : "Change Password");
-                        var message = Render_10.render.tag("p", {}, "Enter your new password below...");
+                        var message = Render_11.render.tag("p", {}, "Enter your new password below...");
                         var formControls = _this.makePasswordField("New Password", "changePassword1");
                         var changePasswordButton = _this.makeCloseButton("Change Password", "changePasswordActionButton", _this.changePassword, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelChangePasswordButton");
-                        var buttonBar = Render_10.render.centeredButtonBar(changePasswordButton + backButton);
+                        var buttonBar = Render_11.render.centeredButtonBar(changePasswordButton + backButton);
                         return header + message + formControls + buttonBar;
                     };
                     this.changePassword = function () {
@@ -4703,7 +4762,7 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
                                     + "</b> with your new password.";
                             }
                             var thiz_1 = _this;
-                            Factory_11.Factory.create("MessageDlg", function (dlg) {
+                            Factory_11.Factory.createDefault("MessageDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Password Change", callback: function () {
@@ -4728,15 +4787,15 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
 System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function(exports_46, context_46) {
     "use strict";
     var __moduleName = context_46 && context_46.id;
-    var DialogBaseImpl_3, Render_11;
+    var DialogBaseImpl_3, Render_12;
     var ConfirmDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_3_1) {
                 DialogBaseImpl_3 = DialogBaseImpl_3_1;
             },
-            function (Render_11_1) {
-                Render_11 = Render_11_1;
+            function (Render_12_1) {
+                Render_12 = Render_12_1;
             }],
         execute: function() {
             console.log("ConfirmDlgImpl.ts");
@@ -4747,10 +4806,10 @@ System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function(exports
                     _super.call(this, "ConfirmDlg");
                     this.build = function () {
                         var content = _this.makeHeader("", "ConfirmDlgTitle") + _this.makeMessageArea("", "ConfirmDlgMessage");
-                        content = Render_11.render.centerContent(content, 300);
+                        content = Render_12.render.centerContent(content, 300);
                         var buttons = _this.makeCloseButton("Yes", "ConfirmDlgYesButton", _this.yesCallback)
                             + _this.makeCloseButton("No", "ConfirmDlgNoButton", _this.noCallback);
-                        content += Render_11.render.centeredButtonBar(buttons);
+                        content += Render_12.render.centeredButtonBar(buttons);
                         return content;
                     };
                     this.init = function () {
@@ -4773,18 +4832,18 @@ System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function(exports
 System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edit"], function(exports_47, context_47) {
     "use strict";
     var __moduleName = context_47 && context_47.id;
-    var DialogBaseImpl_4, Render_12, Meta64_14, Edit_7;
+    var DialogBaseImpl_4, Render_13, Meta64_15, Edit_7;
     var CreateNodeDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_4_1) {
                 DialogBaseImpl_4 = DialogBaseImpl_4_1;
             },
-            function (Render_12_1) {
-                Render_12 = Render_12_1;
+            function (Render_13_1) {
+                Render_13 = Render_13_1;
             },
-            function (Meta64_14_1) {
-                Meta64_14 = Meta64_14_1;
+            function (Meta64_15_1) {
+                Meta64_15 = Meta64_15_1;
             },
             function (Edit_7_1) {
                 Edit_7 = Edit_7_1;
@@ -4802,17 +4861,17 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                         var createLastChildButton = _this.makeCloseButton("Last", "createLastChildButton", _this.createLastChild, _this);
                         var createInlineButton = _this.makeCloseButton("Inline", "createInlineButton", _this.createInline, _this);
                         var backButton = _this.makeCloseButton("Cancel", "cancelButton");
-                        var buttonBar = Render_12.render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
+                        var buttonBar = Render_13.render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
                         var content = "";
                         var typeIdx = 0;
                         content += _this.makeListItem("Standard Type", "nt:unstructured", typeIdx++, true);
                         content += _this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++, false);
                         content += _this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++, false);
-                        var listBox = Render_12.render.tag("div", {
+                        var listBox = Render_13.render.tag("div", {
                             "class": "listBox"
                         }, content);
                         var mainContent = listBox;
-                        var centeredHeader = Render_12.render.tag("div", {
+                        var centeredHeader = Render_13.render.tag("div", {
                             "class": "centeredTitle"
                         }, header);
                         return centeredHeader + mainContent + buttonBar;
@@ -4848,9 +4907,9 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                         _this.el(divId).addClass("selectedListItem");
                     };
                     this.init = function () {
-                        var node = Meta64_14.meta64.getHighlightedNode();
+                        var node = Meta64_15.meta64.getHighlightedNode();
                         if (node) {
-                            var canInsertInline = Meta64_14.meta64.homeNodeId != node.id;
+                            var canInsertInline = Meta64_15.meta64.homeNodeId != node.id;
                             if (canInsertInline) {
                                 _this.el("createInlineButton").show();
                             }
@@ -4870,10 +4929,10 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                         this.lastSelTypeName = typeName;
                         this.lastSelDomId = divId;
                     }
-                    return Render_12.render.tag("div", {
+                    return Render_13.render.tag("div", {
                         "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
                         "id": divId,
-                        "onclick": Meta64_14.meta64.encodeOnClick(this.onRowClick, this, payload)
+                        "onclick": Meta64_15.meta64.encodeOnClick(this.onRowClick, this, payload)
                     }, val);
                 };
                 return CreateNodeDlgImpl;
@@ -4895,7 +4954,7 @@ System.register("EditPropertyDlg", [], function(exports_48, context_48) {
 System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "Factory", "Constants", "Edit", "View", "Props", "Util", "Meta64"], function(exports_49, context_49) {
     "use strict";
     var __moduleName = context_49 && context_49.id;
-    var I, DialogBaseImpl_5, Render_13, Factory_12, Constants_7, Edit_8, View_9, Props_6, Util_16, Meta64_15;
+    var I, DialogBaseImpl_5, Render_14, Factory_12, Constants_7, Edit_8, View_9, Props_7, Util_16, Meta64_16;
     var EditNodeDlgImpl;
     return {
         setters:[
@@ -4905,8 +4964,8 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
             function (DialogBaseImpl_5_1) {
                 DialogBaseImpl_5 = DialogBaseImpl_5_1;
             },
-            function (Render_13_1) {
-                Render_13 = Render_13_1;
+            function (Render_14_1) {
+                Render_14 = Render_14_1;
             },
             function (Factory_12_1) {
                 Factory_12 = Factory_12_1;
@@ -4920,14 +4979,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
             function (View_9_1) {
                 View_9 = View_9_1;
             },
-            function (Props_6_1) {
-                Props_6 = Props_6_1;
+            function (Props_7_1) {
+                Props_7 = Props_7_1;
             },
             function (Util_16_1) {
                 Util_16 = Util_16_1;
             },
-            function (Meta64_15_1) {
-                Meta64_15 = Meta64_15_1;
+            function (Meta64_16_1) {
+                Meta64_16 = Meta64_16_1;
             }],
         execute: function() {
             console.log("EditNodeDlgImpl.ts");
@@ -4946,20 +5005,20 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         var splitContentButton = _this.makeButton("Split", "splitContentButton", _this.splitContent, _this);
                         var deletePropButton = _this.makeButton("Delete", "deletePropButton", _this.deletePropertyButtonClick, _this);
                         var cancelEditButton = _this.makeCloseButton("Close", "cancelEditButton", _this.cancelEdit, _this);
-                        var buttonBar = Render_13.render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
+                        var buttonBar = Render_14.render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
                             + splitContentButton + cancelEditButton, "buttons");
                         var width = 800;
                         var height = 600;
                         var internalMainContent = "";
                         if (Constants_7.cnst.SHOW_PATH_IN_DLGS) {
-                            internalMainContent += Render_13.render.tag("div", {
+                            internalMainContent += Render_14.render.tag("div", {
                                 id: _this.id("editNodePathDisplay"),
                                 "class": "path-display-in-editor"
                             });
                         }
-                        internalMainContent += Render_13.render.tag("div", {
+                        internalMainContent += Render_14.render.tag("div", {
                             id: _this.id("editNodeInstructions")
-                        }) + Render_13.render.tag("div", {
+                        }) + Render_14.render.tag("div", {
                             id: _this.id("propertyEditFieldContainer"),
                             style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
                             class: "vertical-layout-row"
@@ -4975,18 +5034,18 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         if (Edit_8.edit.editNode) {
                             console.log("Editing existing node.");
                             var thiz = _this;
-                            var editOrderedProps = Props_6.props.getPropertiesInEditingOrder(Edit_8.edit.editNode, Edit_8.edit.editNode.properties);
+                            var editOrderedProps = Props_7.props.getPropertiesInEditingOrder(Edit_8.edit.editNode, Edit_8.edit.editNode.properties);
                             var aceFields = [];
                             $.each(editOrderedProps, function (index, prop) {
-                                if (!Render_13.render.allowPropertyToDisplay(prop.name)) {
+                                if (!Render_14.render.allowPropertyToDisplay(prop.name)) {
                                     console.log("Hiding property: " + prop.name);
                                     return;
                                 }
                                 var fieldId = thiz.id("editNodeTextContent" + index);
                                 console.log("Creating edit field " + fieldId + " for property " + prop.name);
                                 var isMulti = prop.values && prop.values.length > 0;
-                                var isReadOnlyProp = Render_13.render.isReadOnlyProperty(prop.name);
-                                var isBinaryProp = Render_13.render.isBinaryProperty(prop.name);
+                                var isReadOnlyProp = Render_14.render.isReadOnlyProperty(prop.name);
+                                var isBinaryProp = Render_14.render.isBinaryProperty(prop.name);
                                 var propEntry = new I.PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
                                 thiz.fieldIdToPropMap[fieldId] = propEntry;
                                 thiz.propEntries.push(propEntry);
@@ -4997,7 +5056,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 else {
                                     field += thiz.makeSinglePropEditor(propEntry, aceFields);
                                 }
-                                fields += Render_13.render.tag("div", {
+                                fields += Render_14.render.tag("div", {
                                     "class": ((!isReadOnlyProp && !isBinaryProp) || Edit_8.edit.showReadOnlyProperties ? "propertyEditListItem"
                                         : "propertyEditListItemHidden")
                                 }, field);
@@ -5007,7 +5066,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             console.log("Editing new node.");
                             if (Constants_7.cnst.USE_ACE_EDITOR) {
                                 var aceFieldId = _this.id("newNodeNameId");
-                                fields += Render_13.render.tag("div", {
+                                fields += Render_14.render.tag("div", {
                                     "id": aceFieldId,
                                     "class": "ace-edit-panel",
                                     "html": "true"
@@ -5018,14 +5077,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 });
                             }
                             else {
-                                var field = Render_13.render.tag("paper-textarea", {
+                                var field = Render_14.render.tag("paper-textarea", {
                                     "id": _this.id("newNodeNameId"),
                                     "label": "New Node Name"
                                 }, '', true);
-                                fields += Render_13.render.tag("div", { "display": "table-row" }, field);
+                                fields += Render_14.render.tag("div", { "display": "table-row" }, field);
                             }
                         }
-                        var propTable = Render_13.render.tag("div", {
+                        var propTable = Render_14.render.tag("div", {
                             "display": "table",
                         }, fields);
                         Util_16.util.setHtml(_this.id("propertyEditFieldContainer"), propTable);
@@ -5033,7 +5092,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             for (var i = 0; i < aceFields.length; i++) {
                                 var editor = ace.edit(aceFields[i].id);
                                 editor.setValue(Util_16.util.unencodeHtml(aceFields[i].val));
-                                Meta64_15.meta64.aceEditorsById[aceFields[i].id] = editor;
+                                Meta64_16.meta64.aceEditorsById[aceFields[i].id] = editor;
                             }
                         }
                         var instr = Edit_8.edit.editingUnsavedNode ?
@@ -5042,19 +5101,19 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 "";
                         _this.el("editNodeInstructions").html(instr);
                         Util_16.util.setVisibility("#" + _this.id("addPropertyButton"), !Edit_8.edit.editingUnsavedNode);
-                        var tagsPropExists = Props_6.props.getNodePropertyVal("tags", Edit_8.edit.editNode) != null;
+                        var tagsPropExists = Props_7.props.getNodePropertyVal("tags", Edit_8.edit.editNode) != null;
                         Util_16.util.setVisibility("#" + _this.id("addTagsPropertyButton"), !tagsPropExists);
                     };
                     this.toggleShowReadOnly = function () {
                     };
                     this.addProperty = function () {
-                        Factory_12.Factory.create("EditPropertyDlg", function (dlg) {
+                        Factory_12.Factory.createDefault("EditPropertyDlgImpl", function (dlg) {
                             _this.editPropertyDlgInst = dlg;
                             _this.editPropertyDlgInst.open();
                         }, { "EditNodeDlgInstance": _this });
                     };
                     this.addTagsProperty = function () {
-                        if (Props_6.props.getNodePropertyVal(Edit_8.edit.editNode, "tags")) {
+                        if (Props_7.props.getNodePropertyVal(Edit_8.edit.editNode, "tags")) {
                             return;
                         }
                         var postData = {
@@ -5072,7 +5131,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                     this.savePropertyResponse = function (res) {
                         Util_16.util.checkSuccess("Save properties", res);
                         Edit_8.edit.editNode.properties.push(res.propertySaved);
-                        Meta64_15.meta64.treeDirty = true;
+                        Meta64_16.meta64.treeDirty = true;
                         _this.populateEditNodePg();
                     };
                     this.addSubProperty = function (fieldId) {
@@ -5088,7 +5147,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                     };
                     this.deleteProperty = function (propName) {
                         var thiz = _this;
-                        Factory_12.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_12.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Delete", "message": "Delete the Property: " + propName,
@@ -5108,8 +5167,8 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                     };
                     this.deletePropertyResponse = function (res, propertyToDelete) {
                         if (Util_16.util.checkSuccess("Delete property", res)) {
-                            Props_6.props.deletePropertyFromLocalData(propertyToDelete);
-                            Meta64_15.meta64.treeDirty = true;
+                            Props_7.props.deletePropertyFromLocalData(propertyToDelete);
+                            Meta64_16.meta64.treeDirty = true;
                             _this.populateEditNodePg();
                         }
                     };
@@ -5118,7 +5177,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             Util_16.util.setInputVal(_this.id(fieldId), "");
                         }
                         else {
-                            var editor = Meta64_15.meta64.aceEditorsById[_this.id(fieldId)];
+                            var editor = Meta64_16.meta64.aceEditorsById[_this.id(fieldId)];
                             if (editor) {
                                 editor.setValue("");
                             }
@@ -5131,7 +5190,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 }
                             }
                             else {
-                                var editor = Meta64_15.meta64.aceEditorsById[_this.id(fieldId + "_subProp" + counter)];
+                                var editor = Meta64_16.meta64.aceEditorsById[_this.id(fieldId + "_subProp" + counter)];
                                 if (editor) {
                                     editor.setValue("");
                                 }
@@ -5156,11 +5215,11 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         if (!newNodeName) {
                             newNodeName = Util_16.util.getInputVal(_this.id("newNodeNameId"));
                         }
-                        if (Meta64_15.meta64.userName != Edit_8.edit.parentOfNewNode.createdBy &&
+                        if (Meta64_16.meta64.userName != Edit_8.edit.parentOfNewNode.createdBy &&
                             Edit_8.edit.parentOfNewNode.createdBy != "admin") {
                             Edit_8.edit.sendNotificationPendingSave = true;
                         }
-                        Meta64_15.meta64.treeDirty = true;
+                        Meta64_16.meta64.treeDirty = true;
                         if (Edit_8.edit.nodeInsertTarget) {
                             Util_16.util.json("insertNode", {
                                 "parentId": Edit_8.edit.parentOfNewNode.id,
@@ -5190,7 +5249,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 console.log("Saving non-multi property field: " + JSON.stringify(prop));
                                 var propVal;
                                 if (Constants_7.cnst.USE_ACE_EDITOR) {
-                                    var editor = Meta64_15.meta64.aceEditorsById[prop.id];
+                                    var editor = Meta64_16.meta64.aceEditorsById[prop.id];
                                     if (!editor)
                                         throw "Unable to find Ace Editor for ID: " + prop.id;
                                     propVal = editor.getValue();
@@ -5216,7 +5275,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                     console.log("subProp[" + index + "]: " + JSON.stringify(subProp));
                                     var propVal;
                                     if (Constants_7.cnst.USE_ACE_EDITOR) {
-                                        var editor = Meta64_15.meta64.aceEditorsById[subProp.id];
+                                        var editor = Meta64_16.meta64.aceEditorsById[subProp.id];
                                         if (!editor)
                                             throw "Unable to find Ace Editor for subProp ID: " + subProp.id;
                                         propVal = editor.getValue();
@@ -5270,7 +5329,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             var subProp = new I.SubProp(id, propVal);
                             propEntry.subProps.push(subProp);
                             if (propEntry.binary || propEntry.readOnly) {
-                                fields += Render_13.render.tag("paper-textarea", {
+                                fields += Render_14.render.tag("paper-textarea", {
                                     "id": id,
                                     "readonly": "readonly",
                                     "disabled": "disabled",
@@ -5279,14 +5338,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 }, '', true);
                             }
                             else {
-                                fields += Render_13.render.tag("paper-textarea", {
+                                fields += Render_14.render.tag("paper-textarea", {
                                     "id": id,
                                     "label": label,
                                     "value": propValStr
                                 }, '', true);
                             }
                         }
-                        var col = Render_13.render.tag("div", {
+                        var col = Render_14.render.tag("div", {
                             "style": "display: table-cell;"
                         }, fields);
                         return col;
@@ -5295,14 +5354,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         console.log("Property single-type: " + propEntry.property.name);
                         var field = "";
                         var propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
-                        var label = Render_13.render.sanitizePropertyName(propEntry.property.name);
+                        var label = Render_14.render.sanitizePropertyName(propEntry.property.name);
                         var propValStr = propVal ? propVal : '';
                         propValStr = Util_16.util.escapeForAttrib(propValStr);
                         console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
                             + "] fieldId=" + propEntry.id);
                         var propSelCheckbox = "";
                         if (propEntry.readOnly || propEntry.binary) {
-                            field += Render_13.render.tag("paper-textarea", {
+                            field += Render_14.render.tag("paper-textarea", {
                                 "id": propEntry.id,
                                 "readonly": "readonly",
                                 "disabled": "disabled",
@@ -5316,14 +5375,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 _this.contentFieldDomId = propEntry.id;
                             }
                             if (!Constants_7.cnst.USE_ACE_EDITOR) {
-                                field += Render_13.render.tag("paper-textarea", {
+                                field += Render_14.render.tag("paper-textarea", {
                                     "id": propEntry.id,
                                     "label": label,
                                     "value": propValStr
                                 }, '', true);
                             }
                             else {
-                                field += Render_13.render.tag("div", {
+                                field += Render_14.render.tag("div", {
                                     "id": propEntry.id,
                                     "class": "ace-edit-panel",
                                     "html": "true"
@@ -5334,10 +5393,10 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                                 });
                             }
                         }
-                        var selCol = Render_13.render.tag("div", {
+                        var selCol = Render_14.render.tag("div", {
                             "style": "width: 40px; display: table-cell; padding: 10px;"
                         }, propSelCheckbox);
-                        var editCol = Render_13.render.tag("div", {
+                        var editCol = Render_14.render.tag("div", {
                             "style": "width: 100%; display: table-cell; padding: 10px;"
                         }, field);
                         return selCol + editCol;
@@ -5376,17 +5435,17 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         if (Util_16.util.checkSuccess("Split content", res)) {
                             _this.cancel();
                             View_9.view.refreshTree(null, false);
-                            Meta64_15.meta64.selectTab("mainTabName");
+                            Meta64_16.meta64.selectTab("mainTabName");
                             View_9.view.scrollToSelectedNode();
                         }
                     };
                     this.cancelEdit = function () {
                         _this.cancel();
-                        if (Meta64_15.meta64.treeDirty) {
-                            Meta64_15.meta64.goToMainPage(true);
+                        if (Meta64_16.meta64.treeDirty) {
+                            Meta64_16.meta64.goToMainPage(true);
                         }
                         else {
-                            Meta64_15.meta64.selectTab("mainTabName");
+                            Meta64_16.meta64.selectTab("mainTabName");
                             View_9.view.scrollToSelectedNode();
                         }
                     };
@@ -5411,7 +5470,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
 System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render", "View", "Util", "Edit", "Meta64"], function(exports_50, context_50) {
     "use strict";
     var __moduleName = context_50 && context_50.id;
-    var DialogBaseImpl_6, Constants_8, Render_14, View_10, Util_17, Edit_9, Meta64_16;
+    var DialogBaseImpl_6, Constants_8, Render_15, View_10, Util_17, Edit_9, Meta64_17;
     var EditPropertyDlgImpl;
     return {
         setters:[
@@ -5421,8 +5480,8 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
             function (Constants_8_1) {
                 Constants_8 = Constants_8_1;
             },
-            function (Render_14_1) {
-                Render_14 = Render_14_1;
+            function (Render_15_1) {
+                Render_15 = Render_15_1;
             },
             function (View_10_1) {
                 View_10 = View_10_1;
@@ -5433,8 +5492,8 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
             function (Edit_9_1) {
                 Edit_9 = Edit_9_1;
             },
-            function (Meta64_16_1) {
-                Meta64_16 = Meta64_16_1;
+            function (Meta64_17_1) {
+                Meta64_17 = Meta64_17_1;
             }],
         execute: function() {
             console.log("EditPropertyDlgImpl.ts");
@@ -5448,7 +5507,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         var header = _this.makeHeader("Edit Node Property");
                         var savePropertyButton = _this.makeCloseButton("Save", "savePropertyButton", _this.saveProperty, _this);
                         var cancelEditButton = _this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
-                        var buttonBar = Render_14.render.centeredButtonBar(savePropertyButton + cancelEditButton);
+                        var buttonBar = Render_15.render.centeredButtonBar(savePropertyButton + cancelEditButton);
                         var internalMainContent = "";
                         if (Constants_8.cnst.SHOW_PATH_IN_DLGS) {
                             internalMainContent += "<div id='" + _this.id("editPropertyPathDisplay")
@@ -5461,7 +5520,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         var field = '';
                         {
                             var fieldPropNameId = "addPropertyNameTextContent";
-                            field += Render_14.render.tag("paper-textarea", {
+                            field += Render_15.render.tag("paper-textarea", {
                                 "name": fieldPropNameId,
                                 "id": _this.id(fieldPropNameId),
                                 "placeholder": "Enter property name",
@@ -5470,7 +5529,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         }
                         {
                             var fieldPropValueId = "addPropertyValueTextContent";
-                            field += Render_14.render.tag("paper-textarea", {
+                            field += Render_15.render.tag("paper-textarea", {
                                 "name": fieldPropValueId,
                                 "id": _this.id(fieldPropValueId),
                                 "placeholder": "Enter property text",
@@ -5493,7 +5552,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                     this.savePropertyResponse = function (res) {
                         Util_17.util.checkSuccess("Save properties", res);
                         Edit_9.edit.editNode.properties.push(res.propertySaved);
-                        Meta64_16.meta64.treeDirty = true;
+                        Meta64_17.meta64.treeDirty = true;
                         _this.editNodeDlg.populateEditNodePg();
                     };
                     this.init = function () {
@@ -5597,15 +5656,15 @@ System.register("ResetPasswordDlg", [], function(exports_55, context_55) {
 System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants", "Factory"], function(exports_56, context_56) {
     "use strict";
     var __moduleName = context_56 && context_56.id;
-    var DialogBaseImpl_10, Render_15, User_5, Constants_9, Factory_13;
+    var DialogBaseImpl_10, Render_16, User_5, Constants_9, Factory_13;
     var LoginDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_10_1) {
                 DialogBaseImpl_10 = DialogBaseImpl_10_1;
             },
-            function (Render_15_1) {
-                Render_15 = Render_15_1;
+            function (Render_16_1) {
+                Render_16 = Render_16_1;
             },
             function (User_5_1) {
                 User_5 = User_5_1;
@@ -5630,7 +5689,7 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
                         var loginButton = _this.makeButton("Login", "loginButton", _this.login, _this);
                         var resetPasswordButton = _this.makeButton("Forgot Password", "resetPasswordButton", _this.resetPassword, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelLoginButton");
-                        var buttonBar = Render_15.render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
+                        var buttonBar = Render_16.render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
                         var divider = "<div><h3>Or Login With...</h3></div>";
                         var form = formControls + buttonBar;
                         var mainContent = form;
@@ -5660,14 +5719,14 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
                     this.resetPassword = function () {
                         var thiz = _this;
                         var usr = _this.getInputVal("userName");
-                        Factory_13.Factory.create("ConfirmDlg", function (dlg) {
+                        Factory_13.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Reset Password",
                             "message": "Reset your password ?<p>You'll still be able to login with your old password until the new one is set.",
                             "buttonText": "Yes, reset.", "yesCallback": function () {
                                 thiz.cancel();
-                                Factory_13.Factory.create("ResetPasswordDlg", function (dlg) {
+                                Factory_13.Factory.createDefault("ResetPasswordDlgImpl", function (dlg) {
                                     dlg.open();
                                 }, { "user": usr });
                             }
@@ -5683,18 +5742,18 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
 System.register("ManageAccountDlgImpl", ["DialogBaseImpl", "Render", "Meta64"], function(exports_57, context_57) {
     "use strict";
     var __moduleName = context_57 && context_57.id;
-    var DialogBaseImpl_11, Render_16, Meta64_17;
+    var DialogBaseImpl_11, Render_17, Meta64_18;
     var ManageAccountDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_11_1) {
                 DialogBaseImpl_11 = DialogBaseImpl_11_1;
             },
-            function (Render_16_1) {
-                Render_16 = Render_16_1;
+            function (Render_17_1) {
+                Render_17 = Render_17_1;
             },
-            function (Meta64_17_1) {
-                Meta64_17 = Meta64_17_1;
+            function (Meta64_18_1) {
+                Meta64_18 = Meta64_18_1;
             }],
         execute: function() {
             console.log("ManageAccountDlgImpl.ts");
@@ -5706,10 +5765,10 @@ System.register("ManageAccountDlgImpl", ["DialogBaseImpl", "Render", "Meta64"], 
                     this.build = function () {
                         var header = _this.makeHeader("Manage Account");
                         var backButton = _this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-                        var closeAccountButton = Meta64_17.meta64.isAdminUser ? "Admin Cannot Close Acount" : _this.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
-                        var buttonBar = Render_16.render.centeredButtonBar(closeAccountButton);
-                        var bottomButtonBar = Render_16.render.centeredButtonBar(backButton);
-                        var bottomButtonBarDiv = Render_16.render.tag("div", {
+                        var closeAccountButton = Meta64_18.meta64.isAdminUser ? "Admin Cannot Close Acount" : _this.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
+                        var buttonBar = Render_17.render.centeredButtonBar(closeAccountButton);
+                        var bottomButtonBar = Render_17.render.centeredButtonBar(backButton);
+                        var bottomButtonBarDiv = Render_17.render.tag("div", {
                             "class": "close-account-bar"
                         }, bottomButtonBar);
                         return header + buttonBar + bottomButtonBarDiv;
@@ -5724,15 +5783,15 @@ System.register("ManageAccountDlgImpl", ["DialogBaseImpl", "Render", "Meta64"], 
 System.register("MessageDlgImpl", ["DialogBaseImpl", "Render"], function(exports_58, context_58) {
     "use strict";
     var __moduleName = context_58 && context_58.id;
-    var DialogBaseImpl_12, Render_17;
+    var DialogBaseImpl_12, Render_18;
     var MessageDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_12_1) {
                 DialogBaseImpl_12 = DialogBaseImpl_12_1;
             },
-            function (Render_17_1) {
-                Render_17 = Render_17_1;
+            function (Render_18_1) {
+                Render_18 = Render_18_1;
             }],
         execute: function() {
             console.log("MessageDlgImpl.ts");
@@ -5743,7 +5802,7 @@ System.register("MessageDlgImpl", ["DialogBaseImpl", "Render"], function(exports
                     _super.call(this, "MessageDlg");
                     this.build = function () {
                         var content = _this.makeHeader(_this.title) + "<p>" + _this.message + "</p>";
-                        content += Render_17.render.centeredButtonBar(_this.makeCloseButton("Ok", "messageDlgOkButton", _this.callback));
+                        content += Render_18.render.centeredButtonBar(_this.makeCloseButton("Ok", "messageDlgOkButton", _this.callback));
                         return content;
                     };
                     if (!args.title) {
@@ -5762,18 +5821,18 @@ System.register("MessageDlgImpl", ["DialogBaseImpl", "Render"], function(exports
 System.register("PrefsDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Util"], function(exports_59, context_59) {
     "use strict";
     var __moduleName = context_59 && context_59.id;
-    var DialogBaseImpl_13, Render_18, Meta64_18, Util_18;
+    var DialogBaseImpl_13, Render_19, Meta64_19, Util_18;
     var PrefsDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_13_1) {
                 DialogBaseImpl_13 = DialogBaseImpl_13_1;
             },
-            function (Render_18_1) {
-                Render_18 = Render_18_1;
+            function (Render_19_1) {
+                Render_19 = Render_19_1;
             },
-            function (Meta64_18_1) {
-                Meta64_18 = Meta64_18_1;
+            function (Meta64_19_1) {
+                Meta64_19 = Meta64_19_1;
             },
             function (Util_18_1) {
                 Util_18 = Util_18_1;
@@ -5788,49 +5847,49 @@ System.register("PrefsDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Util"], 
                         var header = _this.makeHeader("Peferences");
                         var radioButtons = _this.makeRadioButton("Simple", "editModeSimple") +
                             _this.makeRadioButton("Advanced", "editModeAdvanced");
-                        var radioButtonGroup = Render_18.render.tag("paper-radio-group", {
+                        var radioButtonGroup = Render_19.render.tag("paper-radio-group", {
                             "id": _this.id("simpleModeRadioGroup"),
                             "selected": _this.id("editModeSimple")
                         }, radioButtons);
-                        var showMetaDataCheckBox = _this.makeCheckBox("Show Row Metadata", "showMetaData", Meta64_18.meta64.showMetaData);
-                        var checkboxBar = Render_18.render.makeHorzControlGroup(showMetaDataCheckBox);
+                        var showMetaDataCheckBox = _this.makeCheckBox("Show Row Metadata", "showMetaData", Meta64_19.meta64.showMetaData);
+                        var checkboxBar = Render_19.render.makeHorzControlGroup(showMetaDataCheckBox);
                         var formControls = radioButtonGroup;
                         var legend = "<legend>Edit Mode:</legend>";
-                        var radioBar = Render_18.render.makeHorzControlGroup(legend + formControls);
+                        var radioBar = Render_19.render.makeHorzControlGroup(legend + formControls);
                         var saveButton = _this.makeCloseButton("Save", "savePreferencesButton", _this.savePreferences, _this);
                         var backButton = _this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-                        var buttonBar = Render_18.render.centeredButtonBar(saveButton + backButton);
+                        var buttonBar = Render_19.render.centeredButtonBar(saveButton + backButton);
                         return header + radioBar + checkboxBar + buttonBar;
                     };
                     this.savePreferences = function () {
                         var polyElm = Util_18.util.polyElm(_this.id("simpleModeRadioGroup"));
-                        Meta64_18.meta64.editModeOption = polyElm.node.selected == _this.id("editModeSimple") ? Meta64_18.meta64.MODE_SIMPLE
-                            : Meta64_18.meta64.MODE_ADVANCED;
+                        Meta64_19.meta64.editModeOption = polyElm.node.selected == _this.id("editModeSimple") ? Meta64_19.meta64.MODE_SIMPLE
+                            : Meta64_19.meta64.MODE_ADVANCED;
                         var showMetaDataCheckbox = Util_18.util.polyElm(_this.id("showMetaData"));
-                        Meta64_18.meta64.showMetaData = showMetaDataCheckbox.node.checked;
+                        Meta64_19.meta64.showMetaData = showMetaDataCheckbox.node.checked;
                         Util_18.util.json("saveUserPreferences", {
                             "userPreferences": {
-                                "advancedMode": Meta64_18.meta64.editModeOption === Meta64_18.meta64.MODE_ADVANCED,
-                                "editMode": Meta64_18.meta64.userPreferences.editMode,
+                                "advancedMode": Meta64_19.meta64.editModeOption === Meta64_19.meta64.MODE_ADVANCED,
+                                "editMode": Meta64_19.meta64.userPreferences.editMode,
                                 "lastNode": null,
                                 "importAllowed": false,
                                 "exportAllowed": false,
-                                "showMetaData": Meta64_18.meta64.showMetaData
+                                "showMetaData": Meta64_19.meta64.showMetaData
                             }
                         }, _this.savePreferencesResponse, _this);
                     };
                     this.savePreferencesResponse = function (res) {
                         if (Util_18.util.checkSuccess("Saving Preferences", res)) {
-                            Meta64_18.meta64.selectTab("mainTabName");
-                            Meta64_18.meta64.refresh();
+                            Meta64_19.meta64.selectTab("mainTabName");
+                            Meta64_19.meta64.refresh();
                         }
                     };
                     this.init = function () {
                         var polyElm = Util_18.util.polyElm(_this.id("simpleModeRadioGroup"));
-                        polyElm.node.select(Meta64_18.meta64.editModeOption == Meta64_18.meta64.MODE_SIMPLE ? _this.id("editModeSimple") : _this
+                        polyElm.node.select(Meta64_19.meta64.editModeOption == Meta64_19.meta64.MODE_SIMPLE ? _this.id("editModeSimple") : _this
                             .id("editModeAdvanced"));
                         polyElm = Util_18.util.polyElm(_this.id("showMetaData"));
-                        polyElm.node.checked = Meta64_18.meta64.showMetaData;
+                        polyElm.node.checked = Meta64_19.meta64.showMetaData;
                         Polymer.dom.flush();
                     };
                 }
@@ -5843,15 +5902,15 @@ System.register("PrefsDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Util"], 
 System.register("ProgressDlgImpl", ["DialogBaseImpl", "Render"], function(exports_60, context_60) {
     "use strict";
     var __moduleName = context_60 && context_60.id;
-    var DialogBaseImpl_14, Render_19;
+    var DialogBaseImpl_14, Render_20;
     var ProgressDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_14_1) {
                 DialogBaseImpl_14 = DialogBaseImpl_14_1;
             },
-            function (Render_19_1) {
-                Render_19 = Render_19_1;
+            function (Render_20_1) {
+                Render_20 = Render_20_1;
             }],
         execute: function() {
             console.log("ProgressDlgImpl.ts");
@@ -5862,13 +5921,13 @@ System.register("ProgressDlgImpl", ["DialogBaseImpl", "Render"], function(export
                     _super.call(this, "ProgressDlg");
                     this.build = function () {
                         var header = _this.makeHeader("Processing Request", "", true);
-                        var progressBar = Render_19.render.tag("paper-progress", {
+                        var progressBar = Render_20.render.tag("paper-progress", {
                             "indeterminate": "indeterminate",
                             "value": "800",
                             "min": "100",
                             "max": "1000"
                         });
-                        var barContainer = Render_19.render.tag("div", {
+                        var barContainer = Render_20.render.tag("div", {
                             "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
                             "class": "horizontal center-justified layout"
                         }, progressBar);
@@ -5884,21 +5943,21 @@ System.register("ProgressDlgImpl", ["DialogBaseImpl", "Render"], function(export
 System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta64", "Edit", "View"], function(exports_61, context_61) {
     "use strict";
     var __moduleName = context_61 && context_61.id;
-    var DialogBaseImpl_15, Render_20, Util_19, Meta64_19, Edit_10, View_11;
+    var DialogBaseImpl_15, Render_21, Util_19, Meta64_20, Edit_10, View_11;
     var RenameNodeDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_15_1) {
                 DialogBaseImpl_15 = DialogBaseImpl_15_1;
             },
-            function (Render_20_1) {
-                Render_20 = Render_20_1;
+            function (Render_21_1) {
+                Render_21 = Render_21_1;
             },
             function (Util_19_1) {
                 Util_19 = Util_19_1;
             },
-            function (Meta64_19_1) {
-                Meta64_19 = Meta64_19_1;
+            function (Meta64_20_1) {
+                Meta64_20 = Meta64_20_1;
             },
             function (Edit_10_1) {
                 Edit_10 = Edit_10_1;
@@ -5919,7 +5978,7 @@ System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta6
                         var formControls = _this.makeEditField("Enter new name for the node", "newNodeNameEditField");
                         var renameNodeButton = _this.makeCloseButton("Rename", "renameNodeButton", _this.renameNode, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelRenameNodeButton");
-                        var buttonBar = Render_20.render.centeredButtonBar(renameNodeButton + backButton);
+                        var buttonBar = Render_21.render.centeredButtonBar(renameNodeButton + backButton);
                         return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
                     };
                     this.renameNode = function () {
@@ -5928,13 +5987,13 @@ System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta6
                             Util_19.util.showMessage("Please enter a new node name.");
                             return;
                         }
-                        var highlightNode = Meta64_19.meta64.getHighlightedNode();
+                        var highlightNode = Meta64_20.meta64.getHighlightedNode();
                         if (!highlightNode) {
                             Util_19.util.showMessage("Select a node to rename.");
                             return;
                         }
                         var nodeBelow = Edit_10.edit.getNodeBelow(highlightNode);
-                        var renamingRootNode = (highlightNode.id === Meta64_19.meta64.currentNodeId);
+                        var renamingRootNode = (highlightNode.id === Meta64_20.meta64.currentNodeId);
                         var thiz = _this;
                         Util_19.util.json("renameNode", {
                             "nodeId": highlightNode.id,
@@ -5954,7 +6013,7 @@ System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta6
                         }
                     };
                     this.init = function () {
-                        var highlightNode = Meta64_19.meta64.getHighlightedNode();
+                        var highlightNode = Meta64_20.meta64.getHighlightedNode();
                         if (!highlightNode) {
                             return;
                         }
@@ -5971,15 +6030,15 @@ System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta6
 System.register("ResetPasswordDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(exports_62, context_62) {
     "use strict";
     var __moduleName = context_62 && context_62.id;
-    var DialogBaseImpl_16, Render_21, Util_20;
+    var DialogBaseImpl_16, Render_22, Util_20;
     var ResetPasswordDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_16_1) {
                 DialogBaseImpl_16 = DialogBaseImpl_16_1;
             },
-            function (Render_21_1) {
-                Render_21 = Render_21_1;
+            function (Render_22_1) {
+                Render_22 = Render_22_1;
             },
             function (Util_20_1) {
                 Util_20 = Util_20_1;
@@ -5997,7 +6056,7 @@ System.register("ResetPasswordDlgImpl", ["DialogBaseImpl", "Render", "Util"], fu
                             _this.makeEditField("Email Address", "emailAddress");
                         var resetPasswordButton = _this.makeCloseButton("Reset my Password", "resetPasswordButton", _this.resetPassword, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelResetPasswordButton");
-                        var buttonBar = Render_21.render.centeredButtonBar(resetPasswordButton + backButton);
+                        var buttonBar = Render_22.render.centeredButtonBar(resetPasswordButton + backButton);
                         return header + message + formControls + buttonBar;
                     };
                     this.resetPassword = function () {
@@ -6034,15 +6093,15 @@ System.register("ResetPasswordDlgImpl", ["DialogBaseImpl", "Render", "Util"], fu
 System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Search", "Constants", "Meta64"], function(exports_63, context_63) {
     "use strict";
     var __moduleName = context_63 && context_63.id;
-    var DialogBaseImpl_17, Render_22, Util_21, Search_6, Constants_10, Meta64_20;
+    var DialogBaseImpl_17, Render_23, Util_21, Search_6, Constants_10, Meta64_21;
     var SearchContentDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_17_1) {
                 DialogBaseImpl_17 = DialogBaseImpl_17_1;
             },
-            function (Render_22_1) {
-                Render_22 = Render_22_1;
+            function (Render_23_1) {
+                Render_23 = Render_23_1;
             },
             function (Util_21_1) {
                 Util_21 = Util_21_1;
@@ -6053,8 +6112,8 @@ System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Se
             function (Constants_10_1) {
                 Constants_10 = Constants_10_1;
             },
-            function (Meta64_20_1) {
-                Meta64_20 = Meta64_20_1;
+            function (Meta64_21_1) {
+                Meta64_21 = Meta64_21_1;
             }],
         execute: function() {
             SearchContentDlgImpl = (function (_super) {
@@ -6068,7 +6127,7 @@ System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Se
                         var formControls = _this.makeEditField("Search", "searchText");
                         var searchButton = _this.makeCloseButton("Search", "searchNodesButton", _this.searchNodes, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelSearchButton");
-                        var buttonBar = Render_22.render.centeredButtonBar(searchButton + backButton);
+                        var buttonBar = Render_23.render.centeredButtonBar(searchButton + backButton);
                         var content = header + instructions + formControls + buttonBar;
                         _this.bindEnterKey("searchText", Search_6.srch.searchNodes);
                         return content;
@@ -6080,7 +6139,7 @@ System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Se
                         if (!Util_21.util.ajaxReady("searchNodes")) {
                             return;
                         }
-                        var node = Meta64_20.meta64.getHighlightedNode();
+                        var node = Meta64_21.meta64.getHighlightedNode();
                         if (!node) {
                             Util_21.util.showMessage("No node is selected to search under.");
                             return;
@@ -6133,7 +6192,7 @@ System.register("SearchFilesDlgImpl", ["DialogBaseImpl"], function(exports_64, c
 System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Constants", "Util", "Meta64"], function(exports_65, context_65) {
     "use strict";
     var __moduleName = context_65 && context_65.id;
-    var DialogBaseImpl_19, Search_7, Render_23, Constants_11, Util_22, Meta64_21;
+    var DialogBaseImpl_19, Search_7, Render_24, Constants_11, Util_22, Meta64_22;
     var SearchTagsDlgImpl;
     return {
         setters:[
@@ -6143,8 +6202,8 @@ System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Con
             function (Search_7_1) {
                 Search_7 = Search_7_1;
             },
-            function (Render_23_1) {
-                Render_23 = Render_23_1;
+            function (Render_24_1) {
+                Render_24 = Render_24_1;
             },
             function (Constants_11_1) {
                 Constants_11 = Constants_11_1;
@@ -6152,8 +6211,8 @@ System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Con
             function (Util_22_1) {
                 Util_22 = Util_22_1;
             },
-            function (Meta64_21_1) {
-                Meta64_21 = Meta64_21_1;
+            function (Meta64_22_1) {
+                Meta64_22 = Meta64_22_1;
             }],
         execute: function() {
             SearchTagsDlgImpl = (function (_super) {
@@ -6167,7 +6226,7 @@ System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Con
                         var formControls = _this.makeEditField("Search", "searchText");
                         var searchButton = _this.makeCloseButton("Search", "searchNodesButton", _this.searchTags, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelSearchButton");
-                        var buttonBar = Render_23.render.centeredButtonBar(searchButton + backButton);
+                        var buttonBar = Render_24.render.centeredButtonBar(searchButton + backButton);
                         var content = header + instructions + formControls + buttonBar;
                         _this.bindEnterKey("searchText", Search_7.srch.searchNodes);
                         return content;
@@ -6179,7 +6238,7 @@ System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Con
                         if (!Util_22.util.ajaxReady("searchNodes")) {
                             return;
                         }
-                        var node = Meta64_21.meta64.getHighlightedNode();
+                        var node = Meta64_22.meta64.getHighlightedNode();
                         if (!node) {
                             Util_22.util.showMessage("No node is selected to search under.");
                             return;
@@ -6219,7 +6278,7 @@ System.register("ShareToPersonDlg", [], function(exports_66, context_66) {
 System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function(exports_67, context_67) {
     "use strict";
     var __moduleName = context_67 && context_67.id;
-    var DialogBaseImpl_20, Share_2, Util_23, Render_24, Meta64_22, Factory_14;
+    var DialogBaseImpl_20, Share_2, Util_23, Render_25, Meta64_23, Factory_14;
     var ShareToPersonDlgImpl;
     return {
         setters:[
@@ -6232,11 +6291,11 @@ System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Ren
             function (Util_23_1) {
                 Util_23 = Util_23_1;
             },
-            function (Render_24_1) {
-                Render_24 = Render_24_1;
+            function (Render_25_1) {
+                Render_25 = Render_25_1;
             },
-            function (Meta64_22_1) {
-                Meta64_22 = Meta64_22_1;
+            function (Meta64_23_1) {
+                Meta64_23 = Meta64_23_1;
             },
             function (Factory_14_1) {
                 Factory_14 = Factory_14_1;
@@ -6252,7 +6311,7 @@ System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Ren
                         var formControls = _this.makeEditField("User to Share With", "shareToUserName");
                         var shareButton = _this.makeCloseButton("Share", "shareNodeToPersonButton", _this.shareNodeToPerson, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
-                        var buttonBar = Render_24.render.centeredButtonBar(shareButton + backButton);
+                        var buttonBar = Render_25.render.centeredButtonBar(shareButton + backButton);
                         return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
                             + buttonBar;
                     };
@@ -6262,7 +6321,7 @@ System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Ren
                             Util_23.util.showMessage("Please enter a username");
                             return;
                         }
-                        Meta64_22.meta64.treeDirty = true;
+                        Meta64_23.meta64.treeDirty = true;
                         var thiz = _this;
                         Util_23.util.json("addPrivilege", {
                             "nodeId": Share_2.share.sharingNode.id,
@@ -6273,7 +6332,7 @@ System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Ren
                     };
                     this.reloadFromShareWithPerson = function (res) {
                         if (Util_23.util.checkSuccess("Share Node with Person", res)) {
-                            Factory_14.Factory.create("SharingDlg", function (dlg) {
+                            Factory_14.Factory.createDefault("SharingDlgImpl", function (dlg) {
                                 dlg.open();
                             });
                         }
@@ -6288,7 +6347,7 @@ System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Ren
 System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function(exports_68, context_68) {
     "use strict";
     var __moduleName = context_68 && context_68.id;
-    var DialogBaseImpl_21, Share_3, Util_24, Render_25, Meta64_23, Factory_15;
+    var DialogBaseImpl_21, Share_3, Util_24, Render_26, Meta64_24, Factory_15;
     var SharingDlgImpl;
     return {
         setters:[
@@ -6301,11 +6360,11 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
             function (Util_24_1) {
                 Util_24 = Util_24_1;
             },
-            function (Render_25_1) {
-                Render_25 = Render_25_1;
+            function (Render_26_1) {
+                Render_26 = Render_26_1;
             },
-            function (Meta64_23_1) {
-                Meta64_23 = Meta64_23_1;
+            function (Meta64_24_1) {
+                Meta64_24 = Meta64_24_1;
             },
             function (Factory_15_1) {
                 Factory_15 = Factory_15_1;
@@ -6321,7 +6380,7 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         var shareWithPersonButton = _this.makeButton("Share with Person", "shareNodeToPersonPgButton", _this.shareNodeToPersonPg, _this);
                         var makePublicButton = _this.makeButton("Share to Public", "shareNodeToPublicButton", _this.shareNodeToPublic, _this);
                         var backButton = _this.makeCloseButton("Close", "closeSharingButton");
-                        var buttonBar = Render_25.render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
+                        var buttonBar = Render_26.render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
                         var width = window.innerWidth * 0.6;
                         var height = window.innerHeight * 0.4;
                         var internalMainContent = "<div id='" + _this.id("shareNodeNameDisplay") + "'></div>" +
@@ -6348,7 +6407,7 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         var This = _this;
                         $.each(res.aclEntries, function (index, aclEntry) {
                             html += "<h4>User: " + aclEntry.principalName + "</h4>";
-                            html += Render_25.render.tag("div", {
+                            html += Render_26.render.tag("div", {
                                 "class": "privilege-list"
                             }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
                         });
@@ -6360,8 +6419,8 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         if (res.publicAppend) {
                             publicAppendAttrs["checked"] = "checked";
                         }
-                        html += Render_25.render.tag("paper-checkbox", publicAppendAttrs, "", false);
-                        html += Render_25.render.tag("label", {
+                        html += Render_26.render.tag("paper-checkbox", publicAppendAttrs, "", false);
+                        html += Render_26.render.tag("label", {
                             "for": _this.id("allowPublicCommenting")
                         }, "Allow public commenting under this node.", true);
                         Util_24.util.setHtml(_this.id("sharingListFieldContainer"), html);
@@ -6370,7 +6429,7 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         var thiz = _this;
                         setTimeout(function () {
                             var polyElm = Util_24.util.polyElm(thiz.id("allowPublicCommenting"));
-                            Meta64_23.meta64.treeDirty = true;
+                            Meta64_24.meta64.treeDirty = true;
                             Util_24.util.json("addPrivilege", {
                                 "nodeId": Share_3.share.sharingNode.id,
                                 "privileges": null,
@@ -6380,7 +6439,7 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         }, 250);
                     };
                     this.removePrivilege = function (principal, privilege) {
-                        Meta64_23.meta64.treeDirty = true;
+                        Meta64_24.meta64.treeDirty = true;
                         Util_24.util.json("removePrivilege", {
                             "nodeId": Share_3.share.sharingNode.id,
                             "principal": principal,
@@ -6400,22 +6459,22 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         $.each(aclEntry.privileges, function (index, privilege) {
                             var removeButton = thiz.makeButton("Remove", "removePrivButton", "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
                                 + "');");
-                            var row = Render_25.render.makeHorizontalFieldSet(removeButton);
+                            var row = Render_26.render.makeHorizontalFieldSet(removeButton);
                             row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
-                            ret += Render_25.render.tag("div", {
+                            ret += Render_26.render.tag("div", {
                                 "class": "privilege-entry"
                             }, row);
                         });
                         return ret;
                     };
                     this.shareNodeToPersonPg = function () {
-                        Factory_15.Factory.create("ShareToPersonDlg", function (dlg) {
+                        Factory_15.Factory.createDefault("ShareToPersonDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
                     this.shareNodeToPublic = function () {
                         console.log("Sharing node to public.");
-                        Meta64_23.meta64.treeDirty = true;
+                        Meta64_24.meta64.treeDirty = true;
                         Util_24.util.json("addPrivilege", {
                             "nodeId": Share_3.share.sharingNode.id,
                             "principal": "everyone",
@@ -6433,15 +6492,15 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
 System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(exports_69, context_69) {
     "use strict";
     var __moduleName = context_69 && context_69.id;
-    var DialogBaseImpl_22, Render_26, Util_25;
+    var DialogBaseImpl_22, Render_27, Util_25;
     var SignupDlgImpl;
     return {
         setters:[
             function (DialogBaseImpl_22_1) {
                 DialogBaseImpl_22 = DialogBaseImpl_22_1;
             },
-            function (Render_26_1) {
-                Render_26 = Render_26_1;
+            function (Render_27_1) {
+                Render_27 = Render_27_1;
             },
             function (Util_25_1) {
                 Util_25 = Util_25_1;
@@ -6458,9 +6517,9 @@ System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(
                             _this.makePasswordField("Password", "signupPassword") +
                             _this.makeEditField("Email", "signupEmail") +
                             _this.makeEditField("Captcha", "signupCaptcha");
-                        var captchaImage = Render_26.render.tag("div", {
+                        var captchaImage = Render_27.render.tag("div", {
                             "class": "captcha-image"
-                        }, Render_26.render.tag("img", {
+                        }, Render_27.render.tag("img", {
                             "id": _this.id("captchaImage"),
                             "class": "captcha",
                             "src": ""
@@ -6468,7 +6527,7 @@ System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(
                         var signupButton = _this.makeButton("Signup", "signupButton", _this.signup, _this);
                         var newCaptchaButton = _this.makeButton("Try Different Image", "tryAnotherCaptchaButton", _this.tryAnotherCaptcha, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelSignupButton");
-                        var buttonBar = Render_26.render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
+                        var buttonBar = Render_27.render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
                         return header + formControls + captchaImage + buttonBar;
                     };
                     this.signup = function () {
@@ -6527,7 +6586,7 @@ System.register("UploadFromFileDlg", [], function(exports_70, context_70) {
 System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render", "Constants", "Attachment", "Meta64", "Util"], function(exports_71, context_71) {
     "use strict";
     var __moduleName = context_71 && context_71.id;
-    var DialogBaseImpl_23, Factory_16, Render_27, Constants_12, Attachment_2, Meta64_24, Util_26;
+    var DialogBaseImpl_23, Factory_16, Render_28, Constants_12, Attachment_2, Meta64_25, Util_26;
     var UploadFromFileDlgImpl;
     return {
         setters:[
@@ -6537,8 +6596,8 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
             function (Factory_16_1) {
                 Factory_16 = Factory_16_1;
             },
-            function (Render_27_1) {
-                Render_27 = Render_27_1;
+            function (Render_28_1) {
+                Render_28 = Render_28_1;
             },
             function (Constants_12_1) {
                 Constants_12 = Constants_12_1;
@@ -6546,8 +6605,8 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
             function (Attachment_2_1) {
                 Attachment_2 = Attachment_2_1;
             },
-            function (Meta64_24_1) {
-                Meta64_24 = Meta64_24_1;
+            function (Meta64_25_1) {
+                Meta64_25 = Meta64_25_1;
             },
             function (Util_26_1) {
                 Util_26 = Util_26_1;
@@ -6562,7 +6621,7 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_12.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_27.render.tag("div", {
+                            uploadPathDisplay += Render_28.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
@@ -6570,37 +6629,37 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                         var uploadFieldContainer = "";
                         var formFields = "";
                         for (var i = 0; i < 7; i++) {
-                            var input = Render_27.render.tag("input", {
+                            var input = Render_28.render.tag("input", {
                                 "id": _this.id("upload" + i + "FormInputId"),
                                 "type": "file",
                                 "name": "files"
                             }, "", true);
-                            formFields += Render_27.render.tag("div", {
+                            formFields += Render_28.render.tag("div", {
                                 "style": "margin-bottom: 10px;"
                             }, input);
                         }
-                        formFields += Render_27.render.tag("input", {
+                        formFields += Render_28.render.tag("input", {
                             "id": _this.id("uploadFormNodeId"),
                             "type": "hidden",
                             "name": "nodeId"
                         }, "", true);
-                        formFields += Render_27.render.tag("input", {
+                        formFields += Render_28.render.tag("input", {
                             "id": _this.id("explodeZips"),
                             "type": "hidden",
                             "name": "explodeZips"
                         }, "", true);
-                        var form = Render_27.render.tag("form", {
+                        var form = Render_28.render.tag("form", {
                             "id": _this.id("uploadForm"),
                             "method": "POST",
                             "enctype": "multipart/form-data",
                             "data-ajax": "false"
                         }, formFields);
-                        uploadFieldContainer = Render_27.render.tag("div", {
+                        uploadFieldContainer = Render_28.render.tag("div", {
                             "id": _this.id("uploadFieldContainer")
                         }, "<p>Upload from your computer</p>" + form);
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", _this.uploadFileNow, _this);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_27.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_28.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
                     };
                     this.hasAnyZipFiles = function () {
@@ -6627,14 +6686,14 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                                 type: 'POST'
                             });
                             prms.done(function () {
-                                Meta64_24.meta64.refresh();
+                                Meta64_25.meta64.refresh();
                             });
                             prms.fail(function () {
                                 Util_26.util.showMessage("Upload failed.");
                             });
                         };
                         if (_this.hasAnyZipFiles()) {
-                            Factory_16.Factory.create("ConfirmDlg", function (dlg) {
+                            Factory_16.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Explode Zips?",
@@ -6653,7 +6712,7 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                         }
                     };
                     this.init = function () {
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_27.render.formatPath(Attachment_2.attachment.uploadNode));
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_28.render.formatPath(Attachment_2.attachment.uploadNode));
                     };
                 }
                 return UploadFromFileDlgImpl;
@@ -6665,7 +6724,7 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
 System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "Constants", "Render", "Attachment", "Meta64"], function(exports_72, context_72) {
     "use strict";
     var __moduleName = context_72 && context_72.id;
-    var DialogBaseImpl_24, Factory_17, Constants_13, Render_28, Attachment_3, Meta64_25;
+    var DialogBaseImpl_24, Factory_17, Constants_13, Render_29, Attachment_3, Meta64_26;
     var UploadFromFileDropzoneDlgImpl;
     return {
         setters:[
@@ -6678,14 +6737,14 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
             function (Constants_13_1) {
                 Constants_13 = Constants_13_1;
             },
-            function (Render_28_1) {
-                Render_28 = Render_28_1;
+            function (Render_29_1) {
+                Render_29 = Render_29_1;
             },
             function (Attachment_3_1) {
                 Attachment_3 = Attachment_3_1;
             },
-            function (Meta64_25_1) {
-                Meta64_25 = Meta64_25_1;
+            function (Meta64_26_1) {
+                Meta64_26 = Meta64_26_1;
             }],
         execute: function() {
             UploadFromFileDropzoneDlgImpl = (function (_super) {
@@ -6700,18 +6759,18 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_13.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_28.render.tag("div", {
+                            uploadPathDisplay += Render_29.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
                         }
                         var formFields = "";
                         console.log("Upload Action URL: " + postTargetUrl + "upload");
-                        var hiddenInputContainer = Render_28.render.tag("div", {
+                        var hiddenInputContainer = Render_29.render.tag("div", {
                             "id": _this.id("hiddenInputContainer"),
                             "style": "display: none;"
                         }, "");
-                        var form = Render_28.render.tag("form", {
+                        var form = Render_29.render.tag("form", {
                             "action": postTargetUrl + "upload",
                             "autoProcessQueue": false,
                             "class": "dropzone",
@@ -6719,7 +6778,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         }, "");
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", null, null, false);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_28.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_29.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + form + hiddenInputContainer + buttonBar;
                     };
                     this.configureDropZone = function () {
@@ -6757,7 +6816,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                                     this.zipQuestionAnswered = false;
                                 });
                                 this.on("queuecomplete", function (file) {
-                                    Meta64_25.meta64.refresh();
+                                    Meta64_26.meta64.refresh();
                                 });
                             }
                         };
@@ -6769,7 +6828,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         _this.fileList = _this.fileList.concat(dropzoneEvt.getQueuedFiles());
                         if (!_this.zipQuestionAnswered && _this.hasAnyZipFiles()) {
                             _this.zipQuestionAnswered = true;
-                            Factory_17.Factory.create("ConfirmDlg", function (dlg) {
+                            Factory_17.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Explode Zips?",
@@ -6804,7 +6863,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         }
                     };
                     this.init = function () {
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_28.render.formatPath(Attachment_3.attachment.uploadNode));
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_29.render.formatPath(Attachment_3.attachment.uploadNode));
                         _this.configureDropZone();
                     };
                 }
@@ -6817,7 +6876,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
 System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render", "Util", "Attachment", "Meta64"], function(exports_73, context_73) {
     "use strict";
     var __moduleName = context_73 && context_73.id;
-    var DialogBaseImpl_25, Constants_14, Render_29, Util_27, Attachment_4, Meta64_26;
+    var DialogBaseImpl_25, Constants_14, Render_30, Util_27, Attachment_4, Meta64_27;
     var UploadFromUrlDlgImpl;
     return {
         setters:[
@@ -6827,8 +6886,8 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
             function (Constants_14_1) {
                 Constants_14 = Constants_14_1;
             },
-            function (Render_29_1) {
-                Render_29 = Render_29_1;
+            function (Render_30_1) {
+                Render_30 = Render_30_1;
             },
             function (Util_27_1) {
                 Util_27 = Util_27_1;
@@ -6836,8 +6895,8 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
             function (Attachment_4_1) {
                 Attachment_4 = Attachment_4_1;
             },
-            function (Meta64_26_1) {
-                Meta64_26 = Meta64_26_1;
+            function (Meta64_27_1) {
+                Meta64_27 = Meta64_27_1;
             }],
         execute: function() {
             UploadFromUrlDlgImpl = (function (_super) {
@@ -6849,7 +6908,7 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_14.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_29.render.tag("div", {
+                            uploadPathDisplay += Render_30.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
@@ -6857,10 +6916,10 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
                         var uploadFieldContainer = "";
                         var uploadFromUrlDiv = "";
                         var uploadFromUrlField = _this.makeEditField("Upload From URL", "uploadFromUrl");
-                        uploadFromUrlDiv = Render_29.render.tag("div", {}, uploadFromUrlField);
+                        uploadFromUrlDiv = Render_30.render.tag("div", {}, uploadFromUrlField);
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", _this.uploadFileNow, _this);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_29.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_30.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
                     };
                     this.uploadFileNow = function () {
@@ -6874,12 +6933,12 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
                     };
                     this.uploadFromUrlResponse = function (res) {
                         if (Util_27.util.checkSuccess("Upload from URL", res)) {
-                            Meta64_26.meta64.refresh();
+                            Meta64_27.meta64.refresh();
                         }
                     };
                     this.init = function () {
                         Util_27.util.setInputVal(_this.id("uploadFromUrl"), "");
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_29.render.formatPath(Attachment_4.attachment.uploadNode));
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_30.render.formatPath(Attachment_4.attachment.uploadNode));
                     };
                 }
                 return UploadFromUrlDlgImpl;

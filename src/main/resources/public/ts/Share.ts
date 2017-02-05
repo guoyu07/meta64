@@ -25,7 +25,7 @@ class Share {
         }
         share.sharingNode = node;
 
-        Factory.create("SharingDlg", (dlg:SharingDlg) => {
+        Factory.createDefault("SharingDlgImpl", (dlg:SharingDlg) => {
           dlg.open();
         })
     }

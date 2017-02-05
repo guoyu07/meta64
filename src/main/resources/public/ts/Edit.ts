@@ -23,43 +23,43 @@ import {ManageAccountDlg} from "./ManageAccountDlg";
 class Edit {
 
     createNode = function(): void {
-        Factory.create("CreateNodeDlg", (dlg: CreateNodeDlg) => {
+        Factory.createDefault("CreateNodeDlgImpl", (dlg: CreateNodeDlg) => {
             dlg.open();
         })
     }
 
     openChangePasswordDlg = function(): void {
-        Factory.create("ChangePasswordDlg", (dlg: ChangePasswordDlg) => {
+        Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
             dlg.open();
         })
     }
 
     openManageAccountDlg = function(): void {
-        Factory.create("ManageAccountDlg", (dlg: ManageAccountDlg) => {
+        Factory.createDefault("ManageAccountDlgImpl", (dlg: ManageAccountDlg) => {
             dlg.open();
         })
     }
 
     editPreferences = function(): void {
-        Factory.create("PrefsDlg", (dlg: PrefsDlg) => {
+        Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
             dlg.open();
         })
     }
 
     renameNode = function(): void {
-        Factory.create("RenameNodeDlg", (dlg: RenameNodeDlg) => {
+        Factory.createDefault("RenameNodeDlgImpl", (dlg: RenameNodeDlg) => {
             dlg.open();
         })
     }
 
     openImportDlg = function(): void {
-        Factory.create("ImportDlg", (dlg: ImportDlg) => {
+        Factory.createDefault("ImportDlgImpl", (dlg: ImportDlg) => {
             dlg.open();
         })
     }
 
     openExportDlg = function(): void {
-        Factory.create("ExportDlg", (dlg: ExportDlg) => {
+        Factory.createDefault("ExportDlgImpl", (dlg: ExportDlg) => {
             dlg.open();
         })
     }
@@ -109,7 +109,7 @@ class Edit {
                  */
                 edit.editNode = res.nodeInfo;
 
-                Factory.create("EditNodeDlg", (dlg: EditNodeDlg) => {
+                Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
                     edit.editNodeDlgInst = dlg;
                     dlg.open();
                 });
@@ -196,7 +196,7 @@ class Edit {
     startEditingNewNode = function(typeName?: string, createAtTop?: boolean): void {
         edit.editingUnsavedNode = false;
         edit.editNode = null;
-        Factory.create("EditNodeDlg", (dlg: EditNodeDlg) => {
+        Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
             edit.editNodeDlgInst = dlg;
             dlg.saveNewNode("");
         }, { "typeName": typeName, "createAtTop": createAtTop });
@@ -217,7 +217,7 @@ class Edit {
     startEditingNewNodeWithName = function(): void {
         edit.editingUnsavedNode = true;
         edit.editNode = null;
-        Factory.create("EditNodeDlg", (dlg: EditNodeDlg) => {
+        Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
             edit.editNodeDlgInst = dlg;
             dlg.saveNewNode("");
         });
@@ -467,7 +467,7 @@ class Edit {
             return;
         }
 
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm Delete", "message": "Delete " + selNodesArray.length + " node(s) ?", "buttonText": "Yes, delete.", "yesCallback":
@@ -516,7 +516,7 @@ class Edit {
             return;
         }
 
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm Cut", "message": "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?", "buttonText": "Yes", "yesCallback":
@@ -541,7 +541,7 @@ class Edit {
     }
 
     pasteSelNodes = function(): void {
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm Paste", "message": "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback":
@@ -562,7 +562,7 @@ class Edit {
     }
 
     insertBookWarAndPeace = function(): void {
-        Factory.create("ConfirmDlg", (dlg: ConfirmDlg) => {
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm", "message": "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!",

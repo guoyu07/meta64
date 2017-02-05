@@ -63,7 +63,7 @@ class User {
     }
 
     openSignupPg = function(): void {
-        Factory.create("SignupDlg", (dlg: SignupDlg) => {
+        Factory.createDefault("SignupDlgImpl", (dlg: SignupDlg) => {
             dlg.open();
         });
     }
@@ -80,7 +80,7 @@ class User {
      * This method is ugly. It is the button that can be login *or* logout.
      */
     openLoginPg = function(): void {
-        Factory.create("LoginDlg", (dlg: LoginDlg) => {
+        Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
             dlg.populateFromCookies();
             dlg.open();
         });

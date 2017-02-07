@@ -25,8 +25,8 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
         var formControls = this.makeEditField("User", "userName") + //
             this.makePasswordField("Password", "password");
 
-        var loginButton = this.makeButton("Login", "loginButton", this.login, this);
-        var resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword, this);
+        var loginButton = this.makeButton("Login", "loginButton", this.login);
+        var resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword);
         var backButton = this.makeCloseButton("Close", "cancelLoginButton");
         var buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
         var divider = "<div><h3>Or Login With...</h3></div>";

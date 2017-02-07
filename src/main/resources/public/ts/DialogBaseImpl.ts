@@ -242,15 +242,15 @@ export class DialogBaseImpl implements DialogBase {
 
     // todo: there's a makeButton (and other similar methods) that don't have the
     // encodeCallback capability yet
-    makeButton = (text: string, id: string, callback: any, ctx?: any, clazz?:string): string => {
+    makeButton = (text: string, id: string, callback: any, clazz?:string): string => {
         let attribs = {
             "raised": "raised",
             "id": this.id(id),
-            "class": clazz || "standardButton"
+            "class": /* clazz || */ "standardButton"
         };
 
         if (callback != undefined) {
-            attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
+            attribs["onClick"] = meta64.encodeOnClick(callback);
         }
 
         return render.tag("paper-button", attribs, text, true);

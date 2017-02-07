@@ -45,13 +45,13 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     build = (): string => {
         var header = this.makeHeader("Edit Node");
 
-        var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode, this);
-        var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty, this);
+        var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode);
+        var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty);
         var addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
-            this.addTagsProperty, this);
-        var splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent, this);
-        var deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick, this);
-        var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit, this);
+            this.addTagsProperty);
+        var splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent);
+        var deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick);
+        var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit);
 
         var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
             + splitContentButton + cancelEditButton, "buttons");

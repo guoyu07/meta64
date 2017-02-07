@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-Beta version of an RSS reader and Podcast player!
+Changed to using ES6 Module syntax in the TypeScript code, and using SystemJS module loader. 
 
 ## Technology Stack
 * Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
@@ -82,8 +82,6 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Import/Export to XML (admin only)
 * Admin feature to insert entire book "War and Peace", for quickly
   creating test data for exploring all the features, and especially 'search'.
-* Smart dynamic image sizing. Images are sized to look best on your device regardless of screen size or orientation.
-* Soft "Branding". Can rebrand portal by a properties file entry. Includes Search Engine Optimization text.
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
 * Solr Remote Desktop Search (Connects to Solr Instances)
 * Lucene/Tika-based Local Desktop Search (search files on local filesystem)
@@ -91,14 +89,17 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * RSS Reader with Podcast Player (implemented in HTML5)
 * For future planned features see file: **/docs/bugs-and-todos.md**
 * Supports either MongoDB or an RDBMS as backing store (provided by Jackrabbit/Oak)
-* Can run with Derby embedded DB for completely self-contained installation.
+* Run with Derby embedded DB for completely self-contained installation, or connect to MongoDB for enterprise scalability
 
 ## Technology Stack and APIs
 
 * Single Page Application (SPA)
 * JavaScript/HTML/CSS Client
-* All JavaScript, coded as TypeScript
-* JSON-Ajax for Server Communication
+* Leverages Advanced Java 8 Language Features
+* All JavaScript, coded as TypeScript (https://www.typescriptlang.org/)
+* JSON-based Ajax for Server Communication
+* ES6 JS Module syntax, with ES5 support
+* SystemJS module loader, supporting bundled or non-bundles builds (https://github.com/systemjs/systemjs)
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)
 * RDBMS Support (Derby is pre-configured in DEV environment)
@@ -124,17 +125,8 @@ https://jackrabbit.apache.org/oak/docs/index.html
 
 Jackrabbit Oak is an Adobe-sponsored Open Source project for creating the best world class JCR implementation. It is extremely high performance and hugely scalable largely due to Lucene as the search technology in use, and also because of MongoDB. As with any "NoSQL" the primary concern is indeed performance and scalability so the ACID transactions of an RDBMS are sacrificed for the "eventually consistent" model offered by a NoSQL approach.
 
-## Technical Notes
-* To build the app use maven.
-* You need to understand 'spring boot'
-* See application-*.properties files for configurations.
-* Pre-requisites: Java VM installed on machine, and MongoDB server up and running, with a database named 'meta64'
-* Currently uses default storage location for MongoDb
-* Once app is up and running go here: http://localhost:8083 (8083 port is currently the DEV profile port)     
-* Refer to the 'docs' folder of the project for additional technical documentation.
-
 ## About the Developer
-Meta64 is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a 48 yr old Java Developer living in Dallas. I have 25 years of coding experience consisting of 10yrs of C++ followed by 15 years of Java, and primarily on Web Apps.
+Meta64 is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a Java Developer living in Dallas, Texas. I have 25 years of coding experience consisting of 10 years of C++ followed by 16 years of Java, primarily on Web Apps, and mostly on analytical systems, accounting systems, and other database-intensive kinds of applications.
 
 **linkedin.com:** http://www.linkedin.com/in/wclayf  
 **GitHub:** https://github.com/Clay-Ferguson  

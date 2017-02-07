@@ -70,19 +70,19 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
         let player = render.tag("audio", playerAttribs);
 
         //Skipping Buttons
-        let skipBack30Button = this.makeButton("< 30s", "skipBackButton", this.skipBack30Button, this);
-        let skipForward30Button = this.makeButton("30s >", "skipForwardButton", this.skipForward30Button, this);
+        let skipBack30Button = this.makeButton("< 30s", "skipBackButton", this.skipBack30Button);
+        let skipForward30Button = this.makeButton("30s >", "skipForwardButton", this.skipForward30Button);
         let skipButtonBar = render.centeredButtonBar(skipBack30Button + skipForward30Button);
 
         //Speed Buttons
-        let speedNormalButton = this.makeButton("Normal", "normalSpeedButton", this.normalSpeedButton, this);
-        let speed15Button = this.makeButton("1.5X", "speed15Button", this.speed15Button, this);
-        let speed2Button = this.makeButton("2X", "speed2Button", this.speed2Button, this);
+        let speedNormalButton = this.makeButton("Normal", "normalSpeedButton", this.normalSpeedButton);
+        let speed15Button = this.makeButton("1.5X", "speed15Button", this.speed15Button);
+        let speed2Button = this.makeButton("2X", "speed2Button", this.speed2Button);
         let speedButtonBar = render.centeredButtonBar(speedNormalButton + speed15Button + speed2Button);
 
         //Dialog Buttons
-        let pauseButton = this.makeButton("Pause", "pauseButton", this.pauseButton, this);
-        let playButton = this.makeButton("Play", "playButton", this.playButton, this, "playButton");
+        let pauseButton = this.makeButton("Pause", "pauseButton", this.pauseButton);
+        let playButton = this.makeButton("Play", "playButton", this.playButton, "playButton");
         //todo-1: even if this button appears to work, I need it to explicitly enforce the saving of the time value AND the removal of the AUDIO element from the DOM */
         let closeButton = this.makeButton("Close", "closeAudioPlayerDlgButton", this.closeBtn);
 

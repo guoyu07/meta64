@@ -36,9 +36,20 @@ echo "Old JS files deleted."
 #    sudo apt-get install -y build-essential
 #    sudo npm install -g typescript
 #    read -p "TypeScript install complete."
+#
+# Update: now that typescript 2.1 is out I did this to update to it:
+#    sudo npm install -g typescript@latest
+#    tsc -v
+#    read -p "TypeScript updated?"
+#
+#    If version still reports wrong after install, delete all these and try again..
+#    delete /usr/bin/tsc
+#           /usr/local/bin/tsc
+#           /usr/local/lib/node_modules/typescript
+# 
 # =====================================================================
 cd $META64/src/main/resources/public/ts
-tsc
+tsc -p tsconfig-prod.json
 if [ $? -eq 0 ]
 then
   read -p "TypeScript generating successful."

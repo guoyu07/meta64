@@ -21,9 +21,8 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         var header = this.makeHeader("Node Sharing");
 
         var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
-            this.shareNodeToPersonPg, this);
-        var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic,
-            this);
+            this.shareNodeToPersonPg);
+        var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic);
         var backButton = this.makeCloseButton("Close", "closeSharingButton");
 
         var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);

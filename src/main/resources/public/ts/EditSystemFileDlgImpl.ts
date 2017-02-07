@@ -3,6 +3,8 @@ console.log("EditSystemFileDlgImpl.ts");
 import {DialogBaseImpl} from "./DialogBaseImpl";
 import {EditSystemFileDlg} from "./EditSystemFileDlg";
 
+/* I commented this code out when i transitioned over to ES6 modules, but since this is not a core feature
+i haven't re-enabled it yet */
 export default class EditSystemFileDlgImpl extends DialogBaseImpl implements EditSystemFileDlg {
   //
   //   constructor(private fileName: string) {

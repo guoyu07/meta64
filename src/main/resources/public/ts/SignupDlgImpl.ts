@@ -37,9 +37,9 @@ export default class SignupDlgImpl  extends DialogBaseImpl implements SignupDlg 
                 }, //
                 "", false));
 
-        var signupButton = this.makeButton("Signup", "signupButton", this.signup, this);
+        var signupButton = this.makeButton("Signup", "signupButton", this.signup);
         var newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",
-            this.tryAnotherCaptcha, this);
+            this.tryAnotherCaptcha);
         var backButton = this.makeCloseButton("Close", "cancelSignupButton");
 
         var buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);

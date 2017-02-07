@@ -3,13 +3,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-System.register("Interfaces", [], function(exports_1, context_1) {
+System.register("Interfaces", [], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var AdSegment, PropEntry, SubProp;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("Interfaces.ts");
             AdSegment = (function () {
                 function AdSegment(beginTime, endTime) {
@@ -40,15 +40,15 @@ System.register("Interfaces", [], function(exports_1, context_1) {
             }());
             exports_1("SubProp", SubProp);
         }
-    }
+    };
 });
-System.register("Constants", [], function(exports_2, context_2) {
+System.register("Constants", [], function (exports_2, context_2) {
     "use strict";
     var __moduleName = context_2 && context_2.id;
     var Constants, cnst, JCRConstants, jcrCnst;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("Constants.ts");
             Constants = (function () {
                 function Constants() {
@@ -102,86 +102,86 @@ System.register("Constants", [], function(exports_2, context_2) {
             }());
             exports_2("jcrCnst", jcrCnst = new JCRConstants());
         }
-    }
+    };
 });
-System.register("DialogBase", [], function(exports_3, context_3) {
+System.register("DialogBase", [], function (exports_3, context_3) {
     "use strict";
     var __moduleName = context_3 && context_3.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("DialogBase.ts");
         }
-    }
+    };
 });
-System.register("MessageDlg", [], function(exports_4, context_4) {
+System.register("MessageDlg", [], function (exports_4, context_4) {
     "use strict";
     var __moduleName = context_4 && context_4.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("MessageDlg.ts");
         }
-    }
+    };
 });
-System.register("ProgressDlg", [], function(exports_5, context_5) {
+System.register("ProgressDlg", [], function (exports_5, context_5) {
     "use strict";
     var __moduleName = context_5 && context_5.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("MessageDlg.ts");
         }
-    }
+    };
 });
-System.register("Factory", [], function(exports_6, context_6) {
+System.register("Factory", [], function (exports_6, context_6) {
     "use strict";
     var __moduleName = context_6 && context_6.id;
     var Factory;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("Factory.ts");
             Factory = (function () {
                 function Factory() {
                 }
-                Factory.filePrefix = "";
-                Factory.createDefault = function (className, callback, args) {
-                    System.import(Factory.filePrefix + className).then(function (mod) {
-                        var obj = new mod.default(args || {});
-                        if (callback) {
-                            callback(obj);
-                        }
-                    });
-                };
-                Factory.create = function (className, callback, args) {
-                    System.import(Factory.filePrefix + className).then(function (mod) {
-                        var obj = new mod[className](args || {});
-                        if (callback) {
-                            callback(obj);
-                        }
-                    });
-                };
                 return Factory;
             }());
+            Factory.filePrefix = "";
+            Factory.createDefault = function (className, callback, args) {
+                System.import(Factory.filePrefix + className).then(function (mod) {
+                    var obj = new mod.default(args || {});
+                    if (callback) {
+                        callback(obj);
+                    }
+                });
+            };
+            Factory.create = function (className, callback, args) {
+                System.import(Factory.filePrefix + className).then(function (mod) {
+                    var obj = new mod[className](args || {});
+                    if (callback) {
+                        callback(obj);
+                    }
+                });
+            };
             exports_6("Factory", Factory);
         }
-    }
+    };
 });
-System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
+System.register("Util", ["Meta64", "Factory"], function (exports_7, context_7) {
     "use strict";
     var __moduleName = context_7 && context_7.id;
-    var Meta64_1, Factory_1;
-    var Util, util;
+    var Meta64_1, Factory_1, Util, util;
     return {
-        setters:[
+        setters: [
             function (Meta64_1_1) {
                 Meta64_1 = Meta64_1_1;
             },
             function (Factory_1_1) {
                 Factory_1 = Factory_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Util.ts");
             Util = (function () {
                 function Util() {
@@ -382,7 +382,7 @@ System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
                     this.logAndThrow = function (message) {
                         var stack = "[stack, not supported]";
                         try {
-                            stack = (new Error()).stack;
+                            stack = new Error().stack;
                         }
                         catch (e) { }
                         console.error(message + "STACK: " + stack);
@@ -391,7 +391,7 @@ System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
                     this.logAndReThrow = function (message, exception) {
                         var stack = "[stack, not supported]";
                         try {
-                            stack = (new Error()).stack;
+                            stack = new Error().stack;
                         }
                         catch (e) { }
                         console.error(message + "STACK: " + stack);
@@ -655,28 +655,27 @@ System.register("Util", ["Meta64", "Factory"], function(exports_7, context_7) {
                         return instance;
                     };
                 }
-                Util.stdTimezoneOffset = function (_) {
-                    var jan = new Date(_.getFullYear(), 0, 1);
-                    var jul = new Date(_.getFullYear(), 6, 1);
-                    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-                };
-                Util.dst = function (_) {
-                    return _.getTimezoneOffset() < Util.stdTimezoneOffset(_);
-                };
                 return Util;
             }());
+            Util.stdTimezoneOffset = function (_) {
+                var jan = new Date(_.getFullYear(), 0, 1);
+                var jul = new Date(_.getFullYear(), 6, 1);
+                return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+            };
+            Util.dst = function (_) {
+                return _.getTimezoneOffset() < Util.stdTimezoneOffset(_);
+            };
             exports_7("util", util = new Util());
-            exports_7("default",util);
+            exports_7("default", util);
         }
-    }
+    };
 });
-System.register("View", ["Meta64", "Util", "Nav", "Render", "Edit"], function(exports_8, context_8) {
+System.register("View", ["Meta64", "Util", "Nav", "Render", "Edit"], function (exports_8, context_8) {
     "use strict";
     var __moduleName = context_8 && context_8.id;
-    var Meta64_2, Util_1, Nav_1, Render_1, Edit_1;
-    var View, view;
+    var Meta64_2, Util_1, Nav_1, Render_1, Edit_1, View, view;
     return {
-        setters:[
+        setters: [
             function (Meta64_2_1) {
                 Meta64_2 = Meta64_2_1;
             },
@@ -691,8 +690,9 @@ System.register("View", ["Meta64", "Util", "Nav", "Render", "Edit"], function(ex
             },
             function (Edit_1_1) {
                 Edit_1 = Edit_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("View.ts");
             View = (function () {
                 function View() {
@@ -837,17 +837,16 @@ System.register("View", ["Meta64", "Util", "Nav", "Render", "Edit"], function(ex
                 return View;
             }());
             exports_8("view", view = new View());
-            exports_8("default",view);
+            exports_8("default", view);
         }
-    }
+    };
 });
-System.register("Props", ["Meta64", "Util", "Constants", "Render", "View", "Edit"], function(exports_9, context_9) {
+System.register("Props", ["Meta64", "Util", "Constants", "Render", "View", "Edit"], function (exports_9, context_9) {
     "use strict";
     var __moduleName = context_9 && context_9.id;
-    var Meta64_3, Util_2, Constants_1, Render_2, View_1, Edit_2;
-    var Props, props;
+    var Meta64_3, Util_2, Constants_1, Render_2, View_1, Edit_2, Props, props;
     return {
-        setters:[
+        setters: [
             function (Meta64_3_1) {
                 Meta64_3 = Meta64_3_1;
             },
@@ -865,8 +864,9 @@ System.register("Props", ["Meta64", "Util", "Constants", "Render", "View", "Edit
             },
             function (Edit_2_1) {
                 Edit_2 = Edit_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Props.ts");
             Props = (function () {
                 function Props() {
@@ -1030,17 +1030,16 @@ System.register("Props", ["Meta64", "Util", "Constants", "Render", "View", "Edit
                 return Props;
             }());
             exports_9("props", props = new Props());
-            exports_9("default",props);
+            exports_9("default", props);
         }
-    }
+    };
 });
-System.register("Render", ["Meta64", "Util", "Nav", "Edit", "View", "Constants", "Props"], function(exports_10, context_10) {
+System.register("Render", ["Meta64", "Util", "Nav", "Edit", "View", "Constants", "Props"], function (exports_10, context_10) {
     "use strict";
     var __moduleName = context_10 && context_10.id;
-    var Meta64_4, Util_3, Nav_2, Edit_3, View_2, Constants_2, Props_1;
-    var Render, render;
+    var Meta64_4, Util_3, Nav_2, Edit_3, View_2, Constants_2, Props_1, Render, render;
     return {
-        setters:[
+        setters: [
             function (Meta64_4_1) {
                 Meta64_4 = Meta64_4_1;
             },
@@ -1061,8 +1060,9 @@ System.register("Render", ["Meta64", "Util", "Nav", "Edit", "View", "Constants",
             },
             function (Props_1_1) {
                 Props_1 = Props_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Render.ts");
             Render = (function () {
                 function Render() {
@@ -1751,30 +1751,30 @@ System.register("Render", ["Meta64", "Util", "Nav", "Edit", "View", "Constants",
             }());
             exports_10("Render", Render);
             exports_10("render", render = new Render());
-            exports_10("default",render);
+            exports_10("default", render);
         }
-    }
+    };
 });
-System.register("SearchContentDlg", [], function(exports_11, context_11) {
+System.register("SearchContentDlg", [], function (exports_11, context_11) {
     "use strict";
     var __moduleName = context_11 && context_11.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("TimelineResultsPanel", ["Search"], function(exports_12, context_12) {
+System.register("TimelineResultsPanel", ["Search"], function (exports_12, context_12) {
     "use strict";
     var __moduleName = context_12 && context_12.id;
-    var Search_1;
-    var TimelineResultsPanel;
+    var Search_1, TimelineResultsPanel;
     return {
-        setters:[
+        setters: [
             function (Search_1_1) {
                 Search_1 = Search_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("TimelineResultsPanel.ts");
             TimelineResultsPanel = (function () {
                 function TimelineResultsPanel(args) {
@@ -1795,19 +1795,19 @@ System.register("TimelineResultsPanel", ["Search"], function(exports_12, context
             }());
             exports_12("TimelineResultsPanel", TimelineResultsPanel);
         }
-    }
+    };
 });
-System.register("SearchResultsPanel", ["Search"], function(exports_13, context_13) {
+System.register("SearchResultsPanel", ["Search"], function (exports_13, context_13) {
     "use strict";
     var __moduleName = context_13 && context_13.id;
-    var Search_2;
-    var SearchResultsPanel;
+    var Search_2, SearchResultsPanel;
     return {
-        setters:[
+        setters: [
             function (Search_2_1) {
                 Search_2 = Search_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             SearchResultsPanel = (function () {
                 function SearchResultsPanel(args) {
                     this.domId = "searchResultsPanel";
@@ -1827,15 +1827,14 @@ System.register("SearchResultsPanel", ["Search"], function(exports_13, context_1
             }());
             exports_13("SearchResultsPanel", SearchResultsPanel);
         }
-    }
+    };
 });
-System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav", "Factory"], function(exports_14, context_14) {
+System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav", "Factory"], function (exports_14, context_14) {
     "use strict";
     var __moduleName = context_14 && context_14.id;
-    var Constants_3, Meta64_5, Util_4, Render_3, View_3, Nav_3, Factory_2;
-    var Search, srch;
+    var Constants_3, Meta64_5, Util_4, Render_3, View_3, Nav_3, Factory_2, Search, srch;
     return {
-        setters:[
+        setters: [
             function (Constants_3_1) {
                 Constants_3 = Constants_3_1;
             },
@@ -1856,8 +1855,9 @@ System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav
             },
             function (Factory_2_1) {
                 Factory_2 = Factory_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Search.ts");
             Search = (function () {
                 function Search() {
@@ -2008,36 +2008,35 @@ System.register("Search", ["Constants", "Meta64", "Util", "Render", "View", "Nav
             }());
             exports_14("Search", Search);
             exports_14("srch", srch = new Search());
-            exports_14("default",srch);
+            exports_14("default", srch);
         }
-    }
+    };
 });
-System.register("LoginDlg", [], function(exports_15, context_15) {
+System.register("LoginDlg", [], function (exports_15, context_15) {
     "use strict";
     var __moduleName = context_15 && context_15.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("LoginDlg.ts");
         }
-    }
+    };
 });
-System.register("SignupDlg", [], function(exports_16, context_16) {
+System.register("SignupDlg", [], function (exports_16, context_16) {
     "use strict";
     var __moduleName = context_16 && context_16.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], function(exports_17, context_17) {
+System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], function (exports_17, context_17) {
     "use strict";
     var __moduleName = context_17 && context_17.id;
-    var Constants_4, Meta64_6, Util_5, Factory_3, View_4;
-    var User, user;
+    var Constants_4, Meta64_6, Util_5, Factory_3, View_4, User, user;
     return {
-        setters:[
+        setters: [
             function (Constants_4_1) {
                 Constants_4 = Constants_4_1;
             },
@@ -2052,8 +2051,9 @@ System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], func
             },
             function (View_4_1) {
                 View_4 = View_4_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("User.ts");
             User = (function () {
                 function User() {
@@ -2235,44 +2235,43 @@ System.register("User", ["Constants", "Meta64", "Util", "Factory", "View"], func
                 return User;
             }());
             exports_17("user", user = new User());
-            exports_17("default",user);
+            exports_17("default", user);
         }
-    }
+    };
 });
-System.register("PrefsDlg", [], function(exports_18, context_18) {
+System.register("PrefsDlg", [], function (exports_18, context_18) {
     "use strict";
     var __moduleName = context_18 && context_18.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("SearchTagsDlg", [], function(exports_19, context_19) {
+System.register("SearchTagsDlg", [], function (exports_19, context_19) {
     "use strict";
     var __moduleName = context_19 && context_19.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("SearchFilesDlg", [], function(exports_20, context_20) {
+System.register("SearchFilesDlg", [], function (exports_20, context_20) {
     "use strict";
     var __moduleName = context_20 && context_20.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Factory"], function(exports_21, context_21) {
+System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Factory"], function (exports_21, context_21) {
     "use strict";
     var __moduleName = context_21 && context_21.id;
-    var Meta64_7, Util_6, Edit_4, User_1, Render_4, View_5, Factory_4;
-    var Nav, nav;
+    var Meta64_7, Util_6, Edit_4, User_1, Render_4, View_5, Factory_4, Nav, nav;
     return {
-        setters:[
+        setters: [
             function (Meta64_7_1) {
                 Meta64_7 = Meta64_7_1;
             },
@@ -2293,8 +2292,9 @@ System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Fac
             },
             function (Factory_4_1) {
                 Factory_4 = Factory_4_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Nav.ts");
             Nav = (function () {
                 function Nav() {
@@ -2502,96 +2502,95 @@ System.register("Nav", ["Meta64", "Util", "Edit", "User", "Render", "View", "Fac
                 return Nav;
             }());
             exports_21("nav", nav = new Nav());
-            exports_21("default",nav);
+            exports_21("default", nav);
         }
-    }
+    };
 });
-System.register("EditNodeDlg", [], function(exports_22, context_22) {
+System.register("EditNodeDlg", [], function (exports_22, context_22) {
     "use strict";
     var __moduleName = context_22 && context_22.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("EditNodeDlg.ts");
         }
-    }
+    };
 });
-System.register("ConfirmDlg", [], function(exports_23, context_23) {
+System.register("ConfirmDlg", [], function (exports_23, context_23) {
     "use strict";
     var __moduleName = context_23 && context_23.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("ConfirmDlg.ts");
         }
-    }
+    };
 });
-System.register("CreateNodeDlg", [], function(exports_24, context_24) {
+System.register("CreateNodeDlg", [], function (exports_24, context_24) {
     "use strict";
     var __moduleName = context_24 && context_24.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("CreateNodeDlg.ts");
         }
-    }
+    };
 });
-System.register("RenameNodeDlg", [], function(exports_25, context_25) {
+System.register("RenameNodeDlg", [], function (exports_25, context_25) {
     "use strict";
     var __moduleName = context_25 && context_25.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("ImportDlg", [], function(exports_26, context_26) {
+System.register("ImportDlg", [], function (exports_26, context_26) {
     "use strict";
     var __moduleName = context_26 && context_26.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("ImportDlg.ts");
         }
-    }
+    };
 });
-System.register("ExportDlg", [], function(exports_27, context_27) {
+System.register("ExportDlg", [], function (exports_27, context_27) {
     "use strict";
     var __moduleName = context_27 && context_27.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("ExportDlg.ts");
         }
-    }
+    };
 });
-System.register("ChangePasswordDlg", [], function(exports_28, context_28) {
+System.register("ChangePasswordDlg", [], function (exports_28, context_28) {
     "use strict";
     var __moduleName = context_28 && context_28.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("ChangePasswordDlg.ts");
         }
-    }
+    };
 });
-System.register("ManageAccountDlg", [], function(exports_29, context_29) {
+System.register("ManageAccountDlg", [], function (exports_29, context_29) {
     "use strict";
     var __moduleName = context_29 && context_29.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("ManageAccountDlg.ts");
         }
-    }
+    };
 });
-System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants", "Factory", "User"], function(exports_30, context_30) {
+System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants", "Factory", "User"], function (exports_30, context_30) {
     "use strict";
     var __moduleName = context_30 && context_30.id;
-    var Meta64_8, Util_7, Render_5, View_6, Props_2, Constants_5, Factory_5, User_2;
-    var Edit, edit;
+    var Meta64_8, Util_7, Render_5, View_6, Props_2, Constants_5, Factory_5, User_2, Edit, edit;
     return {
-        setters:[
+        setters: [
             function (Meta64_8_1) {
                 Meta64_8 = Meta64_8_1;
             },
@@ -2615,8 +2614,9 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
             },
             function (User_2_1) {
                 User_2 = User_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Edit.ts");
             Edit = (function () {
                 function Edit() {
@@ -3014,17 +3014,16 @@ System.register("Edit", ["Meta64", "Util", "Render", "View", "Props", "Constants
                 return Edit;
             }());
             exports_30("edit", edit = new Edit());
-            exports_30("default",edit);
+            exports_30("default", edit);
         }
-    }
+    };
 });
-System.register("Prefs", ["Factory", "User", "Util"], function(exports_31, context_31) {
+System.register("Prefs", ["Factory", "User", "Util"], function (exports_31, context_31) {
     "use strict";
     var __moduleName = context_31 && context_31.id;
-    var Factory_6, User_3, Util_8;
-    var Prefs, prefs;
+    var Factory_6, User_3, Util_8, Prefs, prefs;
     return {
-        setters:[
+        setters: [
             function (Factory_6_1) {
                 Factory_6 = Factory_6_1;
             },
@@ -3033,8 +3032,9 @@ System.register("Prefs", ["Factory", "User", "Util"], function(exports_31, conte
             },
             function (Util_8_1) {
                 Util_8 = Util_8_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             Prefs = (function () {
                 function Prefs() {
                     this.closeAccountResponse = function (res) {
@@ -3067,26 +3067,25 @@ System.register("Prefs", ["Factory", "User", "Util"], function(exports_31, conte
                 return Prefs;
             }());
             exports_31("prefs", prefs = new Prefs());
-            exports_31("default",prefs);
+            exports_31("default", prefs);
         }
-    }
+    };
 });
-System.register("SharingDlg", [], function(exports_32, context_32) {
+System.register("SharingDlg", [], function (exports_32, context_32) {
     "use strict";
     var __moduleName = context_32 && context_32.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("Share", ["Search", "Util", "Meta64", "Factory"], function(exports_33, context_33) {
+System.register("Share", ["Search", "Util", "Meta64", "Factory"], function (exports_33, context_33) {
     "use strict";
     var __moduleName = context_33 && context_33.id;
-    var Search_3, Util_9, Meta64_9, Factory_7;
-    var Share, share;
+    var Search_3, Util_9, Meta64_9, Factory_7, Share, share;
     return {
-        setters:[
+        setters: [
             function (Search_3_1) {
                 Search_3 = Search_3_1;
             },
@@ -3098,8 +3097,9 @@ System.register("Share", ["Search", "Util", "Meta64", "Factory"], function(expor
             },
             function (Factory_7_1) {
                 Factory_7 = Factory_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             Share = (function () {
                 function Share() {
                     this.findSharedNodesResponse = function (res) {
@@ -3131,27 +3131,26 @@ System.register("Share", ["Search", "Util", "Meta64", "Factory"], function(expor
                 return Share;
             }());
             exports_33("share", share = new Share());
-            exports_33("default",share);
+            exports_33("default", share);
         }
-    }
+    };
 });
-System.register("AudioPlayerDlg", [], function(exports_34, context_34) {
+System.register("AudioPlayerDlg", [], function (exports_34, context_34) {
     "use strict";
     var __moduleName = context_34 && context_34.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("AudioPlayerDlg.ts");
         }
-    }
+    };
 });
-System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Interfaces"], function(exports_35, context_35) {
+System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Interfaces"], function (exports_35, context_35) {
     "use strict";
     var __moduleName = context_35 && context_35.id;
-    var Util_10, Props_3, Render_6, Meta64_10, Factory_8, I;
-    var Podcast, podcast;
+    var Util_10, Props_3, Render_6, Meta64_10, Factory_8, I, Podcast, podcast;
     return {
-        setters:[
+        setters: [
             function (Util_10_1) {
                 Util_10 = Util_10_1;
             },
@@ -3169,8 +3168,9 @@ System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Int
             },
             function (I_1) {
                 I = I_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             Podcast = (function () {
                 function Podcast() {
                     this.player = null;
@@ -3272,7 +3272,8 @@ System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Int
                             "meta64:rssFeedLink",
                             "meta64:rssFeedUri",
                             "meta64:rssFeedSrc",
-                            "meta64:rssFeedImageUrl"];
+                            "meta64:rssFeedImageUrl"
+                        ];
                         return Props_3.props.orderProps(propOrder, properties);
                     };
                     this.propOrderingItemNode = function (node, properties) {
@@ -3281,7 +3282,8 @@ System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Int
                             "meta64:rssItemDesc",
                             "meta64:rssItemLink",
                             "meta64:rssItemUri",
-                            "meta64:rssItemAuthor"];
+                            "meta64:rssItemAuthor"
+                        ];
                         return Props_3.props.orderProps(propOrder, properties);
                     };
                     this.openPlayerDialog = function (_uid) {
@@ -3430,17 +3432,17 @@ System.register("Podcast", ["Util", "Props", "Render", "Meta64", "Factory", "Int
                 return Podcast;
             }());
             exports_35("podcast", podcast = new Podcast());
-            exports_35("default",podcast);
+            exports_35("default", podcast);
         }
-    }
+    };
 });
-System.register("BindClick", [], function(exports_36, context_36) {
+System.register("BindClick", [], function (exports_36, context_36) {
     "use strict";
     var __moduleName = context_36 && context_36.id;
     var BindClick, bindClick;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("BindClick.ts");
             BindClick = (function () {
                 function BindClick() {
@@ -3469,17 +3471,16 @@ System.register("BindClick", [], function(exports_36, context_36) {
                 return BindClick;
             }());
             exports_36("bindClick", bindClick = new BindClick());
-            exports_36("default",bindClick);
+            exports_36("default", bindClick);
         }
-    }
+    };
 });
-System.register("MenuPanel", ["Util", "Render", "Edit", "Nav", "Share", "Attachment", "Search", "Props", "Meta64", "Podcast", "View", "BindClick"], function(exports_37, context_37) {
+System.register("MenuPanel", ["Util", "Render", "Edit", "Nav", "Share", "Attachment", "Search", "Props", "Meta64", "Podcast", "View", "BindClick"], function (exports_37, context_37) {
     "use strict";
     var __moduleName = context_37 && context_37.id;
-    var Util_11, Render_7, Edit_5, Nav_4, Share_1, Attachment_1, Search_4, Props_4, Meta64_11, Podcast_1, View_7, BindClick_1;
-    var MenuPanel, menuPanel;
+    var Util_11, Render_7, Edit_5, Nav_4, Share_1, Attachment_1, Search_4, Props_4, Meta64_11, Podcast_1, View_7, BindClick_1, MenuPanel, menuPanel;
     return {
-        setters:[
+        setters: [
             function (Util_11_1) {
                 Util_11 = Util_11_1;
             },
@@ -3515,8 +3516,9 @@ System.register("MenuPanel", ["Util", "Render", "Edit", "Nav", "Share", "Attachm
             },
             function (BindClick_1_1) {
                 BindClick_1 = BindClick_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("MenuPanel.ts");
             MenuPanel = (function () {
                 function MenuPanel() {
@@ -3604,15 +3606,15 @@ System.register("MenuPanel", ["Util", "Render", "Edit", "Nav", "Share", "Attachm
             }());
             exports_37("menuPanel", menuPanel = new MenuPanel());
         }
-    }
+    };
 });
-System.register("SystemFolder", [], function(exports_38, context_38) {
+System.register("SystemFolder", [], function (exports_38, context_38) {
     "use strict";
     var __moduleName = context_38 && context_38.id;
     var SystemFolder, systemfolder;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             SystemFolder = (function () {
                 function SystemFolder() {
                 }
@@ -3620,15 +3622,14 @@ System.register("SystemFolder", [], function(exports_38, context_38) {
             }());
             exports_38("systemfolder", systemfolder = new SystemFolder());
         }
-    }
+    };
 });
-System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render", "Search", "User", "View", "MenuPanel", "Podcast", "Factory", "BindClick"], function(exports_39, context_39) {
+System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render", "Search", "User", "View", "MenuPanel", "Podcast", "Factory", "BindClick"], function (exports_39, context_39) {
     "use strict";
     var __moduleName = context_39 && context_39.id;
-    var Constants_6, Util_12, Edit_6, Nav_5, Props_5, Render_8, Search_5, User_4, View_8, MenuPanel_1, Podcast_2, Factory_9, BindClick_2;
-    var Meta64, meta64;
+    var Constants_6, Util_12, Edit_6, Nav_5, Props_5, Render_8, Search_5, User_4, View_8, MenuPanel_1, Podcast_2, Factory_9, BindClick_2, Meta64, meta64;
     return {
-        setters:[
+        setters: [
             function (Constants_6_1) {
                 Constants_6 = Constants_6_1;
             },
@@ -3667,8 +3668,9 @@ System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render"
             },
             function (BindClick_2_1) {
                 BindClick_2 = BindClick_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Meta64.ts");
             Meta64 = (function () {
                 function Meta64() {
@@ -4130,7 +4132,8 @@ System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render"
                             Constants_6.jcrCnst.BIN_DATA,
                             Constants_6.jcrCnst.BIN_MIME,
                             Constants_6.jcrCnst.COMMENT_BY,
-                            Constants_6.jcrCnst.PUBLIC_APPEND]);
+                            Constants_6.jcrCnst.PUBLIC_APPEND
+                        ]);
                         Util_12.util.addAll(meta64.readOnlyPropertyList, [
                             Constants_6.jcrCnst.PRIMARY_TYPE,
                             Constants_6.jcrCnst.UUID,
@@ -4145,7 +4148,8 @@ System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render"
                             Constants_6.jcrCnst.BIN_DATA,
                             Constants_6.jcrCnst.BIN_MIME,
                             Constants_6.jcrCnst.COMMENT_BY,
-                            Constants_6.jcrCnst.PUBLIC_APPEND]);
+                            Constants_6.jcrCnst.PUBLIC_APPEND
+                        ]);
                         Util_12.util.addAll(meta64.binaryPropertyList, [Constants_6.jcrCnst.BIN_DATA]);
                     };
                     this.initApp = function () {
@@ -4298,33 +4302,32 @@ System.register("Meta64", ["Constants", "Util", "Edit", "Nav", "Props", "Render"
             exports_39("meta64", meta64 = new Meta64());
             window.meta64 = meta64;
         }
-    }
+    };
 });
-System.register("UploadFromFileDropzoneDlg", [], function(exports_40, context_40) {
+System.register("UploadFromFileDropzoneDlg", [], function (exports_40, context_40) {
     "use strict";
     var __moduleName = context_40 && context_40.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("UploadFromUrlDlg", [], function(exports_41, context_41) {
+System.register("UploadFromUrlDlg", [], function (exports_41, context_41) {
     "use strict";
     var __moduleName = context_41 && context_41.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("Attachment", ["Meta64", "Util", "Factory"], function(exports_42, context_42) {
+System.register("Attachment", ["Meta64", "Util", "Factory"], function (exports_42, context_42) {
     "use strict";
     var __moduleName = context_42 && context_42.id;
-    var Meta64_12, Util_13, Factory_10;
-    var Attachment, attachment;
+    var Meta64_12, Util_13, Factory_10, Attachment, attachment;
     return {
-        setters:[
+        setters: [
             function (Meta64_12_1) {
                 Meta64_12 = Meta64_12_1;
             },
@@ -4333,8 +4336,9 @@ System.register("Attachment", ["Meta64", "Util", "Factory"], function(exports_42
             },
             function (Factory_10_1) {
                 Factory_10 = Factory_10_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("Attachment.ts");
             Attachment = (function () {
                 function Attachment() {
@@ -4387,17 +4391,16 @@ System.register("Attachment", ["Meta64", "Util", "Factory"], function(exports_42
                 return Attachment;
             }());
             exports_42("attachment", attachment = new Attachment());
-            exports_42("default",attachment);
+            exports_42("default", attachment);
         }
-    }
+    };
 });
-System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports_43, context_43) {
+System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function (exports_43, context_43) {
     "use strict";
     var __moduleName = context_43 && context_43.id;
-    var Meta64_13, Util_14, Render_9;
-    var DialogBaseImpl;
+    var Meta64_13, Util_14, Render_9, DialogBaseImpl;
     return {
-        setters:[
+        setters: [
             function (Meta64_13_1) {
                 Meta64_13 = Meta64_13_1;
             },
@@ -4406,8 +4409,9 @@ System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports
             },
             function (Render_9_1) {
                 Render_9 = Render_9_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("DialogBaseImpl.ts");
             DialogBaseImpl = (function () {
                 function DialogBaseImpl(domId) {
@@ -4498,14 +4502,14 @@ System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports
                         }
                         return Render_9.render.tag("p", attrs, message);
                     };
-                    this.makeButton = function (text, id, callback, ctx, clazz) {
+                    this.makeButton = function (text, id, callback, clazz) {
                         var attribs = {
                             "raised": "raised",
                             "id": _this.id(id),
-                            "class": clazz || "standardButton"
+                            "class": "standardButton"
                         };
                         if (callback != undefined) {
-                            attribs["onClick"] = Meta64_13.meta64.encodeOnClick(callback, ctx);
+                            attribs["onClick"] = Meta64_13.meta64.encodeOnClick(callback);
                         }
                         return Render_9.render.tag("paper-button", attribs, text, true);
                     };
@@ -4596,15 +4600,14 @@ System.register("DialogBaseImpl", ["Meta64", "Util", "Render"], function(exports
             }());
             exports_43("DialogBaseImpl", DialogBaseImpl);
         }
-    }
+    };
 });
-System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "Render", "Props"], function(exports_44, context_44) {
+System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "Render", "Props"], function (exports_44, context_44) {
     "use strict";
     var __moduleName = context_44 && context_44.id;
-    var DialogBaseImpl_1, Podcast_3, Meta64_14, Render_10, Props_6;
-    var AudioPlayerDlgImpl;
+    var DialogBaseImpl_1, Podcast_3, Meta64_14, Render_10, Props_6, AudioPlayerDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_1_1) {
                 DialogBaseImpl_1 = DialogBaseImpl_1_1;
             },
@@ -4619,15 +4622,15 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "R
             },
             function (Props_6_1) {
                 Props_6 = Props_6_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("AudioPlayerDlgImpl.ts");
             AudioPlayerDlgImpl = (function (_super) {
                 __extends(AudioPlayerDlgImpl, _super);
                 function AudioPlayerDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "AudioPlayerDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "AudioPlayerDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Audio Player");
                         var node = Meta64_14.meta64.uidToNodeMap[_this.nodeUid];
                         if (!node) {
@@ -4645,53 +4648,54 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "R
                             "preload": "auto"
                         };
                         var player = Render_10.render.tag("audio", playerAttribs);
-                        var skipBack30Button = _this.makeButton("< 30s", "skipBackButton", _this.skipBack30Button, _this);
-                        var skipForward30Button = _this.makeButton("30s >", "skipForwardButton", _this.skipForward30Button, _this);
+                        var skipBack30Button = _this.makeButton("< 30s", "skipBackButton", _this.skipBack30Button);
+                        var skipForward30Button = _this.makeButton("30s >", "skipForwardButton", _this.skipForward30Button);
                         var skipButtonBar = Render_10.render.centeredButtonBar(skipBack30Button + skipForward30Button);
-                        var speedNormalButton = _this.makeButton("Normal", "normalSpeedButton", _this.normalSpeedButton, _this);
-                        var speed15Button = _this.makeButton("1.5X", "speed15Button", _this.speed15Button, _this);
-                        var speed2Button = _this.makeButton("2X", "speed2Button", _this.speed2Button, _this);
+                        var speedNormalButton = _this.makeButton("Normal", "normalSpeedButton", _this.normalSpeedButton);
+                        var speed15Button = _this.makeButton("1.5X", "speed15Button", _this.speed15Button);
+                        var speed2Button = _this.makeButton("2X", "speed2Button", _this.speed2Button);
                         var speedButtonBar = Render_10.render.centeredButtonBar(speedNormalButton + speed15Button + speed2Button);
-                        var pauseButton = _this.makeButton("Pause", "pauseButton", _this.pauseButton, _this);
-                        var playButton = _this.makeButton("Play", "playButton", _this.playButton, _this, "playButton");
+                        var pauseButton = _this.makeButton("Pause", "pauseButton", _this.pauseButton);
+                        var playButton = _this.makeButton("Play", "playButton", _this.playButton, "playButton");
                         var closeButton = _this.makeButton("Close", "closeAudioPlayerDlgButton", _this.closeBtn);
                         var buttonBar = Render_10.render.centeredButtonBar(playButton + pauseButton + closeButton);
                         return header + description + player + skipButtonBar + speedButtonBar + buttonBar;
                     };
-                    this.pauseButton = function () {
+                    _this.pauseButton = function () {
                         Podcast_3.podcast.pause();
                     };
-                    this.playButton = function () {
+                    _this.playButton = function () {
                         Podcast_3.podcast.play();
                     };
-                    this.speed2Button = function () {
+                    _this.speed2Button = function () {
                         Podcast_3.podcast.speed(2);
                     };
-                    this.speed15Button = function () {
+                    _this.speed15Button = function () {
                         Podcast_3.podcast.speed(1.5);
                     };
-                    this.normalSpeedButton = function () {
+                    _this.normalSpeedButton = function () {
                         Podcast_3.podcast.speed(1.0);
                     };
-                    this.skipBack30Button = function () {
+                    _this.skipBack30Button = function () {
                         Podcast_3.podcast.skip(-30);
                     };
-                    this.skipForward30Button = function () {
+                    _this.skipForward30Button = function () {
                         Podcast_3.podcast.skip(30);
                     };
-                    this.closeEvent = function () {
+                    _this.closeEvent = function () {
                         Podcast_3.podcast.destroyPlayer(null);
                     };
-                    this.closeBtn = function () {
+                    _this.closeBtn = function () {
                         Podcast_3.podcast.destroyPlayer(_this);
                     };
-                    this.init = function () {
+                    _this.init = function () {
                     };
-                    this.sourceUrl = args.sourceUrl;
-                    this.nodeUid = args.nodeUid;
-                    this.startTimePending = args.startTimePending;
-                    console.log("startTimePending in constructor: " + this.startTimePending);
-                    Podcast_3.podcast.startTimePending = this.startTimePending;
+                    _this.sourceUrl = args.sourceUrl;
+                    _this.nodeUid = args.nodeUid;
+                    _this.startTimePending = args.startTimePending;
+                    console.log("startTimePending in constructor: " + _this.startTimePending);
+                    Podcast_3.podcast.startTimePending = _this.startTimePending;
+                    return _this;
                 }
                 AudioPlayerDlgImpl.prototype.cancel = function () {
                     _super.prototype.cancel.call(this);
@@ -4705,15 +4709,14 @@ System.register("AudioPlayerDlgImpl", ["DialogBaseImpl", "Podcast", "Meta64", "R
             }(DialogBaseImpl_1.DialogBaseImpl));
             exports_44("default", AudioPlayerDlgImpl);
         }
-    }
+    };
 });
-System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory", "Util"], function(exports_45, context_45) {
+System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory", "Util"], function (exports_45, context_45) {
     "use strict";
     var __moduleName = context_45 && context_45.id;
-    var DialogBaseImpl_2, Render_11, Factory_11, Util_15;
-    var ChangePasswordDlgImpl;
+    var DialogBaseImpl_2, Render_11, Factory_11, Util_15, ChangePasswordDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_2_1) {
                 DialogBaseImpl_2 = DialogBaseImpl_2_1;
             },
@@ -4725,15 +4728,15 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
             },
             function (Util_15_1) {
                 Util_15 = Util_15_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("ChangePasswordDlgImpl.ts");
             ChangePasswordDlgImpl = (function (_super) {
                 __extends(ChangePasswordDlgImpl, _super);
                 function ChangePasswordDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "ChangePasswordDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "ChangePasswordDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader(_this.passCode ? "Password Reset" : "Change Password");
                         var message = Render_11.render.tag("p", {}, "Enter your new password below...");
                         var formControls = _this.makePasswordField("New Password", "changePassword1");
@@ -4742,7 +4745,7 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
                         var buttonBar = Render_11.render.centeredButtonBar(changePasswordButton + backButton);
                         return header + message + formControls + buttonBar;
                     };
-                    this.changePassword = function () {
+                    _this.changePassword = function () {
                         _this.pwd = _this.getInputVal("changePassword1").trim();
                         if (_this.pwd && _this.pwd.length >= 4) {
                             Util_15.util.json("changePassword", {
@@ -4754,7 +4757,7 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
                             Util_15.util.showMessage("Invalid password(s).");
                         }
                     };
-                    this.changePasswordResponse = function (res) {
+                    _this.changePasswordResponse = function (res) {
                         if (Util_15.util.checkSuccess("Change password", res)) {
                             var msg = "Password changed successfully.";
                             if (_this.passCode) {
@@ -4773,38 +4776,38 @@ System.register("ChangePasswordDlgImpl", ["DialogBaseImpl", "Render", "Factory",
                             });
                         }
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.focus("changePassword1");
                     };
-                    this.passCode = args.passCode;
+                    _this.passCode = args.passCode;
+                    return _this;
                 }
                 return ChangePasswordDlgImpl;
             }(DialogBaseImpl_2.DialogBaseImpl));
             exports_45("default", ChangePasswordDlgImpl);
         }
-    }
+    };
 });
-System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function(exports_46, context_46) {
+System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function (exports_46, context_46) {
     "use strict";
     var __moduleName = context_46 && context_46.id;
-    var DialogBaseImpl_3, Render_12;
-    var ConfirmDlgImpl;
+    var DialogBaseImpl_3, Render_12, ConfirmDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_3_1) {
                 DialogBaseImpl_3 = DialogBaseImpl_3_1;
             },
             function (Render_12_1) {
                 Render_12 = Render_12_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("ConfirmDlgImpl.ts");
             ConfirmDlgImpl = (function (_super) {
                 __extends(ConfirmDlgImpl, _super);
                 function ConfirmDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "ConfirmDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "ConfirmDlg") || this;
+                    _this.build = function () {
                         var content = _this.makeHeader("", "ConfirmDlgTitle") + _this.makeMessageArea("", "ConfirmDlgMessage");
                         content = Render_12.render.centerContent(content, 300);
                         var buttons = _this.makeCloseButton("Yes", "ConfirmDlgYesButton", _this.yesCallback)
@@ -4812,30 +4815,30 @@ System.register("ConfirmDlgImpl", ["DialogBaseImpl", "Render"], function(exports
                         content += Render_12.render.centeredButtonBar(buttons);
                         return content;
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.setHtml(_this.title, "ConfirmDlgTitle");
                         _this.setHtml(_this.message, "ConfirmDlgMessage");
                         _this.setHtml(_this.buttonText, "ConfirmDlgYesButton");
                     };
-                    this.title = args.title;
-                    this.message = args.message;
-                    this.buttonText = args.buttonText;
-                    this.yesCallback = args.yesCallback;
-                    this.noCallback = args.noCallback;
+                    _this.title = args.title;
+                    _this.message = args.message;
+                    _this.buttonText = args.buttonText;
+                    _this.yesCallback = args.yesCallback;
+                    _this.noCallback = args.noCallback;
+                    return _this;
                 }
                 return ConfirmDlgImpl;
             }(DialogBaseImpl_3.DialogBaseImpl));
             exports_46("default", ConfirmDlgImpl);
         }
-    }
+    };
 });
-System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edit"], function(exports_47, context_47) {
+System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edit"], function (exports_47, context_47) {
     "use strict";
     var __moduleName = context_47 && context_47.id;
-    var DialogBaseImpl_4, Render_13, Meta64_15, Edit_7;
-    var CreateNodeDlgImpl;
+    var DialogBaseImpl_4, Render_13, Meta64_15, Edit_7, CreateNodeDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_4_1) {
                 DialogBaseImpl_4 = DialogBaseImpl_4_1;
             },
@@ -4847,15 +4850,15 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
             },
             function (Edit_7_1) {
                 Edit_7 = Edit_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("CreateNodeDlgImpl.ts");
             CreateNodeDlgImpl = (function (_super) {
                 __extends(CreateNodeDlgImpl, _super);
                 function CreateNodeDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "CreateNodeDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "CreateNodeDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Create New Node");
                         var createFirstChildButton = _this.makeCloseButton("First", "createFirstChildButton", _this.createFirstChild, _this, true, 1000);
                         var createLastChildButton = _this.makeCloseButton("Last", "createLastChildButton", _this.createLastChild, _this);
@@ -4876,28 +4879,28 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                         }, header);
                         return centeredHeader + mainContent + buttonBar;
                     };
-                    this.createFirstChild = function () {
+                    _this.createFirstChild = function () {
                         if (!_this.lastSelTypeName) {
                             alert("choose a type.");
                             return;
                         }
                         Edit_7.edit.createSubNode(null, _this.lastSelTypeName, true);
                     };
-                    this.createLastChild = function () {
+                    _this.createLastChild = function () {
                         if (!_this.lastSelTypeName) {
                             alert("choose a type.");
                             return;
                         }
                         Edit_7.edit.createSubNode(null, _this.lastSelTypeName, false);
                     };
-                    this.createInline = function () {
+                    _this.createInline = function () {
                         if (!_this.lastSelTypeName) {
                             alert("choose a type.");
                             return;
                         }
                         Edit_7.edit.insertNode(null, _this.lastSelTypeName);
                     };
-                    this.onRowClick = function (payload) {
+                    _this.onRowClick = function (payload) {
                         var divId = _this.id("typeRow" + payload.typeIdx);
                         _this.lastSelTypeName = payload.typeName;
                         if (_this.lastSelDomId) {
@@ -4906,7 +4909,7 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                         _this.lastSelDomId = divId;
                         _this.el(divId).addClass("selectedListItem");
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         var node = Meta64_15.meta64.getHighlightedNode();
                         if (node) {
                             var canInsertInline = Meta64_15.meta64.homeNodeId != node.id;
@@ -4918,6 +4921,7 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
                             }
                         }
                     };
+                    return _this;
                 }
                 CreateNodeDlgImpl.prototype.makeListItem = function (val, typeName, typeIdx, initiallySelected) {
                     var payload = {
@@ -4939,25 +4943,24 @@ System.register("CreateNodeDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Edi
             }(DialogBaseImpl_4.DialogBaseImpl));
             exports_47("default", CreateNodeDlgImpl);
         }
-    }
+    };
 });
-System.register("EditPropertyDlg", [], function(exports_48, context_48) {
+System.register("EditPropertyDlg", [], function (exports_48, context_48) {
     "use strict";
     var __moduleName = context_48 && context_48.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("EditPropertyDlg.ts");
         }
-    }
+    };
 });
-System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "Factory", "Constants", "Edit", "View", "Props", "Util", "Meta64"], function(exports_49, context_49) {
+System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "Factory", "Constants", "Edit", "View", "Props", "Util", "Meta64"], function (exports_49, context_49) {
     "use strict";
     var __moduleName = context_49 && context_49.id;
-    var I, DialogBaseImpl_5, Render_14, Factory_12, Constants_7, Edit_8, View_9, Props_7, Util_16, Meta64_16;
-    var EditNodeDlgImpl;
+    var I, DialogBaseImpl_5, Render_14, Factory_12, Constants_7, Edit_8, View_9, Props_7, Util_16, Meta64_16, EditNodeDlgImpl;
     return {
-        setters:[
+        setters: [
             function (I_2) {
                 I = I_2;
             },
@@ -4987,24 +4990,24 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
             },
             function (Meta64_16_1) {
                 Meta64_16 = Meta64_16_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("EditNodeDlgImpl.ts");
             EditNodeDlgImpl = (function (_super) {
                 __extends(EditNodeDlgImpl, _super);
                 function EditNodeDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "EditNodeDlg");
-                    this.fieldIdToPropMap = {};
-                    this.propEntries = new Array();
-                    this.build = function () {
+                    var _this = _super.call(this, "EditNodeDlg") || this;
+                    _this.fieldIdToPropMap = {};
+                    _this.propEntries = new Array();
+                    _this.build = function () {
                         var header = _this.makeHeader("Edit Node");
-                        var saveNodeButton = _this.makeCloseButton("Save", "saveNodeButton", _this.saveNode, _this);
-                        var addPropertyButton = _this.makeButton("Add Property", "addPropertyButton", _this.addProperty, _this);
-                        var addTagsPropertyButton = _this.makeButton("Add Tags", "addTagsPropertyButton", _this.addTagsProperty, _this);
-                        var splitContentButton = _this.makeButton("Split", "splitContentButton", _this.splitContent, _this);
-                        var deletePropButton = _this.makeButton("Delete", "deletePropButton", _this.deletePropertyButtonClick, _this);
-                        var cancelEditButton = _this.makeCloseButton("Close", "cancelEditButton", _this.cancelEdit, _this);
+                        var saveNodeButton = _this.makeCloseButton("Save", "saveNodeButton", _this.saveNode);
+                        var addPropertyButton = _this.makeButton("Add Property", "addPropertyButton", _this.addProperty);
+                        var addTagsPropertyButton = _this.makeButton("Add Tags", "addTagsPropertyButton", _this.addTagsProperty);
+                        var splitContentButton = _this.makeButton("Split", "splitContentButton", _this.splitContent);
+                        var deletePropButton = _this.makeButton("Delete", "deletePropButton", _this.deletePropertyButtonClick);
+                        var cancelEditButton = _this.makeCloseButton("Close", "cancelEditButton", _this.cancelEdit);
                         var buttonBar = Render_14.render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
                             + splitContentButton + cancelEditButton, "buttons");
                         var width = 800;
@@ -5025,7 +5028,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         }, "Loading...");
                         return header + internalMainContent + buttonBar;
                     };
-                    this.populateEditNodePg = function () {
+                    _this.populateEditNodePg = function () {
                         View_9.view.initEditPathDisplayById(_this.id("editNodePathDisplay"));
                         var fields = "";
                         var counter = 0;
@@ -5104,15 +5107,15 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         var tagsPropExists = Props_7.props.getNodePropertyVal("tags", Edit_8.edit.editNode) != null;
                         Util_16.util.setVisibility("#" + _this.id("addTagsPropertyButton"), !tagsPropExists);
                     };
-                    this.toggleShowReadOnly = function () {
+                    _this.toggleShowReadOnly = function () {
                     };
-                    this.addProperty = function () {
+                    _this.addProperty = function () {
                         Factory_12.Factory.createDefault("EditPropertyDlgImpl", function (dlg) {
                             _this.editPropertyDlgInst = dlg;
                             _this.editPropertyDlgInst.open();
                         }, { "EditNodeDlgInstance": _this });
                     };
-                    this.addTagsProperty = function () {
+                    _this.addTagsProperty = function () {
                         if (Props_7.props.getNodePropertyVal(Edit_8.edit.editNode, "tags")) {
                             return;
                         }
@@ -5123,18 +5126,18 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         };
                         Util_16.util.json("saveProperty", postData, _this.addTagsPropertyResponse, _this);
                     };
-                    this.addTagsPropertyResponse = function (res) {
+                    _this.addTagsPropertyResponse = function (res) {
                         if (Util_16.util.checkSuccess("Add Tags Property", res)) {
                             _this.savePropertyResponse(res);
                         }
                     };
-                    this.savePropertyResponse = function (res) {
+                    _this.savePropertyResponse = function (res) {
                         Util_16.util.checkSuccess("Save properties", res);
                         Edit_8.edit.editNode.properties.push(res.propertySaved);
                         Meta64_16.meta64.treeDirty = true;
                         _this.populateEditNodePg();
                     };
-                    this.addSubProperty = function (fieldId) {
+                    _this.addSubProperty = function (fieldId) {
                         var prop = _this.fieldIdToPropMap[fieldId].property;
                         var isMulti = Util_16.util.isObject(prop.values);
                         if (!isMulti) {
@@ -5145,7 +5148,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         prop.values.push("");
                         _this.populateEditNodePg();
                     };
-                    this.deleteProperty = function (propName) {
+                    _this.deleteProperty = function (propName) {
                         var thiz = _this;
                         Factory_12.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
@@ -5156,7 +5159,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             }
                         });
                     };
-                    this.deletePropertyImmediate = function (propName) {
+                    _this.deletePropertyImmediate = function (propName) {
                         var thiz = _this;
                         Util_16.util.json("deleteProperty", {
                             "nodeId": Edit_8.edit.editNode.id,
@@ -5165,14 +5168,14 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             thiz.deletePropertyResponse(res, propName);
                         });
                     };
-                    this.deletePropertyResponse = function (res, propertyToDelete) {
+                    _this.deletePropertyResponse = function (res, propertyToDelete) {
                         if (Util_16.util.checkSuccess("Delete property", res)) {
                             Props_7.props.deletePropertyFromLocalData(propertyToDelete);
                             Meta64_16.meta64.treeDirty = true;
                             _this.populateEditNodePg();
                         }
                     };
-                    this.clearProperty = function (fieldId) {
+                    _this.clearProperty = function (fieldId) {
                         if (!Constants_7.cnst.USE_ACE_EDITOR) {
                             Util_16.util.setInputVal(_this.id(fieldId), "");
                         }
@@ -5201,7 +5204,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             counter++;
                         }
                     };
-                    this.saveNode = function () {
+                    _this.saveNode = function () {
                         if (Edit_8.edit.editingUnsavedNode) {
                             console.log("saveNewNode.");
                             _this.saveNewNode();
@@ -5211,7 +5214,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             _this.saveExistingNode();
                         }
                     };
-                    this.saveNewNode = function (newNodeName) {
+                    _this.saveNewNode = function (newNodeName) {
                         if (!newNodeName) {
                             newNodeName = Util_16.util.getInputVal(_this.id("newNodeNameId"));
                         }
@@ -5237,7 +5240,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             }, Edit_8.edit.createSubNodeResponse, Edit_8.edit);
                         }
                     };
-                    this.saveExistingNode = function () {
+                    _this.saveExistingNode = function () {
                         console.log("saveExistingNode");
                         var propertiesList = [];
                         var thiz = _this;
@@ -5308,7 +5311,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             console.log("nothing changed. Nothing to save.");
                         }
                     };
-                    this.makeMultiPropEditor = function (propEntry) {
+                    _this.makeMultiPropEditor = function (propEntry) {
                         console.log("Making Multi Editor: Property multi-type: name=" + propEntry.property.name + " count="
                             + propEntry.property.values.length);
                         var fields = "";
@@ -5350,7 +5353,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         }, fields);
                         return col;
                     };
-                    this.makeSinglePropEditor = function (propEntry, aceFields) {
+                    _this.makeSinglePropEditor = function (propEntry, aceFields) {
                         console.log("Property single-type: " + propEntry.property.name);
                         var field = "";
                         var propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
@@ -5401,7 +5404,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         }, field);
                         return selCol + editCol;
                     };
-                    this.deletePropertyButtonClick = function () {
+                    _this.deletePropertyButtonClick = function () {
                         for (var id in _this.fieldIdToPropMap) {
                             if (_this.fieldIdToPropMap.hasOwnProperty(id)) {
                                 var propEntry = _this.fieldIdToPropMap[id];
@@ -5423,7 +5426,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                         }
                         console.log("Delete property: ");
                     };
-                    this.splitContent = function () {
+                    _this.splitContent = function () {
                         var nodeBelow = Edit_8.edit.getNodeBelow(Edit_8.edit.editNode);
                         Util_16.util.json("splitNode", {
                             "nodeId": Edit_8.edit.editNode.id,
@@ -5431,7 +5434,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             "delimiter": null
                         }, _this.splitContentResponse);
                     };
-                    this.splitContentResponse = function (res) {
+                    _this.splitContentResponse = function (res) {
                         if (Util_16.util.checkSuccess("Split content", res)) {
                             _this.cancel();
                             View_9.view.refreshTree(null, false);
@@ -5439,7 +5442,7 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             View_9.view.scrollToSelectedNode();
                         }
                     };
-                    this.cancelEdit = function () {
+                    _this.cancelEdit = function () {
                         _this.cancel();
                         if (Meta64_16.meta64.treeDirty) {
                             Meta64_16.meta64.goToMainPage(true);
@@ -5449,31 +5452,31 @@ System.register("EditNodeDlgImpl", ["Interfaces", "DialogBaseImpl", "Render", "F
                             View_9.view.scrollToSelectedNode();
                         }
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         console.log("EditNodeDlg.init");
                         _this.populateEditNodePg();
                         if (_this.contentFieldDomId) {
                             Util_16.util.delayedFocus("#" + _this.contentFieldDomId);
                         }
                     };
-                    this.typeName = args.typeName;
-                    this.createAtTop = args.createAtTop;
-                    this.fieldIdToPropMap = {};
-                    this.propEntries = new Array();
+                    _this.typeName = args.typeName;
+                    _this.createAtTop = args.createAtTop;
+                    _this.fieldIdToPropMap = {};
+                    _this.propEntries = new Array();
+                    return _this;
                 }
                 return EditNodeDlgImpl;
             }(DialogBaseImpl_5.DialogBaseImpl));
             exports_49("default", EditNodeDlgImpl);
         }
-    }
+    };
 });
-System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render", "View", "Util", "Edit", "Meta64"], function(exports_50, context_50) {
+System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render", "View", "Util", "Edit", "Meta64"], function (exports_50, context_50) {
     "use strict";
     var __moduleName = context_50 && context_50.id;
-    var DialogBaseImpl_6, Constants_8, Render_15, View_10, Util_17, Edit_9, Meta64_17;
-    var EditPropertyDlgImpl;
+    var DialogBaseImpl_6, Constants_8, Render_15, View_10, Util_17, Edit_9, Meta64_17, EditPropertyDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_6_1) {
                 DialogBaseImpl_6 = DialogBaseImpl_6_1;
             },
@@ -5494,16 +5497,16 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
             },
             function (Meta64_17_1) {
                 Meta64_17 = Meta64_17_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("EditPropertyDlgImpl.ts");
             EditPropertyDlgImpl = (function (_super) {
                 __extends(EditPropertyDlgImpl, _super);
                 function EditPropertyDlgImpl(editNodeDlg) {
-                    var _this = this;
-                    _super.call(this, "EditPropertyDlg");
-                    this.editNodeDlg = editNodeDlg;
-                    this.build = function () {
+                    var _this = _super.call(this, "EditPropertyDlg") || this;
+                    _this.editNodeDlg = editNodeDlg;
+                    _this.build = function () {
                         var header = _this.makeHeader("Edit Node Property");
                         var savePropertyButton = _this.makeCloseButton("Save", "savePropertyButton", _this.saveProperty, _this);
                         var cancelEditButton = _this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
@@ -5516,7 +5519,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         internalMainContent += "<div id='" + _this.id("addPropertyFieldContainer") + "'></div>";
                         return header + internalMainContent + buttonBar;
                     };
-                    this.populatePropertyEdit = function () {
+                    _this.populatePropertyEdit = function () {
                         var field = '';
                         {
                             var fieldPropNameId = "addPropertyNameTextContent";
@@ -5539,7 +5542,7 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         View_10.view.initEditPathDisplayById(_this.id("editPropertyPathDisplay"));
                         Util_17.util.setHtml(_this.id("addPropertyFieldContainer"), field);
                     };
-                    this.saveProperty = function () {
+                    _this.saveProperty = function () {
                         var propertyNameData = Util_17.util.getInputVal(_this.id("addPropertyNameTextContent"));
                         var propertyValueData = Util_17.util.getInputVal(_this.id("addPropertyValueTextContent"));
                         var postData = {
@@ -5549,122 +5552,221 @@ System.register("EditPropertyDlgImpl", ["DialogBaseImpl", "Constants", "Render",
                         };
                         Util_17.util.json("saveProperty", postData, _this.savePropertyResponse, _this);
                     };
-                    this.savePropertyResponse = function (res) {
+                    _this.savePropertyResponse = function (res) {
                         Util_17.util.checkSuccess("Save properties", res);
                         Edit_9.edit.editNode.properties.push(res.propertySaved);
                         Meta64_17.meta64.treeDirty = true;
                         _this.editNodeDlg.populateEditNodePg();
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.populatePropertyEdit();
                     };
+                    return _this;
                 }
                 return EditPropertyDlgImpl;
             }(DialogBaseImpl_6.DialogBaseImpl));
             exports_50("default", EditPropertyDlgImpl);
         }
-    }
+    };
 });
-System.register("EditSystemFileDlg", [], function(exports_51, context_51) {
+System.register("EditSystemFileDlg", [], function (exports_51, context_51) {
     "use strict";
     var __moduleName = context_51 && context_51.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             console.log("EditSystemFileDlg.ts");
         }
-    }
+    };
 });
-System.register("EditSystemFileDlgImpl", ["DialogBaseImpl"], function(exports_52, context_52) {
+System.register("EditSystemFileDlgImpl", ["DialogBaseImpl"], function (exports_52, context_52) {
     "use strict";
     var __moduleName = context_52 && context_52.id;
-    var DialogBaseImpl_7;
-    var EditSystemFileDlgImpl;
+    var DialogBaseImpl_7, EditSystemFileDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_7_1) {
                 DialogBaseImpl_7 = DialogBaseImpl_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             console.log("EditSystemFileDlgImpl.ts");
             EditSystemFileDlgImpl = (function (_super) {
                 __extends(EditSystemFileDlgImpl, _super);
                 function EditSystemFileDlgImpl() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return EditSystemFileDlgImpl;
             }(DialogBaseImpl_7.DialogBaseImpl));
             exports_52("default", EditSystemFileDlgImpl);
         }
-    }
+    };
 });
-System.register("ExportDlgImpl", ["DialogBaseImpl"], function(exports_53, context_53) {
+System.register("ExportDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta64", "View", "Factory"], function (exports_53, context_53) {
     "use strict";
     var __moduleName = context_53 && context_53.id;
-    var DialogBaseImpl_8;
-    var ExportDlgImpl;
+    var DialogBaseImpl_8, Render_16, Util_18, Meta64_18, View_11, Factory_13, ExportDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_8_1) {
                 DialogBaseImpl_8 = DialogBaseImpl_8_1;
-            }],
-        execute: function() {
+            },
+            function (Render_16_1) {
+                Render_16 = Render_16_1;
+            },
+            function (Util_18_1) {
+                Util_18 = Util_18_1;
+            },
+            function (Meta64_18_1) {
+                Meta64_18 = Meta64_18_1;
+            },
+            function (View_11_1) {
+                View_11 = View_11_1;
+            },
+            function (Factory_13_1) {
+                Factory_13 = Factory_13_1;
+            }
+        ],
+        execute: function () {
             console.log("ExportDlgImpl.ts");
             ExportDlgImpl = (function (_super) {
                 __extends(ExportDlgImpl, _super);
                 function ExportDlgImpl() {
-                    _super.apply(this, arguments);
+                    var _this = _super.call(this, "ExportDlg") || this;
+                    _this.build = function () {
+                        var header = _this.makeHeader("Export to XML");
+                        var formControls = _this.makeEditField("Export to File Name", "exportTargetNodeName");
+                        var exportButton = _this.makeButton("Export", "exportNodesButton", _this.exportNodes);
+                        var backButton = _this.makeCloseButton("Close", "cancelExportButton");
+                        var buttonBar = Render_16.render.centeredButtonBar(exportButton + backButton);
+                        return header + formControls + buttonBar;
+                    };
+                    _this.exportNodes = function () {
+                        var highlightNode = Meta64_18.meta64.getHighlightedNode();
+                        var targetFileName = _this.getInputVal("exportTargetNodeName");
+                        if (Util_18.util.emptyString(targetFileName)) {
+                            Factory_13.Factory.createDefault("MessageDlgImpl", function (dlg) {
+                                dlg.open();
+                            }, { "message": "Please enter a name for the export file." });
+                            return;
+                        }
+                        if (highlightNode) {
+                            Util_18.util.json("exportToXml", {
+                                "nodeId": highlightNode.id,
+                                "targetFileName": targetFileName
+                            }, _this.exportResponse, _this);
+                        }
+                    };
+                    _this.exportResponse = function (res) {
+                        if (Util_18.util.checkSuccess("Export", res)) {
+                            Factory_13.Factory.createDefault("MessageDlgImpl", function (dlg) {
+                                dlg.open();
+                            }, { "message": "Export successful." });
+                            Meta64_18.meta64.selectTab("mainTabName");
+                            View_11.view.scrollToSelectedNode();
+                        }
+                    };
+                    return _this;
                 }
                 return ExportDlgImpl;
             }(DialogBaseImpl_8.DialogBaseImpl));
             exports_53("default", ExportDlgImpl);
         }
-    }
+    };
 });
-System.register("ImportDlgImpl", ["DialogBaseImpl"], function(exports_54, context_54) {
+System.register("ImportDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta64", "View", "Factory"], function (exports_54, context_54) {
     "use strict";
     var __moduleName = context_54 && context_54.id;
-    var DialogBaseImpl_9;
-    var ImportDlgImpl;
+    var DialogBaseImpl_9, Render_17, Util_19, Meta64_19, View_12, Factory_14, ImportDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_9_1) {
                 DialogBaseImpl_9 = DialogBaseImpl_9_1;
-            }],
-        execute: function() {
+            },
+            function (Render_17_1) {
+                Render_17 = Render_17_1;
+            },
+            function (Util_19_1) {
+                Util_19 = Util_19_1;
+            },
+            function (Meta64_19_1) {
+                Meta64_19 = Meta64_19_1;
+            },
+            function (View_12_1) {
+                View_12 = View_12_1;
+            },
+            function (Factory_14_1) {
+                Factory_14 = Factory_14_1;
+            }
+        ],
+        execute: function () {
             console.log("ImportDlgImpl.ts");
             ImportDlgImpl = (function (_super) {
                 __extends(ImportDlgImpl, _super);
                 function ImportDlgImpl() {
-                    _super.apply(this, arguments);
+                    var _this = _super.call(this, "ImportDlg") || this;
+                    _this.build = function () {
+                        var header = _this.makeHeader("Import from XML");
+                        var formControls = _this.makeEditField("File name to import", "sourceFileName");
+                        var importButton = _this.makeButton("Import", "importNodesButton", _this.importNodes);
+                        var backButton = _this.makeCloseButton("Close", "cancelImportButton");
+                        var buttonBar = Render_17.render.centeredButtonBar(importButton + backButton);
+                        return header + formControls + buttonBar;
+                    };
+                    _this.importNodes = function () {
+                        var highlightNode = Meta64_19.meta64.getHighlightedNode();
+                        var sourceFileName = _this.getInputVal("sourceFileName");
+                        if (Util_19.util.emptyString(sourceFileName)) {
+                            Factory_14.Factory.createDefault("MessageDlgImpl", function (dlg) {
+                                dlg.open();
+                            }, { "message": "Please enter a name for the import file." });
+                            return;
+                        }
+                        if (highlightNode) {
+                            Util_19.util.json("import", {
+                                "nodeId": highlightNode.id,
+                                "sourceFileName": sourceFileName
+                            }, _this.importResponse, _this);
+                        }
+                    };
+                    _this.importResponse = function (res) {
+                        if (Util_19.util.checkSuccess("Import", res)) {
+                            Factory_14.Factory.createDefault("MessageDlgImpl", function (dlg) {
+                                dlg.open();
+                            }, { "message": "Import Successful" });
+                            View_12.view.refreshTree(null, false);
+                            Meta64_19.meta64.selectTab("mainTabName");
+                            View_12.view.scrollToSelectedNode();
+                        }
+                    };
+                    return _this;
                 }
                 return ImportDlgImpl;
             }(DialogBaseImpl_9.DialogBaseImpl));
             exports_54("default", ImportDlgImpl);
         }
-    }
+    };
 });
-System.register("ResetPasswordDlg", [], function(exports_55, context_55) {
+System.register("ResetPasswordDlg", [], function (exports_55, context_55) {
     "use strict";
     var __moduleName = context_55 && context_55.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants", "Factory"], function(exports_56, context_56) {
+System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants", "Factory"], function (exports_56, context_56) {
     "use strict";
     var __moduleName = context_56 && context_56.id;
-    var DialogBaseImpl_10, Render_16, User_5, Constants_9, Factory_13;
-    var LoginDlgImpl;
+    var DialogBaseImpl_10, Render_18, User_5, Constants_9, Factory_15, LoginDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_10_1) {
                 DialogBaseImpl_10 = DialogBaseImpl_10_1;
             },
-            function (Render_16_1) {
-                Render_16 = Render_16_1;
+            function (Render_18_1) {
+                Render_18 = Render_18_1;
             },
             function (User_5_1) {
                 User_5 = User_5_1;
@@ -5672,24 +5774,24 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
             function (Constants_9_1) {
                 Constants_9 = Constants_9_1;
             },
-            function (Factory_13_1) {
-                Factory_13 = Factory_13_1;
-            }],
-        execute: function() {
+            function (Factory_15_1) {
+                Factory_15 = Factory_15_1;
+            }
+        ],
+        execute: function () {
             console.log("LoginDlg.ts");
             LoginDlgImpl = (function (_super) {
                 __extends(LoginDlgImpl, _super);
                 function LoginDlgImpl(paramsTest) {
-                    var _this = this;
-                    _super.call(this, "LoginDlgImpl");
-                    this.build = function () {
+                    var _this = _super.call(this, "LoginDlgImpl") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Login");
                         var formControls = _this.makeEditField("User", "userName") +
                             _this.makePasswordField("Password", "password");
-                        var loginButton = _this.makeButton("Login", "loginButton", _this.login, _this);
-                        var resetPasswordButton = _this.makeButton("Forgot Password", "resetPasswordButton", _this.resetPassword, _this);
+                        var loginButton = _this.makeButton("Login", "loginButton", _this.login);
+                        var resetPasswordButton = _this.makeButton("Forgot Password", "resetPasswordButton", _this.resetPassword);
                         var backButton = _this.makeCloseButton("Close", "cancelLoginButton");
-                        var buttonBar = Render_16.render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
+                        var buttonBar = Render_18.render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
                         var divider = "<div><h3>Or Login With...</h3></div>";
                         var form = formControls + buttonBar;
                         var mainContent = form;
@@ -5698,10 +5800,10 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
                         _this.bindEnterKey("password", User_5.user.login);
                         return content;
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.populateFromCookies();
                     };
-                    this.populateFromCookies = function () {
+                    _this.populateFromCookies = function () {
                         var usr = $.cookie(Constants_9.cnst.COOKIE_LOGIN_USR);
                         var pwd = $.cookie(Constants_9.cnst.COOKIE_LOGIN_PWD);
                         if (usr) {
@@ -5711,394 +5813,250 @@ System.register("LoginDlgImpl", ["DialogBaseImpl", "Render", "User", "Constants"
                             _this.setInputVal("password", pwd);
                         }
                     };
-                    this.login = function () {
+                    _this.login = function () {
                         var usr = _this.getInputVal("userName");
                         var pwd = _this.getInputVal("password");
                         User_5.user.login(_this, usr, pwd);
                     };
-                    this.resetPassword = function () {
+                    _this.resetPassword = function () {
                         var thiz = _this;
                         var usr = _this.getInputVal("userName");
-                        Factory_13.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
+                        Factory_15.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                             dlg.open();
                         }, {
                             "title": "Confirm Reset Password",
                             "message": "Reset your password ?<p>You'll still be able to login with your old password until the new one is set.",
                             "buttonText": "Yes, reset.", "yesCallback": function () {
                                 thiz.cancel();
-                                Factory_13.Factory.createDefault("ResetPasswordDlgImpl", function (dlg) {
+                                Factory_15.Factory.createDefault("ResetPasswordDlgImpl", function (dlg) {
                                     dlg.open();
                                 }, { "user": usr });
                             }
                         });
                     };
+                    return _this;
                 }
                 return LoginDlgImpl;
             }(DialogBaseImpl_10.DialogBaseImpl));
             exports_56("default", LoginDlgImpl);
         }
-    }
+    };
 });
-System.register("ManageAccountDlgImpl", ["DialogBaseImpl", "Render", "Meta64"], function(exports_57, context_57) {
+System.register("ManageAccountDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Prefs"], function (exports_57, context_57) {
     "use strict";
     var __moduleName = context_57 && context_57.id;
-    var DialogBaseImpl_11, Render_17, Meta64_18;
-    var ManageAccountDlgImpl;
+    var DialogBaseImpl_11, Render_19, Meta64_20, Prefs_1, ManageAccountDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_11_1) {
                 DialogBaseImpl_11 = DialogBaseImpl_11_1;
             },
-            function (Render_17_1) {
-                Render_17 = Render_17_1;
+            function (Render_19_1) {
+                Render_19 = Render_19_1;
             },
-            function (Meta64_18_1) {
-                Meta64_18 = Meta64_18_1;
-            }],
-        execute: function() {
+            function (Meta64_20_1) {
+                Meta64_20 = Meta64_20_1;
+            },
+            function (Prefs_1_1) {
+                Prefs_1 = Prefs_1_1;
+            }
+        ],
+        execute: function () {
             console.log("ManageAccountDlgImpl.ts");
             ManageAccountDlgImpl = (function (_super) {
                 __extends(ManageAccountDlgImpl, _super);
                 function ManageAccountDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "ManageAccountDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "ManageAccountDlg") || this;
+                    _this.closeAccount = function () {
+                        Prefs_1.prefs.closeAccount();
+                    };
+                    _this.build = function () {
                         var header = _this.makeHeader("Manage Account");
                         var backButton = _this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-                        var closeAccountButton = Meta64_18.meta64.isAdminUser ? "Admin Cannot Close Acount" : _this.makeButton("Close Account", "closeAccountButton", "prefs.closeAccount();");
-                        var buttonBar = Render_17.render.centeredButtonBar(closeAccountButton);
-                        var bottomButtonBar = Render_17.render.centeredButtonBar(backButton);
-                        var bottomButtonBarDiv = Render_17.render.tag("div", {
+                        var closeAccountButton = Meta64_20.meta64.isAdminUser ? "Admin Cannot Close Acount" : _this.makeButton("Close Account", "closeAccountButton", _this.closeAccount);
+                        var buttonBar = Render_19.render.centeredButtonBar(closeAccountButton);
+                        var bottomButtonBar = Render_19.render.centeredButtonBar(backButton);
+                        var bottomButtonBarDiv = Render_19.render.tag("div", {
                             "class": "close-account-bar"
                         }, bottomButtonBar);
                         return header + buttonBar + bottomButtonBarDiv;
                     };
+                    return _this;
                 }
                 return ManageAccountDlgImpl;
             }(DialogBaseImpl_11.DialogBaseImpl));
             exports_57("default", ManageAccountDlgImpl);
         }
-    }
+    };
 });
-System.register("MessageDlgImpl", ["DialogBaseImpl", "Render"], function(exports_58, context_58) {
+System.register("MessageDlgImpl", ["DialogBaseImpl", "Render"], function (exports_58, context_58) {
     "use strict";
     var __moduleName = context_58 && context_58.id;
-    var DialogBaseImpl_12, Render_18;
-    var MessageDlgImpl;
+    var DialogBaseImpl_12, Render_20, MessageDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_12_1) {
                 DialogBaseImpl_12 = DialogBaseImpl_12_1;
             },
-            function (Render_18_1) {
-                Render_18 = Render_18_1;
-            }],
-        execute: function() {
+            function (Render_20_1) {
+                Render_20 = Render_20_1;
+            }
+        ],
+        execute: function () {
             console.log("MessageDlgImpl.ts");
             MessageDlgImpl = (function (_super) {
                 __extends(MessageDlgImpl, _super);
                 function MessageDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "MessageDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "MessageDlg") || this;
+                    _this.build = function () {
                         var content = _this.makeHeader(_this.title) + "<p>" + _this.message + "</p>";
-                        content += Render_18.render.centeredButtonBar(_this.makeCloseButton("Ok", "messageDlgOkButton", _this.callback));
+                        content += Render_20.render.centeredButtonBar(_this.makeCloseButton("Ok", "messageDlgOkButton", _this.callback));
                         return content;
                     };
                     if (!args.title) {
-                        this.title = "Message";
+                        _this.title = "Message";
                     }
-                    this.title = args.title;
-                    this.message = args.message;
-                    this.callback = args.callback;
+                    _this.title = args.title;
+                    _this.message = args.message;
+                    _this.callback = args.callback;
+                    return _this;
                 }
                 return MessageDlgImpl;
             }(DialogBaseImpl_12.DialogBaseImpl));
             exports_58("default", MessageDlgImpl);
         }
-    }
+    };
 });
-System.register("PrefsDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Util"], function(exports_59, context_59) {
+System.register("PrefsDlgImpl", ["DialogBaseImpl", "Render", "Meta64", "Util"], function (exports_59, context_59) {
     "use strict";
     var __moduleName = context_59 && context_59.id;
-    var DialogBaseImpl_13, Render_19, Meta64_19, Util_18;
-    var PrefsDlgImpl;
+    var DialogBaseImpl_13, Render_21, Meta64_21, Util_20, PrefsDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_13_1) {
                 DialogBaseImpl_13 = DialogBaseImpl_13_1;
             },
-            function (Render_19_1) {
-                Render_19 = Render_19_1;
+            function (Render_21_1) {
+                Render_21 = Render_21_1;
             },
-            function (Meta64_19_1) {
-                Meta64_19 = Meta64_19_1;
+            function (Meta64_21_1) {
+                Meta64_21 = Meta64_21_1;
             },
-            function (Util_18_1) {
-                Util_18 = Util_18_1;
-            }],
-        execute: function() {
+            function (Util_20_1) {
+                Util_20 = Util_20_1;
+            }
+        ],
+        execute: function () {
             PrefsDlgImpl = (function (_super) {
                 __extends(PrefsDlgImpl, _super);
                 function PrefsDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "PrefsDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "PrefsDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Peferences");
                         var radioButtons = _this.makeRadioButton("Simple", "editModeSimple") +
                             _this.makeRadioButton("Advanced", "editModeAdvanced");
-                        var radioButtonGroup = Render_19.render.tag("paper-radio-group", {
+                        var radioButtonGroup = Render_21.render.tag("paper-radio-group", {
                             "id": _this.id("simpleModeRadioGroup"),
                             "selected": _this.id("editModeSimple")
                         }, radioButtons);
-                        var showMetaDataCheckBox = _this.makeCheckBox("Show Row Metadata", "showMetaData", Meta64_19.meta64.showMetaData);
-                        var checkboxBar = Render_19.render.makeHorzControlGroup(showMetaDataCheckBox);
+                        var showMetaDataCheckBox = _this.makeCheckBox("Show Row Metadata", "showMetaData", Meta64_21.meta64.showMetaData);
+                        var checkboxBar = Render_21.render.makeHorzControlGroup(showMetaDataCheckBox);
                         var formControls = radioButtonGroup;
                         var legend = "<legend>Edit Mode:</legend>";
-                        var radioBar = Render_19.render.makeHorzControlGroup(legend + formControls);
+                        var radioBar = Render_21.render.makeHorzControlGroup(legend + formControls);
                         var saveButton = _this.makeCloseButton("Save", "savePreferencesButton", _this.savePreferences, _this);
                         var backButton = _this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-                        var buttonBar = Render_19.render.centeredButtonBar(saveButton + backButton);
+                        var buttonBar = Render_21.render.centeredButtonBar(saveButton + backButton);
                         return header + radioBar + checkboxBar + buttonBar;
                     };
-                    this.savePreferences = function () {
-                        var polyElm = Util_18.util.polyElm(_this.id("simpleModeRadioGroup"));
-                        Meta64_19.meta64.editModeOption = polyElm.node.selected == _this.id("editModeSimple") ? Meta64_19.meta64.MODE_SIMPLE
-                            : Meta64_19.meta64.MODE_ADVANCED;
-                        var showMetaDataCheckbox = Util_18.util.polyElm(_this.id("showMetaData"));
-                        Meta64_19.meta64.showMetaData = showMetaDataCheckbox.node.checked;
-                        Util_18.util.json("saveUserPreferences", {
+                    _this.savePreferences = function () {
+                        var polyElm = Util_20.util.polyElm(_this.id("simpleModeRadioGroup"));
+                        Meta64_21.meta64.editModeOption = polyElm.node.selected == _this.id("editModeSimple") ? Meta64_21.meta64.MODE_SIMPLE
+                            : Meta64_21.meta64.MODE_ADVANCED;
+                        var showMetaDataCheckbox = Util_20.util.polyElm(_this.id("showMetaData"));
+                        Meta64_21.meta64.showMetaData = showMetaDataCheckbox.node.checked;
+                        Util_20.util.json("saveUserPreferences", {
                             "userPreferences": {
-                                "advancedMode": Meta64_19.meta64.editModeOption === Meta64_19.meta64.MODE_ADVANCED,
-                                "editMode": Meta64_19.meta64.userPreferences.editMode,
+                                "advancedMode": Meta64_21.meta64.editModeOption === Meta64_21.meta64.MODE_ADVANCED,
+                                "editMode": Meta64_21.meta64.userPreferences.editMode,
                                 "lastNode": null,
                                 "importAllowed": false,
                                 "exportAllowed": false,
-                                "showMetaData": Meta64_19.meta64.showMetaData
+                                "showMetaData": Meta64_21.meta64.showMetaData
                             }
                         }, _this.savePreferencesResponse, _this);
                     };
-                    this.savePreferencesResponse = function (res) {
-                        if (Util_18.util.checkSuccess("Saving Preferences", res)) {
-                            Meta64_19.meta64.selectTab("mainTabName");
-                            Meta64_19.meta64.refresh();
+                    _this.savePreferencesResponse = function (res) {
+                        if (Util_20.util.checkSuccess("Saving Preferences", res)) {
+                            Meta64_21.meta64.selectTab("mainTabName");
+                            Meta64_21.meta64.refresh();
                         }
                     };
-                    this.init = function () {
-                        var polyElm = Util_18.util.polyElm(_this.id("simpleModeRadioGroup"));
-                        polyElm.node.select(Meta64_19.meta64.editModeOption == Meta64_19.meta64.MODE_SIMPLE ? _this.id("editModeSimple") : _this
+                    _this.init = function () {
+                        var polyElm = Util_20.util.polyElm(_this.id("simpleModeRadioGroup"));
+                        polyElm.node.select(Meta64_21.meta64.editModeOption == Meta64_21.meta64.MODE_SIMPLE ? _this.id("editModeSimple") : _this
                             .id("editModeAdvanced"));
-                        polyElm = Util_18.util.polyElm(_this.id("showMetaData"));
-                        polyElm.node.checked = Meta64_19.meta64.showMetaData;
+                        polyElm = Util_20.util.polyElm(_this.id("showMetaData"));
+                        polyElm.node.checked = Meta64_21.meta64.showMetaData;
                         Polymer.dom.flush();
                     };
+                    return _this;
                 }
                 return PrefsDlgImpl;
             }(DialogBaseImpl_13.DialogBaseImpl));
             exports_59("default", PrefsDlgImpl);
         }
-    }
+    };
 });
-System.register("ProgressDlgImpl", ["DialogBaseImpl", "Render"], function(exports_60, context_60) {
+System.register("ProgressDlgImpl", ["DialogBaseImpl", "Render"], function (exports_60, context_60) {
     "use strict";
     var __moduleName = context_60 && context_60.id;
-    var DialogBaseImpl_14, Render_20;
-    var ProgressDlgImpl;
+    var DialogBaseImpl_14, Render_22, ProgressDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_14_1) {
                 DialogBaseImpl_14 = DialogBaseImpl_14_1;
             },
-            function (Render_20_1) {
-                Render_20 = Render_20_1;
-            }],
-        execute: function() {
+            function (Render_22_1) {
+                Render_22 = Render_22_1;
+            }
+        ],
+        execute: function () {
             console.log("ProgressDlgImpl.ts");
             ProgressDlgImpl = (function (_super) {
                 __extends(ProgressDlgImpl, _super);
                 function ProgressDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "ProgressDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "ProgressDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Processing Request", "", true);
-                        var progressBar = Render_20.render.tag("paper-progress", {
+                        var progressBar = Render_22.render.tag("paper-progress", {
                             "indeterminate": "indeterminate",
                             "value": "800",
                             "min": "100",
                             "max": "1000"
                         });
-                        var barContainer = Render_20.render.tag("div", {
+                        var barContainer = Render_22.render.tag("div", {
                             "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
                             "class": "horizontal center-justified layout"
                         }, progressBar);
                         return header + barContainer;
                     };
+                    return _this;
                 }
                 return ProgressDlgImpl;
             }(DialogBaseImpl_14.DialogBaseImpl));
             exports_60("default", ProgressDlgImpl);
         }
-    }
+    };
 });
-System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta64", "Edit", "View"], function(exports_61, context_61) {
+System.register("RenameNodeDlgImpl", ["DialogBaseImpl", "Render", "Util", "Meta64", "Edit", "View"], function (exports_61, context_61) {
     "use strict";
     var __moduleName = context_61 && context_61.id;
-    var DialogBaseImpl_15, Render_21, Util_19, Meta64_20, Edit_10, View_11;
-    var RenameNodeDlgImpl;
+    var DialogBaseImpl_15, Render_23, Util_21, Meta64_22, Edit_10, View_13, RenameNodeDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_15_1) {
                 DialogBaseImpl_15 = DialogBaseImpl_15_1;
-            },
-            function (Render_21_1) {
-                Render_21 = Render_21_1;
-            },
-            function (Util_19_1) {
-                Util_19 = Util_19_1;
-            },
-            function (Meta64_20_1) {
-                Meta64_20 = Meta64_20_1;
-            },
-            function (Edit_10_1) {
-                Edit_10 = Edit_10_1;
-            },
-            function (View_11_1) {
-                View_11 = View_11_1;
-            }],
-        execute: function() {
-            RenameNodeDlgImpl = (function (_super) {
-                __extends(RenameNodeDlgImpl, _super);
-                function RenameNodeDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "RenameNodeDlg");
-                    this.build = function () {
-                        var header = _this.makeHeader("Rename Node");
-                        var curNodeNameDisplay = "<h3 id='" + _this.id("curNodeNameDisplay") + "'></h3>";
-                        var curNodePathDisplay = "<h4 class='path-display' id='" + _this.id("curNodePathDisplay") + "'></h4>";
-                        var formControls = _this.makeEditField("Enter new name for the node", "newNodeNameEditField");
-                        var renameNodeButton = _this.makeCloseButton("Rename", "renameNodeButton", _this.renameNode, _this);
-                        var backButton = _this.makeCloseButton("Close", "cancelRenameNodeButton");
-                        var buttonBar = Render_21.render.centeredButtonBar(renameNodeButton + backButton);
-                        return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
-                    };
-                    this.renameNode = function () {
-                        var newName = _this.getInputVal("newNodeNameEditField");
-                        if (Util_19.util.emptyString(newName)) {
-                            Util_19.util.showMessage("Please enter a new node name.");
-                            return;
-                        }
-                        var highlightNode = Meta64_20.meta64.getHighlightedNode();
-                        if (!highlightNode) {
-                            Util_19.util.showMessage("Select a node to rename.");
-                            return;
-                        }
-                        var nodeBelow = Edit_10.edit.getNodeBelow(highlightNode);
-                        var renamingRootNode = (highlightNode.id === Meta64_20.meta64.currentNodeId);
-                        var thiz = _this;
-                        Util_19.util.json("renameNode", {
-                            "nodeId": highlightNode.id,
-                            "newName": newName
-                        }, function (res) {
-                            thiz.renameNodeResponse(res, renamingRootNode);
-                        });
-                    };
-                    this.renameNodeResponse = function (res, renamingPageRoot) {
-                        if (Util_19.util.checkSuccess("Rename node", res)) {
-                            if (renamingPageRoot) {
-                                View_11.view.refreshTree(res.newId, true);
-                            }
-                            else {
-                                View_11.view.refreshTree(null, false, res.newId);
-                            }
-                        }
-                    };
-                    this.init = function () {
-                        var highlightNode = Meta64_20.meta64.getHighlightedNode();
-                        if (!highlightNode) {
-                            return;
-                        }
-                        $("#" + _this.id("curNodeNameDisplay")).html("Name: " + highlightNode.name);
-                        $("#" + _this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
-                    };
-                }
-                return RenameNodeDlgImpl;
-            }(DialogBaseImpl_15.DialogBaseImpl));
-            exports_61("default", RenameNodeDlgImpl);
-        }
-    }
-});
-System.register("ResetPasswordDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(exports_62, context_62) {
-    "use strict";
-    var __moduleName = context_62 && context_62.id;
-    var DialogBaseImpl_16, Render_22, Util_20;
-    var ResetPasswordDlgImpl;
-    return {
-        setters:[
-            function (DialogBaseImpl_16_1) {
-                DialogBaseImpl_16 = DialogBaseImpl_16_1;
-            },
-            function (Render_22_1) {
-                Render_22 = Render_22_1;
-            },
-            function (Util_20_1) {
-                Util_20 = Util_20_1;
-            }],
-        execute: function() {
-            ResetPasswordDlgImpl = (function (_super) {
-                __extends(ResetPasswordDlgImpl, _super);
-                function ResetPasswordDlgImpl(args) {
-                    var _this = this;
-                    _super.call(this, "ResetPasswordDlg");
-                    this.build = function () {
-                        var header = _this.makeHeader("Reset Password");
-                        var message = _this.makeMessageArea("Enter your user name and email address and a change-password link will be sent to you");
-                        var formControls = _this.makeEditField("User", "userName") +
-                            _this.makeEditField("Email Address", "emailAddress");
-                        var resetPasswordButton = _this.makeCloseButton("Reset my Password", "resetPasswordButton", _this.resetPassword, _this);
-                        var backButton = _this.makeCloseButton("Close", "cancelResetPasswordButton");
-                        var buttonBar = Render_22.render.centeredButtonBar(resetPasswordButton + backButton);
-                        return header + message + formControls + buttonBar;
-                    };
-                    this.resetPassword = function () {
-                        var userName = _this.getInputVal("userName").trim();
-                        var emailAddress = _this.getInputVal("emailAddress").trim();
-                        if (userName && emailAddress) {
-                            Util_20.util.json("resetPassword", {
-                                "user": userName,
-                                "email": emailAddress
-                            }, _this.resetPasswordResponse, _this);
-                        }
-                        else {
-                            Util_20.util.showMessage("Oops. Try that again.");
-                        }
-                    };
-                    this.resetPasswordResponse = function (res) {
-                        if (Util_20.util.checkSuccess("Reset password", res)) {
-                            Util_20.util.showMessage("Password reset email was sent. Check your inbox.");
-                        }
-                    };
-                    this.init = function () {
-                        if (_this.user) {
-                            _this.setInputVal("userName", _this.user);
-                        }
-                    };
-                    this.user = args.user;
-                }
-                return ResetPasswordDlgImpl;
-            }(DialogBaseImpl_16.DialogBaseImpl));
-            exports_62("default", ResetPasswordDlgImpl);
-        }
-    }
-});
-System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Search", "Constants", "Meta64"], function(exports_63, context_63) {
-    "use strict";
-    var __moduleName = context_63 && context_63.id;
-    var DialogBaseImpl_17, Render_23, Util_21, Search_6, Constants_10, Meta64_21;
-    var SearchContentDlgImpl;
-    return {
-        setters:[
-            function (DialogBaseImpl_17_1) {
-                DialogBaseImpl_17 = DialogBaseImpl_17_1;
             },
             function (Render_23_1) {
                 Render_23 = Render_23_1;
@@ -6106,50 +6064,200 @@ System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Se
             function (Util_21_1) {
                 Util_21 = Util_21_1;
             },
+            function (Meta64_22_1) {
+                Meta64_22 = Meta64_22_1;
+            },
+            function (Edit_10_1) {
+                Edit_10 = Edit_10_1;
+            },
+            function (View_13_1) {
+                View_13 = View_13_1;
+            }
+        ],
+        execute: function () {
+            RenameNodeDlgImpl = (function (_super) {
+                __extends(RenameNodeDlgImpl, _super);
+                function RenameNodeDlgImpl(args) {
+                    var _this = _super.call(this, "RenameNodeDlg") || this;
+                    _this.build = function () {
+                        var header = _this.makeHeader("Rename Node");
+                        var curNodeNameDisplay = "<h3 id='" + _this.id("curNodeNameDisplay") + "'></h3>";
+                        var curNodePathDisplay = "<h4 class='path-display' id='" + _this.id("curNodePathDisplay") + "'></h4>";
+                        var formControls = _this.makeEditField("Enter new name for the node", "newNodeNameEditField");
+                        var renameNodeButton = _this.makeCloseButton("Rename", "renameNodeButton", _this.renameNode, _this);
+                        var backButton = _this.makeCloseButton("Close", "cancelRenameNodeButton");
+                        var buttonBar = Render_23.render.centeredButtonBar(renameNodeButton + backButton);
+                        return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
+                    };
+                    _this.renameNode = function () {
+                        var newName = _this.getInputVal("newNodeNameEditField");
+                        if (Util_21.util.emptyString(newName)) {
+                            Util_21.util.showMessage("Please enter a new node name.");
+                            return;
+                        }
+                        var highlightNode = Meta64_22.meta64.getHighlightedNode();
+                        if (!highlightNode) {
+                            Util_21.util.showMessage("Select a node to rename.");
+                            return;
+                        }
+                        var nodeBelow = Edit_10.edit.getNodeBelow(highlightNode);
+                        var renamingRootNode = (highlightNode.id === Meta64_22.meta64.currentNodeId);
+                        var thiz = _this;
+                        Util_21.util.json("renameNode", {
+                            "nodeId": highlightNode.id,
+                            "newName": newName
+                        }, function (res) {
+                            thiz.renameNodeResponse(res, renamingRootNode);
+                        });
+                    };
+                    _this.renameNodeResponse = function (res, renamingPageRoot) {
+                        if (Util_21.util.checkSuccess("Rename node", res)) {
+                            if (renamingPageRoot) {
+                                View_13.view.refreshTree(res.newId, true);
+                            }
+                            else {
+                                View_13.view.refreshTree(null, false, res.newId);
+                            }
+                        }
+                    };
+                    _this.init = function () {
+                        var highlightNode = Meta64_22.meta64.getHighlightedNode();
+                        if (!highlightNode) {
+                            return;
+                        }
+                        $("#" + _this.id("curNodeNameDisplay")).html("Name: " + highlightNode.name);
+                        $("#" + _this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
+                    };
+                    return _this;
+                }
+                return RenameNodeDlgImpl;
+            }(DialogBaseImpl_15.DialogBaseImpl));
+            exports_61("default", RenameNodeDlgImpl);
+        }
+    };
+});
+System.register("ResetPasswordDlgImpl", ["DialogBaseImpl", "Render", "Util"], function (exports_62, context_62) {
+    "use strict";
+    var __moduleName = context_62 && context_62.id;
+    var DialogBaseImpl_16, Render_24, Util_22, ResetPasswordDlgImpl;
+    return {
+        setters: [
+            function (DialogBaseImpl_16_1) {
+                DialogBaseImpl_16 = DialogBaseImpl_16_1;
+            },
+            function (Render_24_1) {
+                Render_24 = Render_24_1;
+            },
+            function (Util_22_1) {
+                Util_22 = Util_22_1;
+            }
+        ],
+        execute: function () {
+            ResetPasswordDlgImpl = (function (_super) {
+                __extends(ResetPasswordDlgImpl, _super);
+                function ResetPasswordDlgImpl(args) {
+                    var _this = _super.call(this, "ResetPasswordDlg") || this;
+                    _this.build = function () {
+                        var header = _this.makeHeader("Reset Password");
+                        var message = _this.makeMessageArea("Enter your user name and email address and a change-password link will be sent to you");
+                        var formControls = _this.makeEditField("User", "userName") +
+                            _this.makeEditField("Email Address", "emailAddress");
+                        var resetPasswordButton = _this.makeCloseButton("Reset my Password", "resetPasswordButton", _this.resetPassword, _this);
+                        var backButton = _this.makeCloseButton("Close", "cancelResetPasswordButton");
+                        var buttonBar = Render_24.render.centeredButtonBar(resetPasswordButton + backButton);
+                        return header + message + formControls + buttonBar;
+                    };
+                    _this.resetPassword = function () {
+                        var userName = _this.getInputVal("userName").trim();
+                        var emailAddress = _this.getInputVal("emailAddress").trim();
+                        if (userName && emailAddress) {
+                            Util_22.util.json("resetPassword", {
+                                "user": userName,
+                                "email": emailAddress
+                            }, _this.resetPasswordResponse, _this);
+                        }
+                        else {
+                            Util_22.util.showMessage("Oops. Try that again.");
+                        }
+                    };
+                    _this.resetPasswordResponse = function (res) {
+                        if (Util_22.util.checkSuccess("Reset password", res)) {
+                            Util_22.util.showMessage("Password reset email was sent. Check your inbox.");
+                        }
+                    };
+                    _this.init = function () {
+                        if (_this.user) {
+                            _this.setInputVal("userName", _this.user);
+                        }
+                    };
+                    _this.user = args.user;
+                    return _this;
+                }
+                return ResetPasswordDlgImpl;
+            }(DialogBaseImpl_16.DialogBaseImpl));
+            exports_62("default", ResetPasswordDlgImpl);
+        }
+    };
+});
+System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Search", "Constants", "Meta64"], function (exports_63, context_63) {
+    "use strict";
+    var __moduleName = context_63 && context_63.id;
+    var DialogBaseImpl_17, Render_25, Util_23, Search_6, Constants_10, Meta64_23, SearchContentDlgImpl;
+    return {
+        setters: [
+            function (DialogBaseImpl_17_1) {
+                DialogBaseImpl_17 = DialogBaseImpl_17_1;
+            },
+            function (Render_25_1) {
+                Render_25 = Render_25_1;
+            },
+            function (Util_23_1) {
+                Util_23 = Util_23_1;
+            },
             function (Search_6_1) {
                 Search_6 = Search_6_1;
             },
             function (Constants_10_1) {
                 Constants_10 = Constants_10_1;
             },
-            function (Meta64_21_1) {
-                Meta64_21 = Meta64_21_1;
-            }],
-        execute: function() {
+            function (Meta64_23_1) {
+                Meta64_23 = Meta64_23_1;
+            }
+        ],
+        execute: function () {
             SearchContentDlgImpl = (function (_super) {
                 __extends(SearchContentDlgImpl, _super);
                 function SearchContentDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "SearchContentDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "SearchContentDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Search Content");
                         var instructions = _this.makeMessageArea("Enter some text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search.");
                         var formControls = _this.makeEditField("Search", "searchText");
                         var searchButton = _this.makeCloseButton("Search", "searchNodesButton", _this.searchNodes, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelSearchButton");
-                        var buttonBar = Render_23.render.centeredButtonBar(searchButton + backButton);
+                        var buttonBar = Render_25.render.centeredButtonBar(searchButton + backButton);
                         var content = header + instructions + formControls + buttonBar;
                         _this.bindEnterKey("searchText", Search_6.srch.searchNodes);
                         return content;
                     };
-                    this.searchNodes = function () {
+                    _this.searchNodes = function () {
                         return _this.searchProperty(Constants_10.jcrCnst.CONTENT);
                     };
-                    this.searchProperty = function (searchProp) {
-                        if (!Util_21.util.ajaxReady("searchNodes")) {
+                    _this.searchProperty = function (searchProp) {
+                        if (!Util_23.util.ajaxReady("searchNodes")) {
                             return;
                         }
-                        var node = Meta64_21.meta64.getHighlightedNode();
+                        var node = Meta64_23.meta64.getHighlightedNode();
                         if (!node) {
-                            Util_21.util.showMessage("No node is selected to search under.");
+                            Util_23.util.showMessage("No node is selected to search under.");
                             return;
                         }
                         var searchText = _this.getInputVal("searchText");
-                        if (Util_21.util.emptyString(searchText)) {
-                            Util_21.util.showMessage("Enter search text.");
+                        if (Util_23.util.emptyString(searchText)) {
+                            Util_23.util.showMessage("Enter search text.");
                             return;
                         }
-                        Util_21.util.json("nodeSearch", {
+                        Util_23.util.json("nodeSearch", {
                             "nodeId": node.id,
                             "searchText": searchText,
                             "sortDir": "",
@@ -6157,98 +6265,98 @@ System.register("SearchContentDlgImpl", ["DialogBaseImpl", "Render", "Util", "Se
                             "searchProp": searchProp
                         }, Search_6.srch.searchNodesResponse, Search_6.srch);
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.focus("searchText");
                     };
+                    return _this;
                 }
                 return SearchContentDlgImpl;
             }(DialogBaseImpl_17.DialogBaseImpl));
             exports_63("default", SearchContentDlgImpl);
         }
-    }
+    };
 });
-System.register("SearchFilesDlgImpl", ["DialogBaseImpl"], function(exports_64, context_64) {
+System.register("SearchFilesDlgImpl", ["DialogBaseImpl"], function (exports_64, context_64) {
     "use strict";
     var __moduleName = context_64 && context_64.id;
-    var DialogBaseImpl_18;
-    var SearchFilesDlgImpl;
+    var DialogBaseImpl_18, SearchFilesDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_18_1) {
                 DialogBaseImpl_18 = DialogBaseImpl_18_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             SearchFilesDlgImpl = (function (_super) {
                 __extends(SearchFilesDlgImpl, _super);
                 function SearchFilesDlgImpl() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return SearchFilesDlgImpl;
             }(DialogBaseImpl_18.DialogBaseImpl));
             exports_64("default", SearchFilesDlgImpl);
         }
-    }
+    };
 });
-System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Constants", "Util", "Meta64"], function(exports_65, context_65) {
+System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Constants", "Util", "Meta64"], function (exports_65, context_65) {
     "use strict";
     var __moduleName = context_65 && context_65.id;
-    var DialogBaseImpl_19, Search_7, Render_24, Constants_11, Util_22, Meta64_22;
-    var SearchTagsDlgImpl;
+    var DialogBaseImpl_19, Search_7, Render_26, Constants_11, Util_24, Meta64_24, SearchTagsDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_19_1) {
                 DialogBaseImpl_19 = DialogBaseImpl_19_1;
             },
             function (Search_7_1) {
                 Search_7 = Search_7_1;
             },
-            function (Render_24_1) {
-                Render_24 = Render_24_1;
+            function (Render_26_1) {
+                Render_26 = Render_26_1;
             },
             function (Constants_11_1) {
                 Constants_11 = Constants_11_1;
             },
-            function (Util_22_1) {
-                Util_22 = Util_22_1;
+            function (Util_24_1) {
+                Util_24 = Util_24_1;
             },
-            function (Meta64_22_1) {
-                Meta64_22 = Meta64_22_1;
-            }],
-        execute: function() {
+            function (Meta64_24_1) {
+                Meta64_24 = Meta64_24_1;
+            }
+        ],
+        execute: function () {
             SearchTagsDlgImpl = (function (_super) {
                 __extends(SearchTagsDlgImpl, _super);
                 function SearchTagsDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "SearchTagsDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "SearchTagsDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Search Tags");
                         var instructions = _this.makeMessageArea("Enter some text to find. Only tags text will be searched. All sub-nodes under the selected node are included in the search.");
                         var formControls = _this.makeEditField("Search", "searchText");
                         var searchButton = _this.makeCloseButton("Search", "searchNodesButton", _this.searchTags, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelSearchButton");
-                        var buttonBar = Render_24.render.centeredButtonBar(searchButton + backButton);
+                        var buttonBar = Render_26.render.centeredButtonBar(searchButton + backButton);
                         var content = header + instructions + formControls + buttonBar;
                         _this.bindEnterKey("searchText", Search_7.srch.searchNodes);
                         return content;
                     };
-                    this.searchTags = function () {
+                    _this.searchTags = function () {
                         return _this.searchProperty(Constants_11.jcrCnst.TAGS);
                     };
-                    this.searchProperty = function (searchProp) {
-                        if (!Util_22.util.ajaxReady("searchNodes")) {
+                    _this.searchProperty = function (searchProp) {
+                        if (!Util_24.util.ajaxReady("searchNodes")) {
                             return;
                         }
-                        var node = Meta64_22.meta64.getHighlightedNode();
+                        var node = Meta64_24.meta64.getHighlightedNode();
                         if (!node) {
-                            Util_22.util.showMessage("No node is selected to search under.");
+                            Util_24.util.showMessage("No node is selected to search under.");
                             return;
                         }
                         var searchText = _this.getInputVal("searchText");
-                        if (Util_22.util.emptyString(searchText)) {
-                            Util_22.util.showMessage("Enter search text.");
+                        if (Util_24.util.emptyString(searchText)) {
+                            Util_24.util.showMessage("Enter search text.");
                             return;
                         }
-                        Util_22.util.json("nodeSearch", {
+                        Util_24.util.json("nodeSearch", {
                             "nodeId": node.id,
                             "searchText": searchText,
                             "sortDir": "",
@@ -6256,131 +6364,131 @@ System.register("SearchTagsDlgImpl", ["DialogBaseImpl", "Search", "Render", "Con
                             "searchProp": searchProp
                         }, Search_7.srch.searchNodesResponse, Search_7.srch);
                     };
-                    this.init = function () {
-                        Util_22.util.delayedFocus(_this.id("searchText"));
+                    _this.init = function () {
+                        Util_24.util.delayedFocus(_this.id("searchText"));
                     };
+                    return _this;
                 }
                 return SearchTagsDlgImpl;
             }(DialogBaseImpl_19.DialogBaseImpl));
             exports_65("default", SearchTagsDlgImpl);
         }
-    }
+    };
 });
-System.register("ShareToPersonDlg", [], function(exports_66, context_66) {
+System.register("ShareToPersonDlg", [], function (exports_66, context_66) {
     "use strict";
     var __moduleName = context_66 && context_66.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function(exports_67, context_67) {
+System.register("ShareToPersonDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function (exports_67, context_67) {
     "use strict";
     var __moduleName = context_67 && context_67.id;
-    var DialogBaseImpl_20, Share_2, Util_23, Render_25, Meta64_23, Factory_14;
-    var ShareToPersonDlgImpl;
+    var DialogBaseImpl_20, Share_2, Util_25, Render_27, Meta64_25, Factory_16, ShareToPersonDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_20_1) {
                 DialogBaseImpl_20 = DialogBaseImpl_20_1;
             },
             function (Share_2_1) {
                 Share_2 = Share_2_1;
             },
-            function (Util_23_1) {
-                Util_23 = Util_23_1;
+            function (Util_25_1) {
+                Util_25 = Util_25_1;
             },
-            function (Render_25_1) {
-                Render_25 = Render_25_1;
+            function (Render_27_1) {
+                Render_27 = Render_27_1;
             },
-            function (Meta64_23_1) {
-                Meta64_23 = Meta64_23_1;
+            function (Meta64_25_1) {
+                Meta64_25 = Meta64_25_1;
             },
-            function (Factory_14_1) {
-                Factory_14 = Factory_14_1;
-            }],
-        execute: function() {
+            function (Factory_16_1) {
+                Factory_16 = Factory_16_1;
+            }
+        ],
+        execute: function () {
             ShareToPersonDlgImpl = (function (_super) {
                 __extends(ShareToPersonDlgImpl, _super);
                 function ShareToPersonDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "ShareToPersonDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "ShareToPersonDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Share Node to Person");
                         var formControls = _this.makeEditField("User to Share With", "shareToUserName");
                         var shareButton = _this.makeCloseButton("Share", "shareNodeToPersonButton", _this.shareNodeToPerson, _this);
                         var backButton = _this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
-                        var buttonBar = Render_25.render.centeredButtonBar(shareButton + backButton);
+                        var buttonBar = Render_27.render.centeredButtonBar(shareButton + backButton);
                         return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
                             + buttonBar;
                     };
-                    this.shareNodeToPerson = function () {
+                    _this.shareNodeToPerson = function () {
                         var targetUser = _this.getInputVal("shareToUserName");
                         if (!targetUser) {
-                            Util_23.util.showMessage("Please enter a username");
+                            Util_25.util.showMessage("Please enter a username");
                             return;
                         }
-                        Meta64_23.meta64.treeDirty = true;
+                        Meta64_25.meta64.treeDirty = true;
                         var thiz = _this;
-                        Util_23.util.json("addPrivilege", {
+                        Util_25.util.json("addPrivilege", {
                             "nodeId": Share_2.share.sharingNode.id,
                             "principal": targetUser,
                             "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],
                             "publicAppend": false
                         }, thiz.reloadFromShareWithPerson, thiz);
                     };
-                    this.reloadFromShareWithPerson = function (res) {
-                        if (Util_23.util.checkSuccess("Share Node with Person", res)) {
-                            Factory_14.Factory.createDefault("SharingDlgImpl", function (dlg) {
+                    _this.reloadFromShareWithPerson = function (res) {
+                        if (Util_25.util.checkSuccess("Share Node with Person", res)) {
+                            Factory_16.Factory.createDefault("SharingDlgImpl", function (dlg) {
                                 dlg.open();
                             });
                         }
                     };
+                    return _this;
                 }
                 return ShareToPersonDlgImpl;
             }(DialogBaseImpl_20.DialogBaseImpl));
             exports_67("default", ShareToPersonDlgImpl);
         }
-    }
+    };
 });
-System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function(exports_68, context_68) {
+System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", "Meta64", "Factory"], function (exports_68, context_68) {
     "use strict";
     var __moduleName = context_68 && context_68.id;
-    var DialogBaseImpl_21, Share_3, Util_24, Render_26, Meta64_24, Factory_15;
-    var SharingDlgImpl;
+    var DialogBaseImpl_21, Share_3, Util_26, Render_28, Meta64_26, Factory_17, SharingDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_21_1) {
                 DialogBaseImpl_21 = DialogBaseImpl_21_1;
             },
             function (Share_3_1) {
                 Share_3 = Share_3_1;
             },
-            function (Util_24_1) {
-                Util_24 = Util_24_1;
+            function (Util_26_1) {
+                Util_26 = Util_26_1;
             },
-            function (Render_26_1) {
-                Render_26 = Render_26_1;
+            function (Render_28_1) {
+                Render_28 = Render_28_1;
             },
-            function (Meta64_24_1) {
-                Meta64_24 = Meta64_24_1;
+            function (Meta64_26_1) {
+                Meta64_26 = Meta64_26_1;
             },
-            function (Factory_15_1) {
-                Factory_15 = Factory_15_1;
-            }],
-        execute: function() {
+            function (Factory_17_1) {
+                Factory_17 = Factory_17_1;
+            }
+        ],
+        execute: function () {
             SharingDlgImpl = (function (_super) {
                 __extends(SharingDlgImpl, _super);
                 function SharingDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "SharingDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "SharingDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Node Sharing");
-                        var shareWithPersonButton = _this.makeButton("Share with Person", "shareNodeToPersonPgButton", _this.shareNodeToPersonPg, _this);
-                        var makePublicButton = _this.makeButton("Share to Public", "shareNodeToPublicButton", _this.shareNodeToPublic, _this);
+                        var shareWithPersonButton = _this.makeButton("Share with Person", "shareNodeToPersonPgButton", _this.shareNodeToPersonPg);
+                        var makePublicButton = _this.makeButton("Share to Public", "shareNodeToPublicButton", _this.shareNodeToPublic);
                         var backButton = _this.makeCloseButton("Close", "closeSharingButton");
-                        var buttonBar = Render_26.render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
+                        var buttonBar = Render_28.render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
                         var width = window.innerWidth * 0.6;
                         var height = window.innerHeight * 0.4;
                         var internalMainContent = "<div id='" + _this.id("shareNodeNameDisplay") + "'></div>" +
@@ -6388,26 +6496,26 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                             + _this.id("sharingListFieldContainer") + "'></div>";
                         return header + internalMainContent + buttonBar;
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.reload();
                     };
-                    this.reload = function () {
+                    _this.reload = function () {
                         console.log("Loading node sharing info.");
-                        Util_24.util.json("getNodePrivileges", {
+                        Util_26.util.json("getNodePrivileges", {
                             "nodeId": Share_3.share.sharingNode.id,
                             "includeAcl": true,
                             "includeOwners": true
                         }, _this.getNodePrivilegesResponse, _this);
                     };
-                    this.getNodePrivilegesResponse = function (res) {
+                    _this.getNodePrivilegesResponse = function (res) {
                         _this.populateSharingPg(res);
                     };
-                    this.populateSharingPg = function (res) {
+                    _this.populateSharingPg = function (res) {
                         var html = "";
                         var This = _this;
                         $.each(res.aclEntries, function (index, aclEntry) {
                             html += "<h4>User: " + aclEntry.principalName + "</h4>";
-                            html += Render_26.render.tag("div", {
+                            html += Render_28.render.tag("div", {
                                 "class": "privilege-list"
                             }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
                         });
@@ -6419,18 +6527,18 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                         if (res.publicAppend) {
                             publicAppendAttrs["checked"] = "checked";
                         }
-                        html += Render_26.render.tag("paper-checkbox", publicAppendAttrs, "", false);
-                        html += Render_26.render.tag("label", {
+                        html += Render_28.render.tag("paper-checkbox", publicAppendAttrs, "", false);
+                        html += Render_28.render.tag("label", {
                             "for": _this.id("allowPublicCommenting")
                         }, "Allow public commenting under this node.", true);
-                        Util_24.util.setHtml(_this.id("sharingListFieldContainer"), html);
+                        Util_26.util.setHtml(_this.id("sharingListFieldContainer"), html);
                     };
-                    this.publicCommentingChanged = function () {
+                    _this.publicCommentingChanged = function () {
                         var thiz = _this;
                         setTimeout(function () {
-                            var polyElm = Util_24.util.polyElm(thiz.id("allowPublicCommenting"));
-                            Meta64_24.meta64.treeDirty = true;
-                            Util_24.util.json("addPrivilege", {
+                            var polyElm = Util_26.util.polyElm(thiz.id("allowPublicCommenting"));
+                            Meta64_26.meta64.treeDirty = true;
+                            Util_26.util.json("addPrivilege", {
                                 "nodeId": Share_3.share.sharingNode.id,
                                 "privileges": null,
                                 "principal": null,
@@ -6438,99 +6546,99 @@ System.register("SharingDlgImpl", ["DialogBaseImpl", "Share", "Util", "Render", 
                             });
                         }, 250);
                     };
-                    this.removePrivilege = function (principal, privilege) {
-                        Meta64_24.meta64.treeDirty = true;
-                        Util_24.util.json("removePrivilege", {
+                    _this.removePrivilege = function (principal, privilege) {
+                        Meta64_26.meta64.treeDirty = true;
+                        Util_26.util.json("removePrivilege", {
                             "nodeId": Share_3.share.sharingNode.id,
                             "principal": principal,
                             "privilege": privilege
                         }, _this.removePrivilegeResponse, _this);
                     };
-                    this.removePrivilegeResponse = function (res) {
-                        Util_24.util.json("getNodePrivileges", {
+                    _this.removePrivilegeResponse = function (res) {
+                        Util_26.util.json("getNodePrivileges", {
                             "nodeId": Share_3.share.sharingNode.path,
                             "includeAcl": true,
                             "includeOwners": true
                         }, _this.getNodePrivilegesResponse, _this);
                     };
-                    this.renderAclPrivileges = function (principal, aclEntry) {
+                    _this.renderAclPrivileges = function (principal, aclEntry) {
                         var ret = "";
                         var thiz = _this;
                         $.each(aclEntry.privileges, function (index, privilege) {
                             var removeButton = thiz.makeButton("Remove", "removePrivButton", "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
                                 + "');");
-                            var row = Render_26.render.makeHorizontalFieldSet(removeButton);
+                            var row = Render_28.render.makeHorizontalFieldSet(removeButton);
                             row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
-                            ret += Render_26.render.tag("div", {
+                            ret += Render_28.render.tag("div", {
                                 "class": "privilege-entry"
                             }, row);
                         });
                         return ret;
                     };
-                    this.shareNodeToPersonPg = function () {
-                        Factory_15.Factory.createDefault("ShareToPersonDlgImpl", function (dlg) {
+                    _this.shareNodeToPersonPg = function () {
+                        Factory_17.Factory.createDefault("ShareToPersonDlgImpl", function (dlg) {
                             dlg.open();
                         });
                     };
-                    this.shareNodeToPublic = function () {
+                    _this.shareNodeToPublic = function () {
                         console.log("Sharing node to public.");
-                        Meta64_24.meta64.treeDirty = true;
-                        Util_24.util.json("addPrivilege", {
+                        Meta64_26.meta64.treeDirty = true;
+                        Util_26.util.json("addPrivilege", {
                             "nodeId": Share_3.share.sharingNode.id,
                             "principal": "everyone",
                             "privileges": ["read"],
                             "publicAppend": false
                         }, _this.reload, _this);
                     };
+                    return _this;
                 }
                 return SharingDlgImpl;
             }(DialogBaseImpl_21.DialogBaseImpl));
             exports_68("default", SharingDlgImpl);
         }
-    }
+    };
 });
-System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(exports_69, context_69) {
+System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function (exports_69, context_69) {
     "use strict";
     var __moduleName = context_69 && context_69.id;
-    var DialogBaseImpl_22, Render_27, Util_25;
-    var SignupDlgImpl;
+    var DialogBaseImpl_22, Render_29, Util_27, SignupDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_22_1) {
                 DialogBaseImpl_22 = DialogBaseImpl_22_1;
             },
-            function (Render_27_1) {
-                Render_27 = Render_27_1;
+            function (Render_29_1) {
+                Render_29 = Render_29_1;
             },
-            function (Util_25_1) {
-                Util_25 = Util_25_1;
-            }],
-        execute: function() {
+            function (Util_27_1) {
+                Util_27 = Util_27_1;
+            }
+        ],
+        execute: function () {
             SignupDlgImpl = (function (_super) {
                 __extends(SignupDlgImpl, _super);
                 function SignupDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "SignupDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "SignupDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader(BRANDING_TITLE + " Signup");
                         var formControls = _this.makeEditField("User", "signupUserName") +
                             _this.makePasswordField("Password", "signupPassword") +
                             _this.makeEditField("Email", "signupEmail") +
                             _this.makeEditField("Captcha", "signupCaptcha");
-                        var captchaImage = Render_27.render.tag("div", {
+                        var captchaImage = Render_29.render.tag("div", {
                             "class": "captcha-image"
-                        }, Render_27.render.tag("img", {
+                        }, Render_29.render.tag("img", {
                             "id": _this.id("captchaImage"),
                             "class": "captcha",
                             "src": ""
                         }, "", false));
-                        var signupButton = _this.makeButton("Signup", "signupButton", _this.signup, _this);
-                        var newCaptchaButton = _this.makeButton("Try Different Image", "tryAnotherCaptchaButton", _this.tryAnotherCaptcha, _this);
+                        var signupButton = _this.makeButton("Signup", "signupButton", _this.signup);
+                        var newCaptchaButton = _this.makeButton("Try Different Image", "tryAnotherCaptchaButton", _this.tryAnotherCaptcha);
                         var backButton = _this.makeCloseButton("Close", "cancelSignupButton");
-                        var buttonBar = Render_27.render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
+                        var buttonBar = Render_29.render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
                         return header + formControls + captchaImage + buttonBar;
                     };
-                    this.signup = function () {
+                    _this.signup = function () {
                         var userName = _this.getInputVal("signupUserName");
                         var password = _this.getInputVal("signupPassword");
                         var email = _this.getInputVal("signupEmail");
@@ -6539,65 +6647,65 @@ System.register("SignupDlgImpl", ["DialogBaseImpl", "Render", "Util"], function(
                             !password || password.length == 0 ||
                             !email || email.length == 0 ||
                             !captcha || captcha.length == 0) {
-                            Util_25.util.showMessage("You cannot leave any fields blank.");
+                            Util_27.util.showMessage("You cannot leave any fields blank.");
                             return;
                         }
-                        Util_25.util.json("signup", {
+                        Util_27.util.json("signup", {
                             "userName": userName,
                             "password": password,
                             "email": email,
                             "captcha": captcha
                         }, _this.signupResponse, _this);
                     };
-                    this.signupResponse = function (res) {
-                        if (Util_25.util.checkSuccess("Signup new user", res)) {
+                    _this.signupResponse = function (res) {
+                        if (Util_27.util.checkSuccess("Signup new user", res)) {
                             _this.cancel();
-                            Util_25.util.showMessage("User Information Accepted.<p/>Check your email for signup confirmation.");
+                            Util_27.util.showMessage("User Information Accepted.<p/>Check your email for signup confirmation.");
                         }
                     };
-                    this.tryAnotherCaptcha = function () {
-                        var n = Util_25.util.currentTimeMillis();
+                    _this.tryAnotherCaptcha = function () {
+                        var n = Util_27.util.currentTimeMillis();
                         var src = postTargetUrl + "captcha?t=" + n;
                         $("#" + _this.id("captchaImage")).attr("src", src);
                     };
-                    this.pageInitSignupPg = function () {
+                    _this.pageInitSignupPg = function () {
                         _this.tryAnotherCaptcha();
                     };
-                    this.init = function () {
+                    _this.init = function () {
                         _this.pageInitSignupPg();
-                        Util_25.util.delayedFocus("#" + _this.id("signupUserName"));
+                        Util_27.util.delayedFocus("#" + _this.id("signupUserName"));
                     };
+                    return _this;
                 }
                 return SignupDlgImpl;
             }(DialogBaseImpl_22.DialogBaseImpl));
             exports_69("default", SignupDlgImpl);
         }
-    }
+    };
 });
-System.register("UploadFromFileDlg", [], function(exports_70, context_70) {
+System.register("UploadFromFileDlg", [], function (exports_70, context_70) {
     "use strict";
     var __moduleName = context_70 && context_70.id;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
         }
-    }
+    };
 });
-System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render", "Constants", "Attachment", "Meta64", "Util"], function(exports_71, context_71) {
+System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render", "Constants", "Attachment", "Meta64", "Util"], function (exports_71, context_71) {
     "use strict";
     var __moduleName = context_71 && context_71.id;
-    var DialogBaseImpl_23, Factory_16, Render_28, Constants_12, Attachment_2, Meta64_25, Util_26;
-    var UploadFromFileDlgImpl;
+    var DialogBaseImpl_23, Factory_18, Render_30, Constants_12, Attachment_2, Meta64_27, Util_28, UploadFromFileDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_23_1) {
                 DialogBaseImpl_23 = DialogBaseImpl_23_1;
             },
-            function (Factory_16_1) {
-                Factory_16 = Factory_16_1;
+            function (Factory_18_1) {
+                Factory_18 = Factory_18_1;
             },
-            function (Render_28_1) {
-                Render_28 = Render_28_1;
+            function (Render_30_1) {
+                Render_30 = Render_30_1;
             },
             function (Constants_12_1) {
                 Constants_12 = Constants_12_1;
@@ -6605,23 +6713,23 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
             function (Attachment_2_1) {
                 Attachment_2 = Attachment_2_1;
             },
-            function (Meta64_25_1) {
-                Meta64_25 = Meta64_25_1;
+            function (Meta64_27_1) {
+                Meta64_27 = Meta64_27_1;
             },
-            function (Util_26_1) {
-                Util_26 = Util_26_1;
-            }],
-        execute: function() {
+            function (Util_28_1) {
+                Util_28 = Util_28_1;
+            }
+        ],
+        execute: function () {
             UploadFromFileDlgImpl = (function (_super) {
                 __extends(UploadFromFileDlgImpl, _super);
                 function UploadFromFileDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "UploadFromFileDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "UploadFromFileDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_12.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_28.render.tag("div", {
+                            uploadPathDisplay += Render_30.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
@@ -6629,40 +6737,40 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                         var uploadFieldContainer = "";
                         var formFields = "";
                         for (var i = 0; i < 7; i++) {
-                            var input = Render_28.render.tag("input", {
+                            var input = Render_30.render.tag("input", {
                                 "id": _this.id("upload" + i + "FormInputId"),
                                 "type": "file",
                                 "name": "files"
                             }, "", true);
-                            formFields += Render_28.render.tag("div", {
+                            formFields += Render_30.render.tag("div", {
                                 "style": "margin-bottom: 10px;"
                             }, input);
                         }
-                        formFields += Render_28.render.tag("input", {
+                        formFields += Render_30.render.tag("input", {
                             "id": _this.id("uploadFormNodeId"),
                             "type": "hidden",
                             "name": "nodeId"
                         }, "", true);
-                        formFields += Render_28.render.tag("input", {
+                        formFields += Render_30.render.tag("input", {
                             "id": _this.id("explodeZips"),
                             "type": "hidden",
                             "name": "explodeZips"
                         }, "", true);
-                        var form = Render_28.render.tag("form", {
+                        var form = Render_30.render.tag("form", {
                             "id": _this.id("uploadForm"),
                             "method": "POST",
                             "enctype": "multipart/form-data",
                             "data-ajax": "false"
                         }, formFields);
-                        uploadFieldContainer = Render_28.render.tag("div", {
+                        uploadFieldContainer = Render_30.render.tag("div", {
                             "id": _this.id("uploadFieldContainer")
                         }, "<p>Upload from your computer</p>" + form);
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", _this.uploadFileNow, _this);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_28.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_30.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + uploadFieldContainer + buttonBar;
                     };
-                    this.hasAnyZipFiles = function () {
+                    _this.hasAnyZipFiles = function () {
                         var ret = false;
                         for (var i = 0; i < 7; i++) {
                             var inputVal = $("#" + _this.id("upload" + i + "FormInputId")).val();
@@ -6672,7 +6780,7 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                         }
                         return ret;
                     };
-                    this.uploadFileNow = function () {
+                    _this.uploadFileNow = function () {
                         var uploadFunc = function (explodeZips) {
                             $("#" + _this.id("uploadFormNodeId")).attr("value", Attachment_2.attachment.uploadNode.id);
                             $("#" + _this.id("explodeZips")).attr("value", explodeZips ? "true" : "false");
@@ -6686,14 +6794,14 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                                 type: 'POST'
                             });
                             prms.done(function () {
-                                Meta64_25.meta64.refresh();
+                                Meta64_27.meta64.refresh();
                             });
                             prms.fail(function () {
-                                Util_26.util.showMessage("Upload failed.");
+                                Util_28.util.showMessage("Upload failed.");
                             });
                         };
                         if (_this.hasAnyZipFiles()) {
-                            Factory_16.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
+                            Factory_18.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Explode Zips?",
@@ -6711,66 +6819,66 @@ System.register("UploadFromFileDlgImpl", ["DialogBaseImpl", "Factory", "Render",
                             uploadFunc(false);
                         }
                     };
-                    this.init = function () {
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_28.render.formatPath(Attachment_2.attachment.uploadNode));
+                    _this.init = function () {
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_30.render.formatPath(Attachment_2.attachment.uploadNode));
                     };
+                    return _this;
                 }
                 return UploadFromFileDlgImpl;
             }(DialogBaseImpl_23.DialogBaseImpl));
             exports_71("default", UploadFromFileDlgImpl);
         }
-    }
+    };
 });
-System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "Constants", "Render", "Attachment", "Meta64"], function(exports_72, context_72) {
+System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "Constants", "Render", "Attachment", "Meta64"], function (exports_72, context_72) {
     "use strict";
     var __moduleName = context_72 && context_72.id;
-    var DialogBaseImpl_24, Factory_17, Constants_13, Render_29, Attachment_3, Meta64_26;
-    var UploadFromFileDropzoneDlgImpl;
+    var DialogBaseImpl_24, Factory_19, Constants_13, Render_31, Attachment_3, Meta64_28, UploadFromFileDropzoneDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_24_1) {
                 DialogBaseImpl_24 = DialogBaseImpl_24_1;
             },
-            function (Factory_17_1) {
-                Factory_17 = Factory_17_1;
+            function (Factory_19_1) {
+                Factory_19 = Factory_19_1;
             },
             function (Constants_13_1) {
                 Constants_13 = Constants_13_1;
             },
-            function (Render_29_1) {
-                Render_29 = Render_29_1;
+            function (Render_31_1) {
+                Render_31 = Render_31_1;
             },
             function (Attachment_3_1) {
                 Attachment_3 = Attachment_3_1;
             },
-            function (Meta64_26_1) {
-                Meta64_26 = Meta64_26_1;
-            }],
-        execute: function() {
+            function (Meta64_28_1) {
+                Meta64_28 = Meta64_28_1;
+            }
+        ],
+        execute: function () {
             UploadFromFileDropzoneDlgImpl = (function (_super) {
                 __extends(UploadFromFileDropzoneDlgImpl, _super);
                 function UploadFromFileDropzoneDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "UploadFromFileDropzoneDlg");
-                    this.fileList = null;
-                    this.zipQuestionAnswered = false;
-                    this.explodeZips = false;
-                    this.build = function () {
+                    var _this = _super.call(this, "UploadFromFileDropzoneDlg") || this;
+                    _this.fileList = null;
+                    _this.zipQuestionAnswered = false;
+                    _this.explodeZips = false;
+                    _this.build = function () {
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_13.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_29.render.tag("div", {
+                            uploadPathDisplay += Render_31.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
                         }
                         var formFields = "";
                         console.log("Upload Action URL: " + postTargetUrl + "upload");
-                        var hiddenInputContainer = Render_29.render.tag("div", {
+                        var hiddenInputContainer = Render_31.render.tag("div", {
                             "id": _this.id("hiddenInputContainer"),
                             "style": "display: none;"
                         }, "");
-                        var form = Render_29.render.tag("form", {
+                        var form = Render_31.render.tag("form", {
                             "action": postTargetUrl + "upload",
                             "autoProcessQueue": false,
                             "class": "dropzone",
@@ -6778,10 +6886,10 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         }, "");
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", null, null, false);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_29.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_31.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + form + hiddenInputContainer + buttonBar;
                     };
-                    this.configureDropZone = function () {
+                    _this.configureDropZone = function () {
                         var thiz = _this;
                         var config = {
                             url: postTargetUrl + "upload",
@@ -6816,19 +6924,19 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                                     this.zipQuestionAnswered = false;
                                 });
                                 this.on("queuecomplete", function (file) {
-                                    Meta64_26.meta64.refresh();
+                                    Meta64_28.meta64.refresh();
                                 });
                             }
                         };
                         $("#" + _this.id("dropzone-form-id")).dropzone(config);
                     };
-                    this.updateFileList = function (dropzoneEvt) {
+                    _this.updateFileList = function (dropzoneEvt) {
                         var thiz = _this;
                         _this.fileList = dropzoneEvt.getAddedFiles();
                         _this.fileList = _this.fileList.concat(dropzoneEvt.getQueuedFiles());
                         if (!_this.zipQuestionAnswered && _this.hasAnyZipFiles()) {
                             _this.zipQuestionAnswered = true;
-                            Factory_17.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
+                            Factory_19.Factory.createDefault("ConfirmDlgImpl", function (dlg) {
                                 dlg.open();
                             }, {
                                 "title": "Explode Zips?",
@@ -6843,7 +6951,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                             });
                         }
                     };
-                    this.hasAnyZipFiles = function () {
+                    _this.hasAnyZipFiles = function () {
                         var ret = false;
                         for (var _i = 0, _a = _this.fileList; _i < _a.length; _i++) {
                             var file = _a[_i];
@@ -6853,7 +6961,7 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                         }
                         return ret;
                     };
-                    this.runButtonEnablement = function (dropzoneEvt) {
+                    _this.runButtonEnablement = function (dropzoneEvt) {
                         if (dropzoneEvt.getAddedFiles().length > 0 ||
                             dropzoneEvt.getQueuedFiles().length > 0) {
                             $("#" + _this.id("uploadButton")).show();
@@ -6862,53 +6970,53 @@ System.register("UploadFromFileDropzoneDlgImpl", ["DialogBaseImpl", "Factory", "
                             $("#" + _this.id("uploadButton")).hide();
                         }
                     };
-                    this.init = function () {
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_29.render.formatPath(Attachment_3.attachment.uploadNode));
+                    _this.init = function () {
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_31.render.formatPath(Attachment_3.attachment.uploadNode));
                         _this.configureDropZone();
                     };
+                    return _this;
                 }
                 return UploadFromFileDropzoneDlgImpl;
             }(DialogBaseImpl_24.DialogBaseImpl));
             exports_72("default", UploadFromFileDropzoneDlgImpl);
         }
-    }
+    };
 });
-System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render", "Util", "Attachment", "Meta64"], function(exports_73, context_73) {
+System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render", "Util", "Attachment", "Meta64"], function (exports_73, context_73) {
     "use strict";
     var __moduleName = context_73 && context_73.id;
-    var DialogBaseImpl_25, Constants_14, Render_30, Util_27, Attachment_4, Meta64_27;
-    var UploadFromUrlDlgImpl;
+    var DialogBaseImpl_25, Constants_14, Render_32, Util_29, Attachment_4, Meta64_29, UploadFromUrlDlgImpl;
     return {
-        setters:[
+        setters: [
             function (DialogBaseImpl_25_1) {
                 DialogBaseImpl_25 = DialogBaseImpl_25_1;
             },
             function (Constants_14_1) {
                 Constants_14 = Constants_14_1;
             },
-            function (Render_30_1) {
-                Render_30 = Render_30_1;
+            function (Render_32_1) {
+                Render_32 = Render_32_1;
             },
-            function (Util_27_1) {
-                Util_27 = Util_27_1;
+            function (Util_29_1) {
+                Util_29 = Util_29_1;
             },
             function (Attachment_4_1) {
                 Attachment_4 = Attachment_4_1;
             },
-            function (Meta64_27_1) {
-                Meta64_27 = Meta64_27_1;
-            }],
-        execute: function() {
+            function (Meta64_29_1) {
+                Meta64_29 = Meta64_29_1;
+            }
+        ],
+        execute: function () {
             UploadFromUrlDlgImpl = (function (_super) {
                 __extends(UploadFromUrlDlgImpl, _super);
                 function UploadFromUrlDlgImpl() {
-                    var _this = this;
-                    _super.call(this, "UploadFromUrlDlg");
-                    this.build = function () {
+                    var _this = _super.call(this, "UploadFromUrlDlg") || this;
+                    _this.build = function () {
                         var header = _this.makeHeader("Upload File Attachment");
                         var uploadPathDisplay = "";
                         if (Constants_14.cnst.SHOW_PATH_IN_DLGS) {
-                            uploadPathDisplay += Render_30.render.tag("div", {
+                            uploadPathDisplay += Render_32.render.tag("div", {
                                 "id": _this.id("uploadPathDisplay"),
                                 "class": "path-display-in-editor"
                             }, "");
@@ -6916,35 +7024,35 @@ System.register("UploadFromUrlDlgImpl", ["DialogBaseImpl", "Constants", "Render"
                         var uploadFieldContainer = "";
                         var uploadFromUrlDiv = "";
                         var uploadFromUrlField = _this.makeEditField("Upload From URL", "uploadFromUrl");
-                        uploadFromUrlDiv = Render_30.render.tag("div", {}, uploadFromUrlField);
+                        uploadFromUrlDiv = Render_32.render.tag("div", {}, uploadFromUrlField);
                         var uploadButton = _this.makeCloseButton("Upload", "uploadButton", _this.uploadFileNow, _this);
                         var backButton = _this.makeCloseButton("Close", "closeUploadButton");
-                        var buttonBar = Render_30.render.centeredButtonBar(uploadButton + backButton);
+                        var buttonBar = Render_32.render.centeredButtonBar(uploadButton + backButton);
                         return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
                     };
-                    this.uploadFileNow = function () {
+                    _this.uploadFileNow = function () {
                         var sourceUrl = _this.getInputVal("uploadFromUrl");
                         if (sourceUrl) {
-                            Util_27.util.json("uploadFromUrl", {
+                            Util_29.util.json("uploadFromUrl", {
                                 "nodeId": Attachment_4.attachment.uploadNode.id,
                                 "sourceUrl": sourceUrl
                             }, _this.uploadFromUrlResponse, _this);
                         }
                     };
-                    this.uploadFromUrlResponse = function (res) {
-                        if (Util_27.util.checkSuccess("Upload from URL", res)) {
-                            Meta64_27.meta64.refresh();
+                    _this.uploadFromUrlResponse = function (res) {
+                        if (Util_29.util.checkSuccess("Upload from URL", res)) {
+                            Meta64_29.meta64.refresh();
                         }
                     };
-                    this.init = function () {
-                        Util_27.util.setInputVal(_this.id("uploadFromUrl"), "");
-                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_30.render.formatPath(Attachment_4.attachment.uploadNode));
+                    _this.init = function () {
+                        Util_29.util.setInputVal(_this.id("uploadFromUrl"), "");
+                        $("#" + _this.id("uploadPathDisplay")).html("Path: " + Render_32.render.formatPath(Attachment_4.attachment.uploadNode));
                     };
+                    return _this;
                 }
                 return UploadFromUrlDlgImpl;
             }(DialogBaseImpl_25.DialogBaseImpl));
             exports_73("default", UploadFromUrlDlgImpl);
         }
-    }
+    };
 });
-//# sourceMappingURL=meta64-app.js.map

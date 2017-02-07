@@ -203,6 +203,9 @@ class Meta64 {
      * payload is any data object that needs to be passed at runtime
      *
      * note: doesn't currently support having a null ctx and non-null payload.
+     *
+     * todo-0: use obj.bind(this) for the 'callback' parameter passing then then get rid of 'ctx' parameter, but
+     * be careful with the logic, it will be tricky.
      */
     encodeOnClick = function(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
         if (typeof callback == "string") {
@@ -296,8 +299,8 @@ class Meta64 {
     }
 
     selectTab = function(pageName): void {
-        var ironPages = document.querySelector("#mainIronPages");
-        (<any>ironPages).select(pageName);
+        let ironPages = document.querySelector("#mainIronPages") as any;
+        ironPages.select(pageName);
 
         /* this code can be made more DRY, but i'm just trying it out for now, so i'm not bothering to perfect it yet. */
         // $("#mainPageButton").css("border-left", "");
@@ -331,8 +334,8 @@ class Meta64 {
         }
 
         /* this is the same as setting using mainIronPages?? */
-        var paperTabs = document.querySelector("#mainIronPages"); //"#mainPaperTabs");
-        (<any>paperTabs).select(pg.tabId);
+        var paperTabs = document.querySelector("#mainIronPages") as any; //"#mainPaperTabs");
+        paperTabs.select(pg.tabId);
     }
 
     isNodeBlackListed = function(node): boolean {
@@ -764,7 +767,7 @@ class Meta64 {
         // var onresize = window.onresize;
         // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 
-        (<any>window).addEvent = function(object, type, callback) {
+        (window as any).addEvent = function(object, type, callback) {
             if (object == null || typeof (object) == 'undefined')
                 return;
             if (object.addEventListener) {
@@ -797,7 +800,7 @@ class Meta64 {
         //     console.log('app ready event!');
         // });
 
-        (<any>window).addEventListener('polymer-ready', function(e) {
+        (window as any).addEventListener('polymer-ready', function(e) {
             console.log('polymer-ready event!');
         });
         console.log("running module: cnst.js");
@@ -1007,4 +1010,4 @@ class Meta64 {
 }
 
 export let meta64: Meta64 = new Meta64();
-(<any>window).meta64 = meta64;
+(window as any).meta64 = meta64;

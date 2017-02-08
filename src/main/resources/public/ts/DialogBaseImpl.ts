@@ -6,7 +6,7 @@ import {render} from "./Render";
 import {DialogBase} from "./DialogBase";
 
 declare var Polymer;
-declare var $;
+
 
 /*
  * Base class for all dialog boxes.

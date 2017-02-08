@@ -11,7 +11,7 @@ import { view } from "./View";
 import { SignupDlg } from "./SignupDlg";
 
 declare var BRANDING_TITLE_SHORT;
-declare var $;
+
 
 class User {
 

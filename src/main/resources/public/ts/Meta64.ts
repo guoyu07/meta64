@@ -20,9 +20,12 @@ import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { Factory } from "./Factory";
 import { bindClick } from "./BindClick";
 
+// / <reference path="./tyepdefs/jquery/jquery.d.ts" />
+// / <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
+
 declare const System: any;
 declare var Polymer;
-declare var $;
+
 
 class Meta64 {
 

@@ -13,7 +13,7 @@ import { MessageDlg } from "./MessageDlg";
 
 declare var postTargetUrl;
 declare var prettyPrint;
-declare var $;
+
 
 export class Render {
     private debug: boolean = false;

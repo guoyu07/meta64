@@ -1,10 +1,5 @@
 console.log("Interfaces.ts");
 
-declare var $;
-
-/// <reference path="./tyepdefs/jquery/jquery.d.ts" />
-/// <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
-
 /* These are Client-side only models, and are not seen on the server side ever */
 
 /* Models a time-range in some media where an AD starts and stops */

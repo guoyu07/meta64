@@ -1,6 +1,6 @@
 console.log("Util.ts");
 
-declare var $;
+
 
 /// <reference path="./tyepdefs/jquery/jquery.d.ts" />
 /// <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />

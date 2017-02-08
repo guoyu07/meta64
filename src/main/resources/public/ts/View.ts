@@ -8,8 +8,6 @@ import {edit} from "./Edit";
 import {MessageDlg} from "./MessageDlg";
 import * as I from "./Interfaces";
 
-declare var $;
-
 class View {
 
     scrollToSelNodePending: boolean = false;

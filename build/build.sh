@@ -49,7 +49,7 @@ echo "Old JS files deleted."
 # 
 # =====================================================================
 cd $META64/src/main/resources/public/ts
-tsc -p tsconfig-prod.json
+tsc -p tsconfig.json
 if [ $? -eq 0 ]
 then
   read -p "TypeScript generating successful."

@@ -13,7 +13,7 @@ import { SearchContentDlg } from "./SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
 
-declare var $;
+
 
 export class Search {
     _UID_ROWID_SUFFIX: string = "_srch_row";

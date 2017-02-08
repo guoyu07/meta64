@@ -8,7 +8,7 @@ import {view} from "./View";
 import {edit} from "./Edit";
 import * as I from "./Interfaces";
 
-declare var $;
+
 
 class Props {
 

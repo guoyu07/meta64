@@ -1,6 +1,6 @@
 {
     "extends": "./tsconfig-base.json",
     "compilerOptions": {
-        "outFile": "../js/meta64-app.js",
+        "outFile": "../js/meta64-app.js"
     }
 }

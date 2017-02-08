@@ -2,7 +2,7 @@ console.log("TimelineResultsPanel.ts");
 
 import {srch} from "./Search";
 
-declare var $;
+
 
 export class TimelineResultsPanel {
 

@@ -9,7 +9,7 @@ import { user } from "./User";
 import { cnst } from "./Constants";
 import { Factory } from "./Factory";
 
-declare var $;
+
 
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     constructor(paramsTest: Object) {

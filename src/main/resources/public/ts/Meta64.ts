@@ -20,12 +20,8 @@ import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { Factory } from "./Factory";
 import { bindClick } from "./BindClick";
 
-// / <reference path="./tyepdefs/jquery/jquery.d.ts" />
-// / <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
-
 declare const System: any;
 declare var Polymer;
-
 
 class Meta64 {
 
@@ -423,7 +419,7 @@ class Meta64 {
         let mine: boolean = false;
 
         if (res.owners) {
-            $.each(res.owners, function(index, owner) {
+            res.owners.forEach(function(owner, index) {
                 if (ownerBuf.length > 0) {
                     ownerBuf += ",";
                 }
@@ -439,12 +435,14 @@ class Meta64 {
         if (ownerBuf.length > 0) {
             node.owner = ownerBuf;
             let elmId = "#ownerDisplay" + node.uid;
-            var elm = $(elmId);
-            elm.html(" (Manager: " + ownerBuf + ")");
-            if (mine) {
-                util.changeOrAddClass(elmId, "created-by-other", "created-by-me");
-            } else {
-                util.changeOrAddClass(elmId, "created-by-me", "created-by-other");
+            var elm = document.querySelector(elmId);
+            if (elm) {
+                elm.innerHTML = " (Manager: " + ownerBuf + ")";
+                if (mine) {
+                    util.changeOrAddClass(elmId, "created-by-other", "created-by-me");
+                } else {
+                    util.changeOrAddClass(elmId, "created-by-me", "created-by-other");
+                }
             }
         }
     }
@@ -504,18 +502,20 @@ class Meta64 {
                 // console.log("already highlighted.");
                 doneHighlighting = true;
             } else {
-                let rowElmId = curHighlightedNode.uid + "_row";
-                let rowElm = $("#" + rowElmId);
-                util.changeOrAddClass("#" + rowElmId, "active-row", "inactive-row");
+                let rowElmId = "row_" + curHighlightedNode.uid /* + "_row"*/;
+                let rowElm = document.querySelector("#" + rowElmId);
+                if (rowElm) {
+                    util.changeOrAddClass("#" + rowElmId, "active-row", "inactive-row");
+                }
             }
         }
 
         if (!doneHighlighting) {
             meta64.parentUidToFocusNodeMap[meta64.currentNodeUid] = node;
 
-            let rowElmId: string = node.uid + "_row";
-            let rowElm = $("#" + rowElmId);
-            if (!rowElm || rowElm.length == 0) {
+            let rowElmId: string = "row_" + node.uid /* + "_row" */;
+            let rowElm = document.querySelector("#" + rowElmId);
+            if (rowElm == null) {
                 console.log("Unable to find rowElement to highlight: " + rowElmId);
             }
             util.changeOrAddClass("#" + rowElmId, "inactive-row", "active-row");
@@ -904,9 +904,12 @@ class Meta64 {
     }
 
     displaySignupMessage = function(): void {
-        var signupResponse = $("#signupCodeResponse").text();
-        if (signupResponse === "ok") {
-            util.showMessage("Signup complete. You may now login.");
+        let signupElm = document.querySelector("#signupCodeResponse");
+        if (signupElm) {
+            let signupResponse = signupElm.textContent;
+            if (signupResponse === "ok") {
+                util.showMessage("Signup complete. You may now login.");
+            }
         }
     }
 
@@ -917,7 +920,9 @@ class Meta64 {
                 render.adjustImageSize(meta64.currentNode);
             }
 
-            $.each(meta64.currentNodeData.children, function(i, node) {
+            //todo-000: Need to make sure i never try calling forEach on an 'any' types (in entire codebase) until i first verify if it's an
+            //object or an array because object iteration needs to use 'forEachProp()'
+            meta64.currentNodeData.children.forEach(function(node, i) {
                 if (node.imgId) {
                     render.adjustImageSize(node);
                 }

@@ -7,7 +7,7 @@ export interface DialogBase {
     open(): void;
     cancel();
     id(id): string;
-    el(id): any;
+    elById(id): any;
     makePasswordField(text: string, id: string): string;
     makeEditField(fieldName: string, id: string);
     makeMessageArea(message: string, id?: string): string;

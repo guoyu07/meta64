@@ -1,13 +1,13 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {SignupDlg} from "./SignupDlg";
-import {render} from "./Render";
-import {util} from "./Util";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { SignupDlg } from "./SignupDlg";
+import { render } from "./Render";
+import { util } from "./Util";
 import * as I from "./Interfaces";
 
 declare var BRANDING_TITLE;
 declare var postTargetUrl;
 
-export default class SignupDlgImpl  extends DialogBaseImpl implements SignupDlg {
+export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
 
     constructor() {
         super("SignupDlg");
@@ -88,14 +88,17 @@ export default class SignupDlgImpl  extends DialogBaseImpl implements SignupDlg 
     }
 
     tryAnotherCaptcha = (): void => {
-        var n = util.currentTimeMillis();
+        let n = util.currentTimeMillis();
 
         /*
          * embed a time parameter just to thwart browser caching, and ensure server and browser will never return the same
          * image twice.
          */
-        var src = postTargetUrl + "captcha?t=" + n;
-        $("#" + this.id("captchaImage")).attr("src", src);
+        let src = postTargetUrl + "captcha?t=" + n;
+        let elm = this.elById("captchaImage");
+        if (elm) {
+            elm.setAttribute("src", src);
+        }
     }
 
     pageInitSignupPg = (): void => {

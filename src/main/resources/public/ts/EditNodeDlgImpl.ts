@@ -110,7 +110,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             /*
              * Warning each iterator loop has its own 'this'
              */
-            $.each(editOrderedProps, function(index, prop) {
+            editOrderedProps.forEach(function(prop, index) {
 
                 /*
                  * if property not allowed to display return to bypass this property/iteration
@@ -206,7 +206,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             : //
             "";
 
-        this.el("editNodeInstructions").html(instr);
+        this.setInnerHTML("editNodeInstructions", instr);
 
         /*
          * Allow adding of new properties as long as this is a saved node we are editing, because we don't want to start
@@ -425,7 +425,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         var propertiesList = [];
         var thiz = this;
 
-        $.each(this.propEntries, function(index: number, prop: any) {
+        this.propEntries.forEach(function(prop: any, index: number) {
 
             console.log("--------------- Getting prop idx: " + index);
 
@@ -463,7 +463,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 var propVals = [];
 
-                $.each(prop.subProps, function(index, subProp) {
+                prop.subProps.forEach(function(subProp, index) {
 
                     console.log("subProp[" + index + "]: " + JSON.stringify(subProp));
 

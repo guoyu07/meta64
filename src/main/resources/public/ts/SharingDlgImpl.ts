@@ -72,7 +72,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         var html = "";
         var This = this;
 
-        $.each(res.aclEntries, function(index, aclEntry) {
+        res.aclEntries.forEach(function(aclEntry, index) {
             html += "<h4>User: " + aclEntry.principalName + "</h4>";
             html += render.tag("div", {
                 "class": "privilege-list"
@@ -135,7 +135,6 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     }
 
     removePrivilegeResponse = (res: I.RemovePrivilegeResponse): void => {
-
         util.json<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": share.sharingNode.path,
             "includeAcl": true,
@@ -146,7 +145,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     renderAclPrivileges = (principal: any, aclEntry: any): string => {
         var ret = "";
         var thiz = this;
-        $.each(aclEntry.privileges, function(index, privilege) {
+        aclEntry.privileges.forEach(function(privilege, index) {
 
             var removeButton = thiz.makeButton("Remove", "removePrivButton", //
                 "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName

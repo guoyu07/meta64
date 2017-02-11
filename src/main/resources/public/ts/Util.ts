@@ -1,9 +1,7 @@
 console.log("Util.ts");
 
-
-
-/// <reference path="./tyepdefs/jquery/jquery.d.ts" />
-/// <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
+// / <reference path="./tyepdefs/jquery/jquery.d.ts" />
+// / <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
 
 declare var Polymer;
 declare var Dropzone;
@@ -465,6 +463,8 @@ class Util {
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
     domElm = function(id): any {
+
+        /* why did i do this? I thought "#id" was valid for getDomElmementById right? */
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
         }
@@ -479,6 +479,13 @@ class Util {
             console.log("domElm Error. Required element id not found: " + id);
         }
         return e;
+    }
+
+    setInnerHTMLById = function(id: string, val: string): void {
+        let domElm = this.domElm(id);
+        if (domElm) {
+            domElm.innerHTML = val;
+        }
     }
 
     poly = function(id): any {
@@ -565,17 +572,6 @@ class Util {
     }
 
     /*
-     * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
-     * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
-     * old class didn't exist, then new Class is added at end of class list.
-     */
-    changeOrAddClass = function(elm: string, oldClass: string, newClass: string) {
-        var elmement = $(elm);
-        elmement.toggleClass(oldClass, false);
-        elmement.toggleClass(newClass, true);
-    }
-
-    /*
      * displays message (msg) of object is not of specified type
      */
     verifyType = function(obj: any, type: any, msg: string) {
@@ -615,6 +611,14 @@ class Util {
         return count;
     }
 
+    forEachProp = function(obj: Object, callback: Function): void {
+        for (let prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                callback(prop, obj[prop]);
+            }
+        }
+    }
+
     /*
      * iterates over an object creating a string containing it's keys and values
      */
@@ -626,14 +630,12 @@ class Util {
         let val: string = ""
         try {
             let count: number = 0;
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop)) {
-                    console.log("Property[" + count + "]");
-                    count++;
-                }
-            }
+            util.forEachProp(obj, function(prop, v) {
+                console.log("Property[" + count + "]");
+                count++;
+            });
 
-            $.each(obj, function(k, v) {
+            util.forEachProp(obj, function(k, v) {
                 val += k + " , " + v + "\n";
             });
         } catch (err) {
@@ -648,7 +650,7 @@ class Util {
             return "null";
 
         let val: string = "";
-        $.each(obj, function(k, v) {
+        util.forEachProp(obj, function(k, v) {
             if (!k) {
                 k = "null";
             }
@@ -728,6 +730,85 @@ class Util {
         instance.constructor.apply(instance, args);
         return <T>instance;
     }
+
+    setCookie = function(name: string, val: string): void {
+        let d = new Date();
+        d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + val + ";" + expires + ";path=/";
+    }
+
+    deleteCookie = function(name: string): void {
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+    }
+
+    getCookie = function(name: string): string {
+        name += "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    /*
+     * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
+     * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
+     * old class didn't exist, then new Class is added at end of class list.
+     */
+    changeOrAddClass = function(elmSel: string, oldClass: string, newClass: string) {
+        // var elmement = $(elm);
+        // elmement.toggleClass(oldClass, false);
+        // elmement.toggleClass(newClass, true);
+        let elm = this.domElm(elmSel);
+        this.removeClassFromElm(elm, oldClass);
+        this.addClassToElm(elm, newClass);
+    }
+
+    removeClassFromElm(el: any, clazz: string): void {
+        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
+        if (el.classList)
+            el.classList.remove(clazz);
+        else
+            el.className = el.className.replace(new RegExp('(^|\\b)' + clazz.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    }
+
+    addClassToElmById(id: any, clazz: string): void {
+        let elm = this.domElm(id);
+        this.addClassToElm(elm, clazz);
+    }
+
+    addClassToElm(el: any, clazz: string): void {
+        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
+        if (el.classList)
+            el.classList.add(clazz);
+        else
+            el.className += ' ' + clazz;
+    }
+
+    toggleClassFromElm(el: any, clazz: string): void {
+        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
+        if (el.classList) {
+            el.classList.toggle(clazz);
+        } else {
+            var classes = el.className.split(' ');
+            var existingIndex = classes.indexOf(clazz);
+
+            if (existingIndex >= 0)
+                classes.splice(existingIndex, 1);
+            else
+                classes.push(clazz);
+
+            el.className = classes.join(' ');
+        }
+    }
 }
+
 export let util: Util = new Util();
 export default util;

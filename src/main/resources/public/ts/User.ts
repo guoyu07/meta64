@@ -68,14 +68,6 @@ class User {
         });
     }
 
-    /* Write a cookie that expires in a year for all paths */
-    writeCookie = function(name, val): void {
-        $.cookie(name, val, {
-            expires: 365,
-            path: '/'
-        });
-    }
-
     /*
      * This method is ugly. It is the button that can be login *or* logout.
      */
@@ -105,7 +97,7 @@ class User {
         } else {
             console.log("    loginSessionReady = false");
 
-            let loginState: string = $.cookie(cnst.COOKIE_LOGIN_STATE);
+            let loginState: string = util.getCookie(cnst.COOKIE_LOGIN_STATE);
 
             /* if we have known state as logged out, then do nothing here */
             if (loginState === "0") {
@@ -113,8 +105,8 @@ class User {
                 return;
             }
 
-            let usr: string = $.cookie(cnst.COOKIE_LOGIN_USR);
-            let pwd: string = $.cookie(cnst.COOKIE_LOGIN_PWD);
+            let usr: string = util.getCookie(cnst.COOKIE_LOGIN_USR);
+            let pwd: string = util.getCookie(cnst.COOKIE_LOGIN_PWD);
 
             usingCookies = !util.emptyString(usr) && !util.emptyString(pwd);
             console.log("cookieUser=" + usr + " usingCookies = " + usingCookies);
@@ -155,7 +147,7 @@ class User {
         $(window).off("beforeunload");
 
         if (updateLoginStateCookie) {
-            user.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+            util.setCookie(cnst.COOKIE_LOGIN_STATE, "0");
         }
 
         util.json<I.LogoutRequest, I.LogoutResponse>("logout", {}, user.logoutResponse);
@@ -174,9 +166,9 @@ class User {
     }
 
     deleteAllUserCookies = function() {
-        $.removeCookie(cnst.COOKIE_LOGIN_USR);
-        $.removeCookie(cnst.COOKIE_LOGIN_PWD);
-        $.removeCookie(cnst.COOKIE_LOGIN_STATE);
+        util.deleteCookie(cnst.COOKIE_LOGIN_USR);
+        util.deleteCookie(cnst.COOKIE_LOGIN_PWD);
+        util.deleteCookie(cnst.COOKIE_LOGIN_STATE);
     }
 
     loginResponse = function(res?: I.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
@@ -184,9 +176,9 @@ class User {
             console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
             if (usr != "anonymous") {
-                user.writeCookie(cnst.COOKIE_LOGIN_USR, usr);
-                user.writeCookie(cnst.COOKIE_LOGIN_PWD, pwd);
-                user.writeCookie(cnst.COOKIE_LOGIN_STATE, "1");
+                util.setCookie(cnst.COOKIE_LOGIN_USR, usr);
+                util.setCookie(cnst.COOKIE_LOGIN_PWD, pwd);
+                util.setCookie(cnst.COOKIE_LOGIN_STATE, "1");
             }
 
             if (loginDlg) {
@@ -228,9 +220,9 @@ class User {
                  * blow away failed cookie credentials and reload page, should result in brand new page load as anon
                  * user.
                  */
-                $.removeCookie(cnst.COOKIE_LOGIN_USR);
-                $.removeCookie(cnst.COOKIE_LOGIN_PWD);
-                user.writeCookie(cnst.COOKIE_LOGIN_STATE, "0");
+                util.deleteCookie(cnst.COOKIE_LOGIN_USR);
+                util.deleteCookie(cnst.COOKIE_LOGIN_PWD);
+                util.setCookie(cnst.COOKIE_LOGIN_STATE, "0");
                 location.reload();
             }
         }

@@ -13,10 +13,9 @@ import { SearchContentDlg } from "./SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
 
-
-
 export class Search {
-    _UID_ROWID_SUFFIX: string = "_srch_row";
+    //_UID_ROWID_SUFFIX: string = "_srch_row";
+    _UID_ROWID_PREFIX: string = "srch_row_";
 
     searchNodes: any = null;
     searchPageTitle: string = "Search Results";
@@ -85,7 +84,6 @@ export class Search {
     }
 
     timelineResponse = function(res: I.NodeSearchResponse) {
-        debugger;
         srch.timelineResults = res;
         Factory.create("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
             var content = panel.build();
@@ -107,7 +105,6 @@ export class Search {
     }
 
     timelineByModTime = function() {
-        debugger;
         var node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
@@ -154,7 +151,7 @@ export class Search {
          */
         var rowCount = 0;
 
-        $.each(data.searchResults, function(i, node) {
+        data.searchResults.forEach(function(node, i) {
             if (meta64.isNodeBlackListed(node))
                 return;
 
@@ -177,7 +174,7 @@ export class Search {
         var uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
-        var cssId = uid + srch._UID_ROWID_SUFFIX;
+        var cssId = srch._UID_ROWID_PREFIX + uid /*+ srch._UID_ROWID_SUFFIX*/;
         // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
         var buttonBarHtml = srch.makeButtonBarHtml("" + uid);
@@ -231,7 +228,7 @@ export class Search {
         }
 
         /* now make CSS id from node */
-        var nodeId = srch.highlightRowNode.uid + srch._UID_ROWID_SUFFIX;
+        var nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
 
         var elm = util.domElm(nodeId);
         if (elm) {

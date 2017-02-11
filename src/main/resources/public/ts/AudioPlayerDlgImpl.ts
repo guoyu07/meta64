@@ -29,8 +29,8 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
     /* When the dialog closes we need to stop and remove the player */
     public cancel() {
         super.cancel();
-        let player = $("#" + this.id("audioPlayer"));
-        if (player && player.length > 0) {
+        let player = document.querySelector("#" + this.id("audioPlayer"));
+        if (player !== null) {
             /* for some reason the audio player needs to be accessed like it's an array */
             (<any>player[0]).pause();
             player.remove();

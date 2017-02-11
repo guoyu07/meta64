@@ -1,8 +1,7 @@
 console.log("TimelineResultsPanel.ts");
 
 import {srch} from "./Search";
-
-
+import {util} from "./Util";
 
 export class TimelineResultsPanel {
 
@@ -20,7 +19,7 @@ export class TimelineResultsPanel {
     }
 
     init = () => {
-        $("#timelinePageTitle").html(srch.timelinePageTitle);
+        util.setInnerHTMLById("timelinePageTitle", srch.timelinePageTitle);
         srch.populateSearchResultsPage(srch.timelineResults, "timelineView");
     }
 }

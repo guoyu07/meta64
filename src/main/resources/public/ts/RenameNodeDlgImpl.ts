@@ -74,7 +74,7 @@ export default class RenameNodeDlgImpl  extends DialogBaseImpl implements Rename
         if (!highlightNode) {
             return;
         }
-        $("#" + this.id("curNodeNameDisplay")).html("Name: " + highlightNode.name);
-        $("#" + this.id("curNodePathDisplay")).html("Path: " + highlightNode.path);
+        this.setInnerHTML("curNodeNameDisplay", "Name: " + highlightNode.name);
+        this.setInnerHTML("curNodePathDisplay", "Path: " + highlightNode.path);
     }
 }

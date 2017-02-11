@@ -1,9 +1,9 @@
 console.log("DialogBaseImpl.ts");
 
-import {meta64} from "./Meta64"
-import {util} from "./Util";
-import {render} from "./Render";
-import {DialogBase} from "./DialogBase";
+import { meta64 } from "./Meta64"
+import { util } from "./Util";
+import { render } from "./Render";
+import { DialogBase } from "./DialogBase";
 
 declare var Polymer;
 
@@ -187,7 +187,6 @@ export class DialogBaseImpl implements DialogBase {
 
     /* todo: need to cleanup the registered IDs that are in maps for this dialog */
     public cancel() {
-        debugger;
         var polyElm = util.polyElm(this.id(this.domId));
         polyElm.node.cancel();
     }
@@ -213,6 +212,29 @@ export class DialogBaseImpl implements DialogBase {
         }
         else {
             return $(this.id(id));
+        }
+    }
+
+    removeClassFromElmById = (id: string, clazz: string): any => {
+        let elm = this.elById(id);
+        if (elm) {
+            util.removeClassFromElm(elm, clazz);
+        }
+    }
+
+    elById = (id): any => {
+        if (!util.startsWith(id, "#")) {
+            return document.querySelector("#" + this.id(id));
+        }
+        else {
+            return document.querySelector(this.id(id));
+        }
+    }
+
+    setInnerHTML = (id: string, val: string) => {
+        let elm = this.elById(id);
+        if (elm) {
+            elm.innerHTML = val;
         }
     }
 
@@ -242,7 +264,7 @@ export class DialogBaseImpl implements DialogBase {
 
     // todo: there's a makeButton (and other similar methods) that don't have the
     // encodeCallback capability yet
-    makeButton = (text: string, id: string, callback: any, clazz?:string): string => {
+    makeButton = (text: string, id: string, callback: any, clazz?: string): string => {
         let attribs = {
             "raised": "raised",
             "id": this.id(id),
@@ -374,8 +396,5 @@ export class DialogBaseImpl implements DialogBase {
         }
         id = this.id(id);
         util.delayedFocus(id);
-        // setTimeout(function() {
-        //     $(id).focus();
-        // }, 1000);
     }
 }

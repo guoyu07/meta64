@@ -14,7 +14,6 @@ import { MessageDlg } from "./MessageDlg";
 declare var postTargetUrl;
 declare var prettyPrint;
 
-
 export class Render {
     private debug: boolean = false;
 
@@ -166,7 +165,7 @@ export class Render {
         meta64.initNode(node, false);
         if (uid != node.uid) throw "uid changed unexpectly after initNode";
         let rowContent: string = render.renderNodeContent(node, true, true, true, true, true);
-        $("#" + uid + "_content").html(rowContent);
+        util.setInnerHTMLById(uid + "_content", rowContent);
     }
 
     //
@@ -355,7 +354,7 @@ export class Render {
         let buttonBarHtmlRet: string = render.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
         let bkgStyle: string = render.getNodeBkgImageStyle(node);
 
-        let cssId: string = uid + "_row";
+        let cssId: string = "row_"+ uid /*+ "_row"*/;
         return render.tag("div", {
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
             "onClick": `meta64.clickOnNodeRow(this, '${uid}');`, //
@@ -668,7 +667,7 @@ export class Render {
 
         if (!data || !data.node) {
             util.setVisibility("#listView", false);
-            $("#mainNodeContent").html("No content is available here.");
+            util.setInnerHTMLById("mainNodeContent", "No content is available here.");
             return;
         } else {
             util.setVisibility("#listView", true);
@@ -711,7 +710,7 @@ export class Render {
 
         if (mainNodeContent.length > 0) {
             let uid: string = data.node.uid;
-            let cssId: string = uid + "_row";
+            let cssId: string = "row_" + uid /*+ "_row"*/;
             let buttonBar: string = "";
             let editNodeButton: string = "";
             let createSubNodeButton: string = "";
@@ -776,7 +775,7 @@ export class Render {
                 buttonBar + mainNodeContent);
 
             $("#mainNodeContent").show();
-            $("#mainNodeContent").html(content);
+            util.setInnerHTMLById("mainNodeContent", content);
 
             /* force all links to open a new window/tab */
             //not w-pack
@@ -897,7 +896,7 @@ export class Render {
     /* see also: makeImageTag() */
     adjustImageSize = function(node: I.NodeInfo): void {
 
-        var elm = $("#" + node.imgId);
+        let elm = util.domElm(node.imgId);
         if (elm) {
             // var width = elm.attr("width");
             // var height = elm.attr("height");
@@ -928,16 +927,16 @@ export class Render {
                      * and set the height to the value it needs to be at for same w/h ratio (no image stretching)
                      */
                     // var height = width * node.height / node.width;
-                    elm.attr("width", "100%");
-                    elm.attr("height", "auto");
+                    elm.setAttribute("width", "100%");
+                    elm.setAttribute("height", "auto");
                     // elm.attr("style", "max-width: " + maxWidth + "px;");
                 }
                 /*
                  * Image does fit on screen so render it at it's exact size
                  */
                 else {
-                    elm.attr("width", node.width);
-                    elm.attr("height", node.height);
+                    elm.setAttribute("width", node.width);
+                    elm.setAttribute("height", node.height);
                 }
             }
         }
@@ -1010,7 +1009,7 @@ export class Render {
 
         if (attributes) {
             ret += " ";
-            $.each(attributes, function(k, v) {
+            util.forEachProp(attributes, function(k, v) {
                 if (v) {
                     if (typeof v !== 'string') {
                         v = String(v);
@@ -1020,10 +1019,8 @@ export class Render {
                      * we intelligently wrap strings that contain single quotes in double quotes and vice versa
                      */
                     if (util.contains(v, "'")) {
-                        //ret += k + "=\"" + v + "\" ";
                         ret += `${k}="${v}" `;
                     } else {
-                        //ret += k + "='" + v + "' ";
                         ret += `${k}='${v}' `;
                     }
                 } else {
@@ -1036,7 +1033,7 @@ export class Render {
             if (!content) {
                 content = "";
             }
-            //ret += ">" + content + "</" + tag + ">";
+
             ret += `>${content}</${tag}>`;
         } else {
             ret += "/>";

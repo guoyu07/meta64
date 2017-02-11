@@ -87,6 +87,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
                 var submitButton = document.querySelector("#" + thiz.id("uploadButton"));
                 if (!submitButton) {
                     console.log("Unable to get upload button.");
+                    return;
                 }
 
                 submitButton.addEventListener("click", function(e) {

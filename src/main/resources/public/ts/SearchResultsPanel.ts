@@ -1,4 +1,5 @@
 import {srch} from "./Search";
+import {util} from "./Util";
 
 export class SearchResultsPanel {
 
@@ -16,7 +17,7 @@ export class SearchResultsPanel {
     };
 
     init = () => {
-        $("#searchPageTitle").html(srch.searchPageTitle);
+        util.setInnerHTMLById("searchPageTitle", srch.searchPageTitle);
         srch.populateSearchResultsPage(srch.searchResults, "searchResultsView");
     }
 }

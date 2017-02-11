@@ -4,6 +4,7 @@ import {DialogBaseImpl} from "./DialogBaseImpl";
 import {CreateNodeDlg} from "./CreateNodeDlg";
 import { render } from "./Render";
 import {meta64} from "./Meta64";
+import {util} from "./Util";
 import {edit} from "./Edit";
 import * as I from "./Interfaces";
 
@@ -97,10 +98,10 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         this.lastSelTypeName = payload.typeName;
 
         if (this.lastSelDomId) {
-            this.el(this.lastSelDomId).removeClass("selectedListItem");
+            this.removeClassFromElmById(this.lastSelDomId, "selectedListItem");
         }
         this.lastSelDomId = divId;
-        this.el(divId).addClass("selectedListItem");
+        util.addClassToElmById(divId, "selectedListItem");
     }
 
     init = (): void => {

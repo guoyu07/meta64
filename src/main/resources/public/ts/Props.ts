@@ -102,7 +102,7 @@ class Props {
             let table: string = "";
             let propCount: number = 0;
 
-            $.each(properties, function(i, property) {
+            properties.forEach(function(property, i) {
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
@@ -221,7 +221,7 @@ class Props {
     renderPropertyValues = function(values): string {
         let ret: string = "<div>";
         let count: number = 0;
-        $.each(values, function(i, value) {
+        values.forEach(function(value, i:number) {
             if (count > 0) {
                 ret += cnst.BR;
             }

@@ -7,9 +7,8 @@ import { ResetPasswordDlg } from "./ResetPasswordDlg";
 import { render } from "./Render";
 import { user } from "./User";
 import { cnst } from "./Constants";
+import {util} from "./Util";
 import { Factory } from "./Factory";
-
-
 
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     constructor(paramsTest: Object) {
@@ -46,8 +45,8 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     }
 
     populateFromCookies = (): void => {
-        var usr = $.cookie(cnst.COOKIE_LOGIN_USR);
-        var pwd = $.cookie(cnst.COOKIE_LOGIN_PWD);
+        var usr = util.getCookie(cnst.COOKIE_LOGIN_USR);
+        var pwd = util.getCookie(cnst.COOKIE_LOGIN_PWD);
 
         if (usr) {
             this.setInputVal("userName", usr);

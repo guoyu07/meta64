@@ -16,17 +16,17 @@ export default class SearchContentDlgImpl  extends DialogBaseImpl implements Sea
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Search Content");
+    render = (): string => {
+        let header = this.makeHeader("Search Content");
 
-        var instructions = this.makeMessageArea("Enter some text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search.");
-        var formControls = this.makeEditField("Search", "searchText");
+        let instructions = this.makeMessageArea("Enter some text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search.");
+        let formControls = this.makeEditField("Search", "searchText");
 
-        var searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchNodes, this);
-        var backButton = this.makeCloseButton("Close", "cancelSearchButton");
-        var buttonBar = render.centeredButtonBar(searchButton + backButton);
+        let searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchNodes, this);
+        let backButton = this.makeCloseButton("Close", "cancelSearchButton");
+        let buttonBar = render.centeredButtonBar(searchButton + backButton);
 
-        var content = header + instructions + formControls + buttonBar;
+        let content = header + instructions + formControls + buttonBar;
         this.bindEnterKey("searchText", srch.searchNodes)
         return content;
     }
@@ -41,14 +41,14 @@ export default class SearchContentDlgImpl  extends DialogBaseImpl implements Sea
         }
 
         // until i get better validation
-        var node = meta64.getHighlightedNode();
+        let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to search under.");
             return;
         }
 
         // until better validation
-        var searchText = this.getInputVal("searchText");
+        let searchText = this.getInputVal("searchText");
         if (util.emptyString(searchText)) {
             util.showMessage("Enter search text.");
             return;

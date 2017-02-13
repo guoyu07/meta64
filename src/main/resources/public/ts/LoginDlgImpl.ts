@@ -18,22 +18,22 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Login");
+    render = (): string => {
+        let header = this.makeHeader("Login");
 
-        var formControls = this.makeEditField("User", "userName") + //
+        let formControls = this.makeEditField("User", "userName") + //
             this.makePasswordField("Password", "password");
 
-        var loginButton = this.makeButton("Login", "loginButton", this.login);
-        var resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword);
-        var backButton = this.makeCloseButton("Close", "cancelLoginButton");
-        var buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
-        var divider = "<div><h3>Or Login With...</h3></div>";
+        let loginButton = this.makeButton("Login", "loginButton", this.login);
+        let resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword);
+        let backButton = this.makeCloseButton("Close", "cancelLoginButton");
+        let buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
+        let divider = "<div><h3>Or Login With...</h3></div>";
 
-        var form = formControls + buttonBar;
+        let form = formControls + buttonBar;
 
-        var mainContent = form;
-        var content = header + mainContent;
+        let mainContent = form;
+        let content = header + mainContent;
 
         this.bindEnterKey("userName", user.login);
         this.bindEnterKey("password", user.login);
@@ -45,8 +45,8 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     }
 
     populateFromCookies = (): void => {
-        var usr = util.getCookie(cnst.COOKIE_LOGIN_USR);
-        var pwd = util.getCookie(cnst.COOKIE_LOGIN_PWD);
+        let usr = util.getCookie(cnst.COOKIE_LOGIN_USR);
+        let pwd = util.getCookie(cnst.COOKIE_LOGIN_PWD);
 
         if (usr) {
             this.setInputVal("userName", usr);
@@ -57,16 +57,15 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     }
 
     login = (): void => {
-
-        var usr = this.getInputVal("userName");
-        var pwd = this.getInputVal("password");
+        let usr = this.getInputVal("userName");
+        let pwd = this.getInputVal("password");
 
         user.login(this, usr, pwd);
     }
 
     resetPassword = (): any => {
-        var thiz = this;
-        var usr = this.getInputVal("userName");
+        let thiz = this;
+        let usr = this.getInputVal("userName");
 
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();

@@ -12,6 +12,7 @@ import { Factory } from "./Factory";
 import { SearchContentDlg } from "./SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
+import {tag} from "./Tag";
 
 export class Search {
     //_UID_ROWID_SUFFIX: string = "_srch_row";
@@ -76,7 +77,7 @@ export class Search {
     searchNodesResponse = function(res: I.NodeSearchResponse) {
         srch.searchResults = res;
         Factory.create("SearchResultsPanel", (panel: SearchResultsPanel) => {
-            var content = panel.build();
+            let content = panel.render();
             util.setHtml("searchResultsPanel", content);
             panel.init();
             meta64.changePage(panel);
@@ -86,7 +87,7 @@ export class Search {
     timelineResponse = function(res: I.NodeSearchResponse) {
         srch.timelineResults = res;
         Factory.create("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
-            var content = panel.build();
+            let content = panel.render();
             util.setHtml("timelineResultsPanel", content);
             panel.init();
             meta64.changePage(panel);
@@ -105,7 +106,7 @@ export class Search {
     }
 
     timelineByModTime = function() {
-        var node = meta64.getHighlightedNode();
+        let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
             return;
@@ -121,7 +122,7 @@ export class Search {
     }
 
     timelineByCreateTime = function() {
-        var node = meta64.getHighlightedNode();
+        let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
             return;
@@ -142,14 +143,14 @@ export class Search {
     }
 
     populateSearchResultsPage = function(data, viewName) {
-        var output = '';
-        var childCount = data.searchResults.length;
+        let output = '';
+        let childCount = data.searchResults.length;
 
         /*
          * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on the
          * client side for various reasons.
          */
-        var rowCount = 0;
+        let rowCount = 0;
 
         data.searchResults.forEach(function(node, i) {
             if (meta64.isNodeBlackListed(node))
@@ -171,30 +172,30 @@ export class Search {
      */
     renderSearchResultAsListItem = function(node, index, count, rowCount) {
 
-        var uid = node.uid;
+        let uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
-        var cssId = srch._UID_ROWID_PREFIX + uid /*+ srch._UID_ROWID_SUFFIX*/;
+        let cssId = srch._UID_ROWID_PREFIX + uid /*+ srch._UID_ROWID_SUFFIX*/;
         // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
-        var buttonBarHtml = srch.makeButtonBarHtml("" + uid);
+        let buttonBarHtml = srch.makeButtonBarHtml("" + uid);
 
         console.log("buttonBarHtml=" + buttonBarHtml);
-        var content = render.renderNodeContent(node, true, true, true, true, true);
+        let content = render.renderNodeContent(node, true, true, true, true, true);
 
-        return render.tag("div", {
+        return tag.div( {
             "class": "node-table-row inactive-row",
             "onClick": `meta64.clickOnSearchResultRow(this, '${uid}');`, //
             "id": cssId
         },//
             buttonBarHtml//
-            + render.tag("div", {
+            + tag.div( {
                 "id": uid + "_srch_content"
             }, content));
     }
 
     makeButtonBarHtml = function(uid) {
-        var gotoButton = render.makeButton("Go to Node", uid, `meta64.clickSearchNode('${uid}');`);
+        let gotoButton = render.makeButton("Go to Node", uid, `meta64.clickSearchNode('${uid}');`);
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
@@ -228,9 +229,9 @@ export class Search {
         }
 
         /* now make CSS id from node */
-        var nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
+        let nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
 
-        var elm = util.domElm(nodeId);
+        let elm = util.domElm(nodeId);
         if (elm) {
             /* change class on element */
             util.changeOrAddClass(elm, "active-row", "inactive-row");

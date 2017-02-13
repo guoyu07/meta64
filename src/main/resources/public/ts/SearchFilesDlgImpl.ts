@@ -10,7 +10,7 @@ export default class SearchFilesDlgImpl extends DialogBaseImpl implements Search
   //   /*
   //    * Returns a string that is the HTML content of the dialog
   //    */
-  //   build = (): string => {
+  //   render = (): string => {
   //       var header = this.makeHeader("Search Files");
   //
   //       var instructions = this.makeMessageArea("Enter some text to find.");

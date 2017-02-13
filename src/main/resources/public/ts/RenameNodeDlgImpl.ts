@@ -15,41 +15,41 @@ export default class RenameNodeDlgImpl  extends DialogBaseImpl implements Rename
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Rename Node");
+    render = (): string => {
+        let header = this.makeHeader("Rename Node");
 
-        var curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
-        var curNodePathDisplay = "<h4 class='path-display' id='" + this.id("curNodePathDisplay") + "'></h4>";
+        let curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
+        let curNodePathDisplay = "<h4 class='path-display' id='" + this.id("curNodePathDisplay") + "'></h4>";
 
-        var formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
+        let formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
-        var renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", this.renameNode, this);
-        var backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
-        var buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
+        let renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", this.renameNode, this);
+        let backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
+        let buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
 
         return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
     }
 
     renameNode = (): void => {
-        var newName = this.getInputVal("newNodeNameEditField");
+        let newName = this.getInputVal("newNodeNameEditField");
 
         if (util.emptyString(newName)) {
             util.showMessage("Please enter a new node name.");
             return;
         }
 
-        var highlightNode = meta64.getHighlightedNode();
+        let highlightNode = meta64.getHighlightedNode();
         if (!highlightNode) {
             util.showMessage("Select a node to rename.");
             return;
         }
 
         /* if no node below this node, returns null */
-        var nodeBelow = edit.getNodeBelow(highlightNode);
+        let nodeBelow = edit.getNodeBelow(highlightNode);
 
-        var renamingRootNode = (highlightNode.id === meta64.currentNodeId);
+        let renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
-        var thiz = this;
+        let thiz = this;
         util.json<I.RenameNodeRequest, I.RenameNodeResponse>("renameNode", {
             "nodeId": highlightNode.id,
             "newName": newName
@@ -70,7 +70,7 @@ export default class RenameNodeDlgImpl  extends DialogBaseImpl implements Rename
     }
 
     init = (): void => {
-        var highlightNode = meta64.getHighlightedNode();
+        let highlightNode = meta64.getHighlightedNode();
         if (!highlightNode) {
             return;
         }

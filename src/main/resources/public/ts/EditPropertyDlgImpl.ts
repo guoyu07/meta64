@@ -22,7 +22,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         var header = this.makeHeader("Edit Node Property");
 
         var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty, this);

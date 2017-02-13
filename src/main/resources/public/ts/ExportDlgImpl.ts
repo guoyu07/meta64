@@ -19,7 +19,7 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         var header = this.makeHeader("Export to XML");
 
         var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");

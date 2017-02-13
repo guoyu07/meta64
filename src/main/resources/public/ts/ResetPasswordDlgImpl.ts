@@ -16,7 +16,7 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         var header = this.makeHeader("Reset Password");
 
         var message = this.makeMessageArea("Enter your user name and email address and a change-password link will be sent to you");

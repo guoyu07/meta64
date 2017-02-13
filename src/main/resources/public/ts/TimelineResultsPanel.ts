@@ -12,9 +12,9 @@ export class TimelineResultsPanel {
     constructor(args:Object) {
     }
 
-    build = () => {
-        var header = "<h2 id='timelinePageTitle' class='page-title'></h2>";
-        var mainContent = "<div id='timelineView'></div>";
+    render = () => {
+        let header = "<h2 id='timelinePageTitle' class='page-title'></h2>";
+        let mainContent = "<div id='timelineView'></div>";
         return header + mainContent;
     }
 

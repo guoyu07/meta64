@@ -164,7 +164,7 @@ class Meta64 {
 
     updateMainMenuPanel = function() {
         console.log("building main menu panel");
-        menuPanel.build();
+        menuPanel.render();
         meta64.refreshAllGuiEnablement();
     }
 
@@ -180,7 +180,7 @@ class Meta64 {
     }
 
     getObjectByGuid = function(guid) {
-        var ret = meta64.dataObjMap[guid];
+        let ret = meta64.dataObjMap[guid];
         if (!ret) {
             console.log("data object not found: guid=" + guid);
         }
@@ -244,7 +244,7 @@ class Meta64 {
     }
 
     runCallbackImmediate = function(guid, ctx, payload) {
-        var dataObj = meta64.getObjectByGuid(guid);
+        let dataObj = meta64.getObjectByGuid(guid);
 
         // if this is an object, we expect it to have a 'callback' property
         // that is a function
@@ -255,8 +255,8 @@ class Meta64 {
         // which is ok too
         else if (typeof dataObj == 'function') {
             if (ctx) {
-                var thiz = meta64.getObjectByGuid(ctx);
-                var payloadObj = payload ? meta64.getObjectByGuid(payload) : null;
+                let thiz = meta64.getObjectByGuid(ctx);
+                let payloadObj = payload ? meta64.getObjectByGuid(payload) : null;
                 dataObj.call(thiz, payloadObj);
             } else {
                 dataObj();
@@ -302,18 +302,18 @@ class Meta64 {
         ironPages.select(pageName);
 
         /* this code can be made more DRY, but i'm just trying it out for now, so i'm not bothering to perfect it yet. */
-        // $("#mainPageButton").css("border-left", "");
-        // $("#searchPageButton").css("border-left", "");
-        // $("#timelinePageButton").css("border-left", "");
+        // $ ("#mainPageButton").css("border-left", "");
+        // $ ("#searchPageButton").css("border-left", "");
+        // $ ("#timelinePageButton").css("border-left", "");
         //
         // if (pageName == 'mainTabName') {
-        //     $("#mainPageButton").css("border-left", "8px solid red");
+        //     $ ("#mainPageButton").css("border-left", "8px solid red");
         // }
         // else if (pageName == 'searchTabName') {
-        //     $("#searchPageButton").css("border-left", "8px solid red");
+        //     $ ("#searchPageButton").css("border-left", "8px solid red");
         // }
         // else if (pageName == 'timelineTabName') {
-        //     $("#timelinePageButton").css("border-left", "8px solid red");
+        //     $ ("#timelinePageButton").css("border-left", "8px solid red");
         // }
     }
 
@@ -333,7 +333,7 @@ class Meta64 {
         }
 
         /* this is the same as setting using mainIronPages?? */
-        var paperTabs = document.querySelector("#mainIronPages") as any; //"#mainPaperTabs");
+        let paperTabs = document.querySelector("#mainIronPages") as any; //"#mainPaperTabs");
         paperTabs.select(pg.tabId);
     }
 
@@ -391,7 +391,7 @@ class Meta64 {
     getSelectedNodesAsMapById = function(): Object {
         let ret: Object = {};
         let selArray: I.NodeInfo[] = this.getSelectedNodesArray();
-        for (var i = 0; i < selArray.length; i++) {
+        for (let i = 0; i < selArray.length; i++) {
             ret[selArray[i].id] = selArray[i];
         }
         return ret;
@@ -435,7 +435,7 @@ class Meta64 {
         if (ownerBuf.length > 0) {
             node.owner = ownerBuf;
             let elmId = "#ownerDisplay" + node.uid;
-            var elm = document.querySelector(elmId);
+            let elm = document.querySelector(elmId);
             if (elm) {
                 elm.innerHTML = " (Manager: " + ownerBuf + ")";
                 if (mine) {
@@ -477,7 +477,7 @@ class Meta64 {
     }
 
     highlightRowById = function(id, scroll): void {
-        var node: I.NodeInfo = meta64.getNodeFromId(id);
+        let node: I.NodeInfo = meta64.getNodeFromId(id);
         if (node) {
             meta64.highlightNode(node, scroll);
         } else {
@@ -602,23 +602,23 @@ class Meta64 {
         util.setEnablement("adminMenu", meta64.isAdminUser);
 
         //VISIBILITY
-        util.setVisibility("openImportDlg", importFeatureEnabled);
-        util.setVisibility("openExportDlg", exportFeatureEnabled);
-        util.setVisibility("editModeButton", allowEditMode);
-        util.setVisibility("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setVisibility("insertBookWarAndPeaceButton", meta64.isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
-        util.setVisibility("generateRSSButton", meta64.isAdminUser);
-        util.setVisibility("propsToggleButton", !meta64.isAnonUser);
-        util.setVisibility("openLoginDlgButton", meta64.isAnonUser);
-        util.setVisibility("navLogoutButton", !meta64.isAnonUser);
-        util.setVisibility("openSignupPgButton", meta64.isAnonUser);
-        util.setVisibility("searchMainAppButton", !meta64.isAnonUser && highlightNode != null);
-        util.setVisibility("timelineMainAppButton", !meta64.isAnonUser && highlightNode != null);
-        util.setVisibility("userPreferencesMainAppButton", !meta64.isAnonUser);
-        util.setVisibility("fileSearchDlgButton", !meta64.isAnonUser && meta64.allowFileSystemSearch);
+        util.setElmDisplayById("openImportDlg", importFeatureEnabled);
+        util.setElmDisplayById("openExportDlg", exportFeatureEnabled);
+        util.setElmDisplayById("editModeButton", allowEditMode);
+        util.setElmDisplayById("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
+        util.setElmDisplayById("insertBookWarAndPeaceButton", meta64.isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
+        util.setElmDisplayById("generateRSSButton", meta64.isAdminUser);
+        util.setElmDisplayById("propsToggleButton", !meta64.isAnonUser);
+        util.setElmDisplayById("openLoginDlgButton", meta64.isAnonUser);
+        util.setElmDisplayById("navLogoutButton", !meta64.isAnonUser);
+        util.setElmDisplayById("openSignupPgButton", meta64.isAnonUser);
+        util.setElmDisplayById("searchMainAppButton", !meta64.isAnonUser && highlightNode != null);
+        util.setElmDisplayById("timelineMainAppButton", !meta64.isAnonUser && highlightNode != null);
+        util.setElmDisplayById("userPreferencesMainAppButton", !meta64.isAnonUser);
+        util.setElmDisplayById("fileSearchDlgButton", !meta64.isAnonUser && meta64.allowFileSystemSearch);
 
         //Top Level Menu Visibility
-        util.setVisibility("adminMenu", meta64.isAdminUser);
+        util.setElmDisplayById("adminMenu", meta64.isAdminUser);
 
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
@@ -666,13 +666,13 @@ class Meta64 {
 
         if (res.renderNodeResponse) {
 
-            util.setVisibility("mainNodeContent", true);
+            util.setElmDisplayById("mainNodeContent", true);
 
             render.renderPageFromData(res.renderNodeResponse);
 
             meta64.refreshAllGuiEnablement();
         } else {
-            util.setVisibility("mainNodeContent", false);
+            util.setElmDisplayById("mainNodeContent", false);
 
             console.log("setting listview to: " + res.content);
             util.setHtml("listView", res.content);
@@ -813,7 +813,7 @@ class Meta64 {
 
         meta64.appInitialized = true;
 
-        var tabs = util.poly("mainIronPages");
+        let tabs = util.poly("mainIronPages");
         tabs.addEventListener("iron-select", function() {
             meta64.tabChangeEvent(tabs.selected);
         });
@@ -823,7 +823,7 @@ class Meta64 {
 
         /*
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
-         * $(window).on("orientationchange", _.orientationHandler);
+         * $ (window).on("orientationchange", _.orientationHandler);
          */
 
         $(window).bind("beforeunload", function() {
@@ -835,11 +835,11 @@ class Meta64 {
          * "id=\my\path" type of url to open a specific node. Need to rethink  Basically for now I'm thinking
          * going to a different url shouldn't blow up the session, which is what 'logout' does.
          *
-         * $(window).on("unload", function() { user.logout(false); });
+         * $ (window).on("unload", function() { user.logout(false); });
          */
 
-        meta64.deviceWidth = $(window).width();
-        meta64.deviceHeight = $(window).height();
+        meta64.deviceWidth = window.innerWidth;
+        meta64.deviceHeight = window.innerHeight;
 
         /*
          * This call checks the server to see if we have a session already, and gets back the login information from
@@ -856,9 +856,9 @@ class Meta64 {
          */
         /*
          * Polymer->disable
-         * setInterval(function() { var width = $(window).width();
+         * setInterval(function() { var width = $ (window).width();
          * if (width != _.deviceWidth) { // console.log("Screen width changed: " + width);
-         * _.deviceWidth = width; _.deviceHeight = $(window).height();
+         * _.deviceWidth = width; _.deviceHeight = $ (window).height();
          * _.screenSizeChange(); } }, 1500);
          */
         meta64.updateMainMenuPanel();

@@ -6,6 +6,7 @@ import {util} from "./Util";
 import {attachment} from "./Attachment";
 import {meta64} from "./Meta64";
 import * as I from "./Interfaces";
+import {tag} from "./Tag";
 
 export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements UploadFromUrlDlg {
 
@@ -16,35 +17,35 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Upload File Attachment");
+    render = (): string => {
+        let header = this.makeHeader("Upload File Attachment");
 
-        var uploadPathDisplay = "";
+        let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += render.tag("div", {//
+            uploadPathDisplay += tag.div( {//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
         }
 
-        var uploadFieldContainer = "";
-        var uploadFromUrlDiv = "";
+        let uploadFieldContainer = "";
+        let uploadFromUrlDiv = "";
 
-        var uploadFromUrlField = this.makeEditField("Upload From URL", "uploadFromUrl");
-        uploadFromUrlDiv = render.tag("div", {//
+        let uploadFromUrlField = this.makeEditField("Upload From URL", "uploadFromUrl");
+        uploadFromUrlDiv = tag.div( {//
         }, uploadFromUrlField);
 
-        var uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
-        var backButton = this.makeCloseButton("Close", "closeUploadButton");
+        let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
+        let backButton = this.makeCloseButton("Close", "closeUploadButton");
 
-        var buttonBar = render.centeredButtonBar(uploadButton + backButton);
+        let buttonBar = render.centeredButtonBar(uploadButton + backButton);
 
         return header + uploadPathDisplay + uploadFieldContainer + uploadFromUrlDiv + buttonBar;
     }
 
     uploadFileNow = (): void => {
-        var sourceUrl = this.getInputVal("uploadFromUrl");
+        let sourceUrl = this.getInputVal("uploadFromUrl");
 
         /* if uploading from URL */
         if (sourceUrl) {
@@ -65,6 +66,6 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
         util.setInputVal(this.id("uploadFromUrl"), "");
 
         /* display the node path at the top of the edit page */
-        $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
+        this.setInnerHTML("uploadPathDisplay", "Path: " + render.formatPath(attachment.uploadNode));
     }
 }

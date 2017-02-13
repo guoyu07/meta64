@@ -14,9 +14,9 @@ class BindClick {
     }
 
     private interval = (): void => {
-        for (var id in this.idToOnClickMap) {
+        for (let id in this.idToOnClickMap) {
             if (this.idToOnClickMap.hasOwnProperty(id)) {
-                var e = document.getElementById(id);
+                let e = document.getElementById(id);
                 if (e) {
                     (<any>e).onclick = this.idToOnClickMap[id];
 

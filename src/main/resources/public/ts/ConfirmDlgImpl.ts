@@ -24,11 +24,11 @@ export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
+    render = (): string => {
+        let content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
         content = render.centerContent(content, 300);
 
-        var buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
+        let buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
             + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback);
         content += render.centeredButtonBar(buttons);
 

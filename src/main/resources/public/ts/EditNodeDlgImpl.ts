@@ -13,6 +13,7 @@ import { view } from "./View";
 import { props } from "./Props";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";
+import {tag} from "./Tag";
 
 declare var ace;
 
@@ -42,36 +43,36 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Edit Node");
+    render = (): string => {
+        let header = this.makeHeader("Edit Node");
 
-        var saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode);
-        var addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty);
-        var addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
+        let saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode);
+        let addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty);
+        let addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
             this.addTagsProperty);
-        var splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent);
-        var deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick);
-        var cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit);
+        let splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent);
+        let deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick);
+        let cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit);
 
-        var buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
+        let buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
             + splitContentButton + cancelEditButton, "buttons");
 
         /* todo: need something better for this when supporting mobile */
-        var width = 800; //window.innerWidth * 0.6;
-        var height = 600; //window.innerHeight * 0.4;
+        let width = 800; //window.innerWidth * 0.6;
+        let height = 600; //window.innerHeight * 0.4;
 
-        var internalMainContent = "";
+        let internalMainContent = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            internalMainContent += render.tag("div", {
+            internalMainContent += tag.div( {
                 id: this.id("editNodePathDisplay"),
                 "class": "path-display-in-editor"
             });
         }
 
-        internalMainContent += render.tag("div", {
+        internalMainContent += tag.div( {
             id: this.id("editNodeInstructions")
-        }) + render.tag("div", {
+        }) + tag.div( {
             id: this.id("propertyEditFieldContainer"),
             // todo-1: create CSS class for this.
             style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
@@ -90,8 +91,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         /* display the node path at the top of the edit page */
         view.initEditPathDisplayById(this.id("editNodePathDisplay"));
 
-        var fields = "";
-        var counter = 0;
+        let fields = "";
+        let counter = 0;
+        let aceFields = [];
 
         /* clear this map to get rid of old properties */
         this.fieldIdToPropMap = {};
@@ -102,9 +104,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             console.log("Editing existing node.");
 
             /* iterator function will have the wrong 'this' so we save the right one */
-            var thiz = this;
-            var editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
-            var aceFields = [];
+            let thiz = this;
+            let editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
+
 
             // Iterate PropertyInfo.java objects
             /*
@@ -120,18 +122,18 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     return;
                 }
 
-                var fieldId = thiz.id("editNodeTextContent" + index);
+                let fieldId = thiz.id("editNodeTextContent" + index);
                 console.log("Creating edit field " + fieldId + " for property " + prop.name);
 
-                var isMulti = prop.values && prop.values.length > 0;
-                var isReadOnlyProp = render.isReadOnlyProperty(prop.name);
-                var isBinaryProp = render.isBinaryProperty(prop.name);
+                let isMulti = prop.values && prop.values.length > 0;
+                let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
+                let isBinaryProp = render.isBinaryProperty(prop.name);
 
                 let propEntry: I.PropEntry = new I.PropEntry(fieldId, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
 
                 thiz.fieldIdToPropMap[fieldId] = propEntry;
                 thiz.propEntries.push(propEntry);
-                var field = "";
+                let field = "";
 
                 if (isMulti) {
                     field += thiz.makeMultiPropEditor(propEntry);
@@ -139,7 +141,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     field += thiz.makeSinglePropEditor(propEntry, aceFields);
                 }
 
-                fields += render.tag("div", {
+                fields += tag.div( {
                     "class": ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties ? "propertyEditListItem"
                         : "propertyEditListItemHidden")
                     // "style" : "display: "+ (!rdOnly || meta64.showReadOnlyProperties ? "inline" : "none")
@@ -152,25 +154,25 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             console.log("Editing new node.");
 
             if (cnst.USE_ACE_EDITOR) {
-                var aceFieldId = this.id("newNodeNameId");
+                let aceFieldId = this.id("newNodeNameId");
 
-                fields += render.tag("div", {
+                fields += tag.div( {
                     "id": aceFieldId,
                     "class": "ace-edit-panel",
                     "html": "true"
-                }, '', true);
+                }, '');
 
                 aceFields.push({
                     id: aceFieldId,
                     val: ""
                 });
             } else {
-                var field = render.tag("paper-textarea", {
+                let field = render.tag("paper-textarea", {
                     "id": this.id("newNodeNameId"),
                     "label": "New Node Name"
                 }, '', true);
 
-                fields += render.tag("div", { "display": "table-row" }, field);
+                fields += tag.div( { "display": "table-row" }, field);
             }
         }
 
@@ -183,9 +185,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         //     (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
         //
         // fields += toggleReadonlyVisButton;
-        //let row = render.tag("div", { "display": "table-row" }, left + center + right);
+        //let row = tag.div( { "display": "table-row" }, left + center + right);
 
-        let propTable: string = render.tag("div",
+        let propTable: string = tag.div(
             {
                 "display": "table",
             }, fields);
@@ -194,14 +196,14 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         util.setHtml(this.id("propertyEditFieldContainer"), propTable);
 
         if (cnst.USE_ACE_EDITOR) {
-            for (var i = 0; i < aceFields.length; i++) {
-                var editor = ace.edit(aceFields[i].id);
+            for (let i = 0; i < aceFields.length; i++) {
+                let editor = ace.edit(aceFields[i].id);
                 editor.setValue(util.unencodeHtml(aceFields[i].val));
                 meta64.aceEditorsById[aceFields[i].id] = editor;
             }
         }
 
-        var instr = edit.editingUnsavedNode ? //
+        let instr = edit.editingUnsavedNode ? //
             "You may leave this field blank and a unique ID will be assigned. You only need to provide a name if you want this node to have a more meaningful URL."
             : //
             "";
@@ -213,11 +215,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
          * managing new properties on the client side. We need a genuine node already saved on the server before we allow
          * any property editing to happen.
          */
-        util.setVisibility("#" + this.id("addPropertyButton"), !edit.editingUnsavedNode);
+        this.setElmDisplayById("addPropertyButton", !edit.editingUnsavedNode);
 
-        var tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
+        let tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
         // console.log("hasTagsProp: " + tagsProp);
-        util.setVisibility("#" + this.id("addTagsPropertyButton"), !tagsPropExists);
+        this.setElmDisplayById("addTagsPropertyButton", !tagsPropExists);
     }
 
     toggleShowReadOnly = (): void => {
@@ -240,7 +242,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             return;
         }
 
-        var postData = {
+        let postData = {
             nodeId: edit.editNode.id,
             propertyName: "tags",
             propertyValue: ""
@@ -267,9 +269,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     addSubProperty = (fieldId: string): void => {
-        var prop = this.fieldIdToPropMap[fieldId].property;
+        let prop = this.fieldIdToPropMap[fieldId].property;
 
-        var isMulti = util.isObject(prop.values);
+        let isMulti = util.isObject(prop.values);
 
         /* convert to multi-type if we need to */
         if (!isMulti) {
@@ -293,7 +295,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
      * Deletes the property of the specified name on the node being edited, but first gets confirmation from user
      */
     deleteProperty = (propName: string) => {
-      var thiz = this;
+      let thiz = this;
       Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
           dlg.open();
       }, {
@@ -307,7 +309,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
     deletePropertyImmediate = (propName: string) => {
 
-        var thiz = this;
+        let thiz = this;
         util.json<I.DeletePropertyRequest, I.DeletePropertyResponse>("deleteProperty", {
             "nodeId": edit.editNode.id,
             "propName": propName
@@ -337,21 +339,21 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         if (!cnst.USE_ACE_EDITOR) {
             util.setInputVal(this.id(fieldId), "");
         } else {
-            var editor = meta64.aceEditorsById[this.id(fieldId)];
+            let editor = meta64.aceEditorsById[this.id(fieldId)];
             if (editor) {
                 editor.setValue("");
             }
         }
 
         /* scan for all multi-value property fields and clear them */
-        var counter = 0;
+        let counter = 0;
         while (counter < 1000) {
             if (!cnst.USE_ACE_EDITOR) {
                 if (!util.setInputVal(this.id(fieldId + "_subProp" + counter), "")) {
                     break;
                 }
             } else {
-                var editor = meta64.aceEditorsById[this.id(fieldId + "_subProp" + counter)];
+                let editor = meta64.aceEditorsById[this.id(fieldId + "_subProp" + counter)];
                 if (editor) {
                     editor.setValue("");
                 } else {
@@ -422,8 +424,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         console.log("saveExistingNode");
 
         /* holds list of properties to send to server. Each one having name+value properties */
-        var propertiesList = [];
-        var thiz = this;
+        let propertiesList = [];
+        let thiz = this;
 
         this.propEntries.forEach(function(prop: any, index: number) {
 
@@ -436,10 +438,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             if (!prop.multi) {
                 console.log("Saving non-multi property field: " + JSON.stringify(prop));
 
-                var propVal;
+                let propVal;
 
                 if (cnst.USE_ACE_EDITOR) {
-                    var editor = meta64.aceEditorsById[prop.id];
+                    let editor = meta64.aceEditorsById[prop.id];
                     if (!editor)
                         throw "Unable to find Ace Editor for ID: " + prop.id;
                     propVal = editor.getValue();
@@ -461,15 +463,15 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             else {
                 console.log("Saving multi property field: " + JSON.stringify(prop));
 
-                var propVals = [];
+                let propVals = [];
 
                 prop.subProps.forEach(function(subProp, index) {
 
                     console.log("subProp[" + index + "]: " + JSON.stringify(subProp));
 
-                    var propVal;
+                    let propVal;
                     if (cnst.USE_ACE_EDITOR) {
-                        var editor = meta64.aceEditorsById[subProp.id];
+                        let editor = meta64.aceEditorsById[subProp.id];
                         if (!editor)
                             throw "Unable to find Ace Editor for subProp ID: " + subProp.id;
                         propVal = editor.getValue();
@@ -492,7 +494,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         /* if anything changed, save to server */
         if (propertiesList.length > 0) {
-            var postData = {
+            let postData = {
                 nodeId: edit.editNode.id,
                 properties: propertiesList,
                 sendNotification: edit.sendNotificationPendingSave
@@ -510,24 +512,24 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     makeMultiPropEditor = (propEntry: I.PropEntry): string => {
         console.log("Making Multi Editor: Property multi-type: name=" + propEntry.property.name + " count="
             + propEntry.property.values.length);
-        var fields = "";
+        let fields = "";
 
         propEntry.subProps = [];
 
-        var propList = propEntry.property.values;
+        let propList = propEntry.property.values;
         if (!propList || propList.length == 0) {
             propList = [];
             propList.push("");
         }
 
-        for (var i = 0; i < propList.length; i++) {
+        for (let i = 0; i < propList.length; i++) {
             console.log("prop multi-val[" + i + "]=" + propList[i]);
-            var id = this.id(propEntry.id + "_subProp" + i);
+            let id = this.id(propEntry.id + "_subProp" + i);
 
-            var propVal = propEntry.binary ? "[binary]" : propList[i];
-            var propValStr = propVal || '';
+            let propVal = propEntry.binary ? "[binary]" : propList[i];
+            let propValStr = propVal || '';
             propValStr = util.escapeForAttrib(propVal);
-            var label = (i == 0 ? propEntry.property.name : "*") + "." + i;
+            let label = (i == 0 ? propEntry.property.name : "*") + "." + i;
 
             console.log("Creating textarea with id=" + id);
 
@@ -551,7 +553,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             }
         }
 
-        let col = render.tag("div", {
+        let col = tag.div( {
             "style": "display: table-cell;"
         }, fields);
 
@@ -561,11 +563,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     makeSinglePropEditor = (propEntry: I.PropEntry, aceFields: any): string => {
         console.log("Property single-type: " + propEntry.property.name);
 
-        var field = "";
+        let field = "";
 
-        var propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
-        var label = render.sanitizePropertyName(propEntry.property.name);
-        var propValStr = propVal ? propVal : '';
+        let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
+        let label = render.sanitizePropertyName(propEntry.property.name);
+        let propValStr = propVal ? propVal : '';
         propValStr = util.escapeForAttrib(propValStr);
         console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
             + "] fieldId=" + propEntry.id);
@@ -593,11 +595,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     "value": propValStr
                 }, '', true);
             } else {
-                field += render.tag("div", {
+                field += tag.div( {
                     "id": propEntry.id,
                     "class": "ace-edit-panel",
                     "html": "true"
-                }, '', true);
+                }, '');
 
                 aceFields.push({
                     id: propEntry.id,
@@ -606,11 +608,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             }
         }
 
-        let selCol = render.tag("div", {
+        let selCol = tag.div( {
             "style": "width: 40px; display: table-cell; padding: 10px;"
         }, propSelCheckbox);
 
-        let editCol = render.tag("div", {
+        let editCol = tag.div( {
             "style": "width: 100%; display: table-cell; padding: 10px;"
         }, field);
 

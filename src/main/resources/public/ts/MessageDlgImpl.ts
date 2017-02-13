@@ -27,8 +27,8 @@ export default class MessageDlgImpl extends DialogBaseImpl implements MessageDlg
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var content = this.makeHeader(this.title) + "<p>" + this.message + "</p>";
+    render = (): string => {
+        let content = this.makeHeader(this.title) + "<p>" + this.message + "</p>";
         content += render.centeredButtonBar(this.makeCloseButton("Ok", "messageDlgOkButton", this.callback));
         return content;
     }

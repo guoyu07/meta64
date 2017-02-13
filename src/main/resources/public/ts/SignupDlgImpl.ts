@@ -3,6 +3,7 @@ import { SignupDlg } from "./SignupDlg";
 import { render } from "./Render";
 import { util } from "./Util";
 import * as I from "./Interfaces";
+import {tag} from "./Tag";
 
 declare var BRANDING_TITLE;
 declare var postTargetUrl;
@@ -16,16 +17,16 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader(BRANDING_TITLE + " Signup");
+    render = (): string => {
+        let header = this.makeHeader(BRANDING_TITLE + " Signup");
 
-        var formControls = //
+        let formControls = //
             this.makeEditField("User", "signupUserName") + //
             this.makePasswordField("Password", "signupPassword") + //
             this.makeEditField("Email", "signupEmail") + //
             this.makeEditField("Captcha", "signupCaptcha");
 
-        var captchaImage = render.tag("div", //
+        let captchaImage = tag.div( //
             {
                 "class": "captcha-image" //
             }, //
@@ -37,12 +38,12 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
                 }, //
                 "", false));
 
-        var signupButton = this.makeButton("Signup", "signupButton", this.signup);
-        var newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",
+        let signupButton = this.makeButton("Signup", "signupButton", this.signup);
+        let newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",
             this.tryAnotherCaptcha);
-        var backButton = this.makeCloseButton("Close", "cancelSignupButton");
+        let backButton = this.makeCloseButton("Close", "cancelSignupButton");
 
-        var buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
+        let buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
 
         return header + formControls + captchaImage + buttonBar;
 
@@ -53,10 +54,10 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
     }
 
     signup = (): void => {
-        var userName = this.getInputVal("signupUserName");
-        var password = this.getInputVal("signupPassword");
-        var email = this.getInputVal("signupEmail");
-        var captcha = this.getInputVal("signupCaptcha");
+        let userName = this.getInputVal("signupUserName");
+        let password = this.getInputVal("signupPassword");
+        let email = this.getInputVal("signupEmail");
+        let captcha = this.getInputVal("signupCaptcha");
 
         /* no real validation yet, other than non-empty */
         if (!userName || userName.length == 0 || //

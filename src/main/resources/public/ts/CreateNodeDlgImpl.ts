@@ -7,6 +7,7 @@ import {meta64} from "./Meta64";
 import {util} from "./Util";
 import {edit} from "./Edit";
 import * as I from "./Interfaces";
+import {tag} from "./Tag";
 
 export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateNodeDlg {
 
@@ -20,7 +21,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         let header = this.makeHeader("Create New Node");
 
         let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, this, true, 1000);
@@ -36,13 +37,13 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         content += this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++, false);
         content += this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++, false);
 
-        var listBox = render.tag("div", {
+        let listBox = tag.div( {
             "class": "listBox"
         }, content);
 
-        var mainContent: string = listBox;
+        let mainContent: string = listBox;
 
-        var centeredHeader: string = render.tag("div", {
+        let centeredHeader: string = tag.div( {
             "class": "centeredTitle"
         }, header);
 
@@ -62,7 +63,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
             this.lastSelDomId = divId;
         }
 
-        return render.tag("div", {
+        return tag.div( {
             "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
             "id": divId,
             "onclick": meta64.encodeOnClick(this.onRowClick, this, payload)
@@ -108,12 +109,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (node) {
             let canInsertInline: boolean = meta64.homeNodeId != node.id;
-            if (canInsertInline) {
-                this.el("createInlineButton").show();
-            }
-            else {
-                this.el("createInlineButton").hide();
-            }
+            this.setElmDisplayById("createInlineButton", canInsertInline);
         }
     }
 }

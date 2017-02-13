@@ -5,6 +5,7 @@ import {meta64} from "./Meta64";
 import {AudioPlayerDlg} from "./AudioPlayerDlg";
 import {Factory} from "./Factory";
 import * as I from "./Interfaces";
+import {tag} from "./Tag";
 
 /*
 NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
@@ -47,11 +48,11 @@ class Podcast {
         }
 
         if (rowStyling) {
-            ret += render.tag("div", {
+            ret += tag.div( {
                 "class": "jcr-content"
             }, feed);
         } else {
-            ret += render.tag("div", {
+            ret += tag.div( {
                 "class": "jcr-root-content"
             },
                 feed);
@@ -122,16 +123,16 @@ class Podcast {
         }
 
         if (rssAuthor && rssAuthor.value) {
-            entry += render.tag("div", {
+            entry += tag.div( {
             }, "By: " + rssAuthor.value);
         }
 
         if (rowStyling) {
-            ret += render.tag("div", {
+            ret += tag.div( {
                 "class": "jcr-content"
             }, entry);
         } else {
-            ret += render.tag("div", {
+            ret += tag.div( {
                 "class": "jcr-root-content"
             },
                 entry);

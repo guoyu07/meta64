@@ -4,6 +4,7 @@ import { meta64 } from "./Meta64"
 import { util } from "./Util";
 import { render } from "./Render";
 import { DialogBase } from "./DialogBase";
+import { tag } from "./Tag";
 
 declare var Polymer;
 
@@ -18,7 +19,7 @@ declare var Polymer;
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-export class DialogBaseImpl implements DialogBase {
+export abstract class DialogBaseImpl implements DialogBase {
 
     private horizCenterDlgContent: boolean = true;
 
@@ -46,7 +47,7 @@ export class DialogBaseImpl implements DialogBase {
     closeEvent = (): void => {
     }
 
-    build = (): string => {
+    render = (): string => {
         return ""
     };
 
@@ -84,31 +85,31 @@ export class DialogBaseImpl implements DialogBase {
         if (this.horizCenterDlgContent) {
 
             let content: string =
-                render.tag("div", {
+                tag.div({
                     //howto: example of how to center a div in another div. This div is the one being centered.
                     //The trick to getting the layout working was NOT setting this width to 100% even though somehow
                     //the layout does result in it being 100% i think.
                     "style": "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
                 },
-                    this.build());
+                    this.render());
             util.setHtml(id, content);
 
-            // let left = render.tag("div", {
+            // let left = tag.div( {
             //     "display": "table-column",
             //     "style": "border: 1px solid black;"
             // }, "left");
-            // let center = render.tag("div", {
+            // let center = tag.div( {
             //     "display": "table-column",
             //     "style": "border: 1px solid black;"
             // }, this.build());
-            // let right = render.tag("div", {
+            // let right = tag.div( {
             //     "display": "table-column",
             //     "style": "border: 1px solid black;"
             // }, "right");
             //
-            // let row = render.tag("div", { "display": "table-row" }, left + center + right);
+            // let row = tag.div( { "display": "table-row" }, left + center + right);
             //
-            // let table: string = render.tag("div",
+            // let table: string = tag.div(
             //     {
             //         "display": "table",
             //     }, row);
@@ -118,8 +119,8 @@ export class DialogBaseImpl implements DialogBase {
         else {
             /* todo-1: lookup paper-dialog-scrollable, for examples on how we can implement header and footer to build
             a much better dialog. */
-            let content = this.build();
-            // render.tag("div", {
+            let content = this.render();
+            // tag.div( {
             //     "class" : "main-dialog-content"
             // },
             // this.build());
@@ -157,9 +158,9 @@ export class DialogBaseImpl implements DialogBase {
         //polyElm.node.center();
         polyElm.node.open();
 
-        //var dialog = document.getElementById('loginDialog');
+        //let dialog = document.getElementById('loginDialog');
         node.addEventListener('iron-overlay-closed', function(customEvent) {
-            //var id = (<any>customEvent.currentTarget).id;
+            //let id = (<any>customEvent.currentTarget).id;
             //console.log("****************** Dialog: " + id + " is closed!");
             thiz.closeEvent();
         });
@@ -187,7 +188,7 @@ export class DialogBaseImpl implements DialogBase {
 
     /* todo: need to cleanup the registered IDs that are in maps for this dialog */
     public cancel() {
-        var polyElm = util.polyElm(this.id(this.domId));
+        let polyElm = util.polyElm(this.id(this.domId));
         polyElm.node.cancel();
     }
 
@@ -212,6 +213,13 @@ export class DialogBaseImpl implements DialogBase {
         }
         else {
             return $(this.id(id));
+        }
+    }
+
+    setElmDisplayById = (id: string, showing: boolean): void => {
+        let elm = this.elById(id);
+        if (elm) {
+            util.setElmDisplay(elm, showing);
         }
     }
 
@@ -253,7 +261,7 @@ export class DialogBaseImpl implements DialogBase {
     }
 
     makeMessageArea = (message: string, id?: string): string => {
-        var attrs = {
+        let attrs = {
             "class": "dialog-message"
         };
         if (id) {
@@ -347,7 +355,7 @@ export class DialogBaseImpl implements DialogBase {
     makeCheckBox = (label: string, id: string, initialState: boolean): string => {
         id = this.id(id);
 
-        var attrs = {
+        let attrs = {
             //"onClick": "meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
             "name": id,
             "id": id
@@ -377,7 +385,7 @@ export class DialogBaseImpl implements DialogBase {
     }
 
     makeHeader = (text: string, id?: string, centered?: boolean): string => {
-        var attrs = {
+        let attrs = {
             "class": /*"dialog-header " +*/ (centered ? "horizontal center-justified layout" : "") + " dialog-header"
         };
 
@@ -387,7 +395,7 @@ export class DialogBaseImpl implements DialogBase {
         }
 
         /* making this H2 tag causes google to drag in a bunch of its own styles and are hard to override */
-        return render.tag("div", attrs, text);
+        return tag.div(attrs, text);
     }
 
     focus = (id: string): void => {

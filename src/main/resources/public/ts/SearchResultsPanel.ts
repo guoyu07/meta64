@@ -10,7 +10,7 @@ export class SearchResultsPanel {
     constructor(args:Object) {
     }
 
-    build = () => {
+    render = () => {
         var header = "<h2 id='searchPageTitle' class='page-title'></h2>";
         var mainContent = "<div id='searchResultsView'></div>";
         return header + mainContent;

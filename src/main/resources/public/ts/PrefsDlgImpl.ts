@@ -15,34 +15,34 @@ export default class PrefsDlgImpl  extends DialogBaseImpl implements PrefsDlg {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Peferences");
+    render = (): string => {
+        let header = this.makeHeader("Peferences");
 
-        var radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
+        let radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
             this.makeRadioButton("Advanced", "editModeAdvanced");
 
-        var radioButtonGroup = render.tag("paper-radio-group", {
+        let radioButtonGroup = render.tag("paper-radio-group", {
             "id": this.id("simpleModeRadioGroup"),
             "selected": this.id("editModeSimple")
         }, radioButtons);
 
         let showMetaDataCheckBox = this.makeCheckBox("Show Row Metadata", "showMetaData", meta64.showMetaData);
-        var checkboxBar = render.makeHorzControlGroup(showMetaDataCheckBox);
+        let checkboxBar = render.makeHorzControlGroup(showMetaDataCheckBox);
 
-        var formControls = radioButtonGroup;
+        let formControls = radioButtonGroup;
 
-        var legend = "<legend>Edit Mode:</legend>";
-        var radioBar = render.makeHorzControlGroup(legend + formControls);
+        let legend = "<legend>Edit Mode:</legend>";
+        let radioBar = render.makeHorzControlGroup(legend + formControls);
 
-        var saveButton = this.makeCloseButton("Save", "savePreferencesButton", this.savePreferences, this);
-        var backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
+        let saveButton = this.makeCloseButton("Save", "savePreferencesButton", this.savePreferences, this);
+        let backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
 
-        var buttonBar = render.centeredButtonBar(saveButton + backButton);
+        let buttonBar = render.centeredButtonBar(saveButton + backButton);
         return header + radioBar + checkboxBar + buttonBar;
     }
 
     savePreferences = (): void => {
-        var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
+        let polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
         meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
 
@@ -73,7 +73,7 @@ export default class PrefsDlgImpl  extends DialogBaseImpl implements PrefsDlg {
     }
 
     init = (): void => {
-        var polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
+        let polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
         polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
             .id("editModeAdvanced"));
 

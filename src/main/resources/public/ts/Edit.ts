@@ -461,7 +461,7 @@ class Edit {
      * passed then use the node selections for multiple selections on the page.
      */
     deleteSelNodes = function(): void {
-        var selNodesArray = meta64.getSelectedNodeIdsArray();
+        let selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             util.showMessage("You have not selected any nodes. Select nodes to delete first.");
             return;
@@ -490,7 +490,7 @@ class Edit {
 
         /* now we scan the children, and the last child we encounterd up until we find the rist onen in nodesMap will be the
         node we will want to select and scroll the user to AFTER the deleting is done */
-        for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
+        for (let i = 0; i < meta64.currentNodeData.children.length; i++) {
             let node: I.NodeInfo = meta64.currentNodeData.children[i];
 
             if (takeNextNode) {
@@ -510,7 +510,7 @@ class Edit {
 
     cutSelNodes = function(): void {
 
-        var selNodesArray = meta64.getSelectedNodeIdsArray();
+        let selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             util.showMessage("You have not selected any nodes. Select nodes first.");
             return;
@@ -546,7 +546,7 @@ class Edit {
         }, {
                 "title": "Confirm Paste", "message": "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback":
                 function() {
-                    var highlightNode = meta64.getHighlightedNode();
+                    let highlightNode = meta64.getHighlightedNode();
                     /*
                      * For now, we will just cram the nodes onto the end of the children of the currently selected
                      * page. Later on we can get more specific about allowing precise destination location for moved

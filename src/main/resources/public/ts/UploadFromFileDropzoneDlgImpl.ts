@@ -6,6 +6,7 @@ import { cnst } from "./Constants";
 import { render } from "./Render";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
+import {tag} from "./Tag";
 
 declare var postTargetUrl;
 
@@ -19,13 +20,13 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     zipQuestionAnswered: boolean = false;
     explodeZips: boolean = false;
 
-    build = (): string => {
+    render = (): string => {
         let header = this.makeHeader("Upload File Attachment");
 
         let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += render.tag("div", {//
+            uploadPathDisplay += tag.div( {//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
@@ -35,7 +36,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
         console.log("Upload Action URL: " + postTargetUrl + "upload");
 
-        let hiddenInputContainer = render.tag("div", {
+        let hiddenInputContainer = tag.div( {
             "id": this.id("hiddenInputContainer"),
             "style": "display: none;"
         }, "");
@@ -160,16 +161,16 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     runButtonEnablement = (dropzoneEvt: any): void => {
         if (dropzoneEvt.getAddedFiles().length > 0 ||
             dropzoneEvt.getQueuedFiles().length > 0) {
-            $("#" + this.id("uploadButton")).show();
+            this.setElmDisplayById("uploadButton", true);
         }
         else {
-            $("#" + this.id("uploadButton")).hide();
+            this.setElmDisplayById("uploadButton", false);
         }
     }
 
     init = (): void => {
         /* display the node path at the top of the edit page */
-        $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
+        this.setInnerHTML("uploadPathDisplay", "Path: " + render.formatPath(attachment.uploadNode));
 
         this.configureDropZone();
     }

@@ -10,6 +10,7 @@ import { props } from "./Props";
 import * as I from "./Interfaces"
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
+import { tag } from "./Tag";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -36,11 +37,11 @@ export class Render {
          * If not an image we render a link to the attachment, so that it can be downloaded.
          */
         else {
-            let anchor: string = render.tag("a", {
+            let anchor: string = tag.a({
                 "href": render.getUrlForNodeAttachment(node)
             }, "[Download Attachment]");
 
-            return render.tag("div", {
+            return tag.div({
                 "class": "binary-link"
             }, anchor);
         }
@@ -57,7 +58,7 @@ export class Render {
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
-            pg.build(data);
+            pg.render(data);
             pg.built = true;
         }
 
@@ -106,7 +107,7 @@ export class Render {
             headerText += `Name: ${node.name} [uid=${node.uid}]`;
         }
 
-        headerText = render.tag("div", {
+        headerText = tag.div({
             "class": "header-text"
         }, headerText);
 
@@ -144,8 +145,8 @@ export class Render {
          * todo-1: need to provide some way of having these language types configurable in a properties file
          * somewhere, and fill out a lot more file types.
          */
-        var langs = ["js", "html", "htm", "css"];
-        for (var i = 0; i < langs.length; i++) {
+        let langs = ["js", "html", "htm", "css"];
+        for (let i = 0; i < langs.length; i++) {
             content = util.replaceAll(content, "<code class=\"" + langs[i] + "\">", //
                 "<?prettify lang=" + langs[i] + "?><pre class='prettyprint'>");
         }
@@ -228,11 +229,11 @@ export class Render {
                     //jcrContent = injectSubstitutions(jcrContent);
 
                     if (rowStyling) {
-                        ret += render.tag("div", {
+                        ret += tag.div({
                             "class": "jcr-content"
                         }, markedContent);
                     } else {
-                        ret += render.tag("div", {
+                        ret += tag.div({
                             "class": "jcr-root-content"
                         }, markedContent);
                     }
@@ -268,7 +269,7 @@ export class Render {
 
         let tags: string = props.getNodePropertyVal(jcrCnst.TAGS, node);
         if (tags) {
-            ret += render.tag("div", {
+            ret += tag.div({
                 "class": "tags-content"
             }, "Tags: " + tags);
         }
@@ -283,7 +284,7 @@ export class Render {
             let list: any[] = JSON.parse(jsonContent);
 
             for (let entry of list) {
-                content += render.tag("div", {
+                content += tag.div({
                     "class": "systemFile",
                     "onclick": `meta64.editSystemFile('${entry.fileName}')`
                 }, entry.fileName);
@@ -354,14 +355,14 @@ export class Render {
         let buttonBarHtmlRet: string = render.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
         let bkgStyle: string = render.getNodeBkgImageStyle(node);
 
-        let cssId: string = "row_"+ uid /*+ "_row"*/;
-        return render.tag("div", {
+        let cssId: string = "row_" + uid /*+ "_row"*/;
+        return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
             "onClick": `meta64.clickOnNodeRow(this, '${uid}');`, //
             "id": cssId,
             "style": bkgStyle
         },//
-            buttonBarHtmlRet + render.tag("div", {
+            buttonBarHtmlRet + tag.div({
                 "id": uid + "_content"
             }, render.renderNodeContent(node, true, true, true, true, true)));
     }
@@ -411,25 +412,25 @@ export class Render {
     centeredButtonBar = function(buttons?: string, classes?: string): string {
         classes = classes || "";
 
-        return render.tag("div", {
+        return tag.div({
             "class": "horizontal center-justified layout vertical-layout-row " + classes
         }, buttons);
     }
 
     centerContent = function(content: string, width: number): string {
-        let div: string = render.tag("div", { "style": `width:${width}px;` }, content);
+        let div: string = tag.div({ "style": `width:${width}px;` }, content);
 
         let attrs = {
             "class": "horizontal center-justified layout vertical-layout-row"
         };
 
-        return render.tag("div", attrs, div, true);
+        return tag.div(attrs, div);
     }
 
     buttonBar = function(buttons: string, classes: string): string {
         classes = classes || "";
 
-        return render.tag("div", {
+        return tag.div({
             "class": "horizontal left-justified layout vertical-layout-row " + classes
         }, buttons);
     }
@@ -596,16 +597,16 @@ export class Render {
     makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
 
         /* Now build entire control bar */
-        return render.tag("div", //
+        return tag.div( //
             {
                 "class": "horizontal layout" + (extraClasses ? (" " + extraClasses) : "")
-            }, content, true);
+            }, content);
     }
 
     makeHorzControlGroup = function(content: string): string {
-        return render.tag("div", {
+        return tag.div({
             "class": "horizontal layout"
-        }, content, true);
+        }, content);
     }
 
     makeRadioButton = function(label: string, id: string): string {
@@ -666,11 +667,11 @@ export class Render {
         nav.endReached = data && data.endReached;
 
         if (!data || !data.node) {
-            util.setVisibility("#listView", false);
+            util.setElmDisplayById("listView", false);
             util.setInnerHTMLById("mainNodeContent", "No content is available here.");
             return;
         } else {
-            util.setVisibility("#listView", true);
+            util.setElmDisplayById("listView", true);
         }
 
         meta64.treeDirty = false;
@@ -767,24 +768,17 @@ export class Render {
                 buttonBar = render.makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
             }
 
-            let content: string = render.tag("div", {
+            let content: string = tag.div({
                 "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
                 "onClick": `meta64.clickOnNodeRow(this, '${uid}');`,
                 "id": cssId
             },//
                 buttonBar + mainNodeContent);
 
-            $("#mainNodeContent").show();
+            util.setElmDisplayById("mainNodeContent", true);
             util.setInnerHTMLById("mainNodeContent", content);
-
-            /* force all links to open a new window/tab */
-            //not w-pack
-            //$("a").attr("target", "_blank"); <---- this doesn't work.
-            // $('#mainNodeContent').find("a").each(function() {
-            //     $(this).attr("target", "_blank");
-            // });
         } else {
-            $("#mainNodeContent").hide();
+            util.setElmDisplayById("mainNodeContent", false);
         }
 
         // console.log("update status bar.");
@@ -804,7 +798,7 @@ export class Render {
              * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
              * the client side for various reasons.
              */
-            for (var i = 0; i < data.children.length; i++) {
+            for (let i = 0; i < data.children.length; i++) {
                 let node: I.NodeInfo = data.children[i];
                 if (!edit.nodesToMoveSet[node.id]) {
                     let row: string = render.generateRow(i, node, newData, childCount, rowCount);
@@ -834,7 +828,9 @@ export class Render {
             prettyPrint();
         }
 
-        $("a").attr("target", "_blank");
+        util.forEachElmBySel("a", function(el, i) {
+            el.setAttribute("target", "_blank");
+        });
 
         /*
          * TODO-3: Instead of calling screenSizeChange here immediately, it would be better to set the image sizes
@@ -884,7 +880,7 @@ export class Render {
         }
 
         rowCount++; // warning: this is the local variable/parameter
-        var row = render.renderNodeAsListItem(node, i, childCount, rowCount);
+        let row = render.renderNodeAsListItem(node, i, childCount, rowCount);
         // console.log("row[" + rowCount + "]=" + row);
         return row;
     }
@@ -898,8 +894,8 @@ export class Render {
 
         let elm = util.domElm(node.imgId);
         if (elm) {
-            // var width = elm.attr("width");
-            // var height = elm.attr("height");
+            // let width = elm.attr("width");
+            // let height = elm.attr("height");
             // console.log("width=" + width + " height=" + height);
 
             if (node.width && node.height) {
@@ -910,7 +906,7 @@ export class Render {
                  * window resizings even on desktop browsers the image will always be entirely visible and not
                  * clipped.
                  */
-                // var maxWidth = meta64.deviceWidth - 80;
+                // let maxWidth = meta64.deviceWidth - 80;
                 // elm.attr("width", "150%");
                 // elm.attr("height", "auto");
                 // elm.attr("style", "max-width: " + maxWidth + "px;");
@@ -922,11 +918,11 @@ export class Render {
                 if (node.width > meta64.deviceWidth - 80) {
 
                     /* set the width we want to go for */
-                    // var width = meta64.deviceWidth - 80;
+                    // let width = meta64.deviceWidth - 80;
                     /*
                      * and set the height to the value it needs to be at for same w/h ratio (no image stretching)
                      */
-                    // var height = width * node.height / node.width;
+                    // let height = width * node.height / node.width;
                     elm.setAttribute("width", "100%");
                     elm.setAttribute("height", "auto");
                     // elm.attr("style", "max-width: " + maxWidth + "px;");
@@ -970,27 +966,27 @@ export class Render {
                  */
                 let height: number = width * node.height / node.width;
 
-                return render.tag("img", {
+                return tag.img({
                     "src": src,
                     "id": node.imgId,
                     "width": width + "px",
                     "height": height + "px"
-                }, null, false);
+                });
             }
             /* Image does fit on screen so render it at it's exact size */
             else {
-                return render.tag("img", {
+                return tag.img({
                     "src": src,
                     "id": node.imgId,
                     "width": node.width + "px",
                     "height": node.height + "px"
-                }, null, false);
+                });
             }
         } else {
-            return render.tag("img", {
+            return tag.img({
                 "src": src,
                 "id": node.imgId
-            }, null, false);
+            });
         }
     }
 

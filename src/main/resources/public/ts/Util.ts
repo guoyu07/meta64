@@ -39,7 +39,7 @@ class Util {
         if (!util.contains(_, "&"))
             return _;
 
-        var ret = _;
+        let ret = _;
         ret = util.replaceAll(ret, '&amp;', '&');
         ret = util.replaceAll(ret, '&gt;', '>');
         ret = util.replaceAll(ret, '&lt;', '<');
@@ -73,8 +73,8 @@ class Util {
     };
 
     arrayIndexOfItemByProp = function(_: any[], propName, propVal) {
-        var len = _.length;
-        for (var i = 0; i < len; i++) {
+        let len = _.length;
+        for (let i = 0; i < len; i++) {
             if (_[i][propName] === propVal) {
                 return i;
             }
@@ -90,8 +90,8 @@ class Util {
     };
 
     static stdTimezoneOffset = function(_: Date) {
-        var jan = new Date(_.getFullYear(), 0, 1);
-        var jul = new Date(_.getFullYear(), 6, 1);
+        let jan = new Date(_.getFullYear(), 0, 1);
+        let jul = new Date(_.getFullYear(), 6, 1);
         return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
     }
 
@@ -100,7 +100,7 @@ class Util {
     }
 
     indexOfObject = function(_: any[], obj) {
-        for (var i = 0; i < _.length; i++) {
+        for (let i = 0; i < _.length; i++) {
             if (_[i] === obj) {
                 return i;
             }
@@ -134,7 +134,7 @@ class Util {
         if (!url)
             url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
         if (!results)
             return null;
         if (!results[2])
@@ -158,7 +158,7 @@ class Util {
     }
 
     progressInterval = function(): void {
-        var isWaiting = util.isAjaxWaiting();
+        let isWaiting = util.isAjaxWaiting();
         if (isWaiting) {
             util.waitCounter++;
             if (util.waitCounter >= 3) {
@@ -185,8 +185,8 @@ class Util {
             console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
         }
 
-        var ironAjax;
-        var ironRequest;
+        let ironAjax;
+        let ironRequest;
 
         try {
             if (util.offline) {
@@ -200,7 +200,7 @@ class Util {
 
             //not w-pack
             /* Do not delete, research this way... */
-            // var ironAjax = this.$$("#myIronAjax");
+            // let ironAjax = this.$$("#myIronAjax");
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
 
             ironAjax = util.polyElmNode("ironAjax");
@@ -410,7 +410,7 @@ class Util {
 
     /* adds all array objects to obj as a set */
     addAll = function(obj, a): void {
-        for (var i = 0; i < a.length; i++) {
+        for (let i = 0; i < a.length; i++) {
             if (!a[i]) {
                 console.error("null element in addAll at idx=" + i);
             } else {
@@ -449,13 +449,13 @@ class Util {
             return null;
         }
 
-        var e = document.getElementById(id);
+        let e = document.getElementById(id);
         return e != null;
     }
 
     /* Takes textarea dom Id (# optional) and returns its value */
     getTextAreaValById = function(id): string {
-        var de: HTMLElement = util.domElm(id);
+        let de: HTMLElement = util.domElm(id);
         return (<HTMLInputElement>de).value;
     }
 
@@ -474,7 +474,7 @@ class Util {
             return null;
         }
 
-        var e = document.getElementById(id);
+        let e = document.getElementById(id);
         if (!e) {
             console.log("domElm Error. Required element id not found: " + id);
         }
@@ -483,8 +483,12 @@ class Util {
 
     setInnerHTMLById = function(id: string, val: string): void {
         let domElm = this.domElm(id);
-        if (domElm) {
-            domElm.innerHTML = val;
+        this.setInnerHTML(domElm, val);
+    }
+
+    setInnerHTML = function(elm: any, val: string): void {
+        if (elm) {
+            elm.innerHTML = val;
         }
     }
 
@@ -505,7 +509,7 @@ class Util {
             console.log("Invalid # in domElm");
             return null;
         }
-        var e = document.getElementById(id);
+        let e = document.getElementById(id);
         if (!e) {
             console.log("domElm Error. Required element id not found: " + id);
         }
@@ -514,7 +518,7 @@ class Util {
     }
 
     polyElmNode = function(id: string): any {
-        var e = util.polyElm(id);
+        let e = util.polyElm(id);
         return e.node;
     }
 
@@ -522,7 +526,7 @@ class Util {
      * Gets the element and displays an error message if it's not found
      */
     getRequiredElement = function(id: string): any {
-        var e = $(id);
+        let e = $(id);
         if (e == null) {
             console.log("getRequiredElement. Required element id not found: " + id);
         }
@@ -550,7 +554,7 @@ class Util {
         if (val == null) {
             val = "";
         }
-        var elm = util.polyElm(id);
+        let elm = util.polyElm(id);
         if (elm) {
             elm.node.value = val;
         }
@@ -587,8 +591,8 @@ class Util {
             content = "";
         }
 
-        var elm = util.domElm(id);
-        var polyElm = Polymer.dom(elm);
+        let elm = util.domElm(id);
+        let polyElm = Polymer.dom(elm);
 
         //For Polymer 1.0.0, you need this...
         //polyElm.node.innerHTML = content;
@@ -599,9 +603,21 @@ class Util {
         Polymer.updateStyles();
     }
 
+    setElmDisplayById = function(id: string, showing: boolean) {
+        let elm = util.domElm(id);
+        if (elm) {
+            this.setElmDisplay(elm, showing);
+        }
+    }
+
+    setElmDisplay = function(elm: any, showing: boolean) {
+        elm.style.display = showing ? "" : "none";
+    }
+
+
     getPropertyCount = function(obj: Object): number {
-        var count = 0;
-        var prop;
+        let count = 0;
+        let prop;
 
         for (prop in obj) {
             if (obj.hasOwnProperty(prop)) {
@@ -609,6 +625,11 @@ class Util {
             }
         }
         return count;
+    }
+
+    forEachElmBySel = function(sel: string, callback: Function): void {
+        let elements = document.querySelectorAll("a");
+        Array.prototype.forEach.call(elements, callback);
     }
 
     forEachProp = function(obj: Object, callback: Function): void {
@@ -670,7 +691,7 @@ class Util {
      */
     setEnablement = function(elmId: string, enable: boolean): void {
 
-        var elm = null;
+        let elm = null;
         if (typeof elmId == "string") {
             elm = util.domElm(elmId);
         } else {
@@ -691,42 +712,12 @@ class Util {
         }
     }
 
-    /*
-     * Makes eleId visible based on vis flag
-     *
-     * eleId can be a DOM element or the ID of a dom element, with or without leading #
-     */
-    setVisibility = function(elmId: string, vis: boolean): void {
-
-        var elm = null;
-        if (typeof elmId == "string") {
-            elm = util.domElm(elmId);
-        } else {
-            elm = elmId;
-        }
-
-        if (elm == null) {
-            console.log("setVisibility couldn't find item: " + elmId);
-            return;
-        }
-
-        if (vis) {
-            // console.log("Showing element: " + elmId);
-            //elm.style.display = 'block';
-            $(elm).show();
-        } else {
-            // console.log("hiding element: " + elmId);
-            //elm.style.display = 'none';
-            $(elm).hide();
-        }
-    }
-
     /* Programatically creates objects by name, similar to what Java reflection does
 
-    * ex: var example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
+    * ex: let example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
     */
     getInstance = function <T>(context: Object, name: string, ...args: any[]): T {
-        var instance = Object.create(context[name].prototype);
+        let instance = Object.create(context[name].prototype);
         instance.constructor.apply(instance, args);
         return <T>instance;
     }
@@ -763,9 +754,6 @@ class Util {
      * old class didn't exist, then new Class is added at end of class list.
      */
     changeOrAddClass = function(elmSel: string, oldClass: string, newClass: string) {
-        // var elmement = $(elm);
-        // elmement.toggleClass(oldClass, false);
-        // elmement.toggleClass(newClass, true);
         let elm = this.domElm(elmSel);
         this.removeClassFromElm(elm, oldClass);
         this.addClassToElm(elm, newClass);
@@ -797,8 +785,8 @@ class Util {
         if (el.classList) {
             el.classList.toggle(clazz);
         } else {
-            var classes = el.className.split(' ');
-            var existingIndex = classes.indexOf(clazz);
+            let classes = el.className.split(' ');
+            let existingIndex = classes.indexOf(clazz);
 
             if (existingIndex >= 0)
                 classes.splice(existingIndex, 1);

@@ -7,6 +7,7 @@ import {meta64} from "./Meta64";
 import * as I from "./Interfaces";
 import {Factory} from "./Factory";
 import {ShareToPersonDlg} from "./ShareToPersonDlg";
+import {tag} from "./Tag";
 
 export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg {
 
@@ -17,20 +18,20 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Node Sharing");
+    render = (): string => {
+        let header = this.makeHeader("Node Sharing");
 
-        var shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
+        let shareWithPersonButton = this.makeButton("Share with Person", "shareNodeToPersonPgButton",
             this.shareNodeToPersonPg);
-        var makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic);
-        var backButton = this.makeCloseButton("Close", "closeSharingButton");
+        let makePublicButton = this.makeButton("Share to Public", "shareNodeToPublicButton", this.shareNodeToPublic);
+        let backButton = this.makeCloseButton("Close", "closeSharingButton");
 
-        var buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
+        let buttonBar = render.centeredButtonBar(shareWithPersonButton + makePublicButton + backButton);
 
-        var width = window.innerWidth * 0.6;
-        var height = window.innerHeight * 0.4;
+        let width = window.innerWidth * 0.6;
+        let height = window.innerHeight * 0.4;
 
-        var internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
+        let internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
             "<div class='vertical-layout-row' style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
             + this.id("sharingListFieldContainer") + "'></div>";
 
@@ -69,17 +70,17 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
      * Processes the response gotten back from the server containing ACL info so we can populate the sharing page in the gui
      */
     populateSharingPg = (res: I.GetNodePrivilegesResponse): void => {
-        var html = "";
-        var This = this;
+        let html = "";
+        let This = this;
 
         res.aclEntries.forEach(function(aclEntry, index) {
             html += "<h4>User: " + aclEntry.principalName + "</h4>";
-            html += render.tag("div", {
+            html += tag.div( {
                 "class": "privilege-list"
             }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
         });
 
-        var publicAppendAttrs = {
+        let publicAppendAttrs = {
             "onClick": "meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
             "name": "allowPublicCommenting",
             "id": this.id("allowPublicCommenting")
@@ -105,9 +106,9 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
          * change listener on a paper-checkbox. The documented on-change listener simply doesn't work and appears to be
          * simply a bug in google code AFAIK.
          */
-        var thiz = this;
+        let thiz = this;
         setTimeout(function() {
-            var polyElm = util.polyElm(thiz.id("allowPublicCommenting"));
+            let polyElm = util.polyElm(thiz.id("allowPublicCommenting"));
 
             meta64.treeDirty = true;
 
@@ -143,19 +144,19 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     }
 
     renderAclPrivileges = (principal: any, aclEntry: any): string => {
-        var ret = "";
-        var thiz = this;
+        let ret = "";
+        let thiz = this;
         aclEntry.privileges.forEach(function(privilege, index) {
 
-            var removeButton = thiz.makeButton("Remove", "removePrivButton", //
+            let removeButton = thiz.makeButton("Remove", "removePrivButton", //
                 "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
                 + "');");
 
-            var row = render.makeHorizontalFieldSet(removeButton);
+            let row = render.makeHorizontalFieldSet(removeButton);
 
             row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
 
-            ret += render.tag("div", {
+            ret += tag.div( {
                 "class": "privilege-entry"
             }, row);
         });

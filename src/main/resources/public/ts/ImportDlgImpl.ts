@@ -18,7 +18,7 @@ export default class ImportDlgImpl extends DialogBaseImpl implements ImportDlg {
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         var header = this.makeHeader("Import from XML");
 
         var formControls = this.makeEditField("File name to import", "sourceFileName");

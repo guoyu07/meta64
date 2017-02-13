@@ -25,22 +25,21 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
      * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
      * user.
      */
-    build = (): string => {
+    render = (): string => {
 
-        var header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
+        let header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
 
-        var message = render.tag("p", {
+        let message = render.tag("p", {
 
         }, "Enter your new password below...");
 
-        var formControls = this.makePasswordField("New Password", "changePassword1");
+        let formControls = this.makePasswordField("New Password", "changePassword1");
 
-        var changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
+        let changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
             this.changePassword, this);
-        var backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
+        let backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
 
-        var buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
-
+        let buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
         return header + message + formControls + buttonBar;
     }
 
@@ -60,7 +59,7 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     changePasswordResponse = (res: I.ChangePasswordResponse) => {
         if (util.checkSuccess("Change password", res)) {
 
-            var msg = "Password changed successfully.";
+            let msg = "Password changed successfully.";
 
             if (this.passCode) {
                 msg += "<p>You may now login as <b>" + res.user

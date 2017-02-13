@@ -161,7 +161,6 @@ class View {
         if (view.scrollToSelNodePending)
             return;
 
-        //let e = $("#mainContainer");
         $("#mainContainer").scrollTop(0);
 
         //todo-0: not using mainPaperTabs any longer so shw should go here now ?
@@ -174,13 +173,13 @@ class View {
 
     initEditPathDisplayById = function(domId: string) {
         let node: I.NodeInfo = edit.editNode;
-        let e: any = $("#" + domId);
+        let e: any = util.domElm(domId);
         if (!e)
             return;
 
         if (edit.editingUnsavedNode) {
-            e.html("");
-            e.hide();
+            util.setInnerHTML(e, "");
+            util.setElmDisplay(e, false);
         } else {
             var pathDisplay = "Path: " + render.formatPath(node);
 
@@ -190,8 +189,8 @@ class View {
             if (node.lastModified) {
                 pathDisplay += "<br>Mod: " + node.lastModified;
             }
-            e.html(pathDisplay);
-            e.show();
+            util.setInnerHTML(e, pathDisplay);
+            util.setElmDisplay(e, true);
         }
     }
 

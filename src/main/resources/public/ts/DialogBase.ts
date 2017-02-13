@@ -3,7 +3,7 @@ console.log("DialogBase.ts");
 export interface DialogBase {
     init(): void;
     closeEvent(): void;
-    build(): string;
+    render(): string;
     open(): void;
     cancel();
     id(id): string;

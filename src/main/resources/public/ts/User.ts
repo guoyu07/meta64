@@ -40,7 +40,7 @@ class User {
             title += ":" + res.userName;
         }
 
-        $("#headerAppName").html(title);
+        util.setInnerHTMLById("headerAppName", title);
     }
 
     /* TODO-3: move this into meta64 module */

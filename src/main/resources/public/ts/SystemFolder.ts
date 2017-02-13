@@ -17,11 +17,11 @@ class SystemFolder {
     //     //let fileListing = fileListingProp ? render.renderJsonFileSearchResultProperty(fileListingProp.value) : "";
     //
     //     if (rowStyling) {
-    //         ret += render.tag("div", {
+    //         ret += tag.div( {
     //             "class": "jcr-content"
     //         }, path /* + fileListing */);
     //     } else {
-    //         ret += render.tag("div", {
+    //         ret += tag.div( {
     //             "class": "jcr-root-content"
     //         },
     //             path /* + fileListing */);
@@ -38,11 +38,11 @@ class SystemFolder {
     //         let jcrContent = render.renderJsonFileSearchResultProperty(searchResultProp.value);
     //
     //         if (rowStyling) {
-    //             ret += render.tag("div", {
+    //             ret += tag.div( {
     //                 "class": "jcr-content"
     //             }, jcrContent);
     //         } else {
-    //             ret += render.tag("div", {
+    //             ret += tag.div( {
     //                 "class": "jcr-root-content"
     //             },
     //                 jcrContent);

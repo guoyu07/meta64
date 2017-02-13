@@ -17,21 +17,21 @@ export default class ShareToPersonDlgImpl  extends DialogBaseImpl implements Sha
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
-        var header = this.makeHeader("Share Node to Person");
+    render = (): string => {
+        let header = this.makeHeader("Share Node to Person");
 
-        var formControls = this.makeEditField("User to Share With", "shareToUserName");
-        var shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", this.shareNodeToPerson,
+        let formControls = this.makeEditField("User to Share With", "shareToUserName");
+        let shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", this.shareNodeToPerson,
             this);
-        var backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
-        var buttonBar = render.centeredButtonBar(shareButton + backButton);
+        let backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
+        let buttonBar = render.centeredButtonBar(shareButton + backButton);
 
         return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
             + buttonBar;
     }
 
     shareNodeToPerson = (): void => {
-        var targetUser = this.getInputVal("shareToUserName");
+        let targetUser = this.getInputVal("shareToUserName");
         if (!targetUser) {
             util.showMessage("Please enter a username");
             return;
@@ -41,7 +41,7 @@ export default class ShareToPersonDlgImpl  extends DialogBaseImpl implements Sha
          * Trigger going to server at next main page refresh
          */
         meta64.treeDirty = true;
-        var thiz = this;
+        let thiz = this;
         util.json<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,

@@ -67,7 +67,7 @@ class MenuPanel {
 
     private domId: string = "mainAppMenu";
 
-    build = function(): void {
+    render = function(): void {
 
         //not w-pack
         // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.

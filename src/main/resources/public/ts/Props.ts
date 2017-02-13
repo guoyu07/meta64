@@ -40,7 +40,7 @@ class Props {
         // "forbidden");
 
         // fix for polymer
-        // var elm = $("#propsToggleButton");
+        // let elm = $ ("#propsToggleButton");
         // elm.toggleClass("ui-icon-grid", meta64.showProperties);
         // elm.toggleClass("ui-icon-forbidden", !meta64.showProperties);
 
@@ -50,7 +50,7 @@ class Props {
     }
 
     deletePropertyFromLocalData = function(propertyName): void {
-        for (var i = 0; i < edit.editNode.properties.length; i++) {
+        for (let i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
                 edit.editNode.properties.splice(i, 1);

@@ -40,7 +40,7 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         let header = this.makeHeader("Audio Player");
 
         let node: I.NodeInfo = meta64.uidToNodeMap[this.nodeUid];

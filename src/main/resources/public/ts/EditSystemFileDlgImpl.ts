@@ -14,7 +14,7 @@ export default class EditSystemFileDlgImpl extends DialogBaseImpl implements Edi
   //   /*
   //    * Returns a string that is the HTML content of the dialog
   //    */
-  //   build = (): string => {
+  //   render = (): string => {
   //       let content: string = "<h2>File Editor: " + this.fileName + "</h2>";
   //
   //       let buttons = this.makeCloseButton("Save", "SaveFileButton", this.saveEdit)

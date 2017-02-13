@@ -7,6 +7,7 @@ import { cnst } from "./Constants";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
+import {tag} from "./Tag";
 
 declare var postTargetUrl;
 
@@ -19,13 +20,13 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    build = (): string => {
+    render = (): string => {
         let header = this.makeHeader("Upload File Attachment");
 
         let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += render.tag("div", {//
+            uploadPathDisplay += tag.div( {//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
@@ -49,7 +50,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             }, "", true);
 
             /* wrap in DIV to force vertical align */
-            formFields += render.tag("div", {
+            formFields += tag.div( {
                 "style": "margin-bottom: 10px;"
             }, input);
         }
@@ -74,7 +75,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             "data-ajax": "false" // NEW for multiple file upload support???
         }, formFields);
 
-        uploadFieldContainer = render.tag("div", {//
+        uploadFieldContainer = tag.div( {//
             "id": this.id("uploadFieldContainer")
         }, "<p>Upload from your computer</p>" + form);
 
@@ -88,8 +89,9 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
         for (let i = 0; i < 7; i++) {
-            let inputVal = $("#" + this.id("upload" + i + "FormInputId")).val();
-            if (inputVal.toLowerCase().endsWith(".zip")) {
+            let inputElm = this.elById("upload" + i + "FormInputId");
+
+            if (inputElm && inputElm.value !== null && inputElm.value.toLowerCase().endsWith(".zip")) {
                 return true;
             }
         }
@@ -100,8 +102,8 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
 
         let uploadFunc = (explodeZips) => {
             /* Upload form has hidden input element for nodeId parameter */
-            $("#" + this.id("uploadFormNodeId")).attr("value", attachment.uploadNode.id);
-            $("#" + this.id("explodeZips")).attr("value", explodeZips ? "true" : "false");
+            this.elById("uploadFormNodeId").setAttribute("value", attachment.uploadNode.id);
+            this.elById("explodeZips").setAttribute("value", explodeZips ? "true" : "false");
 
             /*
              * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
@@ -150,6 +152,6 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
 
     init = (): void => {
         /* display the node path at the top of the edit page */
-        $("#" + this.id("uploadPathDisplay")).html("Path: " + render.formatPath(attachment.uploadNode));
+        this.setInnerHTML("uploadPathDisplay", "Path: " + render.formatPath(attachment.uploadNode));
     }
 }

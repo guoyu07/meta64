@@ -85,7 +85,8 @@ class User {
         let callPwd: string;
         let usingCookies: boolean = false;
 
-        var loginSessionReady = $("#loginSessionReady").text();
+        let readyElm = util.domElm("#loginSessionReady");
+        let loginSessionReady = !readyElm ? null : readyElm.textContent;
         if (loginSessionReady === "true") {
             console.log("    loginSessionReady = true");
             /*

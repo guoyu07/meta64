@@ -158,7 +158,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedDomElement = function(): any {
+    getSelectedDomElement = function(): HTMLElement {
 
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {

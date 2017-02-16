@@ -7,7 +7,7 @@ import { cnst } from "./Constants";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 declare var postTargetUrl;
 
@@ -26,7 +26,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
         let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += tag.div( {//
+            uploadPathDisplay += tag.div({//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
@@ -50,7 +50,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             }, "", true);
 
             /* wrap in DIV to force vertical align */
-            formFields += tag.div( {
+            formFields += tag.div({
                 "style": "margin-bottom: 10px;"
             }, input);
         }
@@ -75,7 +75,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             "data-ajax": "false" // NEW for multiple file upload support???
         }, formFields);
 
-        uploadFieldContainer = tag.div( {//
+        uploadFieldContainer = tag.div({//
             "id": this.id("uploadFieldContainer")
         }, "<p>Upload from your computer</p>" + form);
 
@@ -89,9 +89,10 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
         for (let i = 0; i < 7; i++) {
-            let inputElm = this.elById("upload" + i + "FormInputId");
+            let inputElm : HTMLElement = this.elById("upload" + i + "FormInputId");
 
-            if (inputElm && inputElm.value !== null && inputElm.value.toLowerCase().endsWith(".zip")) {
+            if (inputElm && (<HTMLInputElement>inputElm).value !== null &&
+                util.endsWith((<HTMLInputElement>inputElm).value.toLowerCase(), ".zip")) {
                 return true;
             }
         }
@@ -109,7 +110,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
              * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
              * this is highly specialized here for form uploading, and is different from normal ajax calls.
              */
-            let data = new FormData(<HTMLFormElement>($("#" + this.id("uploadForm"))[0]));
+            let data = new FormData(<HTMLFormElement>(util.domElm("#" + this.id("uploadForm"))[0]));
 
             let prms = $.ajax({
                 url: postTargetUrl + "upload",

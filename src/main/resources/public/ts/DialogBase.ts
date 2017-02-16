@@ -13,7 +13,7 @@ export interface DialogBase {
     makeMessageArea(message: string, id?: string): string;
     makeButton(text: string, id: string, callback: any, ctx?: any): string;
     makeCloseButton(text: string, id: string, callback?: any, ctx?: any, initiallyVisible?: boolean, delayCloseCallback?: number): string;
-    bindEnterKey(id: string, callback: any): void;
+    bindEnterKey(id: string, callback: Function): void;
     setInputVal(id: string, val: string): void;
     getInputVal(id: string): string;
     setHtml(text: string, id: string): void;

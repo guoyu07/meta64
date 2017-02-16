@@ -1,13 +1,13 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {SearchContentDlg} from "./SearchContentDlg";
-import {render} from "./Render";
-import {util} from "./Util";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { SearchContentDlg } from "./SearchContentDlg";
+import { render } from "./Render";
+import { util } from "./Util";
 import * as I from "./Interfaces";
-import {srch} from "./Search";
-import {jcrCnst} from "./Constants";
-import {meta64} from "./Meta64";
+import { srch } from "./Search";
+import { jcrCnst } from "./Constants";
+import { meta64 } from "./Meta64";
 
-export default class SearchContentDlgImpl  extends DialogBaseImpl implements SearchContentDlg {
+export default class SearchContentDlgImpl extends DialogBaseImpl implements SearchContentDlg {
 
     constructor() {
         super("SearchContentDlg");
@@ -27,7 +27,7 @@ export default class SearchContentDlgImpl  extends DialogBaseImpl implements Sea
         let buttonBar = render.centeredButtonBar(searchButton + backButton);
 
         let content = header + instructions + formControls + buttonBar;
-        this.bindEnterKey("searchText", srch.searchNodes)
+        this.bindEnterKey("searchText", this.searchNodes);
         return content;
     }
 
@@ -60,11 +60,16 @@ export default class SearchContentDlgImpl  extends DialogBaseImpl implements Sea
             "sortDir": "",
             "sortField": "",
             "searchProp": searchProp
-        }, srch.searchNodesResponse, srch);
+        }, this.searchNodesResponse, this);
+    }
+
+    searchNodesResponse = function(res: I.NodeSearchResponse) {
+        let thiz = this;
+        srch.searchNodesResponse(res);
+        thiz.cancel();
     }
 
     init = (): void => {
-        //util.delayedFocus(this.id("searchText"));
         this.focus("searchText");
     }
 }

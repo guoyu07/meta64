@@ -892,7 +892,7 @@ export class Render {
     /* see also: makeImageTag() */
     adjustImageSize = function(node: I.NodeInfo): void {
 
-        let elm = util.domElm(node.imgId);
+        let elm:HTMLElement = util.domElm(node.imgId);
         if (elm) {
             // let width = elm.attr("width");
             // let height = elm.attr("height");
@@ -931,8 +931,8 @@ export class Render {
                  * Image does fit on screen so render it at it's exact size
                  */
                 else {
-                    elm.setAttribute("width", node.width);
-                    elm.setAttribute("height", node.height);
+                    elm.setAttribute("width", ""+node.width);
+                    elm.setAttribute("height", ""+node.height);
                 }
             }
         }

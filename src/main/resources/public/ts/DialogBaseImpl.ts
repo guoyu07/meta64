@@ -207,15 +207,6 @@ export abstract class DialogBaseImpl implements DialogBase {
         return id + "_dlgId" + this.data.guid;
     }
 
-    el = (id): any => {
-        if (!util.startsWith(id, "#")) {
-            return $("#" + this.id(id));
-        }
-        else {
-            return $(this.id(id));
-        }
-    }
-
     setElmDisplayById = (id: string, showing: boolean): void => {
         let elm = this.elById(id);
         if (elm) {
@@ -230,12 +221,12 @@ export abstract class DialogBaseImpl implements DialogBase {
         }
     }
 
-    elById = (id): any => {
+    elById = (id): HTMLElement => {
         if (!util.startsWith(id, "#")) {
-            return document.querySelector("#" + this.id(id));
+            return <HTMLElement>document.querySelector("#" + this.id(id));
         }
         else {
-            return document.querySelector(this.id(id));
+            return <HTMLElement>document.querySelector(this.id(id));
         }
     }
 
@@ -288,7 +279,7 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     /* The reason delayCloseCallback is here is so that we can encode a button to popup a new dialog over the top of
     an existing dialog, and have that happen instantly, rather than letting it close, and THEN poping up a second dialog,
-    becasue using the delay means that the one being hidden is not able to become hidden before the one comes up because
+    because using the delay means that the one being hidden is not able to become hidden before the one comes up because
     that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case. */
     makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
 
@@ -325,7 +316,10 @@ export abstract class DialogBaseImpl implements DialogBase {
         return render.tag("paper-button", attribs, text, true);
     }
 
-    bindEnterKey = (id: string, callback: any): void => {
+    bindEnterKey = (id: string, callback: Function): void => {
+        debugger;
+        //console.log("typeof callback == " + (typeof callback));
+        if (typeof callback !== 'function') throw "bindEnterKey requires function";
         util.bindEnterKey(this.id(id), callback);
     }
 

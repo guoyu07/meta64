@@ -147,7 +147,8 @@ class View {
             // If we couldn't find a selected node on this page, scroll to
             // top instead.
             else {
-                $("#mainContainer").scrollTop(0);
+                //sets vertical top position of scrollbar to zero (top)
+                util.domElm("#mainContainer").scrollTop = 0;
                 //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
                 // elm = util.polyElm("mainPaperTabs");
                 // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
@@ -161,13 +162,13 @@ class View {
         if (view.scrollToSelNodePending)
             return;
 
-        $("#mainContainer").scrollTop(0);
+        util.domElm("#mainContainer").scrollTop = 0;
 
         //todo-0: not using mainPaperTabs any longer so shw should go here now ?
         setTimeout(function() {
             if (view.scrollToSelNodePending)
                 return;
-            $("#mainContainer").scrollTop(0);
+            util.domElm("#mainContainer").scrollTop = 0;
         }, 1000);
     }
 

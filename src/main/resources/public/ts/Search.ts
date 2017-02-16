@@ -231,10 +231,10 @@ export class Search {
         /* now make CSS id from node */
         let nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
 
-        let elm = util.domElm(nodeId);
+        let elm:HTMLElement = util.domElm(nodeId);
         if (elm) {
             /* change class on element */
-            util.changeOrAddClass(elm, "active-row", "inactive-row");
+            util.changeOrAddClassToElm(elm, "active-row", "inactive-row");
         }
     }
 }

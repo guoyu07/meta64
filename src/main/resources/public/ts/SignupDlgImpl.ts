@@ -48,7 +48,7 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
         return header + formControls + captchaImage + buttonBar;
 
         /*
-         * $("#" + _.domId + "-main").css({ "backgroundImage" : "url(/ibm-702-bright.jpg);" "background-repeat" :
+         * $ ("#" + _.domId + "-main").css({ "backgroundImage" : "url(/ibm-702-bright.jpg);" "background-repeat" :
          * "no-repeat;", "background-size" : "100% auto" });
          */
     }

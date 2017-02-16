@@ -904,7 +904,7 @@ class Meta64 {
     }
 
     displaySignupMessage = function(): void {
-        let signupElm = document.querySelector("#signupCodeResponse");
+        let signupElm = util.domElm("#signupCodeResponse");
         if (signupElm) {
             let signupResponse = signupElm.textContent;
             if (signupResponse === "ok") {

@@ -1,8 +1,5 @@
 console.log("Util.ts");
 
-// / <reference path="./tyepdefs/jquery/jquery.d.ts" />
-// / <reference path="./tyepdefs/jquery.cookie/jquery.cookie.d.ts" />
-
 declare var Polymer;
 declare var Dropzone;
 declare var ace;
@@ -16,6 +13,7 @@ import { meta64 } from "./Meta64";
 import { MessageDlg } from "./MessageDlg";
 import { ProgressDlg } from "./ProgressDlg";
 import { Factory } from "./Factory";
+import { bindClick } from "./BindClick";
 import * as I from "./Interfaces";
 
 class Util {
@@ -59,6 +57,10 @@ class Util {
 
     startsWith = function(_, str) {
         return _.indexOf(str) === 0;
+    }
+
+    endsWith = function(_, str) {
+        return _.indexOf(str, _.length - str.length) !== -1;
     }
 
     stripIfStartsWith = function(_, str) {
@@ -141,18 +143,7 @@ class Util {
             return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-    //
-    // /*
-    //  * Sets up an inheritance relationship so that child inherits from parent, and then returns the prototype of the
-    //  * child so that methods can be added to it, which will behave like member functions in classic OOP with
-    //  * inheritance hierarchies.
-    //  */
-    // inherit = function(parent, child): any {
-    //     child.prototype.constructor = child;
-    //     child.prototype = Object.create(parent.prototype);
-    //     return child.prototype;
-    // }
-    //
+
     initProgressMonitor = function(): void {
         setInterval(util.progressInterval, 1000);
     }
@@ -178,8 +169,10 @@ class Util {
         }
     }
 
+  /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller */
     json = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
-        callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, callbackPayload?: any) {
+        callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
+        callbackPayload?: any) {
 
         if (callbackThis === window) {
             console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
@@ -200,7 +193,7 @@ class Util {
 
             //not w-pack
             /* Do not delete, research this way... */
-            // let ironAjax = this.$$("#myIronAjax");
+            // let ironAjax = this.$$ ("#myIronAjax");
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
 
             ironAjax = util.polyElmNode("ironAjax");
@@ -455,14 +448,14 @@ class Util {
 
     /* Takes textarea dom Id (# optional) and returns its value */
     getTextAreaValById = function(id): string {
-        let de: HTMLElement = util.domElm(id);
-        return (<HTMLInputElement>de).value;
+        let de: HTMLInputElement = <HTMLInputElement>util.domElm(id);
+        return de.value;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    domElm = function(id): any {
+    domElm = function(id): HTMLElement {
 
         /* why did i do this? I thought "#id" was valid for getDomElmementById right? */
         if (util.startsWith(id, "#")) {
@@ -474,7 +467,7 @@ class Util {
             return null;
         }
 
-        let e = document.getElementById(id);
+        let e: HTMLElement = document.getElementById(id);
         if (!e) {
             console.log("domElm Error. Required element id not found: " + id);
         }
@@ -482,11 +475,11 @@ class Util {
     }
 
     setInnerHTMLById = function(id: string, val: string): void {
-        let domElm = this.domElm(id);
+        let domElm: HTMLElement = this.domElm(id);
         this.setInnerHTML(domElm, val);
     }
 
-    setInnerHTML = function(elm: any, val: string): void {
+    setInnerHTML = function(elm: HTMLElement, val: string): void {
         if (elm) {
             elm.innerHTML = val;
         }
@@ -522,17 +515,6 @@ class Util {
         return e.node;
     }
 
-    /*
-     * Gets the element and displays an error message if it's not found
-     */
-    getRequiredElement = function(id: string): any {
-        let e = $(id);
-        if (e == null) {
-            console.log("getRequiredElement. Required element id not found: " + id);
-        }
-        return e;
-    }
-
     isObject = function(obj: any): boolean {
         return obj && obj.length != 0;
     }
@@ -561,18 +543,15 @@ class Util {
         return elm != null;
     }
 
-    bindEnterKey = function(id: string, func: any) {
-        util.bindKey(id, func, 13);
-    }
-
-    bindKey = function(id: string, func: any, keyCode: any): boolean {
-        $(id).keypress(function(e) {
-            if (e.which == keyCode) { // 13==enter key code
+    bindEnterKey = function(id: string, func: Function) {
+        if (typeof func !== 'function') throw "bindEnterKey requires function";
+        bindClick.addKeyPress(id, function(e) {
+            if (e.which == 13) { // 13==enter key code
+                debugger;
                 func();
                 return false;
             }
         });
-        return false;
     }
 
     /*
@@ -591,7 +570,7 @@ class Util {
             content = "";
         }
 
-        let elm = util.domElm(id);
+        let elm: HTMLElement = util.domElm(id);
         let polyElm = Polymer.dom(elm);
 
         //For Polymer 1.0.0, you need this...
@@ -604,7 +583,7 @@ class Util {
     }
 
     setElmDisplayById = function(id: string, showing: boolean) {
-        let elm = util.domElm(id);
+        let elm: HTMLElement = util.domElm(id);
         if (elm) {
             this.setElmDisplay(elm, showing);
         }
@@ -691,7 +670,7 @@ class Util {
      */
     setEnablement = function(elmId: string, enable: boolean): void {
 
-        let elm = null;
+        let elm: HTMLElement = null;
         if (typeof elmId == "string") {
             elm = util.domElm(elmId);
         } else {
@@ -703,13 +682,9 @@ class Util {
             return;
         }
 
-        if (!enable) {
-            // console.log("Enabling element: " + elmId);
-            elm.disabled = true;
-        } else {
-            // console.log("Disabling element: " + elmId);
-            elm.disabled = false;
-        }
+        //todo-0: use specific element for parameter to this class and get rid of <any> cast.
+        // console.log("Enabling element: " + elmId);
+        (<any>elm).disabled = !enable;
     }
 
     /* Programatically creates objects by name, similar to what Java reflection does
@@ -754,7 +729,12 @@ class Util {
      * old class didn't exist, then new Class is added at end of class list.
      */
     changeOrAddClass = function(elmSel: string, oldClass: string, newClass: string) {
-        let elm = this.domElm(elmSel);
+        let elm: HTMLElement = this.domElm(elmSel);
+        this.removeClassFromElm(elm, oldClass);
+        this.addClassToElm(elm, newClass);
+    }
+
+    changeOrAddClassToElm = function(elm: HTMLElement, oldClass: string, newClass: string) {
         this.removeClassFromElm(elm, oldClass);
         this.addClassToElm(elm, newClass);
     }

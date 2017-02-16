@@ -21,7 +21,7 @@ export default class SearchFilesDlgImpl extends DialogBaseImpl implements Search
   //       var buttonBar = render.centeredButtonBar(searchButton + backButton);
   //
   //       var content = header + instructions + formControls + buttonBar;
-  //       this.bindEnterKey("searchText", srch.searchNodes)
+  //       this.bindEnterKey("searchText", this.searchNodes)
   //       return content;
   //   }
   //

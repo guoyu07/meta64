@@ -1,12 +1,13 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { UploadFromFileDropzoneDlg } from "./UploadFromFileDropzoneDlg";
-import {Factory} from "./Factory";
-import {ConfirmDlg} from "./ConfirmDlg";
+import { Factory } from "./Factory";
+import { ConfirmDlg } from "./ConfirmDlg";
 import { cnst } from "./Constants";
 import { render } from "./Render";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
+import { util } from "./Util";
 
 declare var postTargetUrl;
 
@@ -26,7 +27,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
         let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += tag.div( {//
+            uploadPathDisplay += tag.div({//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
@@ -36,7 +37,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
         console.log("Upload Action URL: " + postTargetUrl + "upload");
 
-        let hiddenInputContainer = tag.div( {
+        let hiddenInputContainer = tag.div({
             "id": this.id("hiddenInputContainer"),
             "style": "display: none;"
         }, "");
@@ -118,7 +119,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             }
         };
 
-        (<any>$("#" + this.id("dropzone-form-id"))).dropzone(config);
+        (<any>util.domElm("#" + this.id("dropzone-form-id"))).dropzone(config);
     }
 
     updateFileList = (dropzoneEvt: any): void => {
@@ -151,7 +152,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
         for (let file of this.fileList) {
-            if (file["name"].toLowerCase().endsWith(".zip")) {
+            if (util.endsWith(file["name"].toLowerCase(), ".zip")) {
                 return true;
             }
         }

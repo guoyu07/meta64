@@ -27,7 +27,7 @@ export default class SearchTagsDlgImpl  extends DialogBaseImpl implements Search
         let buttonBar = render.centeredButtonBar(searchButton + backButton);
 
         let content = header + instructions + formControls + buttonBar;
-        this.bindEnterKey("searchText", srch.searchNodes)
+        this.bindEnterKey("searchText", this.searchTags)
         return content;
     }
 

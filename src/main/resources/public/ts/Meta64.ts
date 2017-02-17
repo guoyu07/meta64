@@ -18,7 +18,7 @@ import { podcast } from "./Podcast";
 import { systemfolder } from "./SystemFolder";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { Factory } from "./Factory";
-import { bindClick } from "./BindClick";
+import { domBind } from "./DomBind";
 
 declare const System: any;
 declare var Polymer;
@@ -872,16 +872,16 @@ class Meta64 {
 
     /* Eventually i'll refactor to have all these domIds in a component, and the component will contain the assignment of the onclicks */
     initStaticHtmlOnClicks = function(): void {
-        bindClick.addOnClick("headerAppName", nav.navPublicHome);
-        bindClick.addOnClick("navHomeButton", nav.navHome);
-        bindClick.addOnClick("upLevelButton", nav.navUpLevel);
-        bindClick.addOnClick("editModeButton", nav.editMode);
-        bindClick.addOnClick("searchMainAppButton", nav.search);
-        bindClick.addOnClick("timelineMainAppButton", srch.timelineByModTime);
-        bindClick.addOnClick("userPreferencesMainAppButton", nav.preferences);
-        bindClick.addOnClick("openLoginDlgButton", nav.login);
-        bindClick.addOnClick("navLogoutButton", nav.logout);
-        bindClick.addOnClick("openSignupPgButton", nav.signup);
+        domBind.addOnClick("headerAppName", nav.navPublicHome);
+        domBind.addOnClick("navHomeButton", nav.navHome);
+        domBind.addOnClick("upLevelButton", nav.navUpLevel);
+        domBind.addOnClick("editModeButton", nav.editMode);
+        domBind.addOnClick("searchMainAppButton", nav.search);
+        domBind.addOnClick("timelineMainAppButton", srch.timelineByModTime);
+        domBind.addOnClick("userPreferencesMainAppButton", nav.preferences);
+        domBind.addOnClick("openLoginDlgButton", nav.login);
+        domBind.addOnClick("navLogoutButton", nav.logout);
+        domBind.addOnClick("openSignupPgButton", nav.signup);
     }
 
     processUrlParams = function(): void {

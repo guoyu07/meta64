@@ -13,7 +13,7 @@ import { meta64 } from "./Meta64";
 import { MessageDlg } from "./MessageDlg";
 import { ProgressDlg } from "./ProgressDlg";
 import { Factory } from "./Factory";
-import { bindClick } from "./BindClick";
+import { domBind } from "./DomBind";
 import * as I from "./Interfaces";
 
 class Util {
@@ -545,9 +545,8 @@ class Util {
 
     bindEnterKey = function(id: string, func: Function) {
         if (typeof func !== 'function') throw "bindEnterKey requires function";
-        bindClick.addKeyPress(id, function(e) {
+        domBind.addKeyPress(id, function(e) {
             if (e.which == 13) { // 13==enter key code
-                debugger;
                 func();
                 return false;
             }
@@ -611,6 +610,7 @@ class Util {
         Array.prototype.forEach.call(elements, callback);
     }
 
+    /* Iterates by callling callback with property key/value pairs for each property in the object */
     forEachProp = function(obj: Object, callback: Function): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {

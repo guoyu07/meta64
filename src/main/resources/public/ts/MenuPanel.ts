@@ -11,7 +11,7 @@ import {props} from "./Props";
 import {meta64} from "./Meta64";
 import {podcast} from "./Podcast";
 import {view} from "./View";
-import {bindClick} from "./BindClick";
+import {domBind} from "./DomBind";
 
 class MenuPanel {
     private makeTopLevelMenu = function(title: string, content: string, id?: string): string {
@@ -60,7 +60,7 @@ class MenuPanel {
         /* It's ok to register this onClick way ahead of even the time that the DOM element even
         gets created, so we do it here in the most obvious place to do it
         */
-        bindClick.addOnClick(id, onClick);
+        domBind.addOnClick(id, onClick);
 
         return html;
     }

@@ -21,6 +21,8 @@ import { Factory } from "./Factory";
 import { domBind } from "./DomBind";
 
 declare const System: any;
+
+//need to declare Polymer using *.d.ts file.
 declare var Polymer;
 
 class Meta64 {
@@ -162,7 +164,7 @@ class Meta64 {
         "showMetaData": false
     };
 
-    updateMainMenuPanel = function() {
+    updateMainMenuPanel() {
         console.log("building main menu panel");
         menuPanel.render();
         meta64.refreshAllGuiEnablement();
@@ -172,14 +174,14 @@ class Meta64 {
      * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
      * future.
      */
-    registerDataObject = function(data) {
+    registerDataObject(data) {
         if (!data.guid) {
             data.guid = ++meta64.nextGuid;
             meta64.dataObjMap[data.guid] = data;
         }
     }
 
-    getObjectByGuid = function(guid) {
+    getObjectByGuid(guid) {
         let ret = meta64.dataObjMap[guid];
         if (!ret) {
             console.log("data object not found: guid=" + guid);
@@ -206,7 +208,7 @@ class Meta64 {
      * todo-0: use obj.bind(this) for the 'callback' parameter passing then then get rid of 'ctx' parameter, but
      * be careful with the logic, it will be tricky.
      */
-    encodeOnClick = function(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
+    encodeOnClick(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
         if (typeof callback == "string") {
             return callback;
         } //
@@ -230,7 +232,7 @@ class Meta64 {
         }
     }
 
-    runCallback = function(guid, ctx, payload, delayCallback?: number) {
+    runCallback(guid, ctx, payload, delayCallback?: number) {
         console.log("callback run: " + delayCallback);
         /* depending on delayCallback, run the callback either immediately or with a delay */
         if (delayCallback > 0) {
@@ -243,7 +245,7 @@ class Meta64 {
         }
     }
 
-    runCallbackImmediate = function(guid, ctx, payload) {
+    runCallbackImmediate(guid, ctx, payload) {
         let dataObj = meta64.getObjectByGuid(guid);
 
         // if this is an object, we expect it to have a 'callback' property
@@ -266,15 +268,15 @@ class Meta64 {
         }
     }
 
-    inSimpleMode = function(): boolean {
+    inSimpleMode(): boolean {
         return meta64.editModeOption === meta64.MODE_SIMPLE;
     }
 
-    refresh = function(): void {
+    refresh(): void {
         meta64.goToMainPage(true, true);
     }
 
-    goToMainPage = function(rerender?: boolean, forceServerRefresh?: boolean): void {
+    goToMainPage(rerender?: boolean, forceServerRefresh?: boolean): void {
 
         if (forceServerRefresh) {
             meta64.treeDirty = true;
@@ -297,7 +299,7 @@ class Meta64 {
         }
     }
 
-    selectTab = function(pageName): void {
+    selectTab(pageName): void {
         let ironPages = document.querySelector("#mainIronPages") as any;
         ironPages.select(pageName);
 
@@ -326,7 +328,7 @@ class Meta64 {
      * Note: each data instance is required to have a guid numberic property, unique to it.
      *
      */
-    changePage = function(pg?: any, data?: any) {
+    changePage(pg?: any, data?: any) {
         if (typeof pg.tabId === 'undefined') {
             console.log("oops, wrong object type passed to changePage function.");
             return null;
@@ -337,7 +339,7 @@ class Meta64 {
         paperTabs.select(pg.tabId);
     }
 
-    isNodeBlackListed = function(node): boolean {
+    isNodeBlackListed(node): boolean {
         if (!meta64.inSimpleMode())
             return false;
 
@@ -351,7 +353,7 @@ class Meta64 {
         return false;
     }
 
-    getSelectedNodeUidsArray = function(): string[] {
+    getSelectedNodeUidsArray(): string[] {
         let selArray: string[] = [], uid;
 
         for (uid in meta64.selectedNodes) {
@@ -365,7 +367,7 @@ class Meta64 {
     /**
     Returns a newly cloned array of all the selected nodes each time it's called.
     */
-    getSelectedNodeIdsArray = function(): string[] {
+    getSelectedNodeIdsArray(): string[] {
         let selArray: string[] = [], uid;
 
         if (!meta64.selectedNodes) {
@@ -388,7 +390,7 @@ class Meta64 {
     }
 
     /* return an object with properties for each NodeInfo where the key is the id */
-    getSelectedNodesAsMapById = function(): Object {
+    getSelectedNodesAsMapById(): Object {
         let ret: Object = {};
         let selArray: I.NodeInfo[] = this.getSelectedNodesArray();
         for (let i = 0; i < selArray.length; i++) {
@@ -398,7 +400,7 @@ class Meta64 {
     }
 
     /* Gets selected nodes as NodeInfo.java objects array */
-    getSelectedNodesArray = function(): I.NodeInfo[] {
+    getSelectedNodesArray(): I.NodeInfo[] {
         let selArray: I.NodeInfo[] = [];
         let idx: number = 0;
         let uid: string = "";
@@ -410,11 +412,11 @@ class Meta64 {
         return selArray;
     }
 
-    clearSelectedNodes = function() {
+    clearSelectedNodes() {
         meta64.selectedNodes = {};
     }
 
-    updateNodeInfoResponse = function(res, node) {
+    updateNodeInfoResponse(res, node) {
         let ownerBuf: string = "";
         let mine: boolean = false;
 
@@ -447,7 +449,7 @@ class Meta64 {
         }
     }
 
-    updateNodeInfo = function(node: I.NodeInfo) {
+    updateNodeInfo(node: I.NodeInfo) {
         util.json<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": node.id,
             "includeAcl": false,
@@ -458,11 +460,11 @@ class Meta64 {
     }
 
     /* Returns the node with the given node.id value */
-    getNodeFromId = function(id: string): I.NodeInfo {
+    getNodeFromId(id: string): I.NodeInfo {
         return meta64.idToNodeMap[id];
     }
 
-    getPathOfUid = function(uid: string): string {
+    getPathOfUid(uid: string): string {
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             return "[path error. invalid uid: " + uid + "]";
@@ -471,12 +473,12 @@ class Meta64 {
         }
     }
 
-    getHighlightedNode = function(): I.NodeInfo {
+    getHighlightedNode(): I.NodeInfo {
         let ret: I.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
         return ret;
     }
 
-    highlightRowById = function(id, scroll): void {
+    highlightRowById(id, scroll): void {
         let node: I.NodeInfo = meta64.getNodeFromId(id);
         if (node) {
             meta64.highlightNode(node, scroll);
@@ -489,7 +491,7 @@ class Meta64 {
      * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
      * setting that value should go thru this function.
      */
-    highlightNode = function(node: I.NodeInfo, scroll: boolean): void {
+    highlightNode(node: I.NodeInfo, scroll: boolean): void {
         if (!node)
             return;
 
@@ -531,7 +533,7 @@ class Meta64 {
      * decouple
      */
 
-    refreshAllGuiEnablement = function() {
+    refreshAllGuiEnablement() {
         /* multiple select nodes */
         let prevPageExists: boolean = nav.mainOffset > 0;
         let nextPageExists: boolean = !nav.endReached;
@@ -624,7 +626,7 @@ class Meta64 {
         Polymer.updateStyles();
     }
 
-    getSingleSelectedNode = function(): I.NodeInfo {
+    getSingleSelectedNode(): I.NodeInfo {
         let uid: string;
         for (uid in meta64.selectedNodes) {
             if (meta64.selectedNodes.hasOwnProperty(uid)) {
@@ -635,7 +637,7 @@ class Meta64 {
         return null;
     }
 
-    getOrdinalOfNode = function(node: I.NodeInfo): number {
+    getOrdinalOfNode(node: I.NodeInfo): number {
         if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
             return -1;
 
@@ -647,14 +649,14 @@ class Meta64 {
         return -1;
     }
 
-    getNumChildNodes = function(): number {
+    getNumChildNodes(): number {
         if (!meta64.currentNodeData || !meta64.currentNodeData.children)
             return 0;
 
         return meta64.currentNodeData.children.length;
     }
 
-    setCurrentNodeData = function(data): void {
+    setCurrentNodeData(data): void {
         meta64.currentNodeData = data;
         meta64.currentNode = data.node;
         meta64.currentNodeUid = data.node.uid;
@@ -662,7 +664,7 @@ class Meta64 {
         meta64.currentNodePath = data.node.path;
     }
 
-    anonPageLoadResponse = function(res: I.AnonPageLoadResponse): void {
+    anonPageLoadResponse(res: I.AnonPageLoadResponse): void {
 
         if (res.renderNodeResponse) {
 
@@ -679,7 +681,7 @@ class Meta64 {
         }
     }
 
-    removeBinaryByUid = function(uid): void {
+    removeBinaryByUid(uid): void {
         for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
             let node: I.NodeInfo = meta64.currentNodeData.children[i];
             if (node.uid === uid) {
@@ -693,7 +695,7 @@ class Meta64 {
      * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
      * side code
      */
-    initNode = function(node: I.NodeInfo, updateMaps?: boolean): void {
+    initNode(node: I.NodeInfo, updateMaps?: boolean): void {
         if (!node) {
             console.log("initNode has null node");
             return;
@@ -719,7 +721,7 @@ class Meta64 {
         }
     }
 
-    initConstants = function() {
+    initConstants() {
         util.addAll(meta64.simpleModePropertyBlackList, [ //
             jcrCnst.MIXIN_TYPES, //
             jcrCnst.PRIMARY_TYPE, //
@@ -751,7 +753,7 @@ class Meta64 {
         util.addAll(meta64.binaryPropertyList, [jcrCnst.BIN_DATA]);
     }
 
-    initApp = function(): void {
+    initApp(): void {
         console.log("initApp running.");
 
         meta64.renderFunctionsByJcrType["meta64:rssfeed"] = podcast.renderFeedNode;
@@ -825,10 +827,9 @@ class Meta64 {
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
          * $ (window).on("orientationchange", _.orientationHandler);
          */
-
-        $(window).bind("beforeunload", function() {
+         window.onbeforeunload = function() {
             return "Leave Meta64 ?";
-        });
+        };
 
         /*
          * I thought this was a good idea, but actually it destroys the session, when the user is entering an
@@ -871,7 +872,7 @@ class Meta64 {
     }
 
     /* Eventually i'll refactor to have all these domIds in a component, and the component will contain the assignment of the onclicks */
-    initStaticHtmlOnClicks = function(): void {
+    initStaticHtmlOnClicks(): void {
         domBind.addOnClick("headerAppName", nav.navPublicHome);
         domBind.addOnClick("navHomeButton", nav.navHome);
         domBind.addOnClick("upLevelButton", nav.navUpLevel);
@@ -884,7 +885,7 @@ class Meta64 {
         domBind.addOnClick("openSignupPgButton", nav.signup);
     }
 
-    processUrlParams = function(): void {
+    processUrlParams(): void {
         var passCode = util.getParameterByName("passCode");
         if (passCode) {
             setTimeout(function() {
@@ -897,13 +898,13 @@ class Meta64 {
         meta64.urlCmd = util.getParameterByName("cmd");
     }
 
-    tabChangeEvent = function(tabName): void {
+    tabChangeEvent(tabName): void {
         if (tabName == "searchTabName") {
             srch.searchTabActivated();
         }
     }
 
-    displaySignupMessage = function(): void {
+    displaySignupMessage(): void {
         let signupElm = util.domElm("#signupCodeResponse");
         if (signupElm) {
             let signupResponse = signupElm.textContent;
@@ -913,7 +914,7 @@ class Meta64 {
         }
     }
 
-    screenSizeChange = function(): void {
+    screenSizeChange(): void {
         if (meta64.currentNodeData) {
 
             if (meta64.currentNode.imgId) {
@@ -941,78 +942,78 @@ class Meta64 {
     // }
     //
 
-    loadAnonPageHome = function(ignoreUrl): void {
+    loadAnonPageHome(ignoreUrl): void {
         util.json<I.AnonPageLoadRequest, I.AnonPageLoadResponse>("anonPageLoad", {
             "ignoreUrl": ignoreUrl
         }, meta64.anonPageLoadResponse);
     }
 
-    saveUserPreferences = function(): void {
+    saveUserPreferences(): void {
         util.json<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": meta64.userPreferences
         });
     }
 
-    openSystemFile = function(fileName: string) {
+    openSystemFile(fileName: string) {
         util.json<I.OpenSystemFileRequest, I.OpenSystemFileResponse>("openSystemFile", {
             "fileName": fileName
         });
     }
 
     /* This is a wrapper around System.import, to make future refactoring needs easier, and also make the code a bit cleaner */
-    modRun = function(modName: string, callback: Function) {
+    modRun(modName: string, callback: Function) {
         System.import("/js/" + modName).then(function(mod) {
             callback(mod);
         });
     }
 
-    clickOnNodeRow = function(rowElm, uid): void {
+    clickOnNodeRow(rowElm, uid): void {
         nav.clickOnNodeRow(rowElm, uid);
     }
 
-    replyToComment = function(uid: any): void {
+    replyToComment(uid: any): void {
         edit.replyToComment(uid);
     }
 
-    openNode = function(uid): void {
+    openNode(uid): void {
         nav.openNode(uid);
     }
 
-    toggleNodeSel = function(uid): void {
+    toggleNodeSel(uid): void {
         nav.toggleNodeSel(uid);
     }
 
-    createSubNode = function(uid?: any, typeName?: string, createAtTop?: boolean): void {
+    createSubNode(uid?: any, typeName?: string, createAtTop?: boolean): void {
         edit.createSubNode(uid, typeName, createAtTop);
     }
 
-    insertNode = function(uid?: any, typeName?: string): void {
+    insertNode(uid?: any, typeName?: string): void {
         edit.insertNode(uid, typeName);
     }
 
-    runEditNode = function(uid: any): void {
+    runEditNode(uid: any): void {
         edit.runEditNode(uid);
     }
 
-    moveNodeUp = function(uid?: string): void {
+    moveNodeUp(uid?: string): void {
         edit.moveNodeUp();
     }
 
-    moveNodeDown = function(uid?: string): void {
+    moveNodeDown(uid?: string): void {
         edit.moveNodeDown();
     }
 
-    clickOnSearchResultRow = function(rowElm, uid) {
+    clickOnSearchResultRow(rowElm, uid) {
         srch.clickOnSearchResultRow(rowElm, uid);
     }
 
-    clickSearchNode = function(uid: string) {
+    clickSearchNode(uid: string) {
         srch.clickSearchNode(uid);
     }
 
     //webpack
-    // editSystemFile = function(fileName: string) {
+    // editSystemFile(fileName: string) {
     //     new EditSystemFileDlg(fileName).open();
     // }
 }

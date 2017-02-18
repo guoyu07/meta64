@@ -7,7 +7,7 @@ import {SharingDlg} from "./SharingDlg";
 
 class Share {
 
-    private findSharedNodesResponse = function(res: I.GetSharedNodesResponse) {
+    private findSharedNodesResponse(res: I.GetSharedNodesResponse) {
         srch.searchNodesResponse(res);
     }
 
@@ -16,7 +16,7 @@ class Share {
     /*
      * Handles 'Sharing' button on a specific node, from button bar above node display in edit mode
      */
-    editNodeSharing = function(): void {
+    editNodeSharing(): void {
         let node: I.NodeInfo = meta64.getHighlightedNode();
 
         if (!node) {
@@ -30,7 +30,7 @@ class Share {
         })
     }
 
-    findSharedNodes = function(): void {
+    findSharedNodes(): void {
         let focusNode: I.NodeInfo = meta64.getHighlightedNode();
         if (focusNode == null) {
             return;

@@ -12,7 +12,7 @@ import { Factory } from "./Factory";
 import { SearchContentDlg } from "./SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 export class Search {
     //_UID_ROWID_SUFFIX: string = "_srch_row";
@@ -55,14 +55,14 @@ export class Search {
      */
     uidToNodeMap: { [key: string]: I.NodeInfo } = {};
 
-    numSearchResults = function() {
+    numSearchResults() {
         return srch.searchResults != null && //
             srch.searchResults.searchResults != null && //
             srch.searchResults.searchResults.length != null ? //
             srch.searchResults.searchResults.length : 0;
     }
 
-    searchTabActivated = function() {
+    searchTabActivated() {
         /*
          * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
          * and open up the search dialog.
@@ -74,7 +74,7 @@ export class Search {
         }
     }
 
-    searchNodesResponse = function(res: I.NodeSearchResponse) {
+    searchNodesResponse(res: I.NodeSearchResponse) {
         srch.searchResults = res;
         Factory.create("SearchResultsPanel", (panel: SearchResultsPanel) => {
             let content = panel.render();
@@ -84,7 +84,7 @@ export class Search {
         });
     }
 
-    timelineResponse = function(res: I.NodeSearchResponse) {
+    timelineResponse(res: I.NodeSearchResponse) {
         srch.timelineResults = res;
         Factory.create("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
             let content = panel.render();
@@ -94,7 +94,7 @@ export class Search {
         });
     }
 
-    searchFilesResponse = function(res: I.FileSearchResponse) {
+    searchFilesResponse(res: I.FileSearchResponse) {
         nav.mainOffset = 0;
         util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": res.searchResultNodeId,
@@ -105,7 +105,7 @@ export class Search {
         }, nav.navPageNodeResponse);
     }
 
-    timelineByModTime = function() {
+    timelineByModTime() {
         let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
@@ -121,7 +121,7 @@ export class Search {
         }, srch.timelineResponse);
     }
 
-    timelineByCreateTime = function() {
+    timelineByCreateTime() {
         let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
@@ -137,12 +137,12 @@ export class Search {
         }, srch.timelineResponse);
     }
 
-    initSearchNode = function(node: I.NodeInfo) {
+    initSearchNode(node: I.NodeInfo) {
         node.uid = util.getUidForId(srch.identToUidMap, node.id);
         srch.uidToNodeMap[node.uid] = node;
     }
 
-    populateSearchResultsPage = function(data, viewName) {
+    populateSearchResultsPage(data, viewName) {
         let output = '';
         let childCount = data.searchResults.length;
 
@@ -170,7 +170,7 @@ export class Search {
      *
      * node is a NodeInfo.java JSON
      */
-    renderSearchResultAsListItem = function(node, index, count, rowCount) {
+    renderSearchResultAsListItem(node, index, count, rowCount) {
 
         let uid = node.uid;
         console.log("renderSearchResult: " + uid);
@@ -183,30 +183,30 @@ export class Search {
         console.log("buttonBarHtml=" + buttonBarHtml);
         let content = render.renderNodeContent(node, true, true, true, true, true);
 
-        return tag.div( {
+        return tag.div({
             "class": "node-table-row inactive-row",
             "onClick": `meta64.clickOnSearchResultRow(this, '${uid}');`, //
             "id": cssId
         },//
             buttonBarHtml//
-            + tag.div( {
+            + tag.div({
                 "id": uid + "_srch_content"
             }, content));
     }
 
-    makeButtonBarHtml = function(uid) {
+    makeButtonBarHtml(uid) {
         let gotoButton = render.makeButton("Go to Node", uid, `meta64.clickSearchNode('${uid}');`);
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
-    clickOnSearchResultRow = function(rowElm, uid) {
+    clickOnSearchResultRow(rowElm, uid) {
         srch.unhighlightRow();
         srch.highlightRowNode = srch.uidToNodeMap[uid];
 
         util.changeOrAddClass(rowElm, "inactive-row", "active-row");
     }
 
-    clickSearchNode = function(uid: string) {
+    clickSearchNode(uid: string) {
         /*
          * update highlight node to point to the node clicked on, just to persist it for later
          */
@@ -222,7 +222,7 @@ export class Search {
     /*
      * turn of row selection styling of whatever row is currently selected
      */
-    unhighlightRow = function() {
+    unhighlightRow() {
 
         if (!srch.highlightRowNode) {
             return;
@@ -231,7 +231,7 @@ export class Search {
         /* now make CSS id from node */
         let nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
 
-        let elm:HTMLElement = util.domElm(nodeId);
+        let elm: HTMLElement = util.domElm(nodeId);
         if (elm) {
             /* change class on element */
             util.changeOrAddClassToElm(elm, "active-row", "inactive-row");

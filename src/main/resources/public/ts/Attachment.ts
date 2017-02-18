@@ -12,7 +12,7 @@ class Attachment {
     /* Node being uploaded to */
     uploadNode: any = null;
 
-    openUploadFromFileDlg = function(): void {
+    openUploadFromFileDlg(): void {
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (!node) {
             attachment.uploadNode = null;
@@ -32,7 +32,7 @@ class Attachment {
         */
     }
 
-    openUploadFromUrlDlg = function(): void {
+    openUploadFromUrlDlg(): void {
         let node: I.NodeInfo = meta64.getHighlightedNode();
 
         if (!node) {
@@ -48,7 +48,7 @@ class Attachment {
         })
     }
 
-    deleteAttachment = function(): void {
+    deleteAttachment(): void {
         let node: I.NodeInfo = meta64.getHighlightedNode();
 
         if (node) {
@@ -65,7 +65,7 @@ class Attachment {
         }
     }
 
-    deleteAttachmentResponse = function(res: I.DeleteAttachmentResponse, uid: any): void {
+    deleteAttachmentResponse(res: I.DeleteAttachmentResponse, uid: any): void {
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.

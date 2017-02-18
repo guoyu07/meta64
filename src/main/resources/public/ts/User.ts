@@ -14,7 +14,7 @@ declare var BRANDING_TITLE_SHORT;
 
 class User {
 
-    private logoutResponse = function(res: I.LogoutResponse): void {
+    private logoutResponse(res: I.LogoutResponse): void {
         /* reloads browser with the query parameters stripped off the path */
         window.location.href = window.location.origin;
     }
@@ -24,14 +24,14 @@ class User {
      * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
      * use these names
      */
-    isTestUserAccount = function(): boolean {
+    isTestUserAccount(): boolean {
         return meta64.userName.toLowerCase() === "adam" || //
             meta64.userName.toLowerCase() === "bob" || //
             meta64.userName.toLowerCase() === "cory" || //
             meta64.userName.toLowerCase() === "dan";
     }
 
-    setTitleUsingLoginResponse = function(res): void {
+    setTitleUsingLoginResponse(res): void {
         var title = BRANDING_TITLE_SHORT;
 
         /* todo-0: If users go with very long usernames this is gonna be ugly */
@@ -43,7 +43,7 @@ class User {
     }
 
     /* TODO-3: move this into meta64 module */
-    setStateVarsUsingLoginResponse = function(res: I.LoginResponse): void {
+    setStateVarsUsingLoginResponse(res: I.LoginResponse): void {
         if (res.rootNode) {
             meta64.homeNodeId = res.rootNode.id;
             meta64.homeNodePath = res.rootNode.path;
@@ -61,7 +61,7 @@ class User {
         console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
     }
 
-    openSignupPg = function(): void {
+    openSignupPg(): void {
         Factory.createDefault("SignupDlgImpl", (dlg: SignupDlg) => {
             dlg.open();
         });
@@ -70,14 +70,14 @@ class User {
     /*
      * This method is ugly. It is the button that can be login *or* logout.
      */
-    openLoginPg = function(): void {
+    openLoginPg(): void {
         Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
             dlg.populateFromCookies();
             dlg.open();
         });
     }
 
-    refreshLogin = function(): void {
+    refreshLogin(): void {
         console.log("refreshLogin.");
 
         let callUsr: string;
@@ -138,13 +138,13 @@ class User {
         }
     }
 
-    logout = function(updateLoginStateCookie) {
+    logout(updateLoginStateCookie) {
         if (meta64.isAnonUser) {
             return;
         }
 
         /* Remove warning dialog to ask user about leaving the page */
-        $(window).off("beforeunload");
+        window.onbeforeunload = null;
 
         if (updateLoginStateCookie) {
             util.setCookie(cnst.COOKIE_LOGIN_STATE, "0");
@@ -154,7 +154,7 @@ class User {
     }
 
 
-    login = function(loginDlg, usr, pwd) {
+    login(loginDlg, usr, pwd) {
         util.json<I.LoginRequest, I.LoginResponse>("login", {
             "userName": usr,
             "password": pwd,
@@ -165,13 +165,13 @@ class User {
         });
     }
 
-    deleteAllUserCookies = function() {
+    deleteAllUserCookies() {
         util.deleteCookie(cnst.COOKIE_LOGIN_USR);
         util.deleteCookie(cnst.COOKIE_LOGIN_PWD);
         util.deleteCookie(cnst.COOKIE_LOGIN_STATE);
     }
 
-    loginResponse = function(res?: I.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
+    loginResponse(res?: I.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
         if (util.checkSuccess("Login", res)) {
             console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
@@ -229,7 +229,7 @@ class User {
     }
 
     // res is JSON response object from server.
-    private refreshLoginResponse = function(res: I.LoginResponse): void {
+    private refreshLoginResponse(res: I.LoginResponse): void {
         console.log("refreshLoginResponse");
 
         if (res.success) {

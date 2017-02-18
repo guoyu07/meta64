@@ -1,6 +1,6 @@
 class SystemFolder {
     //
-    // renderNode = function(node: NodeInfo, rowStyling: boolean): string {
+    // renderNode(node: NodeInfo, rowStyling: boolean): string {
     //     let ret: string = "";
     //     let pathProp: PropertyInfo = props.getNodeProperty("meta64:path", node);
     //     let path: string = "";
@@ -30,7 +30,7 @@ class SystemFolder {
     //     return ret;
     // }
     //
-    // renderFileListNode = function(node: NodeInfo, rowStyling: boolean): string {
+    // renderFileListNode(node: NodeInfo, rowStyling: boolean): string {
     //     let ret: string = "";
     //
     //     let searchResultProp: PropertyInfo = props.getNodeProperty(jcrCnst.JSON_FILE_SEARCH_RESULT, node);
@@ -52,14 +52,14 @@ class SystemFolder {
     //     return ret;
     // }
     //
-    // fileListPropOrdering = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
+    // fileListPropOrdering(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
     //     let propOrder: string[] = [//
     //         "meta64:json"];
     //
     //     return props.orderProps(propOrder, properties);
     // }
     //
-    // reindex = function() {
+    // reindex() {
     //     let selNode: NodeInfo = meta64.getHighlightedNode();
     //     if (selNode) {
     //         util.json<FileSearchRequest, FileSearchResponse>("fileSearch", {
@@ -70,7 +70,7 @@ class SystemFolder {
     //     }
     // }
     //
-    // browse = function() {
+    // browse() {
     //     // This browse function works, but i'm disabling it, for now because what I'll be doing instead is making it
     //     // switch to a FileBrowser Tab (main tab) where browsing will all be done. No JCR nodes will be updated during
     //     // the process of browsing and editing files on the server.
@@ -83,7 +83,7 @@ class SystemFolder {
     //     // }
     // }
     //
-    // refreshResponse = function(res: BrowseFolderResponse) {
+    // refreshResponse(res: BrowseFolderResponse) {
     //     //nav.mainOffset = 0;
     //     // util.json<RenderNodeRequest, RenderNodeResponse>("renderNode", {
     //     //     "nodeId": res.searchResultNodeId,
@@ -94,15 +94,15 @@ class SystemFolder {
     //     // }, nav.navPageNodeResponse);
     // }
     //
-    // reindexResponse = function(res: FileSearchResponse) {
+    // reindexResponse(res: FileSearchResponse) {
     //     alert("Reindex complete.");
     // }
     //
-    // search = function() {
+    // search() {
     //     (new SearchFilesDlg(true)).open();
     // }
     //
-    // propOrdering = function(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
+    // propOrdering(node: NodeInfo, properties: PropertyInfo[]): PropertyInfo[] {
     //     let propOrder: string[] = [//
     //         "meta64:path"];
     //

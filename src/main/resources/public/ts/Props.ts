@@ -11,7 +11,7 @@ import { tag } from "./Tag";
 
 class Props {
 
-    orderProps = function(propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] {
+    orderProps(propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] {
         let propsNew: I.PropertyInfo[] = util.arrayClone(_props);
         let targetIdx: number = 0;
 
@@ -22,7 +22,7 @@ class Props {
         return propsNew;
     }
 
-    moveNodePosition = function(props: I.PropertyInfo[], idx: number, typeName: string): number {
+    moveNodePosition(props: I.PropertyInfo[], idx: number, typeName: string): number {
         let tagIdx: number = util.arrayIndexOfItemByProp(props, "name", typeName);
         if (tagIdx != -1) {
             util.arrayMoveItem(props, tagIdx, idx++);
@@ -33,7 +33,7 @@ class Props {
     /*
      * Toggles display of properties in the gui.
      */
-    propsToggle = function(): void {
+    propsToggle(): void {
         meta64.showProperties = meta64.showProperties ? false : true;
         // setDataIconUsingId("#editModeButton", editMode ? "edit" :
         // "forbidden");
@@ -48,7 +48,7 @@ class Props {
         meta64.selectTab("mainTabName");
     }
 
-    deletePropertyFromLocalData = function(propertyName): void {
+    deletePropertyFromLocalData(propertyName): void {
         for (let i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
@@ -62,7 +62,7 @@ class Props {
      * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
      * node and puts it on the top, and then does same for 'jctCnst.TAGS'
      */
-    getPropertiesInEditingOrder = function(node: I.NodeInfo, _props: I.PropertyInfo[]): I.PropertyInfo[] {
+    getPropertiesInEditingOrder(node: I.NodeInfo, _props: I.PropertyInfo[]): I.PropertyInfo[] {
         let func: Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
         if (func) {
             return func(node, _props);
@@ -76,7 +76,7 @@ class Props {
     }
 
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    private movePropsToTop = function(propsList: string[], props: I.PropertyInfo[]) {
+    private movePropsToTop(propsList: string[], props: I.PropertyInfo[]) {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -85,7 +85,7 @@ class Props {
         }
     }
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    private movePropsToEnd = function(propsList: string[], props: I.PropertyInfo[]) {
+    private movePropsToEnd(propsList: string[], props: I.PropertyInfo[]) {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -96,7 +96,7 @@ class Props {
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
-    renderProperties = function(properties): string {
+    renderProperties(properties): string {
         if (properties) {
             let table: string = "";
             let propCount: number = 0;
@@ -149,7 +149,7 @@ class Props {
      * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
      * (PropertyInfo.java) with name matching propertyName, else null.
      */
-    getNodeProperty = function(propertyName, node): I.PropertyInfo {
+    getNodeProperty(propertyName, node): I.PropertyInfo {
         if (!node || !node.properties)
             return null;
 
@@ -162,7 +162,7 @@ class Props {
         return null;
     }
 
-    getNodePropertyVal = function(propertyName, node): string {
+    getNodePropertyVal(propertyName, node): string {
         let prop: I.PropertyInfo = props.getNodeProperty(propertyName, node);
         return prop ? prop.value : null;
     }
@@ -171,7 +171,7 @@ class Props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedNode = function(node): boolean {
+    isNonOwnedNode(node): boolean {
         let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
 
         // if we don't know who owns this node assume the admin owns it.
@@ -187,12 +187,12 @@ class Props {
      * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedCommentNode = function(node): boolean {
+    isNonOwnedCommentNode(node): boolean {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy != meta64.userName;
     }
 
-    isOwnedCommentNode = function(node): boolean {
+    isOwnedCommentNode(node): boolean {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         return commentBy != null && commentBy == meta64.userName;
     }
@@ -200,7 +200,7 @@ class Props {
     /*
      * Returns string representation of property value, even if multiple properties
      */
-    renderProperty = function(property): string {
+    renderProperty(property): string {
         /* If this is a single-value type property */
         if (!property.values) {
 
@@ -217,7 +217,7 @@ class Props {
         }
     }
 
-    renderPropertyValues = function(values): string {
+    renderPropertyValues(values): string {
         let ret: string = "";
 
         util.forEachArrElm(values, function(value, i: number) {

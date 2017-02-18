@@ -26,29 +26,29 @@ class Nav {
     /* todo-0: need to have this value passed from server rather than coded in TypeScript */
     ROWS_PER_PAGE: number = 25;
 
-    search = function(): void {
+    search(): void {
         Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
             dlg.open();
         });
     }
 
-    searchTags = function(): void {
+    searchTags(): void {
         Factory.createDefault("SearchTagsDlgImpl", (dlg: SearchTagsDlg) => {
             dlg.open();
         });
     }
 
-    searchFiles = function(): void {
+    searchFiles(): void {
         Factory.createDefault("SearchFilesDlgImpl", (dlg: SearchFilesDlg) => {
             dlg.open();
         });
     }
 
-    editMode = function(): void {
+    editMode(): void {
         edit.editMode();
     }
 
-    login = function(): void {
+    login(): void {
         Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
             //todo-0: this call was always missing pupulateFromCookies, is this right ?
             //dlg.populateFromCookies();
@@ -56,22 +56,22 @@ class Nav {
         });
     }
 
-    logout = function(): void {
+    logout(): void {
         user.logout(true);
     }
 
-    signup = function(): void {
+    signup(): void {
         user.openSignupPg();
     }
 
 
-    preferences = function(): void {
+    preferences(): void {
         Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
             dlg.open();
         });
     }
 
-    openMainMenuHelp = function(): void {
+    openMainMenuHelp(): void {
         nav.mainOffset = 0;
         util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/meta64/public/help",
@@ -82,7 +82,7 @@ class Nav {
         }, nav.navPageNodeResponse);
     }
 
-    openRssFeedsNode = function(): void {
+    openRssFeedsNode(): void {
         nav.mainOffset = 0;
         util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/rss/feeds",
@@ -93,7 +93,7 @@ class Nav {
         }, nav.navPageNodeResponse);
     }
 
-    expandMore = function(nodeId: string): void {
+    expandMore(nodeId: string): void {
 
         /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button
         this is lower priority for now, so i'm not using it yet */
@@ -104,14 +104,14 @@ class Nav {
         }, nav.expandAbbreviatedNodeResponse);
     }
 
-    private expandAbbreviatedNodeResponse = function(res: I.ExpandAbbreviatedNodeResponse): void {
+    private expandAbbreviatedNodeResponse(res: I.ExpandAbbreviatedNodeResponse): void {
         if (util.checkSuccess("ExpandAbbreviatedNode", res)) {
             //console.log("VAL: "+JSON.stringify(res.nodeInfo));
             render.refreshNodeOnPage(res.nodeInfo);
         }
     }
 
-    displayingHome = function(): boolean {
+    displayingHome(): boolean {
         if (meta64.isAnonUser) {
             return meta64.currentNodeId === meta64.anonUserLandingPageNode;
         } else {
@@ -119,11 +119,11 @@ class Nav {
         }
     }
 
-    parentVisibleToUser = function(): boolean {
+    parentVisibleToUser(): boolean {
         return !nav.displayingHome();
     }
 
-    upLevelResponse = function(res: I.RenderNodeResponse, id): void {
+    upLevelResponse(res: I.RenderNodeResponse, id): void {
         if (!res || !res.node) {
             util.showMessage("No data is visible to you above this node.");
         } else {
@@ -133,7 +133,7 @@ class Nav {
         }
     }
 
-    navUpLevel = function(): void {
+    navUpLevel(): void {
 
         if (!nav.parentVisibleToUser()) {
             // Already at root. Can't go up.
@@ -158,7 +158,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedDomElement = function(): HTMLElement {
+    getSelectedDomElement(): HTMLElement {
 
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {
@@ -183,7 +183,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedPolyElement = function(): any {
+    getSelectedPolyElement(): any {
         try {
             let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode) {
@@ -209,7 +209,7 @@ class Nav {
         return null;
     }
 
-    clickOnNodeRow = function(rowElm, uid): void {
+    clickOnNodeRow(rowElm, uid): void {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
@@ -235,7 +235,7 @@ class Nav {
         meta64.refreshAllGuiEnablement();
     }
 
-    openNode = function(uid): void {
+    openNode(uid): void {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         meta64.highlightNode(node, true);
@@ -252,7 +252,7 @@ class Nav {
      * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
      * silly looking async timer here.
      */
-    toggleNodeSel = function(uid): void {
+    toggleNodeSel(uid): void {
         let toggleButton: any = util.polyElm(uid + "_sel");
         setTimeout(function() {
             if (toggleButton.node.checked) {
@@ -266,14 +266,14 @@ class Nav {
         }, 500);
     }
 
-    navPageNodeResponse = function(res: I.RenderNodeResponse): void {
+    navPageNodeResponse(res: I.RenderNodeResponse): void {
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();
         meta64.refreshAllGuiEnablement();
     }
 
-    navHome = function(): void {
+    navHome(): void {
         if (meta64.isAnonUser) {
             meta64.loadAnonPageHome(true);
             // window.location.href = window.location.origin;
@@ -289,7 +289,7 @@ class Nav {
         }
     }
 
-    navPublicHome = function(): void {
+    navPublicHome(): void {
         meta64.loadAnonPageHome(true);
     }
 }

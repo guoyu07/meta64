@@ -22,11 +22,11 @@ export class Render {
      * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
      * want to give them some instructions and the ability to add content.
      */
-    private getEmptyPagePrompt = function(): string {
+    private getEmptyPagePrompt(): string {
         return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
     }
 
-    private renderBinary = function(node: I.NodeInfo): string {
+    private renderBinary(node: I.NodeInfo): string {
         /*
          * If this is an image render the image directly onto the page as a visible image
          */
@@ -54,7 +54,7 @@ export class Render {
      *
      * If 'data' is provided, this is the instance data for the dialog
      */
-    buidPage = function(pg, data): void {
+    buidPage(pg, data): void {
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -67,7 +67,7 @@ export class Render {
         }
     }
 
-    buildRowHeader = function(node: I.NodeInfo, showPath: boolean, showName: boolean): string {
+    buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): string {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
         let headerText: string = "";
@@ -128,7 +128,7 @@ export class Render {
      * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
      * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
      */
-    injectCodeFormatting = function(content: string): string {
+    injectCodeFormatting(content: string): string {
         if (!content) return content;
         // example markdown:
         // ```js
@@ -145,11 +145,11 @@ export class Render {
         return content;
     }
 
-    injectSubstitutions = function(content: string): string {
+    injectSubstitutions(content: string): string {
         return util.replaceAll(content, "{{locationOrigin}}", window.location.origin);
     }
 
-    encodeLanguages = function(content: string): string {
+    encodeLanguages(content: string): string {
         /*
          * todo-1: need to provide some way of having these language types configurable in a properties file
          * somewhere, and fill out a lot more file types.
@@ -166,7 +166,7 @@ export class Render {
 
     /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
     which is what's done in most of the app, which is much less efficient and snappy visually */
-    refreshNodeOnPage = function(node: I.NodeInfo): void {
+    refreshNodeOnPage(node: I.NodeInfo): void {
         //need to lookup uid from NodeInfo.id then set the content of this div.
         //"id": uid + "_content"
         //to the value from renderNodeContent(node, true, true, true, true, true)));
@@ -187,7 +187,7 @@ export class Render {
      * of nodes, need a more pluggable design, where rendeing of different things is deletaged to some
      * appropriate object/service
      */
-    renderNodeContent = function(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
+    renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
         var ret: string = render.getTopRightImageTag(node);
 
         /* todo-2: enable headerText when appropriate here */
@@ -286,7 +286,7 @@ export class Render {
         return ret;
     }
 
-    renderJsonFileSearchResultProperty = function(jsonContent: string): string {
+    renderJsonFileSearchResultProperty(jsonContent: string): string {
         let content: string = "";
         try {
             console.log("json: " + jsonContent);
@@ -331,7 +331,7 @@ export class Render {
      *
      * node is a NodeInfo.java JSON
      */
-    renderNodeAsListItem = function(node: I.NodeInfo, index: number, count: number, rowCount: number): string {
+    renderNodeAsListItem(node: I.NodeInfo, index: number, count: number, rowCount: number): string {
 
         let uid: string = node.uid;
         let prevPageExists: boolean = nav.mainOffset > 0;
@@ -376,7 +376,7 @@ export class Render {
             }, render.renderNodeContent(node, true, true, true, true, true)));
     }
 
-    showNodeUrl = function() {
+    showNodeUrl() {
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("You must first click on a node.");
@@ -396,7 +396,7 @@ export class Render {
         util.showMessage(message);
     }
 
-    getTopRightImageTag = function(node: I.NodeInfo) {
+    getTopRightImageTag(node: I.NodeInfo) {
         let topRightImg: string = props.getNodePropertyVal('img.top.right', node);
         let topRightImgTag: string = "";
         if (topRightImg) {
@@ -408,7 +408,7 @@ export class Render {
         return topRightImgTag;
     }
 
-    getNodeBkgImageStyle = function(node: I.NodeInfo): string {
+    getNodeBkgImageStyle(node: I.NodeInfo): string {
         let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
         let bkgImgStyle: string = "";
         if (bkgImg) {
@@ -418,7 +418,7 @@ export class Render {
         return bkgImgStyle;
     }
 
-    centeredButtonBar = function(buttons?: string, classes?: string): string {
+    centeredButtonBar(buttons?: string, classes?: string): string {
         classes = classes || "";
 
         return tag.div({
@@ -426,7 +426,7 @@ export class Render {
         }, buttons);
     }
 
-    centerContent = function(content: string, width: number): string {
+    centerContent(content: string, width: number): string {
         let div: string = tag.div({ "style": `width:${width}px;` }, content);
 
         let attrs = {
@@ -436,7 +436,7 @@ export class Render {
         return tag.div(attrs, div);
     }
 
-    buttonBar = function(buttons: string, classes: string): string {
+    buttonBar(buttons: string, classes: string): string {
         classes = classes || "";
 
         return tag.div({
@@ -444,7 +444,7 @@ export class Render {
         }, buttons);
     }
 
-    makeRowButtonBarHtml = function(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
+    makeRowButtonBarHtml(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
 
         let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -602,7 +602,7 @@ export class Render {
         return allButtons.length > 0 ? render.makeHorizontalFieldSet(allButtons, "row-toolbar") : "";
     }
 
-    makeHorizontalFieldSet = function(content?: string, extraClasses?: string): string {
+    makeHorizontalFieldSet(content?: string, extraClasses?: string): string {
 
         /* Now build entire control bar */
         return tag.div( //
@@ -611,13 +611,13 @@ export class Render {
             }, content);
     }
 
-    makeHorzControlGroup = function(content: string): string {
+    makeHorzControlGroup(content: string): string {
         return tag.div({
             "class": "horizontal layout"
         }, content);
     }
 
-    makeRadioButton = function(label: string, id: string): string {
+    makeRadioButton(label: string, id: string): string {
         return tag.radioButton({
             "id": id,
             "name": id
@@ -627,7 +627,7 @@ export class Render {
     /*
      * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
      */
-    nodeHasChildren = function(uid: string): boolean {
+    nodeHasChildren(uid: string): boolean {
         var node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("Unknown nodeId in nodeHasChildren: " + uid);
@@ -637,7 +637,7 @@ export class Render {
         }
     }
 
-    formatPath = function(node: I.NodeInfo): string {
+    formatPath(node: I.NodeInfo): string {
         let path: string = node.path;
 
         /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
@@ -657,7 +657,7 @@ export class Render {
     /*
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
-    renderPageFromData = function(data?: I.RenderNodeResponse, scrollToTop?: boolean): string {
+    renderPageFromData(data?: I.RenderNodeResponse, scrollToTop?: boolean): string {
         meta64.codeFormatDirty = false;
         console.log("render.renderPageFromData()");
 
@@ -850,27 +850,27 @@ export class Render {
         }
     }
 
-    firstPage = function(): void {
+    firstPage(): void {
         console.log("First page button click.");
         view.firstPage();
     }
 
-    prevPage = function(): void {
+    prevPage(): void {
         console.log("Prev page button click.");
         view.prevPage();
     }
 
-    nextPage = function(): void {
+    nextPage(): void {
         console.log("Next page button click.");
         view.nextPage();
     }
 
-    lastPage = function(): void {
+    lastPage(): void {
         console.log("Last page button click.");
         view.lastPage();
     }
 
-    generateRow = function(i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
+    generateRow(i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
 
         if (meta64.isNodeBlackListed(node))
             return "";
@@ -889,12 +889,12 @@ export class Render {
         return row;
     }
 
-    getUrlForNodeAttachment = function(node: I.NodeInfo): string {
+    getUrlForNodeAttachment(node: I.NodeInfo): string {
         return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
     }
 
     /* see also: makeImageTag() */
-    adjustImageSize = function(node: I.NodeInfo): void {
+    adjustImageSize(node: I.NodeInfo): void {
 
         let elm: HTMLElement = util.domElm(node.imgId);
         if (elm) {
@@ -943,7 +943,7 @@ export class Render {
     }
 
     /* see also: adjustImageSize() */
-    makeImageTag = function(node: I.NodeInfo) {
+    makeImageTag(node: I.NodeInfo) {
         let src: string = render.getUrlForNodeAttachment(node);
         node.imgId = "imgUid_" + node.uid;
 
@@ -998,7 +998,7 @@ export class Render {
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
      * content is non-null
      */
-    tag = function(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
+    tag(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
 
         /* default parameter values */
         if (typeof (closeTag) === 'undefined')
@@ -1042,7 +1042,7 @@ export class Render {
         return ret;
     }
 
-    makeTextArea = function(fieldName: string, fieldId: string): string {
+    makeTextArea(fieldName: string, fieldId: string): string {
         return tag.textarea({
             "name": fieldId,
             "label": fieldName,
@@ -1050,7 +1050,7 @@ export class Render {
         });
     }
 
-    makeEditField = function(fieldName: string, fieldId: string): string {
+    makeEditField(fieldName: string, fieldId: string): string {
         return tag.input({
             "name": fieldId,
             "label": fieldName,
@@ -1058,7 +1058,7 @@ export class Render {
         });
     }
 
-    makePasswordField = function(fieldName: string, fieldId: string): string {
+    makePasswordField(fieldName: string, fieldId: string): string {
         return tag.input({
             "type": "password",
             "name": fieldId,
@@ -1068,7 +1068,7 @@ export class Render {
         });
     }
 
-    makeButton = function(text: string, id: string, callback: any, ctx?: any): string {
+    makeButton(text: string, id: string, callback: any, ctx?: any): string {
         let attribs = {
             "raised": "raised",
             "id": id,
@@ -1082,21 +1082,21 @@ export class Render {
         return tag.button(attribs, text);
     }
 
-    allowPropertyToDisplay = function(propName: string): boolean {
+    allowPropertyToDisplay(propName: string): boolean {
         if (!meta64.inSimpleMode())
             return true;
         return meta64.simpleModePropertyBlackList[propName] == null;
     }
 
-    isReadOnlyProperty = function(propName: string): boolean {
+    isReadOnlyProperty(propName: string): boolean {
         return meta64.readOnlyPropertyList[propName];
     }
 
-    isBinaryProperty = function(propName: string): boolean {
+    isBinaryProperty(propName: string): boolean {
         return meta64.binaryPropertyList[propName];
     }
 
-    sanitizePropertyName = function(propName: string): string {
+    sanitizePropertyName(propName: string): string {
         if (meta64.editModeOption === "simple") {
             return propName === jcrCnst.CONTENT ? "Content" : propName;
         } else {

@@ -22,16 +22,16 @@ class Podcast {
 
     private pushTimer: any = null;
 
-    generateRSS = function(): void {
+    generateRSS(): void {
         util.json<I.GenerateRSSRequest, I.GenerateRSSResponse>("generateRSS", {
         }, podcast.generateRSSResponse);
     }
 
-    private generateRSSResponse = function(): void {
+    private generateRSSResponse(): void {
         alert('rss complete.');
     }
 
-    renderFeedNode = function(node: I.NodeInfo, rowStyling: boolean): string {
+    renderFeedNode(node: I.NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
         let title: I.PropertyInfo = props.getNodeProperty("meta64:rssFeedTitle", node);
         let desc: I.PropertyInfo = props.getNodeProperty("meta64:rssFeedDesc", node);
@@ -68,7 +68,7 @@ class Podcast {
         return ret;
     }
 
-    getMediaPlayerUrlFromNode = function(node: I.NodeInfo): string {
+    getMediaPlayerUrlFromNode(node: I.NodeInfo): string {
         let link: I.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
         if (link && link.value && util.contains(link.value.toLowerCase(), ".mp3")) {
             return link.value;
@@ -90,7 +90,7 @@ class Podcast {
         return null;
     }
 
-    renderItemNode = function(node: I.NodeInfo, rowStyling: boolean): string {
+    renderItemNode(node: I.NodeInfo, rowStyling: boolean): string {
         let ret: string = "";
         let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
         let rssDesc: I.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
@@ -141,7 +141,7 @@ class Podcast {
         return ret;
     }
 
-    propOrderingFeedNode = function(node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] {
+    propOrderingFeedNode(node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:rssFeedTitle",
             "meta64:rssFeedDesc",
@@ -153,7 +153,7 @@ class Podcast {
         return props.orderProps(propOrder, properties);
     }
 
-    propOrderingItemNode = function(node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] {
+    propOrderingItemNode(node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] {
         let propOrder: string[] = [//
             "meta64:rssItemTitle",
             "meta64:rssItemDesc",
@@ -164,7 +164,7 @@ class Podcast {
         return props.orderProps(propOrder, properties);
     }
 
-    openPlayerDialog = function(_uid: string) {
+    openPlayerDialog(_uid: string) {
         podcast.uid = _uid;
         podcast.node = meta64.uidToNodeMap[podcast.uid];
 
@@ -184,7 +184,7 @@ class Podcast {
         }
     }
 
-    private parseAdSegmentUid = function(_uid: string) {
+    private parseAdSegmentUid(_uid: string) {
         if (podcast.node) {
             let adSegs: I.PropertyInfo = props.getNodeProperty("ad-segments", podcast.node);
             if (adSegs) {
@@ -194,7 +194,7 @@ class Podcast {
         else throw "Unable to find node uid: " + podcast.uid;
     }
 
-    private parseAdSegmentText = function(adSegs: string) {
+    private parseAdSegmentText(adSegs: string) {
         podcast.adSegments = [];
 
         let segList: string[] = adSegs.split("\n");
@@ -217,7 +217,7 @@ class Podcast {
     * todo-0: make this accept just seconds, or min:sec, or hour:min:sec, and be able to
     * parse any of them correctly.
     */
-    private convertToSeconds = function(timeVal: string) {
+    private convertToSeconds(timeVal: string) {
         /* end time is designated with asterisk by user, and represented by -1 in variables */
         if (timeVal == '*') return -1;
         let timeParts: string[] = timeVal.split(":");
@@ -230,7 +230,7 @@ class Podcast {
         return minutes * 60 + seconds;
     }
 
-    restoreStartTime = function() {
+    restoreStartTime() {
         /* makes player always start wherever the user last was when they clicked "pause" */
         if (podcast.player && podcast.startTimePending) {
             podcast.player.currentTime = podcast.startTimePending;
@@ -238,13 +238,13 @@ class Podcast {
         }
     }
 
-    onCanPlay = function(uid: string, elm: any): void {
+    onCanPlay(uid: string, elm: any): void {
         podcast.player = elm;
         podcast.restoreStartTime();
         podcast.player.play();
     }
 
-    onTimeUpdate = function(uid: string, elm: any): void {
+    onTimeUpdate(uid: string, elm: any): void {
         if (!podcast.pushTimer) {
             /* ping server once every five minutes */
             podcast.pushTimer = setInterval(podcast.pushTimerFunction, 5 * 60 * 1000);
@@ -282,7 +282,7 @@ class Podcast {
     }
 
     /* todo-0: for production, boost this up to one minute */
-    pushTimerFunction = function(): void {
+    pushTimerFunction(): void {
         //console.log("pushTimer");
         /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
         but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
@@ -303,14 +303,14 @@ class Podcast {
     }
 
     //This podcast handling hack is only in this file temporarily
-    pause = function(): void {
+    pause(): void {
         if (podcast.player) {
             podcast.player.pause();
             podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
         }
     }
 
-    destroyPlayer = function(dlg: AudioPlayerDlg): void {
+    destroyPlayer(dlg: AudioPlayerDlg): void {
         if (podcast.player) {
             podcast.player.pause();
 
@@ -327,26 +327,26 @@ class Podcast {
         }
     }
 
-    play = function(): void {
+    play(): void {
         if (podcast.player) {
             podcast.player.play();
         }
     }
 
-    speed = function(rate: number): void {
+    speed(rate: number): void {
         if (podcast.player) {
             podcast.player.playbackRate = rate;
         }
     }
 
     //This podcast handling hack is only in this file temporarily
-    skip = function(delta: number): void {
+    skip(delta: number): void {
         if (podcast.player) {
             podcast.player.currentTime += delta;
         }
     }
 
-    savePlayerInfo = function(url: string, timeOffset: number): void {
+    savePlayerInfo(url: string, timeOffset: number): void {
         if (meta64.isAnonUser) return;
 
         util.json<I.SetPlayerInfoRequest, I.SetPlayerInfoResponse>("setPlayerInfo", {
@@ -356,7 +356,7 @@ class Podcast {
         }, podcast.setPlayerInfoResponse);
     }
 
-    private setPlayerInfoResponse = function(): void {
+    private setPlayerInfoResponse(): void {
         //alert('save complete.');
     }
 }

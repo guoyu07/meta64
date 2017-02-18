@@ -15,7 +15,7 @@ import { domBind } from "./DomBind";
 import { tag } from "./Tag";
 
 class MenuPanel {
-    private makeTopLevelMenu = function(title: string, content: string, id?: string): string {
+    private makeTopLevelMenu(title: string, content: string, id?: string): string {
         let paperItemAttrs = {
             class: "menu-trigger"
         };
@@ -42,7 +42,7 @@ class MenuPanel {
             menuPanel.makeSecondLevelList(content));
     }
 
-    private makeSecondLevelList = function(content: string): string {
+    private makeSecondLevelList(content: string): string {
         return tag.menu({
             "class": "menu-content sublist my-menu-section",
             "selectable": ""
@@ -52,7 +52,7 @@ class MenuPanel {
         }, content);
     }
 
-    private menuItem = function(name: string, id: string, onClick: Function): string {
+    private menuItem(name: string, id: string, onClick: Function): string {
         let html = tag.item({
             "id": id,
             "selectable": ""
@@ -68,7 +68,7 @@ class MenuPanel {
 
     private domId: string = "mainAppMenu";
 
-    render = function(): void {
+    render(): void {
 
         //not w-pack
         // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.

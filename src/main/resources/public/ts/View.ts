@@ -12,7 +12,7 @@ class View {
 
     scrollToSelNodePending: boolean = false;
 
-    updateStatusBar = function(): void {
+    updateStatusBar(): void {
         if (!meta64.currentNodeData)
             return;
         var statusLine = "";
@@ -30,7 +30,7 @@ class View {
      * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
      * render.
      */
-    refreshTreeResponse = function(res?: I.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
+    refreshTreeResponse(res?: I.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
         render.renderPageFromData(res, scrollToTop);
 
         if (scrollToTop) {
@@ -49,7 +49,7 @@ class View {
     /*
      * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
      */
-    refreshTree = function(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
+    refreshTree(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
         if (!nodeId) {
             nodeId = meta64.currentNodeId;
         }
@@ -84,13 +84,13 @@ class View {
         });
     }
 
-    firstPage = function(): void {
+    firstPage(): void {
         console.log("Running firstPage Query");
         nav.mainOffset = 0;
         view.loadPage(false);
     }
 
-    prevPage = function(): void {
+    prevPage(): void {
         console.log("Running prevPage Query");
         nav.mainOffset -= nav.ROWS_PER_PAGE;
         if (nav.mainOffset < 0) {
@@ -99,19 +99,19 @@ class View {
         view.loadPage(false);
     }
 
-    nextPage = function(): void {
+    nextPage(): void {
         console.log("Running nextPage Query");
         nav.mainOffset += nav.ROWS_PER_PAGE;
         view.loadPage(false);
     }
 
-    lastPage = function(): void {
+    lastPage(): void {
         console.log("Running lastPage Query");
         //nav.mainOffset += nav.ROWS_PER_PAGE;
         view.loadPage(true);
     }
 
-    private loadPage = function(goToLastPage: boolean): void {
+    private loadPage(goToLastPage: boolean): void {
         util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": null,
@@ -134,7 +134,7 @@ class View {
      * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
      * and then scrolling to a different place a fraction of a second later)
      */
-    scrollToSelectedNode = function() {
+    scrollToSelectedNode() {
         view.scrollToSelNodePending = true;
 
         setTimeout(function() {
@@ -158,7 +158,7 @@ class View {
         }, 1000);
     }
 
-    scrollToTop = function() {
+    scrollToTop() {
         if (view.scrollToSelNodePending)
             return;
 
@@ -172,7 +172,7 @@ class View {
         }, 1000);
     }
 
-    initEditPathDisplayById = function(domId: string) {
+    initEditPathDisplayById(domId: string) {
         let node: I.NodeInfo = edit.editNode;
         let e: any = util.domElm(domId);
         if (!e)
@@ -195,7 +195,7 @@ class View {
         }
     }
 
-    showServerInfo = function() {
+    showServerInfo() {
         util.json<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {}, function(res: I.GetServerInfoResponse) {
             util.showMessage(res.serverInfo);
         });

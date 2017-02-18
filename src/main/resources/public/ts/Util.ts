@@ -25,15 +25,15 @@ class Util {
     waitCounter: number = 0;
     pgrsDlg: any = null;
 
-    escapeRegExp = function(_) {
+    escapeRegExp(_) {
         return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
-    escapeForAttrib = function(_) {
+    escapeForAttrib(_) {
         return util.replaceAll(_, "\"", "&quot;");
     }
 
-    unencodeHtml = function(_) {
+    unencodeHtml(_) {
         if (!util.contains(_, "&"))
             return _;
 
@@ -47,34 +47,34 @@ class Util {
         return ret;
     }
 
-    replaceAll = function(_, find, replace) {
+    replaceAll(_, find, replace) {
         return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
     }
 
-    contains = function(_, str) {
+    contains(_, str) {
         return _.indexOf(str) != -1;
     }
 
-    startsWith = function(_, str) {
+    startsWith(_, str) {
         return _.indexOf(str) === 0;
     }
 
-    endsWith = function(_, str) {
+    endsWith(_, str) {
         return _.indexOf(str, _.length - str.length) !== -1;
     }
 
-    stripIfStartsWith = function(_, str) {
+    stripIfStartsWith(_, str) {
         if (_.startsWith(str)) {
             return _.substring(str.length);
         }
         return _;
     }
 
-    arrayClone = function(_: any[]) {
+    arrayClone(_: any[]) {
         return _.slice(0);
     };
 
-    arrayIndexOfItemByProp = function(_: any[], propName, propVal) {
+    arrayIndexOfItemByProp(_: any[], propName, propVal) {
         let len = _.length;
         for (let i = 0; i < len; i++) {
             if (_[i][propName] === propVal) {
@@ -87,21 +87,21 @@ class Util {
     /* need to test all calls to this method because i noticed during TypeScript conversion i wasn't even returning
     a value from this function! todo-0
     */
-    arrayMoveItem = function(_: any[], fromIndex, toIndex) {
+    arrayMoveItem(_: any[], fromIndex, toIndex) {
         _.splice(toIndex, 0, _.splice(fromIndex, 1)[0]);
     };
 
-    static stdTimezoneOffset = function(_: Date) {
+    static stdTimezoneOffset(_: Date) {
         let jan = new Date(_.getFullYear(), 0, 1);
         let jul = new Date(_.getFullYear(), 6, 1);
         return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
     }
 
-    static dst = function(_: Date) {
+    static dst(_: Date) {
         return _.getTimezoneOffset() < Util.stdTimezoneOffset(_);
     }
 
-    indexOfObject = function(_: any[], obj) {
+    indexOfObject(_: any[], obj) {
         for (let i = 0; i < _.length; i++) {
             if (_[i] === obj) {
                 return i;
@@ -110,7 +110,7 @@ class Util {
         return -1;
     }
 
-    assertNotNull = function(varName) {
+    assertNotNull(varName) {
         if (typeof eval(varName) === 'undefined') {
             util.showMessage("Variable not found: " + varName);
         }
@@ -124,7 +124,7 @@ class Util {
 
     daylightSavingsTime: boolean = (Util.dst(new Date())) ? true : false;
 
-    toJson = function(obj) {
+    toJson(obj) {
         return JSON.stringify(obj, null, 4);
     }
 
@@ -132,7 +132,7 @@ class Util {
      * This came from here:
      * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    getParameterByName = function(name?: any, url?: any): string {
+    getParameterByName(name?: any, url?: any): string {
         if (!url)
             url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -144,11 +144,11 @@ class Util {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    initProgressMonitor = function(): void {
+    initProgressMonitor(): void {
         setInterval(util.progressInterval, 1000);
     }
 
-    progressInterval = function(): void {
+    progressInterval(): void {
         let isWaiting = util.isAjaxWaiting();
         if (isWaiting) {
             util.waitCounter++;
@@ -169,8 +169,8 @@ class Util {
         }
     }
 
-  /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller */
-    json = function <RequestType, ResponseType>(postName: any, postData: RequestType, //
+    /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller */
+    json<RequestType, ResponseType>(postName: any, postData: RequestType, //
         callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
         callbackPayload?: any) {
 
@@ -300,7 +300,7 @@ class Util {
                             util.showMessage("Session timed out. Page will refresh.");
                         }
 
-                        $(window).off("beforeunload");
+                        window.onbeforeunload = null;
                         window.location.href = window.location.origin;
                         return;
                     }
@@ -335,7 +335,7 @@ class Util {
         return ironRequest;
     }
 
-    logAndThrow = function(message: string) {
+    logAndThrow(message: string) {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -345,7 +345,7 @@ class Util {
         throw message;
     }
 
-    logAndReThrow = function(message: string, exception: any) {
+    logAndReThrow(message: string, exception: any) {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -355,7 +355,7 @@ class Util {
         throw exception;
     }
 
-    ajaxReady = function(requestName): boolean {
+    ajaxReady(requestName): boolean {
         if (util._ajaxCounter > 0) {
             console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
             return false;
@@ -363,21 +363,28 @@ class Util {
         return true;
     }
 
-    isAjaxWaiting = function(): boolean {
+    isAjaxWaiting(): boolean {
         return util._ajaxCounter > 0;
     }
 
+    focusElmById(id: string) {
+        let elm = this.domElm(id);
+        if (elm) {
+            elm.focus();
+        }
+    }
+
     /* set focus to element by id (id must be actual jquery selector) */
-    delayedFocus = function(id): void {
+    delayedFocus(id): void {
         /* so user sees the focus fast we try at .5 seconds */
         setTimeout(function() {
-            $(id).focus();
+            util.focusElmById(id);
         }, 500);
 
         /* we try again a full second later. Normally not required, but never undesirable */
         setTimeout(function() {
             //console.log("Focusing ID: "+id);
-            $(id).focus();
+            util.focusElmById(id);
         }, 1300);
     }
 
@@ -388,21 +395,21 @@ class Util {
      *
      * requires: res.success res.message
      */
-    checkSuccess = function(opFriendlyName, res): boolean {
+    checkSuccess(opFriendlyName, res): boolean {
         if (!res.success) {
             util.showMessage(opFriendlyName + " failed: " + res.message);
         }
         return res.success;
     }
 
-    showMessage = function(message: string): void {
+    showMessage(message: string): void {
         Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
             dlg.open();
         }, { "message": message });
     }
 
     /* adds all array objects to obj as a set */
-    addAll = function(obj, a): void {
+    addAll(obj, a): void {
         for (let i = 0; i < a.length; i++) {
             if (!a[i]) {
                 console.error("null element in addAll at idx=" + i);
@@ -412,7 +419,7 @@ class Util {
         }
     }
 
-    nullOrUndef = function(obj): boolean {
+    nullOrUndef(obj): boolean {
         return obj === null || obj === undefined;
     }
 
@@ -420,7 +427,7 @@ class Util {
      * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
      * 'hashset-type' implementation
      */
-    getUidForId = function(map: { [key: string]: string }, id): string {
+    getUidForId(map: { [key: string]: string }, id): string {
         /* look for uid in map */
         let uid: string = map[id];
 
@@ -432,7 +439,7 @@ class Util {
         return uid;
     }
 
-    elementExists = function(id): boolean {
+    elementExists(id): boolean {
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
         }
@@ -447,7 +454,7 @@ class Util {
     }
 
     /* Takes textarea dom Id (# optional) and returns its value */
-    getTextAreaValById = function(id): string {
+    getTextAreaValById(id): string {
         let de: HTMLInputElement = <HTMLInputElement>util.domElm(id);
         return de.value;
     }
@@ -455,7 +462,7 @@ class Util {
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    domElm = function(id): HTMLElement {
+    domElm(id): HTMLElement {
 
         /* why did i do this? I thought "#id" was valid for getDomElmementById right? */
         if (util.startsWith(id, "#")) {
@@ -474,25 +481,25 @@ class Util {
         return e;
     }
 
-    setInnerHTMLById = function(id: string, val: string): void {
+    setInnerHTMLById(id: string, val: string): void {
         let domElm: HTMLElement = this.domElm(id);
         this.setInnerHTML(domElm, val);
     }
 
-    setInnerHTML = function(elm: HTMLElement, val: string): void {
+    setInnerHTML(elm: HTMLElement, val: string): void {
         if (elm) {
             elm.innerHTML = val;
         }
     }
 
-    poly = function(id): any {
+    poly(id): any {
         return util.polyElm(id).node;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    polyElm = function(id: string): any {
+    polyElm(id: string): any {
 
         if (util.startsWith(id, "#")) {
             id = id.substring(1);
@@ -510,29 +517,29 @@ class Util {
         return Polymer.dom(e);
     }
 
-    polyElmNode = function(id: string): any {
+    polyElmNode(id: string): any {
         let e = util.polyElm(id);
         return e.node;
     }
 
-    isObject = function(obj: any): boolean {
+    isObject(obj: any): boolean {
         return obj && obj.length != 0;
     }
 
-    currentTimeMillis = function(): number {
+    currentTimeMillis(): number {
         return new Date().getMilliseconds();
     }
 
-    emptyString = function(val: string): boolean {
+    emptyString(val: string): boolean {
         return !val || val.length == 0;
     }
 
-    getInputVal = function(id: string): any {
+    getInputVal(id: string): any {
         return util.polyElm(id).node.value;
     }
 
     /* returns true if element was found, or false if element not found */
-    setInputVal = function(id: string, val: string): boolean {
+    setInputVal(id: string, val: string): boolean {
         if (val == null) {
             val = "";
         }
@@ -543,7 +550,7 @@ class Util {
         return elm != null;
     }
 
-    bindEnterKey = function(id: string, func: Function) {
+    bindEnterKey(id: string, func: Function) {
         if (typeof func !== 'function') throw "bindEnterKey requires function";
         domBind.addKeyPress(id, function(e) {
             if (e.which == 13) { // 13==enter key code
@@ -556,7 +563,7 @@ class Util {
     /*
      * displays message (msg) of object is not of specified type
      */
-    verifyType = function(obj: any, type: any, msg: string) {
+    verifyType(obj: any, type: any, msg: string) {
         if (typeof obj !== type) {
             util.showMessage(msg);
             return false;
@@ -564,7 +571,7 @@ class Util {
         return true;
     }
 
-    setHtml = function(id: string, content: string): void {
+    setHtml(id: string, content: string): void {
         if (content == null) {
             content = "";
         }
@@ -581,19 +588,19 @@ class Util {
         Polymer.updateStyles();
     }
 
-    setElmDisplayById = function(id: string, showing: boolean) {
+    setElmDisplayById(id: string, showing: boolean) {
         let elm: HTMLElement = util.domElm(id);
         if (elm) {
             this.setElmDisplay(elm, showing);
         }
     }
 
-    setElmDisplay = function(elm: any, showing: boolean) {
+    setElmDisplay(elm: any, showing: boolean) {
         elm.style.display = showing ? "" : "none";
     }
 
 
-    getPropertyCount = function(obj: Object): number {
+    getPropertyCount(obj: Object): number {
         let count = 0;
         let prop;
 
@@ -605,13 +612,13 @@ class Util {
         return count;
     }
 
-    forEachElmBySel = function(sel: string, callback: Function): void {
+    forEachElmBySel(sel: string, callback: Function): void {
         let elements = document.querySelectorAll("a");
         Array.prototype.forEach.call(elements, callback);
     }
 
     /* Iterates by callling callback with property key/value pairs for each property in the object */
-    forEachProp = function(obj: Object, callback: Function): void {
+    forEachProp(obj: Object, callback: Function): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 callback(prop, obj[prop]);
@@ -619,14 +626,14 @@ class Util {
         }
     }
 
-    forEachArrElm = function(elements: any[], callback: Function): void {
+    forEachArrElm(elements: any[], callback: Function): void {
         Array.prototype.forEach.call(elements, callback);
     }
 
     /*
      * iterates over an object creating a string containing it's keys and values
      */
-    printObject = function(obj: Object): string {
+    printObject(obj: Object): string {
         if (!obj) {
             return "null";
         }
@@ -649,7 +656,7 @@ class Util {
     }
 
     /* iterates over an object creating a string containing it's keys */
-    printKeys = function(obj: Object): string {
+    printKeys(obj: Object): string {
         if (!obj)
             return "null";
 
@@ -672,7 +679,7 @@ class Util {
      *
      * eleId can be a DOM element or the ID of a dom element, with or without leading #
      */
-    setEnablement = function(elmId: string, enable: boolean): void {
+    setEnablement(elmId: string, enable: boolean): void {
 
         let elm: HTMLElement = null;
         if (typeof elmId == "string") {
@@ -695,24 +702,24 @@ class Util {
 
     * ex: let example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
     */
-    getInstance = function <T>(context: Object, name: string, ...args: any[]): T {
+    getInstance<T>(context: Object, name: string, ...args: any[]): T {
         let instance = Object.create(context[name].prototype);
         instance.constructor.apply(instance, args);
         return <T>instance;
     }
 
-    setCookie = function(name: string, val: string): void {
+    setCookie(name: string, val: string): void {
         let d = new Date();
         d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
         let expires = "expires=" + d.toUTCString();
         document.cookie = name + "=" + val + ";" + expires + ";path=/";
     }
 
-    deleteCookie = function(name: string): void {
+    deleteCookie(name: string): void {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
     }
 
-    getCookie = function(name: string): string {
+    getCookie(name: string): string {
         name += "=";
         let ca = document.cookie.split(';');
         for (let i = 0; i < ca.length; i++) {
@@ -732,13 +739,13 @@ class Util {
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
      */
-    changeOrAddClass = function(elmSel: string, oldClass: string, newClass: string) {
+    changeOrAddClass(elmSel: string, oldClass: string, newClass: string) {
         let elm: HTMLElement = this.domElm(elmSel);
         this.removeClassFromElm(elm, oldClass);
         this.addClassToElm(elm, newClass);
     }
 
-    changeOrAddClassToElm = function(elm: HTMLElement, oldClass: string, newClass: string) {
+    changeOrAddClassToElm(elm: HTMLElement, oldClass: string, newClass: string) {
         this.removeClassFromElm(elm, oldClass);
         this.addClassToElm(elm, newClass);
     }

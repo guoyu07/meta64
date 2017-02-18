@@ -6,15 +6,15 @@ import * as I from "./Interfaces";
 
 class Prefs {
 
-    closeAccountResponse = function(res: I.CloseAccountResponse): void {
+    closeAccountResponse(res: I.CloseAccountResponse): void {
         /* Remove warning dialog to ask user about leaving the page */
-        $(window).off("beforeunload");
+        window.onbeforeunload = null;
 
         /* reloads browser with the query parameters stripped off the path */
         window.location.href = window.location.origin;
     }
 
-    closeAccount = function(): void {
+    closeAccount(): void {
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {

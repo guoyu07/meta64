@@ -374,6 +374,11 @@ class Util {
         }
     }
 
+    //todo-0: Haven't yet verified this is correct, but i'm not using it anywhere important yet.
+    isElmVisible(elm: HTMLElement) {
+        return elm && elm.offsetHeight > 0;
+    }
+
     /* set focus to element by id (id must be actual jquery selector) */
     delayedFocus(id): void {
         /* so user sees the focus fast we try at .5 seconds */

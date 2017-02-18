@@ -62,9 +62,6 @@ public class PreProcFilter implements Filter {
 		ConstantsProviderImpl.setCacheVersion(String.valueOf(cacheVersion));
 	}
 
-	@Value("${jqueryJs}")
-	private String jqueryJs;
-
 	@Value("${brandingTitle}")
 	private String brandingTitle;
 
@@ -128,7 +125,6 @@ public class PreProcFilter implements Filter {
 
 		// content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
-		content = content.replace("{{jqueryJs}}", jqueryJs);
 		content = content.replace("{{brandingTitle}}", brandingTitle);
 		content = content.replace("{{brandingTitleShort}}", brandingTitleShort);
 		content = content.replace("{{brandingMetaContent}}", brandingMetaContent);

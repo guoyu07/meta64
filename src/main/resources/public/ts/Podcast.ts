@@ -13,7 +13,9 @@ NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
 class Podcast {
-    player: any = null;
+    //todo-0: changing this to HTMLAudioElement was a WAG until I retest Podcast dialog, soon. For now the only thing
+    //i cared about was ripping out the last vestages of jquery.
+    player: HTMLAudioElement = null;
     startTimePending: number = null;
 
     private uid: string = null;
@@ -288,12 +290,12 @@ class Podcast {
         but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
         contact the server during this timer to update the time on the server AND keep session from timing out
 
-        todo-0: would everything work if 'player' WAS the jquery object always.
+        todo-0: would everything work if 'player' WAS the jquery object always?
         */
         if (podcast.player && !podcast.player.paused) {
             /* this safety check to be sure no hidden audio can still be playing should no longer be needed
             now that I have the close litener even on the dialog, but i'll leave this here anyway. Can't hurt. */
-            if (!$(podcast.player).is(":visible")) {
+            if (!util.isElmVisible(podcast.player)) {
                 console.log("closing player, because it was detected as not visible. player dialog get hidden?");
                 podcast.player.pause();
             }
@@ -316,7 +318,7 @@ class Podcast {
 
             setTimeout(function() {
                 podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
-                let localPlayer = $(podcast.player);
+                let localPlayer = podcast.player;
                 podcast.player = null;
                 localPlayer.remove();
 

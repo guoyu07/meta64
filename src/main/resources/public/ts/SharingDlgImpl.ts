@@ -73,7 +73,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         let html = "";
         let This = this;
 
-        res.aclEntries.forEach(function(aclEntry, index) {
+        util.forEachArrElm(res.aclEntries, function(aclEntry, index) {
             html += "<h4>User: " + aclEntry.principalName + "</h4>";
             html += tag.div( {
                 "class": "privilege-list"
@@ -90,8 +90,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
             publicAppendAttrs["checked"] = "checked";
         }
 
-        /* todo: use actual polymer paper-checkbox here */
-        html += render.tag("paper-checkbox", publicAppendAttrs, "", false);
+        html += tag.checkbox(publicAppendAttrs);
 
         html += render.tag("label", {
             "for": this.id("allowPublicCommenting")
@@ -146,7 +145,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     renderAclPrivileges = (principal: any, aclEntry: any): string => {
         let ret = "";
         let thiz = this;
-        aclEntry.privileges.forEach(function(privilege, index) {
+        util.forEachArrElm(aclEntry.privileges, function(privilege, index) {
 
             let removeButton = thiz.makeButton("Remove", "removePrivButton", //
                 "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName

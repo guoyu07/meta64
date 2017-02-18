@@ -2,7 +2,6 @@ console.log("DomBind.ts");
 
 import { util } from "./Util";
 
-//todo-0: need to rename this class, it's no longer about "clicks" but is more general
 class DomBind {
     /* Binds DOM IDs to functions that should be called on "onClick" */
     private idToOnClickMap: { [key: string]: Function } = {};

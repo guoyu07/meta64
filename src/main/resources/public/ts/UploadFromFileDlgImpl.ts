@@ -43,11 +43,11 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
          * (Will do this modification once I get the drag-n-drop stuff working first)
          */
         for (let i = 0; i < 7; i++) {
-            let input = render.tag("input", {
+            let input = tag.input({
                 "id": this.id("upload" + i + "FormInputId"),
                 "type": "file",
                 "name": "files"
-            }, "", true);
+            });
 
             /* wrap in DIV to force vertical align */
             formFields += tag.div({
@@ -55,18 +55,22 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             }, input);
         }
 
-        formFields += render.tag("input", {
+        formFields += tag.input({
+            //todo-0: MAJOR EPIPHANY of design!!!!!!! as follows
+            //I need to allow a property named "_id", and have ALL tags generate using Tags.ts-type wrapper in a helper function, and when it detects that
+            //it should replace it with "id=this.id(myid)" so each render function needs an optional COMPONENT that can be specified which is defined to be
+            //any gui-component that implements a this.id()
             "id": this.id("uploadFormNodeId"),
             "type": "hidden",
             "name": "nodeId"
-        }, "", true);
+        });
 
         /* boolean field to specify if we explode zip files onto the JCR tree */
-        formFields += render.tag("input", {
+        formFields += tag.input({
             "id": this.id("explodeZips"),
             "type": "hidden",
             "name": "explodeZips"
-        }, "", true);
+        });
 
         let form = render.tag("form", {
             "id": this.id("uploadForm"),

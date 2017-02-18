@@ -1,17 +1,18 @@
 console.log("MenuPanel.ts");
 
-import {util} from "./Util";
-import {render} from "./Render";
-import {edit} from "./Edit";
-import {nav} from "./Nav";
-import {share} from "./Share";
-import {attachment} from "./Attachment";
-import {srch} from "./Search";
-import {props} from "./Props";
-import {meta64} from "./Meta64";
-import {podcast} from "./Podcast";
-import {view} from "./View";
-import {domBind} from "./DomBind";
+import { util } from "./Util";
+import { render } from "./Render";
+import { edit } from "./Edit";
+import { nav } from "./Nav";
+import { share } from "./Share";
+import { attachment } from "./Attachment";
+import { srch } from "./Search";
+import { props } from "./Props";
+import { meta64 } from "./Meta64";
+import { podcast } from "./Podcast";
+import { view } from "./View";
+import { domBind } from "./DomBind";
+import { tag } from "./Tag";
 
 class MenuPanel {
     private makeTopLevelMenu = function(title: string, content: string, id?: string): string {
@@ -19,7 +20,7 @@ class MenuPanel {
             class: "menu-trigger"
         };
 
-        let paperItem = render.tag("paper-item", paperItemAttrs, title);
+        let paperItem = tag.item(paperItemAttrs, title);
 
         let paperSubmenuAttrs = {
             "label": title,
@@ -30,32 +31,32 @@ class MenuPanel {
             (<any>paperSubmenuAttrs).id = id;
         }
 
-        return render.tag("paper-submenu", paperSubmenuAttrs
-          //not w-pack
+        return tag.subMenu(paperSubmenuAttrs
+            //not w-pack
             //{
             //"label": title,
             //"class": "meta64-menu-heading",
             //"class": "menu-content sublist"
             //}
             , paperItem + //"<paper-item class='menu-trigger'>" + title + "</paper-item>" + //
-            menuPanel.makeSecondLevelList(content), true);
+            menuPanel.makeSecondLevelList(content));
     }
 
     private makeSecondLevelList = function(content: string): string {
-        return render.tag("paper-menu", {
+        return tag.menu({
             "class": "menu-content sublist my-menu-section",
             "selectable": ""
             // not w-pack
             //,
             //"multi": "multi"
-        }, content, true);
+        }, content);
     }
 
     private menuItem = function(name: string, id: string, onClick: Function): string {
-        let html = render.tag("paper-item", {
+        let html = tag.item({
             "id": id,
             "selectable": ""
-        }, name, true);
+        }, name);
 
         /* It's ok to register this onClick way ahead of even the time that the DOM element even
         gets created, so we do it here in the most obvious place to do it

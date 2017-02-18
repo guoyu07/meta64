@@ -152,7 +152,7 @@ export class Search {
          */
         let rowCount = 0;
 
-        data.searchResults.forEach(function(node, i) {
+        util.forEachArrElm(data.searchResults, function(node, i) {
             if (meta64.isNodeBlackListed(node))
                 return;
 

@@ -419,7 +419,7 @@ class Meta64 {
         let mine: boolean = false;
 
         if (res.owners) {
-            res.owners.forEach(function(owner, index) {
+            util.forEachArrElm(res.owners, function(owner, index) {
                 if (ownerBuf.length > 0) {
                     ownerBuf += ",";
                 }
@@ -922,7 +922,7 @@ class Meta64 {
 
             //todo-000: Need to make sure i never try calling forEach on an 'any' types (in entire codebase) until i first verify if it's an
             //object or an array because object iteration needs to use 'forEachProp()'
-            meta64.currentNodeData.children.forEach(function(node, i) {
+            util.forEachArrElm(meta64.currentNodeData.children, function(node, i) {
                 if (node.imgId) {
                     render.adjustImageSize(node);
                 }

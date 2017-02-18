@@ -12,7 +12,6 @@ import { SignupDlg } from "./SignupDlg";
 
 declare var BRANDING_TITLE_SHORT;
 
-
 class User {
 
     private logoutResponse = function(res: I.LogoutResponse): void {
@@ -115,8 +114,8 @@ class User {
             /*
              * empyt credentials causes server to try to log in with any active session credentials.
              */
-            callUsr = usr ? usr : "";
-            callPwd = pwd ? pwd : "";
+            callUsr = usr || "";
+            callPwd = pwd || "";
         }
 
         console.log("refreshLogin with name: " + callUsr);

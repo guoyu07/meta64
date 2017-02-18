@@ -112,7 +112,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             /*
              * Warning each iterator loop has its own 'this'
              */
-            editOrderedProps.forEach(function(prop, index) {
+            util.forEachArrElm(editOrderedProps, function(prop, index) {
 
                 /*
                  * if property not allowed to display return to bypass this property/iteration
@@ -167,18 +167,18 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     val: ""
                 });
             } else {
-                let field = render.tag("paper-textarea", {
+                let field = tag.textarea({
                     "id": this.id("newNodeNameId"),
                     "label": "New Node Name"
-                }, '', true);
+                });
 
                 fields += tag.div( { "display": "table-row" }, field);
             }
         }
 
-//not w-pack
+        //not w-pack
         //I'm not quite ready to add this button yet.
-        // var toggleReadonlyVisButton = render.tag("paper-button", {
+        // var toggleReadonlyVisButton = tag.button({
         //     "raised": "raised",
         //     "onClick": "meta64.getObjectByGuid(" + this.guid + ").toggleShowReadOnly();" //
         // }, //
@@ -427,7 +427,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         let propertiesList = [];
         let thiz = this;
 
-        this.propEntries.forEach(function(prop: any, index: number) {
+        util.forEachArrElm(this.propEntries, function(prop: any, index: number) {
 
             console.log("--------------- Getting prop idx: " + index);
 
@@ -465,7 +465,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 let propVals = [];
 
-                prop.subProps.forEach(function(subProp, index) {
+                util.forEachArrElm(prop.subProps, function(subProp, index) {
 
                     console.log("subProp[" + index + "]: " + JSON.stringify(subProp));
 
@@ -537,19 +537,19 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             propEntry.subProps.push(subProp);
 
             if (propEntry.binary || propEntry.readOnly) {
-                fields += render.tag("paper-textarea", {
+                fields += tag.textarea({
                     "id": id,
                     "readonly": "readonly",
                     "disabled": "disabled",
                     "label": label,
                     "value": propValStr
-                }, '', true);
+                });
             } else {
-                fields += render.tag("paper-textarea", {
+                fields += tag.textarea({
                     "id": id,
                     "label": label,
                     "value": propValStr
-                }, '', true);
+                });
             }
         }
 
@@ -575,13 +575,13 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         let propSelCheckbox: string = "";
 
         if (propEntry.readOnly || propEntry.binary) {
-            field += render.tag("paper-textarea", {
+            field += tag.textarea({
                 "id": propEntry.id,
                 "readonly": "readonly",
                 "disabled": "disabled",
                 "label": label,
                 "value": propValStr
-            }, "", true);
+            });
         } else {
             propSelCheckbox = this.makeCheckBox("", "selProp_" + propEntry.id, false);
 
@@ -589,11 +589,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 this.contentFieldDomId = propEntry.id;
             }
             if (!cnst.USE_ACE_EDITOR) {
-                field += render.tag("paper-textarea", {
+                field += tag.textarea({
                     "id": propEntry.id,
                     "label": label,
                     "value": propValStr
-                }, '', true);
+                });
             } else {
                 field += tag.div( {
                     "id": propEntry.id,

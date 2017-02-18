@@ -619,6 +619,10 @@ class Util {
         }
     }
 
+    forEachArrElm = function(elements: any[], callback: Function): void {
+        Array.prototype.forEach.call(elements, callback);
+    }
+
     /*
      * iterates over an object creating a string containing it's keys and values
      */

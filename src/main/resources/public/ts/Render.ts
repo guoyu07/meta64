@@ -292,14 +292,14 @@ export class Render {
                 /* openSystemFile worked on linux, but i'm switching to full text file edit capability only and doing that
                 inside meta64 from now on, so openSystemFile is no longer being used */
                 //not w-pack
-                // let localOpenLink = tag("paper-button", {
+                // let localOpenLink = tag.button({
                 //     "raised": "raised",
                 //     "onclick": "meta64.openSystemFile('" + entry.fileName + "')"
                 // }, "Local Open");
                 //
                 // let downloadLink = "";
                 //haven't implemented download capability yet.
-                // tag("paper-button", {
+                // tag.button({
                 //     "raised": "raised",
                 //     "onclick": "meta64.downloadSystemFile('" + entry.fileName + "')"
                 // }, "Download")
@@ -455,7 +455,7 @@ export class Render {
          * or having been added as comment by current user
          */
         if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-            replyButton = render.tag("paper-button", {
+            replyButton = tag.button({
                 "raised": "raised",
                 "onClick": `meta64.replyToComment('${node.uid}');` //
             }, //
@@ -468,7 +468,7 @@ export class Render {
         if (render.nodeHasChildren(node.uid)) {
             buttonCount++;
 
-            openButton = render.tag("paper-button", {
+            openButton = tag.button({
 
                 /* For some unknown reason the ability to style this with the class broke, and even
                 after dedicating several hours trying to figure out why I'm still baffled. I checked everything
@@ -494,7 +494,7 @@ export class Render {
             // console.log(" nodeId " + node.uid + " selected=" + selected);
             buttonCount++;
 
-            let css: Object = selected ? {
+            let attrs: Object = selected ? {
                 "id": node.uid + "_sel",//
                 "onClick": `meta64.toggleNodeSel('${node.uid}');`,
                 "checked": "checked",
@@ -508,12 +508,12 @@ export class Render {
                     "style": "margin-top: 11px;"
                 };
 
-            selButton = render.tag("paper-checkbox", css, "");
+            selButton = tag.checkbox(attrs);
 
             if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
                 buttonCount++;
-                createSubNodeButton = render.tag("paper-icon-button", {
+                createSubNodeButton = tag.button({
                     "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                     "id": "addNodeButtonId" + node.uid,
                     "raised": "raised",
@@ -524,7 +524,7 @@ export class Render {
             if (cnst.INS_ON_TOOLBAR && !commentBy) {
                 buttonCount++;
                 /* Construct Create Subnode Button */
-                insertNodeButton = render.tag("paper-icon-button", {
+                insertNodeButton = tag.button({
                     "icon": "icons:picture-in-picture", //"icons:more-horiz",
                     "id": "insertNodeButtonId" + node.uid,
                     "raised": "raised",
@@ -538,8 +538,7 @@ export class Render {
         if (meta64.userPreferences.editMode && editingAllowed) {
             buttonCount++;
             /* Construct Create Subnode Button */
-            editNodeButton = render.tag("paper-icon-button", //
-                {
+            editNodeButton = tag.button({
                     "alt": "Edit node.",
                     "icon": "editor:mode-edit",
                     "raised": "raised",
@@ -551,7 +550,7 @@ export class Render {
                 if (canMoveUp) {
                     buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeUpButton = render.tag("paper-icon-button", {
+                    moveNodeUpButton = tag.button({
                         "icon": "icons:arrow-upward",
                         "raised": "raised",
                         "onClick": `meta64.moveNodeUp('${node.uid}');`
@@ -561,7 +560,7 @@ export class Render {
                 if (canMoveDown) {
                     buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeDownButton = render.tag("paper-icon-button", {
+                    moveNodeDownButton = tag.button({
                         "icon": "icons:arrow-downward",
                         "raised": "raised",
                         "onClick": `meta64.moveNodeDown('${node.uid}');`
@@ -610,7 +609,7 @@ export class Render {
     }
 
     makeRadioButton = function(label: string, id: string): string {
-        return render.tag("paper-radio-button", {
+        return tag.radioButton({
             "id": id,
             "name": id
         }, label);
@@ -644,10 +643,6 @@ export class Render {
         let ret: string = meta64.isAdminUser ? shortPath : noRootPath;
         ret += " [" + node.primaryTypeName + "]";
         return ret;
-    }
-
-    wrapHtml = function(text: string): string {
-        return "<div>" + text + "</div>";
     }
 
     /*
@@ -731,7 +726,7 @@ export class Render {
              */
 
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-                replyButton = render.tag("paper-button", {
+                replyButton = tag.button({
                     "raised": "raised",
                     "onClick": `meta64.replyToComment('${data.node.uid}');` //
                 }, //
@@ -739,7 +734,7 @@ export class Render {
             }
 
             if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
-                createSubNodeButton = render.tag("paper-icon-button", {
+                createSubNodeButton = tag.button({
                     "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                     "raised": "raised",
                     "onClick": `meta64.createSubNode('${uid}');`
@@ -750,7 +745,7 @@ export class Render {
             if (edit.isEditAllowed(data.node)) {
 
                 /* Construct Create Subnode Button */
-                editNodeButton = render.tag("paper-icon-button", {
+                editNodeButton = tag.button({
                     "icon": "editor:mode-edit",
                     "raised": "raised",
                     "onClick": `meta64.runEditNode('${uid}');`
@@ -1039,29 +1034,29 @@ export class Render {
     }
 
     makeTextArea = function(fieldName: string, fieldId: string): string {
-        return render.tag("paper-textarea", {
+        return tag.textarea({
             "name": fieldId,
             "label": fieldName,
             "id": fieldId
-        }, "", true);
+        });
     }
 
     makeEditField = function(fieldName: string, fieldId: string): string {
-        return render.tag("paper-input", {
+        return tag.input({
             "name": fieldId,
             "label": fieldName,
             "id": fieldId
-        }, "", true);
+        });
     }
 
     makePasswordField = function(fieldName: string, fieldId: string): string {
-        return render.tag("paper-input", {
+        return tag.input({
             "type": "password",
             "name": fieldId,
             "label": fieldName,
             "id": fieldId,
             "class": "meta64-input"
-        }, "", true);
+        });
     }
 
     makeButton = function(text: string, id: string, callback: any, ctx?: any): string {
@@ -1075,7 +1070,7 @@ export class Render {
             attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
         }
 
-        return render.tag("paper-button", attribs, text, true);
+        return tag.button(attribs, text);
     }
 
     allowPropertyToDisplay = function(propName: string): boolean {

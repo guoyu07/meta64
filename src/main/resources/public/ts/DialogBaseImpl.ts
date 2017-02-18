@@ -243,12 +243,12 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     makeEditField = (fieldName: string, id: string) => {
         id = this.id(id);
-        return render.tag("paper-input", {
+        return tag.input({
             "name": id,
             "label": fieldName,
             "id": id,
             "class": "meta64-input"
-        }, "", true);
+        });
     }
 
     makeMessageArea = (message: string, id?: string): string => {
@@ -274,7 +274,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             attribs["onClick"] = meta64.encodeOnClick(callback);
         }
 
-        return render.tag("paper-button", attribs, text, true);
+        return tag.button(attribs, text);
     }
 
     /* The reason delayCloseCallback is here is so that we can encode a button to popup a new dialog over the top of
@@ -313,7 +313,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             attribs["style"] = "display:none;"
         }
 
-        return render.tag("paper-button", attribs, text, true);
+        return tag.button(attribs, text);
     }
 
     bindEnterKey = (id: string, callback: Function): void => {
@@ -340,7 +340,7 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     makeRadioButton = (label: string, id: string): string => {
         id = this.id(id);
-        return render.tag("paper-radio-button", {
+        return tag.radioButton({
             "id": id,
             "name": id
         }, label);
@@ -356,7 +356,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         };
 
         ////////////
-        //             <paper-checkbox on-change="checkboxChanged">click</paper-checkbox>
+        //             <paper - checkbox on-change="checkboxChanged">click</paper - checkbox>
         //
         //             checkboxChanged : function(event){
         //     if(event.target.checked) {
@@ -369,7 +369,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             attrs["checked"] = "checked";
         }
 
-        let checkbox: string = render.tag("paper-checkbox", attrs, "", false);
+        let checkbox: string = tag.checkbox(attrs);
 
         checkbox += render.tag("label", {
             "for": id

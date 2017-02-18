@@ -1,13 +1,14 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {PrefsDlg} from "./PrefsDlg";
-import {render} from "./Render";
-import {meta64} from "./Meta64";
-import {util} from "./Util";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { PrefsDlg } from "./PrefsDlg";
+import { render } from "./Render";
+import { meta64 } from "./Meta64";
+import { util } from "./Util";
 import * as I from "./Interfaces";
+import { tag } from "./Tag";
 
 declare var Polymer;
 
-export default class PrefsDlgImpl  extends DialogBaseImpl implements PrefsDlg {
+export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
     constructor() {
         super("PrefsDlg");
     }
@@ -21,7 +22,7 @@ export default class PrefsDlgImpl  extends DialogBaseImpl implements PrefsDlg {
         let radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
             this.makeRadioButton("Advanced", "editModeAdvanced");
 
-        let radioButtonGroup = render.tag("paper-radio-group", {
+        let radioButtonGroup = tag.radioGroup({
             "id": this.id("simpleModeRadioGroup"),
             "selected": this.id("editModeSimple")
         }, radioButtons);

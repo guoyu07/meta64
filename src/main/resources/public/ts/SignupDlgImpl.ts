@@ -3,7 +3,7 @@ import { SignupDlg } from "./SignupDlg";
 import { render } from "./Render";
 import { util } from "./Util";
 import * as I from "./Interfaces";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 declare var BRANDING_TITLE;
 declare var postTargetUrl;
@@ -26,17 +26,15 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
             this.makeEditField("Email", "signupEmail") + //
             this.makeEditField("Captcha", "signupCaptcha");
 
-        let captchaImage = tag.div( //
-            {
-                "class": "captcha-image" //
-            }, //
-            render.tag("img", //
-                {
-                    "id": this.id("captchaImage"),
-                    "class": "captcha",
-                    "src": ""//
-                }, //
-                "", false));
+        let captchaImgTag = tag.img({
+            "id": this.id("captchaImage"),
+            "class": "captcha",
+            "src": ""//
+        });
+
+        let captchaImage = tag.div({
+            "class": "captcha-image" //
+        }, captchaImgTag);
 
         let signupButton = this.makeButton("Signup", "signupButton", this.signup);
         let newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",

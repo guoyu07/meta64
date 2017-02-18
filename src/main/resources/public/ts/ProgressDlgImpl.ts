@@ -17,7 +17,7 @@ export default class ProgressDlgImpl extends DialogBaseImpl implements ProgressD
     render = (): string => {
         var header = this.makeHeader("Processing Request", "", true);
 
-        var progressBar = render.tag("paper-progress", {
+        var progressBar = tag.progress({
             "indeterminate": "indeterminate",
             "value": "800",
             "min": "100",

@@ -9,6 +9,7 @@ import {util} from "./Util";
 import {edit} from "./Edit";
 import {meta64} from "./Meta64";
 import * as I from "./Interfaces";
+import {tag} from "./Tag";
 
 /*
  * Property Editor Dialog (Edits Node Properties)
@@ -49,24 +50,24 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
         {
             var fieldPropNameId = "addPropertyNameTextContent";
 
-            field += render.tag("paper-textarea", {
+            field += tag.textarea({
                 "name": fieldPropNameId,
                 "id": this.id(fieldPropNameId),
                 "placeholder": "Enter property name",
                 "label": "Name"
-            }, "", true);
+            });
         }
 
         /* Property Value Field */
         {
             var fieldPropValueId = "addPropertyValueTextContent";
 
-            field += render.tag("paper-textarea", {
+            field += tag.textarea({
                 "name": fieldPropValueId,
                 "id": this.id(fieldPropValueId),
                 "placeholder": "Enter property text",
                 "label": "Value"
-            }, "", true);
+            });
         }
 
         /* display the node path at the top of the edit page */

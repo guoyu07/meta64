@@ -109,7 +109,7 @@ class Podcast {
         let playerUrl = podcast.getMediaPlayerUrlFromNode(node);
         //if (playerUrl) {
             //onclick not encoded yet (commented 1/31/2017)
-            // entry += render.tag("paper-button", {
+            // entry += tag.button({
             //     "raised": "raised",
             //     "onClick": "podcast.openPlayerDialog('" + node.uid + "');",
             //     "class": "standardButton"

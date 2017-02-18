@@ -1,14 +1,13 @@
 console.log("Props.ts");
 
-import {meta64} from "./Meta64"
-import {util} from "./Util";
-import {cnst, jcrCnst} from "./Constants";
-import {render} from "./Render";
-import {view} from "./View";
-import {edit} from "./Edit";
+import { meta64 } from "./Meta64"
+import { util } from "./Util";
+import { cnst, jcrCnst } from "./Constants";
+import { render } from "./Render";
+import { view } from "./View";
+import { edit } from "./Edit";
 import * as I from "./Interfaces";
-
-
+import { tag } from "./Tag";
 
 class Props {
 
@@ -102,12 +101,12 @@ class Props {
             let table: string = "";
             let propCount: number = 0;
 
-            properties.forEach(function(property, i) {
+            util.forEachArrElm(properties, function(property, i) {
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
                     propCount++;
-                    let td: string = render.tag("td", {
+                    let td: string = tag.td({
                         "class": "prop-table-name-col"
                     }, render.sanitizePropertyName(property.name));
 
@@ -115,16 +114,16 @@ class Props {
                     if (isBinaryProp) {
                         val = "[binary]";
                     } else if (!property.values) {
-                        val = render.wrapHtml(property.value);
+                        val = tag.div(null, property.value);
                     } else {
                         val = props.renderPropertyValues(property.values);
                     }
 
-                    td += render.tag("td", {
+                    td += tag.td({
                         "class": "prop-table-val-col"
                     }, val);
 
-                    table += render.tag("tr", {
+                    table += tag.tr({
                         "class": "prop-table-row"
                     }, td);
 
@@ -137,7 +136,7 @@ class Props {
                 return "";
             }
 
-            return render.tag("table", {
+            return tag.table({
                 "border": "1",
                 "class": "property-table"
             }, table);
@@ -219,17 +218,13 @@ class Props {
     }
 
     renderPropertyValues = function(values): string {
-        let ret: string = "<div>";
-        let count: number = 0;
-        values.forEach(function(value, i:number) {
-            if (count > 0) {
-                ret += cnst.BR;
-            }
-            ret += render.wrapHtml(value);
-            count++;
+        let ret: string = "";
+
+        util.forEachArrElm(values, function(value, i: number) {
+            ret += tag.div(null, value);
         });
-        ret += "</div>";
-        return ret;
+
+        return tag.div(null, ret);
     }
 }
 export let props: Props = new Props();

@@ -9,7 +9,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 Changed to using ES6 Module syntax in the TypeScript code, and using SystemJS module loader. 
 
 ## Technology Stack
-* Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JQuery, JSON/Ajax, Ace Editor, Pegdown Markdown
+* Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax, Ace Editor, Pegdown Markdown
 * Server (Back End): Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb or RDB, Tomcat Embedded
 
 ## Links

@@ -1,7 +1,8 @@
 console.log("TimelineResultsPanel.ts");
 
-import {srch} from "./Search";
-import {util} from "./Util";
+import { srch } from "./Search";
+import { util } from "./Util";
+import { tag } from "./Tag";
 
 export class TimelineResultsPanel {
 
@@ -9,12 +10,17 @@ export class TimelineResultsPanel {
     tabId: string = "timelineTabName";
     visible: boolean = false;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
     }
 
     render = () => {
-        let header = "<h2 id='timelinePageTitle' class='page-title'></h2>";
-        let mainContent = "<div id='timelineView'></div>";
+        let header = tag.h2({
+            "id": "timelinePageTitle",
+            "class": "page-title"
+        });
+        let mainContent = tag.div({
+            "id": "timelineView"
+        });
         return header + mainContent;
     }
 

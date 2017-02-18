@@ -1,15 +1,15 @@
 console.log("EditPropertyDlgImpl.ts");
 
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {EditPropertyDlg} from "./EditPropertyDlg";
-import {cnst} from "./Constants";
-import {render} from "./Render";
-import {view} from "./View";
-import {util} from "./Util";
-import {edit} from "./Edit";
-import {meta64} from "./Meta64";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { EditPropertyDlg } from "./EditPropertyDlg";
+import { cnst } from "./Constants";
+import { render } from "./Render";
+import { view } from "./View";
+import { util } from "./Util";
+import { edit } from "./Edit";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 /*
  * Property Editor Dialog (Edits Node Properties)
@@ -34,11 +34,15 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
         var internalMainContent = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            internalMainContent += "<div id='" + this.id("editPropertyPathDisplay")
-                + "' class='path-display-in-editor'></div>";
+            internalMainContent += tag.div({
+                "id": this.id("editPropertyPathDisplay"),
+                "class": "path-display-in-editor"
+            });
         }
 
-        internalMainContent += "<div id='" + this.id("addPropertyFieldContainer") + "'></div>";
+        internalMainContent += tag.div({
+            "id": this.id("addPropertyFieldContainer")
+        });
 
         return header + internalMainContent + buttonBar;
     }

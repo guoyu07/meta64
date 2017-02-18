@@ -1,13 +1,13 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {SharingDlg} from "./SharingDlg";
-import {share} from "./Share";
-import {util} from "./Util";
-import {render} from "./Render";
-import {meta64} from "./Meta64";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { SharingDlg } from "./SharingDlg";
+import { share } from "./Share";
+import { util } from "./Util";
+import { render } from "./Render";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import {Factory} from "./Factory";
-import {ShareToPersonDlg} from "./ShareToPersonDlg";
-import {tag} from "./Tag";
+import { Factory } from "./Factory";
+import { ShareToPersonDlg } from "./ShareToPersonDlg";
+import { tag } from "./Tag";
 
 export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg {
 
@@ -31,9 +31,15 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         let width = window.innerWidth * 0.6;
         let height = window.innerHeight * 0.4;
 
-        let internalMainContent = "<div id='" + this.id("shareNodeNameDisplay") + "'></div>" + //
-            "<div class='vertical-layout-row' style=\"width:" + width + "px;height:" + height + "px;overflow:scroll;border:4px solid lightGray;\" id='"
-            + this.id("sharingListFieldContainer") + "'></div>";
+        //todo-0: refactor this ugliness to use a  single class and Tag.div()
+        let internalMainContent = tag.div({
+            "id": this.id("shareNodeNameDisplay")
+        }) + //
+            tag.div({
+                "class": "vertical-layout-row",
+                "style": `width:${width}px;height:${height}px;overflow:scroll;border:4px solid lightGray;`,
+                "id": this.id("sharingListFieldContainer")
+            });
 
         return header + internalMainContent + buttonBar;
     }
@@ -75,7 +81,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
 
         util.forEachArrElm(res.aclEntries, function(aclEntry, index) {
             html += "<h4>User: " + aclEntry.principalName + "</h4>";
-            html += tag.div( {
+            html += tag.div({
                 "class": "privilege-list"
             }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
         });
@@ -155,7 +161,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
 
             row += "<b>" + principal + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.";
 
-            ret += tag.div( {
+            ret += tag.div({
                 "class": "privilege-entry"
             }, row);
         });
@@ -163,9 +169,9 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     }
 
     shareNodeToPersonPg = (): void => {
-      Factory.createDefault("ShareToPersonDlgImpl", (dlg:ShareToPersonDlg) => {
-        dlg.open();
-      })
+        Factory.createDefault("ShareToPersonDlgImpl", (dlg: ShareToPersonDlg) => {
+            dlg.open();
+        })
     }
 
     shareNodeToPublic = (): void => {

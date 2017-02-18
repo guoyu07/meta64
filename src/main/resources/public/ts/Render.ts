@@ -73,25 +73,34 @@ export class Render {
         let headerText: string = "";
 
         if (cnst.SHOW_PATH_ON_ROWS) {
-            headerText += "<div class='path-display'>Path: " + render.formatPath(node) + "</div>";
+            headerText += tag.div({
+                "class": "path-display"
+            },
+                "Path: " + render.formatPath(node));
         }
 
-        headerText += "<div>";
-
+        let spans: string = "";
         if (commentBy) {
             let clazz: string = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
-            headerText += "<span class='" + clazz + "'>Comment By: " + commentBy + "</span>";
+            spans += tag.span({
+                "class": clazz
+            },
+                "Comment By: " + commentBy);
         } //
         else if (node.createdBy) {
             let clazz: string = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
-            headerText += "<span class='" + clazz + "'>Created By: " + node.createdBy + "</span>";
+            spans += tag.span({
+                "class": clazz
+            },
+                "Created By: " + node.createdBy);
         }
 
-        headerText += `<span id='ownerDisplay${node.uid}'></span>`;
+        spans += tag.span({ "id": `ownerDisplay${node.uid}` });
         if (node.lastModified) {
-            headerText += `  Mod: ${node.lastModified}`;
+            spans += `  Mod: ${node.lastModified}`;
         }
-        headerText += "</div>";
+
+        headerText += tag.div("null", spans);
 
         /*
          * on root node name will be empty string so don't show that
@@ -216,7 +225,7 @@ export class Render {
                     //console.log("**************** jcrContent for MARKDOWN:\n"+jcrContent);
 
                     let markedContent = "<marked-element sanitize='true'>" +
-                        "<div class='markdown-html'></div>" +
+                        tag.div({ "class": "markdown-html" }) +
                         "<script type='text/markdown'>\n" +
                         jcrContent +
                         "</script>" +
@@ -244,7 +253,7 @@ export class Render {
                 if (node.path.trim() == "/") {
                     ret += "Root Node";
                 }
-                /* ret += "<div>[No Content Property]</div>"; */
+                /* ret += "< div>[No Content Property]</div>"; */
                 let properties: string = props.renderProperties(node.properties);
                 if (properties) {
                     ret += /* "<br>" + */properties;
@@ -539,11 +548,11 @@ export class Render {
             buttonCount++;
             /* Construct Create Subnode Button */
             editNodeButton = tag.button({
-                    "alt": "Edit node.",
-                    "icon": "editor:mode-edit",
-                    "raised": "raised",
-                    "onClick": `meta64.runEditNode('${node.uid}');`
-                }, "Edit");
+                "alt": "Edit node.",
+                "icon": "editor:mode-edit",
+                "raised": "raised",
+                "onClick": `meta64.runEditNode('${node.uid}');`
+            }, "Edit");
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
 
@@ -887,7 +896,7 @@ export class Render {
     /* see also: makeImageTag() */
     adjustImageSize = function(node: I.NodeInfo): void {
 
-        let elm:HTMLElement = util.domElm(node.imgId);
+        let elm: HTMLElement = util.domElm(node.imgId);
         if (elm) {
             // let width = elm.attr("width");
             // let height = elm.attr("height");
@@ -926,8 +935,8 @@ export class Render {
                  * Image does fit on screen so render it at it's exact size
                  */
                 else {
-                    elm.setAttribute("width", ""+node.width);
-                    elm.setAttribute("height", ""+node.height);
+                    elm.setAttribute("width", "" + node.width);
+                    elm.setAttribute("height", "" + node.height);
                 }
             }
         }

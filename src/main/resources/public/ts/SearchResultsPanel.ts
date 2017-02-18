@@ -1,5 +1,6 @@
-import {srch} from "./Search";
-import {util} from "./Util";
+import { srch } from "./Search";
+import { util } from "./Util";
+import { tag } from "./Tag";
 
 export class SearchResultsPanel {
 
@@ -7,12 +8,17 @@ export class SearchResultsPanel {
     tabId: string = "searchTabName";
     visible: boolean = false;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
     }
 
     render = () => {
-        var header = "<h2 id='searchPageTitle' class='page-title'></h2>";
-        var mainContent = "<div id='searchResultsView'></div>";
+        var header = tag.h2({
+            "id": "searchPageTitle",
+            "class": "page-title"
+        });
+        var mainContent = tag.div({
+            "id": "searchResultsView"
+        });
         return header + mainContent;
     };
 

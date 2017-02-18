@@ -7,8 +7,9 @@ import { ResetPasswordDlg } from "./ResetPasswordDlg";
 import { render } from "./Render";
 import { user } from "./User";
 import { cnst } from "./Constants";
-import {util} from "./Util";
+import { util } from "./Util";
 import { Factory } from "./Factory";
+import { tag } from "./Tag";
 
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     constructor(paramsTest: Object) {
@@ -28,7 +29,7 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
         let resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword);
         let backButton = this.makeCloseButton("Close", "cancelLoginButton");
         let buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
-        let divider = "<div><h3>Or Login With...</h3></div>";
+        let divider = tag.dlgSectionHeading("Or Login With...");
 
         let form = formControls + buttonBar;
 

@@ -11,7 +11,6 @@ class Constants {
      * loginState="0" if user logged out intentionally. loginState="1" if last known state of user was 'logged in'
      */
     COOKIE_LOGIN_STATE: string = cookiePrefix + "loginState";
-    BR: "<div class='vert-space'></div>";
     INSERT_ATTACHMENT: string = "{{insert-attachment}}";
     NEW_ON_TOOLBAR: boolean = false;
     INS_ON_TOOLBAR: boolean = false;

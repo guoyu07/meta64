@@ -8,6 +8,8 @@ fully pluggable. The goal here is not only clean code but full decoupling FROM P
 */
 export class Tag {
 
+    // BR: "<div class='vert-space'></div>";
+
     img(attr: Object): string {
         return render.tag("img", attr, null, false);
     }
@@ -30,6 +32,14 @@ export class Tag {
 
     div(attr?: Object, content?: string): string {
         return render.tag("div", attr, content, true);
+    }
+
+    h2(attr?: Object, content?: string): string {
+        return render.tag("h2", attr, content, true);
+    }
+
+    span(attr?: Object, content?: string): string {
+        return render.tag("span", attr, content, true);
     }
 
     textarea(attr?: Object): string {
@@ -73,6 +83,10 @@ export class Tag {
 
     subMenu(attr?: Object, content?: string): string {
         return render.tag("paper-submenu", attr, content, true);
+    }
+
+    dlgSectionHeading(name: string): string {
+        return `<h3>${name}</h3>`;
     }
 }
 

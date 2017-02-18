@@ -29,7 +29,7 @@ class DomBind {
         util.forEachProp(this.idToKeyPressMap, function(id, func) {
             let e = util.domElm(id);
             if (e) {
-                (<any>e).onkeypress = this.idToKeyPressMap[id];
+                (<any>e).onkeypress = func;
                 delete thiz.idToKeyPressMap[id];
             }
         });

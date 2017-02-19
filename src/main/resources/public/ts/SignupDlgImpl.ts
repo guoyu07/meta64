@@ -5,7 +5,6 @@ import { util } from "./Util";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
 
-declare var BRANDING_TITLE;
 declare var postTargetUrl;
 
 export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
@@ -18,7 +17,7 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
      * Returns a string that is the HTML content of the dialog
      */
     render = (): string => {
-        let header = this.makeHeader(BRANDING_TITLE + " Signup");
+        let header = this.makeHeader("Meta64 Signup");
 
         let formControls = //
             this.makeEditField("User", "signupUserName") + //

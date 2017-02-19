@@ -10,8 +10,6 @@ import { MessageDlg } from "./MessageDlg";
 import { view } from "./View";
 import { SignupDlg } from "./SignupDlg";
 
-declare var BRANDING_TITLE_SHORT;
-
 class User {
 
     private logoutResponse(res: I.LogoutResponse): void {
@@ -32,7 +30,7 @@ class User {
     }
 
     setTitleUsingLoginResponse(res): void {
-        var title = BRANDING_TITLE_SHORT;
+        var title = "M64";
 
         /* todo-0: If users go with very long usernames this is gonna be ugly */
         if (!meta64.isAnonUser) {

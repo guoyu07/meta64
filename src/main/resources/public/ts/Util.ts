@@ -5,8 +5,6 @@ declare var Dropzone;
 declare var ace;
 declare var postTargetUrl;
 declare var prettyPrint;
-declare var BRANDING_TITLE;
-declare var BRANDING_TITLE_SHORT;
 
 import { meta64 } from "./Meta64";
 import { MessageDlg } from "./MessageDlg";

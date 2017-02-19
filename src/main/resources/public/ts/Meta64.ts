@@ -393,6 +393,7 @@ class Meta64 {
     getSelectedNodesAsMapById(): Object {
         let ret: Object = {};
         let selArray: I.NodeInfo[] = this.getSelectedNodesArray();
+        if (!selArray) return ret;
         for (let i = 0; i < selArray.length; i++) {
             ret[selArray[i].id] = selArray[i];
         }

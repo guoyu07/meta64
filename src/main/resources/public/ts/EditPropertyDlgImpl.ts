@@ -26,7 +26,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     render = (): string => {
         var header = this.makeHeader("Edit Node Property");
 
-        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty, this);
+        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty.bind(this));
         var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
 
         var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);

@@ -24,9 +24,9 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     render = (): string => {
         let header = this.makeHeader("Create New Node");
 
-        let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, this, true, 1000);
-        let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild, this);
-        let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline, this);
+        let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild.bind(this), true, 1000);
+        let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild.bind(this));
+        let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline.bind(this));
         let backButton = this.makeCloseButton("Cancel", "cancelButton");
         let buttonBar = render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
 
@@ -66,7 +66,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         return tag.div({
             "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
             "id": divId,
-            "onclick": meta64.encodeOnClick(this.onRowClick, this, payload)
+            "onclick": function() { this.onRowClick(payload); }.bind(this)
         }, val);
     }
 
@@ -95,6 +95,8 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     }
 
     onRowClick = (payload: any): void => {
+        debugger;
+        console.log("proof=" + this.domId);
         let divId = this.id("typeRow" + payload.typeIdx);
         this.lastSelTypeName = payload.typeName;
 

@@ -16,7 +16,7 @@ export default class SearchFilesDlgImpl extends DialogBaseImpl implements Search
   //       var instructions = this.makeMessageArea("Enter some text to find.");
   //       var formControls = this.makeEditField("Search", "searchText");
   //
-  //       var searchButton = this.makeCloseButton("Search", "searchButton", this.searchTags, this);
+  //       var searchButton = this.makeCloseButton("Search", "searchButton", this.searchTags.bind(this));
   //       var backButton = this.makeCloseButton("Close", "cancelSearchButton");
   //       var buttonBar = render.centeredButtonBar(searchButton + backButton);
   //

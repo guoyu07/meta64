@@ -23,7 +23,7 @@ export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameN
 
         let formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
 
-        let renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", this.renameNode, this);
+        let renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", this.renameNode.bind(this));
         let backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
         let buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
 

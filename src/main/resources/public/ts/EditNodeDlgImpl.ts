@@ -46,13 +46,13 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     render = (): string => {
         let header = this.makeHeader("Edit Node");
 
-        let saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode);
+        let saveNodeButton = this.makeCloseButton("Save", "saveNodeButton", this.saveNode.bind(this));
         let addPropertyButton = this.makeButton("Add Property", "addPropertyButton", this.addProperty);
         let addTagsPropertyButton = this.makeButton("Add Tags", "addTagsPropertyButton",
             this.addTagsProperty);
         let splitContentButton = this.makeButton("Split", "splitContentButton", this.splitContent);
         let deletePropButton = this.makeButton("Delete", "deletePropButton", this.deletePropertyButtonClick);
-        let cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit);
+        let cancelEditButton = this.makeCloseButton("Close", "cancelEditButton", this.cancelEdit.bind(this));
 
         let buttonBar = render.centeredButtonBar(saveNodeButton + addPropertyButton + addTagsPropertyButton + deletePropButton
             + splitContentButton + cancelEditButton, "buttons");
@@ -75,7 +75,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         }) + tag.div({
             id: this.id("propertyEditFieldContainer"),
             // todo-1: create CSS class for this.
-            style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
+            style: `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%; overflow:scroll; border:4px solid lightGray;`,
             class: "vertical-layout-row"
             //"padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
         }, "Loading...");
@@ -150,7 +150,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         }
         /* Editing a new node */
         else {
-            // todo-0: this entire block needs review now (redesign)
+            // todo-1: this entire block needs review now (redesign)
             console.log("Editing new node.");
 
             if (cnst.USE_ACE_EDITOR) {
@@ -180,7 +180,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         //I'm not quite ready to add this button yet.
         // var toggleReadonlyVisButton = tag.button({
         //     "raised": "raised",
-        //     "onClick": "meta64.getObjectByGuid(" + this.guid + ").toggleShowReadOnly();" //
+        //     "onClick": toggleShowReadOnly(); //
         // }, //
         //     (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
         //

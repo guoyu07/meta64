@@ -83,7 +83,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
             "id": this.id("uploadFieldContainer")
         }, "<p>Upload from your computer</p>" + form);
 
-        let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
+        let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow.bind(this));
         let backButton = this.makeCloseButton("Close", "closeUploadButton");
         let buttonBar = render.centeredButtonBar(uploadButton + backButton);
 

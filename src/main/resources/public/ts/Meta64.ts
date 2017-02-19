@@ -174,6 +174,7 @@ class Meta64 {
      * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
      * future.
      */
+     //todo-0: I'm in the process of removing the need for this currently, so that encodeOnClick is gone and every other thing that needed this.
     registerDataObject(data) {
         if (!data.guid) {
             data.guid = ++meta64.nextGuid;
@@ -189,6 +190,9 @@ class Meta64 {
         return ret;
     }
 
+    //
+    // I want to keep this code for a short time before deleting it just in case i need to easily refer to it again.
+    //
     /*
      * If callback is a string, it will be interpreted as a script to run, or if it's a function object that will be
      * the function to run.
@@ -208,65 +212,65 @@ class Meta64 {
      * todo-0: use obj.bind(this) for the 'callback' parameter passing then then get rid of 'ctx' parameter, but
      * be careful with the logic, it will be tricky.
      */
-    encodeOnClick(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
-        if (typeof callback == "string") {
-            return callback;
-        } //
-        else if (typeof callback == "function") {
-            meta64.registerDataObject(callback);
-
-            if (ctx) {
-                meta64.registerDataObject(ctx);
-
-                if (payload) {
-                    meta64.registerDataObject(payload);
-                }
-                let payloadStr = payload ? payload.guid : "null";
-                return `meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr},${delayCallback});`;
-            } else {
-                return `meta64.runCallback(${callback.guid},null,null,${delayCallback});`;
-            }
-        }
-        else {
-            throw "unexpected callback type in encodeOnClick";
-        }
-    }
-
-    runCallback(guid, ctx, payload, delayCallback?: number) {
-        console.log("callback run: " + delayCallback);
-        /* depending on delayCallback, run the callback either immediately or with a delay */
-        if (delayCallback > 0) {
-            setTimeout(function() {
-                meta64.runCallbackImmediate(guid, ctx, payload);
-            }, delayCallback);
-        }
-        else {
-            return meta64.runCallbackImmediate(guid, ctx, payload);
-        }
-    }
-
-    runCallbackImmediate(guid, ctx, payload) {
-        let dataObj = meta64.getObjectByGuid(guid);
-
-        // if this is an object, we expect it to have a 'callback' property
-        // that is a function
-        if (dataObj.callback) {
-            dataObj.callback();
-        }
-        // or else sometimes the registered object itself is the function,
-        // which is ok too
-        else if (typeof dataObj == 'function') {
-            if (ctx) {
-                let thiz = meta64.getObjectByGuid(ctx);
-                let payloadObj = payload ? meta64.getObjectByGuid(payload) : null;
-                dataObj.call(thiz, payloadObj);
-            } else {
-                dataObj();
-            }
-        } else {
-            throw "unable to find callback on registered guid: " + guid;
-        }
-    }
+    // encodeOnClick(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
+    //     if (typeof callback == "string") {
+    //         return callback;
+    //     } //
+    //     else if (typeof callback == "function") {
+    //         meta64.registerDataObject(callback);
+    //
+    //         if (ctx) {
+    //             meta64.registerDataObject(ctx);
+    //
+    //             if (payload) {
+    //                 meta64.registerDataObject(payload);
+    //             }
+    //             let payloadStr = payload ? payload.guid : "null";
+    //             return `meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr},${delayCallback});`;
+    //         } else {
+    //             return `meta64.runCallback(${callback.guid},null,null,${delayCallback});`;
+    //         }
+    //     }
+    //     else {
+    //         throw "unexpected callback type in encodeOnClick";
+    //     }
+    // }
+    //
+    // runCallback(guid, ctx, payload, delayCallback?: number) {
+    //     console.log("callback run: " + delayCallback);
+    //     /* depending on delayCallback, run the callback either immediately or with a delay */
+    //     if (delayCallback > 0) {
+    //         setTimeout(function() {
+    //             meta64.runCallbackImmediate(guid, ctx, payload);
+    //         }, delayCallback);
+    //     }
+    //     else {
+    //         return meta64.runCallbackImmediate(guid, ctx, payload);
+    //     }
+    // }
+    //
+    // runCallbackImmediate(guid, ctx, payload) {
+    //     let dataObj = meta64.getObjectByGuid(guid);
+    //
+    //     // if this is an object, we expect it to have a 'callback' property
+    //     // that is a function
+    //     if (dataObj.callback) {
+    //         dataObj.callback();
+    //     }
+    //     // or else sometimes the registered object itself is the function,
+    //     // which is ok too
+    //     else if (typeof dataObj == 'function') {
+    //         if (ctx) {
+    //             let thiz = meta64.getObjectByGuid(ctx);
+    //             let payloadObj = payload ? meta64.getObjectByGuid(payload) : null;
+    //             dataObj.call(thiz, payloadObj);
+    //         } else {
+    //             dataObj();
+    //         }
+    //     } else {
+    //         throw "unable to find callback on registered guid: " + guid;
+    //     }
+    // }
 
     inSimpleMode(): boolean {
         return meta64.editModeOption === meta64.MODE_SIMPLE;

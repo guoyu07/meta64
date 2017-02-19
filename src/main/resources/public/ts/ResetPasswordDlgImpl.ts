@@ -25,7 +25,7 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
             this.makeEditField("Email Address", "emailAddress");
 
         var resetPasswordButton = this.makeCloseButton("Reset my Password", "resetPasswordButton",
-            this.resetPassword, this);
+            this.resetPassword.bind(this));
         var backButton = this.makeCloseButton("Close", "cancelResetPasswordButton");
 
         var buttonBar = render.centeredButtonBar(resetPasswordButton + backButton);

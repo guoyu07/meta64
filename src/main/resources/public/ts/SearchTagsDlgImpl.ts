@@ -22,7 +22,7 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
         let instructions = this.makeMessageArea("Enter some text to find. Only tags text will be searched. All sub-nodes under the selected node are included in the search.");
         let formControls = this.makeEditField("Search", "searchText");
 
-        let searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchTags, this);
+        let searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchTags.bind(this));
         let backButton = this.makeCloseButton("Close", "cancelSearchButton");
         let buttonBar = render.centeredButtonBar(searchButton + backButton);
 

@@ -35,7 +35,7 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
         let legend = "<legend>Edit Mode:</legend>";
         let radioBar = render.makeHorzControlGroup(legend + formControls);
 
-        let saveButton = this.makeCloseButton("Save", "savePreferencesButton", this.savePreferences, this);
+        let saveButton = this.makeCloseButton("Save", "savePreferencesButton", this.savePreferences.bind(this));
         let backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
 
         let buttonBar = render.centeredButtonBar(saveButton + backButton);

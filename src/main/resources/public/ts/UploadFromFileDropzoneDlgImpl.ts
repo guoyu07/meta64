@@ -50,7 +50,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             "id": this.id("dropzone-form-id")
         }, "");
 
-        let uploadButton = this.makeCloseButton("Upload", "uploadButton", null, null, false);
+        let uploadButton = this.makeCloseButton("Upload", "uploadButton", null, false);
         let backButton = this.makeCloseButton("Close", "closeUploadButton");
         let buttonBar = render.centeredButtonBar(uploadButton + backButton);
 

@@ -21,8 +21,7 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
         let header = this.makeHeader("Share Node to Person");
 
         let formControls = this.makeEditField("User to Share With", "shareToUserName");
-        let shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", this.shareNodeToPerson,
-            this);
+        let shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", this.shareNodeToPerson.bind(this));
         let backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
         let buttonBar = render.centeredButtonBar(shareButton + backButton);
 

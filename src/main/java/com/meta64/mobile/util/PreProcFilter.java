@@ -77,12 +77,10 @@ public class PreProcFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
 
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
-
-		String uri = request.getRequestURI();
-
-		log.debug("***************** PreProcFilter: uri: " + uri);
+		//HttpServletRequest request = (HttpServletRequest) req;
+		//HttpServletResponse response = (HttpServletResponse) res;
+		//String uri = request.getRequestURI();
+		//log.debug("***************** PreProcFilter: uri: " + uri);
 
 		// String ver = request.getParameter("ver");
 		// String warning = "";

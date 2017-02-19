@@ -36,7 +36,7 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
         let formControls = this.makePasswordField("New Password", "changePassword1");
 
         let changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
-            this.changePassword, this);
+            this.changePassword.bind(this));
         let backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
 
         let buttonBar = render.centeredButtonBar(changePasswordButton + backButton);

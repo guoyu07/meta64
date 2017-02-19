@@ -87,7 +87,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         });
 
         let publicAppendAttrs = {
-            "onClick": "meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
+            "onClick": this.publicCommentingChanged.bind(this),
             "name": "allowPublicCommenting",
             "id": this.id("allowPublicCommenting")
         };

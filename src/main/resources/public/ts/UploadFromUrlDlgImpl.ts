@@ -36,7 +36,7 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
         uploadFromUrlDiv = tag.div({//
         }, uploadFromUrlField);
 
-        let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);
+        let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow.bind(this));
         let backButton = this.makeCloseButton("Close", "closeUploadButton");
 
         let buttonBar = render.centeredButtonBar(uploadButton + backButton);

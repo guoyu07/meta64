@@ -260,18 +260,13 @@ export abstract class DialogBaseImpl implements DialogBase {
         return render.tag("p", attrs, message);
     }
 
-    // todo: there's a makeButton (and other similar methods) that don't have the
-    // encodeCallback capability yet
     makeButton = (text: string, id: string, callback: any, clazz?: string): string => {
         let attribs = {
             "raised": "raised",
             "id": this.id(id),
-            "class": /* clazz || */ "standardButton"
+            "class": /* clazz || */ "standardButton",
+            "onclick": callback
         };
-
-        if (callback != undefined) {
-            attribs["onClick"] = meta64.encodeOnClick(callback);
-        }
 
         return tag.button(attribs, text);
     }
@@ -279,8 +274,9 @@ export abstract class DialogBaseImpl implements DialogBase {
     /* The reason delayCloseCallback is here is so that we can encode a button to popup a new dialog over the top of
     an existing dialog, and have that happen instantly, rather than letting it close, and THEN poping up a second dialog,
     because using the delay means that the one being hidden is not able to become hidden before the one comes up because
-    that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case. */
-    makeCloseButton = (text: string, id: string, callback?: any, ctx?: any, initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
+    that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case.
+    */
+    makeCloseButton = (text: string, id: string, callback?: any,  initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
 
         let attribs = {
             "raised": "raised",
@@ -296,20 +292,19 @@ export abstract class DialogBaseImpl implements DialogBase {
             "class": "standardButton"
         };
 
-        let onClick = "";
+        let thiz = this;
+        (<any>attribs).onclick = function() {
+            if (callback) {
+                callback(); //callback.bind(ctx)();
+            }
 
-        if (callback != undefined) {
-            onClick = meta64.encodeOnClick(callback, ctx);
-        }
-
-        onClick += meta64.encodeOnClick(this.cancel, this, null, delayCloseCallback);
-
-        if (onClick) {
-            attribs["onClick"] = onClick;
-        }
+            setTimeout(function() {
+                thiz.cancel.bind(thiz)();
+            }, delayCloseCallback);
+        };
 
         if (!initiallyVisible) {
-            attribs["style"] = "display:none;"
+            (<any>attribs).style = "display:none;"
         }
 
         return tag.button(attribs, text);
@@ -349,13 +344,13 @@ export abstract class DialogBaseImpl implements DialogBase {
         id = this.id(id);
 
         let attrs = {
-            //"onClick": "meta64.getObjectByGuid(" + this.guid + ").publicCommentingChanged();",
+            //"onClick": publicCommentingChanged
             "name": id,
             "id": id
         };
 
         ////////////
-        //             <paper - checkbox on-change="checkboxChanged">click</paper - checkbox>
+        //     <paper - checkbox on-change="checkboxChanged">click</paper - checkbox>
         //
         //             checkboxChanged : function(event){
         //     if(event.target.checked) {

@@ -11,6 +11,7 @@ import * as I from "./Interfaces"
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
 import { tag } from "./Tag";
+import { domBind } from "./DomBind";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -1006,11 +1007,25 @@ export class Render {
 
         /* HTML tag itself */
         let ret: string = "<" + tag;
+        let onClickFunc: Function = null;
+        let id: string = null;
 
         if (attributes) {
             ret += " ";
             util.forEachProp(attributes, function(k, v) {
                 if (v) {
+                    if (k.toLowerCase() === "id") {
+                        id = v;
+                    }
+
+                    if (k.toLowerCase() === "onclick") {
+                        if (typeof v === "function") {
+                            onClickFunc = v;
+                            //Return now because when using 'domBind' (below) we don't need the onclick encoded as a string on the element. It's dynamic
+                            return;
+                        }
+                    }
+
                     if (typeof v !== 'string') {
                         v = String(v);
                     }
@@ -1027,6 +1042,16 @@ export class Render {
                     ret += k + " ";
                 }
             });
+
+            if (onClickFunc) {
+                debugger;
+                if (id) {
+                    domBind.addOnClick(id, onClickFunc);
+                }
+                else {
+                    throw "Function binding failed. Missing ID attribute.";
+                }
+            }
         }
 
         if (closeTag) {
@@ -1068,6 +1093,7 @@ export class Render {
         });
     }
 
+    //todo-0: refactor so that 'ctx' is pre-bound to the callback passed into here, and not needed as a parameter
     makeButton(text: string, id: string, callback: any, ctx?: any): string {
         let attribs = {
             "raised": "raised",
@@ -1076,7 +1102,13 @@ export class Render {
         };
 
         if (callback != undefined) {
-            attribs["onClick"] = meta64.encodeOnClick(callback, ctx);
+            if (typeof callback === "Function") {
+                (<any>attribs).onclick = callback.bind(ctx);
+            }
+            else {
+                console.log("makeButton for id=" + id + " is using string callback, which is not recommended. Use actual Function instead.");
+                (<any>attribs).onclick = callback;
+            }
         }
 
         return tag.button(attribs, text);

@@ -1,6 +1,9 @@
 package com.meta64.mobile.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
@@ -9,6 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 // todo-1: don't checkin dev file hardcoded here, bc this will break production
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
+
+	@Value("${jsBaseFolder}")
+	private String jsBaseFolder;
 
 	// @Override
 	// public void addViewControllers(ViewControllerRegistry registry) {
@@ -38,4 +44,21 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
 	// }
 	// };
 	// }
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+		/*
+		 * This is how we enable the JS files to be edited and tested without doing a rebuild and
+		 * restart of server code. We can just run TSC compile to generate the new JS files, and
+		 * then refresh the browser to reload them, and that works! This jsBaseFolder should of
+		 * course be empty (unused) in production environment, or any time the JAR (build) should be
+		 * used exclusively at runtime
+		 */
+		if (!StringUtils.isEmpty(jsBaseFolder)) {
+			registry.addResourceHandler("/js/**").addResourceLocations(jsBaseFolder);
+		}
+
+		super.addResourceHandlers(registry);
+	}
 }

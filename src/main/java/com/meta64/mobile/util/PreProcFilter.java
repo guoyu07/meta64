@@ -28,7 +28,7 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
  * all we need in this app which the ability to substitute strings into the HTML at runtime, which
  * is done in the 'transform' method.
  */
-@WebFilter(urlPatterns = { "/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
+@WebFilter(urlPatterns = { "/", "/elements/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
 public class PreProcFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(PreProcFilter.class);
 	private Properties props;
@@ -82,31 +82,17 @@ public class PreProcFilter implements Filter {
 
 		String uri = request.getRequestURI();
 
-		/*
-		 * I realize I could be using the filter pattern matcher to do a lot of this URI searching,
-		 * but this filter also does loging of all requests, so we need this filter to intercept
-		 * everything.
-		 */
-		if (!uri.contains("/bower_components/") && //
-				!uri.contains("/cookie/") && //
-				!uri.contains("/jquery/") && //
-				!uri.startsWith("/mobile/api/")) {
-			String ver = request.getParameter("ver");
-			String warning = "";
-			if (ver == null) {
-				ver = "";
-				warning = "WARNING: NO VERSION!!!";
-			}
-			// log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
+		log.debug("***************** PreProcFilter: uri: " + uri);
 
-			if (uri.equals("/") || //
-					uri.toLowerCase().contains(".html")) {
-				transform(req, res, chain);
-				return;
-			}
-		}
+		// String ver = request.getParameter("ver");
+		// String warning = "";
+		// if (ver == null) {
+		// ver = "";
+		// warning = "WARNING: NO VERSION!!!";
+		// }
+		// log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
-		chain.doFilter(req, res);
+		transform(req, res, chain);
 	}
 
 	public void transform(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {

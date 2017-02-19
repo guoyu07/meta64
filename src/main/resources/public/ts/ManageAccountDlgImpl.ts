@@ -1,11 +1,11 @@
 console.log("ManageAccountDlgImpl.ts");
 
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {ManageAccountDlg} from "./ManageAccountDlg";
-import {render} from "./Render";
-import {meta64} from "./Meta64";
-import {prefs} from "./Prefs";
-import {tag} from "./Tag";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { ManageAccountDlg } from "./ManageAccountDlg";
+import { render } from "./Render";
+import { meta64 } from "./Meta64";
+import { prefs } from "./Prefs";
+import { tag } from "./Tag";
 
 export default class ManageAccountDlgImpl extends DialogBaseImpl implements ManageAccountDlg {
 
@@ -29,7 +29,7 @@ export default class ManageAccountDlgImpl extends DialogBaseImpl implements Mana
         var buttonBar = render.centeredButtonBar(closeAccountButton);
 
         var bottomButtonBar = render.centeredButtonBar(backButton);
-        var bottomButtonBarDiv = tag.div( {
+        var bottomButtonBarDiv = tag.div({
             "class": "close-account-bar"
         }, bottomButtonBar);
 

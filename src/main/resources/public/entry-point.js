@@ -32,18 +32,12 @@ var systemJsCacheBuster = "?ver=" + cacheVersion;
  * thing it must be a text match and may different to browser.
  */
 var postTargetUrl = window.location.origin + "/mobile/api/";
-
-// ---------------- SECOND BLOCK:
-
 var bundled = true;
 
 console.log("registering WebComponentsReady listener.");
 
-window.webComponentsReady = null; //todo-0: i think this variable is no longer being used.
-
 addEventListener("WebComponentsReady", function() {
 	console.log("WebComponentsReady event. Init modules.");
-	window.webComponentsReady = true;
 
 	if (bundled) {
 		// when running bundled, no special config() is equired.

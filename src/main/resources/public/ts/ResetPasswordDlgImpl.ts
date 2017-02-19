@@ -1,14 +1,14 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {ResetPasswordDlg} from "./ResetPasswordDlg";
-import {render} from "./Render";
-import {util} from "./Util";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { ResetPasswordDlg } from "./ResetPasswordDlg";
+import { render } from "./Render";
+import { util } from "./Util";
 import * as I from "./Interfaces";
 
 export default class ResetPasswordDlgImpl extends DialogBaseImpl implements ResetPasswordDlg {
 
-    private user:string;
+    private user: string;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
         super("ResetPasswordDlg");
         this.user = (<any>args).user;
     }

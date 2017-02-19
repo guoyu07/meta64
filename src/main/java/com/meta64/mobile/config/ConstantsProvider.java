@@ -7,12 +7,6 @@ package com.meta64.mobile.config;
  */
 public interface ConstantsProvider {
 
-	public String getCookiePrefix();
-
-	public String getBrandingTitle();
-
-	public String getBrandingTitleShort();
-
 	public String getBrandingMetaContent();
 
 	public String getCacheVersion();

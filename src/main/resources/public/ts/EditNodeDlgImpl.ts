@@ -4,7 +4,7 @@ import * as I from "./Interfaces"
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { EditNodeDlg } from "./EditNodeDlg";
 import { EditPropertyDlg } from "./EditPropertyDlg";
-import {ConfirmDlg} from "./ConfirmDlg";
+import { ConfirmDlg } from "./ConfirmDlg";
 import { render } from "./Render";
 import { Factory } from "./Factory";
 import { cnst, jcrCnst } from "./Constants";
@@ -13,7 +13,7 @@ import { view } from "./View";
 import { props } from "./Props";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 declare var ace;
 
@@ -23,10 +23,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     fieldIdToPropMap: any = {};
     propEntries: Array<I.PropEntry> = new Array<I.PropEntry>();
     editPropertyDlgInst: any;
-    typeName:string;
-    createAtTop:boolean;
+    typeName: string;
+    createAtTop: boolean;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
         super("EditNodeDlg");
 
         this.typeName = (<any>args).typeName;
@@ -64,15 +64,15 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         let internalMainContent = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            internalMainContent += tag.div( {
+            internalMainContent += tag.div({
                 id: this.id("editNodePathDisplay"),
                 "class": "path-display-in-editor"
             });
         }
 
-        internalMainContent += tag.div( {
+        internalMainContent += tag.div({
             id: this.id("editNodeInstructions")
-        }) + tag.div( {
+        }) + tag.div({
             id: this.id("propertyEditFieldContainer"),
             // todo-1: create CSS class for this.
             style: "padding-left: 0px; max-width:" + width + "px;height:" + height + "px;width:100%; overflow:scroll; border:4px solid lightGray;",
@@ -141,7 +141,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     field += thiz.makeSinglePropEditor(propEntry, aceFields);
                 }
 
-                fields += tag.div( {
+                fields += tag.div({
                     "class": ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties ? "propertyEditListItem"
                         : "propertyEditListItemHidden")
                     // "style" : "display: "+ (!rdOnly || meta64.showReadOnlyProperties ? "inline" : "none")
@@ -156,7 +156,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             if (cnst.USE_ACE_EDITOR) {
                 let aceFieldId = this.id("newNodeNameId");
 
-                fields += tag.div( {
+                fields += tag.div({
                     "id": aceFieldId,
                     "class": "ace-edit-panel",
                     "html": "true"
@@ -172,7 +172,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     "label": "New Node Name"
                 });
 
-                fields += tag.div( { "display": "table-row" }, field);
+                fields += tag.div({ "display": "table-row" }, field);
             }
         }
 
@@ -295,16 +295,16 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
      * Deletes the property of the specified name on the node being edited, but first gets confirmation from user
      */
     deleteProperty = (propName: string) => {
-      let thiz = this;
-      Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-          dlg.open();
-      }, {
-              "title": "Confirm Delete", "message": "Delete the Property: " + propName,
-              "buttonText": "Yes, delete.", "yesCallback":
-              function() {
-                  thiz.deletePropertyImmediate(propName);
-              }
-          });
+        let thiz = this;
+        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
+            dlg.open();
+        }, {
+                "title": "Confirm Delete", "message": "Delete the Property: " + propName,
+                "buttonText": "Yes, delete.", "yesCallback":
+                function() {
+                    thiz.deletePropertyImmediate(propName);
+                }
+            });
     }
 
     deletePropertyImmediate = (propName: string) => {
@@ -553,7 +553,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             }
         }
 
-        let col = tag.div( {
+        let col = tag.div({
             "style": "display: table-cell;"
         }, fields);
 
@@ -595,7 +595,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     "value": propValStr
                 });
             } else {
-                field += tag.div( {
+                field += tag.div({
                     "id": propEntry.id,
                     "class": "ace-edit-panel",
                     "html": "true"
@@ -608,11 +608,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             }
         }
 
-        let selCol = tag.div( {
+        let selCol = tag.div({
             "style": "width: 40px; display: table-cell; padding: 10px;"
         }, propSelCheckbox);
 
-        let editCol = tag.div( {
+        let editCol = tag.div({
             "style": "width: 100%; display: table-cell; padding: 10px;"
         }, field);
 

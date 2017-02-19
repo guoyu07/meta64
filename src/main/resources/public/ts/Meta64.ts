@@ -827,7 +827,7 @@ class Meta64 {
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
          * $ (window).on("orientationchange", _.orientationHandler);
          */
-         window.onbeforeunload = function() {
+        window.onbeforeunload = function() {
             return "Leave Meta64 ?";
         };
 

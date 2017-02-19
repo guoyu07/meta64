@@ -1,11 +1,11 @@
 console.log("Attachment.ts");
 
-import {meta64} from "./Meta64";
-import {util} from "./Util";
-import {Factory} from "./Factory";
-import {ConfirmDlg} from "./ConfirmDlg";
-import {UploadFromFileDropzoneDlg} from "./UploadFromFileDropzoneDlg";
-import {UploadFromUrlDlg} from "./UploadFromUrlDlg";
+import { meta64 } from "./Meta64";
+import { util } from "./Util";
+import { Factory } from "./Factory";
+import { ConfirmDlg } from "./ConfirmDlg";
+import { UploadFromFileDropzoneDlg } from "./UploadFromFileDropzoneDlg";
+import { UploadFromUrlDlg } from "./UploadFromUrlDlg";
 import * as I from "./Interfaces";
 
 class Attachment {
@@ -23,7 +23,7 @@ class Attachment {
         attachment.uploadNode = node;
 
         Factory.createDefault("UploadFromFileDropzoneDlgImpl", (dlg: UploadFromFileDropzoneDlg) => {
-          dlg.open();
+            dlg.open();
         })
 
         /* Note: To run legacy uploader just put this version of the dialog here, and
@@ -44,7 +44,7 @@ class Attachment {
         attachment.uploadNode = node;
 
         Factory.createDefault("UploadFromUrlDlgImpl", (dlg: UploadFromUrlDlg) => {
-          dlg.open();
+            dlg.open();
         })
     }
 
@@ -52,16 +52,16 @@ class Attachment {
         let node: I.NodeInfo = meta64.getHighlightedNode();
 
         if (node) {
-          Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-              dlg.open();
-          }, {
-                  "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback":
-                  function() {
-                    util.json<I.DeleteAttachmentRequest, I.DeleteAttachmentResponse>("deleteAttachment", {
-                               "nodeId": node.id
-                           }, attachment.deleteAttachmentResponse, null, node.uid);
-                  }
-              });
+            Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
+                dlg.open();
+            }, {
+                    "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback":
+                    function() {
+                        util.json<I.DeleteAttachmentRequest, I.DeleteAttachmentResponse>("deleteAttachment", {
+                            "nodeId": node.id
+                        }, attachment.deleteAttachmentResponse, null, node.uid);
+                    }
+                });
         }
     }
 

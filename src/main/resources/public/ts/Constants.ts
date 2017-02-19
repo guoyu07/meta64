@@ -1,16 +1,14 @@
 console.log("Constants.ts");
 
-declare var cookiePrefix;
-
 class Constants {
 
     ANON: string = "anonymous";
-    COOKIE_LOGIN_USR: string = cookiePrefix + "loginUsr";
-    COOKIE_LOGIN_PWD: string = cookiePrefix + "loginPwd";
+    COOKIE_LOGIN_USR: string = "loginUsr";
+    COOKIE_LOGIN_PWD: string = "loginPwd";
     /*
      * loginState="0" if user logged out intentionally. loginState="1" if last known state of user was 'logged in'
      */
-    COOKIE_LOGIN_STATE: string = cookiePrefix + "loginState";
+    COOKIE_LOGIN_STATE: string = "loginState";
     INSERT_ATTACHMENT: string = "{{insert-attachment}}";
     NEW_ON_TOOLBAR: boolean = false;
     INS_ON_TOOLBAR: boolean = false;

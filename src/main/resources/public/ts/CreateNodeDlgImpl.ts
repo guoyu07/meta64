@@ -1,13 +1,13 @@
 console.log("CreateNodeDlgImpl.ts");
 
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {CreateNodeDlg} from "./CreateNodeDlg";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { CreateNodeDlg } from "./CreateNodeDlg";
 import { render } from "./Render";
-import {meta64} from "./Meta64";
-import {util} from "./Util";
-import {edit} from "./Edit";
+import { meta64 } from "./Meta64";
+import { util } from "./Util";
+import { edit } from "./Edit";
 import * as I from "./Interfaces";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateNodeDlg {
 
@@ -37,13 +37,13 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         content += this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++, false);
         content += this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++, false);
 
-        let listBox = tag.div( {
+        let listBox = tag.div({
             "class": "listBox"
         }, content);
 
         let mainContent: string = listBox;
 
-        let centeredHeader: string = tag.div( {
+        let centeredHeader: string = tag.div({
             "class": "centeredTitle"
         }, header);
 
@@ -63,7 +63,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
             this.lastSelDomId = divId;
         }
 
-        return tag.div( {
+        return tag.div({
             "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
             "id": divId,
             "onclick": meta64.encodeOnClick(this.onRowClick, this, payload)

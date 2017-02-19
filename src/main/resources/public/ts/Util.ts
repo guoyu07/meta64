@@ -3,7 +3,6 @@ console.log("Util.ts");
 declare var Polymer;
 declare var Dropzone;
 declare var ace;
-declare var cookiePrefix;
 declare var postTargetUrl;
 declare var prettyPrint;
 declare var BRANDING_TITLE;

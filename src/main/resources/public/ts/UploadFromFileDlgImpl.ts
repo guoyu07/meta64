@@ -93,7 +93,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
         for (let i = 0; i < 7; i++) {
-            let inputElm : HTMLElement = this.elById("upload" + i + "FormInputId");
+            let inputElm: HTMLElement = this.elById("upload" + i + "FormInputId");
 
             if (inputElm && (<HTMLInputElement>inputElm).value !== null &&
                 util.endsWith((<HTMLInputElement>inputElm).value.toLowerCase(), ".zip")) {

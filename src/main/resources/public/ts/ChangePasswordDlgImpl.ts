@@ -3,8 +3,8 @@ console.log("ChangePasswordDlgImpl.ts");
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { render } from "./Render";
-import {Factory} from "./Factory";
-import {MessageDlg} from "./MessageDlg";
+import { Factory } from "./Factory";
+import { MessageDlg } from "./MessageDlg";
 import { util } from "./Util";
 import * as I from "./Interfaces";
 
@@ -13,7 +13,7 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     pwd: string;
     private passCode: string;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
         super("ChangePasswordDlg");
         this.passCode = (<any>args).passCode;
     }

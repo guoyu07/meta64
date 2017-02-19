@@ -13,7 +13,7 @@ export default class MessageDlgImpl extends DialogBaseImpl implements MessageDlg
     private title: any;
     private callback: any;
 
-    constructor(args:Object) {
+    constructor(args: Object) {
         super("MessageDlg");
 
         if (!(<any>args).title) {

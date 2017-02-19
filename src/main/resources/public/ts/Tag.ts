@@ -8,8 +8,6 @@ fully pluggable. The goal here is not only clean code but full decoupling FROM P
 */
 export class Tag {
 
-    // BR: "<div class='vert-space'></div>";
-
     img(attr: Object): string {
         return render.tag("img", attr, null, false);
     }

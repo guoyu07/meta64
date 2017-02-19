@@ -62,12 +62,6 @@ public class PreProcFilter implements Filter {
 		ConstantsProviderImpl.setCacheVersion(String.valueOf(cacheVersion));
 	}
 
-	@Value("${brandingTitle}")
-	private String brandingTitle;
-
-	@Value("${brandingTitleShort}")
-	private String brandingTitleShort;
-
 	@Value("${brandingMetaContent}")
 	private String brandingMetaContent;
 
@@ -125,10 +119,7 @@ public class PreProcFilter implements Filter {
 
 		// content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
-		content = content.replace("{{brandingTitle}}", brandingTitle);
-		content = content.replace("{{brandingTitleShort}}", brandingTitleShort);
 		content = content.replace("{{brandingMetaContent}}", brandingMetaContent);
-		content = content.replace("{{cookiePrefix}}", constProvider.getCookiePrefix());
 		content = content.replace("{{profileName}}", constProvider.getProfileName());
 
 		/*

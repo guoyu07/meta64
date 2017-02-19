@@ -1,11 +1,11 @@
 console.log("View.ts");
 
-import {meta64} from "./Meta64"
-import {util} from "./Util";
-import {nav} from "./Nav";
-import {render} from "./Render";
-import {edit} from "./Edit";
-import {MessageDlg} from "./MessageDlg";
+import { meta64 } from "./Meta64"
+import { util } from "./Util";
+import { nav } from "./Nav";
+import { render } from "./Render";
+import { edit } from "./Edit";
+import { MessageDlg } from "./MessageDlg";
 import * as I from "./Interfaces";
 
 class View {

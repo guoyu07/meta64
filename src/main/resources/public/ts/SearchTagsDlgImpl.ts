@@ -1,13 +1,13 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {SearchTagsDlg} from "./SearchTagsDlg";
-import {srch} from "./Search";
-import {render} from "./Render";
-import {jcrCnst} from "./Constants";
-import {util} from "./Util";
-import {meta64} from "./Meta64";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { SearchTagsDlg } from "./SearchTagsDlg";
+import { srch } from "./Search";
+import { render } from "./Render";
+import { jcrCnst } from "./Constants";
+import { util } from "./Util";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 
-export default class SearchTagsDlgImpl  extends DialogBaseImpl implements SearchTagsDlg {
+export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchTagsDlg {
 
     constructor() {
         super("SearchTagsDlg");

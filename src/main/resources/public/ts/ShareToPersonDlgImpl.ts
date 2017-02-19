@@ -1,14 +1,14 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {ShareToPersonDlg} from "./ShareToPersonDlg";
-import {share} from "./Share";
-import {util} from "./Util";
-import {render} from "./Render";
-import {meta64} from "./Meta64";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { ShareToPersonDlg } from "./ShareToPersonDlg";
+import { share } from "./Share";
+import { util } from "./Util";
+import { render } from "./Render";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import {Factory} from "./Factory";
-import {SharingDlg} from "./SharingDlg";
+import { Factory } from "./Factory";
+import { SharingDlg } from "./SharingDlg";
 
-export default class ShareToPersonDlgImpl  extends DialogBaseImpl implements ShareToPersonDlg {
+export default class ShareToPersonDlgImpl extends DialogBaseImpl implements ShareToPersonDlg {
 
     constructor() {
         super("ShareToPersonDlg");
@@ -52,8 +52,8 @@ export default class ShareToPersonDlgImpl  extends DialogBaseImpl implements Sha
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {
         if (util.checkSuccess("Share Node with Person", res)) {
-            Factory.createDefault("SharingDlgImpl", (dlg:SharingDlg) => {
-              dlg.open();
+            Factory.createDefault("SharingDlgImpl", (dlg: SharingDlg) => {
+                dlg.open();
             });
         }
     }

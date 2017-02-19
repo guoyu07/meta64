@@ -8,7 +8,6 @@ import { tag } from "./Tag";
 
 declare var Polymer;
 
-
 /*
  * Base class for all dialog boxes.
  *

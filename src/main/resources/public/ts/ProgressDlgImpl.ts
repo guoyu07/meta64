@@ -1,9 +1,9 @@
 console.log("ProgressDlgImpl.ts");
 
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {ProgressDlg} from "./ProgressDlg";
-import {render} from  "./Render";
-import {tag} from "./Tag";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { ProgressDlg } from "./ProgressDlg";
+import { render } from "./Render";
+import { tag } from "./Tag";
 
 export default class ProgressDlgImpl extends DialogBaseImpl implements ProgressDlg {
 
@@ -24,7 +24,7 @@ export default class ProgressDlgImpl extends DialogBaseImpl implements ProgressD
             "max": "1000"
         });
 
-        var barContainer = tag.div( {
+        var barContainer = tag.div({
             "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
             "class": "horizontal center-justified layout"
         }, progressBar);

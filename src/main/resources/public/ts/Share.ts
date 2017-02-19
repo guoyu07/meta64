@@ -1,9 +1,9 @@
-import {srch} from "./Search";
-import {util} from "./Util";
-import {meta64} from "./Meta64";
+import { srch } from "./Search";
+import { util } from "./Util";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import {Factory} from "./Factory";
-import {SharingDlg} from "./SharingDlg";
+import { Factory } from "./Factory";
+import { SharingDlg } from "./SharingDlg";
 
 class Share {
 
@@ -25,8 +25,8 @@ class Share {
         }
         share.sharingNode = node;
 
-        Factory.createDefault("SharingDlgImpl", (dlg:SharingDlg) => {
-          dlg.open();
+        Factory.createDefault("SharingDlgImpl", (dlg: SharingDlg) => {
+            dlg.open();
         })
     }
 

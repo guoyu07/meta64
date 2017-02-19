@@ -19,15 +19,6 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 	@Value("${server.port}")
 	private String serverPort;
 
-	@Value("${cookiePrefix}")
-	private String cookiePrefix;
-
-	@Value("${brandingTitle}")
-	private String brandingTitle;
-
-	@Value("${brandingTitleShort}")
-	private String brandingTitleShort;
-
 	@Value("${brandingMetaContent}")
 	private String brandingMetaContent;
 
@@ -39,21 +30,6 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 	@Override
 	public String getHostAndPort() {
 		return "http://" + metaHost + ":" + serverPort;
-	}
-
-	@Override
-	public String getCookiePrefix() {
-		return cookiePrefix;
-	}
-
-	@Override
-	public String getBrandingTitle() {
-		return brandingTitle;
-	}
-
-	@Override
-	public String getBrandingTitleShort() {
-		return brandingTitleShort;
 	}
 
 	@Override

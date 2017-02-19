@@ -1,12 +1,12 @@
-import {DialogBaseImpl} from "./DialogBaseImpl";
-import {UploadFromUrlDlg} from "./UploadFromUrlDlg";
-import {cnst} from "./Constants";
-import {render} from "./Render";
-import {util} from "./Util";
-import {attachment} from "./Attachment";
-import {meta64} from "./Meta64";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { UploadFromUrlDlg } from "./UploadFromUrlDlg";
+import { cnst } from "./Constants";
+import { render } from "./Render";
+import { util } from "./Util";
+import { attachment } from "./Attachment";
+import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements UploadFromUrlDlg {
 
@@ -23,7 +23,7 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
         let uploadPathDisplay = "";
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += tag.div( {//
+            uploadPathDisplay += tag.div({//
                 "id": this.id("uploadPathDisplay"),
                 "class": "path-display-in-editor"
             }, "");
@@ -33,7 +33,7 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
         let uploadFromUrlDiv = "";
 
         let uploadFromUrlField = this.makeEditField("Upload From URL", "uploadFromUrl");
-        uploadFromUrlDiv = tag.div( {//
+        uploadFromUrlDiv = tag.div({//
         }, uploadFromUrlField);
 
         let uploadButton = this.makeCloseButton("Upload", "uploadButton", this.uploadFileNow, this);

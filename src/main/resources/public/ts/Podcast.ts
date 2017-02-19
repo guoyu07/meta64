@@ -1,11 +1,11 @@
-import {util} from "./Util";
-import {props} from "./Props";
-import {render} from "./Render";
-import {meta64} from "./Meta64";
-import {AudioPlayerDlg} from "./AudioPlayerDlg";
-import {Factory} from "./Factory";
+import { util } from "./Util";
+import { props } from "./Props";
+import { render } from "./Render";
+import { meta64 } from "./Meta64";
+import { AudioPlayerDlg } from "./AudioPlayerDlg";
+import { Factory } from "./Factory";
 import * as I from "./Interfaces";
-import {tag} from "./Tag";
+import { tag } from "./Tag";
 
 /*
 NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
@@ -50,11 +50,11 @@ class Podcast {
         }
 
         if (rowStyling) {
-            ret += tag.div( {
+            ret += tag.div({
                 "class": "jcr-content"
             }, feed);
         } else {
-            ret += tag.div( {
+            ret += tag.div({
                 "class": "jcr-root-content"
             },
                 feed);
@@ -110,13 +110,13 @@ class Podcast {
 
         let playerUrl = podcast.getMediaPlayerUrlFromNode(node);
         //if (playerUrl) {
-            //onclick not encoded yet (commented 1/31/2017)
-            // entry += tag.button({
-            //     "raised": "raised",
-            //     "onClick": "podcast.openPlayerDialog('" + node.uid + "');",
-            //     "class": "standardButton"
-            // }, //
-            //     "Play");
+        //onclick not encoded yet (commented 1/31/2017)
+        // entry += tag.button({
+        //     "raised": "raised",
+        //     "onClick": "podcast.openPlayerDialog('" + node.uid + "');",
+        //     "class": "standardButton"
+        // }, //
+        //     "Play");
         //}
 
         if (rssDesc && rssDesc.value) {
@@ -125,16 +125,16 @@ class Podcast {
         }
 
         if (rssAuthor && rssAuthor.value) {
-            entry += tag.div( {
+            entry += tag.div({
             }, "By: " + rssAuthor.value);
         }
 
         if (rowStyling) {
-            ret += tag.div( {
+            ret += tag.div({
                 "class": "jcr-content"
             }, entry);
         } else {
-            ret += tag.div( {
+            ret += tag.div({
                 "class": "jcr-root-content"
             },
                 entry);
@@ -178,9 +178,9 @@ class Podcast {
                 }, function(res: I.GetPlayerInfoResponse) {
                     podcast.parseAdSegmentUid(podcast.uid);
 
-                    Factory.createDefault("AudioPlayerDlgImpl", (dlg:AudioPlayerDlg) => {
-                      dlg.open();
-                    }, {"sourceUrl":mp3Url, "nodeUid":podcast.uid, "startTimePending": res.timeOffset});
+                    Factory.createDefault("AudioPlayerDlgImpl", (dlg: AudioPlayerDlg) => {
+                        dlg.open();
+                    }, { "sourceUrl": mp3Url, "nodeUid": podcast.uid, "startTimePending": res.timeOffset });
                 });
             }
         }

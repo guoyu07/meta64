@@ -13,12 +13,12 @@ import { ConfirmDlg } from "./ConfirmDlg";
 import { CreateNodeDlg } from "./CreateNodeDlg";
 import { Factory } from "./Factory";
 import { user } from "./User";
-import {RenameNodeDlg} from "./RenameNodeDlg";
-import {ImportDlg} from "./ImportDlg";
-import {ExportDlg} from "./ExportDlg";
-import {PrefsDlg} from "./PrefsDlg";
-import {ChangePasswordDlg} from "./ChangePasswordDlg";
-import {ManageAccountDlg} from "./ManageAccountDlg";
+import { RenameNodeDlg } from "./RenameNodeDlg";
+import { ImportDlg } from "./ImportDlg";
+import { ExportDlg } from "./ExportDlg";
+import { PrefsDlg } from "./PrefsDlg";
+import { ChangePasswordDlg } from "./ChangePasswordDlg";
+import { ManageAccountDlg } from "./ManageAccountDlg";
 
 class Edit {
 

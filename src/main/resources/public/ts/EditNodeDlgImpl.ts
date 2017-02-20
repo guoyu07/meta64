@@ -429,7 +429,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         util.forEachArrElm(this.propEntries, function(prop: any, index: number) {
 
-            console.log("--------------- Getting prop idx: " + index);
+            //console.log("--------------- Getting prop idx: " + index);
 
             /* Ignore this property if it's one that cannot be edited as text */
             if (prop.readOnly || prop.binary)

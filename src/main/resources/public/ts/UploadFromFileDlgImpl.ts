@@ -105,6 +105,8 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
 
     uploadFileNow = (): void => {
 
+        //todo-0: most of my functions are not defined like this, but apparently this way of doing it,
+        //captures 'this' without using bind(this) on the funciton???? I say that becasue the code does work right?
         let uploadFunc = (explodeZips) => {
             /* Upload form has hidden input element for nodeId parameter */
             this.elById("uploadFormNodeId").setAttribute("value", attachment.uploadNode.id);

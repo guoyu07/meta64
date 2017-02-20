@@ -28,8 +28,8 @@ export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg
         let content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
         content = render.centerContent(content, 300);
 
-        let buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback.bind(this))
-            + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback.bind(this));
+        let buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
+            + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback);
         content += render.centeredButtonBar(buttons);
 
         return content;

@@ -166,7 +166,8 @@ class Util {
         }
     }
 
-    /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller */
+    /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller, also the callbackpayload doesn't
+    need to be a parameter to this function if we using a function scope in the callback, that encloses it right ? */
     json<RequestType, ResponseType>(postName: any, postData: RequestType, //
         callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
         callbackPayload?: any) {
@@ -619,13 +620,7 @@ class Util {
         Array.prototype.forEach.call(elements, callback);
     }
 
-    /* Iterates by callling callback with property key/value pairs for each property in the object
-
-    TODO-0: check all calls to this and make sure the return value out of the callback, wasn't
-    originally a return from the function DOING the iteration before refactoring. There was at least
-    one bug ilke that , and i bet there's more.
-
-    */
+    /* Iterates by callling callback with property key/value pairs for each property in the object */
     forEachProp(obj: Object, callback: I.PropertyIterator): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {

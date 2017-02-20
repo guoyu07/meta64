@@ -153,6 +153,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         let thiz = this;
         util.forEachArrElm(aclEntry.privileges, function(privilege, index) {
 
+            /* todo-0: I think getObjectByGuid can be eliminated now using functional binding capability in BindDom.ts right ? */
             let removeButton = thiz.makeButton("Remove", "removePrivButton", //
                 "meta64.getObjectByGuid(" + thiz.guid + ").removePrivilege('" + principal + "', '" + privilege.privilegeName
                 + "');");

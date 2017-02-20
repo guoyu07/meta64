@@ -267,7 +267,7 @@ class Meta64 {
 
         let ret = false;
 
-        util.forEachProp(meta64.simpleModeNodePrefixBlackList, function(prop, val) : boolean {
+        util.forEachProp(meta64.simpleModeNodePrefixBlackList, function(prop, val): boolean {
             if (util.startsWith(node.name, prop)) {
                 ret = true;
                 //teminate iteration with false return
@@ -280,9 +280,8 @@ class Meta64 {
     }
 
     getSelectedNodeUidsArray(): string[] {
-        let selArray: string[] = [], uid;
-
-        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean {
+        let selArray: string[] = [];
+        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
             selArray.push(uid);
             return true;
         });
@@ -293,7 +292,7 @@ class Meta64 {
     Returns a newly cloned array of all the selected nodes each time it's called.
     */
     getSelectedNodeIdsArray(): string[] {
-        let selArray: string[] = [], uid;
+        let selArray: string[] = [];
 
         if (!meta64.selectedNodes) {
             console.log("no selected nodes.");
@@ -301,7 +300,7 @@ class Meta64 {
             console.log("selectedNode count: " + util.getPropertyCount(meta64.selectedNodes));
         }
 
-        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean {
+        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
             let node: I.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("unable to find uidToNodeMap for uid=" + uid);
@@ -327,10 +326,11 @@ class Meta64 {
     /* Gets selected nodes as NodeInfo.java objects array */
     getSelectedNodesArray(): I.NodeInfo[] {
         let selArray: I.NodeInfo[] = [];
-        let idx: number = 0;
-        let uid: string = "";
-        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean{
-            selArray[idx++] = meta64.uidToNodeMap[uid];
+        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
+            let node = meta64.uidToNodeMap[uid];
+            if (node) {
+                selArray.push(node);
+            }
             return true;
         });
         return selArray;
@@ -552,7 +552,7 @@ class Meta64 {
 
     getSingleSelectedNode(): I.NodeInfo {
         let ret = null;
-        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean{
+        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
             // console.log("found a single Sel NodeID: " + nodeId);
             ret = meta64.uidToNodeMap[uid];
             return false;

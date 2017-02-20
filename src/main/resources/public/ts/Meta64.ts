@@ -174,7 +174,7 @@ class Meta64 {
      * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
      * future.
      */
-     //todo-0: I'm in the process of removing the need for this currently, so that encodeOnClick is gone and every other thing that needed this.
+    //todo-0: I'm in the process of removing the need for this currently, so that encodeOnClick is gone and every other thing that needed this.
     registerDataObject(data) {
         if (!data.guid) {
             data.guid = ++meta64.nextGuid;
@@ -189,88 +189,6 @@ class Meta64 {
         }
         return ret;
     }
-
-    //
-    // I want to keep this code for a short time before deleting it just in case i need to easily refer to it again.
-    //
-    /*
-     * If callback is a string, it will be interpreted as a script to run, or if it's a function object that will be
-     * the function to run.
-     *
-     * Whenever we are building an onClick string, and we have the actual function, rather than the name of the
-     * function (i.e. we have the function object and not a string representation we hande that by assigning a guid
-     * to the function object, and then encode a call to run that guid by calling runCallback. There is a level of
-     * indirection here, but this is the simplest approach when we need to be able to map from a string to a
-     * function.
-     *
-     * ctx=context, which is the 'this' to call with if we have a function, and have a 'this' context to bind to it.
-     *
-     * payload is any data object that needs to be passed at runtime
-     *
-     * note: doesn't currently support having a null ctx and non-null payload.
-     *
-     * todo-0: use obj.bind(this) for the 'callback' parameter passing then then get rid of 'ctx' parameter, but
-     * be careful with the logic, it will be tricky.
-     */
-    // encodeOnClick(callback: any, ctx?: any, payload?: any, delayCallback?: number) {
-    //     if (typeof callback == "string") {
-    //         return callback;
-    //     } //
-    //     else if (typeof callback == "function") {
-    //         meta64.registerDataObject(callback);
-    //
-    //         if (ctx) {
-    //             meta64.registerDataObject(ctx);
-    //
-    //             if (payload) {
-    //                 meta64.registerDataObject(payload);
-    //             }
-    //             let payloadStr = payload ? payload.guid : "null";
-    //             return `meta64.runCallback(${callback.guid},${ctx.guid},${payloadStr},${delayCallback});`;
-    //         } else {
-    //             return `meta64.runCallback(${callback.guid},null,null,${delayCallback});`;
-    //         }
-    //     }
-    //     else {
-    //         throw "unexpected callback type in encodeOnClick";
-    //     }
-    // }
-    //
-    // runCallback(guid, ctx, payload, delayCallback?: number) {
-    //     console.log("callback run: " + delayCallback);
-    //     /* depending on delayCallback, run the callback either immediately or with a delay */
-    //     if (delayCallback > 0) {
-    //         setTimeout(function() {
-    //             meta64.runCallbackImmediate(guid, ctx, payload);
-    //         }, delayCallback);
-    //     }
-    //     else {
-    //         return meta64.runCallbackImmediate(guid, ctx, payload);
-    //     }
-    // }
-    //
-    // runCallbackImmediate(guid, ctx, payload) {
-    //     let dataObj = meta64.getObjectByGuid(guid);
-    //
-    //     // if this is an object, we expect it to have a 'callback' property
-    //     // that is a function
-    //     if (dataObj.callback) {
-    //         dataObj.callback();
-    //     }
-    //     // or else sometimes the registered object itself is the function,
-    //     // which is ok too
-    //     else if (typeof dataObj == 'function') {
-    //         if (ctx) {
-    //             let thiz = meta64.getObjectByGuid(ctx);
-    //             let payloadObj = payload ? meta64.getObjectByGuid(payload) : null;
-    //             dataObj.call(thiz, payloadObj);
-    //         } else {
-    //             dataObj();
-    //         }
-    //     } else {
-    //         throw "unable to find callback on registered guid: " + guid;
-    //     }
-    // }
 
     inSimpleMode(): boolean {
         return meta64.editModeOption === meta64.MODE_SIMPLE;
@@ -339,7 +257,7 @@ class Meta64 {
         }
 
         /* this is the same as setting using mainIronPages?? */
-        let paperTabs = document.querySelector("#mainIronPages") as any; //"#mainPaperTabs");
+        let paperTabs = document.querySelector("#mainIronPages") as any;
         paperTabs.select(pg.tabId);
     }
 
@@ -347,24 +265,27 @@ class Meta64 {
         if (!meta64.inSimpleMode())
             return false;
 
-        let prop;
-        for (prop in meta64.simpleModeNodePrefixBlackList) {
-            if (meta64.simpleModeNodePrefixBlackList.hasOwnProperty(prop) && util.startsWith(node.name, prop)) {
-                return true;
-            }
-        }
+        let ret = false;
 
-        return false;
+        util.forEachProp(meta64.simpleModeNodePrefixBlackList, function(prop, val) : boolean {
+            if (util.startsWith(node.name, prop)) {
+                ret = true;
+                //teminate iteration with false return
+                return false;
+            }
+            return true;
+        });
+
+        return ret;
     }
 
     getSelectedNodeUidsArray(): string[] {
         let selArray: string[] = [], uid;
 
-        for (uid in meta64.selectedNodes) {
-            if (meta64.selectedNodes.hasOwnProperty(uid)) {
-                selArray.push(uid);
-            }
-        }
+        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean {
+            selArray.push(uid);
+            return true;
+        });
         return selArray;
     }
 
@@ -380,16 +301,15 @@ class Meta64 {
             console.log("selectedNode count: " + util.getPropertyCount(meta64.selectedNodes));
         }
 
-        for (uid in meta64.selectedNodes) {
-            if (meta64.selectedNodes.hasOwnProperty(uid)) {
-                let node: I.NodeInfo = meta64.uidToNodeMap[uid];
-                if (!node) {
-                    console.log("unable to find uidToNodeMap for uid=" + uid);
-                } else {
-                    selArray.push(node.id);
-                }
+        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean {
+            let node: I.NodeInfo = meta64.uidToNodeMap[uid];
+            if (!node) {
+                console.log("unable to find uidToNodeMap for uid=" + uid);
+            } else {
+                selArray.push(node.id);
             }
-        }
+            return true;
+        });
         return selArray;
     }
 
@@ -409,11 +329,10 @@ class Meta64 {
         let selArray: I.NodeInfo[] = [];
         let idx: number = 0;
         let uid: string = "";
-        for (uid in meta64.selectedNodes) {
-            if (meta64.selectedNodes.hasOwnProperty(uid)) {
-                selArray[idx++] = meta64.uidToNodeMap[uid];
-            }
-        }
+        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean{
+            selArray[idx++] = meta64.uidToNodeMap[uid];
+            return true;
+        });
         return selArray;
     }
 
@@ -632,20 +551,20 @@ class Meta64 {
     }
 
     getSingleSelectedNode(): I.NodeInfo {
-        let uid: string;
-        for (uid in meta64.selectedNodes) {
-            if (meta64.selectedNodes.hasOwnProperty(uid)) {
-                // console.log("found a single Sel NodeID: " + nodeId);
-                return meta64.uidToNodeMap[uid];
-            }
-        }
-        return null;
+        let ret = null;
+        util.forEachProp(meta64.selectedNodes, function(uid, val) : boolean{
+            // console.log("found a single Sel NodeID: " + nodeId);
+            ret = meta64.uidToNodeMap[uid];
+            return false;
+        });
+        return ret;
     }
 
     getOrdinalOfNode(node: I.NodeInfo): number {
         if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
             return -1;
 
+        //todo-0: use util array iterator for this and search all code for the kinds of old for loops also
         for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
             if (node.id === meta64.currentNodeData.children[i].id) {
                 return i;
@@ -926,8 +845,6 @@ class Meta64 {
                 render.adjustImageSize(meta64.currentNode);
             }
 
-            //todo-000: Need to make sure i never try calling forEach on an 'any' types (in entire codebase) until i first verify if it's an
-            //object or an array because object iteration needs to use 'forEachProp()'
             util.forEachArrElm(meta64.currentNodeData.children, function(node, i) {
                 if (node.imgId) {
                     render.adjustImageSize(node);

@@ -18,20 +18,22 @@ class DomBind {
 
     private interval = (): void => {
         let thiz = this;
-        util.forEachProp(this.idToOnClickMap, function(id, func) {
+        util.forEachProp(this.idToOnClickMap, function(id, func) : boolean {
             let e = util.domElm(id);
             if (e) {
                 (<any>e).onclick = func;
                 delete thiz.idToOnClickMap[id];
             }
+            return true;
         });
 
-        util.forEachProp(this.idToKeyPressMap, function(id, func) {
+        util.forEachProp(this.idToKeyPressMap, function(id, func) : boolean {
             let e = util.domElm(id);
             if (e) {
                 (<any>e).onkeypress = func;
                 delete thiz.idToKeyPressMap[id];
             }
+            return true;
         });
     }
 

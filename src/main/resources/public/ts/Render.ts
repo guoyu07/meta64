@@ -1012,7 +1012,7 @@ export class Render {
 
         if (attributes) {
             ret += " ";
-            util.forEachProp(attributes, function(k, v) {
+            util.forEachProp(attributes, function(k, v) : boolean {
                 if (v) {
                     if (k.toLowerCase() === "id") {
                         id = v;
@@ -1022,7 +1022,7 @@ export class Render {
                         if (typeof v === "function") {
                             onClickFunc = v;
                             //Return now because when using 'domBind' (below) we don't need the onclick encoded as a string on the element. It's dynamic
-                            return;
+                            return true;
                         }
                     }
 
@@ -1041,10 +1041,10 @@ export class Render {
                 } else {
                     ret += k + " ";
                 }
+                return true;
             });
 
             if (onClickFunc) {
-                debugger;
                 if (id) {
                     domBind.addOnClick(id, onClickFunc);
                 }

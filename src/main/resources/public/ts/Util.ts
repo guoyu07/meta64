@@ -615,15 +615,21 @@ class Util {
     }
 
     forEachElmBySel(sel: string, callback: Function): void {
-        let elements = document.querySelectorAll("a");
+        let elements = document.querySelectorAll(sel);
         Array.prototype.forEach.call(elements, callback);
     }
 
-    /* Iterates by callling callback with property key/value pairs for each property in the object */
-    forEachProp(obj: Object, callback: Function): void {
+    /* Iterates by callling callback with property key/value pairs for each property in the object
+
+    TODO-0: check all calls to this and make sure the return value out of the callback, wasn't
+    originally a return from the function DOING the iteration before refactoring. There was at least
+    one bug ilke that , and i bet there's more.
+
+    */
+    forEachProp(obj: Object, callback: I.PropertyIterator): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
-                callback(prop, obj[prop]);
+                if (!callback(prop, obj[prop])) return;
             }
         }
     }
@@ -643,13 +649,15 @@ class Util {
         let val: string = ""
         try {
             let count: number = 0;
-            util.forEachProp(obj, function(prop, v) {
+            util.forEachProp(obj, function(prop, v) : boolean {
                 console.log("Property[" + count + "]");
                 count++;
+                return true;
             });
 
-            util.forEachProp(obj, function(k, v) {
+            util.forEachProp(obj, function(k, v) : boolean {
                 val += k + " , " + v + "\n";
+                return true;
             });
         } catch (err) {
             return "err";
@@ -663,7 +671,7 @@ class Util {
             return "null";
 
         let val: string = "";
-        util.forEachProp(obj, function(k, v) {
+        util.forEachProp(obj, function(k, v) : boolean {
             if (!k) {
                 k = "null";
             }
@@ -672,6 +680,7 @@ class Util {
                 val += ',';
             }
             val += k;
+            return true;
         });
         return val;
     }

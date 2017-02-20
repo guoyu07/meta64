@@ -622,38 +622,29 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     deletePropertyButtonClick = (): void => {
 
         /* Iterate over all properties */
-        for (let id in this.fieldIdToPropMap) {
-            if (this.fieldIdToPropMap.hasOwnProperty(id)) {
+        util.forEachProp(this.fieldIdToPropMap, function(id: string, propEntry: I.PropEntry) : boolean {
 
-                /* get PropEntry for this item */
-                let propEntry: I.PropEntry = this.fieldIdToPropMap[id];
-                if (propEntry) {
-                    //console.log("prop=" + propEntry.property.name);
-                    let selPropDomId = "selProp_" + propEntry.id;
+            //console.log("prop=" + propEntry.property.name);
+            let selPropDomId = "selProp_" + propEntry.id;
 
-                    /*
-                    Get checkbox control and its value
-                    todo-1: getting value of checkbox should be in some shared utility method
-                    */
-                    let selCheckbox = util.polyElm(this.id(selPropDomId));
-                    if (selCheckbox) {
-                        let checked: boolean = selCheckbox.node.checked;
-                        if (checked) {
-                            //console.log("prop IS CHECKED=" + propEntry.property.name);
-                            this.deleteProperty(propEntry.property.name);
+            /*
+            Get checkbox control and its value
+            todo-1: getting value of checkbox should be in some shared utility method
+            */
+            let selCheckbox = util.polyElm(this.id(selPropDomId));
+            if (selCheckbox) {
+                let checked: boolean = selCheckbox.node.checked;
+                if (checked) {
+                    //console.log("prop IS CHECKED=" + propEntry.property.name);
+                    this.deleteProperty(propEntry.property.name);
 
-                            /* for now lets' just support deleting one property at a time, and so we can return once we found a
-                            checked one to delete. Would be easy to extend to allow multiple-selects in the future */
-                            return;
-                        }
-                    }
-                }
-                else {
-                    throw "propEntry not found for id: " + id;
+                    /* for now lets' just support deleting one property at a time, and so we can return once we found a
+                    checked one to delete. Would be easy to extend to allow multiple-selects in the future.
+                    Returning false stops iteration, and returns from function */
+                    return false;
                 }
             }
-        }
-        console.log("Delete property: ")
+        });
     }
 
     splitContent = (): void => {

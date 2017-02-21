@@ -276,7 +276,7 @@ export abstract class DialogBaseImpl implements DialogBase {
     because using the delay means that the one being hidden is not able to become hidden before the one comes up because
     that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case.
     */
-    makeCloseButton = (text: string, id: string, callback?: any,  initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
+    makeCloseButton = (text: string, id: string, callback?: any, initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
 
         let attribs = {
             "raised": "raised",
@@ -295,7 +295,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         let thiz = this;
         (<any>attribs).onclick = function() {
             if (callback) {
-                callback(); //callback.bind(ctx)();
+                callback();
             }
 
             setTimeout(function() {
@@ -311,7 +311,6 @@ export abstract class DialogBaseImpl implements DialogBase {
     }
 
     bindEnterKey = (id: string, callback: Function): void => {
-        debugger;
         //console.log("typeof callback == " + (typeof callback));
         if (typeof callback !== 'function') throw "bindEnterKey requires function";
         util.bindEnterKey(this.id(id), callback);

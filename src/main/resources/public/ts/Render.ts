@@ -1012,7 +1012,7 @@ export class Render {
 
         if (attributes) {
             ret += " ";
-            util.forEachProp(attributes, function(k, v) : boolean {
+            util.forEachProp(attributes, function(k, v): boolean {
                 if (v) {
                     if (k.toLowerCase() === "id") {
                         id = v;
@@ -1093,23 +1093,22 @@ export class Render {
         });
     }
 
-    //todo-0: refactor so that 'ctx' is pre-bound to the callback passed into here, and not needed as a parameter
-    makeButton(text: string, id: string, callback: any, ctx?: any): string {
+    //todo-0: based on latest architecture is MAY be possible to always fully auto-generate DOM ids, rather than ever requiring developer
+    //to specify the dom id, and risk it not being unique AND also it is just unnecesary hassle.
+    makeButton(text: string, id: string, callback: Function): string {
         let attribs = {
             "raised": "raised",
             "id": id,
             "class": "standardButton"
         };
 
-        if (callback != undefined) {
-            if (typeof callback === "Function") {
-                (<any>attribs).onclick = callback.bind(ctx);
-            }
-            else {
-                console.log("makeButton for id=" + id + " is using string callback, which is not recommended. Use actual Function instead.");
-                (<any>attribs).onclick = callback;
-            }
+        if (typeof callback === "function") {
+            (<any>attribs).onclick = callback;
         }
+        else {
+            throw "makeButton using invalid function: buttonId=" + id;
+        }
+
 
         return tag.button(attribs, text);
     }

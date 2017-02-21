@@ -366,7 +366,7 @@ class Util {
     }
 
     focusElmById(id: string) {
-        let elm = this.domElm(id);
+        let elm = util.domElm(id);
         if (elm) {
             elm.focus();
         }
@@ -485,8 +485,8 @@ class Util {
     }
 
     setInnerHTMLById(id: string, val: string): void {
-        let domElm: HTMLElement = this.domElm(id);
-        this.setInnerHTML(domElm, val);
+        let domElm: HTMLElement = util.domElm(id);
+        util.setInnerHTML(domElm, val);
     }
 
     setInnerHTML(elm: HTMLElement, val: string): void {
@@ -594,7 +594,7 @@ class Util {
     setElmDisplayById(id: string, showing: boolean) {
         let elm: HTMLElement = util.domElm(id);
         if (elm) {
-            this.setElmDisplay(elm, showing);
+            util.setElmDisplay(elm, showing);
         }
     }
 
@@ -744,16 +744,18 @@ class Util {
      * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
+     *
+     * todo-0: verify all calls to this are passing STRING, or else using the *ToElm function below instead.
      */
     changeOrAddClass(elmSel: string, oldClass: string, newClass: string) {
-        let elm: HTMLElement = this.domElm(elmSel);
-        this.removeClassFromElm(elm, oldClass);
-        this.addClassToElm(elm, newClass);
+        let elm: HTMLElement = util.domElm(elmSel);
+        util.removeClassFromElm(elm, oldClass);
+        util.addClassToElm(elm, newClass);
     }
 
     changeOrAddClassToElm(elm: HTMLElement, oldClass: string, newClass: string) {
-        this.removeClassFromElm(elm, oldClass);
-        this.addClassToElm(elm, newClass);
+        util.removeClassFromElm(elm, oldClass);
+        util.addClassToElm(elm, newClass);
     }
 
     removeClassFromElm(el: any, clazz: string): void {
@@ -765,8 +767,8 @@ class Util {
     }
 
     addClassToElmById(id: any, clazz: string): void {
-        let elm = this.domElm(id);
-        this.addClassToElm(elm, clazz);
+        let elm =  util.domElm(id);
+        util.addClassToElm(elm, clazz);
     }
 
     addClassToElm(el: any, clazz: string): void {

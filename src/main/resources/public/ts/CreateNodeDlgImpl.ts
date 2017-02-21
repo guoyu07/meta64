@@ -95,8 +95,6 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     }
 
     onRowClick = (payload: any): void => {
-        debugger;
-        console.log("proof=" + this.domId);
         let divId = this.id("typeRow" + payload.typeIdx);
         this.lastSelTypeName = payload.typeName;
 

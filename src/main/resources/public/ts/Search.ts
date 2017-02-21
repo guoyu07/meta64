@@ -182,28 +182,34 @@ export class Search {
 
         console.log("buttonBarHtml=" + buttonBarHtml);
         let content = render.renderNodeContent(node, true, true, true, true, true);
-
+        let thiz = this;
         return tag.div({
             "class": "node-table-row inactive-row",
-            "onClick": `meta64.clickOnSearchResultRow(this, '${uid}');`, //
+            "onclick": function() {
+                meta64.clickOnSearchResultRow(this, uid);
+            }, //
             "id": cssId
         },//
             buttonBarHtml//
             + tag.div({
-                "id": uid + "_srch_content"
+                //todo-0: oops dom IDs must START with a string. So this needs to be prefixed not suffixed here.
+                "id": "srch_content_" + uid
             }, content));
     }
 
-    makeButtonBarHtml(uid) {
-        let gotoButton = render.makeButton("Go to Node", uid, `meta64.clickSearchNode('${uid}');`);
+    makeButtonBarHtml(uid: string) {
+        let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, function() {
+            debugger;
+            meta64.clickSearchNode(uid);
+        });
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
-    clickOnSearchResultRow(rowElm, uid) {
+    clickOnSearchResultRow(rowElm: HTMLElement, uid) {
         srch.unhighlightRow();
         srch.highlightRowNode = srch.uidToNodeMap[uid];
 
-        util.changeOrAddClass(rowElm, "inactive-row", "active-row");
+        util.changeOrAddClassToElm(rowElm, "inactive-row", "active-row");
     }
 
     clickSearchNode(uid: string) {

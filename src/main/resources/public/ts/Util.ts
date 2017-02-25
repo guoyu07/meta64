@@ -60,6 +60,16 @@ class Util {
         return _.indexOf(str, _.length - str.length) !== -1;
     }
 
+    chopAtLastChar(str: string, char: string) {
+        let idx = str.lastIndexOf(char);
+        if (idx != -1) {
+            return str.substring(0, idx);
+        }
+        else {
+            return str;
+        }
+    }
+
     stripIfStartsWith(_, str) {
         if (_.startsWith(str)) {
             return _.substring(str.length);
@@ -644,13 +654,13 @@ class Util {
         let val: string = ""
         try {
             let count: number = 0;
-            util.forEachProp(obj, function(prop, v) : boolean {
+            util.forEachProp(obj, function(prop, v): boolean {
                 console.log("Property[" + count + "]");
                 count++;
                 return true;
             });
 
-            util.forEachProp(obj, function(k, v) : boolean {
+            util.forEachProp(obj, function(k, v): boolean {
                 val += k + " , " + v + "\n";
                 return true;
             });
@@ -666,7 +676,7 @@ class Util {
             return "null";
 
         let val: string = "";
-        util.forEachProp(obj, function(k, v) : boolean {
+        util.forEachProp(obj, function(k, v): boolean {
             if (!k) {
                 k = "null";
             }
@@ -767,7 +777,7 @@ class Util {
     }
 
     addClassToElmById(id: any, clazz: string): void {
-        let elm =  util.domElm(id);
+        let elm = util.domElm(id);
         util.addClassToElm(elm, clazz);
     }
 

@@ -10,14 +10,18 @@ import { edit } from "./Edit";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
+import { EditNodeDlg } from "./EditNodeDlg";
 
 /*
  * Property Editor Dialog (Edits Node Properties)
  */
 export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditPropertyDlg {
 
-    constructor(private editNodeDlg: any) {
+    private editNodeDlg: EditNodeDlg;
+
+    constructor(args: any) {
         super("EditPropertyDlg");
+        this.editNodeDlg = args.editNodeDlg;
     }
 
     /*
@@ -26,7 +30,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     render = (): string => {
         var header = this.makeHeader("Edit Node Property");
 
-        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty.bind(this));
+        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty);
         var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
 
         var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
@@ -89,7 +93,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
             propertyName: propertyNameData,
             propertyValue: propertyValueData
         };
-        util.json<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse, this);
+        util.json<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
     }
 
     savePropertyResponse = (res: I.SavePropertyResponse): void => {

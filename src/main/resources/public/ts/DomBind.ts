@@ -48,6 +48,10 @@ class DomBind {
     public addKeyPress(domId: string, callback: Function) {
         this.idToFuncMap[domId + ".keypress"] = (e) => { (<any>e).onkeypress = callback; };
     }
+
+    public addOnChange(domId: string, callback: Function) {
+        this.idToFuncMap[domId + ".onchange"] = (e) => { (<any>e).onchange = callback; };
+    }
 }
 
 export let domBind: DomBind = new DomBind();

@@ -5,6 +5,9 @@ import { util } from "./Util";
 import { render } from "./Render";
 import { DialogBase } from "./DialogBase";
 import { tag } from "./Tag";
+import { Div } from "./widget/Div";
+import { Comp } from "./widget/base/Comp";
+import { domBind } from "./DomBind";
 
 declare var Polymer;
 
@@ -26,6 +29,10 @@ export abstract class DialogBaseImpl implements DialogBase {
     built: boolean;
     guid: string;
 
+    //Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
+    //containment rather than composition, and letting content be the root element for the GUI of the dialog.
+    content: Div = new Div();
+
     constructor(protected domId: string) {
         this.data = {};
 
@@ -36,6 +43,10 @@ export abstract class DialogBaseImpl implements DialogBase {
          */
         meta64.registerDataObject(this);
         meta64.registerDataObject(this.data);
+    }
+
+    getComponent(): Comp {
+        return this.content;
     }
 
     /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
@@ -341,11 +352,12 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     makeCheckBox = (label: string, id: string, initialState: boolean): string => {
         id = this.id(id);
-
+        console.log("Making Dialog Checkbox. ID=" + id);
         let attrs = {
             //"onClick": publicCommentingChanged
             "name": id,
-            "id": id
+            "id": id,
+            "checkedState" : initialState
         };
 
         ////////////

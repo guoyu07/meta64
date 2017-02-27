@@ -131,6 +131,16 @@ class Util {
 
     daylightSavingsTime: boolean = (Util.dst(new Date())) ? true : false;
 
+    getCheckBoxStateById(id: string): boolean {
+        let checkbox = util.domElm(id);
+        if (checkbox) {
+            return "true" == checkbox.getAttribute("checkedstate");
+        }
+        else {
+            throw "checkbox not found: " + id;
+        }
+    }
+
     toJson(obj) {
         return JSON.stringify(obj, null, 4);
     }
@@ -178,7 +188,7 @@ class Util {
 
     /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller, also the callbackpayload doesn't
     need to be a parameter to this function if we using a function scope in the callback, that encloses it right ? */
-    json<RequestType, ResponseType>(postName: any, postData: RequestType, //
+    json<RequestType, ResponseType>(postName: string, postData: RequestType, //
         callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
         callbackPayload?: any) {
 

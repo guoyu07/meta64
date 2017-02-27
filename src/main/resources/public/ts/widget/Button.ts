@@ -1,6 +1,6 @@
 console.log("Button.ts");
 
-import { Comp } from "./Comp";
+import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 

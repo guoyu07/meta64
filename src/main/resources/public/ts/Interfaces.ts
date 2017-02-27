@@ -15,7 +15,10 @@ export class AdSegment {
 }
 
 export class PropEntry {
+    //ID is of the EditPropTextarea element, I can probably make this hold the ACTUAL EditPropTextarea object reference itself
+    //but i'm paranoid about introducing more circular ref risk so i leave as a string for now. With ID we can always get comp by Comp.findById()
     constructor(public id: string, //
+        public checkboxId : string, //
         public property: PropertyInfo, //
         public multi: boolean, //
         public readOnly: boolean, //
@@ -25,6 +28,8 @@ export class PropEntry {
 }
 
 export class SubProp {
+    //ID is of the EditPropTextarea element, I can probably make this hold the ACTUAL EditPropTextarea object reference itself
+    //but i'm paranoid about introducing more circular ref risk so i leave as a string for now. With ID we can always get comp by Comp.findById()
     constructor(public id: string, //
         public val: string) {
     }
@@ -61,11 +66,11 @@ export interface PrivilegeInfo {
 }
 
 export interface PropertyInfo {
-    type: number;
+    type?: number;
     name: string;
-    value: string;
-    values: string[];
-    abbreviated: boolean;
+    value?: string;
+    values?: string[];
+    abbreviated?: boolean;
 }
 
 export interface RefInfo {

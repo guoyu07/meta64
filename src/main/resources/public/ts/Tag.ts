@@ -2,6 +2,7 @@ console.log("Tag.ts");
 
 import { util } from "./Util";
 import { render } from "./Render";
+import { domBind } from "./DomBind";
 
 /* Eventually I will have ALL tags defined here, so they are decoupled from their rendering details, and
 fully pluggable. The goal here is not only clean code but full decoupling FROM Polymer.
@@ -41,7 +42,7 @@ export class Tag {
     }
 
     textarea(attr?: Object): string {
-        return render.tag("paper-textarea", attr, '', true);
+        return render.tag("paper-textarea", attr, "", true);
     }
 
     /* We encapsulate/decouple here smartly so that if there's an 'icon' property, we automatically use an paper-icon-button instead of
@@ -64,6 +65,11 @@ export class Tag {
     }
 
     checkbox(attr?: Object): string {
+        (<any>attr).checkedState = (<any>attr).checked ? "true" : "false";
+        domBind.addOnChange((<any>attr).id, (event) => {
+            event.target.setAttribute("checkedstate", event.target.getAttribute("checkedstate") == "true" ? "false" : "true");
+            console.log("ID: " + (<any>attr).id + " Checked=" + event.target.getAttribute("checkedstate")+". Proof of id: "+event.target.getAttribute("id"));
+        });
         return render.tag("paper-checkbox", attr, "", false);
     }
 

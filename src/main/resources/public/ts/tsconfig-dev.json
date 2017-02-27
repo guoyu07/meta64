@@ -1,0 +1,8 @@
+{
+    "extends": "./tsconfig-base.json",
+    "compilerOptions": {
+        "outFile": "../js/meta64-app.js",
+        "sourceMap": true,
+        "inlineSources" : true
+    }
+}

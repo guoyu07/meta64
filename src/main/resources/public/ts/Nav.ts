@@ -251,6 +251,8 @@ class Nav {
      * unfortunately we have to rely on onClick, because of the fact that events to checkboxes don't appear to work
      * in Polmer at all, and since onClick runs BEFORE the state change is completed, that is the reason for the
      * silly looking async timer here.
+     *
+     * todo-0: oops did I just need node.value go make this work without a timer hack?
      */
     toggleNodeSel(uid): void {
         let toggleButton: any = util.polyElm(uid + "_sel");

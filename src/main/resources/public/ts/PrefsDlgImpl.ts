@@ -80,6 +80,8 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
 
         //todo-1: put these two lines in a utility method
         polyElm = util.polyElm(this.id("showMetaData"));
+
+        //warning. checked only sets initial state. That property is not updated as user makes clicks.
         polyElm.node.checked = meta64.showMetaData;
 
         Polymer.dom.flush();

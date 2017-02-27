@@ -199,7 +199,6 @@ export class Search {
 
     makeButtonBarHtml(uid: string) {
         let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, function() {
-            debugger;
             meta64.clickSearchNode(uid);
         });
         return render.makeHorizontalFieldSet(gotoButton);

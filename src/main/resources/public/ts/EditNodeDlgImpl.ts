@@ -29,6 +29,12 @@ import { EditPropsTableCell } from "./widget/EditPropsTableCell";
 
 declare var ace;
 
+/*
+todo-1 No longer support multi-value property editing. I have a lot of code dedicated to it, but never tested that
+after refactoring, so i'm gonna hazard a guess that multi-value properts currently DO NOT work, because i'm unsure
+but i know i didn't test it during refactoring, and don't even see buttons in place for management of them
+*/
+
 export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeDlg {
 
     header: Header;
@@ -64,12 +70,11 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
          * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
          * edits.
          */
-        //this.fieldIdToPropMap = {};
         this.propEntries = new Array<I.PropEntry>();
 
         this.header = new Header("Edit Node");
         this.help = new Help("");
-        this.propertyEditFieldContainer = new Div("Loading...", {
+        this.propertyEditFieldContainer = new Div("", {
             // todo-1: create CSS class for this.
             //style: `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%; overflow:scroll; border:4px solid lightGray;`,
             class: "vertical-layout-row"
@@ -227,7 +232,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
          * managing new properties on the client side. We need a genuine node already saved on the server before we allow
          * any property editing to happen.
          */
-        //todo-0: this call is not wired in to new Button object yet!
         this.addPropertyButton.setVisible(!edit.editingUnsavedNode);
 
         let tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
@@ -278,8 +282,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.populateEditNodePg();
     }
 
+    /* Note: looks like i'm not even supporting multi-valued property editing currently */
     addSubProperty = (fieldId: string): void => {
-        let prop = null; //refactored. need other way to get property here..... was this ---> this.fieldIdToPropMap[fieldId].property; (todo-0)
+        let prop = null; //refactored. need other way to get property here..... was this ---> this.fieldIdToPropMap[fieldId].property; (todo-1)
 
         let isMulti = util.isObject(prop.values);
 
@@ -343,36 +348,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         }
     }
 
-    // function no longer used (delete)
-    // clearProperty = (fieldId: string): void => {
-    //     if (!cnst.USE_ACE_EDITOR) {
-    //         util.setInputVal(this.id(fieldId), "");
-    //     } else {
-    //         let editor = meta64.aceEditorsById[this.id(fieldId)];
-    //         if (editor) {
-    //             editor.setValue("");
-    //         }
-    //     }
-    //
-    //     /* scan for all multi-value property fields and clear them */
-    //     let counter = 0;
-    //     while (counter < 1000) {
-    //         if (!cnst.USE_ACE_EDITOR) {
-    //             if (!util.setInputVal(this.id("subProp" + counter + "_" + fieldId), "")) {
-    //                 break;
-    //             }
-    //         } else {
-    //             let editor = meta64.aceEditorsById[this.id("subProp" + counter + "_" + fieldId)];
-    //             if (editor) {
-    //                 editor.setValue("");
-    //             } else {
-    //                 break;
-    //             }
-    //         }
-    //         counter++;
-    //     }
-    // }
-
     /*
      * for now just let server side choke on invalid things. It has enough security and validation to at least protect
      * itself from any kind of damage.
@@ -383,7 +358,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
          * server, and will initiate further editing like for properties, etc.
          */
         if (edit.editingUnsavedNode) {
-            // todo-0: need to make this compatible with Ace Editor.
+            // todo-1: need to make this compatible with Ace Editor.
             this.saveNewNode();
         }
         /*
@@ -586,15 +561,16 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             propEntry.checkboxId = checkbox.getId();
             checkboxTableCell.addChild(checkbox);
 
-            if (propEntry.property.name == jcrCnst.CONTENT) {
-                this.contentFieldDomId = propEntry.id;
-            }
             if (!cnst.USE_ACE_EDITOR) {
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,
                     "value": propValStr
                 })
                 textareaTableCell.addChild(textarea);
+
+                if (propEntry.property.name == jcrCnst.CONTENT) {
+                    this.contentFieldDomId = textarea.getId();
+                }
             } else {
                 throw "not doing ace refactoring for now";
                 // field += tag.div({
@@ -667,7 +643,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         console.log("EditNodeDlg.init");
         this.populateEditNodePg();
         if (this.contentFieldDomId) {
-            //todo-0: this is obsolete right ?
             util.delayedFocus("#" + this.contentFieldDomId);
         }
     }

@@ -174,15 +174,14 @@ class Meta64 {
      * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
      * future.
      */
-    //todo-0: I'm in the process of removing the need for this currently, so that encodeOnClick is gone and every other thing that needed this.
-    registerDataObject(data) {
+    registerDataObject__unused(data) {
         if (!data.guid) {
             data.guid = ++meta64.nextGuid;
             meta64.dataObjMap[data.guid] = data;
         }
     }
 
-    getObjectByGuid(guid) {
+    getObjectByGuid__unused(guid) {
         let ret = meta64.dataObjMap[guid];
         if (!ret) {
             console.log("data object not found: guid=" + guid);
@@ -345,7 +344,7 @@ class Meta64 {
         let mine: boolean = false;
 
         if (res.owners) {
-            util.forEachArrElm(res.owners, function(owner, index) {
+            util.forEachArrElm(res.owners, (owner, index) => {
                 if (ownerBuf.length > 0) {
                     ownerBuf += ",";
                 }
@@ -552,7 +551,9 @@ class Meta64 {
 
     getSingleSelectedNode(): I.NodeInfo {
         let ret = null;
-        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
+        //todo-0: use arrow function for all functions
+        //todo-0: get rid of all old-school for loops
+        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
             // console.log("found a single Sel NodeID: " + nodeId);
             ret = meta64.uidToNodeMap[uid];
             return false;
@@ -561,16 +562,19 @@ class Meta64 {
     }
 
     getOrdinalOfNode(node: I.NodeInfo): number {
-        if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
-            return -1;
+        let ret = -1;
 
-        //todo-0: use util array iterator for this and search all code for the kinds of old for loops also
-        for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
-            if (node.id === meta64.currentNodeData.children[i].id) {
-                return i;
+        if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
+            return ret;
+
+        util.forEachArrElm(meta64.currentNodeData.children, (iterNode, idx) : boolean => {
+            if (node.id === iterNode.id) {
+                ret = idx;
+                return false; //stop iterating.
             }
-        }
-        return -1;
+            return true;
+        });
+        return ret;
     }
 
     getNumChildNodes(): number {
@@ -845,7 +849,7 @@ class Meta64 {
                 render.adjustImageSize(meta64.currentNode);
             }
 
-            util.forEachArrElm(meta64.currentNodeData.children, function(node, i) {
+            util.forEachArrElm(meta64.currentNodeData.children, (node, i) => {
                 if (node.imgId) {
                     render.adjustImageSize(node);
                 }

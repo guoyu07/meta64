@@ -35,14 +35,15 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     constructor(protected domId: string) {
         this.data = {};
+        this.data.guid = ++Comp.guid;
 
         /*
          * We register 'this' so we can do meta64.getObjectByGuid in onClick methods
          * on the dialog and be able to have 'this' available to the functions that are encoded in onClick methods
          * as strings.
          */
-        meta64.registerDataObject(this);
-        meta64.registerDataObject(this.data);
+        // meta64.registerDataObject(this);
+        // meta64.registerDataObject(this.data);
     }
 
     getComponent(): Comp {
@@ -205,6 +206,8 @@ export abstract class DialogBaseImpl implements DialogBase {
     /*
      * Helper method to get the true id that is specific to this dialog (i.e. guid
      * suffix appended)
+     *
+     * This will be totally replaced by Comp.getId() once we are fully converted to Widget architecture.
      */
     id = (id): string => {
         if (id == null)

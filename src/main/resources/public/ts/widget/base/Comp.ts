@@ -3,7 +3,10 @@ console.log("Comp.ts");
 import { util } from "../../Util";
 
 export abstract class Comp {
+
+    //todo-0: make guid private and make a nextGuid() function for getting a value
     static guid: number = 0;
+    
     static idToCompMap: { [key: string]: Comp } = {};
     attribs: Object;
     children: Comp[];

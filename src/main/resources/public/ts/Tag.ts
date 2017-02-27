@@ -66,9 +66,21 @@ export class Tag {
 
     checkbox(attr?: Object): string {
         (<any>attr).checkedState = (<any>attr).checked ? "true" : "false";
+
+        /* if caller supplied an onclick wire into the onchange and make it be AFTER the onchange happens always, so that all onclicks
+        can depend on correct value of checkedstate */
+        let onClick: Function = null;
+        if ((<any>attr).onclick) {
+            onClick = (<any>attr).onclick;
+            delete (<any>attr).onclick;
+        }
+
         domBind.addOnChange((<any>attr).id, (event) => {
             event.target.setAttribute("checkedstate", event.target.getAttribute("checkedstate") == "true" ? "false" : "true");
-            console.log("ID: " + (<any>attr).id + " Checked=" + event.target.getAttribute("checkedstate")+". Proof of id: "+event.target.getAttribute("id"));
+            console.log("ID: " + (<any>attr).id + " Checked=" + event.target.getAttribute("checkedstate") + ". Proof of id: " + event.target.getAttribute("id"));
+            if (onClick) {
+                onClick();
+            }
         });
         return render.tag("paper-checkbox", attr, "", false);
     }

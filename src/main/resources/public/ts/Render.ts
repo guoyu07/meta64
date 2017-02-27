@@ -12,6 +12,7 @@ import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
 import { tag } from "./Tag";
 import { domBind } from "./DomBind";
+import { Comp } from "./widget/base/Comp";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -101,7 +102,7 @@ export class Render {
             spans += `  Mod: ${node.lastModified}`;
         }
 
-        headerText += tag.div("null", spans);
+        headerText += tag.div(null, spans);
 
         /*
          * on root node name will be empty string so don't show that
@@ -368,7 +369,8 @@ export class Render {
         let cssId: string = "row_" + uid /*+ "_row"*/;
         return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
-            "onClick": `meta64.clickOnNodeRow(this, '${uid}');`, //
+            //"onClick": `meta64.clickOnNodeRow(this, '${uid}');`, //
+            "onClick": (elm) => { meta64.clickOnNodeRow(elm, uid); }, //
             "id": cssId,
             "style": bkgStyle
         },//
@@ -467,7 +469,7 @@ export class Render {
         if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
             replyButton = tag.button({
                 "raised": "raised",
-                "onClick": `meta64.replyToComment('${node.uid}');` //
+                "onClick": () => { meta64.replyToComment(node.uid); } //
             }, //
                 "Reply");
         }
@@ -486,7 +488,7 @@ export class Render {
                 here to accomplish the same thing */
                 "style": "background-color: #4caf50;color:white;",
                 "raised": "raised",
-                "onClick": `meta64.openNode('${node.uid}');`//
+                "onClick": () => { meta64.openNode(node.uid); }
             }, //
                 "Open");
         }
@@ -505,16 +507,16 @@ export class Render {
             buttonCount++;
 
             let attrs: Object = selected ? {
-                "id": node.uid + "_sel",//
-                "onClick": `meta64.toggleNodeSel('${node.uid}');`,
+                "id": node.uid + "_sel",
+                "onClick": () => { meta64.toggleNodeSel(node.uid) },
                 "checked": "checked",
                 //padding is a back hack to make checkbox line up with other icons.
                 //(i will probably end up using a paper-icon-button that toggles here, instead of checkbox)
                 "style": "margin-top: 11px;"
             } : //
                 {
-                    "id": node.uid + "_sel",//
-                    "onClick": `meta64.toggleNodeSel('${node.uid}');`,
+                    "id": node.uid + "_sel",
+                    "onClick": () => { meta64.toggleNodeSel(node.uid) },
                     "style": "margin-top: 11px;"
                 };
 
@@ -527,7 +529,7 @@ export class Render {
                     "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                     "id": "addNodeButtonId" + node.uid,
                     "raised": "raised",
-                    "onClick": `meta64.createSubNode('${node.uid}');`
+                    "onClick": () => { meta64.createSubNode(node.uid); }
                 }, "Add");
             }
 
@@ -538,7 +540,7 @@ export class Render {
                     "icon": "icons:picture-in-picture", //"icons:more-horiz",
                     "id": "insertNodeButtonId" + node.uid,
                     "raised": "raised",
-                    "onClick": `meta64.insertNode('${node.uid}');`
+                    "onClick": () => { meta64.insertNode(node.uid); }
                 }, "Ins");
             }
         }
@@ -552,7 +554,7 @@ export class Render {
                 "alt": "Edit node.",
                 "icon": "editor:mode-edit",
                 "raised": "raised",
-                "onClick": `meta64.runEditNode('${node.uid}');`
+                "onClick": () => { meta64.runEditNode(node.uid); }
             }, "Edit");
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
@@ -563,7 +565,7 @@ export class Render {
                     moveNodeUpButton = tag.button({
                         "icon": "icons:arrow-upward",
                         "raised": "raised",
-                        "onClick": `meta64.moveNodeUp('${node.uid}');`
+                        "onClick": () => { meta64.moveNodeUp(node.uid); }
                     }, "Up");
                 }
 
@@ -573,7 +575,7 @@ export class Render {
                     moveNodeDownButton = tag.button({
                         "icon": "icons:arrow-downward",
                         "raised": "raised",
-                        "onClick": `meta64.moveNodeDown('${node.uid}');`
+                        "onClick": () => { meta64.moveNodeDown(node.uid); }
                     }, "Dn");
                 }
             }
@@ -738,7 +740,7 @@ export class Render {
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
                 replyButton = tag.button({
                     "raised": "raised",
-                    "onClick": `meta64.replyToComment('${data.node.uid}');` //
+                    "onClick": () => { meta64.replyToComment(data.node.uid); }//
                 }, //
                     "Reply");
             }
@@ -747,7 +749,7 @@ export class Render {
                 createSubNodeButton = tag.button({
                     "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                     "raised": "raised",
-                    "onClick": `meta64.createSubNode('${uid}');`
+                    "onClick": () => { meta64.createSubNode(uid); }
                 }, "Add");
             }
 
@@ -758,7 +760,7 @@ export class Render {
                 editNodeButton = tag.button({
                     "icon": "editor:mode-edit",
                     "raised": "raised",
-                    "onClick": `meta64.runEditNode('${uid}');`
+                    "onClick": () => { meta64.runEditNode(uid); }
                 }, "Edit");
             }
 
@@ -775,7 +777,8 @@ export class Render {
 
             let content: string = tag.div({
                 "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
-                "onClick": `meta64.clickOnNodeRow(this, '${uid}');`,
+                //"onClick": `meta64.clickOnNodeRow(this, '${uid}');`,
+                "onClick": (elm) => { meta64.clickOnNodeRow(elm, uid); },
                 "id": cssId
             },//
                 buttonBar + mainNodeContent);
@@ -1011,6 +1014,12 @@ export class Render {
         let id: string = null;
 
         if (attributes) {
+
+            /* If there's no ID specified then generate one */
+            if (!(<any>attributes).id) {
+                (<any>attributes).id = "genId_" + (++Comp.guid);
+            }
+
             ret += " ";
             util.forEachProp(attributes, function(k, v): boolean {
                 if (v) {

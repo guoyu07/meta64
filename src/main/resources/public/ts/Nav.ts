@@ -150,7 +150,7 @@ class Nav {
             "renderParentIfLeaf": false,
             "offset": nav.mainOffset,
             "goToLastPage": false
-        }, function(res: I.RenderNodeResponse) {
+        }, (res: I.RenderNodeResponse) => {
             nav.upLevelResponse(ironRes.response, meta64.currentNodeId);
         });
     }

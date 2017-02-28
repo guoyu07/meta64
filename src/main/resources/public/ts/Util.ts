@@ -262,7 +262,7 @@ class Util {
         ironRequest.completes.then(//
 
             // Handle Success
-            function() {
+            () => {
                 try {
                     util._ajaxCounter--;
                     util.progressInterval();
@@ -303,7 +303,7 @@ class Util {
 
             },
             // Handle Fail
-            function() {
+            () => {
                 try {
                     util._ajaxCounter--;
                     util.progressInterval();
@@ -400,12 +400,12 @@ class Util {
     /* set focus to element by id (id must be actual jquery selector) */
     delayedFocus(id): void {
         /* so user sees the focus fast we try at .5 seconds */
-        setTimeout(function() {
+        setTimeout(() => {
             util.focusElmById(id);
         }, 500);
 
         /* we try again a full second later. Normally not required, but never undesirable */
-        setTimeout(function() {
+        setTimeout(() => {
             //console.log("Focusing ID: "+id);
             util.focusElmById(id);
         }, 1300);
@@ -575,7 +575,7 @@ class Util {
 
     bindEnterKey(id: string, func: Function) {
         if (typeof func !== 'function') throw "bindEnterKey requires function";
-        domBind.addKeyPress(id, function(e) {
+        domBind.addKeyPress(id, (e) => {
             if (e.which == 13) { // 13==enter key code
                 func();
                 return false;
@@ -644,7 +644,8 @@ class Util {
     forEachProp(obj: Object, callback: I.PropertyIterator): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
-                if (!callback(prop, obj[prop])) return;
+                /* we use the unusual '== false' here so that returning a value is optional, but if you return false it terminates looping */
+                if (callback(prop, obj[prop]) == false) return;
             }
         }
     }
@@ -664,13 +665,13 @@ class Util {
         let val: string = ""
         try {
             let count: number = 0;
-            util.forEachProp(obj, function(prop, v): boolean {
+            util.forEachProp(obj, (prop, v): boolean => {
                 console.log("Property[" + count + "]");
                 count++;
                 return true;
             });
 
-            util.forEachProp(obj, function(k, v): boolean {
+            util.forEachProp(obj, (k, v): boolean => {
                 val += k + " , " + v + "\n";
                 return true;
             });
@@ -686,7 +687,7 @@ class Util {
             return "null";
 
         let val: string = "";
-        util.forEachProp(obj, function(k, v): boolean {
+        util.forEachProp(obj, (k, v): boolean => {
             if (!k) {
                 k = "null";
             }

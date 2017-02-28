@@ -34,7 +34,6 @@ todo-1 No longer support multi-value property editing. I have a lot of code dedi
 after refactoring, so i'm gonna hazard a guess that multi-value properts currently DO NOT work, because i'm unsure
 but i know i didn't test it during refactoring, and don't even see buttons in place for management of them
 */
-
 export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeDlg {
 
     header: Header;
@@ -63,8 +62,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.createAtTop = (<any>args).createAtTop;
 
         // /* todo: need something better for this when supporting mobile */
-        // let width = 800; //window.innerWidth * 0.6;
-        // let height = 600; //window.innerHeight * 0.4;
+        let width = 800; //window.innerWidth * 0.6;
+        let height = 600; //window.innerHeight * 0.4;
 
         /*
          * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
@@ -76,7 +75,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.help = new Help("");
         this.propertyEditFieldContainer = new Div("", {
             // todo-1: create CSS class for this.
-            //style: `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%; overflow:scroll; border:4px solid lightGray;`,
+            style: `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%;`, //overflow:scroll; border:4px solid lightGray;`,
             class: "vertical-layout-row"
             //"padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
         })

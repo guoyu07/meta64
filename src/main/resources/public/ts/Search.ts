@@ -152,7 +152,7 @@ export class Search {
          */
         let rowCount = 0;
 
-        util.forEachArrElm(data.searchResults, function(node, i) {
+        util.forEachArrElm(data.searchResults, (node, i) => {
             if (meta64.isNodeBlackListed(node))
                 return;
 
@@ -171,7 +171,6 @@ export class Search {
      * node is a NodeInfo.java JSON
      */
     renderSearchResultAsListItem(node, index, count, rowCount) {
-
         let uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
@@ -185,7 +184,7 @@ export class Search {
         let thiz = this;
         return tag.div({
             "class": "node-table-row inactive-row",
-            "onclick": function() {
+            "onclick": () => {
                 meta64.clickOnSearchResultRow(this, uid);
             }, //
             "id": cssId
@@ -198,7 +197,7 @@ export class Search {
     }
 
     makeButtonBarHtml(uid: string) {
-        let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, function() {
+        let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, () => {
             meta64.clickSearchNode(uid);
         });
         return render.makeHorizontalFieldSet(gotoButton);

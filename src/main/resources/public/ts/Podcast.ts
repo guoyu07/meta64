@@ -175,7 +175,7 @@ class Podcast {
             if (mp3Url) {
                 util.json<I.GetPlayerInfoRequest, I.GetPlayerInfoResponse>("getPlayerInfo", {
                     "url": mp3Url
-                }, function(res: I.GetPlayerInfoResponse) {
+                }, (res: I.GetPlayerInfoResponse) => {
                     podcast.parseAdSegmentUid(podcast.uid);
 
                     Factory.createDefault("AudioPlayerDlgImpl", (dlg: AudioPlayerDlg) => {
@@ -316,7 +316,7 @@ class Podcast {
         if (podcast.player) {
             podcast.player.pause();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
                 let localPlayer = podcast.player;
                 podcast.player = null;

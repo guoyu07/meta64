@@ -63,7 +63,6 @@ export abstract class DialogBaseImpl implements DialogBase {
     };
 
     open = (): void => {
-        let thiz = this;
         /*
          * get container where all dialogs are created (true polymer dialogs)
          */
@@ -91,7 +90,6 @@ export abstract class DialogBaseImpl implements DialogBase {
 
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
-
 
         if (this.horizCenterDlgContent) {
 
@@ -138,9 +136,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             util.setHtml(id, content);
         }
 
-
         this.built = true;
-
         this.init();
         console.log("Showing dialog: " + id);
 
@@ -170,10 +166,10 @@ export abstract class DialogBaseImpl implements DialogBase {
         polyElm.node.open();
 
         //let dialog = document.getElementById('loginDialog');
-        node.addEventListener('iron-overlay-closed', function(customEvent) {
+        node.addEventListener('iron-overlay-closed', (customEvent) => {
             //let id = (<any>customEvent.currentTarget).id;
             //console.log("****************** Dialog: " + id + " is closed!");
-            thiz.closeEvent();
+            this.closeEvent();
         });
 
         /*
@@ -185,20 +181,21 @@ export abstract class DialogBaseImpl implements DialogBase {
         polyElm.node.refit();
 
         /* I'm doing this in desparation. nothing else seems to get rid of the margin */
-        setTimeout(function() {
+        setTimeout(() => {
             polyElm.node.style.margin = "0px";
             polyElm.node.refit();
         }, 10);
 
         /* I'm doing this in desparation. nothing else seems to get rid of the margin */
-        setTimeout(function() {
+        setTimeout(() => {
             polyElm.node.style.margin = "0px";
             polyElm.node.refit();
         }, 1500);
     }
 
-    /* todo: need to cleanup the registered IDs that are in maps for this dialog */
-    public cancel() {
+    /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
+    //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
+    public cancel() : void {
         let polyElm = util.polyElm(this.id(this.domId));
         polyElm.node.cancel();
     }
@@ -306,14 +303,13 @@ export abstract class DialogBaseImpl implements DialogBase {
             "class": "standardButton"
         };
 
-        let thiz = this;
-        (<any>attribs).onclick = function() {
+        (<any>attribs).onclick = () => {
             if (callback) {
                 callback();
             }
 
-            setTimeout(function() {
-                thiz.cancel.bind(thiz)();
+            setTimeout(() => {
+                this.cancel();
             }, delayCloseCallback);
         };
 
@@ -362,16 +358,6 @@ export abstract class DialogBaseImpl implements DialogBase {
             "id": id,
             "checkedState" : initialState
         };
-
-        ////////////
-        //     <paper - checkbox on-change="checkboxChanged">click</paper - checkbox>
-        //
-        //             checkboxChanged : function(event){
-        //     if(event.target.checked) {
-        //         console.log(event.target.value);
-        //     }
-        // }
-        ////////////
 
         if (initialState) {
             attrs["checked"] = "checked";

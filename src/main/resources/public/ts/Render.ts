@@ -836,7 +836,7 @@ export class Render {
             prettyPrint();
         }
 
-        util.forEachElmBySel("a", function(el, i) {
+        util.forEachElmBySel("a", (el, i) => {
             el.setAttribute("target", "_blank");
         });
 
@@ -1021,7 +1021,7 @@ export class Render {
             }
 
             ret += " ";
-            util.forEachProp(attributes, function(k, v): boolean {
+            util.forEachProp(attributes, (k, v): boolean => {
                 if (v) {
                     if (k.toLowerCase() === "id") {
                         id = v;

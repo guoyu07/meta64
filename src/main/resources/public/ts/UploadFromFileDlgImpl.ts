@@ -11,6 +11,7 @@ import { tag } from "./Tag";
 
 declare var postTargetUrl;
 
+/* We could delete this file, but i want to keep it around a bit longer even though we now use Dropzone */
 export default class UploadFromFileDlgImpl extends DialogBaseImpl implements UploadFromFileDlg {
 
     constructor() {
@@ -104,57 +105,57 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
     }
 
     uploadFileNow = (): void => {
-
-        //todo-0: most of my functions are not defined like this, but apparently this way of doing it,
-        //captures 'this' without using bind(this) on the funciton???? I say that becasue the code does work right?
-        let uploadFunc = (explodeZips) => {
-            /* Upload form has hidden input element for nodeId parameter */
-            this.elById("uploadFormNodeId").setAttribute("value", attachment.uploadNode.id);
-            this.elById("explodeZips").setAttribute("value", explodeZips ? "true" : "false");
-
-            /*
-             * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
-             * this is highly specialized here for form uploading, and is different from normal ajax calls.
-             */
-            let data = new FormData(<HTMLFormElement>(util.domElm("#" + this.id("uploadForm"))[0]));
-
-            let prms = $.ajax({
-                url: postTargetUrl + "upload",
-                data: data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                type: 'POST'
-            });
-
-            prms.done(function() {
-                meta64.refresh();
-            });
-
-            prms.fail(function() {
-                util.showMessage("Upload failed.");
-            });
-        };
-
-        if (this.hasAnyZipFiles()) {
-            Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-                dlg.open();
-            }, {
-                    "title": "Explode Zips?",
-                    "message": "Do you want Zip files exploded onto the tree when uploaded?",
-                    "buttonText": "Yes, explode zips",
-                    "yesCallback":
-                    function() {
-                        uploadFunc(true);
-                    },
-                    "noCallback": function() {
-                        uploadFunc(true);
-                    }
-                });
-        }
-        else {
-            uploadFunc(false);
-        }
+        throw "UploadFromFileDlgImpl was never refactored after jquery  removal and is not being used";
+        // //todo-0: most of my functions are not defined like this, but apparently this way of doing it,
+        // //captures 'this' without using bind(this) on the funciton???? I say that becasue the code does work right?
+        // let uploadFunc = (explodeZips) => {
+        //     /* Upload form has hidden input element for nodeId parameter */
+        //     this.elById("uploadFormNodeId").setAttribute("value", attachment.uploadNode.id);
+        //     this.elById("explodeZips").setAttribute("value", explodeZips ? "true" : "false");
+        //
+        //     /*
+        //      * This is the only place we do something differently from the normal 'util.json()' calls to the server, because
+        //      * this is highly specialized here for form uploading, and is different from normal ajax calls.
+        //      */
+        //     let data = new FormData(<HTMLFormElement>(util.domElm("#" + this.id("uploadForm"))[0]));
+        //
+        //     let prms = $.ajax({
+        //         url: postTargetUrl + "upload",
+        //         data: data,
+        //         cache: false,
+        //         contentType: false,
+        //         processData: false,
+        //         type: 'POST'
+        //     });
+        //
+        //     prms.done(function() {
+        //         meta64.refresh();
+        //     });
+        //
+        //     prms.fail(function() {
+        //         util.showMessage("Upload failed.");
+        //     });
+        // };
+        //
+        // if (this.hasAnyZipFiles()) {
+        //     Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
+        //         dlg.open();
+        //     }, {
+        //             "title": "Explode Zips?",
+        //             "message": "Do you want Zip files exploded onto the tree when uploaded?",
+        //             "buttonText": "Yes, explode zips",
+        //             "yesCallback":
+        //             function() {
+        //                 uploadFunc(true);
+        //             },
+        //             "noCallback": function() {
+        //                 uploadFunc(true);
+        //             }
+        //         });
+        // }
+        // else {
+        //     uploadFunc(false);
+        // }
     }
 
     init = (): void => {

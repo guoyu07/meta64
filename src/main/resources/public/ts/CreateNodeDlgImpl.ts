@@ -66,7 +66,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         return tag.div({
             "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
             "id": divId,
-            "onclick": function() { this.onRowClick(payload); }.bind(this)
+            "onclick": () => { this.onRowClick(payload); }
         }, val);
     }
 

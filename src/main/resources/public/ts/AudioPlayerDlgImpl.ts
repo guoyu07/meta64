@@ -27,7 +27,9 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
     }
 
     /* When the dialog closes we need to stop and remove the player */
-    public cancel() {
+    //TypeScript has a limitation where => cannot be used on overridden methods, so we have to be careful to use
+    //bind(this) everywhere we need 'cancel' callable as a function by variable.
+    cancel (): void {
         super.cancel();
         let player = document.querySelector("#" + this.id("audioPlayer"));
         if (player !== null) {

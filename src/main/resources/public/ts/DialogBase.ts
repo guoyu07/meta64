@@ -5,7 +5,7 @@ export interface DialogBase {
     closeEvent(): void;
     render(): string;
     open(): void;
-    cancel();
+    cancel(): void;
     id(id): string;
     elById(id): any;
     makePasswordField(text: string, id: string): string;

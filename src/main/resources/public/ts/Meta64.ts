@@ -266,7 +266,7 @@ class Meta64 {
 
         let ret = false;
 
-        util.forEachProp(meta64.simpleModeNodePrefixBlackList, function(prop, val): boolean {
+        util.forEachProp(meta64.simpleModeNodePrefixBlackList, (prop, val): boolean => {
             if (util.startsWith(node.name, prop)) {
                 ret = true;
                 //teminate iteration with false return
@@ -280,7 +280,7 @@ class Meta64 {
 
     getSelectedNodeUidsArray(): string[] {
         let selArray: string[] = [];
-        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
+        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
             selArray.push(uid);
             return true;
         });
@@ -299,7 +299,7 @@ class Meta64 {
             console.log("selectedNode count: " + util.getPropertyCount(meta64.selectedNodes));
         }
 
-        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
+        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
             let node: I.NodeInfo = meta64.uidToNodeMap[uid];
             if (!node) {
                 console.log("unable to find uidToNodeMap for uid=" + uid);
@@ -325,7 +325,7 @@ class Meta64 {
     /* Gets selected nodes as NodeInfo.java objects array */
     getSelectedNodesArray(): I.NodeInfo[] {
         let selArray: I.NodeInfo[] = [];
-        util.forEachProp(meta64.selectedNodes, function(uid, val): boolean {
+        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
             let node = meta64.uidToNodeMap[uid];
             if (node) {
                 selArray.push(node);
@@ -377,7 +377,7 @@ class Meta64 {
             "nodeId": node.id,
             "includeAcl": false,
             "includeOwners": true
-        }, function(res: I.GetNodePrivilegesResponse) {
+        }, (res: I.GetNodePrivilegesResponse) => {
             meta64.updateNodeInfoResponse(res, node);
         });
     }
@@ -700,7 +700,7 @@ class Meta64 {
         // var onresize = window.onresize;
         // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 
-        (window as any).addEvent = function(object, type, callback) {
+        (window as any).addEvent = (object, type, callback) => {
             if (object == null || typeof (object) == 'undefined')
                 return;
             if (object.addEventListener) {
@@ -733,7 +733,7 @@ class Meta64 {
         //     console.log('app ready event!');
         // });
 
-        (window as any).addEventListener('polymer-ready', function(e) {
+        (window as any).addEventListener('polymer-ready', (e) => {
             console.log('polymer-ready event!');
         });
         console.log("running module: cnst.js");
@@ -744,7 +744,7 @@ class Meta64 {
         meta64.appInitialized = true;
 
         let tabs = util.poly("mainIronPages");
-        tabs.addEventListener("iron-select", function() {
+        tabs.addEventListener("iron-select", () => {
             meta64.tabChangeEvent(tabs.selected);
         });
 
@@ -755,7 +755,7 @@ class Meta64 {
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
          * $ (window).on("orientationchange", _.orientationHandler);
          */
-        window.onbeforeunload = function() {
+        window.onbeforeunload = () => {
             return "Leave Meta64 ?";
         };
 
@@ -816,7 +816,7 @@ class Meta64 {
     processUrlParams(): void {
         var passCode = util.getParameterByName("passCode");
         if (passCode) {
-            setTimeout(function() {
+            setTimeout(() => {
                 Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
                     dlg.open();
                 }, { "passCode": passCode })
@@ -889,7 +889,7 @@ class Meta64 {
 
     /* This is a wrapper around System.import, to make future refactoring needs easier, and also make the code a bit cleaner */
     modRun(modName: string, callback: Function) {
-        System.import("/js/" + modName).then(function(mod) {
+        System.import("/js/" + modName).then((mod) => {
             callback(mod);
         });
     }

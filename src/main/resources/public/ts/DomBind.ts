@@ -13,7 +13,7 @@ class DomBind {
 
     constructor() {
         /* I bet there's a better way to subscribe to DOM events than this timer, but i'm using the timer for now */
-        setInterval(function() {
+        setInterval(() => {
             if (domBind) {
                 domBind.interval();
             }
@@ -21,8 +21,7 @@ class DomBind {
     }
 
     private interval = (): void => {
-        let thiz = this;
-        util.forEachProp(this.idToFuncMap, function(key: string, func: Function): boolean {
+        util.forEachProp(this.idToFuncMap, (key: string, func: Function): boolean => {
             let id = util.chopAtLastChar(key, ".");
             let e = util.domElm(id);
 
@@ -31,8 +30,8 @@ class DomBind {
             //this will not be all that common, and at this time not worth adding that compleity to the code quite yet. KISS for now.
             if (e) {
                 //console.log("DomBind " + id + " FOUND.");
-                thiz.idToFuncMap[key](e);
-                delete thiz.idToFuncMap[key];
+                this.idToFuncMap[key](e);
+                delete this.idToFuncMap[key];
             }
             else {
                 console.log("DomBind " + id + " waiting...");

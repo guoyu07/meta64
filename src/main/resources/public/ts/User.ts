@@ -126,7 +126,7 @@ class User {
                 "password": callPwd,
                 "tzOffset": new Date().getTimezoneOffset(),
                 "dst": util.daylightSavingsTime
-            }, function(res: I.LoginResponse) {
+            }, (res: I.LoginResponse) => {
                 if (usingCookies) {
                     user.loginResponse(res, callUsr, callPwd, usingCookies);
                 } else {
@@ -158,7 +158,7 @@ class User {
             "password": pwd,
             "tzOffset": new Date().getTimezoneOffset(),
             "dst": util.daylightSavingsTime
-        }, function(res: I.LoginResponse) {
+        }, (res: I.LoginResponse) => {
             user.loginResponse(res, usr, pwd, null, loginDlg);
         });
     }

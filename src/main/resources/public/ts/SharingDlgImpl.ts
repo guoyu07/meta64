@@ -77,13 +77,13 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
      */
     populateSharingPg = (res: I.GetNodePrivilegesResponse): void => {
         let html = "";
-        let This = this;
 
-        util.forEachArrElm(res.aclEntries, function(aclEntry, index) {
+        util.forEachArrElm(res.aclEntries, (aclEntry, index) => {
             html += "<h4>User: " + aclEntry.principalName + "</h4>";
             html += tag.div({
                 "class": "privilege-list"
-            }, This.renderAclPrivileges(aclEntry.principalName, aclEntry));
+            }, this.renderAclPrivileges(aclEntry.principalName, aclEntry));
+            return true;
         });
 
         let publicAppendAttrs = {

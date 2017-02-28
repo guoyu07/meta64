@@ -56,7 +56,7 @@ class Attachment {
                 dlg.open();
             }, {
                     "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback":
-                    function() {
+                    () => {
                         util.json<I.DeleteAttachmentRequest, I.DeleteAttachmentResponse>("deleteAttachment", {
                             "nodeId": node.id
                         }, attachment.deleteAttachmentResponse, null, node.uid);

@@ -22,7 +22,7 @@ class Prefs {
                 "message": "Close your Account?<p> Are you sure?",
                 "buttonText": "Yes, Close Account.",
                 "yesCallback":
-                function() {
+                () => {
                     Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
                         dlg.open();
                     }, {
@@ -30,7 +30,7 @@ class Prefs {
                             "message": "Your data will be deleted and can never be recovered.<p> Are you sure?",
                             "buttonText": "Yes, Close Account.",
                             "yesCallback":
-                            function() {
+                            () => {
                                 user.deleteAllUserCookies();
                                 util.json<I.CloseAccountRequest, I.CloseAccountResponse>("closeAccount", {}, prefs.closeAccountResponse);
                             }

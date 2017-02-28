@@ -22,49 +22,49 @@ import { ManageAccountDlg } from "./ManageAccountDlg";
 
 class Edit {
 
-    createNode = function(): void {
+    createNode = (): void => {
         Factory.createDefault("CreateNodeDlgImpl", (dlg: CreateNodeDlg) => {
             dlg.open();
         })
     }
 
-    openChangePasswordDlg = function(): void {
+    openChangePasswordDlg = (): void => {
         Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
             dlg.open();
         })
     }
 
-    openManageAccountDlg = function(): void {
+    openManageAccountDlg = (): void => {
         Factory.createDefault("ManageAccountDlgImpl", (dlg: ManageAccountDlg) => {
             dlg.open();
         })
     }
 
-    editPreferences = function(): void {
+    editPreferences = (): void => {
         Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
             dlg.open();
         })
     }
 
-    renameNode = function(): void {
+    renameNode = (): void => {
         Factory.createDefault("RenameNodeDlgImpl", (dlg: RenameNodeDlg) => {
             dlg.open();
         })
     }
 
-    openImportDlg = function(): void {
+    openImportDlg = (): void => {
         Factory.createDefault("ImportDlgImpl", (dlg: ImportDlg) => {
             dlg.open();
         })
     }
 
-    openExportDlg = function(): void {
+    openExportDlg = (): void => {
         Factory.createDefault("ExportDlgImpl", (dlg: ExportDlg) => {
             dlg.open();
         })
     }
 
-    private insertBookResponse = function(res: I.InsertBookResponse): void {
+    private insertBookResponse = (res: I.InsertBookResponse): void => {
         console.log("insertBookResponse running.");
 
         util.checkSuccess("Insert Book", res);
@@ -73,7 +73,7 @@ class Edit {
         view.scrollToSelectedNode();
     }
 
-    private deleteNodesResponse = function(res: I.DeleteNodesResponse, payload: Object): void {
+    private deleteNodesResponse = (res: I.DeleteNodesResponse, payload: Object): void => {
         if (util.checkSuccess("Delete node", res)) {
             meta64.clearSelectedNodes();
             let highlightId: string = null;
@@ -88,7 +88,7 @@ class Edit {
         }
     }
 
-    private initNodeEditResponse = function(res: I.InitNodeEditResponse): void {
+    private initNodeEditResponse = (res: I.InitNodeEditResponse): void => {
         if (util.checkSuccess("Editing node", res)) {
             let node: I.NodeInfo = res.nodeInfo;
             let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
@@ -120,7 +120,7 @@ class Edit {
         }
     }
 
-    private moveNodesResponse = function(res: I.MoveNodesResponse): void {
+    private moveNodesResponse = (res: I.MoveNodesResponse): void => {
         if (util.checkSuccess("Move nodes", res)) {
             edit.nodesToMove = null; // reset
             edit.nodesToMoveSet = {};
@@ -128,7 +128,7 @@ class Edit {
         }
     }
 
-    private setNodePositionResponse = function(res: I.SetNodePositionResponse): void {
+    private setNodePositionResponse = (res: I.SetNodePositionResponse): void => {
         if (util.checkSuccess("Change node position", res)) {
             meta64.refresh();
         }
@@ -179,7 +179,7 @@ class Edit {
     nodeInsertTarget: any = null;
 
     /* returns true if we can 'try to' insert under 'node' or false if not */
-    isEditAllowed = function(node: any): boolean {
+    isEditAllowed = (node: any): boolean => {
         return meta64.userPreferences.editMode && node.path != "/" &&
             /*
              * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
@@ -189,11 +189,11 @@ class Edit {
     }
 
     /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
-    isInsertAllowed = function(node: any): boolean {
+    isInsertAllowed = (node: any): boolean => {
         return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
     }
 
-    startEditingNewNode = function(typeName?: string, createAtTop?: boolean): void {
+    startEditingNewNode = (typeName?: string, createAtTop?: boolean): void => {
         edit.editingUnsavedNode = false;
         edit.editNode = null;
         Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
@@ -214,7 +214,7 @@ class Edit {
      * that will cause the GUI to always prompt for the node name before creating the node. This was the original
      * functionality and still works.
      */
-    startEditingNewNodeWithName = function(): void {
+    startEditingNewNodeWithName = (): void => {
         edit.editingUnsavedNode = true;
         edit.editNode = null;
         Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
@@ -223,7 +223,7 @@ class Edit {
         });
     }
 
-    insertNodeResponse = function(res: I.InsertNodeResponse): void {
+    insertNodeResponse = (res: I.InsertNodeResponse): void => {
         if (util.checkSuccess("Insert node", res)) {
             meta64.initNode(res.newNode, true);
             meta64.highlightNode(res.newNode, true);
@@ -231,14 +231,14 @@ class Edit {
         }
     }
 
-    createSubNodeResponse = function(res: I.CreateSubNodeResponse): void {
+    createSubNodeResponse = (res: I.CreateSubNodeResponse): void => {
         if (util.checkSuccess("Create subnode", res)) {
             meta64.initNode(res.newNode, true);
             edit.runEditNode(res.newNode.uid);
         }
     }
 
-    saveNodeResponse = function(res: I.SaveNodeResponse, payload: any): void {
+    saveNodeResponse = (res: I.SaveNodeResponse, payload: any): void => {
         if (util.checkSuccess("Save node", res)) {
             /* becasuse I don't understand 'editingUnsavedNode' variable any longer until i refresh my memory, i will use
             the old approach of refreshing entire tree rather than more efficient refresnNodeOnPage, becuase it requires
@@ -250,7 +250,7 @@ class Edit {
         }
     }
 
-    editMode = function(modeVal?: boolean): void {
+    editMode = (modeVal?: boolean): void => {
         if (typeof modeVal != 'undefined') {
             meta64.userPreferences.editMode = modeVal;
         }
@@ -270,7 +270,7 @@ class Edit {
         meta64.saveUserPreferences();
     }
 
-    moveNodeUp = function(uid?: string): void {
+    moveNodeUp = (uid?: string): void => {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
@@ -289,7 +289,7 @@ class Edit {
         }
     }
 
-    moveNodeDown = function(uid?: string): void {
+    moveNodeDown = (uid?: string): void => {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
@@ -308,7 +308,7 @@ class Edit {
         }
     }
 
-    moveNodeToTop = function(uid?: string): void {
+    moveNodeToTop = (uid?: string): void => {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
@@ -327,7 +327,7 @@ class Edit {
         }
     }
 
-    moveNodeToBottom = function(uid?: string): void {
+    moveNodeToBottom = (uid?: string): void => {
         /* if no uid was passed, use the highlighted node */
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
@@ -349,7 +349,7 @@ class Edit {
     /*
      * Returns the node above the specified node or null if node is itself the top node
      */
-    getNodeAbove = function(node): any {
+    getNodeAbove = (node): any => {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)
             return null;
@@ -359,7 +359,7 @@ class Edit {
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
-    getNodeBelow = function(node: any): I.NodeInfo {
+    getNodeBelow = (node: any): I.NodeInfo => {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
         if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -368,12 +368,12 @@ class Edit {
         return meta64.currentNodeData.children[ordinal + 1];
     }
 
-    getFirstChildNode = function(): any {
+    getFirstChildNode = (): any => {
         if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
         return meta64.currentNodeData.children[0];
     }
 
-    runEditNode = function(uid: any): void {
+    runEditNode = (uid: any): void => {
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             edit.editNode = null;
@@ -387,7 +387,7 @@ class Edit {
         }, edit.initNodeEditResponse);
     }
 
-    insertNode = function(uid?: any, typeName?: string): void {
+    insertNode = (uid?: any, typeName?: string): void => {
 
         edit.parentOfNewNode = meta64.currentNode;
         if (!edit.parentOfNewNode) {
@@ -412,7 +412,7 @@ class Edit {
         }
     }
 
-    createSubNode = function(uid?: any, typeName?: string, createAtTop?: boolean): void {
+    createSubNode = (uid?: any, typeName?: string, createAtTop?: boolean): void => {
         /*
          * If no uid provided we deafult to creating a node under the currently viewed node (parent of current page), or any selected
          * node if there is a selected node.
@@ -440,11 +440,11 @@ class Edit {
         edit.startEditingNewNode(typeName, createAtTop);
     }
 
-    replyToComment = function(uid: any): void {
+    replyToComment = (uid: any): void => {
         edit.createSubNode(uid);
     }
 
-    clearSelections = function(): void {
+    clearSelections = (): void => {
         meta64.clearSelectedNodes();
 
         /*
@@ -460,7 +460,7 @@ class Edit {
      * Delete the single node identified by 'uid' parameter if uid parameter is passed, and if uid parameter is not
      * passed then use the node selections for multiple selections on the page.
      */
-    deleteSelNodes = function(): void {
+    deleteSelNodes = (): void => {
         let selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             util.showMessage("You have not selected any nodes. Select nodes to delete first.");
@@ -471,7 +471,7 @@ class Edit {
             dlg.open();
         }, {
                 "title": "Confirm Delete", "message": "Delete " + selNodesArray.length + " node(s) ?", "buttonText": "Yes, delete.", "yesCallback":
-                function() {
+                () => {
                     let postDeleteSelNode: I.NodeInfo = edit.getBestPostDeleteSelNode();
 
                     util.json<I.DeleteNodesRequest, I.DeleteNodesResponse>("deleteNodes", {
@@ -482,7 +482,7 @@ class Edit {
     }
 
     /* Gets the node we want to scroll to after a delete */
-    getBestPostDeleteSelNode = function(): I.NodeInfo {
+    getBestPostDeleteSelNode = (): I.NodeInfo => {
         /* Use a hashmap-type approach to saving all selected nodes into a looup map */
         let nodesMap: Object = meta64.getSelectedNodesAsMapById();
         let bestNode: I.NodeInfo = null;
@@ -508,7 +508,7 @@ class Edit {
         return bestNode;
     }
 
-    cutSelNodes = function(): void {
+    cutSelNodes = (): void => {
 
         let selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
@@ -520,7 +520,7 @@ class Edit {
             dlg.open();
         }, {
                 "title": "Confirm Cut", "message": "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?", "buttonText": "Yes", "yesCallback":
-                function() {
+                () => {
                     edit.nodesToMove = selNodesArray;
                     edit.loadNodesToMoveSet(selNodesArray);
                     /* todo-1: need to have a way to find all selected checkboxes in the gui and reset them all to unchecked */
@@ -533,19 +533,19 @@ class Edit {
             });
     }
 
-    private loadNodesToMoveSet = function(nodeIds: string[]) {
+    private loadNodesToMoveSet = (nodeIds: string[]) => {
         edit.nodesToMoveSet = {};
         for (let id of nodeIds) {
             edit.nodesToMoveSet[id] = true;
         }
     }
 
-    pasteSelNodes = function(): void {
+    pasteSelNodes = (): void => {
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm Paste", "message": "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback":
-                function() {
+                () => {
                     let highlightNode = meta64.getHighlightedNode();
                     /*
                      * For now, we will just cram the nodes onto the end of the children of the currently selected
@@ -561,13 +561,13 @@ class Edit {
             });
     }
 
-    insertBookWarAndPeace = function(): void {
+    insertBookWarAndPeace = (): void => {
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
         }, {
                 "title": "Confirm", "message": "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!",
                 "buttonText": "Yes, insert book.", "yesCallback":
-                function() {
+                () => {
                     /* inserting under whatever node user has focused */
                     var node = meta64.getHighlightedNode();
 

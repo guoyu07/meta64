@@ -101,7 +101,7 @@ class Props {
             let table: string = "";
             let propCount: number = 0;
 
-            util.forEachArrElm(properties, function(property, i) {
+            util.forEachArrElm(properties, (property, i) => {
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
@@ -220,7 +220,7 @@ class Props {
     renderPropertyValues(values): string {
         let ret: string = "";
 
-        util.forEachArrElm(values, function(value, i: number) {
+        util.forEachArrElm(values, (value, i: number) => {
             ret += tag.div(null, value);
         });
 

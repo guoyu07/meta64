@@ -49,12 +49,11 @@ export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameN
 
         let renamingRootNode = (highlightNode.id === meta64.currentNodeId);
 
-        let thiz = this;
         util.json<I.RenameNodeRequest, I.RenameNodeResponse>("renameNode", {
             "nodeId": highlightNode.id,
             "newName": newName
-        }, function(res: I.RenameNodeResponse) {
-            thiz.renameNodeResponse(res, renamingRootNode);
+        }, (res: I.RenameNodeResponse) => {
+            this.renameNodeResponse(res, renamingRootNode);
         });
     }
 

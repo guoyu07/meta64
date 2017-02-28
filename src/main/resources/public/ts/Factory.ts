@@ -18,7 +18,7 @@ export class Factory {
 
     /* Creates an instance of an object exported as 'default' */
     static createDefault(className: string, callback?: any, args?: Object): void {
-        System.import(Factory.filePrefix + className).then(function(mod) {
+        System.import(Factory.filePrefix + className).then((mod) => {
             let obj = new (<any>mod).default(args || {});
             if (callback) {
                 callback(obj);
@@ -28,7 +28,7 @@ export class Factory {
 
     /* Create an instance of an object assuming the naming convention is followed by having the module name be the same as the class name. */
     static create(className: string, callback?: any, args?: Object): void {
-        System.import(Factory.filePrefix + className).then(function(mod) {
+        System.import(Factory.filePrefix + className).then((mod)=>  {
             let obj = new (<any>mod)[className](args || {});
             if (callback) {
                 callback(obj);

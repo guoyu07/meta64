@@ -63,10 +63,9 @@ export default class SearchContentDlgImpl extends DialogBaseImpl implements Sear
         }, this.searchNodesResponse, this);
     }
 
-    searchNodesResponse = function(res: I.NodeSearchResponse) {
-        let thiz = this;
+    searchNodesResponse = (res: I.NodeSearchResponse) => {
         srch.searchNodesResponse(res);
-        thiz.cancel();
+        this.cancel();
     }
 
     init = (): void => {

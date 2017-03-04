@@ -8,6 +8,10 @@ import { tag } from "./Tag";
 
 declare var Polymer;
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
     constructor() {
         super("PrefsDlg");

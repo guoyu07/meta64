@@ -14,6 +14,9 @@ import { EditNodeDlg } from "./EditNodeDlg";
 
 /*
  * Property Editor Dialog (Edits Node Properties)
+ *
+ NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+ new architecture)
  */
 export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditPropertyDlg {
 

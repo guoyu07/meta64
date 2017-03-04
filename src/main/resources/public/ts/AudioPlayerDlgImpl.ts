@@ -8,7 +8,12 @@ import { render } from "./Render";
 import { props } from "./Props";
 import * as I from "./Interfaces";
 
-/* This is an audio player dialog that has ad-skipping technology provided by podcast.ts */
+/* This is an audio player dialog that has ad-skipping technology provided by podcast.ts
+
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+
+*/
 export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioPlayerDlg {
 
     private sourceUrl: string;

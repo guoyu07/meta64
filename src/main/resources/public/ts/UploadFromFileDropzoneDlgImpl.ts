@@ -12,6 +12,10 @@ import { util } from "./Util";
 declare var Dropzone;
 declare var postTargetUrl;
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implements UploadFromFileDropzoneDlg {
 
     constructor() {

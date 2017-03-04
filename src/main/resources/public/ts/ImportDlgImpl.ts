@@ -10,6 +10,10 @@ import { view } from "./View";
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class ImportDlgImpl extends DialogBaseImpl implements ImportDlg {
     constructor() {
         super("ImportDlg");

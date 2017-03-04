@@ -7,6 +7,10 @@ import { edit } from "./Edit";
 import { view } from "./View";
 import * as I from "./Interfaces";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameNodeDlg {
     constructor(args: Object) {
         super("RenameNodeDlg");

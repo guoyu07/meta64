@@ -8,6 +8,10 @@ import * as I from "./Interfaces";
 import { Factory } from "./Factory";
 import { SharingDlg } from "./SharingDlg";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class ShareToPersonDlgImpl extends DialogBaseImpl implements ShareToPersonDlg {
 
     constructor() {
@@ -40,7 +44,7 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
          * Trigger going to server at next main page refresh
          */
         meta64.treeDirty = true;
-        
+
         util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,

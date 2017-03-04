@@ -5,6 +5,10 @@ import { MessageDlg } from "./MessageDlg";
 import { render } from "./Render";
 
 /*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
+/*
  * Callback can be null if you don't need to run any function when the dialog is closed
  */
 export default class MessageDlgImpl extends DialogBaseImpl implements MessageDlg {

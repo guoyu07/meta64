@@ -7,6 +7,10 @@ import { tag } from "./Tag";
 
 declare var postTargetUrl;
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
 
     constructor() {

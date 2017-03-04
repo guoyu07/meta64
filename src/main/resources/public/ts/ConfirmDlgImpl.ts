@@ -4,6 +4,10 @@ import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { render } from "./Render";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg {
 
     private title: string;
@@ -25,7 +29,8 @@ export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg
      * Returns a string that is the HTML content of the dialog
      */
     render = (): string => {
-        let content: string = this.makeHeader("", "ConfirmDlgTitle") + this.makeMessageArea("", "ConfirmDlgMessage");
+        let content: string = this.makeHeader("", "ConfirmDlgTitle") + //
+            this.makeMessageArea("", "ConfirmDlgMessage");
         content = render.centerContent(content, 300);
 
         let buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)

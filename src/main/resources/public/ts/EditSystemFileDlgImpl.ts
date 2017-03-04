@@ -3,6 +3,10 @@ console.log("EditSystemFileDlgImpl.ts");
 import {DialogBaseImpl} from "./DialogBaseImpl";
 import {EditSystemFileDlg} from "./EditSystemFileDlg";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 /* I commented this code out when i transitioned over to ES6 modules, but since this is not a core feature
 i haven't re-enabled it yet */
 export default class EditSystemFileDlgImpl extends DialogBaseImpl implements EditSystemFileDlg {

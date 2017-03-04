@@ -11,6 +11,10 @@ import { util } from "./Util";
 import { Factory } from "./Factory";
 import { tag } from "./Tag";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     constructor(paramsTest: Object) {
         super("LoginDlgImpl");

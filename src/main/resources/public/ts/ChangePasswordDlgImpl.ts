@@ -15,7 +15,7 @@ import { Button } from "./widget/Button";
 
 export default class ChangePasswordDlgImpl extends DialogBaseImpl implements ChangePasswordDlg {
 
-    //GUI Component members
+    //GUI Widget members
     //---------------------
     header: Header;
     passwordField: PasswordTextField;

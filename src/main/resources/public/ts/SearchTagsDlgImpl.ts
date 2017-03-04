@@ -7,6 +7,10 @@ import { util } from "./Util";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchTagsDlg {
 
     constructor() {

@@ -8,6 +8,10 @@ import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements UploadFromUrlDlg {
 
     constructor() {

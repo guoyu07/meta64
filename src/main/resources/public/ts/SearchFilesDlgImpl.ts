@@ -1,6 +1,10 @@
 import {DialogBaseImpl} from "./DialogBaseImpl";
 import {SearchFilesDlg} from "./SearchFilesDlg";
 
+/*
+NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
+new architecture)
+*/
 export default class SearchFilesDlgImpl extends DialogBaseImpl implements SearchFilesDlg {
   //
   //   constructor(private lucene: boolean) {

@@ -353,7 +353,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         id = this.id(id);
         console.log("Making Dialog Checkbox. ID=" + id);
         let attrs = {
-            //"onClick": publicCommentingChanged
+            //"onclick": publicCommentingChanged
             "name": id,
             "id": id,
             "checkedState" : initialState

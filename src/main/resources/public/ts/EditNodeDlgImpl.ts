@@ -196,11 +196,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             editPropsTable.addChild(tableRow);
         }
 
-        //not w-pack
         //I'm not quite ready to add this button yet.
         // var toggleReadonlyVisButton = tag.button({
         //     "raised": "raised",
-        //     "onClick": toggleShowReadOnly(); //
+        //     "onclick": toggleShowReadOnly(); //
         // }, //
         //     (edit.showReadOnlyProperties ? "Hide Read-Only Properties" : "Show Read-Only Properties"));
         //
@@ -239,7 +238,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     toggleShowReadOnly = (): void => {
-        //not w-pack
         // alert("not yet implemented.");
         // see saveExistingNode for how to iterate all properties, although I wonder why I didn't just use a map/set of
         // properties elements
@@ -263,7 +261,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             propertyName: "tags",
             propertyValue: ""
         };
-        util.json<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse);
+        util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse);
     }
 
     addTagsPropertyResponse = (res: I.SavePropertyResponse): void => {
@@ -322,10 +320,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     deletePropertyImmediate = (propName: string) => {
-        util.json<I.DeletePropertyRequest, I.DeletePropertyResponse>("deleteProperty", {
+        util.ajax<I.DeletePropertyRequest, I.DeletePropertyResponse>("deleteProperty", {
             "nodeId": edit.editNode.id,
             "propName": propName
-        }, (res: I.DeletePropertyResponse) => {
+        }, (res) => {
             this.deletePropertyResponse(res, propName);
         });
     }
@@ -384,19 +382,19 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         meta64.treeDirty = true;
         if (edit.nodeInsertTarget) {
-            util.json<I.InsertNodeRequest, I.InsertNodeResponse>("insertNode", {
+            util.ajax<I.InsertNodeRequest, I.InsertNodeResponse>("insertNode", {
                 "parentId": edit.parentOfNewNode.id,
                 "targetName": edit.nodeInsertTarget.name,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured"
-            }, edit.insertNodeResponse, edit);
+            }, edit.insertNodeResponse);
         } else {
-            util.json<I.CreateSubNodeRequest, I.CreateSubNodeResponse>("createSubNode", {
+            util.ajax<I.CreateSubNodeRequest, I.CreateSubNodeResponse>("createSubNode", {
                 "nodeId": edit.parentOfNewNode.id,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured",
                 "createAtTop": this.createAtTop
-            }, edit.createSubNodeResponse, edit);
+            }, edit.createSubNodeResponse);
         }
     }
 
@@ -476,8 +474,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 sendNotification: edit.sendNotificationPendingSave
             };
             console.log("calling saveNode(). PostData=" + util.toJson(postData));
-            util.json<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, edit.saveNodeResponse, null, {
-                savedId: edit.editNode.id
+            util.ajax<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, (res) => {
+                edit.saveNodeResponse(res, {
+                    savedId: edit.editNode.id
+                });
             });
             edit.sendNotificationPendingSave = false;
         } else {
@@ -612,7 +612,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
     splitContent = (): void => {
         let nodeBelow: I.NodeInfo = edit.getNodeBelow(edit.editNode);
-        util.json<I.SplitNodeRequest, I.SplitNodeResponse>("splitNode", {
+        util.ajax<I.SplitNodeRequest, I.SplitNodeResponse>("splitNode", {
             "nodeId": edit.editNode.id,
             "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
             "delimiter": null

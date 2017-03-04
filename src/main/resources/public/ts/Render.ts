@@ -233,7 +233,6 @@ export class Render {
                         "</script>" +
                         "</marked-element>";
 
-                    //not w-pack
                     //When doing server-side markdown we had this processing the HTML that was generated
                     //but I haven't looked into how to get this back now that we are doing markdown on client.
                     //jcrContent = injectCodeFormatting(jcrContent);
@@ -302,7 +301,6 @@ export class Render {
 
                 /* openSystemFile worked on linux, but i'm switching to full text file edit capability only and doing that
                 inside meta64 from now on, so openSystemFile is no longer being used */
-                //not w-pack
                 // let localOpenLink = tag.button({
                 //     "raised": "raised",
                 //     "onclick": "meta64.openSystemFile('" + entry.fileName + "')"
@@ -357,7 +355,6 @@ export class Render {
          * if not selected by being the new child, then we try to select based on if this node was the last one
          * clicked on for this page.
          */
-        //not w-pack
         // console.log("test: [" + parentIdToFocusIdMap[currentNodeId]
         // +"]==["+ node.id + "]")
         let focusNode: I.NodeInfo = meta64.getHighlightedNode();
@@ -369,8 +366,7 @@ export class Render {
         let cssId: string = "row_" + uid /*+ "_row"*/;
         return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
-            //"onClick": `meta64.clickOnNodeRow(this, '${uid}');`, //
-            "onClick": (elm) => { meta64.clickOnNodeRow(elm, uid); }, //
+            "onclick": (elm) => { meta64.clickOnNodeRow(elm, uid); }, //
             "id": cssId,
             "style": bkgStyle
         },//
@@ -469,7 +465,7 @@ export class Render {
         if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
             replyButton = tag.button({
                 "raised": "raised",
-                "onClick": () => { meta64.replyToComment(node.uid); } //
+                "onclick": () => { meta64.replyToComment(node.uid); } //
             }, //
                 "Reply");
         }
@@ -488,7 +484,7 @@ export class Render {
                 here to accomplish the same thing */
                 "style": "background-color: #4caf50;color:white;",
                 "raised": "raised",
-                "onClick": () => { meta64.openNode(node.uid); }
+                "onclick": () => { meta64.openNode(node.uid); }
             }, //
                 "Open");
         }
@@ -508,7 +504,7 @@ export class Render {
 
             let attrs: Object = selected ? {
                 "id": node.uid + "_sel",
-                "onClick": () => { meta64.toggleNodeSel(node.uid) },
+                "onclick": () => { meta64.toggleNodeSel(node.uid) },
                 "checked": "checked",
                 //padding is a back hack to make checkbox line up with other icons.
                 //(i will probably end up using a paper-icon-button that toggles here, instead of checkbox)
@@ -516,7 +512,7 @@ export class Render {
             } : //
                 {
                     "id": node.uid + "_sel",
-                    "onClick": () => { meta64.toggleNodeSel(node.uid) },
+                    "onclick": () => { meta64.toggleNodeSel(node.uid) },
                     "style": "margin-top: 11px;"
                 };
 
@@ -529,7 +525,7 @@ export class Render {
                     "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                     "id": "addNodeButtonId" + node.uid,
                     "raised": "raised",
-                    "onClick": () => { meta64.createSubNode(node.uid); }
+                    "onclick": () => { meta64.createSubNode(node.uid); }
                 }, "Add");
             }
 
@@ -540,7 +536,7 @@ export class Render {
                     "icon": "icons:picture-in-picture", //"icons:more-horiz",
                     "id": "insertNodeButtonId" + node.uid,
                     "raised": "raised",
-                    "onClick": () => { meta64.insertNode(node.uid); }
+                    "onclick": () => { meta64.insertNode(node.uid); }
                 }, "Ins");
             }
         }
@@ -554,7 +550,7 @@ export class Render {
                 "alt": "Edit node.",
                 "icon": "editor:mode-edit",
                 "raised": "raised",
-                "onClick": () => { meta64.runEditNode(node.uid); }
+                "onclick": () => { meta64.runEditNode(node.uid); }
             }, "Edit");
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
@@ -565,7 +561,7 @@ export class Render {
                     moveNodeUpButton = tag.button({
                         "icon": "icons:arrow-upward",
                         "raised": "raised",
-                        "onClick": () => { meta64.moveNodeUp(node.uid); }
+                        "onclick": () => { meta64.moveNodeUp(node.uid); }
                     }, "Up");
                 }
 
@@ -575,7 +571,7 @@ export class Render {
                     moveNodeDownButton = tag.button({
                         "icon": "icons:arrow-downward",
                         "raised": "raised",
-                        "onClick": () => { meta64.moveNodeDown(node.uid); }
+                        "onclick": () => { meta64.moveNodeDown(node.uid); }
                     }, "Dn");
                 }
             }
@@ -587,14 +583,12 @@ export class Render {
          * However tooltips ALWAYS cause problems. Mystery for now.
          */
         let insertNodeTooltip: string = "";
-        //not w-pack
         //			 tag("paper-tooltip", {
         //			 "for" : "insertNodeButtonId" + node.uid
         //			 }, "INSERTS a new node at the current tree position. As a sibling on this level.");
 
         let addNodeTooltip: string = "";
 
-        //not w-pack
         //			 tag("paper-tooltip", {
         //			 "for" : "addNodeButtonId" + node.uid
         //			 }, "ADDS a new node inside the current node, as a child of it.");
@@ -740,7 +734,7 @@ export class Render {
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
                 replyButton = tag.button({
                     "raised": "raised",
-                    "onClick": () => { meta64.replyToComment(data.node.uid); }//
+                    "onclick": () => { meta64.replyToComment(data.node.uid); }//
                 }, //
                     "Reply");
             }
@@ -749,7 +743,7 @@ export class Render {
                 createSubNodeButton = tag.button({
                     "icon": "icons:picture-in-picture-alt", //icons:more-vert",
                     "raised": "raised",
-                    "onClick": () => { meta64.createSubNode(uid); }
+                    "onclick": () => { meta64.createSubNode(uid); }
                 }, "Add");
             }
 
@@ -760,7 +754,7 @@ export class Render {
                 editNodeButton = tag.button({
                     "icon": "editor:mode-edit",
                     "raised": "raised",
-                    "onClick": () => { meta64.runEditNode(uid); }
+                    "onclick": () => { meta64.runEditNode(uid); }
                 }, "Edit");
             }
 
@@ -768,7 +762,6 @@ export class Render {
             let focusNode: I.NodeInfo = meta64.getHighlightedNode();
             let selected: boolean = focusNode && focusNode.uid === uid;
 
-            //not w-pack
             // var rowHeader = buildRowHeader(data.node, true, true);
 
             if (createSubNodeButton || editNodeButton || replyButton) {
@@ -777,8 +770,7 @@ export class Render {
 
             let content: string = tag.div({
                 "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
-                //"onClick": `meta64.clickOnNodeRow(this, '${uid}');`,
-                "onClick": (elm) => { meta64.clickOnNodeRow(elm, uid); },
+                "onclick": (elm) => { meta64.clickOnNodeRow(elm, uid); },
                 "id": cssId
             },//
                 buttonBar + mainNodeContent);

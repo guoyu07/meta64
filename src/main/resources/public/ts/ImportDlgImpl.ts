@@ -43,10 +43,10 @@ export default class ImportDlgImpl extends DialogBaseImpl implements ImportDlg {
         }
 
         if (highlightNode) {
-            util.json<I.ImportRequest, I.ImportResponse>("import", {
+            util.ajax<I.ImportRequest, I.ImportResponse>("import", {
                 "nodeId": highlightNode.id,
                 "sourceFileName": sourceFileName
-            }, this.importResponse, this);
+            }, this.importResponse);
         }
     }
 

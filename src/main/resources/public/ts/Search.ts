@@ -96,7 +96,7 @@ export class Search {
 
     searchFilesResponse(res: I.FileSearchResponse) {
         nav.mainOffset = 0;
-        util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": res.searchResultNodeId,
             "upLevel": null,
             "renderParentIfLeaf": null,
@@ -112,7 +112,7 @@ export class Search {
             return;
         }
 
-        util.json<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
+        util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
@@ -128,7 +128,7 @@ export class Search {
             return;
         }
 
-        util.json<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
+        util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
@@ -191,7 +191,6 @@ export class Search {
         },//
             buttonBarHtml//
             + tag.div({
-                //todo-0: oops dom IDs must START with a string. So this needs to be prefixed not suffixed here.
                 "id": "srch_content_" + uid
             }, content));
     }

@@ -40,13 +40,13 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
          * Trigger going to server at next main page refresh
          */
         meta64.treeDirty = true;
-        let thiz = this;
-        util.json<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+        
+        util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,
             "privileges": ["read", "write", "addChildren", "nodeTypeManagement"],
             "publicAppend": false
-        }, thiz.reloadFromShareWithPerson, thiz);
+        }, this.reloadFromShareWithPerson);
     }
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {

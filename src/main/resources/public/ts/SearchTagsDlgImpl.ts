@@ -54,13 +54,13 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
             return;
         }
 
-        util.json<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
+        util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": searchText,
             "sortDir": "",
             "sortField": "",
             "searchProp": searchProp
-        }, srch.searchNodesResponse, srch);
+        }, srch.searchNodesResponse);
     }
 
     init = (): void => {

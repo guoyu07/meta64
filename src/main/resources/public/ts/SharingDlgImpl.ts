@@ -31,7 +31,6 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         let width = window.innerWidth * 0.6;
         let height = window.innerHeight * 0.4;
 
-        //todo-0: refactor this ugliness to use a  single class and Tag.div()
         let internalMainContent = tag.div({
             "id": this.id("shareNodeNameDisplay")
         }) + //
@@ -54,11 +53,11 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     reload = (): void => {
         console.log("Loading node sharing info.");
 
-        util.json<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
+        util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": share.sharingNode.id,
             "includeAcl": true,
             "includeOwners": true
-        }, this.getNodePrivilegesResponse, this);
+        }, this.getNodePrivilegesResponse);
     }
 
     /*
@@ -117,7 +116,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
 
             meta64.treeDirty = true;
 
-            util.json<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+            util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
                 "nodeId": share.sharingNode.id,
                 "privileges": null,
                 "principal": null,
@@ -133,19 +132,19 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
          */
         meta64.treeDirty = true;
 
-        util.json<I.RemovePrivilegeRequest, I.RemovePrivilegeResponse>("removePrivilege", {
+        util.ajax<I.RemovePrivilegeRequest, I.RemovePrivilegeResponse>("removePrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": principal,
             "privilege": privilege
-        }, this.removePrivilegeResponse, this);
+        }, this.removePrivilegeResponse);
     }
 
     removePrivilegeResponse = (res: I.RemovePrivilegeResponse): void => {
-        util.json<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
+        util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": share.sharingNode.path,
             "includeAcl": true,
             "includeOwners": true
-        }, this.getNodePrivilegesResponse, this);
+        }, this.getNodePrivilegesResponse);
     }
 
     renderAclPrivileges = (principal: any, aclEntry: any): string => {
@@ -185,11 +184,11 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
          *
          * TODO: this additional call can be avoided as an optimization
          */
-        util.json<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+        util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": "everyone",
             "privileges": ["read"],
             "publicAppend": false
-        }, this.reload, this);
+        }, this.reload);
     }
 }

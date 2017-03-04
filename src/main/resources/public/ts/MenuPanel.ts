@@ -32,7 +32,6 @@ class MenuPanel {
         }
 
         return tag.subMenu(paperSubmenuAttrs
-            //not w-pack
             //{
             //"label": title,
             //"class": "meta64-menu-heading",
@@ -46,13 +45,12 @@ class MenuPanel {
         return tag.menu({
             "class": "menu-content sublist my-menu-section",
             "selectable": ""
-            // not w-pack
             //,
             //"multi": "multi"
         }, content);
     }
 
-    private menuItem(name: string, id: string, onClick: Function): string {
+    private menuItem(name: string, id: string, onclick: Function): string {
         let html = tag.item({
             "id": id,
             "selectable": ""
@@ -61,7 +59,7 @@ class MenuPanel {
         /* It's ok to register this onClick way ahead of even the time that the DOM element even
         gets created, so we do it here in the most obvious place to do it
         */
-        domBind.addOnClick(id, onClick);
+        domBind.addOnClick(id, onclick);
 
         return html;
     }
@@ -70,7 +68,6 @@ class MenuPanel {
 
     render(): void {
 
-        //not w-pack
         // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.
         // let pageMenuItems = //
         //     menuItem("Main", "mainPageButton", "meta64.selectTab('mainTabName');") + //
@@ -132,7 +129,6 @@ class MenuPanel {
             menuPanel.menuItem("Preferences", "accountPreferencesButton", edit.editPreferences); //
         let viewOptionsMenu = menuPanel.makeTopLevelMenu("View", viewOptionsMenuItems);
 
-        //not w-pack
         // WORK IN PROGRESS ( do not delete)
         // let fileSystemMenuItems = //
         //     menuItem("Reindex", "fileSysReindexButton", "systemfolder.reindex();") + //

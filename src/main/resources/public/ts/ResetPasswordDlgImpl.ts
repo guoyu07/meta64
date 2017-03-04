@@ -39,10 +39,10 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
         var emailAddress = this.getInputVal("emailAddress").trim();
 
         if (userName && emailAddress) {
-            util.json<I.ResetPasswordRequest, I.ResetPasswordResponse>("resetPassword", {
+            util.ajax<I.ResetPasswordRequest, I.ResetPasswordResponse>("resetPassword", {
                 "user": userName,
                 "email": emailAddress
-            }, this.resetPasswordResponse, this);
+            }, this.resetPasswordResponse);
         } else {
             util.showMessage("Oops. Try that again.");
         }

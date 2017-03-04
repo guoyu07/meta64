@@ -93,7 +93,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
             propertyName: propertyNameData,
             propertyValue: propertyValueData
         };
-        util.json<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
+        util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
     }
 
     savePropertyResponse = (res: I.SavePropertyResponse): void => {

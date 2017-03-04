@@ -57,15 +57,15 @@ class Attachment {
             }, {
                     "title": "Confirm Delete Attachment", "message": "Delete the Attachment on the Node?", "buttonText": "Yes, delete.", "yesCallback":
                     () => {
-                        util.json<I.DeleteAttachmentRequest, I.DeleteAttachmentResponse>("deleteAttachment", {
+                        util.ajax<I.DeleteAttachmentRequest, I.DeleteAttachmentResponse>("deleteAttachment", {
                             "nodeId": node.id
-                        }, attachment.deleteAttachmentResponse, null, node.uid);
+                        }, (res : I.DeleteAttachmentResponse) : void => { attachment.deleteAttachmentResponse(res, node.uid) });
                     }
                 });
         }
     }
 
-    deleteAttachmentResponse(res: I.DeleteAttachmentResponse, uid: any): void {
+    deleteAttachmentResponse(res: I.DeleteAttachmentResponse, uid: string): void {
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.

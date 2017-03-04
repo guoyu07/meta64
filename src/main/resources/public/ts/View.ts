@@ -65,7 +65,7 @@ class View {
         as a hint for the future.
         nav.mainOffset = 0;
         */
-        util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": nodeId,
             "upLevel": null,
             "renderParentIfLeaf": renderParentIfLeaf ? true : false,
@@ -112,7 +112,7 @@ class View {
     }
 
     private loadPage(goToLastPage: boolean): void {
-        util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": null,
             "renderParentIfLeaf": true,
@@ -196,7 +196,7 @@ class View {
     }
 
     showServerInfo() {
-        util.json<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {}, function(res: I.GetServerInfoResponse) {
+        util.ajax<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {}, function(res: I.GetServerInfoResponse) {
             util.showMessage(res.serverInfo);
         });
     }

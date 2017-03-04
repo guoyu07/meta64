@@ -32,7 +32,7 @@ class Prefs {
                             "yesCallback":
                             () => {
                                 user.deleteAllUserCookies();
-                                util.json<I.CloseAccountRequest, I.CloseAccountResponse>("closeAccount", {}, prefs.closeAccountResponse);
+                                util.ajax<I.CloseAccountRequest, I.CloseAccountResponse>("closeAccount", {}, prefs.closeAccountResponse);
                             }
                         });
                 }

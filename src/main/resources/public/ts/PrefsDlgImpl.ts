@@ -50,7 +50,7 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
         let showMetaDataCheckbox = util.polyElm(this.id("showMetaData"));
         meta64.showMetaData = showMetaDataCheckbox.node.checked;
 
-        util.json<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
+        util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-1: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": {
                 "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
@@ -61,7 +61,7 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
                 "exportAllowed": false,
                 "showMetaData": meta64.showMetaData
             }
-        }, this.savePreferencesResponse, this);
+        }, this.savePreferencesResponse);
     }
 
     savePreferencesResponse = (res: I.SaveUserPreferencesResponse): void => {

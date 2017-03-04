@@ -373,7 +373,7 @@ class Meta64 {
     }
 
     updateNodeInfo(node: I.NodeInfo) {
-        util.json<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
+        util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": node.id,
             "includeAcl": false,
             "includeOwners": true
@@ -551,8 +551,6 @@ class Meta64 {
 
     getSingleSelectedNode(): I.NodeInfo {
         let ret = null;
-        //todo-0: use arrow function for all functions
-        //todo-0: get rid of all old-school for loops
         util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
             // console.log("found a single Sel NodeID: " + nodeId);
             ret = meta64.uidToNodeMap[uid];
@@ -696,7 +694,6 @@ class Meta64 {
         // meta64.renderFunctionsByJcrType["meta64:filelist"] = systemfolder.renderFileListNode;
         // meta64.propOrderingFunctionsByJcrType["meta64:filelist"] = systemfolder.fileListPropOrdering;
 
-        //NOT w-pack
         // var onresize = window.onresize;
         // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
 
@@ -712,7 +709,6 @@ class Meta64 {
             }
         };
 
-        //NOT w-pack comment
         // /*
         //  * WARNING: This is called in realtime while user is resizing so always throttle back any processing so that you don't
         //  * do any actual processing in here unless you want it VERY live, because it is.
@@ -869,20 +865,20 @@ class Meta64 {
     //
 
     loadAnonPageHome(ignoreUrl): void {
-        util.json<I.AnonPageLoadRequest, I.AnonPageLoadResponse>("anonPageLoad", {
+        util.ajax<I.AnonPageLoadRequest, I.AnonPageLoadResponse>("anonPageLoad", {
             "ignoreUrl": ignoreUrl
         }, meta64.anonPageLoadResponse);
     }
 
     saveUserPreferences(): void {
-        util.json<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
+        util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": meta64.userPreferences
         });
     }
 
     openSystemFile(fileName: string) {
-        util.json<I.OpenSystemFileRequest, I.OpenSystemFileResponse>("openSystemFile", {
+        util.ajax<I.OpenSystemFileRequest, I.OpenSystemFileResponse>("openSystemFile", {
             "fileName": fileName
         });
     }

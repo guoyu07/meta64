@@ -38,7 +38,7 @@ class Share {
 
         srch.searchPageTitle = "Shared Nodes";
 
-        util.json<I.GetSharedNodesRequest, I.GetSharedNodesResponse>("getSharedNodes", {
+        util.ajax<I.GetSharedNodesRequest, I.GetSharedNodesResponse>("getSharedNodes", {
             "nodeId": focusNode.id
         }, share.findSharedNodesResponse);
     }

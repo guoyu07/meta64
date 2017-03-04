@@ -49,10 +49,10 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
 
         /* if uploading from URL */
         if (sourceUrl) {
-            util.json<I.UploadFromUrlRequest, I.UploadFromUrlResponse>("uploadFromUrl", {
+            util.ajax<I.UploadFromUrlRequest, I.UploadFromUrlResponse>("uploadFromUrl", {
                 "nodeId": attachment.uploadNode.id,
                 "sourceUrl": sourceUrl
-            }, this.uploadFromUrlResponse, this);
+            }, this.uploadFromUrlResponse);
         }
     }
 

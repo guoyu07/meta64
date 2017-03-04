@@ -9,6 +9,7 @@ import { meta64 } from "./Meta64";
 import { tag } from "./Tag";
 import { util } from "./Util";
 
+declare var Dropzone;
 declare var postTargetUrl;
 
 export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implements UploadFromFileDropzoneDlg {
@@ -20,6 +21,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     fileList: Object[] = null;
     zipQuestionAnswered: boolean = false;
     explodeZips: boolean = false;
+    dropzone : any = null;
 
     render = (): string => {
         let header = this.makeHeader("Upload File Attachment");
@@ -119,7 +121,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             }
         };
 
-        (<any>util.domElm("#" + this.id("dropzone-form-id"))).dropzone(config);
+        this.dropzone = new Dropzone("#" + this.id("dropzone-form-id"), config);
     }
 
     updateFileList = (dropzoneEvt: any): void => {

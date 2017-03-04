@@ -25,7 +25,7 @@ class Podcast {
     private pushTimer: any = null;
 
     generateRSS(): void {
-        util.json<I.GenerateRSSRequest, I.GenerateRSSResponse>("generateRSS", {
+        util.ajax<I.GenerateRSSRequest, I.GenerateRSSResponse>("generateRSS", {
         }, podcast.generateRSSResponse);
     }
 
@@ -113,7 +113,7 @@ class Podcast {
         //onclick not encoded yet (commented 1/31/2017)
         // entry += tag.button({
         //     "raised": "raised",
-        //     "onClick": "podcast.openPlayerDialog('" + node.uid + "');",
+        //     "onclick": "podcast.openPlayerDialog('" + node.uid + "');",
         //     "class": "standardButton"
         // }, //
         //     "Play");
@@ -173,7 +173,7 @@ class Podcast {
         if (podcast.node) {
             let mp3Url = podcast.getMediaPlayerUrlFromNode(podcast.node);
             if (mp3Url) {
-                util.json<I.GetPlayerInfoRequest, I.GetPlayerInfoResponse>("getPlayerInfo", {
+                util.ajax<I.GetPlayerInfoRequest, I.GetPlayerInfoResponse>("getPlayerInfo", {
                     "url": mp3Url
                 }, (res: I.GetPlayerInfoResponse) => {
                     podcast.parseAdSegmentUid(podcast.uid);
@@ -351,7 +351,7 @@ class Podcast {
     savePlayerInfo(url: string, timeOffset: number): void {
         if (meta64.isAnonUser) return;
 
-        util.json<I.SetPlayerInfoRequest, I.SetPlayerInfoResponse>("setPlayerInfo", {
+        util.ajax<I.SetPlayerInfoRequest, I.SetPlayerInfoResponse>("setPlayerInfo", {
             "url": url,
             "timeOffset": timeOffset //,
             //"nodePath": node.path

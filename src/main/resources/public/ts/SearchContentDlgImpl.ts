@@ -54,13 +54,13 @@ export default class SearchContentDlgImpl extends DialogBaseImpl implements Sear
             return;
         }
 
-        util.json<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
+        util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": searchText,
             "sortDir": "",
             "sortField": "",
             "searchProp": searchProp
-        }, this.searchNodesResponse, this);
+        }, this.searchNodesResponse);
     }
 
     searchNodesResponse = (res: I.NodeSearchResponse) => {

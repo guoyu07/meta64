@@ -186,15 +186,12 @@ class Util {
         }
     }
 
-    /* todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller, also the callbackpayload doesn't
-    need to be a parameter to this function if we using a function scope in the callback, that encloses it right ? */
-    json<RequestType, ResponseType>(postName: string, postData: RequestType, //
-        callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
-        callbackPayload?: any) {
-
-        if (callbackThis === window) {
-            console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
-        }
+    /*
+    todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller, also the callbackpayload doesn't
+    need to be a parameter to this function if we using a function scope in the callback, that encloses it right ?
+    */
+    ajax<RequestType, ResponseType>(postName: string, postData: RequestType, //
+        callback?: (response: ResponseType) => void) {
 
         let ironAjax;
         let ironRequest;
@@ -209,7 +206,6 @@ class Util {
                 console.log("JSON-POST[gen]: [" + postName + "]" + JSON.stringify(postData));
             }
 
-            //not w-pack
             /* Do not delete, research this way... */
             // let ironAjax = this.$$ ("#myIronAjax");
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
@@ -222,13 +218,11 @@ class Util {
             ironAjax.method = "POST";
             ironAjax.contentType = "application/json";
 
-            //not w-pack
             // specify any url params this way:
             // ironAjax.params='{"alt":"json", "q":"chrome"}';
 
             ironAjax.handleAs = "json"; // handle-as (is prop)
 
-            //not w-pack
             /* This not a required property */
             // ironAjax.onResponse = "util.ironAjaxResponse"; // on-response
             // (is
@@ -273,29 +267,7 @@ class Util {
                     }
 
                     if (typeof callback == "function") {
-                        /*
-                         * This is ugly because it covers all four cases based on two booleans, but it's still the
-                         * simplest way to do this. We have a callback function that may or may not specify a 'this'
-                         * and always calls with the 'reponse' param and optionally a callbackPayload param.
-                         */
-                        if (callbackPayload) {
-                            if (callbackThis) {
-                                callback.call(callbackThis, <ResponseType>ironRequest.response, callbackPayload);
-                            } else {
-                                callback(<ResponseType>ironRequest.response, callbackPayload);
-                            }
-                        }
-                        /* Can't we just let callbackPayload be undefined, and call the above callback methods
-                        and not even have this else block here at all (i.e. not even check if callbackPayload is
-                        null/undefined, but just use it, and not have this if block?)
-                        */
-                        else {
-                            if (callbackThis) {
-                                callback.call(callbackThis, <ResponseType>ironRequest.response);
-                            } else {
-                                callback(<ResponseType>ironRequest.response);
-                            }
-                        }
+                        callback(<ResponseType>ironRequest.response);
                     }
                 } catch (ex) {
                     util.logAndReThrow("Failed handling result of: " + postName, ex);
@@ -352,6 +324,172 @@ class Util {
 
         return ironRequest;
     }
+
+    /*
+    todo-0: we can eliminate the callbackThis param by just using "func.bind(whateverThis)" in the caller, also the callbackpayload doesn't
+    need to be a parameter to this function if we using a function scope in the callback, that encloses it right ?
+    */
+    // json<RequestType, ResponseType>(postName: string, postData: RequestType, //
+    //     callback?: (response: ResponseType, payload?: any) => any, callbackThis?: any, //
+    //     callbackPayload?: any) {
+    //
+    //     if (callbackThis === window) {
+    //         console.log("PROBABLE BUG: json call for " + postName + " used global 'window' as 'this', which is almost never going to be correct.");
+    //     }
+    //
+    //     let ironAjax;
+    //     let ironRequest;
+    //
+    //     try {
+    //         if (util.offline) {
+    //             console.log("offline: ignoring call for " + postName);
+    //             return;
+    //         }
+    //
+    //         if (util.logAjax) {
+    //             console.log("JSON-POST[gen]: [" + postName + "]" + JSON.stringify(postData));
+    //         }
+    //
+    //         /* Do not delete, research this way... */
+    //         // let ironAjax = this.$$ ("#myIronAjax");
+    //         //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
+    //
+    //         ironAjax = util.polyElmNode("ironAjax");
+    //
+    //         ironAjax.url = postTargetUrl + postName;
+    //         ironAjax.verbose = true;
+    //         ironAjax.body = JSON.stringify(postData);
+    //         ironAjax.method = "POST";
+    //         ironAjax.contentType = "application/json";
+    //
+    //         // specify any url params this way:
+    //         // ironAjax.params='{"alt":"json", "q":"chrome"}';
+    //
+    //         ironAjax.handleAs = "json"; // handle-as (is prop)
+    //
+    //         /* This not a required property */
+    //         // ironAjax.onResponse = "util.ironAjaxResponse"; // on-response
+    //         // (is
+    //         // prop)
+    //         ironAjax.debounceDuration = "300"; // debounce-duration (is
+    //         // prop)
+    //
+    //         util._ajaxCounter++;
+    //         ironRequest = ironAjax.generateRequest();
+    //     } catch (ex) {
+    //         util.logAndReThrow("Failed starting request: " + postName, ex);
+    //     }
+    //
+    //     /**
+    //      * Notes
+    //      * <p>
+    //      * If using then function: promise.then(successFunction, failFunction);
+    //      * <p>
+    //      * I think the way these parameters get passed into done/fail functions, is because there are resolve/reject
+    //      * methods getting called with the parameters. Basically the parameters passed to 'resolve' get distributed
+    //      * to all the waiting methods just like as if they were subscribing in a pub/sub model. So the 'promise'
+    //      * pattern is sort of a pub/sub model in a way
+    //      * <p>
+    //      * The reason to return a 'promise.promise()' method is so no other code can call resolve/reject but can
+    //      * only react to a done/fail/complete.
+    //      * <p>
+    //      * deferred.when(promise1, promise2) creates a new promise that becomes 'resolved' only when all promises
+    //      * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
+    //      * failing, it fails this "ANDed" one also.
+    //      */
+    //     ironRequest.completes.then(//
+    //
+    //         // Handle Success
+    //         () => {
+    //             try {
+    //                 util._ajaxCounter--;
+    //                 util.progressInterval();
+    //
+    //                 if (util.logAjax) {
+    //                     console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
+    //                         + JSON.stringify(ironRequest.response));
+    //                 }
+    //
+    //                 if (typeof callback == "function") {
+    //                     /*
+    //                      * This is ugly because it covers all four cases based on two booleans, but it's still the
+    //                      * simplest way to do this. We have a callback function that may or may not specify a 'this'
+    //                      * and always calls with the 'reponse' param and optionally a callbackPayload param.
+    //                      */
+    //                     if (callbackPayload) {
+    //                         if (callbackThis) {
+    //                             callback.call(callbackThis, <ResponseType>ironRequest.response, callbackPayload);
+    //                         } else {
+    //                             callback(<ResponseType>ironRequest.response, callbackPayload);
+    //                         }
+    //                     }
+    //                     /* Can't we just let callbackPayload be undefined, and call the above callback methods
+    //                     and not even have this else block here at all (i.e. not even check if callbackPayload is
+    //                     null/undefined, but just use it, and not have this if block?)
+    //                     */
+    //                     else {
+    //                         if (callbackThis) {
+    //                             callback.call(callbackThis, <ResponseType>ironRequest.response);
+    //                         } else {
+    //                             callback(<ResponseType>ironRequest.response);
+    //                         }
+    //                     }
+    //                 }
+    //             } catch (ex) {
+    //                 util.logAndReThrow("Failed handling result of: " + postName, ex);
+    //             }
+    //
+    //         },
+    //         // Handle Fail
+    //         () => {
+    //             try {
+    //                 util._ajaxCounter--;
+    //                 util.progressInterval();
+    //                 console.log("Error in util.json");
+    //
+    //                 if (ironRequest.status == "403") {
+    //                     console.log("Not logged in detected in util.");
+    //                     util.offline = true;
+    //
+    //                     if (!util.timeoutMessageShown) {
+    //                         util.timeoutMessageShown = true;
+    //                         util.showMessage("Session timed out. Page will refresh.");
+    //                     }
+    //
+    //                     window.onbeforeunload = null;
+    //                     window.location.href = window.location.origin;
+    //                     return;
+    //                 }
+    //
+    //                 let msg: string = "Server request failed.\n\n";
+    //
+    //                 /* catch block should fail silently */
+    //                 try {
+    //                     msg += "Status: " + ironRequest.statusText + "\n";
+    //                     msg += "Code: " + ironRequest.status + "\n";
+    //                 } catch (ex) {
+    //                 }
+    //
+    //                 //NOT webpack
+    //                 /*
+    //                  * this catch block should also fail silently
+    //                  *
+    //                  * This was showing "classCastException" when I threw a regular "Exception" from server so for now
+    //                  * I'm just turning this off since its' not displaying the correct message.
+    //                  */
+    //                 // try {
+    //                 // msg += "Response: " +
+    //                 // JSON.parse(xhr.responseText).exception;
+    //                 // } catch (ex) {
+    //                 // }
+    //                 util.showMessage(msg);
+    //             } catch (ex) {
+    //                 util.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
+    //             }
+    //         });
+    //
+    //     return ironRequest;
+    // }
 
     logAndThrow(message: string) {
         let stack = "[stack, not supported]";
@@ -720,8 +858,6 @@ class Util {
             return;
         }
 
-        //todo-0: use specific element for parameter to this class and get rid of <any> cast.
-        // console.log("Enabling element: " + elmId);
         (<any>elm).disabled = !enable;
     }
 
@@ -765,8 +901,6 @@ class Util {
      * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
-     *
-     * todo-0: verify all calls to this are passing STRING, or else using the *ToElm function below instead.
      */
     changeOrAddClass(elmSel: string, oldClass: string, newClass: string) {
         let elm: HTMLElement = util.domElm(elmSel);
@@ -780,7 +914,6 @@ class Util {
     }
 
     removeClassFromElm(el: any, clazz: string): void {
-        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
         if (el.classList)
             el.classList.remove(clazz);
         else
@@ -793,7 +926,6 @@ class Util {
     }
 
     addClassToElm(el: any, clazz: string): void {
-        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
         if (el.classList)
             el.classList.add(clazz);
         else
@@ -801,7 +933,6 @@ class Util {
     }
 
     toggleClassFromElm(el: any, clazz: string): void {
-        /* todo-0: I have not yet fully vetted this code. NO certainty that it works */
         if (el.classList) {
             el.classList.toggle(clazz);
         } else {

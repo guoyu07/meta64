@@ -279,7 +279,7 @@ class Edit {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
+            util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[nodeAbove]"
@@ -298,7 +298,7 @@ class Edit {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
+            util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": "[nodeBelow]",
                 "siblingId": node.name
@@ -317,7 +317,7 @@ class Edit {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
+            util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeId,
                 "nodeId": node.name,
                 "siblingId": "[topNode]"
@@ -336,7 +336,7 @@ class Edit {
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
-            util.json<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
+            util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "parentNodeId": meta64.currentNodeData.node.id,
                 "nodeId": node.name,
                 "siblingId": null
@@ -382,7 +382,7 @@ class Edit {
         }
         edit.editingUnsavedNode = false;
 
-        util.json<I.InitNodeEditRequest, I.InitNodeEditResponse>("initNodeEdit", {
+        util.ajax<I.InitNodeEditRequest, I.InitNodeEditResponse>("initNodeEdit", {
             "nodeId": node.id
         }, edit.initNodeEditResponse);
     }
@@ -474,9 +474,9 @@ class Edit {
                 () => {
                     let postDeleteSelNode: I.NodeInfo = edit.getBestPostDeleteSelNode();
 
-                    util.json<I.DeleteNodesRequest, I.DeleteNodesResponse>("deleteNodes", {
+                    util.ajax<I.DeleteNodesRequest, I.DeleteNodesResponse>("deleteNodes", {
                         "nodeIds": selNodesArray
-                    }, edit.deleteNodesResponse, null, { "postDeleteSelNode": postDeleteSelNode });
+                    }, (res) => { edit.deleteNodesResponse(res, { "postDeleteSelNode": postDeleteSelNode }); });
                 }
             });
     }
@@ -552,7 +552,7 @@ class Edit {
                      * page. Later on we can get more specific about allowing precise destination location for moved
                      * nodes.
                      */
-                    util.json<I.MoveNodesRequest, I.MoveNodesResponse>("moveNodes", {
+                    util.ajax<I.MoveNodesRequest, I.MoveNodesResponse>("moveNodes", {
                         "targetNodeId": highlightNode.id,
                         "targetChildId": highlightNode != null ? highlightNode.id : null,
                         "nodeIds": edit.nodesToMove
@@ -574,7 +574,7 @@ class Edit {
                     if (!node) {
                         util.showMessage("No node is selected.");
                     } else {
-                        util.json<I.InsertBookRequest, I.InsertBookResponse>("insertBook", {
+                        util.ajax<I.InsertBookRequest, I.InsertBookResponse>("insertBook", {
                             "nodeId": node.id,
                             "bookName": "War and Peace",
                             "truncated": user.isTestUserAccount()

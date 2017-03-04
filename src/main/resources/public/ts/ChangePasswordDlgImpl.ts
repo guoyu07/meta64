@@ -47,10 +47,10 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
         this.pwd = this.getInputVal("changePassword1").trim();
 
         if (this.pwd && this.pwd.length >= 4) {
-            util.json<I.ChangePasswordRequest, I.ChangePasswordResponse>("changePassword", {
+            util.ajax<I.ChangePasswordRequest, I.ChangePasswordResponse>("changePassword", {
                 "newPassword": this.pwd,
                 "passCode": this.passCode
-            }, this.changePasswordResponse, this);
+            }, this.changePasswordResponse);
         } else {
             util.showMessage("Invalid password(s).");
         }

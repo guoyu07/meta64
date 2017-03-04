@@ -43,10 +43,10 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
         }
 
         if (highlightNode) {
-            util.json<I.ExportRequest, I.ExportResponse>("exportToXml", {
+            util.ajax<I.ExportRequest, I.ExportResponse>("exportToXml", {
                 "nodeId": highlightNode.id,
                 "targetFileName": targetFileName
-            }, this.exportResponse, this);
+            }, this.exportResponse);
         }
     }
 

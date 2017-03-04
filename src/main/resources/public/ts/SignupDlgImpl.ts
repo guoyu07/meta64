@@ -65,12 +65,12 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
             return;
         }
 
-        util.json<I.SignupRequest, I.SignupResponse>("signup", {
+        util.ajax<I.SignupRequest, I.SignupResponse>("signup", {
             "userName": userName,
             "password": password,
             "email": email,
             "captcha": captcha
-        }, this.signupResponse, this);
+        }, this.signupResponse);
     }
 
     signupResponse = (res: I.SignupResponse): void => {

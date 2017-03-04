@@ -11,7 +11,12 @@ import { tag } from "./Tag";
 
 declare var postTargetUrl;
 
-/* We could delete this file, but i want to keep it around a bit longer even though we now use Dropzone */
+/*
+NOTE: Obsolete deprecated file. Not being used.
+
+We could delete this file, but i want to keep it around a bit longer even though we now use Dropzone
+
+*/
 export default class UploadFromFileDlgImpl extends DialogBaseImpl implements UploadFromFileDlg {
 
     constructor() {
@@ -39,9 +44,6 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
         /*
          * For now I just hard-code in 7 edit fields, but we could theoretically make this dynamic so user can click 'add'
          * button and add new ones one at a time. Just not taking the time to do that yet.
-         *
-         * todo-0: This is ugly to pre-create these input fields. Need to make them able to add dynamically.
-         * (Will do this modification once I get the drag-n-drop stuff working first)
          */
         for (let i = 0; i < 7; i++) {
             let input = tag.input({
@@ -57,10 +59,6 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
         }
 
         formFields += tag.input({
-            //todo-0: MAJOR EPIPHANY of design!!!!!!! as follows
-            //I need to allow a property named "_id", and have ALL tags generate using Tags.ts-type wrapper in a helper function, and when it detects that
-            //it should replace it with "id=this.id(myid)" so each render function needs an optional COMPONENT that can be specified which is defined to be
-            //any gui-component that implements a this.id()
             "id": this.id("uploadFormNodeId"),
             "type": "hidden",
             "name": "nodeId"
@@ -106,7 +104,7 @@ export default class UploadFromFileDlgImpl extends DialogBaseImpl implements Upl
 
     uploadFileNow = (): void => {
         throw "UploadFromFileDlgImpl was never refactored after jquery  removal and is not being used";
-        // //todo-0: most of my functions are not defined like this, but apparently this way of doing it,
+        // most of my functions are not defined like this, but apparently this way of doing it,
         // //captures 'this' without using bind(this) on the funciton???? I say that becasue the code does work right?
         // let uploadFunc = (explodeZips) => {
         //     /* Upload form has hidden input element for nodeId parameter */

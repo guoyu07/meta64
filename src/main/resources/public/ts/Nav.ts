@@ -73,7 +73,7 @@ class Nav {
 
     openMainMenuHelp(): void {
         nav.mainOffset = 0;
-        util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/meta64/public/help",
             "upLevel": null,
             "renderParentIfLeaf": null,
@@ -84,7 +84,7 @@ class Nav {
 
     openRssFeedsNode(): void {
         nav.mainOffset = 0;
-        util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/rss/feeds",
             "upLevel": null,
             "renderParentIfLeaf": null,
@@ -99,7 +99,7 @@ class Nav {
         this is lower priority for now, so i'm not using it yet */
         meta64.expandedAbbrevNodeIds[nodeId] = true;
 
-        util.json<I.ExpandAbbreviatedNodeRequest, I.ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
+        util.ajax<I.ExpandAbbreviatedNodeRequest, I.ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
             "nodeId": nodeId
         }, nav.expandAbbreviatedNodeResponse);
     }
@@ -144,7 +144,7 @@ class Nav {
         remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
         drilled down from */
         nav.mainOffset = 0;
-        var ironRes = util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+        var ironRes = util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": 1,
             "renderParentIfLeaf": false,
@@ -271,7 +271,7 @@ class Nav {
             // window.location.href = window.location.origin;
         } else {
             nav.mainOffset = 0;
-            util.json<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+            util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.homeNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null,

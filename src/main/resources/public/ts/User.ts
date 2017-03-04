@@ -121,7 +121,7 @@ class User {
         if (!callUsr) {
             meta64.loadAnonPageHome(false);
         } else {
-            util.json<I.LoginRequest, I.LoginResponse>("login", {
+            util.ajax<I.LoginRequest, I.LoginResponse>("login", {
                 "userName": callUsr,
                 "password": callPwd,
                 "tzOffset": new Date().getTimezoneOffset(),
@@ -148,12 +148,12 @@ class User {
             util.setCookie(cnst.COOKIE_LOGIN_STATE, "0");
         }
 
-        util.json<I.LogoutRequest, I.LogoutResponse>("logout", {}, user.logoutResponse);
+        util.ajax<I.LogoutRequest, I.LogoutResponse>("logout", {}, user.logoutResponse);
     }
 
 
     login(loginDlg, usr, pwd) {
-        util.json<I.LoginRequest, I.LoginResponse>("login", {
+        util.ajax<I.LoginRequest, I.LoginResponse>("login", {
             "userName": usr,
             "password": pwd,
             "tzOffset": new Date().getTimezoneOffset(),

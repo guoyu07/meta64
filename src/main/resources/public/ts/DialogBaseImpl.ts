@@ -35,7 +35,7 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     constructor(protected domId: string) {
         this.data = {};
-        this.data.guid = ++Comp.guid;
+        this.data.guid = Comp.nextGuid();
 
         /*
          * We register 'this' so we can do meta64.getObjectByGuid in onClick methods

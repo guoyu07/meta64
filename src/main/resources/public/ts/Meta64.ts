@@ -687,7 +687,7 @@ class Meta64 {
         meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = podcast.propOrderingFeedNode;
         meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = podcast.propOrderingItemNode;
 
-        //SystemFolder and File handling stuff is disabled for now (todo-0)
+        // SystemFolder and File handling stuff is disabled for now (todo-0)
         // meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
         // meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
         //
@@ -872,7 +872,6 @@ class Meta64 {
 
     saveUserPreferences(): void {
         util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
-            //todo-0: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": meta64.userPreferences
         });
     }

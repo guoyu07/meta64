@@ -185,8 +185,8 @@ export class Render {
      * This is the function that renders each node in the main window. The rendering in here is very central to the
      * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
      *
-     * todo-0: Rather than having this node renderer itself be responsible for rendering all the different types
-     * of nodes, need a more pluggable design, where rendeing of different things is deletaged to some
+     * todo-1: Rather than having this node renderer itself be responsible for rendering all the different types
+     * of nodes, need a more pluggable design, where rendeing of different things is delegated to some
      * appropriate object/service
      */
     renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
@@ -411,7 +411,6 @@ export class Render {
         let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
         let bkgImgStyle: string = "";
         if (bkgImg) {
-            //todo-0: as I was converting some strings to backtick i noticed this URL missing the quotes around the string. Is this a bug?
             bkgImgStyle = `background-image: url(${bkgImg});`;
         }
         return bkgImgStyle;
@@ -1009,7 +1008,7 @@ export class Render {
 
             /* If there's no ID specified then generate one */
             if (!(<any>attributes).id) {
-                (<any>attributes).id = "genId_" + (++Comp.guid);
+                (<any>attributes).id = "genId_" + Comp.nextGuid();
             }
 
             ret += " ";
@@ -1094,8 +1093,6 @@ export class Render {
         });
     }
 
-    //todo-0: based on latest architecture is MAY be possible to always fully auto-generate DOM ids, rather than ever requiring developer
-    //to specify the dom id, and risk it not being unique AND also it is just unnecesary hassle.
     makeButton(text: string, id: string, callback: Function): string {
         let attribs = {
             "raised": "raised",

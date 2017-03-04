@@ -4,9 +4,8 @@ import { util } from "../../Util";
 
 export abstract class Comp {
 
-    //todo-0: make guid private and make a nextGuid() function for getting a value
-    static guid: number = 0;
-    
+    private static guid: number = 0;
+
     static idToCompMap: { [key: string]: Comp } = {};
     attribs: Object;
     children: Comp[];
@@ -14,11 +13,15 @@ export abstract class Comp {
     constructor(attribs: Object) {
         this.attribs = attribs || {};
         this.children = [];
-        let id = "Comp_" + (++Comp.guid);
+        let id = "Comp_" + Comp.nextGuid();
         (<any>this.attribs).id = id;
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup
         Comp.idToCompMap[id] = this;
+    }
+
+    static nextGuid(): number {
+        return ++Comp.guid;
     }
 
     static findById(id: string): Comp {

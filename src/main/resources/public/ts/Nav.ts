@@ -19,11 +19,11 @@ class Nav {
     _UID_ROWID_SUFFIX: string = "_row";
     _UID_ROWID_PREFIX: string = "row_";
 
-    /* todo-0: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
+    /* todo-1: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
     mainOffset: number = 0;
     endReached: boolean = true;
 
-    /* todo-0: need to have this value passed from server rather than coded in TypeScript */
+    /* todo-1: need to have this value passed from server rather than coded in TypeScript */
     ROWS_PER_PAGE: number = 25;
 
     search(): void {
@@ -140,7 +140,7 @@ class Nav {
             return;
         }
 
-        /* todo-0: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
+        /* todo-1: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
         remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
         drilled down from */
         nav.mainOffset = 0;

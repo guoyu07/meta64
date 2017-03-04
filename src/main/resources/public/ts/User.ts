@@ -32,7 +32,7 @@ class User {
     setTitleUsingLoginResponse(res): void {
         var title = "M64";
 
-        /* todo-0: If users go with very long usernames this is gonna be ugly */
+        /* todo-1: If users go with very long usernames this is gonna be ugly */
         if (!meta64.isAnonUser) {
             title += ":" + res.userName;
         }

@@ -149,7 +149,7 @@ class View {
             else {
                 //sets vertical top position of scrollbar to zero (top)
                 util.domElm("#mainContainer").scrollTop = 0;
-                //todo-0: removed mainPaperTabs from visibility, but what code should go here now?
+                //todo-1: removed mainPaperTabs from visibility, but what code should go here now?
                 // elm = util.polyElm("mainPaperTabs");
                 // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                 //     elm.node.scrollIntoView();
@@ -164,7 +164,7 @@ class View {
 
         util.domElm("#mainContainer").scrollTop = 0;
 
-        //todo-0: not using mainPaperTabs any longer so shw should go here now ?
+        //todo-1: not using mainPaperTabs any longer so shw should go here now ?
         setTimeout(function() {
             if (view.scrollToSelNodePending)
                 return;

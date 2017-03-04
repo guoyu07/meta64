@@ -216,7 +216,7 @@ class Podcast {
 
     /* convert from fomrat "minutes:seconts" to absolute number of seconds
     *
-    * todo-0: make this accept just seconds, or min:sec, or hour:min:sec, and be able to
+    * todo-1: make this accept just seconds, or min:sec, or hour:min:sec, and be able to
     * parse any of them correctly.
     */
     private convertToSeconds(timeVal: string) {
@@ -283,14 +283,13 @@ class Podcast {
         }
     }
 
-    /* todo-0: for production, boost this up to one minute */
     pushTimerFunction(): void {
         //console.log("pushTimer");
         /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
         but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
         contact the server during this timer to update the time on the server AND keep session from timing out
 
-        todo-0: would everything work if 'player' WAS the jquery object always?
+        todo-1: would everything work if 'player' WAS the jquery object always?
         */
         if (podcast.player && !podcast.player.paused) {
             /* this safety check to be sure no hidden audio can still be playing should no longer be needed

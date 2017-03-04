@@ -72,6 +72,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.propEntries = new Array<I.PropEntry>();
 
         this.header = new Header("Edit Node");
+        this.getComponent().addChild(this.header);
+        
         this.help = new Help("");
         this.propertyEditFieldContainer = new Div("", {
             // todo-1: create CSS class for this.
@@ -89,8 +91,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             this.splitContentButton = new Button("Split", this.splitContent),
             this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
             this.cancelButton = new Button("Cancel", this.cancelEdit)]);
-
-        this.getComponent().addChild(this.header);
 
         if (cnst.SHOW_PATH_IN_DLGS) {
             this.getComponent().addChild(this.pathDisplay);

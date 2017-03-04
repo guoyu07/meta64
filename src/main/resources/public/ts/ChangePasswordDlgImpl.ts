@@ -7,15 +7,47 @@ import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
 import { util } from "./Util";
 import * as I from "./Interfaces";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { Help } from "./widget/Help";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
 
 export default class ChangePasswordDlgImpl extends DialogBaseImpl implements ChangePasswordDlg {
 
+    //GUI Component members
+    //---------------------
+    header: Header;
+    passwordField: PasswordTextField;
+    message: Help;
+    closeButton: Button;
+    changePasswordButton: Button;
+    buttonBar: ButtonBar;
+
+    //Non-GUI members
+    //---------------
     pwd: string;
     private passCode: string;
 
     constructor(args: Object) {
         super("ChangePasswordDlg");
         this.passCode = (<any>args).passCode;
+
+        this.buildGUI();
+    }
+
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+
+            this.header = new Header(this.passCode ? "Password Reset" : "Change Password"),
+            this.message = new Help("Enter your new password below..."),
+            this.passwordField = new PasswordTextField("changePassword1", "New Password"),
+
+            this.buttonBar = new ButtonBar([
+                this.changePasswordButton = new Button("Change Password", this.changePassword, null, true, this),
+                this.closeButton = new Button("Close", null, null, true, this)
+            ])
+        ]);
     }
 
     /*
@@ -26,25 +58,11 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
      * user.
      */
     render = (): string => {
-
-        let header = this.makeHeader(this.passCode ? "Password Reset" : "Change Password");
-
-        let message = render.tag("p", {
-
-        }, "Enter your new password below...");
-
-        let formControls = this.makePasswordField("New Password", "changePassword1");
-
-        let changePasswordButton = this.makeCloseButton("Change Password", "changePasswordActionButton",
-            this.changePassword.bind(this));
-        let backButton = this.makeCloseButton("Close", "cancelChangePasswordButton");
-
-        let buttonBar = render.centeredButtonBar(changePasswordButton + backButton);
-        return header + message + formControls + buttonBar;
+        return this.getComponent().render();
     }
 
     changePassword = (): void => {
-        this.pwd = this.getInputVal("changePassword1").trim();
+        this.pwd = this.passwordField.getValue();
 
         if (this.pwd && this.pwd.length >= 4) {
             util.ajax<I.ChangePasswordRequest, I.ChangePasswordResponse>("changePassword", {
@@ -59,20 +77,20 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     changePasswordResponse = (res: I.ChangePasswordResponse) => {
         if (util.checkSuccess("Change password", res)) {
 
+            //todo-0: oops msg got dropped from this message dialog!!!
             let msg = "Password changed successfully.";
 
             if (this.passCode) {
-                msg += "<p>You may now login as <b>" + res.user
-                    + "</b> with your new password.";
+                msg += `<p>You may now login as <b>${res.user}</b> with your new password.`;
             }
 
-            let thiz = this;
             Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
                 dlg.open();
             }
                 , {
+                    "message" : msg,
                     "title": "Password Change", callback: () => {
-                        if (thiz.passCode) {
+                        if (this.passCode) {
                             //this login call DOES work, but the reason we don't do this is because the URL still has the passCode on it and we
                             //want to direct the user to a url without that.
                             //user.login(null, res.user, thiz.pwd);
@@ -85,6 +103,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     }
 
     init = (): void => {
-        this.focus("changePassword1");
+        this.passwordField.focus();
     }
 }

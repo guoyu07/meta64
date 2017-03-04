@@ -28,7 +28,11 @@ export abstract class Comp {
         return Comp.idToCompMap[id];
     }
 
-    getId(): string {
+    removeAllChildren = () : void => {
+       this.children = [];
+    }
+
+    getId = (): string => {
         return (<any>this.attribs).id;
     }
 
@@ -36,40 +40,40 @@ export abstract class Comp {
         return <HTMLElement>document.querySelector("#" + this.getId());
     }
 
-    setVisible(visible: boolean) {
+    setVisible = (visible: boolean) => {
         let elm = this.getElement();
         if (elm) {
             util.setElmDisplay(elm, visible);
         }
     }
 
-    renderToDom(): void {
+    renderToDom = (): void => {
         let elm = this.getElement();
         if (elm) {
             elm.innerHTML = this.render();
         }
     }
 
-    setInnerHTML(html: string) {
+    setInnerHTML = (html: string) => {
         let elm = this.getElement();
         if (elm) {
             elm.innerHTML = html;
         }
     }
 
-    addChild(comp: Comp): void {
+    addChild = (comp: Comp): void => {
         this.children.push(comp);
     }
 
-    addChildren(comps: Comp[]): void {
+    addChildren = (comps: Comp[]): void => {
         this.children.push.apply(this.children, comps);
     }
 
-    setChildren(comps: Comp[]) {
+    setChildren = (comps: Comp[]) => {
         this.children = comps;
     }
 
-    renderChildren(): string {
+    renderChildren = (): string => {
         let html = "";
         util.forEachArrElm(this.children, function(child, idx) {
             html += child.render();
@@ -77,7 +81,7 @@ export abstract class Comp {
         return html;
     }
 
-    render(): string {
+    render = (): string => {
         return this.renderChildren();
     }
 }

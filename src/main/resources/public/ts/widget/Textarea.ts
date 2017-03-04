@@ -10,7 +10,7 @@ export class Textarea extends Comp {
         super(attribs);
     }
 
-    render(): string {
+    render = (): string => {
         return tag.textarea(this.attribs);
     }
 }

@@ -36,7 +36,7 @@ export class Button extends Comp {
         };
     }
 
-    render(): string {
+    render = (): string => {
         return tag.button(this.attribs, this.text);
     }
 }

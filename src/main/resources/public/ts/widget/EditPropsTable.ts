@@ -13,7 +13,7 @@ export class EditPropsTable extends Comp {
     }
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
-    render(): string {
+    render = (): string => {
         return tag.div(this.attribs, this.renderChildren());
     }
 }

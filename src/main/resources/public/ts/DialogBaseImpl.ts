@@ -30,20 +30,13 @@ export abstract class DialogBaseImpl implements DialogBase {
     guid: string;
 
     //Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
-    //containment rather than composition, and letting content be the root element for the GUI of the dialog.
+    //containment rather than composition, and letting this 'content' be the actual root element for the GUI of the dialog,
+    //rather than haing this dialog itself be an instenace of Comp.
     content: Div = new Div();
 
     constructor(protected domId: string) {
         this.data = {};
         this.data.guid = Comp.nextGuid();
-
-        /*
-         * We register 'this' so we can do meta64.getObjectByGuid in onClick methods
-         * on the dialog and be able to have 'this' available to the functions that are encoded in onClick methods
-         * as strings.
-         */
-        // meta64.registerDataObject(this);
-        // meta64.registerDataObject(this.data);
     }
 
     getComponent(): Comp {

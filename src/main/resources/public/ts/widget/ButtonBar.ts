@@ -14,7 +14,7 @@ export class ButtonBar extends Comp {
         }
     }
 
-    render(): string {
+    render = (): string => {
         return tag.div(this.attribs, this.renderChildren());
     }
 }

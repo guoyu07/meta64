@@ -24,9 +24,9 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     render = (): string => {
         let header = this.makeHeader("Create New Node");
 
-        let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild.bind(this), true, 1000);
-        let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild.bind(this));
-        let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline.bind(this));
+        let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, true, 1000);
+        let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild);
+        let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline);
         let backButton = this.makeCloseButton("Cancel", "cancelButton");
         let buttonBar = render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
 
@@ -50,7 +50,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         return centeredHeader + mainContent + buttonBar;
     }
 
-    makeListItem(val: string, typeName: string, typeIdx: number, initiallySelected: boolean): string {
+    makeListItem = (val: string, typeName: string, typeIdx: number, initiallySelected: boolean): string => {
         let payload: Object = {
             "typeName": typeName,
             "typeIdx": typeIdx

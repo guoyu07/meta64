@@ -10,7 +10,7 @@ export class Checkbox extends Comp {
         super(null);
     }
 
-    render(): string {
+    render = (): string => {
         return tag.checkbox(this.attribs);
     }
 }

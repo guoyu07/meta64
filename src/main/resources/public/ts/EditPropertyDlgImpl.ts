@@ -3,93 +3,74 @@ console.log("EditPropertyDlgImpl.ts");
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { EditPropertyDlg } from "./EditPropertyDlg";
 import { cnst } from "./Constants";
-import { render } from "./Render";
 import { view } from "./View";
 import { util } from "./Util";
 import { edit } from "./Edit";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
-import { tag } from "./Tag";
 import { EditNodeDlg } from "./EditNodeDlg";
+import { Header } from "./widget/Header";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextContent } from "./widget/TextContent";
+import { Div } from "./widget/Div";
+import { Textarea } from "./widget/Textarea";
 
 /*
  * Property Editor Dialog (Edits Node Properties)
- *
- NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
- new architecture)
  */
 export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditPropertyDlg {
+
+    editPropertyPathDisplay: TextContent;
+    propertyNameTextarea : Textarea;
+    propertyValTextarea : Textarea;
 
     private editNodeDlg: EditNodeDlg;
 
     constructor(args: any) {
         super("EditPropertyDlg");
         this.editNodeDlg = args.editNodeDlg;
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Edit Node Property"),
+            cnst.SHOW_PATH_IN_DLGS ?
+                this.editPropertyPathDisplay = new TextContent(null, false, {
+                    "class": "path-display-in-editor"
+                }) : null,
+            new Div(null, null, [
+                this.propertyNameTextarea = new Textarea({
+                    "placeholder": "Enter property name",
+                    "label": "Name"
+                }),
+                this.propertyValTextarea = new Textarea({
+                    "placeholder": "Enter property text",
+                    "label": "Value"
+                })
+            ]),
+
+            new ButtonBar([
+                new Button("Save", this.saveProperty, null, true, this),
+                new Button("Cancel", null, null, true, this)
+            ])
+        ]);
+    }
+
     render = (): string => {
-        var header = this.makeHeader("Edit Node Property");
-
-        var savePropertyButton = this.makeCloseButton("Save", "savePropertyButton", this.saveProperty);
-        var cancelEditButton = this.makeCloseButton("Cancel", "editPropertyPgCloseButton");
-
-        var buttonBar = render.centeredButtonBar(savePropertyButton + cancelEditButton);
-
-        var internalMainContent = "";
-
-        if (cnst.SHOW_PATH_IN_DLGS) {
-            internalMainContent += tag.div({
-                "id": this.id("editPropertyPathDisplay"),
-                "class": "path-display-in-editor"
-            });
-        }
-
-        internalMainContent += tag.div({
-            "id": this.id("addPropertyFieldContainer")
-        });
-
-        return header + internalMainContent + buttonBar;
+        return this.getComponent().render();
     }
 
     populatePropertyEdit = (): void => {
-        var field = '';
-
-        /* Property Name Field */
-        {
-            var fieldPropNameId = "addPropertyNameTextContent";
-
-            field += tag.textarea({
-                "name": fieldPropNameId,
-                "id": this.id(fieldPropNameId),
-                "placeholder": "Enter property name",
-                "label": "Name"
-            });
-        }
-
-        /* Property Value Field */
-        {
-            var fieldPropValueId = "addPropertyValueTextContent";
-
-            field += tag.textarea({
-                "name": fieldPropValueId,
-                "id": this.id(fieldPropValueId),
-                "placeholder": "Enter property text",
-                "label": "Value"
-            });
-        }
-
         /* display the node path at the top of the edit page */
-        view.initEditPathDisplayById(this.id("editPropertyPathDisplay"));
-
-        util.setHtml(this.id("addPropertyFieldContainer"), field);
+        view.initEditPathDisplayById(this.editPropertyPathDisplay.getId());
     }
 
     saveProperty = (): void => {
-        var propertyNameData = util.getInputVal(this.id("addPropertyNameTextContent"));
-        var propertyValueData = util.getInputVal(this.id("addPropertyValueTextContent"));
+        //todo-1: how bout some validation here ?
+        var propertyNameData = this.propertyNameTextarea.getValue();
+        var propertyValueData = this.propertyValTextarea.getValue();
 
         var postData = {
             nodeId: edit.editNode.id,
@@ -105,9 +86,6 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
         edit.editNode.properties.push(res.propertySaved);
         meta64.treeDirty = true;
 
-        // if (this.editNodeDlg.domId != "EditNodeDlg") {
-        //     console.log("error: incorrect object for EditNodeDlg");
-        // }
         this.editNodeDlg.populateEditNodePg();
     }
 

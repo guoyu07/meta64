@@ -10,6 +10,14 @@ export class Textarea extends Comp {
         super(attribs);
     }
 
+    getValue = (): string => {
+        let elm = this.getElement();
+        if (elm) {
+            return (<any>elm).value.trim();
+        }
+        return null;
+    }
+
     render = (): string => {
         return tag.textarea(this.attribs);
     }

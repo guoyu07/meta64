@@ -30,7 +30,7 @@ export class Tag {
     }
 
     div(attr?: Object, content?: string): string {
-        return render.tag("div", attr, content, true);
+        return render.tag("div", attr, content || "", true);
     }
 
     h2(attr?: Object, content?: string): string {

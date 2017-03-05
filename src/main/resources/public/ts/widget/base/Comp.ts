@@ -10,6 +10,8 @@ export abstract class Comp {
 
     static idToCompMap: { [key: string]: Comp } = {};
     attribs: Object;
+
+    /* Note: NULL elements are allowed in this array and simply don't render anything, and are required to be tolerated and ignored */
     children: Comp[];
 
     constructor(attribs: Object) {
@@ -91,7 +93,12 @@ export abstract class Comp {
     renderChildren = (): string => {
         let html = "";
         util.forEachArrElm(this.children, function(child, idx) {
-            html += child.render();
+            if (child) {
+                let childRender = child.render();
+                if (childRender) {
+                    html += childRender;
+                }
+            }
         });
         return html;
     }

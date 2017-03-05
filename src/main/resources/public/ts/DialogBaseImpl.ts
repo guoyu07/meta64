@@ -52,7 +52,7 @@ export abstract class DialogBaseImpl implements DialogBase {
     }
 
     render = (): string => {
-        return ""
+        throw "render method should always be overridden";
     };
 
     open = (): void => {

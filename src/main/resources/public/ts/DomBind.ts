@@ -8,6 +8,8 @@ on the DOM! This allows us to set things up before they get rendered! Very power
 the word I'd used to describe this innovation/technique would indeed be "Temporal Decoupling"
 */
 class DomBind {
+    private counter: number = 0;
+
     /* Binds DOM IDs to functions that should be called on "onClick" */
     private idToFuncMap: { [key: string]: Function } = {};
 
@@ -50,6 +52,19 @@ class DomBind {
 
     public addOnChange(domId: string, callback: Function) {
         this.idToFuncMap[domId + ".onchange"] = (e) => { (<any>e).onchange = callback; };
+    }
+
+    public whenElm(domId: string, callback: Function) {
+
+        /* First try to find the domId immediately and if found run the function */
+        let e = util.domElm(domId);
+        if (e) {
+            callback(e);
+            return;
+        }
+
+        /* Otherwise we setup into the timer loop, to process whenever the element comes into existence */
+        this.idToFuncMap[domId + ".whenElm" + (++this.counter)] = callback;
     }
 }
 

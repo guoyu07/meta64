@@ -130,7 +130,10 @@ export abstract class DialogBaseImpl implements DialogBase {
         }
 
         this.built = true;
-        this.init();
+
+        if (typeof this.init == 'function') {
+            this.init();
+        }
         console.log("Showing dialog: " + id);
 
         /* now open and display polymer dialog we just created */
@@ -188,7 +191,7 @@ export abstract class DialogBaseImpl implements DialogBase {
 
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
-    public cancel() : void {
+    public cancel(): void {
         let polyElm = util.polyElm(this.id(this.domId));
         polyElm.node.cancel();
     }
@@ -349,7 +352,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             //"onclick": publicCommentingChanged
             "name": id,
             "id": id,
-            "checkedState" : initialState
+            "checkedState": initialState
         };
 
         if (initialState) {

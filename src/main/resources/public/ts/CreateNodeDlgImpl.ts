@@ -8,112 +8,61 @@ import { util } from "./Util";
 import { edit } from "./Edit";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
+import { Header } from "./widget/Header";
+import { TextContent } from "./widget/TextContent";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { ListBox } from "./widget/ListBox";
+import { ListBoxRow } from "./widget/ListBoxRow";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateNodeDlg {
 
-    lastSelDomId: string;
-    lastSelTypeName: string;
+    selType: string = "nt:unstructured";
+    inlineButton: Button;
 
     constructor() {
         super("CreateNodeDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Create New Node"),
+            new ListBox([
+                new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),
+                new ListBoxRow("RSS Feed", () => { this.selType = "meta64:rssfeed"; }, false),
+                new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
+            ]),
+            new ButtonBar([
+                new Button("First", this.createFirstChild, null, true, this),
+                new Button("Last", this.createLastChild, null, true, this),
+                this.inlineButton = new Button("Inline", this.createInline, null, true, this),
+                new Button("Cancel", null, null, true, this)
+            ])
+        ]);
+    }
+
     render = (): string => {
-        let header = this.makeHeader("Create New Node");
-
-        let createFirstChildButton = this.makeCloseButton("First", "createFirstChildButton", this.createFirstChild, true, 1000);
-        let createLastChildButton = this.makeCloseButton("Last", "createLastChildButton", this.createLastChild);
-        let createInlineButton = this.makeCloseButton("Inline", "createInlineButton", this.createInline);
-        let backButton = this.makeCloseButton("Cancel", "cancelButton");
-        let buttonBar = render.centeredButtonBar(createFirstChildButton + createLastChildButton + createInlineButton + backButton);
-
-        let content = "";
-        let typeIdx = 0;
-        /* todo-1: need a better way to enumerate and add the types we want to be able to search */
-        content += this.makeListItem("Standard Type", "nt:unstructured", typeIdx++, true);
-        content += this.makeListItem("RSS Feed", "meta64:rssfeed", typeIdx++, false);
-        content += this.makeListItem("System Folder", "meta64:systemfolder", typeIdx++, false);
-
-        let listBox = tag.div({
-            "class": "listBox"
-        }, content);
-
-        let mainContent: string = listBox;
-
-        let centeredHeader: string = tag.div({
-            "class": "centeredTitle"
-        }, header);
-
-        return centeredHeader + mainContent + buttonBar;
-    }
-
-    makeListItem = (val: string, typeName: string, typeIdx: number, initiallySelected: boolean): string => {
-        let payload: Object = {
-            "typeName": typeName,
-            "typeIdx": typeIdx
-        };
-
-        let divId: string = this.id("typeRow" + typeIdx);
-
-        if (initiallySelected) {
-            this.lastSelTypeName = typeName;
-            this.lastSelDomId = divId;
-        }
-
-        return tag.div({
-            "class": "listItem" + (initiallySelected ? " selectedListItem" : ""),
-            "id": divId,
-            "onclick": () => { this.onRowClick(payload); }
-        }, val);
+        return this.getComponent().render();
     }
 
     createFirstChild = (): void => {
-        if (!this.lastSelTypeName) {
-            alert("choose a type.");
-            return;
-        }
-        edit.createSubNode(null, this.lastSelTypeName, true);
+        edit.createSubNode(null, this.selType, true);
     }
 
     createLastChild = (): void => {
-        if (!this.lastSelTypeName) {
-            alert("choose a type.");
-            return;
-        }
-        edit.createSubNode(null, this.lastSelTypeName, false);
+        edit.createSubNode(null, this.selType, false);
     }
 
     createInline = (): void => {
-        if (!this.lastSelTypeName) {
-            alert("choose a type.");
-            return;
-        }
-        edit.insertNode(null, this.lastSelTypeName);
-    }
-
-    onRowClick = (payload: any): void => {
-        let divId = this.id("typeRow" + payload.typeIdx);
-        this.lastSelTypeName = payload.typeName;
-
-        if (this.lastSelDomId) {
-            this.removeClassFromElmById(this.lastSelDomId, "selectedListItem");
-        }
-        this.lastSelDomId = divId;
-        util.addClassToElmById(divId, "selectedListItem");
+        edit.insertNode(null, this.selType);
     }
 
     init = (): void => {
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (node) {
             let canInsertInline: boolean = meta64.homeNodeId != node.id;
-            this.setElmDisplayById("createInlineButton", canInsertInline);
+            this.inlineButton.setDisplay(canInsertInline);
         }
     }
 }

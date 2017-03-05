@@ -1,7 +1,9 @@
 console.log("Comp.ts");
 
 import { util } from "../../Util";
+import { domBind } from "../../DomBind";
 
+/* todo-0: The calls in here the try to get an element immediately need to use domBind.whenElm instead */
 export abstract class Comp {
 
     private static guid: number = 0;
@@ -28,37 +30,50 @@ export abstract class Comp {
         return Comp.idToCompMap[id];
     }
 
-    removeAllChildren = () : void => {
-       this.children = [];
+    removeAllChildren = (): void => {
+        this.children = [];
     }
 
     getId = (): string => {
         return (<any>this.attribs).id;
     }
 
+    /* Warning: Under lots of circumstances it's better to call domBind.whenElm rather than getElement() because getElement returns
+    null unless the element is already created and rendered onto the DOM */
     getElement = (): HTMLElement => {
         return <HTMLElement>document.querySelector("#" + this.getId());
     }
 
+    setDisplay = (showing: boolean): void => {
+        domBind.whenElm(this.getId(), (elm) => {
+            util.setElmDisplay(elm, showing);
+        });
+    }
+
     setVisible = (visible: boolean) => {
-        let elm = this.getElement();
-        if (elm) {
+        domBind.whenElm(this.getId(), (elm) => {
             util.setElmDisplay(elm, visible);
-        }
+        });
+    }
+
+    setClass = (clazz: string): void => {
+        (<any>this.attribs).class = clazz;
+    }
+
+    setOnClick = (onclick: Function): void => {
+        (<any>this.attribs).onclick = onclick;
     }
 
     renderToDom = (): void => {
-        let elm = this.getElement();
-        if (elm) {
+        domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = this.render();
-        }
+        });
     }
 
     setInnerHTML = (html: string) => {
-        let elm = this.getElement();
-        if (elm) {
+        domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = html;
-        }
+        });
     }
 
     addChild = (comp: Comp): void => {
@@ -70,7 +85,7 @@ export abstract class Comp {
     }
 
     setChildren = (comps: Comp[]) => {
-        this.children = comps;
+        this.children = comps || [];
     }
 
     renderChildren = (): string => {

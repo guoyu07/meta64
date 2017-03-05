@@ -51,8 +51,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     }
 
     /*
-     * Returns a string that is the HTML content of the dialog.
-     *
      * If the user is doing a "Reset Password" we will have a non-null passCode here, and we simply send this to the server
      * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
      * user.

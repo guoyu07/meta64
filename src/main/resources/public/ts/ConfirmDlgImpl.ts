@@ -3,6 +3,10 @@ console.log("ConfirmDlgImpl.ts");
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { render } from "./Render";
+import { Header } from "./widget/Header";
+import { TextContent } from "./widget/TextContent";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
 
 /*
 NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
@@ -10,39 +14,23 @@ new architecture)
 */
 export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg {
 
-    private title: string;
-    private message: string;
-    private buttonText: string;
-    private yesCallback: Function;
-    private noCallback: Function;
-
-    constructor(args: Object) {
+    constructor(public config: any) {
         super("ConfirmDlg");
-        this.title = (<any>args).title;
-        this.message = (<any>args).message;
-        this.buttonText = (<any>args).buttonText;
-        this.yesCallback = (<any>args).yesCallback;
-        this.noCallback = (<any>args).noCallback;
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header(this.config.title),
+            new TextContent(this.config.message),
+            new ButtonBar([
+                new Button("Yes", this.config.yesCallback, null, true, this),
+                new Button("No", this.config.noCallback, null, true, this)
+            ])
+        ]);
+    }
+
     render = (): string => {
-        let content: string = this.makeHeader("", "ConfirmDlgTitle") + //
-            this.makeMessageArea("", "ConfirmDlgMessage");
-        content = render.centerContent(content, 300);
-
-        let buttons = this.makeCloseButton("Yes", "ConfirmDlgYesButton", this.yesCallback)
-            + this.makeCloseButton("No", "ConfirmDlgNoButton", this.noCallback);
-        content += render.centeredButtonBar(buttons);
-
-        return content;
-    }
-
-    init = (): void => {
-        this.setHtml(this.title, "ConfirmDlgTitle");
-        this.setHtml(this.message, "ConfirmDlgMessage");
-        this.setHtml(this.buttonText, "ConfirmDlgYesButton");
+        return this.getComponent().render();
     }
 }

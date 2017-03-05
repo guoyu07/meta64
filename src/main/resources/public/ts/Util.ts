@@ -616,6 +616,7 @@ class Util {
     }
 
     forEachArrElm(elements: any[], callback: Function): void {
+        if (!elements) return;
         Array.prototype.forEach.call(elements, callback);
     }
 

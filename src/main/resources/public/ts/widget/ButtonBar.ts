@@ -9,9 +9,7 @@ export class ButtonBar extends Comp {
     constructor(initialButtons: Comp[] = null) {
         super(null);
         (<any>this.attribs).class = "horizontal center-justified layout vertical-layout-row";
-        if (initialButtons) {
-            this.setChildren(initialButtons);
-        }
+        this.setChildren(initialButtons);
     }
 
     render = (): string => {

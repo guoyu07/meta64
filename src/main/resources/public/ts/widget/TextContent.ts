@@ -1,13 +1,14 @@
-console.log("Help.ts");
+console.log("Header.ts");
 
 import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 
-export class Help extends Comp {
+export class TextContent extends Comp {
 
-    constructor(public text: string) {
+    constructor(public text: string, centered:boolean = false) {
         super(null);
+        (<any>this.attribs).class = (centered ? "horizontal center-justified layout" : "");
     }
 
     render = (): string => {

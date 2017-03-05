@@ -73,7 +73,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         this.header = new Header("Edit Node");
         this.getComponent().addChild(this.header);
-        
+
         this.help = new Help("");
         this.propertyEditFieldContainer = new Div("", {
             // todo-1: create CSS class for this.
@@ -97,13 +97,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         }
 
         this.getComponent().addChildren([this.help, this.propertyEditFieldContainer, this.buttonBar]);
-    }
-
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        return this.getComponent().render();
     }
 
     /*

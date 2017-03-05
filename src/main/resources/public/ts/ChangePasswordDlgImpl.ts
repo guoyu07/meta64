@@ -55,10 +55,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
      * where it will validate the passCode, and if it's valid use it to perform the correct password change on the correct
      * user.
      */
-    render = (): string => {
-        return this.getComponent().render();
-    }
-
     changePassword = (): void => {
         this.pwd = this.passwordField.getValue();
 

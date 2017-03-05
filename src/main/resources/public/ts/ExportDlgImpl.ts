@@ -9,34 +9,36 @@ import * as I from "./Interfaces";
 import { view } from "./View";
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { Help } from "./widget/Help";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
+
+    exportToFileNameTextField: TextField;
+
     constructor() {
         super("ExportDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        var header = this.makeHeader("Export to XML");
-
-        var formControls = this.makeEditField("Export to File Name", "exportTargetNodeName");
-
-        var exportButton = this.makeButton("Export", "exportNodesButton", this.exportNodes);
-        var backButton = this.makeCloseButton("Close", "cancelExportButton");
-        var buttonBar = render.centeredButtonBar(exportButton + backButton);
-
-        return header + formControls + buttonBar;
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Export to XML"),
+            this.exportToFileNameTextField = new TextField("Export to File Name"),
+            new ButtonBar([
+                new Button("Export", this.exportNodes, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
     }
 
     exportNodes = (): void => {
         var highlightNode = meta64.getHighlightedNode();
-        var targetFileName = this.getInputVal("exportTargetNodeName");
+        var targetFileName = this.exportToFileNameTextField.getValue();
 
         if (util.emptyString(targetFileName)) {
             Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {

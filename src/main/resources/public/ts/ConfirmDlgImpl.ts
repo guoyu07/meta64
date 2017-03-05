@@ -29,8 +29,4 @@ export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg
             ])
         ]);
     }
-
-    render = (): string => {
-        return this.getComponent().render();
-    }
 }

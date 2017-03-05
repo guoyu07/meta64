@@ -52,7 +52,10 @@ export abstract class DialogBaseImpl implements DialogBase {
     }
 
     render = (): string => {
-        throw "render method should always be overridden";
+        if (this.getComponent()) {
+            return this.getComponent().render();
+        }
+        throw "render method should overridden, unless componet is available";
     };
 
     open = (): void => {

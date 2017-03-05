@@ -58,10 +58,6 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
         ]);
     }
 
-    render = (): string => {
-        return this.getComponent().render();
-    }
-
     populatePropertyEdit = (): void => {
         /* display the node path at the top of the edit page */
         view.initEditPathDisplayById(this.editPropertyPathDisplay.getId());

@@ -42,10 +42,6 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         ]);
     }
 
-    render = (): string => {
-        return this.getComponent().render();
-    }
-
     createFirstChild = (): void => {
         edit.createSubNode(null, this.selType, true);
     }

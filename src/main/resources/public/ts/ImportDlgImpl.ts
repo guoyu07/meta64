@@ -9,34 +9,51 @@ import * as I from "./Interfaces";
 import { view } from "./View";
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { Help } from "./widget/Help";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class ImportDlgImpl extends DialogBaseImpl implements ImportDlg {
+
+  importFromFileNameTextField: TextField;
+
     constructor() {
         super("ImportDlg");
+        this.buildGUI();
+    }
+
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Import From XML"),
+            this.importFromFileNameTextField = new TextField("File Name to import"),
+            new ButtonBar([
+                new Button("Import", this.importNodes, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
     }
 
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    render = (): string => {
-        var header = this.makeHeader("Import from XML");
-
-        var formControls = this.makeEditField("File name to import", "sourceFileName");
-
-        var importButton = this.makeButton("Import", "importNodesButton", this.importNodes);
-        var backButton = this.makeCloseButton("Close", "cancelImportButton");
-        var buttonBar = render.centeredButtonBar(importButton + backButton);
-
-        return header + formControls + buttonBar;
-    }
+    // render = (): string => {
+    //     var header = this.makeHeader("Import from XML");
+    //
+    //     var formControls = this.makeEditField("File name to import", "sourceFileName");
+    //
+    //     var importButton = this.makeButton("Import", "importNodesButton", this.importNodes);
+    //     var backButton = this.makeCloseButton("Close", "cancelImportButton");
+    //     var buttonBar = render.centeredButtonBar(importButton + backButton);
+    //
+    //     return header + formControls + buttonBar;
+    // }
 
     importNodes = (): void => {
         var highlightNode = meta64.getHighlightedNode();
-        var sourceFileName = this.getInputVal("sourceFileName");
+        var sourceFileName = this.importFromFileNameTextField.getValue();
 
         if (util.emptyString(sourceFileName)) {
             Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {

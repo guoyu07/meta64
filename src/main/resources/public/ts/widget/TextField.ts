@@ -6,9 +6,11 @@ import { util } from "../Util";
 
 export class TextField extends Comp {
 
-    constructor(attribs: Object) {
-        super(attribs);
+    constructor(label: string) {
+        super(null);
 
+        (<any>this.attribs).label = label;
+        (<any>this.attribs).name = this.getId();
         (<any>this.attribs).class = "meta64-input";
     }
 

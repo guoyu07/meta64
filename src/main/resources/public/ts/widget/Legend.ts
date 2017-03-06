@@ -1,21 +1,17 @@
-console.log("Header.ts");
+console.log("Legend.ts");
 
 import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 
-export class TextContent extends Comp {
+export class Legend extends Comp {
 
-    constructor(public text: string, classes: string = null) {
+    constructor(public text: string, centered: boolean = false, attribs: Object = null) {
         super(null);
-
-        if (classes) {
-            (<any>this.attribs).class = classes;
-        }
         //(<any>this.attribs).class = (centered ? "horizontal center-justified layout" : "");
     }
 
     render = (): string => {
-        return tag.div(this.attribs, this.text);
+        return tag.legend(this.attribs, this.text);
     }
 }

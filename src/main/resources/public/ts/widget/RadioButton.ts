@@ -1,19 +1,20 @@
-console.log("Checkbox.ts");
+console.log("RadioButton.ts");
 
 import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { domBind } from "../DomBind";
 import { util } from "../Util";
 import { DialogBase } from "../DialogBase";
+import { RadioButtonGroup } from "./RadioButtonGroup";
 
-export class Checkbox extends Comp {
+export class RadioButton extends Comp {
 
-    constructor(label: string = null, checked: boolean = false) {
+    constructor(public label: string, public checked: boolean) {
         super(null);
-        (<any>this.attribs).label = label;
         if (checked) {
             (<any>this.attribs).checked = "checked";
         }
+        (<any>this.attribs).name = this.getId();
     }
 
     setChecked(checked: boolean) {
@@ -28,6 +29,6 @@ export class Checkbox extends Comp {
     }
 
     render = (): string => {
-        return tag.checkbox(this.attribs);
+        return tag.radioButton(this.attribs, this.label);
     }
 }

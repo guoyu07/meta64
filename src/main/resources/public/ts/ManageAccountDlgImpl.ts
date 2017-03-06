@@ -6,37 +6,30 @@ import { render } from "./Render";
 import { meta64 } from "./Meta64";
 import { prefs } from "./Prefs";
 import { tag } from "./Tag";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class ManageAccountDlgImpl extends DialogBaseImpl implements ManageAccountDlg {
 
     constructor() {
         super("ManageAccountDlg");
+        this.buildGUI();
+    }
+
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Manage Account"),
+            new ButtonBar([
+                new Button("Close Account", this.closeAccount, null, true, this),
+                new Button("Cancel", null, null, true, this)
+            ])
+        ]);
     }
 
     closeAccount = (): void => {
         prefs.closeAccount();
-    }
-
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        var header = this.makeHeader("Manage Account");
-
-        var backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-        var closeAccountButton = meta64.isAdminUser ? "Admin Cannot Close Acount" : this.makeButton("Close Account", "closeAccountButton", this.closeAccount);
-
-        var buttonBar = render.centeredButtonBar(closeAccountButton);
-
-        var bottomButtonBar = render.centeredButtonBar(backButton);
-        var bottomButtonBarDiv = tag.div({
-            "class": "close-account-bar"
-        }, bottomButtonBar);
-
-        return header + buttonBar + bottomButtonBarDiv;
     }
 }

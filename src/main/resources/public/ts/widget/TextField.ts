@@ -14,6 +14,14 @@ export class TextField extends Comp {
         (<any>this.attribs).class = "meta64-input";
     }
 
+    bindEnterKey = (func: Function) => {
+        util.bindEnterKey(this.getId(), func);
+    }
+
+    setValue = (val: string): void => {
+        util.setInputVal(this.getId(), val || "");
+    }
+
     getValue = (): string => {
         let elm = this.getElement();
         if (elm) {

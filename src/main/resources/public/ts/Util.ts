@@ -131,7 +131,7 @@ class Util {
     getCheckBoxStateById(id: string): boolean {
         let checkbox = util.domElm(id);
         if (checkbox) {
-            return "true" == checkbox.getAttribute("checkedstate");
+            return (<any>checkbox).checked;
         }
         else {
             throw "checkbox not found: " + id;

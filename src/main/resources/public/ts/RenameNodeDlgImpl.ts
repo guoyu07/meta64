@@ -6,36 +6,42 @@ import { meta64 } from "./Meta64";
 import { edit } from "./Edit";
 import { view } from "./View";
 import * as I from "./Interfaces";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { TextContent } from "./widget/TextContent";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameNodeDlg {
+
+    newNameTextField: TextField;
+
     constructor(args: Object) {
         super("RenameNodeDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Rename Node");
+    buildGUI = (): void => {
+        let highlightNode = meta64.getHighlightedNode();
+        if (!highlightNode) {
+            return;
+        }
 
-        let curNodeNameDisplay = "<h3 id='" + this.id("curNodeNameDisplay") + "'></h3>";
-        let curNodePathDisplay = "<h4 class='path-display' id='" + this.id("curNodePathDisplay") + "'></h4>";
-
-        let formControls = this.makeEditField("Enter new name for the node", "newNodeNameEditField");
-
-        let renameNodeButton = this.makeCloseButton("Rename", "renameNodeButton", this.renameNode.bind(this));
-        let backButton = this.makeCloseButton("Close", "cancelRenameNodeButton");
-        let buttonBar = render.centeredButtonBar(renameNodeButton + backButton);
-
-        return header + curNodeNameDisplay + curNodePathDisplay + formControls + buttonBar;
+        this.getComponent().setChildren([
+            new Header("Rename Node"),
+            new TextContent("Name: " + highlightNode.name),
+            new TextContent("Path: " + highlightNode.path, "path-display"),
+            this.newNameTextField = new TextField("Enter new name for the node"),
+            new ButtonBar([
+                new Button("Rename", this.renameNode, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
     }
 
     renameNode = (): void => {
-        let newName = this.getInputVal("newNodeNameEditField");
+        let newName = this.newNameTextField.getValue();
 
         if (util.emptyString(newName)) {
             util.showMessage("Please enter a new node name.");
@@ -70,14 +76,5 @@ export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameN
             }
             // meta64.selectTab("mainTabName");
         }
-    }
-
-    init = (): void => {
-        let highlightNode = meta64.getHighlightedNode();
-        if (!highlightNode) {
-            return;
-        }
-        this.setInnerHTML("curNodeNameDisplay", "Name: " + highlightNode.name);
-        this.setInnerHTML("curNodePathDisplay", "Path: " + highlightNode.path);
     }
 }

@@ -32,7 +32,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     constructor(args: Object) {
         super("ChangePasswordDlg");
         this.passCode = (<any>args).passCode;
-
         this.buildGUI();
     }
 

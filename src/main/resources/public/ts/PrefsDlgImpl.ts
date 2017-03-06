@@ -5,54 +5,53 @@ import { meta64 } from "./Meta64";
 import { util } from "./Util";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
+import { Header } from "./widget/Header";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { RadioButton } from "./widget/RadioButton";
+import { RadioButtonGroup } from "./widget/RadioButtonGroup";
+import { Checkbox } from "./widget/Checkbox";
+import { Legend } from "./widget/Legend";
+import { Div } from "./widget/Div";
 
-declare var Polymer;
-
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
+
+    simpleRadioButton: RadioButton;
+    advancedRadioButton: RadioButton;
+    showMetadataCheckBox: Checkbox;
+
     constructor() {
         super("PrefsDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Peferences");
-
-        let radioButtons = this.makeRadioButton("Simple", "editModeSimple") + //
-            this.makeRadioButton("Advanced", "editModeAdvanced");
-
-        let radioButtonGroup = tag.radioGroup({
-            "id": this.id("simpleModeRadioGroup"),
-            "selected": this.id("editModeSimple")
-        }, radioButtons);
-
-        let showMetaDataCheckBox = this.makeCheckBox("Show Row Metadata", "showMetaData", meta64.showMetaData);
-        let checkboxBar = render.makeHorzControlGroup(showMetaDataCheckBox);
-
-        let formControls = radioButtonGroup;
-
-        let legend = "<legend>Edit Mode:</legend>";
-        let radioBar = render.makeHorzControlGroup(legend + formControls);
-
-        let saveButton = this.makeCloseButton("Save", "savePreferencesButton", this.savePreferences.bind(this));
-        let backButton = this.makeCloseButton("Cancel", "cancelPreferencesDlgButton");
-
-        let buttonBar = render.centeredButtonBar(saveButton + backButton);
-        return header + radioBar + checkboxBar + buttonBar;
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Preferences"),
+            new Div(null, null, [
+                new Legend("Edit Mode:"),
+                new RadioButtonGroup([
+                    this.simpleRadioButton = new RadioButton("Simple", meta64.editModeOption == meta64.MODE_SIMPLE),
+                    this.advancedRadioButton = new RadioButton("Advanced", meta64.editModeOption == meta64.MODE_ADVANCED),
+                ]),
+            ]),
+            new Div(null, null, [
+                this.showMetadataCheckBox = new Checkbox("Show Row Metadata", meta64.showMetaData),
+            ]),
+            new Div(null, null, [
+                new ButtonBar([
+                    new Button("Save", this.savePreferences, null, true, this),
+                    new Button("Cancel", null, null, true, this)
+                ])
+            ])
+        ]);
     }
 
     savePreferences = (): void => {
-        let polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
-        meta64.editModeOption = polyElm.node.selected == this.id("editModeSimple") ? meta64.MODE_SIMPLE
+        meta64.editModeOption = this.simpleRadioButton.getChecked() ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
-
-        let showMetaDataCheckbox = util.polyElm(this.id("showMetaData"));
-        meta64.showMetaData = showMetaDataCheckbox.node.checked;
+        meta64.showMetaData = this.showMetadataCheckBox.getChecked();
 
         util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-1: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
@@ -72,22 +71,6 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
         if (util.checkSuccess("Saving Preferences", res)) {
             meta64.selectTab("mainTabName");
             meta64.refresh();
-            // todo-2: try and maintain scroll position ? this is going to be async, so watch out.
-            // view.scrollToSelectedNode();
         }
-    }
-
-    init = (): void => {
-        let polyElm = util.polyElm(this.id("simpleModeRadioGroup"));
-        polyElm.node.select(meta64.editModeOption == meta64.MODE_SIMPLE ? this.id("editModeSimple") : this
-            .id("editModeAdvanced"));
-
-        //todo-1: put these two lines in a utility method
-        polyElm = util.polyElm(this.id("showMetaData"));
-
-        //warning. checked only sets initial state. That property is not updated as user makes clicks.
-        polyElm.node.checked = meta64.showMetaData;
-
-        Polymer.dom.flush();
     }
 }

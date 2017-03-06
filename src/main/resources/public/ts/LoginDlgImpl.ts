@@ -4,45 +4,40 @@ import { DialogBaseImpl } from "./DialogBaseImpl";
 import { LoginDlg } from "./LoginDlg";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { ResetPasswordDlg } from "./ResetPasswordDlg";
-import { render } from "./Render";
 import { user } from "./User";
 import { cnst } from "./Constants";
 import { util } from "./Util";
 import { Factory } from "./Factory";
-import { tag } from "./Tag";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
+
+    userTextField: TextField;
+    passwordTextField: PasswordTextField;
+
     constructor(paramsTest: Object) {
         super("LoginDlgImpl");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Login");
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Login"),
+            this.userTextField = new TextField("User"),
+            this.passwordTextField = new PasswordTextField("pwdField", "Password"),
+            new ButtonBar([
+                new Button("Login", this.login, null, true, this),
+                new Button("Forgot Password", this.resetPassword, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
 
-        let formControls = this.makeEditField("User", "userName") + //
-            this.makePasswordField("Password", "password");
-
-        let loginButton = this.makeButton("Login", "loginButton", this.login);
-        let resetPasswordButton = this.makeButton("Forgot Password", "resetPasswordButton", this.resetPassword);
-        let backButton = this.makeCloseButton("Close", "cancelLoginButton");
-        let buttonBar = render.centeredButtonBar(loginButton + resetPasswordButton + backButton);
-        let divider = tag.dlgSectionHeading("Or Login With...");
-
-        let form = formControls + buttonBar;
-
-        let mainContent = form;
-        let content = header + mainContent;
-
-        this.bindEnterKey("userName", user.login);
-        this.bindEnterKey("password", user.login);
-        return content;
+        this.userTextField.bindEnterKey(this.login);
+        this.passwordTextField.bindEnterKey(this.login);
     }
 
     init = (): void => {
@@ -50,26 +45,19 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     }
 
     populateFromCookies = (): void => {
-        let usr = util.getCookie(cnst.COOKIE_LOGIN_USR);
-        let pwd = util.getCookie(cnst.COOKIE_LOGIN_PWD);
-
-        if (usr) {
-            this.setInputVal("userName", usr);
-        }
-        if (pwd) {
-            this.setInputVal("password", pwd);
-        }
+        this.userTextField.setValue(util.getCookie(cnst.COOKIE_LOGIN_USR));
+        this.passwordTextField.setValue(util.getCookie(cnst.COOKIE_LOGIN_PWD));
     }
 
     login = (): void => {
-        let usr = this.getInputVal("userName");
-        let pwd = this.getInputVal("password");
+        let usr = this.userTextField.getValue();
+        let pwd = this.passwordTextField.getValue();
 
         user.login(this, usr, pwd);
     }
 
     resetPassword = (): any => {
-        let usr = this.getInputVal("userName");
+        let usr = this.userTextField.getValue();
 
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();

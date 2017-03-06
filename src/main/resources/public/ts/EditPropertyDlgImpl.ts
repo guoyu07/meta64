@@ -22,8 +22,8 @@ import { Textarea } from "./widget/Textarea";
 export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditPropertyDlg {
 
     editPropertyPathDisplay: TextContent;
-    propertyNameTextarea : Textarea;
-    propertyValTextarea : Textarea;
+    propertyNameTextarea: Textarea;
+    propertyValTextarea: Textarea;
 
     private editNodeDlg: EditNodeDlg;
 
@@ -37,9 +37,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
         this.getComponent().setChildren([
             new Header("Edit Node Property"),
             cnst.SHOW_PATH_IN_DLGS ?
-                this.editPropertyPathDisplay = new TextContent(null, false, {
-                    "class": "path-display-in-editor"
-                }) : null,
+                this.editPropertyPathDisplay = new TextContent(null, "path-display-in-editor") : null,
             new Div(null, null, [
                 this.propertyNameTextarea = new Textarea({
                     "placeholder": "Enter property name",

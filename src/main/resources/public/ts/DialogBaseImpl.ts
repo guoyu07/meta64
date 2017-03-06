@@ -355,12 +355,8 @@ export abstract class DialogBaseImpl implements DialogBase {
             //"onclick": publicCommentingChanged
             "name": id,
             "id": id,
-            "checkedState": initialState
+            "checked": initialState
         };
-
-        if (initialState) {
-            attrs["checked"] = "checked";
-        }
 
         let checkbox: string = tag.checkbox(attrs);
 

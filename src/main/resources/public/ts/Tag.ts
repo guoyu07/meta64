@@ -41,6 +41,10 @@ export class Tag {
         return render.tag("span", attr, content, true);
     }
 
+    legend(attr?: Object, content?: string): string {
+        return render.tag("legend", attr, content, true);
+    }
+
     textarea(attr?: Object): string {
         return render.tag("paper-textarea", attr, "", true);
     }
@@ -53,6 +57,9 @@ export class Tag {
     }
 
     radioButton(attr?: Object, text?: string): string {
+        // domBind.addOnChange((<any>attr).id, (event) => {
+        //     console.log("checkbox ID: " + (<any>attr).id + " checked=" + (<any>event.target).checked  + ". Proof of id: " + event.target.getAttribute("id"));
+        // });
         return render.tag("paper-radio-button", attr, text);
     }
 
@@ -65,24 +72,18 @@ export class Tag {
     }
 
     checkbox(attr?: Object): string {
-        (<any>attr).checkedState = (<any>attr).checked ? "true" : "false";
+        // domBind.addOnChange((<any>attr).id, (event) => {
+        //     console.log("checkbox ID: " + (<any>attr).id + " checked=" + (<any>event.target).checked + ". Proof of id: " + event.target.getAttribute("id"));
+        // });
 
-        /* if caller supplied an onclick wire into the onchange and make it be AFTER the onchange happens always, so that all onclicks
-        can depend on correct value of checkedstate */
-        let onClick: Function = null;
-        if ((<any>attr).onclick) {
-            onClick = (<any>attr).onclick;
-            delete (<any>attr).onclick;
+        let ret = render.tag("paper-checkbox", attr, "", false);
+
+        if ((<any>attr).label) {
+            ret += render.tag("label", {
+                "for": (<any>attr).id
+            }, (<any>attr).label, true);
         }
-
-        domBind.addOnChange((<any>attr).id, (event) => {
-            event.target.setAttribute("checkedstate", event.target.getAttribute("checkedstate") == "true" ? "false" : "true");
-            console.log("ID: " + (<any>attr).id + " Checked=" + event.target.getAttribute("checkedstate") + ". Proof of id: " + event.target.getAttribute("id"));
-            if (onClick) {
-                onClick();
-            }
-        });
-        return render.tag("paper-checkbox", attr, "", false);
+        return ret;
     }
 
     progress(attr?: Object): string {

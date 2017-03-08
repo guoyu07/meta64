@@ -4,7 +4,6 @@ import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 
-/* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class EditPropsTableCell extends Comp {
 
     constructor(public content: string = "", attribs : Object = {}) {

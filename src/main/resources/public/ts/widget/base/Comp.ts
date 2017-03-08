@@ -14,6 +14,9 @@ export abstract class Comp {
     /* Note: NULL elements are allowed in this array and simply don't render anything, and are required to be tolerated and ignored */
     children: Comp[];
 
+    /* State tells us if the widget is currently about to re-render itself as soon as it can */
+    renderPending : boolean = false;
+
     constructor(attribs: Object) {
         this.attribs = attribs || {};
         this.children = [];
@@ -67,10 +70,21 @@ export abstract class Comp {
     }
 
     renderToDom = (): void => {
+        if (this.renderPending) return;
+        this.renderPending = true;
         domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = this.render();
+            this.renderPending = false;
         });
     }
+
+    // /* This method expects the dom element to exist on the dom already */
+    // rerenderToDom = (): void => {
+    //     let elm = this.getElement();
+    //     if (elm) {
+    //         elm.innerHTML = this.render();
+    //     }
+    // }
 
     setInnerHTML = (html: string) => {
         domBind.whenElm(this.getId(), (elm) => {

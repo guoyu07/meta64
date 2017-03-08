@@ -83,7 +83,7 @@ export class Tag {
                 "for": (<any>attr).id
             }, (<any>attr).label, true);
         }
-        return ret;
+        return this.span(null, ret);
     }
 
     progress(attr?: Object): string {

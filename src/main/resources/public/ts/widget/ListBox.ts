@@ -6,7 +6,6 @@ import { DialogBase } from "../DialogBase";
 import { ListBoxRow } from "./ListBoxRow";
 import { util } from "../Util";
 
-/* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class ListBox extends Comp {
 
     selectedRow: ListBoxRow = null;

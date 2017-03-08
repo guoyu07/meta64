@@ -6,33 +6,33 @@ import { jcrCnst } from "./Constants";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
+import { Header } from "./widget/Header";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { TextContent } from "./widget/TextContent";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchTagsDlg {
+    searchTextField: TextField;
 
     constructor() {
         super("SearchTagsDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Search Tags");
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Search Tags"),
+            new TextContent("Enter some text to find. Only tags text will be searched. All sub-nodes under the selected node are included in the search."),
+            this.searchTextField = new TextField("Search"),
+            new ButtonBar([
+                new Button("Search", this.searchTags, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
 
-        let instructions = this.makeMessageArea("Enter some text to find. Only tags text will be searched. All sub-nodes under the selected node are included in the search.");
-        let formControls = this.makeEditField("Search", "searchText");
-
-        let searchButton = this.makeCloseButton("Search", "searchNodesButton", this.searchTags.bind(this));
-        let backButton = this.makeCloseButton("Close", "cancelSearchButton");
-        let buttonBar = render.centeredButtonBar(searchButton + backButton);
-
-        let content = header + instructions + formControls + buttonBar;
-        this.bindEnterKey("searchText", this.searchTags)
-        return content;
+        this.searchTextField.bindEnterKey(this.searchTags);
     }
 
     searchTags = (): void => {
@@ -44,7 +44,7 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
             return;
         }
 
-        // until i get better validation
+        // until we have better validation
         let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to search under.");
@@ -52,7 +52,7 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
         }
 
         // until better validation
-        let searchText = this.getInputVal("searchText");
+        let searchText = this.searchTextField.getValue();
         if (util.emptyString(searchText)) {
             util.showMessage("Enter search text.");
             return;
@@ -68,6 +68,6 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
     }
 
     init = (): void => {
-        util.delayedFocus(this.id("searchText"));
+        this.searchTextField.focus();
     }
 }

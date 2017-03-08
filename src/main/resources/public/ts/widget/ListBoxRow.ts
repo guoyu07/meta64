@@ -7,7 +7,6 @@ import { ListBox } from "./ListBox";
 import { domBind } from "../DomBind";
 import { util } from "../Util";
 
-/* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class ListBoxRow extends Comp {
 
     /* Each listbox row has a reference to its parent (containing) list box, and needs to ineract with it to coordinate selected items. */

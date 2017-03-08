@@ -7,7 +7,6 @@ import { srch } from "./Search";
 import { jcrCnst } from "./Constants";
 import { meta64 } from "./Meta64";
 import { Header } from "./widget/Header";
-import { PasswordTextField } from "./widget/PasswordTextField";
 import { ButtonBar } from "./widget/ButtonBar";
 import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";

@@ -7,42 +7,46 @@ import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 import { Factory } from "./Factory";
 import { SharingDlg } from "./SharingDlg";
+import { Header } from "./widget/Header";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { TextContent } from "./widget/TextContent";
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class ShareToPersonDlgImpl extends DialogBaseImpl implements ShareToPersonDlg {
 
-    constructor() {
+    shareToUserTextField: TextField;
+    sharingDlg: SharingDlg;
+
+    constructor(args: Object) {
         super("ShareToPersonDlg");
+        this.sharingDlg = (<any>args).sharingDlg;
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Share Node to Person");
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Share Node to Person"),
+            new TextContent("Enter the username of the person you want to share this node with:"),
+            this.shareToUserTextField = new TextField("User to Share with"),
+            new ButtonBar([
+                new Button("Share", this.shareNodeToPerson, null, true, this),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
 
-        let formControls = this.makeEditField("User to Share With", "shareToUserName");
-        let shareButton = this.makeCloseButton("Share", "shareNodeToPersonButton", this.shareNodeToPerson.bind(this));
-        let backButton = this.makeCloseButton("Close", "cancelShareNodeToPersonButton");
-        let buttonBar = render.centeredButtonBar(shareButton + backButton);
-
-        return header + "<p>Enter the username of the person you want to share this node with:</p>" + formControls
-            + buttonBar;
+        this.shareToUserTextField.bindEnterKey(this.shareNodeToPerson);
     }
 
     shareNodeToPerson = (): void => {
-        let targetUser = this.getInputVal("shareToUserName");
+        debugger;
+        let targetUser = this.shareToUserTextField.getValue();
         if (!targetUser) {
             util.showMessage("Please enter a username");
             return;
         }
 
-        /*
-         * Trigger going to server at next main page refresh
-         */
+        /* Trigger update from server at next main page refresh */
         meta64.treeDirty = true;
 
         util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
@@ -54,10 +58,9 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
     }
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {
+        debugger;
         if (util.checkSuccess("Share Node with Person", res)) {
-            Factory.createDefault("SharingDlgImpl", (dlg: SharingDlg) => {
-                dlg.open();
-            });
+            this.sharingDlg.reload();
         }
     }
 }

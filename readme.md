@@ -6,7 +6,7 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 ## News: Recent Changes 
 
-Changed to using ES6 Module syntax in the TypeScript code, and using SystemJS module loader. 
+Created a "Widget Framework" that eliminates any need for "Templating" (and/or JSX), by using TypeScript Components that programatically encode and represent information in a way that is actually more expressive, simpler to read, and more dynamic than any templating system could ever be. I now can declare JSX to be completely *dead* because this new technique in the Meta64 Widget Framework shows a VASTLY better way to generate GUIs. I plan to write a blog/whitepaper on why TypeScript Widget Components make not only JSX (JSP, Mustache, etc) and other templating system completely obsolete at least insofar as Web 'Applications'. Templates are, at there core, and by definition "static" and so in the world of static content management and representations Templates are still great, but for generating application GUIs, totally obsolete.
 
 ## Technology Stack
 * Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax, Ace Editor, Pegdown Markdown

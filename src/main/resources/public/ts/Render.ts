@@ -634,7 +634,6 @@ export class Render {
     }
 
     formatPath(node: I.NodeInfo): string {
-      debugger;
         let path: string = node.path;
 
         /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */

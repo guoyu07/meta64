@@ -104,7 +104,6 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     }
 
     shareToPersonDlg = (): void => {
-      debugger;
         Factory.createDefault("ShareToPersonDlgImpl", (dlg: ShareToPersonDlg) => {
             dlg.open();
         }, {"sharingDlg" : this});

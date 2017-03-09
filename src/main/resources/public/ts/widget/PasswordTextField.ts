@@ -3,15 +3,16 @@ console.log("PasswordTextField.ts");
 import { TextField } from "./TextField";
 import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
+import {util} from "../Util";
 
 export class PasswordTextField extends TextField {
 
     constructor(public label: string) {
         super(null);
 
-        /* todo-0: need a cleaner way to add an objects properties another object */
-        (<any>this.attribs).label = label;
-        //(<any>this.attribs).name = name;
-        (<any>this.attribs).type = "password";
+        util.mergeProps(this.attribs, {
+            "label" : label,
+            "type" : "password"
+        });
     }
 }

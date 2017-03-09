@@ -8,10 +8,11 @@ export class TextField extends Comp {
 
     constructor(label: string) {
         super(null);
-
-        (<any>this.attribs).label = label;
-        (<any>this.attribs).name = this.getId();
-        (<any>this.attribs).class = "meta64-input";
+        util.mergeProps(this.attribs, {
+            "label": label,
+            "name": this.getId(),
+            "class": "meta64-input"
+        });
     }
 
     bindEnterKey = (func: Function) => {

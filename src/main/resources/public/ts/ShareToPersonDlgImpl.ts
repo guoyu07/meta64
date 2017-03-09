@@ -39,7 +39,6 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
     }
 
     shareNodeToPerson = (): void => {
-        debugger;
         let targetUser = this.shareToUserTextField.getValue();
         if (!targetUser) {
             util.showMessage("Please enter a username");
@@ -58,7 +57,6 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
     }
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {
-        debugger;
         if (util.checkSuccess("Share Node with Person", res)) {
             this.sharingDlg.reload();
         }

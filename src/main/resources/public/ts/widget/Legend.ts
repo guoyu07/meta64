@@ -8,7 +8,6 @@ export class Legend extends Comp {
 
     constructor(public text: string, centered: boolean = false, attribs: Object = null) {
         super(null);
-        //(<any>this.attribs).class = (centered ? "horizontal center-justified layout" : "");
     }
 
     render = (): string => {

@@ -39,11 +39,9 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
         this.getComponent().setChildren([
             new Header("Upload File Attachment"),
             cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
-            //todo-0: create a Form-derived class named DropzoneForm
             this.form = new Form({
                 "action": postTargetUrl + "upload",
                 "autoProcessQueue": false,
-                /* Note: we also have some styling in meta64.css for 'dropzone' */
                 "class": "dropzone"
             }),
             this.hiddenInputContaier = new Div(null, { "style": "display: none;" }),
@@ -143,8 +141,6 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
-
-        //todo-0: need to use my forEach iterator here.
         for (let file of this.fileList) {
             if (util.endsWith(file["name"].toLowerCase(), ".zip")) {
                 return true;

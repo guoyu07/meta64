@@ -3,7 +3,6 @@ console.log("Comp.ts");
 import { util } from "../../Util";
 import { domBind } from "../../DomBind";
 
-/* todo-0: The calls in here the try to get an element immediately need to use domBind.whenElm instead */
 export abstract class Comp {
 
     private static guid: number = 0;
@@ -77,14 +76,6 @@ export abstract class Comp {
             this.renderPending = false;
         });
     }
-
-    // /* This method expects the dom element to exist on the dom already */
-    // rerenderToDom = (): void => {
-    //     let elm = this.getElement();
-    //     if (elm) {
-    //         elm.innerHTML = this.render();
-    //     }
-    // }
 
     setInnerHTML = (html: string) => {
         domBind.whenElm(this.getId(), (elm) => {

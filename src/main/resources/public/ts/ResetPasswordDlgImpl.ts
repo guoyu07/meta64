@@ -10,7 +10,6 @@ import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";
 import { TextContent } from "./widget/TextContent";
 
-//todo-0: this dialog is untested after conversion to Widget Framework.
 export default class ResetPasswordDlgImpl extends DialogBaseImpl implements ResetPasswordDlg {
 
     userTextField: TextField;

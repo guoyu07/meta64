@@ -605,12 +605,20 @@ class Util {
         Array.prototype.forEach.call(elements, callback);
     }
 
+    /* Equivalent of ES6 Object.assign(). Takes all properties from src and merges them onto dst */
+    mergeProps(dst: Object, src: Object): void {
+        util.forEachProp(src, (k, v): boolean => {
+            dst[k] = v;
+            return true;
+        });
+    }
+
     /* Iterates by callling callback with property key/value pairs for each property in the object */
     forEachProp(obj: Object, callback: I.PropertyIterator): void {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 /* we use the unusual '== false' here so that returning a value is optional, but if you return false it terminates looping */
-                if (callback(prop, obj[prop]) == false) return;
+                if (callback(prop, obj[prop]) === false) return;
             }
         }
     }

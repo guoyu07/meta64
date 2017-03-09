@@ -2,7 +2,6 @@ console.log("ChangePasswordDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
-import { render } from "./Render";
 import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
 import { util } from "./Util";
@@ -15,17 +14,7 @@ import { Button } from "./widget/Button";
 
 export default class ChangePasswordDlgImpl extends DialogBaseImpl implements ChangePasswordDlg {
 
-    //GUI Widget members
-    //---------------------
-    header: Header;
     passwordField: PasswordTextField;
-    message: Help;
-    closeButton: Button;
-    changePasswordButton: Button;
-    buttonBar: ButtonBar;
-
-    //Non-GUI members
-    //---------------
     pwd: string;
     private passCode: string;
 
@@ -37,14 +26,12 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
 
     buildGUI = (): void => {
         this.getComponent().setChildren([
-
-            this.header = new Header(this.passCode ? "Password Reset" : "Change Password"),
-            this.message = new Help("Enter your new password below..."),
+            new Header(this.passCode ? "Password Reset" : "Change Password"),
+            new Help("Enter your new password below..."),
             this.passwordField = new PasswordTextField("New Password"),
-
-            this.buttonBar = new ButtonBar([
-                this.changePasswordButton = new Button("Change Password", this.changePassword, null, true, this),
-                this.closeButton = new Button("Close", null, null, true, this)
+            new ButtonBar([
+                new Button("Change Password", this.changePassword, null, true, this),
+                new Button("Close", null, null, true, this)
             ])
         ]);
     }
@@ -69,8 +56,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
 
     changePasswordResponse = (res: I.ChangePasswordResponse) => {
         if (util.checkSuccess("Change password", res)) {
-
-            //todo-0: oops msg got dropped from this message dialog!!!
             let msg = "Password changed successfully.";
 
             if (this.passCode) {
@@ -84,10 +69,6 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
                     "message" : msg,
                     "title": "Password Change", callback: () => {
                         if (this.passCode) {
-                            //this login call DOES work, but the reason we don't do this is because the URL still has the passCode on it and we
-                            //want to direct the user to a url without that.
-                            //user.login(null, res.user, thiz.pwd);
-
                             window.location.href = window.location.origin;
                         }
                     }

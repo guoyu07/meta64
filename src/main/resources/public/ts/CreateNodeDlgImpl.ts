@@ -43,6 +43,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     }
 
     createFirstChild = (): void => {
+        debugger;
         edit.createSubNode(null, this.selType, true);
     }
 

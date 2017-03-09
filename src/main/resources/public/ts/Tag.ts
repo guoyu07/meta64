@@ -102,6 +102,10 @@ export class Tag {
         return render.tag("paper-submenu", attr, content, true);
     }
 
+    form(attr: Object, content: string): string {
+        return render.tag("form", attr, content);
+    }
+
     dlgSectionHeading(name: string): string {
         return `<h3>${name}</h3>`;
     }

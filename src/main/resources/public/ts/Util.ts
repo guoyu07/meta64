@@ -744,8 +744,9 @@ class Util {
     removeClassFromElm(el: any, clazz: string): void {
         if (el.classList)
             el.classList.remove(clazz);
-        else
+        else if (el.className) {
             el.className = el.className.replace(new RegExp('(^|\\b)' + clazz.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+        }
     }
 
     addClassToElmById(id: any, clazz: string): void {
@@ -756,23 +757,34 @@ class Util {
     addClassToElm(el: any, clazz: string): void {
         if (el.classList)
             el.classList.add(clazz);
-        else
-            el.className += ' ' + clazz;
+        else {
+            if (el.className) {
+                el.className += " " + clazz;
+            }
+            else {
+                el.className = clazz;
+            }
+        }
     }
 
     toggleClassFromElm(el: any, clazz: string): void {
         if (el.classList) {
             el.classList.toggle(clazz);
         } else {
-            let classes = el.className.split(' ');
-            let existingIndex = classes.indexOf(clazz);
+            if (el.className) {
+                let classes = el.className.split(" ");
+                let existingIndex = classes.indexOf(clazz);
 
-            if (existingIndex >= 0)
-                classes.splice(existingIndex, 1);
-            else
-                classes.push(clazz);
+                if (existingIndex >= 0)
+                    classes.splice(existingIndex, 1);
+                else
+                    classes.push(clazz);
 
-            el.className = classes.join(' ');
+                el.className = classes.join(" ");
+            }
+            else {
+                el.className = clazz;
+            }
         }
     }
 }

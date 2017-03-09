@@ -28,7 +28,7 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
         this.getComponent().setChildren([
             new Header("Login"),
             this.userTextField = new TextField("User"),
-            this.passwordTextField = new PasswordTextField("pwdField", "Password"),
+            this.passwordTextField = new PasswordTextField("Password"),
             new ButtonBar([
                 new Button("Login", this.login, null, true, this),
                 new Button("Forgot Password", this.resetPassword, null, true, this),

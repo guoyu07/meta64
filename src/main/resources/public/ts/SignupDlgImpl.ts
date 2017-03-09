@@ -4,61 +4,53 @@ import { render } from "./Render";
 import { util } from "./Util";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
+import { Header } from "./widget/Header";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { TextContent } from "./widget/TextContent";
+import { PasswordTextField } from "./widget/PasswordTextField";
+import { Div } from "./widget/Div";
+import { Checkbox } from "./widget/Checkbox";
+import { Comp } from "./widget/base/Comp";
+import { Captcha } from "./widget/Captcha";
 
 declare var postTargetUrl;
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
+
+    userTextField: TextField;
+    passwordTextField: PasswordTextField;
+    emailTextField: TextField;
+    captchaTextField: TextField;
+    captchaImage: Captcha;
 
     constructor() {
         super("SignupDlg");
+        this.buildGUI();
     }
 
-    /*
-     * Returns a string that is the HTML content of the dialog
-     */
-    render = (): string => {
-        let header = this.makeHeader("Meta64 Signup");
-
-        let formControls = //
-            this.makeEditField("User", "signupUserName") + //
-            this.makePasswordField("Password", "signupPassword") + //
-            this.makeEditField("Email", "signupEmail") + //
-            this.makeEditField("Captcha", "signupCaptcha");
-
-        let captchaImgTag = tag.img({
-            "id": this.id("captchaImage"),
-            "class": "captcha",
-            "src": ""//
-        });
-
-        let captchaImage = tag.div({
-            "class": "captcha-image" //
-        }, captchaImgTag);
-
-        let signupButton = this.makeButton("Signup", "signupButton", this.signup);
-        let newCaptchaButton = this.makeButton("Try Different Image", "tryAnotherCaptchaButton",
-            this.tryAnotherCaptcha);
-        let backButton = this.makeCloseButton("Close", "cancelSignupButton");
-
-        let buttonBar = render.centeredButtonBar(signupButton + newCaptchaButton + backButton);
-
-        return header + formControls + captchaImage + buttonBar;
-
-        /*
-         * $ ("#" + _.domId + "-main").css({ "backgroundImage" : "url(/ibm-702-bright.jpg);" "background-repeat" :
-         * "no-repeat;", "background-size" : "100% auto" });
-         */
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Node Sharing"),
+            this.userTextField = new TextField("User"),
+            this.passwordTextField = new PasswordTextField("Password"),
+            this.emailTextField = new TextField("Email"),
+            this.captchaTextField = new TextField("Captcha"),
+            this.captchaImage = new Captcha(),
+            new ButtonBar([
+                new Button("Signup", this.signup),
+                new Button("Try Different Image", this.tryAnotherCaptcha),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
     }
 
     signup = (): void => {
-        let userName = this.getInputVal("signupUserName");
-        let password = this.getInputVal("signupPassword");
-        let email = this.getInputVal("signupEmail");
-        let captcha = this.getInputVal("signupCaptcha");
+        let userName = this.userTextField.getValue();
+        let password = this.passwordTextField.getValue();
+        let email = this.emailTextField.getValue();
+        let captcha = this.captchaTextField.getValue();
 
         /* no real validation yet, other than non-empty */
         if (!userName || userName.length == 0 || //
@@ -90,17 +82,9 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
     }
 
     tryAnotherCaptcha = (): void => {
-        let n = util.currentTimeMillis();
-
-        /*
-         * embed a time parameter just to thwart browser caching, and ensure server and browser will never return the same
-         * image twice.
-         */
-        let src = postTargetUrl + "captcha?t=" + n;
-        let elm = this.elById("captchaImage");
-        if (elm) {
-            elm.setAttribute("src", src);
-        }
+        let cacheBuster = util.currentTimeMillis();
+        let src = postTargetUrl + "captcha?t=" + cacheBuster;
+        this.captchaImage.setSrc(src);
     }
 
     pageInitSignupPg = (): void => {
@@ -109,6 +93,6 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
 
     init = (): void => {
         this.pageInitSignupPg();
-        util.delayedFocus("#" + this.id("signupUserName"));
+        this.userTextField.focus();
     }
 }

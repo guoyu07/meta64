@@ -463,6 +463,7 @@ class Meta64 {
         let selNodeCount: number = util.getPropertyCount(meta64.selectedNodes);
         let highlightNode: I.NodeInfo = meta64.getHighlightedNode();
         let selNodeIsMine: boolean = highlightNode != null && (highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
+        console.log("SelNodeIsMine="+selNodeIsMine);
         //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
         let homeNodeSelected: boolean = highlightNode != null && meta64.homeNodeId == highlightNode.id;
         let importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;

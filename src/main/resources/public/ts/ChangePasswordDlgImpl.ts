@@ -40,7 +40,7 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
 
             this.header = new Header(this.passCode ? "Password Reset" : "Change Password"),
             this.message = new Help("Enter your new password below..."),
-            this.passwordField = new PasswordTextField("changePassword1", "New Password"),
+            this.passwordField = new PasswordTextField("New Password"),
 
             this.buttonBar = new ButtonBar([
                 this.changePasswordButton = new Button("Change Password", this.changePassword, null, true, this),

@@ -236,9 +236,6 @@ tr td div p {
   overflow-x: auto;
   white-space: nowrap;
 }
-.captcha-image {
-  text-align: center;
-}
 .page-node-header {
   border-left: 10px solid transparent;
 }
@@ -258,7 +255,6 @@ tr td div p {
   margin: 16px;
   padding: 16px;
   background: lightGray;
-  border-left: 4px solid gray;
 }
 .jcr-content {
   margin-top: 10px;

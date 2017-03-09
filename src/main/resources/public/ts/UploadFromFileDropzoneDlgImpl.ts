@@ -6,66 +6,62 @@ import { cnst } from "./Constants";
 import { render } from "./Render";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
-import { tag } from "./Tag";
 import { util } from "./Util";
+import { Header } from "./widget/Header";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Button } from "./widget/Button";
+import { TextField } from "./widget/TextField";
+import { TextContent } from "./widget/TextContent";
+import { Div } from "./widget/Div";
+import { Checkbox } from "./widget/Checkbox";
+import { Comp } from "./widget/base/Comp";
+import { Form } from "./widget/Form";
 
 declare var Dropzone;
 declare var postTargetUrl;
 
-/*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
 export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implements UploadFromFileDropzoneDlg {
 
-    constructor() {
-        super("UploadFromFileDropzoneDlg");
-    }
+    hiddenInputContaier: Div;
+    form: Form;
+    uploadButton: Button;
 
     fileList: Object[] = null;
     zipQuestionAnswered: boolean = false;
     explodeZips: boolean = false;
-    dropzone : any = null;
+    dropzone: any = null;
 
-    render = (): string => {
-        let header = this.makeHeader("Upload File Attachment");
+    constructor() {
+        super("UploadFromFileDropzoneDlg");
+        this.buildGUI();
+    }
 
-        let uploadPathDisplay = "";
+    buildGUI = (): void => {
+        this.getComponent().setChildren([
+            new Header("Upload File Attachment"),
+            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
+            //todo-0: create a Form-derived class named DropzoneForm
+            this.form = new Form({
+                "action": postTargetUrl + "upload",
+                "autoProcessQueue": false,
+                /* Note: we also have some styling in meta64.css for 'dropzone' */
+                "class": "dropzone"
+            }),
+            this.hiddenInputContaier = new Div(null, { "style": "display: none;" }),
+            new ButtonBar([
+                this.uploadButton = new Button("Upload", this.upload),
+                new Button("Close", null, null, true, this)
+            ])
+        ]);
+    }
 
-        if (cnst.SHOW_PATH_IN_DLGS) {
-            uploadPathDisplay += tag.div({//
-                "id": this.id("uploadPathDisplay"),
-                "class": "path-display-in-editor"
-            }, "");
-        }
-
-        let formFields = "";
-
-        console.log("Upload Action URL: " + postTargetUrl + "upload");
-
-        let hiddenInputContainer = tag.div({
-            "id": this.id("hiddenInputContainer"),
-            "style": "display: none;"
-        }, "");
-
-        let form = render.tag("form", {
-            "action": postTargetUrl + "upload",
-            "autoProcessQueue": false,
-            /* Note: we also have some styling in meta64.css for 'dropzone' */
-            "class": "dropzone",
-            "id": this.id("dropzone-form-id")
-        }, "");
-
-        let uploadButton = this.makeCloseButton("Upload", "uploadButton", null, false);
-        let backButton = this.makeCloseButton("Close", "closeUploadButton");
-        let buttonBar = render.centeredButtonBar(uploadButton + backButton);
-
-        return header + uploadPathDisplay + form + hiddenInputContainer + buttonBar;
+    upload = (): void => {
+        this.dropzone.processQueue();
     }
 
     configureDropZone = (): void => {
 
-        let thiz = this;
+        let dlg = this;
         let config: Object = {
             url: postTargetUrl + "upload",
             // Prevents Dropzone from uploading dropped files immediately
@@ -79,7 +75,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             uploadMultiple: false,
             addRemoveLinks: true,
             dictDefaultMessage: "Drag & Drop files here, or Click",
-            hiddenInputContainer: "#" + thiz.id("hiddenInputContainer"),
+            hiddenInputContainer: "#" + this.hiddenInputContaier.getId(),
 
             /*
             This doesn't work at all. Dropzone apparently claims to support this but doesn't.
@@ -92,25 +88,15 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
             init: function() {
                 let dropzone = this; // closure
-                var submitButton = document.querySelector("#" + thiz.id("uploadButton"));
-                if (!submitButton) {
-                    console.log("Unable to get upload button.");
-                    return;
-                }
-
-                submitButton.addEventListener("click", function(e) {
-                    //e.preventDefault();
-                    dropzone.processQueue();
-                });
 
                 this.on("addedfile", function() {
-                    thiz.updateFileList(this);
-                    thiz.runButtonEnablement(this);
+                    dlg.updateFileList(this);
+                    dlg.runButtonEnablement(this);
                 });
 
                 this.on("removedfile", function() {
-                    thiz.updateFileList(this);
-                    thiz.runButtonEnablement(this);
+                    dlg.updateFileList(this);
+                    dlg.runButtonEnablement(this);
                 });
 
                 this.on("sending", function(file, xhr, formData) {
@@ -120,12 +106,13 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
                 });
 
                 this.on("queuecomplete", function(file) {
+                    dlg.cancel();
                     meta64.refresh();
                 });
             }
         };
 
-        this.dropzone = new Dropzone("#" + this.id("dropzone-form-id"), config);
+        this.dropzone = new Dropzone("#" + this.form.getId(), config);
     }
 
     updateFileList = (dropzoneEvt: any): void => {
@@ -157,6 +144,8 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
+
+        //todo-0: need to use my forEach iterator here.
         for (let file of this.fileList) {
             if (util.endsWith(file["name"].toLowerCase(), ".zip")) {
                 return true;
@@ -166,19 +155,12 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     }
 
     runButtonEnablement = (dropzoneEvt: any): void => {
-        if (dropzoneEvt.getAddedFiles().length > 0 ||
-            dropzoneEvt.getQueuedFiles().length > 0) {
-            this.setElmDisplayById("uploadButton", true);
-        }
-        else {
-            this.setElmDisplayById("uploadButton", false);
-        }
+        let filesSelected = dropzoneEvt.getAddedFiles().length > 0 ||
+            dropzoneEvt.getQueuedFiles().length > 0;
+        this.uploadButton.setDisplay(filesSelected);
     }
 
     init = (): void => {
-        /* display the node path at the top of the edit page */
-        this.setInnerHTML("uploadPathDisplay", "Path: " + render.formatPath(attachment.uploadNode));
-
         this.configureDropZone();
     }
 }

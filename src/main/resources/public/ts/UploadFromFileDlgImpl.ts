@@ -12,14 +12,8 @@ import { tag } from "./Tag";
 declare var postTargetUrl;
 
 /*
-NOTE: This dialog is not yet converted to new Widget Architecture (see ChangePasswordDlgImpl.ts for a working example of the
-new architecture)
-*/
-/*
-NOTE: Obsolete deprecated file. Not being used.
-
+NOTE: Obsolete deprecated file. Not being used (Also was pre-Widget Framework)
 We could delete this file, but i want to keep it around a bit longer even though we now use Dropzone
-
 */
 export default class UploadFromFileDlgImpl extends DialogBaseImpl implements UploadFromFileDlg {
 

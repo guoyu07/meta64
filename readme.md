@@ -102,11 +102,11 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 ## Technology Stack and APIs
 
 * Single Page Application (SPA)
-* JavaScript/HTML/CSS Client
+* 100% TypeScript(zero raw JavaScript)/HTML/CSS. (https://www.typescriptlang.org/)
+* Most GUI using TypeScript Widget Framework (no Templating, JSX, JSP, or Mustach, etc)
 * Leverages Advanced Java 8 Language Features
-* All JavaScript, coded as TypeScript (https://www.typescriptlang.org/)
 * JSON-based Ajax for Server Communication
-* ES6 JS Module syntax, with ES5 support
+* All TypeScript in ES6 Modules, compiled to support ES5
 * SystemJS module loader, supporting bundled or non-bundles builds (https://github.com/systemjs/systemjs)
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)

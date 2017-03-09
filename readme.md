@@ -8,13 +8,12 @@ The **meta64.com** website is currently geared towards the web developer audienc
 
 Created a "Widget Framework" that eliminates any need for "HTML Templates" (and/or JSX, etc), by using TypeScript custom components that programatically represent GUI layout and definition in a way that is actually more expressive, simpler to read, and more dynamic than any templating system could ever be. 
 
-Punchline: I now can declare JSX to be completely *dead*, because this new technique (demonstrated in the Meta64 Widget Framework) shows a VASTLY better way to generate GUIs. I plan to write a blog/whitepaper on why TypeScript Widget Components (TWC, to coin an acronym) makes JSX (JSP, Mustache, etc) and other templating systems completely obsolete at least insofar as Web 'Applications' are concerned. Templates are, at their core, and by definition, "static" (with ugly logic conditionals mixed in) and so in the world of static content HTML representations, templates are still great; but for generating application GUIs, totally obsolete.
-
 Because of the power of having full OOP (Classes, etc) in TypeScript it has opened up web development to the possibility of what was possible in Java Swing, and GWT, which are two technologies that were great for what they were, and not built on top of any templating nonsense. Not only does a GUI Component widget system in TypeScript eliminate any need to work with templates, it totally decouples the HTML also, so that for the most part the the developer never even notices he's dealing with an HTML, because everything is just clean OOP calls on Widget Components, with the HTML specifics abstracted into lower layers that never need be worried about.
 
-[For example, here is the entire "Change Password Dialog"] https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts
+[For example, here is the entire "Change Password Dialog"] 
+https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts
 
-If you look at the BuildGUI() method on that class it's just immediately obvious that this widget technique is superior in every way to any template-based system. The code is at least 10X simpler than other "modern" approaches (including React/JSX). I haven't added data-binding and validation yet, but those implementation details will similarly vanish into the background, and they will also 'beat' React/JSX when I'm done. All I have to do is implement a checksum at each node of the tree based on the rendered content under that sub-branch of the tree, and I'll be able to have live-binding that updates the DOM with 'minimal DOM operations' just like React does, but with none of the hassles of templates. But it's worth noting that with a full 'components-based' architecure 'binding to HTML elements' is much less important, because you have a component you can always call getters and setters on directly.
+If you look at the BuildGUI() method on that class it should be obvious that this widget technique is superior to any template-based system. 
 
 ## Technology Stack
 * Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax, Ace Editor, Pegdown Markdown

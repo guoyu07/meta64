@@ -13,7 +13,6 @@ import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";
 import { TextContent } from "./widget/TextContent";
 import { Div } from "./widget/Div";
-import { Checkbox } from "./widget/Checkbox";
 import { Comp } from "./widget/base/Comp";
 import { Form } from "./widget/Form";
 

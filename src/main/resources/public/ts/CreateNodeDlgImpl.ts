@@ -21,12 +21,12 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     inlineButton: Button;
 
     constructor() {
-        super("CreateNodeDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Create New Node"),
             new ListBox([
                 new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),

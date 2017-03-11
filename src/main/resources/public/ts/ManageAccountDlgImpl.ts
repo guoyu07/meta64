@@ -15,12 +15,12 @@ import { TextField } from "./widget/TextField";
 export default class ManageAccountDlgImpl extends DialogBaseImpl implements ManageAccountDlg {
 
     constructor() {
-        super("ManageAccountDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Manage Account"),
             new ButtonBar([
                 new Button("Close Account", this.closeAccount, null, true, this),

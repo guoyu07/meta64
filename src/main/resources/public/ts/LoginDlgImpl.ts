@@ -20,12 +20,12 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
     passwordTextField: PasswordTextField;
 
     constructor(paramsTest: Object) {
-        super("LoginDlgImpl");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Login"),
             this.userTextField = new TextField("User"),
             this.passwordTextField = new PasswordTextField("Password"),

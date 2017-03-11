@@ -18,13 +18,13 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
     private user: string;
 
     constructor(args: Object) {
-        super("ResetPasswordDlg");
+        super();
         this.user = (<any>args).user;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Reset Password"),
             new TextContent("Enter your user name and email address and a change-password link will be sent to you"),
             new TextField("User"),

@@ -56,7 +56,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     createAtTop: boolean;
 
     constructor(args: Object) {
-        super("EditNodeDlg");
+        super();
 
         this.typeName = (<any>args).typeName;
         this.createAtTop = (<any>args).createAtTop;
@@ -72,7 +72,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.propEntries = new Array<I.PropEntry>();
 
         this.header = new Header("Edit Node");
-        this.getComponent().addChild(this.header);
+        this.addChild(this.header);
 
         this.help = new Help("");
         this.propertyEditFieldContainer = new Div("", {
@@ -93,10 +93,10 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             this.cancelButton = new Button("Cancel", this.cancelEdit)]);
 
         if (cnst.SHOW_PATH_IN_DLGS) {
-            this.getComponent().addChild(this.pathDisplay);
+            this.addChild(this.pathDisplay);
         }
 
-        this.getComponent().addChildren([this.help, this.propertyEditFieldContainer, this.buttonBar]);
+        this.addChildren([this.help, this.propertyEditFieldContainer, this.buttonBar]);
     }
 
     /*
@@ -361,7 +361,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
     saveNewNode = (newNodeName?: string): void => {
         if (!newNodeName) {
-            newNodeName = util.getInputVal(this.id("newNodeNameId"));
+            //newNodeName = util.getInputVal(this.id("newNodeNameId"));
+            //todo-0: come back and test this.
+            throw "case not handled after refactoring. new node name not set?";
         }
 
         /*

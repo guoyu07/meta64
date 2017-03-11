@@ -21,12 +21,12 @@ export default class ImportDlgImpl extends DialogBaseImpl implements ImportDlg {
   importFromFileNameTextField: TextField;
 
     constructor() {
-        super("ImportDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Import From XML"),
             this.importFromFileNameTextField = new TextField("File Name to import"),
             new ButtonBar([

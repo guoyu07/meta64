@@ -19,13 +19,13 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
     sharingDlg: SharingDlg;
 
     constructor(args: Object) {
-        super("ShareToPersonDlg");
+        super();
         this.sharingDlg = (<any>args).sharingDlg;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Share Node to Person"),
             new TextContent("Enter the username of the person you want to share this node with:"),
             this.shareToUserTextField = new TextField("User to Share with"),

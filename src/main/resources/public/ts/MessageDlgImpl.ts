@@ -13,12 +13,12 @@ import { TextContent } from "./widget/TextContent";
 export default class MessageDlgImpl extends DialogBaseImpl implements MessageDlg {
 
     constructor(public config: Object) {
-        super("MessageDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header((<any>this.config).title || "Message"),
             new TextContent((<any>this.config).message),
             new ButtonBar([

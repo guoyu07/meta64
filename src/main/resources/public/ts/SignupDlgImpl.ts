@@ -26,12 +26,12 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
     captchaImage: Captcha;
 
     constructor() {
-        super("SignupDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Node Sharing"),
             this.userTextField = new TextField("User"),
             this.passwordTextField = new PasswordTextField("Password"),

@@ -21,28 +21,29 @@ declare var Polymer;
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-export abstract class DialogBaseImpl implements DialogBase {
+export abstract class DialogBaseImpl extends Comp implements DialogBase {
     private horizCenterDlgContent: boolean = true;
 
-    data: any;
+    //data: any;
     built: boolean;
-    guid: string;
+    //guid: string;
 
     //todo-0: Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
     //containment rather than composition, and letting this 'content' be the actual root element for the GUI of the dialog,
     //rather than haing this dialog itself be an instenace of Comp.
     //
     //Note: amaking this base class into a Comp-derived class will also eliminate a lot of methods in it (this.id, this.makeButton, etc)
-    content: Div = new Div();
+    //content: Div = new Div();
 
-    constructor(protected domId: string) {
-        this.data = {};
-        this.data.guid = Comp.nextGuid();
+    constructor(/* protected domId: string */) {
+        super(null);
+        //this.data = {};
+        //this.data.guid = Comp.nextGuid();
     }
 
-    getComponent(): Comp {
-        return this.content;
-    }
+    // getComponent(): Comp {
+    //     return this.content;
+    // }
 
     /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
     any defaults or values in for fields, etc. should be set when the dialog is displayed */
@@ -52,12 +53,12 @@ export abstract class DialogBaseImpl implements DialogBase {
     closeEvent = (): void => {
     }
 
-    render = (): string => {
-        if (this.getComponent()) {
-            return this.getComponent().render();
-        }
-        throw "render method should overridden, unless component is available";
-    };
+    // render = (): string => {
+    //     if (this.getComponent()) {
+    //         return this.getComponent().render();
+    //     }
+    //     throw "render method should overridden, unless component is available";
+    // };
 
     open = (): void => {
         /*
@@ -66,7 +67,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         let modalsContainer = util.polyElm("modalsContainer");
 
         /* suffix domId for this instance/guid */
-        let id = this.id(this.domId);
+        //let id = this.id(this.domId);
 
         /*
          * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
@@ -79,7 +80,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         //set these properties on the 'polyElm.node' below.
         //node.setAttribute("with-backdrop", "with-backdrop");
 
-        node.setAttribute("id", id);
+        node.setAttribute("id", this.getId()); //id);
         modalsContainer.node.appendChild(node);
 
         // todo-3: put in CSS now
@@ -98,7 +99,8 @@ export abstract class DialogBaseImpl implements DialogBase {
                     "style": "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
                 },
                     this.render());
-            util.setHtml(id, content);
+
+            util.setHtml(this.getId(), content);
 
             // let left = tag.div( {
             //     "display": "table-column",
@@ -130,7 +132,7 @@ export abstract class DialogBaseImpl implements DialogBase {
             //     "class" : "main-dialog-content"
             // },
             // this.build());
-            util.setHtml(id, content);
+            util.setHtml(this.getId(), content);
         }
 
         this.built = true;
@@ -138,10 +140,10 @@ export abstract class DialogBaseImpl implements DialogBase {
         if (typeof this.init == 'function') {
             this.init();
         }
-        console.log("Showing dialog: " + id);
+        //console.log("Showing dialog: " + id);
 
         /* now open and display polymer dialog we just created */
-        let polyElm = util.polyElm(id);
+        let polyElm = util.polyElm(this.getId());
 
         /*
         i tried to tweak the placement of the dialog using fitInto, and it didn't work
@@ -196,7 +198,7 @@ export abstract class DialogBaseImpl implements DialogBase {
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
     public cancel(): void {
-        let polyElm = util.polyElm(this.id(this.domId));
+        let polyElm = util.polyElm(this.getId()); //this.id(this.domId));
         polyElm.node.cancel();
     }
 
@@ -206,14 +208,14 @@ export abstract class DialogBaseImpl implements DialogBase {
      *
      * This will be totally replaced by Comp.getId() once we are fully converted to Widget architecture.
      */
-    id = (id): string => {
-        if (id == null)
-            return null;
-
-        /* if dialog already suffixed */
-        if (util.contains(id, "_dlgId")) {
-            return id;
-        }
-        return id + "_dlgId" + this.data.guid;
-    }
+    // id = (id): string => {
+    //     if (id == null)
+    //         return null;
+    //
+    //     /* if dialog already suffixed */
+    //     if (util.contains(id, "_dlgId")) {
+    //         return id;
+    //     }
+    //     return id + "_dlgId" + this.data.guid;
+    // }
 }

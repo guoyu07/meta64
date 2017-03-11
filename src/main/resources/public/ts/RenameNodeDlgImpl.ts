@@ -18,7 +18,7 @@ export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameN
     newNameTextField: TextField;
 
     constructor(args: Object) {
-        super("RenameNodeDlg");
+        super();
         this.buildGUI();
     }
 
@@ -28,7 +28,7 @@ export default class RenameNodeDlgImpl extends DialogBaseImpl implements RenameN
             return;
         }
 
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Rename Node"),
             new TextContent("Name: " + highlightNode.name),
             new TextContent("Path: " + highlightNode.path, "path-display"),

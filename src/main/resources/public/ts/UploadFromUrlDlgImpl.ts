@@ -20,12 +20,12 @@ export default class UploadFromUrlDlgImpl extends DialogBaseImpl implements Uplo
     uploadButton : Button;
 
     constructor() {
-        super("UploadFromUrlDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Upload File Attachment"),
             cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
             this.uploadFromUrlTextField = new TextField("Upload from URL"),

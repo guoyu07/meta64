@@ -25,12 +25,12 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
     publicCommentingCheckbox: Checkbox;
 
     constructor() {
-        super("SharingDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Node Sharing"),
             this.privsTable = new EditPrivsTable(),
             this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),

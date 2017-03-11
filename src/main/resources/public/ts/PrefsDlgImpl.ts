@@ -22,12 +22,12 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
     showMetadataCheckBox: Checkbox;
 
     constructor() {
-        super("PrefsDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Preferences"),
             new Div(null, null, [
                 new Legend("Edit Mode:"),

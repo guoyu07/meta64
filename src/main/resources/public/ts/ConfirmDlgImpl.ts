@@ -15,12 +15,12 @@ new architecture)
 export default class ConfirmDlgImpl extends DialogBaseImpl implements ConfirmDlg {
 
     constructor(public config: any) {
-        super("ConfirmDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header(this.config.title),
             new TextContent(this.config.message),
             new ButtonBar([

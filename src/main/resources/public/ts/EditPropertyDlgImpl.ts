@@ -28,13 +28,13 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     private editNodeDlg: EditNodeDlg;
 
     constructor(args: any) {
-        super("EditPropertyDlg");
+        super();
         this.editNodeDlg = args.editNodeDlg;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Edit Node Property"),
             cnst.SHOW_PATH_IN_DLGS ?
                 this.editPropertyPathDisplay = new TextContent(null, "path-display-in-editor") : null,

@@ -17,12 +17,12 @@ export default class SearchContentDlgImpl extends DialogBaseImpl implements Sear
     searchTextField: TextField;
 
     constructor() {
-        super("SearchContentDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Search Content"),
             new TextContent("Enter text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search."),
             this.searchTextField = new TextField("Search"),

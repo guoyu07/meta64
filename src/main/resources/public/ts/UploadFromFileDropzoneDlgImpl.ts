@@ -31,12 +31,12 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     dropzone: any = null;
 
     constructor() {
-        super("UploadFromFileDropzoneDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Upload File Attachment"),
             cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
             this.form = new Form({

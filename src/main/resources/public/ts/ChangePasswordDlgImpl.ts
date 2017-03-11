@@ -19,13 +19,13 @@ export default class ChangePasswordDlgImpl extends DialogBaseImpl implements Cha
     private passCode: string;
 
     constructor(args: Object) {
-        super("ChangePasswordDlg");
+        super();
         this.passCode = (<any>args).passCode;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header(this.passCode ? "Password Reset" : "Change Password"),
             new Help("Enter your new password below..."),
             this.passwordField = new PasswordTextField("New Password"),

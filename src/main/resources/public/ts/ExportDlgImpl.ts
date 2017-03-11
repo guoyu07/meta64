@@ -21,12 +21,12 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
     exportToFileNameTextField: TextField;
 
     constructor() {
-        super("ExportDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Export to XML"),
             this.exportToFileNameTextField = new TextField("Export to File Name"),
             new ButtonBar([

@@ -12,27 +12,28 @@ new architecture)
 export default class ProgressDlgImpl extends DialogBaseImpl implements ProgressDlg {
 
     constructor() {
-        super("ProgressDlg");
+        super();
     }
 
     /*
      * Returns a string that is the HTML content of the dialog
      */
-    render = (): string => {
-        var header = this.makeHeader("Processing Request", "", true);
-
-        var progressBar = tag.progress({
-            "indeterminate": "indeterminate",
-            "value": "800",
-            "min": "100",
-            "max": "1000"
-        });
-
-        var barContainer = tag.div({
-            "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
-            "class": "horizontal center-justified layout"
-        }, progressBar);
-
-        return header + barContainer;
-    }
+    //todo-0 disabling progress dialog content for a short time until i get DialogBaseImpl refactor verified.
+    // render = (): string => {
+    //     var header = this.makeHeader("Processing Request", "", true);
+    //
+    //     var progressBar = tag.progress({
+    //         "indeterminate": "indeterminate",
+    //         "value": "800",
+    //         "min": "100",
+    //         "max": "1000"
+    //     });
+    //
+    //     var barContainer = tag.div({
+    //         "style": "width:280px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
+    //         "class": "horizontal center-justified layout"
+    //     }, progressBar);
+    //
+    //     return header + barContainer;
+    // }
 }

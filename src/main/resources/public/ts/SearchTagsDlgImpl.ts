@@ -17,12 +17,12 @@ export default class SearchTagsDlgImpl extends DialogBaseImpl implements SearchT
     searchTextField: TextField;
 
     constructor() {
-        super("SearchTagsDlg");
+        super();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        this.getComponent().setChildren([
+        this.setChildren([
             new Header("Search Tags"),
             new TextContent("Enter some text to find. Only tags text will be searched. All sub-nodes under the selected node are included in the search."),
             this.searchTextField = new TextField("Search"),

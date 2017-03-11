@@ -23,13 +23,26 @@ class DomBind {
     }
 
     private interval = (): void => {
+        /* The loop below may have multiple entries targeting the same element, so just to avoid as many DOM operations
+        as possible (for performance) we cache them in this map once we find them */
+        let idToElmMap: { [key: string]: HTMLElement } = {};
+
         util.forEachProp(this.idToFuncMap, (key: string, func: Function): boolean => {
             let id = util.chopAtLastChar(key, ".");
-            let e = util.domElm(id);
 
-            //todo-1: An optimization that could be done here is that once we find an element we are looking for, we could run all
-            //the functions that are mapped onto it because there can be multiple of these in idToFuncMap that are for this DOM id, but
-            //this will not be all that common, and at this time not worth adding that compleity to the code quite yet. KISS for now.
+            //first try to get from map.
+            let e = idToElmMap[id];
+
+            //if not in map look on DOM itself
+            if (!e) {
+                e = util.domElm(id);
+
+                //if we found it, put it in map
+                if (e) {
+                    idToElmMap[id] = e;
+                }
+            }
+
             if (e) {
                 //console.log("DomBind " + id + " FOUND.");
                 this.idToFuncMap[key](e);

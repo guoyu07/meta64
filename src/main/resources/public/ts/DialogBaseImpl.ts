@@ -22,16 +22,17 @@ declare var Polymer;
  * making them invisible.
  */
 export abstract class DialogBaseImpl implements DialogBase {
-
     private horizCenterDlgContent: boolean = true;
 
     data: any;
     built: boolean;
     guid: string;
 
-    //Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
+    //todo-0: Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
     //containment rather than composition, and letting this 'content' be the actual root element for the GUI of the dialog,
     //rather than haing this dialog itself be an instenace of Comp.
+    //
+    //Note: amaking this base class into a Comp-derived class will also eliminate a lot of methods in it (this.id, this.makeButton, etc)
     content: Div = new Div();
 
     constructor(protected domId: string) {
@@ -55,7 +56,7 @@ export abstract class DialogBaseImpl implements DialogBase {
         if (this.getComponent()) {
             return this.getComponent().render();
         }
-        throw "render method should overridden, unless componet is available";
+        throw "render method should overridden, unless component is available";
     };
 
     open = (): void => {
@@ -214,178 +215,5 @@ export abstract class DialogBaseImpl implements DialogBase {
             return id;
         }
         return id + "_dlgId" + this.data.guid;
-    }
-
-    setElmDisplayById = (id: string, showing: boolean): void => {
-        let elm = this.elById(id);
-        if (elm) {
-            util.setElmDisplay(elm, showing);
-        }
-    }
-
-    removeClassFromElmById = (id: string, clazz: string): any => {
-        let elm = this.elById(id);
-        if (elm) {
-            util.removeClassFromElm(elm, clazz);
-        }
-    }
-
-    elById = (id): HTMLElement => {
-        if (!util.startsWith(id, "#")) {
-            return <HTMLElement>document.querySelector("#" + this.id(id));
-        }
-        else {
-            return <HTMLElement>document.querySelector(this.id(id));
-        }
-    }
-
-    setInnerHTML = (id: string, val: string) => {
-        let elm = this.elById(id);
-        if (elm) {
-            elm.innerHTML = val;
-        }
-    }
-
-    makePasswordField = (text: string, id: string): string => {
-        return render.makePasswordField(text, this.id(id));
-    }
-
-    makeEditField = (fieldName: string, id: string) => {
-        id = this.id(id);
-        return tag.input({
-            "name": id,
-            "label": fieldName,
-            "id": id,
-            "class": "meta64-input"
-        });
-    }
-
-    makeMessageArea = (message: string, id?: string): string => {
-        let attrs = {
-            "class": "dialog-message"
-        };
-        if (id) {
-            attrs["id"] = this.id(id);
-        }
-        return render.tag("p", attrs, message);
-    }
-
-    makeButton = (text: string, id: string, callback: any, clazz?: string): string => {
-        let attribs = {
-            "raised": "raised",
-            "id": this.id(id),
-            "class": /* clazz || */ "standardButton",
-            "onclick": callback
-        };
-
-        return tag.button(attribs, text);
-    }
-
-    /* The reason delayCloseCallback is here is so that we can encode a button to popup a new dialog over the top of
-    an existing dialog, and have that happen instantly, rather than letting it close, and THEN poping up a second dialog,
-    because using the delay means that the one being hidden is not able to become hidden before the one comes up because
-    that creates an uglyness. It's better to popup one right over the other and no flicker happens in that case.
-    */
-    makeCloseButton = (text: string, id: string, callback?: any, initiallyVisible: boolean = true, delayCloseCallback: number = 0): string => {
-
-        let attribs = {
-            "raised": "raised",
-
-            /* warning: this dialog-confirm will cause google polymer to close the dialog instantly when the button
-             is clicked and sometimes we don't want that, like for example, when we open a dialog over another dialog,
-             we don't want the instantaneous close and display of background. It creates a flicker effect.
-
-            "dialog-confirm": "dialog-confirm",
-            */
-
-            "id": this.id(id),
-            "class": "standardButton"
-        };
-
-        (<any>attribs).onclick = () => {
-            if (callback) {
-                callback();
-            }
-
-            setTimeout(() => {
-                this.cancel();
-            }, delayCloseCallback);
-        };
-
-        if (!initiallyVisible) {
-            (<any>attribs).style = "display:none;"
-        }
-
-        return tag.button(attribs, text);
-    }
-
-    bindEnterKey = (id: string, callback: Function): void => {
-        //console.log("typeof callback == " + (typeof callback));
-        if (typeof callback !== 'function') throw "bindEnterKey requires function";
-        util.bindEnterKey(this.id(id), callback);
-    }
-
-    setInputVal = (id: string, val: string): void => {
-        if (!val) {
-            val = "";
-        }
-        util.setInputVal(this.id(id), val);
-    }
-
-    getInputVal = (id: string): string => {
-        return util.getInputVal(this.id(id)).trim();
-    }
-
-    setHtml = (text: string, id: string): void => {
-        util.setHtml(this.id(id), text);
-    }
-
-    makeRadioButton = (label: string, id: string): string => {
-        id = this.id(id);
-        return tag.radioButton({
-            "id": id,
-            "name": id
-        }, label);
-    }
-
-    makeCheckBox = (label: string, id: string, initialState: boolean): string => {
-        id = this.id(id);
-        console.log("Making Dialog Checkbox. ID=" + id);
-        let attrs = {
-            //"onclick": publicCommentingChanged
-            "name": id,
-            "id": id,
-            "checked": initialState
-        };
-
-        let checkbox: string = tag.checkbox(attrs);
-
-        checkbox += render.tag("label", {
-            "for": id
-        }, label, true);
-
-        return checkbox;
-    }
-
-    makeHeader = (text: string, id?: string, centered?: boolean): string => {
-        let attrs = {
-            "class": /*"dialog-header " +*/ (centered ? "horizontal center-justified layout" : "") + " dialog-header"
-        };
-
-        //add id if one was provided
-        if (id) {
-            attrs["id"] = this.id(id);
-        }
-
-        /* making this H2 tag causes google to drag in a bunch of its own styles and are hard to override */
-        return tag.div(attrs, text);
-    }
-
-    focus = (id: string): void => {
-        if (!util.startsWith(id, "#")) {
-            id = "#" + id;
-        }
-        id = this.id(id);
-        util.delayedFocus(id);
     }
 }

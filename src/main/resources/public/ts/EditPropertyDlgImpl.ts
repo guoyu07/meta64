@@ -62,7 +62,7 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     }
 
     saveProperty = (): void => {
-        //todo-1: how bout some validation here ?
+        //todo-1: need validation
         var propertyNameData = this.propertyNameTextarea.getValue();
         var propertyValueData = this.propertyValTextarea.getValue();
 

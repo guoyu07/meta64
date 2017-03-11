@@ -14,7 +14,7 @@ export abstract class Comp {
     children: Comp[];
 
     /* State tells us if the widget is currently about to re-render itself as soon as it can */
-    renderPending : boolean = false;
+    renderPending: boolean = false;
 
     constructor(attribs: Object) {
         this.attribs = attribs || {};
@@ -68,8 +68,22 @@ export abstract class Comp {
         (<any>this.attribs).onclick = onclick;
     }
 
-    renderToDom = (): void => {
+    // createElement(): HTMLElement {
+    //     document.createElement("paper-dialog");
+    // }
+
+    /* If caller happens to have this element it can be passed, to avoid one DOM lookup */
+    renderToDom = (elm? : HTMLElement): void => {
         if (this.renderPending) return;
+        
+        /* To be synchronous where possible we go ahead and check to see if the
+        element exists right now, and if so we render and don't rely on domBind async */
+        elm = elm || this.getElement();
+        if (elm) {
+            elm.innerHTML = this.render();
+            return;
+        }
+
         this.renderPending = true;
         domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = this.render();

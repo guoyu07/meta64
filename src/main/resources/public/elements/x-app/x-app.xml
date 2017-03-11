@@ -234,17 +234,13 @@
                             name="timelineTabName"
                             id="timelineResultsPanel">No timeline displaying.</div>
                     </iron-pages>
-
                     <!-- All modal dialogs go in here -->
-                    <div
-                        id="modalsContainer"
-                        style="position: absolute; top: 0; left: 0"></div>
+                    <div id="modalsContainer"
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
                 </div>
             </paper-header-panel>
         </paper-drawer-panel>
-        <div
-            id="modalsContainer"
-            style="position: absolute; top: 0; left: 0"></div>
+        
     </template>
     <script type="text/javascript">
         /*<![CDATA[*/

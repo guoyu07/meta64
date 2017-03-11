@@ -18,6 +18,7 @@ declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render {
+    private PRETTY_TAGS: boolean = true;
     private debug: boolean = false;
 
     /*
@@ -1038,6 +1039,11 @@ export class Render {
                     } else {
                         ret += `${k}='${v}' `;
                     }
+
+                    if (this.PRETTY_TAGS) {
+                        ret += "\n";
+                    }
+
                 } else {
                     ret += k + " ";
                 }
@@ -1059,9 +1065,18 @@ export class Render {
                 content = "";
             }
 
-            ret += `>${content}</${tag}>`;
+            if (this.PRETTY_TAGS) {
+                ret +=`>\n${content}</${tag}>`;
+            }
+            else {
+                ret += `>${content}</${tag}>`;
+            }
         } else {
             ret += "/>";
+        }
+
+        if (this.PRETTY_TAGS) {
+            ret += "\n";
         }
 
         return ret;

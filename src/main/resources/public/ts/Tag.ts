@@ -49,6 +49,10 @@ export class Tag {
         return render.tag("paper-textarea", attr, "", true);
     }
 
+    dialog(attr: Object, content: string): string {
+        return render.tag("paper-dialog", attr, content, true);
+    }
+
     /* We encapsulate/decouple here smartly so that if there's an 'icon' property, we automatically use an paper-icon-button instead of
     a plain paper-button */
     button(attr?: Object, text?: string): string {

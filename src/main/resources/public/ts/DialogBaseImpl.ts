@@ -8,6 +8,7 @@ import { tag } from "./Tag";
 import { Div } from "./widget/Div";
 import { Comp } from "./widget/base/Comp";
 import { domBind } from "./DomBind";
+import { Dialog } from "./widget/Dialog";
 
 declare var Polymer;
 
@@ -21,29 +22,13 @@ declare var Polymer;
  * repopulated to reopen one of them, and closing any of them is merely done by
  * making them invisible.
  */
-export abstract class DialogBaseImpl extends Comp implements DialogBase {
-    private horizCenterDlgContent: boolean = true;
+export abstract class DialogBaseImpl extends Dialog implements DialogBase {
 
-    //data: any;
     built: boolean;
-    //guid: string;
 
-    //todo-0: Eventually we can make this base class be an instance of Comp, as its base class, but for now, I'm just using
-    //containment rather than composition, and letting this 'content' be the actual root element for the GUI of the dialog,
-    //rather than haing this dialog itself be an instenace of Comp.
-    //
-    //Note: amaking this base class into a Comp-derived class will also eliminate a lot of methods in it (this.id, this.makeButton, etc)
-    //content: Div = new Div();
-
-    constructor(/* protected domId: string */) {
+    constructor() {
         super(null);
-        //this.data = {};
-        //this.data.guid = Comp.nextGuid();
     }
-
-    // getComponent(): Comp {
-    //     return this.content;
-    // }
 
     /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
     any defaults or values in for fields, etc. should be set when the dialog is displayed */
@@ -53,87 +38,55 @@ export abstract class DialogBaseImpl extends Comp implements DialogBase {
     closeEvent = (): void => {
     }
 
-    // render = (): string => {
-    //     if (this.getComponent()) {
-    //         return this.getComponent().render();
-    //     }
-    //     throw "render method should overridden, unless component is available";
-    // };
-
+    /* To open any dialog all we do is construct the object and call open() */
     open = (): void => {
         /*
          * get container where all dialogs are created (true polymer dialogs)
          */
-        let modalsContainer = util.polyElm("modalsContainer");
-
-        /* suffix domId for this instance/guid */
-        //let id = this.id(this.domId);
+        let modalsContainer = util.domElm("modalsContainer");
 
         /*
          * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
-         * once it's closed, AND that same code should delete the guid's object in
-         * map in this module
+         * once it's closed, but remember some dialogs will eventually be treated as singletons, meaning
+         * they can STAY on the dom, but be invisible. None of this work is done yet.
+         *
+         * This createElement call is done with a DIV, here although it's really going to be a 'paper-dialog' when the render sets the innerHTML
+         * on it, but we have to create first as a DIV because the DOM tree doesn't yet know about 'paper-dialog'
          */
-        let node = document.createElement("paper-dialog");
+        let node = document.createElement("div");
 
         //NOTE: This works, but is an example of what NOT to do actually. Instead always
         //set these properties on the 'polyElm.node' below.
         //node.setAttribute("with-backdrop", "with-backdrop");
 
-        node.setAttribute("id", this.getId()); //id);
-        modalsContainer.node.appendChild(node);
+        modalsContainer.appendChild(node);
 
-        // todo-3: put in CSS now
-        node.style.border = "3px solid gray";
+        this.renderToDom(node);
 
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
 
-        if (this.horizCenterDlgContent) {
-
-            let content: string =
-                tag.div({
-                    //howto: example of how to center a div in another div. This div is the one being centered.
-                    //The trick to getting the layout working was NOT setting this width to 100% even though somehow
-                    //the layout does result in it being 100% i think.
-                    "style": "margin: 0 auto; max-width: 800px;" //"margin: 0 auto; width: 800px;"
-                },
-                    this.render());
-
-            util.setHtml(this.getId(), content);
-
-            // let left = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, "left");
-            // let center = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, this.build());
-            // let right = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, "right");
-            //
-            // let row = tag.div( { "display": "table-row" }, left + center + right);
-            //
-            // let table: string = tag.div(
-            //     {
-            //         "display": "table",
-            //     }, row);
-            //
-            // util.setHtml(id, table);
-        }
-        else {
-            /* todo-1: lookup paper-dialog-scrollable, for examples on how we can implement header and footer to build
-            a much better dialog. */
-            let content = this.render();
-            // tag.div( {
-            //     "class" : "main-dialog-content"
-            // },
-            // this.build());
-            util.setHtml(this.getId(), content);
-        }
+        // let left = tag.div( {
+        //     "display": "table-column",
+        //     "style": "border: 1px solid black;"
+        // }, "left");
+        // let center = tag.div( {
+        //     "display": "table-column",
+        //     "style": "border: 1px solid black;"
+        // }, this.build());
+        // let right = tag.div( {
+        //     "display": "table-column",
+        //     "style": "border: 1px solid black;"
+        // }, "right");
+        //
+        // let row = tag.div( { "display": "table-row" }, left + center + right);
+        //
+        // let table: string = tag.div(
+        //     {
+        //         "display": "table",
+        //     }, row);
+        //
+        // util.setHtml(id, table);
 
         this.built = true;
 
@@ -150,11 +103,11 @@ export abstract class DialogBaseImpl extends Comp implements DialogBase {
         so I'm just using the paper-dialog CSS styling to alter the dialog size to fullscreen
         let ironPages = util.polyElm("mainIronPages");
 
-        After the TypeScript conversion I noticed having a modal flag will cause
-        an infinite loop (completely hang) Chrome browser, but this issue is most likely
-        not related to TypeScript at all, but i'm just mention TS just in case, because
+        After the TypeScript conversion I noticed having a modal flag (modal = true) will cause
+        an infinite loop (completely hang) in Chrome browser, but this issue is most likely
+        not related to TypeScript at all. I just mention TS just in case, because
         that's when I noticed it. Dialogs are fine but not a dialog on top of another dialog, which is
-        the case where it hangs if model=true
+        the case where it hangs if modal=true
         */
         //polyElm.node.modal = true;
 
@@ -165,6 +118,7 @@ export abstract class DialogBaseImpl extends Comp implements DialogBase {
         //polyElm.node.fitInto = ironPages.node;
         //polyElm.node.constrain();
         //polyElm.node.center();
+        polyElm.node.setAttribute("with-backdrop", "with-backdrop");
         polyElm.node.open();
 
         //let dialog = document.getElementById('loginDialog');
@@ -173,49 +127,12 @@ export abstract class DialogBaseImpl extends Comp implements DialogBase {
             //console.log("****************** Dialog: " + id + " is closed!");
             this.closeEvent();
         });
-
-        /*
-        setting to zero margin immediately, and then almost immediately, and then afte 1.5 seconds
-        is a really ugly hack, but I couldn't find the right style class or way of doing this in the google
-        docs on the dialog class.
-        */
-        polyElm.node.style.margin = "0px";
-        polyElm.node.refit();
-
-        /* I'm doing this in desparation. nothing else seems to get rid of the margin */
-        setTimeout(() => {
-            polyElm.node.style.margin = "0px";
-            polyElm.node.refit();
-        }, 10);
-
-        /* I'm doing this in desparation. nothing else seems to get rid of the margin */
-        setTimeout(() => {
-            polyElm.node.style.margin = "0px";
-            polyElm.node.refit();
-        }, 1500);
     }
 
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
     public cancel(): void {
-        let polyElm = util.polyElm(this.getId()); //this.id(this.domId));
+        let polyElm = util.polyElm(this.getId());
         polyElm.node.cancel();
     }
-
-    /*
-     * Helper method to get the true id that is specific to this dialog (i.e. guid
-     * suffix appended)
-     *
-     * This will be totally replaced by Comp.getId() once we are fully converted to Widget architecture.
-     */
-    // id = (id): string => {
-    //     if (id == null)
-    //         return null;
-    //
-    //     /* if dialog already suffixed */
-    //     if (util.contains(id, "_dlgId")) {
-    //         return id;
-    //     }
-    //     return id + "_dlgId" + this.data.guid;
-    // }
 }

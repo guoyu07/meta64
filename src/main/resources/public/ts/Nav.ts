@@ -209,8 +209,9 @@ class Nav {
         return null;
     }
 
-    clickOnNodeRow(rowElm, uid): void {
+    clickOnNodeRow(uid : string): void {
 
+        //console.log("clickOnNodeRow: uid="+uid);
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);
@@ -228,7 +229,7 @@ class Nav {
              * if non-null it's already displaying and we do nothing.
              */
             if (!node.owner) {
-                console.log("calling updateNodeInfo");
+                //console.log("calling updateNodeInfo");
                 meta64.updateNodeInfo(node);
             }
         }

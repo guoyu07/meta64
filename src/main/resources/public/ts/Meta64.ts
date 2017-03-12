@@ -415,35 +415,33 @@ class Meta64 {
      * setting that value should go thru this function.
      */
     highlightNode(node: I.NodeInfo, scroll: boolean): void {
-        if (!node)
+        if (!node) {
+            console.log("ignoring null noode.");
             return;
+        }
 
         let doneHighlighting: boolean = false;
 
         /* Unhighlight currently highlighted node if any */
         let curHighlightedNode: I.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
         if (curHighlightedNode) {
+            //console.log("already had a highlighted node.");
             if (curHighlightedNode.uid === node.uid) {
-                // console.log("already highlighted.");
+                //console.log("nodeid " + node.uid + " was already highlighted.");
                 doneHighlighting = true;
             } else {
-                let rowElmId = "row_" + curHighlightedNode.uid /* + "_row"*/;
-                let rowElm = document.querySelector("#" + rowElmId);
-                if (rowElm) {
-                    util.changeOrAddClass("#" + rowElmId, "active-row", "inactive-row");
-                }
+                //console.log("highlighting(1).");
+                let rowElmId = "row_" + curHighlightedNode.uid;
+                util.changeOrAddClass(rowElmId, "active-row", "inactive-row");
             }
         }
 
         if (!doneHighlighting) {
             meta64.parentUidToFocusNodeMap[meta64.currentNodeUid] = node;
 
-            let rowElmId: string = "row_" + node.uid /* + "_row" */;
-            let rowElm = document.querySelector("#" + rowElmId);
-            if (rowElm == null) {
-                console.log("Unable to find rowElement to highlight: " + rowElmId);
-            }
-            util.changeOrAddClass("#" + rowElmId, "inactive-row", "active-row");
+            let rowElmId: string = "row_" + node.uid;
+            //console.log("highlighting(2): to row: "+rowElmId);
+            util.changeOrAddClass(rowElmId, "inactive-row", "active-row");
         }
 
         if (scroll) {
@@ -463,7 +461,7 @@ class Meta64 {
         let selNodeCount: number = util.getPropertyCount(meta64.selectedNodes);
         let highlightNode: I.NodeInfo = meta64.getHighlightedNode();
         let selNodeIsMine: boolean = highlightNode != null && (highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
-        console.log("SelNodeIsMine="+selNodeIsMine);
+        console.log("SelNodeIsMine=" + selNodeIsMine);
         //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
         let homeNodeSelected: boolean = highlightNode != null && meta64.homeNodeId == highlightNode.id;
         let importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;
@@ -566,7 +564,7 @@ class Meta64 {
         if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
             return ret;
 
-        util.forEachArrElm(meta64.currentNodeData.children, (iterNode, idx) : boolean => {
+        util.forEachArrElm(meta64.currentNodeData.children, (iterNode, idx): boolean => {
             if (node.id === iterNode.id) {
                 ret = idx;
                 return false; //stop iterating.
@@ -890,8 +888,8 @@ class Meta64 {
         });
     }
 
-    clickOnNodeRow(rowElm, uid): void {
-        nav.clickOnNodeRow(rowElm, uid);
+    clickOnNodeRow(uid): void {
+        nav.clickOnNodeRow(uid);
     }
 
     replyToComment(uid: any): void {

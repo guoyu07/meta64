@@ -360,12 +360,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     saveNewNode = (newNodeName?: string): void => {
-        if (!newNodeName) {
-            //newNodeName = util.getInputVal(this.id("newNodeNameId"));
-            //todo-0: come back and test this.
-            throw "case not handled after refactoring. new node name not set?";
-        }
-
         /*
          * If we didn't create the node we are inserting under, and neither did "admin", then we need to send notification
          * email upon saving this new node.

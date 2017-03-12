@@ -733,20 +733,25 @@ class Util {
         return "";
     }
 
+    changeOrAddClassToElm(elm : HTMLElement, oldClass: string, newClass: string) {
+        util.removeClassFromElmById((<any>elm.attributes).id, oldClass);
+        util.addClassToElmById((<any>elm.attributes).id, newClass);
+    }
+
     /*
      * Removed oldClass from element and replaces with newClass, and if oldClass is not present it simply adds
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
      */
-    changeOrAddClass(elmSel: string, oldClass: string, newClass: string) {
-        let elm: HTMLElement = util.domElm(elmSel);
-        util.removeClassFromElm(elm, oldClass);
-        util.addClassToElm(elm, newClass);
+    changeOrAddClass(id: string, oldClass: string, newClass: string) {
+        util.removeClassFromElmById(id, oldClass);
+        util.addClassToElmById(id, newClass);
     }
 
-    changeOrAddClassToElm(elm: HTMLElement, oldClass: string, newClass: string) {
-        util.removeClassFromElm(elm, oldClass);
-        util.addClassToElm(elm, newClass);
+    removeClassFromElmById(id: string, clazz: string) {
+        domBind.whenElm(id, (elm) => {
+            util.removeClassFromElm(elm, clazz);
+        });
     }
 
     removeClassFromElm(el: any, clazz: string): void {
@@ -758,18 +763,25 @@ class Util {
     }
 
     addClassToElmById(id: any, clazz: string): void {
-        let elm = util.domElm(id);
-        util.addClassToElm(elm, clazz);
+        //console.log("Adding class "+clazz+" to dom id "+id);
+        domBind.whenElm(id, (elm) => {
+            //console.log("found dom id, adding class now.");
+            util.addClassToElm(elm, clazz);
+        });
     }
 
     addClassToElm(el: any, clazz: string): void {
-        if (el.classList)
+        if (el.classList) {
+            //console.log("add to classList " + clazz);
             el.classList.add(clazz);
+        }
         else {
             if (el.className) {
+                //console.log("appending to className " + clazz);
                 el.className += " " + clazz;
             }
             else {
+                //console.log("setting className " + clazz);
                 el.className = clazz;
             }
         }

@@ -42,8 +42,12 @@ export abstract class DialogBaseImpl extends Dialog implements DialogBase {
     open = (): void => {
         /*
          * get container where all dialogs are created (true polymer dialogs)
+         *
+         * I'm not sure i'm going to keep modalsContainer, but it works fine for now.
          */
         let modalsContainer = util.domElm("modalsContainer");
+        modalsContainer.style.width = "100%";
+        modalsContainer.style.height = "100%";
 
         /*
          * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
@@ -134,5 +138,9 @@ export abstract class DialogBaseImpl extends Dialog implements DialogBase {
     public cancel(): void {
         let polyElm = util.polyElm(this.getId());
         polyElm.node.cancel();
+
+        let modalsContainer = util.domElm("modalsContainer");
+        modalsContainer.style.width = "1px";
+        modalsContainer.style.height = "1px";
     }
 }

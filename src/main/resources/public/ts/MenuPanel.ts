@@ -20,7 +20,7 @@ class MenuPanel {
             class: "menu-trigger"
         };
 
-        let paperItem = tag.item(paperItemAttrs, title);
+        let paperItem = tag.menuItem(paperItemAttrs, title);
 
         let paperSubmenuAttrs = {
             "label": title,
@@ -51,7 +51,7 @@ class MenuPanel {
     }
 
     private menuItem(name: string, id: string, onclick: Function): string {
-        let html = tag.item({
+        let html = tag.menuItem({
             "id": id,
             "selectable": ""
         }, name);
@@ -162,9 +162,5 @@ class MenuPanel {
 
         util.setHtml(menuPanel.domId, content);
     }
-    //
-    // init = function(): void {
-    //     meta64.refreshAllGuiEnablement();
-    // }
 }
 export let menuPanel: MenuPanel = new MenuPanel();

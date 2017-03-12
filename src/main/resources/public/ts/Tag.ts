@@ -94,7 +94,7 @@ export class Tag {
         return render.tag("paper-progress", attr);
     }
 
-    item(attr?: Object, content?: string): string {
+    menuItem(attr?: Object, content?: string): string {
         return render.tag("paper-item", attr, content, true);
     }
 

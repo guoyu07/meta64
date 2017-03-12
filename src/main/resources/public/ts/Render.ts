@@ -367,7 +367,7 @@ export class Render {
         let cssId: string = "row_" + uid /*+ "_row"*/;
         return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
-            "onclick": (elm) => { meta64.clickOnNodeRow(elm, uid); }, //
+            "onclick": (elm) => { meta64.clickOnNodeRow(uid); }, //
             "id": cssId,
             "style": bkgStyle
         },//
@@ -770,7 +770,7 @@ export class Render {
 
             let content: string = tag.div({
                 "class": (selected ? "mainNodeContentStyle active-row" : "mainNodeContentStyle inactive-row"),
-                "onclick": (elm) => { meta64.clickOnNodeRow(elm, uid); },
+                "onclick": (elm) => { meta64.clickOnNodeRow(uid); },
                 "id": cssId
             },//
                 buttonBar + mainNodeContent);

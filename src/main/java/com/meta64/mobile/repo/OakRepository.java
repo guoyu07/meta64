@@ -70,7 +70,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
 
 /**
- * Instance of a MonboDB-based Repository.
+ * Instance of a JCR Repository (both RDB and MongoDB are supported).
+ * 
+ * If you configure db.store.type=="rdb", then set the rdb.* properties in this class.
+ * If you configure db.store.type=="mongo", then set the mongo.* properties in this class.
  * 
  * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
  * called.
@@ -272,6 +275,7 @@ public class OakRepository {
 					// */.with(getSecurityProvider()).createRepository();
 				}
 				else if ("filesystem".equalsIgnoreCase(dbStoreType)) {
+					throw new Exception("filesystem storage not yet supported.");
 					/*
 					 * The below code is just a sample of what I found online which I think works
 					 * but I've never tested. Since Java includes DerbyDB support alread built-in, i

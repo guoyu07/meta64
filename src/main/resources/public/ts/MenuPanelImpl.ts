@@ -45,15 +45,6 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Cut", edit.cutSelNodes, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine }), //
                 new MenuItem("Paste", edit.pasteSelNodes, () => { return !meta64.isAnonUser && edit.nodesToMove != null && (meta64.state.selNodeIsMine || meta64.state.homeNodeSelected) }), //
                 new MenuItem("Clear Selections", edit.clearSelections, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 }), //
-
-                new MenuItem("Import", edit.openImportDlg, //
-                    () => { return meta64.state.importFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },//
-                    () => { return meta64.state.importFeatureEnabled }), //
-
-                new MenuItem("Export", edit.openExportDlg, //
-                    () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
-                    () => { return meta64.state.exportFeatureEnabled }
-                ), //
                 new MenuItem("Delete", edit.deleteSelNodes, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine })
             ]),
             new Menu("Move", [
@@ -102,7 +93,15 @@ export default class MenuPanel extends Comp {
              */
             new Menu("Account", [
                 new MenuItem("Change Password", edit.openChangePasswordDlg, () => { return !meta64.isAnonUser }), //
-                new MenuItem("Manage Account", edit.openManageAccountDlg, () => { return !meta64.isAnonUser }) //
+                new MenuItem("Manage Account", edit.openManageAccountDlg, () => { return !meta64.isAnonUser }), //
+                new MenuItem("Import", edit.openImportDlg, //
+                    () => { return meta64.state.importFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },//
+                    () => { return meta64.state.importFeatureEnabled }), //
+
+                new MenuItem("Export", edit.openExportDlg, //
+                    () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
+                    () => { return meta64.state.exportFeatureEnabled }
+                ), //
                 // menuItem("Full Repository Export", "fullRepositoryExport", "
                 // edit.fullRepositoryExport();") + //
             ]),

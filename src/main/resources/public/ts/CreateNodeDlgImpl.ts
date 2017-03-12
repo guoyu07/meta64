@@ -2,7 +2,6 @@ console.log("CreateNodeDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { CreateNodeDlg } from "./CreateNodeDlg";
-import { render } from "./Render";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
 import { edit } from "./Edit";

@@ -52,7 +52,7 @@ cd $META64/src/main/resources/public/ts
 tsc -p tsconfig-dev.json
 if [ $? -eq 0 ]
 then
-  read -p "TypeScript generating successful."
+  read -p "TypeScript generating successful. Press ENTER key."
 else
   read -p "FAIL. TypeScript compiler reported ERRORS."
 fi
@@ -81,7 +81,7 @@ cd $META64/src/main/resources/public/css
 lessc meta64.less meta64.css
 if [ $? -eq 0 ]
 then
-  read -p "LESS CSS generating successful."
+  read -p "LESS CSS generating successful. Press ENTER key."
 else
   read -p "FAIL. LESS compiler reported ERRORS."
 fi

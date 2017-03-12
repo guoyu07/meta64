@@ -1,10 +1,8 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { PrefsDlg } from "./PrefsDlg";
-import { render } from "./Render";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
 import * as I from "./Interfaces";
-import { tag } from "./Tag";
 import { Header } from "./widget/Header";
 import { ButtonBar } from "./widget/ButtonBar";
 import { Button } from "./widget/Button";

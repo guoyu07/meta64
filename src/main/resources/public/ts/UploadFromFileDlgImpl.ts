@@ -2,12 +2,10 @@ import { DialogBaseImpl } from "./DialogBaseImpl";
 import { UploadFromFileDlg } from "./UploadFromFileDlg";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { Factory } from "./Factory";
-import { render } from "./Render";
 import { cnst } from "./Constants";
 import { attachment } from "./Attachment";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
-import { tag } from "./Tag";
 
 declare var postTargetUrl;
 

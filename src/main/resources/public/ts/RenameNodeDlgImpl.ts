@@ -1,6 +1,5 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { RenameNodeDlg } from "./RenameNodeDlg";
-import { render } from "./Render";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";
 import { edit } from "./Edit";

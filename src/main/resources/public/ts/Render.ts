@@ -253,7 +253,7 @@ export class Render {
 
             if (!renderComplete) {
                 if (node.path.trim() == "/") {
-                    ret += "Root Node";
+                    ret += "<h1>Root Node</h1>";
                 }
                 /* ret += "< div>[No Content Property]</div>"; */
                 let properties: string = props.renderProperties(node.properties);

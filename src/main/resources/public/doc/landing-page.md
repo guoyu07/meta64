@@ -4,9 +4,16 @@ Meta64 is an Open Source "Mobile First" Wiki-type content repository (or CMS) bu
 
 The **meta64.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
-## News: Recent Changes 
+## News: Recent Awesome Changes (3/8/2017) 
 
-Changed to using ES6 Module syntax in the TypeScript code, and using SystemJS module loader. 
+Created a "Widget Framework" that eliminates any need for "HTML Templates" (and/or JSX, etc), by using TypeScript custom components that programatically represent GUI layout and definition in a way that is actually more expressive, simpler to read, and more dynamic than any templating system could ever be. 
+
+Because of the power of having full OOP (Classes, etc) in TypeScript it has opened up web development to the possibility of what was possible in Java Swing, and GWT, which are two technologies that were great for what they were, and not built on top of any templating nonsense. Not only does a GUI Component widget system in TypeScript eliminate any need to work with templates, it totally decouples the HTML also, so that for the most part the the developer never even notices he's dealing with an HTML, because everything is just clean OOP calls on Widget Components, with the HTML specifics abstracted into lower layers that never need be worried about.
+
+[For example, here is the entire "Change Password Dialog"] 
+https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts
+
+If you look at the BuildGUI() method on that class it should be obvious that this widget technique is superior to any template-based system. 
 
 ## Technology Stack
 * Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax, Ace Editor, Pegdown Markdown
@@ -94,11 +101,11 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 ## Technology Stack and APIs
 
 * Single Page Application (SPA)
-* JavaScript/HTML/CSS Client
+* 100% TypeScript(zero raw JavaScript)/HTML/CSS. (https://www.typescriptlang.org/)
+* Most GUI using TypeScript Widget Framework (no Templating, JSX, JSP, or Mustach, etc)
 * Leverages Advanced Java 8 Language Features
-* All JavaScript, coded as TypeScript (https://www.typescriptlang.org/)
 * JSON-based Ajax for Server Communication
-* ES6 JS Module syntax, with ES5 support
+* All TypeScript in ES6 Modules, compiled to support ES5
 * SystemJS module loader, supporting bundled or non-bundles builds (https://github.com/systemjs/systemjs)
 * Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
 * MongoDB as Data Storage (https://www.mongodb.com)

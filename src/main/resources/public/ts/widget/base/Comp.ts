@@ -43,10 +43,14 @@ export abstract class Comp {
         this.setVisible(this.visible);
         this.setEnabled(this.enabled);
 
-        //recursively drill down and do entire tree.
+        //recursively drill down and do entire tree. For efficiency I need to modify this to be 'breadth' first?
+        //let visibleChildrenCount = 0;
         util.forEachArrElm(this.children, function(child, idx) {
             if (child) {
                 child.refreshState();
+                // if (child.visible) {
+                //     visibleChildrenCount++;
+                // }
             }
         });
     }
@@ -73,6 +77,24 @@ export abstract class Comp {
             ret = true;
         }
         return ret;
+    }
+
+    /* Certain components decide if they are visible based on if any children are visible so we encapsulated that logic into here */
+    setVisibleIfAnyChildrenVisible() {
+        let thisVisible = false;
+
+        util.forEachArrElm(this.children, function(child, idx) {
+            if (child) {
+                /* if we found a visible child, we can set visible to true, and end this forEach iteration, because we don't need any
+                more info. We're done. It's gonna be visible */
+                if (child.visible) {
+                    thisVisible = true;
+                    return false;
+                }
+            }
+        });
+
+        this.setVisible(thisVisible);
     }
 
     static nextGuid(): number {

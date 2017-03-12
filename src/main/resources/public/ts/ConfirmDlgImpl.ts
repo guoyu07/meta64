@@ -2,7 +2,6 @@ console.log("ConfirmDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ConfirmDlg } from "./ConfirmDlg";
-import { render } from "./Render";
 import { Header } from "./widget/Header";
 import { TextContent } from "./widget/TextContent";
 import { ButtonBar } from "./widget/ButtonBar";

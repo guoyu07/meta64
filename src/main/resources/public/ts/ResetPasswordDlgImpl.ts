@@ -1,6 +1,5 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ResetPasswordDlg } from "./ResetPasswordDlg";
-import { render } from "./Render";
 import { util } from "./Util";
 import * as I from "./Interfaces";
 import { Header } from "./widget/Header";

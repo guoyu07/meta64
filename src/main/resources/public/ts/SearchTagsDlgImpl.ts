@@ -1,7 +1,6 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { SearchTagsDlg } from "./SearchTagsDlg";
 import { srch } from "./Search";
-import { render } from "./Render";
 import { jcrCnst } from "./Constants";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";

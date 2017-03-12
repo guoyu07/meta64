@@ -2,10 +2,8 @@ console.log("ManageAccountDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ManageAccountDlg } from "./ManageAccountDlg";
-import { render } from "./Render";
 import { meta64 } from "./Meta64";
 import { prefs } from "./Prefs";
-import { tag } from "./Tag";
 import { Header } from "./widget/Header";
 import { PasswordTextField } from "./widget/PasswordTextField";
 import { ButtonBar } from "./widget/ButtonBar";

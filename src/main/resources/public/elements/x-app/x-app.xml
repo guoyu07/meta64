@@ -106,8 +106,6 @@
     rel="import"
     href="/polymer/marked-element/marked-element.html" />
 
-<!-- <link rel="stylesheet" href="/css/meta64.css?ver={{cacheVersion}}" /> -->
-
 <dom-module id="x-app">
     <template>
         <style is="custom-style">

@@ -1,9 +1,7 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { SignupDlg } from "./SignupDlg";
-import { render } from "./Render";
 import { util } from "./Util";
 import * as I from "./Interfaces";
-import { tag } from "./Tag";
 import { Header } from "./widget/Header";
 import { ButtonBar } from "./widget/ButtonBar";
 import { Button } from "./widget/Button";

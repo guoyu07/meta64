@@ -2,7 +2,6 @@ import { DialogBaseImpl } from "./DialogBaseImpl";
 import { SharingDlg } from "./SharingDlg";
 import { share } from "./Share";
 import { util } from "./Util";
-import { render } from "./Render";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";
 import { Factory } from "./Factory";

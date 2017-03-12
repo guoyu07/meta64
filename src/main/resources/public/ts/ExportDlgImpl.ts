@@ -2,7 +2,6 @@ console.log("ExportDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { ExportDlg } from "./ExportDlg";
-import { render } from "./Render";
 import { util } from "./Util";
 import { meta64 } from "./Meta64";
 import * as I from "./Interfaces";

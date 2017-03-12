@@ -1010,6 +1010,7 @@ export class Render {
             /* If there's no ID specified then generate one */
             if (!(<any>attributes).id) {
                 (<any>attributes).id = "genId_" + Comp.nextGuid();
+                console.log("auto-generated an ID, because code didn't specify: tag=" + tag + ". Is this a bug?");
             }
 
             ret += " ";
@@ -1029,6 +1030,7 @@ export class Render {
 
                     if (typeof v !== 'string') {
                         v = String(v);
+                        console.log("forceed attribute to string(" + v + "): tag=" + tag + ". Is this a bug?");
                     }
 
                     /*
@@ -1066,7 +1068,7 @@ export class Render {
             }
 
             if (this.PRETTY_TAGS) {
-                ret +=`>\n${content}</${tag}>`;
+                ret += `>\n${content}</${tag}>`;
             }
             else {
                 ret += `>${content}</${tag}>`;

@@ -13,7 +13,7 @@ import { srch } from "./Search";
 import { share } from "./Share";
 import { user } from "./User";
 import { view } from "./View";
-import { menuPanel } from "./MenuPanel";
+import { MenuPanel } from "./MenuPanel";
 import { podcast } from "./Podcast";
 import { systemfolder } from "./SystemFolder";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
@@ -26,6 +26,27 @@ declare const System: any;
 declare var Polymer;
 
 class Meta64 {
+
+    menuPanel: MenuPanel;
+
+    /* This is the state that all enablement and visibility must reference to determine how to enable gui */
+    state = {
+        prevPageExists: false,
+        nextPageExists: false,
+        selNodeCount: 0,
+        highlightNode: null,
+        selNodeIsMine: false,
+        homeNodeSelected: false,
+        importFeatureEnabled: false,
+        exportFeatureEnabled: false,
+        highlightOrdinal: 0,
+        numChildNodes: 0,
+        canMoveUp: false,
+        canMoveDown: false,
+        canCreateNode: false,
+        propsToggle: false,
+        allowEditMode: false
+    };
 
     appInitialized: boolean = false;
 
@@ -149,9 +170,6 @@ class Meta64 {
     currentNodeId: any = null;
     currentNodePath: any = null;
 
-    /* Maps from guid to Data Object */
-    dataObjMap: any = {};
-
     renderFunctionsByJcrType: { [key: string]: Function } = {};
     propOrderingFunctionsByJcrType: { [key: string]: Function } = {};
 
@@ -166,27 +184,21 @@ class Meta64 {
 
     updateMainMenuPanel() {
         console.log("building main menu panel");
-        menuPanel.render();
-        meta64.refreshAllGuiEnablement();
-    }
 
-    /*
-     * Creates a 'guid' on this object, and makes dataObjMap able to look up the object using that guid in the
-     * future.
-     */
-    registerDataObject__unused(data) {
-        if (!data.guid) {
-            data.guid = ++meta64.nextGuid;
-            meta64.dataObjMap[data.guid] = data;
+        /* create menuPanel, only upon first need for it. I think really I should be creating right in the initializer code instead here, but leaving
+        in this legacy location for now */
+        if (!this.menuPanel) {
+            /* We have to use Factory here even on this non-Dialog class because SystemJS (despite the claims of its developers) doesn't
+            handle the particular type of circular reference this causes if not loaded async by Factory */
+            Factory.createDefault("MenuPanelImpl", (menuPanel: MenuPanel) => {
+                this.menuPanel = menuPanel;
+                util.setHtml("mainAppMenu", menuPanel.render());
+                meta64.refreshAllGuiEnablement();
+            });
         }
-    }
-
-    getObjectByGuid__unused(guid) {
-        let ret = meta64.dataObjMap[guid];
-        if (!ret) {
-            console.log("data object not found: guid=" + guid);
+        else {
+            meta64.refreshAllGuiEnablement();
         }
-        return ret;
     }
 
     inSimpleMode(): boolean {
@@ -453,97 +465,55 @@ class Meta64 {
      * Really need to use pub/sub event to broadcast enablement, and let each component do this independently and
      * decouple
      */
-
-    refreshAllGuiEnablement() {
+    updateState() {
         /* multiple select nodes */
-        let prevPageExists: boolean = nav.mainOffset > 0;
-        let nextPageExists: boolean = !nav.endReached;
-        let selNodeCount: number = util.getPropertyCount(meta64.selectedNodes);
-        let highlightNode: I.NodeInfo = meta64.getHighlightedNode();
-        let selNodeIsMine: boolean = highlightNode != null && (highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
-        console.log("SelNodeIsMine=" + selNodeIsMine);
-        //console.log("homeNodeId="+meta64.homeNodeId+" highlightNode.id="+highlightNode.id);
-        let homeNodeSelected: boolean = highlightNode != null && meta64.homeNodeId == highlightNode.id;
-        let importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;
-        let exportFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.exportAllowed;
-        let highlightOrdinal: number = meta64.getOrdinalOfNode(highlightNode);
-        let numChildNodes: number = meta64.getNumChildNodes();
-        let canMoveUp: boolean = (highlightOrdinal > 0 && numChildNodes > 1) || prevPageExists;
-        let canMoveDown: boolean = (highlightOrdinal < numChildNodes - 1 && numChildNodes > 1) || nextPageExists;
+        meta64.state.prevPageExists = nav.mainOffset > 0;
+        meta64.state.nextPageExists = !nav.endReached;
+        meta64.state.selNodeCount = util.getPropertyCount(meta64.selectedNodes);
+        meta64.state.highlightNode = meta64.getHighlightedNode();
+        meta64.state.selNodeIsMine = meta64.state.highlightNode != null && (meta64.state.highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
+
+        meta64.state.homeNodeSelected = meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id;
+        meta64.state.importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;
+        meta64.state.exportFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.exportAllowed;
+        meta64.state.highlightOrdinal = meta64.getOrdinalOfNode(meta64.state.highlightNode);
+        meta64.state.numChildNodes = meta64.getNumChildNodes();
+        meta64.state.canMoveUp = (meta64.state.highlightOrdinal > 0 && meta64.state.numChildNodes > 1) || meta64.state.prevPageExists;
+        meta64.state.canMoveDown = (meta64.state.highlightOrdinal < meta64.state.numChildNodes - 1 && meta64.state.numChildNodes > 1) || meta64.state.nextPageExists;
 
         //todo-1: need to add to this selNodeIsMine || selParentIsMine;
-        let canCreateNode = meta64.userPreferences.editMode && (meta64.isAdminUser || (!meta64.isAnonUser /* && selNodeIsMine */));
+        meta64.state.canCreateNode = meta64.userPreferences.editMode && (meta64.isAdminUser || (!meta64.isAnonUser /* && selNodeIsMine */));
+        meta64.state.propsToggle = meta64.currentNode && !meta64.isAnonUser;
+        meta64.state.allowEditMode = meta64.currentNode && !meta64.isAnonUser;
+    }
 
-        console.log("enablement: isAnonUser=" + meta64.isAnonUser + " selNodeCount=" + selNodeCount + " selNodeIsMine=" + selNodeIsMine);
+    refreshAllGuiEnablement() {
+        this.updateState();
+
+        //for now we simply tolerate a null menuPanel here before it's initialized.
+        if (this.menuPanel) {
+            /* refreh all enablement and visibility under entire menu with this recursive call! */
+            this.menuPanel.refreshState();
+        }
 
         util.setEnablement("navLogoutButton", !meta64.isAnonUser);
         util.setEnablement("openSignupPgButton", meta64.isAnonUser);
-
-        let propsToggle: boolean = meta64.currentNode && !meta64.isAnonUser;
-        util.setEnablement("propsToggleButton", propsToggle);
-
-        let allowEditMode: boolean = meta64.currentNode && !meta64.isAnonUser;
-
-        util.setEnablement("editModeButton", allowEditMode);
+        util.setEnablement("editModeButton", meta64.state.allowEditMode);
         util.setEnablement("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setEnablement("cutSelNodesButton", !meta64.isAnonUser && selNodeCount > 0 && selNodeIsMine);
-        util.setEnablement("deleteSelNodesButton", !meta64.isAnonUser && selNodeCount > 0 && selNodeIsMine);
-        util.setEnablement("clearSelectionsButton", !meta64.isAnonUser && selNodeCount > 0);
-
-        util.setEnablement("pasteSelNodesButton", !meta64.isAnonUser && edit.nodesToMove != null && (selNodeIsMine || homeNodeSelected));
-
-        util.setEnablement("moveNodeUpButton", canMoveUp);
-        util.setEnablement("moveNodeDownButton", canMoveDown);
-        util.setEnablement("moveNodeToTopButton", canMoveUp);
-        util.setEnablement("moveNodeToBottomButton", canMoveDown);
-
-        util.setEnablement("changePasswordPgButton", !meta64.isAnonUser);
-        util.setEnablement("accountPreferencesButton", !meta64.isAnonUser);
         util.setEnablement("manageAccountButton", !meta64.isAnonUser);
-        util.setEnablement("insertBookWarAndPeaceButton", meta64.isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
-        util.setEnablement("generateRSSButton", meta64.isAdminUser);
-        util.setEnablement("uploadFromFileButton", !meta64.isAnonUser && highlightNode != null && selNodeIsMine);
-        util.setEnablement("uploadFromUrlButton", !meta64.isAnonUser && highlightNode != null && selNodeIsMine);
-        util.setEnablement("deleteAttachmentsButton", !meta64.isAnonUser && highlightNode != null
-            && highlightNode.hasBinary && selNodeIsMine);
-        util.setEnablement("editNodeSharingButton", !meta64.isAnonUser && highlightNode != null && selNodeIsMine);
-        util.setEnablement("renameNodePgButton", !meta64.isAnonUser && highlightNode != null && selNodeIsMine);
-        util.setEnablement("contentSearchDlgButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("tagSearchDlgButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("fileSearchDlgButton", !meta64.isAnonUser && meta64.allowFileSystemSearch);
-        util.setEnablement("searchMainAppButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("timelineMainAppButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("timelineCreatedButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("timelineModifiedButton", !meta64.isAnonUser && highlightNode != null);
-        util.setEnablement("showServerInfoButton", meta64.isAdminUser);
-        util.setEnablement("showFullNodeUrlButton", highlightNode != null);
-        util.setEnablement("refreshPageButton", !meta64.isAnonUser);
-        util.setEnablement("findSharedNodesButton", !meta64.isAnonUser && highlightNode != null);
+        util.setEnablement("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
+        util.setEnablement("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setEnablement("userPreferencesMainAppButton", !meta64.isAnonUser);
-        util.setEnablement("createNodeButton", canCreateNode);
-        util.setEnablement("openImportDlg", importFeatureEnabled && (selNodeIsMine || (highlightNode != null && meta64.homeNodeId == highlightNode.id)));
-        util.setEnablement("openExportDlg", exportFeatureEnabled && (selNodeIsMine || (highlightNode != null && meta64.homeNodeId == highlightNode.id)));
-        util.setEnablement("adminMenu", meta64.isAdminUser);
-
-        //VISIBILITY
-        util.setElmDisplayById("openImportDlg", importFeatureEnabled);
-        util.setElmDisplayById("openExportDlg", exportFeatureEnabled);
-        util.setElmDisplayById("editModeButton", allowEditMode);
+        
+        util.setElmDisplayById("editModeButton", meta64.state.allowEditMode);
         util.setElmDisplayById("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setElmDisplayById("insertBookWarAndPeaceButton", meta64.isAdminUser || (user.isTestUserAccount() && selNodeIsMine));
-        util.setElmDisplayById("generateRSSButton", meta64.isAdminUser);
-        util.setElmDisplayById("propsToggleButton", !meta64.isAnonUser);
         util.setElmDisplayById("openLoginDlgButton", meta64.isAnonUser);
         util.setElmDisplayById("navLogoutButton", !meta64.isAnonUser);
         util.setElmDisplayById("openSignupPgButton", meta64.isAnonUser);
-        util.setElmDisplayById("searchMainAppButton", !meta64.isAnonUser && highlightNode != null);
-        util.setElmDisplayById("timelineMainAppButton", !meta64.isAnonUser && highlightNode != null);
+        util.setElmDisplayById("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
+        util.setElmDisplayById("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setElmDisplayById("userPreferencesMainAppButton", !meta64.isAnonUser);
-        util.setElmDisplayById("fileSearchDlgButton", !meta64.isAnonUser && meta64.allowFileSystemSearch);
-
-        //Top Level Menu Visibility
-        util.setElmDisplayById("adminMenu", meta64.isAdminUser);
-
+   
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
     }

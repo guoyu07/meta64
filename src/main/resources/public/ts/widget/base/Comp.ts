@@ -16,6 +16,13 @@ export abstract class Comp {
     /* State tells us if the widget is currently about to re-render itself as soon as it can */
     renderPending: boolean = false;
 
+    /* These are primarily used by Buttons and MenuItems based on enablement updater */
+    enabled: boolean = true;
+    visible: boolean = true;
+
+    isEnabledFunc: Function;
+    isVisibleFunc: Function;
+
     constructor(attribs: Object) {
         this.attribs = attribs || {};
         this.children = [];
@@ -24,6 +31,48 @@ export abstract class Comp {
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup
         Comp.idToCompMap[id] = this;
+    }
+
+    /* Function refreshes all enablement and visibility based on current state of app */
+    refreshState(): void {
+        //todo-0: need to make this the smart routine which does a minimal-only DOM update on the dom tree branches, but first
+        //simply to prove working we do just brute force updating here.
+        //todo-0: future optimization. For components that don't implement any enablement/visibilty functions, we need can
+        //just only do this enablement stuff ONCE and then not do it again on that same element.
+        this.updateState();
+        this.setVisible(this.visible);
+        this.setEnabled(this.enabled);
+
+        //recursively drill down and do entire tree.
+        util.forEachArrElm(this.children, function(child, idx) {
+            if (child) {
+                child.refreshState();
+            }
+        });
+    }
+
+    setIsEnabledFunc(isEnabledFunc: Function) {
+        this.isEnabledFunc = isEnabledFunc;
+    }
+
+    setIsVisibleFunc(isVisibleFunc: Function) {
+        this.isVisibleFunc = isVisibleFunc;
+    }
+
+    /* returns true if anything was done. Should I eventually make this return true if something CHAGNED ? */
+    updateState(): boolean {
+        let ret = false;
+
+        if (this.isEnabledFunc) {
+            this.enabled = this.isEnabledFunc();
+            ret = true;
+        }
+
+        if (this.isVisibleFunc) {
+            this.visible = this.isVisibleFunc();
+            ret = true;
+        }
+        return ret;
     }
 
     static nextGuid(): number {
@@ -48,15 +97,25 @@ export abstract class Comp {
         return <HTMLElement>document.querySelector("#" + this.getId());
     }
 
+    //todo-0: oops this methid is a dupliate of setVisible() delete it.
     setDisplay = (showing: boolean): void => {
         domBind.whenElm(this.getId(), (elm) => {
             util.setElmDisplay(elm, showing);
         });
     }
 
+    /* WARNING: this is NOT a setter for 'this.visible'. Perhaps i need to rename it for better clarity, it takes
+    this.visible as its input sometimes. Slightly confusing */
     setVisible = (visible: boolean) => {
         domBind.whenElm(this.getId(), (elm) => {
             util.setElmDisplay(elm, visible);
+        });
+    }
+
+    /* WARNING: this is NOT the setter for 'this.enabled' */
+    setEnabled = (enabled: boolean) => {
+        domBind.whenElm(this.getId(), (elm) => {
+            (<any>elm).disabled = !enabled;
         });
     }
 
@@ -73,9 +132,9 @@ export abstract class Comp {
     // }
 
     /* If caller happens to have this element it can be passed, to avoid one DOM lookup */
-    renderToDom = (elm? : HTMLElement): void => {
+    renderToDom = (elm?: HTMLElement): void => {
         if (this.renderPending) return;
-        
+
         /* To be synchronous where possible we go ahead and check to see if the
         element exists right now, and if so we render and don't rely on domBind async */
         elm = elm || this.getElement();

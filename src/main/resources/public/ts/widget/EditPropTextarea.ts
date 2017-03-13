@@ -19,5 +19,6 @@ export class EditPropTextarea extends Textarea {
         else {
             propEntry.id = this.getId();
         }
+        (<any>this.attribs).sourceClass = "EditPropTextarea";
     }
 }

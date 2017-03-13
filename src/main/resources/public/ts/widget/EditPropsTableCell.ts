@@ -6,7 +6,7 @@ import { DialogBase } from "../DialogBase";
 
 export class EditPropsTableCell extends Comp {
 
-    constructor(public content: string = "", attribs : Object = {}) {
+    constructor(attribs : Object = {}) {
         super(attribs);
         (<any>this.attribs).style = "display: table-cell;"
     }

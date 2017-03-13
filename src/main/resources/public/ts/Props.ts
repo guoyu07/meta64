@@ -139,9 +139,10 @@ class Props {
             return tag.table({
                 "border": "1",
                 "class": "property-table"
+                // "sourceClass" : "[propsTable]"
             }, table);
         } else {
-            return undefined;
+            return "";
         }
     }
 

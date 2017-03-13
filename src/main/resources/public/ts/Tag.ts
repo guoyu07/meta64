@@ -26,7 +26,7 @@ export class Tag {
     }
 
     td(attr: Object, content: string): string {
-        return render.tag("tr", attr, content);
+        return render.tag("td", attr, content);
     }
 
     div(attr?: Object, content?: string): string {

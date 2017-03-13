@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -80,7 +81,6 @@ import com.mongodb.MongoTimeoutException;
  */
 @Component
 public class OakRepository {
-
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
 
 	@Value("${forceIndexRebuild}")
@@ -200,6 +200,13 @@ public class OakRepository {
 		close();
 	}
 
+	@PostConstruct
+	public void postConstruct() {
+		adminDataFolder = FileTools.translateDirs(adminDataFolder);
+		rdbUrl = FileTools.translateDirs(rdbUrl);
+		rdbShutdown = FileTools.translateDirs(rdbShutdown);
+	}
+	
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
 
@@ -264,10 +271,8 @@ public class OakRepository {
 					// String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 					Class.forName(rdbDriver).newInstance();
 
-					String userDir = System.getProperty("user.dir");
-					String url = rdbUrl.replace("{user.dir}", userDir);
-
-					dataSource = RDBDataSourceFactory.forJdbcUrl(url, rdbUser, rdbPassword);
+					log.debug("rdbUrl: "+rdbUrl);
+					dataSource = RDBDataSourceFactory.forJdbcUrl(rdbUrl, rdbUser, rdbPassword);
 					builder = builder.setRDBConnection(dataSource, options);
 
 					// This was ORIGINAL way of getting 'repository' with RDB

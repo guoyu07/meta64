@@ -201,7 +201,7 @@ export class Render {
         if (meta64.showProperties) {
             var properties = props.renderProperties(node.properties);
             if (properties) {
-                ret += /* "<br>" + */properties;
+                ret += properties;
             }
         } else {
             let renderComplete: boolean = false;
@@ -364,7 +364,7 @@ export class Render {
         let buttonBarHtmlRet: string = render.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
         let bkgStyle: string = render.getNodeBkgImageStyle(node);
 
-        let cssId: string = "row_" + uid /*+ "_row"*/;
+        let cssId: string = "row_" + uid;
         return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
             "onclick": (elm) => { meta64.clickOnNodeRow(uid); }, //

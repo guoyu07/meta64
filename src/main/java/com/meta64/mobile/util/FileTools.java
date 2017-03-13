@@ -4,7 +4,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.meta64.mobile.repo.OakRepository;
+
 public class FileTools {
+	private static final Logger log = LoggerFactory.getLogger(FileTools.class);
+
+	public static String translateDirs(String folder) {
+		if (folder == null) return folder;
+		String userDir = System.getProperty("user.dir");
+		return folder.replace("{user.dir}", userDir);
+	}
 
 	public static boolean fileExists(String fileName) {
 		if (fileName == null || fileName.equals("")) return false;
@@ -22,6 +34,7 @@ public class FileTools {
 		File file = new File(dir);
 		if (file.isDirectory()) return true;
 		boolean success = file.mkdirs();
+		log.debug("Created folder: " + dir + ". success=" + success);
 		return success;
 	}
 

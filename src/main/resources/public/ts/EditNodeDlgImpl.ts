@@ -142,7 +142,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 this.propEntries.push(propEntry);
 
-                let tableRow = new EditPropsTableRow("", {
+                let tableRow = new EditPropsTableRow({
                     "class": ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties ? "propertyEditListItem"
                         : "propertyEditListItemHidden")
                     // "style" : "display: "+ (!rdOnly || meta64.showReadOnlyProperties ? "inline" : "none")
@@ -159,9 +159,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         }
         /* Editing a new node */
         else {
-            let tableRow = new EditPropsTableRow("", {
-                "style": "display: table-row"
-            });
+            let tableRow = new EditPropsTableRow();
 
             // todo-1: this entire block needs review now (redesign)
             console.log("Editing new node.");
@@ -497,7 +495,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             let label = (i == 0 ? propEntry.property.name : "*") + "." + i;
 
             let textarea: EditPropTextarea = null;
-            let subProp: I.SubProp = new I.SubProp(null /*textarea.getId() */, propVal);
+            let subProp: I.SubProp = new I.SubProp(null, propVal);
 
             if (propEntry.binary || propEntry.readOnly) {
                 textarea = new EditPropTextarea(propEntry, subProp, {

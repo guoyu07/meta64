@@ -210,8 +210,8 @@ class Nav {
     }
 
     clickOnNodeRow(uid : string): void {
-
-        //console.log("clickOnNodeRow: uid="+uid);
+        debugger;
+        console.log("clickOnNodeRow: uid="+uid);
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("clickOnNodeRow recieved uid that doesn't map to any node. uid=" + uid);

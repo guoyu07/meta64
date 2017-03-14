@@ -26,7 +26,7 @@ export abstract class Comp {
     constructor(attribs: Object) {
         this.attribs = attribs || {};
         this.children = [];
-        let id = "Comp_" + Comp.nextGuid();
+        let id = "c" + Comp.nextGuid();
         (<any>this.attribs).id = id;
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup
@@ -117,6 +117,10 @@ export abstract class Comp {
     null unless the element is already created and rendered onto the DOM */
     getElement = (): HTMLElement => {
         return <HTMLElement>document.querySelector("#" + this.getId());
+    }
+
+    whenElm = (func: Function) => {
+        domBind.whenElm(this.getId(), func);
     }
 
     //todo-0: oops this methid is a dupliate of setVisible() delete it.

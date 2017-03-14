@@ -49,7 +49,8 @@ class DomBind {
                 delete this.idToFuncMap[key];
             }
             else {
-                console.log("DomBind " + id + " waiting...");
+                //todo-1: periorically uncomment to see if anything is showing up here
+                //console.log("DomBind " + id + " waiting...");
             }
             return true;
         });
@@ -57,6 +58,14 @@ class DomBind {
 
     public addOnClick(domId: string, callback: Function) {
         this.idToFuncMap[domId + ".onclick"] = (e) => { (<any>e).onclick = callback; };
+    }
+
+    public addOnTimeUpdate(domId: string, callback: Function) {
+        this.idToFuncMap[domId + ".ontimeupdate"] = (e) => { (<any>e).ontimeupdate = callback; };
+    }
+
+    public addOnCanPlay(domId: string, callback: Function) {
+        this.idToFuncMap[domId + ".oncanplay"] = (e) => { (<any>e).oncanplay = callback; };
     }
 
     public addKeyPress(domId: string, callback: Function) {

@@ -93,6 +93,7 @@ class Podcast {
     }
 
     renderItemNode(node: I.NodeInfo, rowStyling: boolean): string {
+        debugger;
         let ret: string = "";
         let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
         let rssDesc: I.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
@@ -109,15 +110,14 @@ class Podcast {
         }
 
         let playerUrl = podcast.getMediaPlayerUrlFromNode(node);
-        //if (playerUrl) {
-        //onclick not encoded yet (commented 1/31/2017)
-        // entry += tag.button({
-        //     "raised": "raised",
-        //     "onclick": "podcast.openPlayerDialog('" + node.uid + "');",
-        //     "class": "standardButton"
-        // }, //
-        //     "Play");
-        //}
+        if (playerUrl) {
+            entry += tag.button({
+                "raised": "raised",
+                "onclick": () => { podcast.openPlayerDialog(node.uid); },
+                "class": "standardButton"
+            }, //
+                "Play");
+        }
 
         if (rssDesc && rssDesc.value) {
             entry += render.tag("p", {
@@ -167,6 +167,7 @@ class Podcast {
     }
 
     openPlayerDialog(_uid: string) {
+        debugger;
         podcast.uid = _uid;
         podcast.node = meta64.uidToNodeMap[podcast.uid];
 
@@ -240,19 +241,20 @@ class Podcast {
         }
     }
 
-    onCanPlay(uid: string, elm: any): void {
-        podcast.player = elm;
+    onCanPlay(dlg: AudioPlayerDlg): void {
+        podcast.player = dlg.getAudioElement();
         podcast.restoreStartTime();
         podcast.player.play();
     }
 
-    onTimeUpdate(uid: string, elm: any): void {
+    onTimeUpdate(dlg: AudioPlayerDlg): void {
+        //console.log("CurrentTime=" + elm.currentTime);
+        podcast.player = dlg.getAudioElement();
+
         if (!podcast.pushTimer) {
             /* ping server once every five minutes */
             podcast.pushTimer = setInterval(podcast.pushTimerFunction, 5 * 60 * 1000);
         }
-        //console.log("CurrentTime=" + elm.currentTime);
-        podcast.player = elm;
 
         /* todo-1: we call restoreStartTime upon loading of the component but it doesn't seem to have the effect doing anything at all
         and can't even update the slider displayed position, until playins is STARTED. Need to come back and fix this because users
@@ -313,18 +315,21 @@ class Podcast {
 
     destroyPlayer(dlg: AudioPlayerDlg): void {
         if (podcast.player) {
+            console.log("player.pause()");
             podcast.player.pause();
 
             setTimeout(() => {
+                console.log("savePlayerInfo");
                 podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
-                let localPlayer = podcast.player;
+
+                //let localPlayer = podcast.player;
                 podcast.player = null;
-                localPlayer.remove();
+                //localPlayer.remove();
 
                 if (dlg) {
                     dlg.cancel();
                 }
-            }, 750);
+            }, 250);
         }
     }
 
@@ -352,8 +357,7 @@ class Podcast {
 
         util.ajax<I.SetPlayerInfoRequest, I.SetPlayerInfoResponse>("setPlayerInfo", {
             "url": url,
-            "timeOffset": timeOffset //,
-            //"nodePath": node.path
+            "timeOffset": timeOffset
         }, podcast.setPlayerInfoResponse);
     }
 

@@ -56,8 +56,10 @@ public class NodeMoveService {
 		Node parentNode = node.getParent();
 		Node firstChild = JcrUtil.getFirstChild(session, parentNode, false);
 		if (firstChild.getIdentifier().equals(node.getIdentifier())) {
+			log.debug("already was first child, no need to move to top.");
 			return;
 		}
+		log.debug("setting node position, to move node top");
 		setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread, allowPrivelegeEscalation);
 	}
 

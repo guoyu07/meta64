@@ -55,7 +55,7 @@ public class NotificationDaemon {
 	 * 
 	 * @Scheduled value is in milliseconds.
 	 */
-	@Scheduled(fixedDelay = 10 * 60 * 1000)
+	@Scheduled(fixedDelay = 3 * 60 * 1000)
 	public void run() {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 
@@ -95,7 +95,6 @@ public class NotificationDaemon {
 			mailSender.init();
 
 			for (Node node : nodes) {
-
 				String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_RECIP);
 				String subject = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_SUBJECT);
 				String content = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_CONTENT);

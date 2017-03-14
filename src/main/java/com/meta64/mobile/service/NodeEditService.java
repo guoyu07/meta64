@@ -57,6 +57,9 @@ public class NodeEditService {
 	private Convert convert;
 
 	@Autowired
+	private JcrUtil jcrUtil;
+
+	@Autowired
 	private OakRepository oak;
 
 	@Autowired
@@ -93,21 +96,24 @@ public class NodeEditService {
 			createUnderRoot = true;
 		}
 
-		///////////////////
 		/*
 		 * If this is a publicly appendable node, then we always use admin to append a comment type
 		 * node under it. No other type of child node creation is allowed.
 		 */
 		boolean publicAppend = JcrUtil.isPublicAppend(node);
+		boolean asAdminNow = false;
 		if (publicAppend) {
+			// todo-0: everywhere that I'm doing this pattern of logout of active session, and
+			// switch to more powerful admin session,
+			// I should try using the session.impersonate() which i think was designed for this very
+			// purpose I need.
+			log.debug("Switch to admin user.");
 			session.logout();
 			session = oak.newAdminSession();
+			asAdminNow = true;
+			// jcrUtil.impersonateAdminCredentials(session);
 			node = JcrUtil.findNode(session, nodeId);
 		}
-
-		// IMPORTANT: Only editing actual content requires a "createdBy"
-		// checking by
-		// JcrUtil.checkNodeCreatedBy
 
 		String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() : req.getNewNodeName();
 
@@ -128,22 +134,37 @@ public class NodeEditService {
 			newNode.setProperty(JcrProp.PUBLIC_APPEND, true);
 		}
 
+		log.debug("session.save()");
 		session.save();
 
 		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
 		res.setSuccess(true);
 
+		/*
+		 * todo-0: enhancement here would be to detect if this is the first child added to this
+		 * node, and if so, then skip the code to move the new node to the top, because it's wasted
+		 * cycles.
+		 */
 		if (req.isCreateAtTop()) {
-			
+			log.debug("is create at top");
 			/*
-			 * We have to create a new session to run the move node because that is operating on a node
-			 * we do not own. Account root nodes are technically owned by admin
+			 * We have to create a new session to run the move node because that is operating on a
+			 * node we do not own. Account root nodes are technically owned by admin
 			 */
 			if (createUnderRoot) {
-				session.logout();
-				session = oak.newAdminSession();
-				
+				/* get the newNodeId from 'newNode' object, and beware we cannot access the 'newNode' object 
+				 * itself in memory after we close this current session.
+				 */
 				String newNodeId = newNode.getIdentifier();
+				
+				if (!asAdminNow) {
+					log.debug("switching to admin.");
+					session.logout();
+					session = oak.newAdminSession();
+					// jcrUtil.impersonateAdminCredentials(session);
+				}
+
+				/* gets a different 'newNode' object, this time specific to the new session */
 				newNode = JcrUtil.findNode(session, newNodeId);
 			}
 			nodeMoveService.moveNodeToTop(session, newNode, true, true, false);

@@ -463,9 +463,10 @@ class Util {
         }
 
         let e: HTMLElement = document.getElementById(id);
-        if (!e) {
-            console.log("domElm Error. Required element id not found: " + id);
-        }
+        //if (!e) {
+            //todo-1: periorically uncomment to see if anything is showing up here
+            //console.log("domElm Error. Required element id not found: " + id);
+        //}
         return e;
     }
 

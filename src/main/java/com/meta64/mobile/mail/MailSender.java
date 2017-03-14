@@ -108,7 +108,7 @@ public class MailSender implements TransportListener {
 			throw new Exception("concurrency must be done via 'isBusy' before each call");
 		}
 
-		log.debug("send to address [" + sendToAddress + "]");
+		log.debug("send mail to address [" + sendToAddress + "]");
 
 		MimeMessage message = new MimeMessage(mailSession);
 		message.setSentDate(new Date());

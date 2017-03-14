@@ -27,9 +27,10 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
     buildGUI = (): void => {
         this.setChildren([
             new Header("Create New Node"),
-            new ListBox([
+            new ListBox({"style" : "width:500px;height:500px;"}, [
                 new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),
                 new ListBoxRow("RSS Feed", () => { this.selType = "meta64:rssfeed"; }, false),
+                new ListBoxRow("RSS Item", () => { this.selType = "meta64:rssitem"; }, false),
                 new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
             ]),
             new ButtonBar([

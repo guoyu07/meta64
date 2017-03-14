@@ -90,6 +90,10 @@ export class Tag {
         return this.span(null, ret);
     }
 
+    audio(attr: Object, content: string): string {
+        return render.tag("audio", attr, content);
+    }
+
     progress(attr?: Object): string {
         return render.tag("paper-progress", attr);
     }

@@ -297,7 +297,8 @@ export class Render {
             for (let entry of list) {
                 content += tag.div({
                     "class": "systemFile",
-                    "onclick": `meta64.editSystemFile('${entry.fileName}')`
+                    //todo-0: need to check all 'onclick' attributes in the entire app and make sure none are using string representation any longer.
+                    //"onclick": () => {meta64.editSystemFile(entry.fileName);}
                 }, entry.fileName);
 
                 /* openSystemFile worked on linux, but i'm switching to full text file edit capability only and doing that
@@ -1003,6 +1004,11 @@ export class Render {
         /* HTML tag itself */
         let ret: string = "<" + tag;
         let onClickFunc: Function = null;
+
+        /* AudioPlayer Support */
+        let onTimeUpdate: Function = null;
+        let onCanPlay : Function = null;
+
         let id: string = null;
 
         if (attributes) {
@@ -1023,6 +1029,22 @@ export class Render {
                     if (k.toLowerCase() === "onclick") {
                         if (typeof v === "function") {
                             onClickFunc = v;
+                            //Return now because when using 'domBind' (below) we don't need the onclick encoded as a string on the element. It's dynamic
+                            return true;
+                        }
+                    }
+
+                    if (k.toLowerCase() === "ontimeupdate") {
+                        if (typeof v === "function") {
+                            onTimeUpdate = v;
+                            //Return now because when using 'domBind' (below) we don't need the onclick encoded as a string on the element. It's dynamic
+                            return true;
+                        }
+                    }
+
+                    if (k.toLowerCase() === "oncanplay") {
+                        if (typeof v === "function") {
+                            onCanPlay = v;
                             //Return now because when using 'domBind' (below) we don't need the onclick encoded as a string on the element. It's dynamic
                             return true;
                         }
@@ -1055,6 +1077,24 @@ export class Render {
             if (onClickFunc) {
                 if (id) {
                     domBind.addOnClick(id, onClickFunc);
+                }
+                else {
+                    throw "Function binding failed. Missing ID attribute.";
+                }
+            }
+
+            if (onTimeUpdate) {
+                if (id) {
+                    domBind.addOnTimeUpdate(id, onTimeUpdate);
+                }
+                else {
+                    throw "Function binding failed. Missing ID attribute.";
+                }
+            }
+
+            if (onCanPlay) {
+                if (id) {
+                    domBind.addOnCanPlay(id, onCanPlay);
                 }
                 else {
                     throw "Function binding failed. Missing ID attribute.";

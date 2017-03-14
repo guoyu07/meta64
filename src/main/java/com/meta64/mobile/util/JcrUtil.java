@@ -11,12 +11,15 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
@@ -26,8 +29,17 @@ import com.meta64.mobile.model.RefInfo;
 
 /**
  * Assorted general utility functions related to JCR nodes.
+ * 
+ * todo-0: there's a lot of code calling these static methods, but need to transition to singleton scope bean and non-static methods.
  */
+@Component
 public class JcrUtil {
+	@Value("${jcrAdminUserName}")
+	private String jcrAdminUserName;
+
+	@Value("${jcrAdminPassword}")
+	private String jcrAdminPassword;
+	
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
 
 	/*
@@ -55,6 +67,22 @@ public class JcrUtil {
 		nonSavableProperties.add(JcrProp.IMG_HEIGHT);
 		nonSavableProperties.add(JcrProp.IMG_WIDTH);
 	}
+
+	// todo-1: could I be using the same instance everywhere here (like singleton pattern?)
+	public SimpleCredentials getAdminCredentials() {
+		return new SimpleCredentials(jcrAdminUserName, jcrAdminPassword.toCharArray());
+	}
+
+//	public void impersonateAdminCredentials(Session session) throws Exception {
+//		/* if already as admin creds, just return */
+//		if (JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
+//			return;
+//		}
+//		log.debug("Impersonating admin on session.");
+//		//&&&
+//		//oops this is tricky. need to grant impersonation first, and i'm not going to get side tracked into that right now.
+//		session.impersonate(getAdminCredentials());
+//	}
 
 	public static NodeType safeGetNodeType(NodeTypeManager mgr, String nodeTypeName) {
 		try {
@@ -117,7 +145,7 @@ public class JcrUtil {
 				Node n = nodeIter.nextNode();
 
 				if (!includeSystemNodes) {
-					NodeType nodeType = n.getPrimaryNodeType();				
+					NodeType nodeType = n.getPrimaryNodeType();
 					if (nodeType.getName().startsWith("rep:")) {
 						continue;
 					}

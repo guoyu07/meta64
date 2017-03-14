@@ -11,8 +11,6 @@ import { props } from "./Props";
 import { meta64 } from "./Meta64";
 import { podcast } from "./Podcast";
 import { view } from "./View";
-import { domBind } from "./DomBind";
-import { tag } from "./Tag";
 import { Comp } from "./widget/base/Comp";
 import { Menu } from "./widget/Menu";
 import { MenuItem } from "./widget/MenuItem";
@@ -97,7 +95,6 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Import", edit.openImportDlg, //
                     () => { return meta64.state.importFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },//
                     () => { return meta64.state.importFeatureEnabled }), //
-
                 new MenuItem("Export", edit.openExportDlg, //
                     () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
                     () => { return meta64.state.exportFeatureEnabled }
@@ -111,7 +108,7 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Insert Book: War and Peace", edit.insertBookWarAndPeace,
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }
-                ) //
+                )
             ]),
             new Menu("Help/Docs", [
                 new MenuItem("Main Menu Help", nav.openMainMenuHelp)

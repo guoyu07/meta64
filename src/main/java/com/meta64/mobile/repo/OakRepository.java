@@ -83,6 +83,9 @@ import com.mongodb.MongoTimeoutException;
 public class OakRepository {
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
 
+	//hack for now to make RSS deamon wait.
+	public static boolean fullInit = false;
+	
 	@Value("${forceIndexRebuild}")
 	private boolean forceIndexRebuild;
 	
@@ -113,6 +116,9 @@ public class OakRepository {
 	@Autowired
 	private UserManagerService userManagerService;
 
+	@Autowired
+	private JcrUtil jcrUtil;
+	
 	private LuceneIndexProvider indexProvider;
 	private DocumentNodeStore nodeStore;
 	private DocumentNodeState root;
@@ -231,9 +237,9 @@ public class OakRepository {
 	}
 
 	public Session newAdminSession() throws Exception {
-		return getRepository().login(new SimpleCredentials(getJcrAdminUserName(), getJcrAdminPassword().toCharArray()));
+		return getRepository().login(jcrUtil.getAdminCredentials());
 	}
-
+	
 	public void init() throws Exception {
 		if (initialized) return;
 
@@ -318,7 +324,7 @@ public class OakRepository {
 				if (AppServer.isShuttingDown()) return;
 
 				repository = jcr.createRepository();
-				log.debug("MongoDb connection ok.");
+				log.debug("Db connection ok.");
 
 				/* can shutdown during startup. */
 				if (AppServer.isShuttingDown()) return;
@@ -337,9 +343,10 @@ public class OakRepository {
 				typeService.initNodeTypes();
 
 				log.debug("Repository fully initialized.");
+				fullInit = true;
 			}
 			catch (MongoTimeoutException e) {
-				log.error("********** Is the MongoDb Server reachable ? **********", e);
+				log.error("********** Is the MongoDb or RDBMS Server reachable ? **********", e);
 				throw e;
 			}
 		}

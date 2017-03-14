@@ -25,6 +25,7 @@ import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
+import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.GetPlayerInfoRequest;
 import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
@@ -133,7 +134,7 @@ public class RssService {
 
 	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
-		if (AppServer.isShuttingDown()) return;
+		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
 		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
 		readFeedsNow();
 	}

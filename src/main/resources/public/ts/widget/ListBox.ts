@@ -7,11 +7,10 @@ import { ListBoxRow } from "./ListBoxRow";
 import { util } from "../Util";
 
 export class ListBox extends Comp {
-
     selectedRow: ListBoxRow = null;
 
-    constructor(initialRows: ListBoxRow[] = null) {
-        super(null);
+    constructor(attribs: Object, initialRows: ListBoxRow[] = null) {
+        super(attribs);
         this.setClass("listBox");
         this.setChildren(initialRows);
 

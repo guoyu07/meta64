@@ -100,7 +100,7 @@ cd $META64/build
 java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
 if [ $? -eq 0 ]
 then
-  read -p "JS Minification Complete"
+  read -p "JS Minification Complete. Press ENTER key."
 else
   read -p "FAIL. JS Minify reported ERRORS."
 fi

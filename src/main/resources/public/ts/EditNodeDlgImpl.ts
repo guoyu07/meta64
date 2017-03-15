@@ -62,41 +62,36 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         this.createAtTop = (<any>args).createAtTop;
 
         // /* todo: need something better for this when supporting mobile */
+
+        this.propEntries = new Array<I.PropEntry>();
+        this.buildGUI();
+    }
+
+    buildGUI = (): void => {
         let width = 800; //window.innerWidth * 0.6;
         let height = 600; //window.innerHeight * 0.4;
 
-        /*
-         * Property fields are generated dynamically and this maps the DOM IDs of each field to the property object it
-         * edits.
-         */
-        this.propEntries = new Array<I.PropEntry>();
-
-        this.header = new Header("Edit Node");
-        this.addChild(this.header);
-
-        this.help = new Help("");
-        this.propertyEditFieldContainer = new Div("", {
-            // todo-1: create CSS class for this.
-            style: `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%;`, //overflow:scroll; border:4px solid lightGray;`,
-            class: "vertical-layout-row"
-            //"padding-left: 0px; width:" + width + "px;height:" + height + "px;overflow:scroll; border:4px solid lightGray;"
-        })
-        this.pathDisplay = new Div("", {
-            "class": "path-display-in-editor"
-        });
-        this.buttonBar = new ButtonBar([
-            this.saveNodeButton = new Button("Save", this.saveNode, null, true, this),
-            this.addPropertyButton = new Button("Add Property", this.addProperty),
-            this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
-            this.splitContentButton = new Button("Split", this.splitContent),
-            this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
-            this.cancelButton = new Button("Cancel", this.cancelEdit)]);
-
-        if (cnst.SHOW_PATH_IN_DLGS) {
-            this.addChild(this.pathDisplay);
-        }
-
-        this.addChildren([this.help, this.propertyEditFieldContainer, this.buttonBar]);
+        this.setChildren([
+            this.header = new Header("Edit Node"),
+            this.help = new Help(""),
+            this.propertyEditFieldContainer = new Div("", {
+                // todo-1: create CSS class for this.
+                "style": `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%;overflow:scroll; border:4px solid lightGray;`,
+                "class": "vertical-layout-row",
+                "sourceClass": "propertyEditFieldContainer"
+            }),
+            this.pathDisplay = cnst.SHOW_PATH_IN_DLGS ? new Div("", {
+                "class": "path-display-in-editor"
+            }) : null,
+            this.buttonBar = new ButtonBar([
+                this.saveNodeButton = new Button("Save", this.saveNode, null, true, this),
+                this.addPropertyButton = new Button("Add Property", this.addProperty),
+                this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
+                this.splitContentButton = new Button("Split", this.splitContent),
+                this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
+                this.cancelButton = new Button("Cancel", this.cancelEdit)
+            ])
+        ]);
     }
 
     /*
@@ -138,6 +133,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
                 let isBinaryProp = render.isBinaryProperty(prop.name);
 
+                //todo-0: did I ever cleanup PropEntry so that it doesn't contain unused stuff like fieldId and checkboxId ?
                 let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
 
                 this.propEntries.push(propEntry);
@@ -198,7 +194,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         //let row = tag.div( { "display": "table-row" }, left + center + right);
 
         this.propertyEditFieldContainer.setChildren([editPropsTable]);
-        this.propertyEditFieldContainer.renderToDom()
+        this.propertyEditFieldContainer.renderChildrenToDom();
 
         if (cnst.USE_ACE_EDITOR) {
             throw "ace editor disabled for now";

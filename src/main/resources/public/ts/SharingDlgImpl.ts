@@ -69,7 +69,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
             this.privsTable.addChild(new EditPrivsTableRow(this, aclEntry));
         });
 
-        this.privsTable.renderToDom();
+        this.privsTable.renderChildrenToDom();
 
         this.publicCommentingCheckbox.setChecked(res.publicAppend);
     }

@@ -176,6 +176,24 @@ export abstract class Comp {
         });
     }
 
+    renderChildrenToDom = (elm?: HTMLElement): void => {
+        if (this.renderPending) return;
+
+        /* To be synchronous where possible we go ahead and check to see if the
+        element exists right now, and if so we render and don't rely on domBind async */
+        elm = elm || this.getElement();
+        if (elm) {
+            elm.innerHTML = this.renderChildren();
+            return;
+        }
+
+        this.renderPending = true;
+        domBind.whenElm(this.getId(), (elm) => {
+            elm.innerHTML = this.renderChildren();
+            this.renderPending = false;
+        });
+    }
+
     setInnerHTML = (html: string) => {
         domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = html;

@@ -49,7 +49,7 @@ echo "Old JS files deleted."
 # 
 # =====================================================================
 cd $META64/src/main/resources/public/ts
-tsc -p tsconfig-dev.json
+tsc -p tsconfig-prod.json
 if [ $? -eq 0 ]
 then
   read -p "TypeScript generating successful. Press ENTER key."
@@ -98,6 +98,12 @@ cd $META64/build
 
 #This command is the normal build command for minification, but i'm currently deploying NON-Minified builds so I can debug 
 java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
+if [ $? -eq 0 ]
+then
+  read -p "JS Minification Complete"
+else
+  read -p "FAIL. JS Minify reported ERRORS."
+fi
 
 # This command was run just once to minify the SystemJS after the following hack I made to the source:
 # Inside the 'fetchFetch()' function I added this:
@@ -125,3 +131,4 @@ rm -f $META64/src/main/resources/public/*.md~
 rm -f $META64/*.md~
 
 read -p "All done."
+

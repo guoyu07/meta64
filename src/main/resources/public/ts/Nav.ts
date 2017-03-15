@@ -16,7 +16,6 @@ import { SearchTagsDlg } from "./SearchTagsDlg";
 import { SearchFilesDlg } from "./SearchFilesDlg";
 
 class Nav {
-    _UID_ROWID_SUFFIX: string = "_row";
     _UID_ROWID_PREFIX: string = "row_";
 
     /* todo-1: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
@@ -170,7 +169,7 @@ class Nav {
                 console.log("found highlighted node.id=" + node.id);
 
                 /* now make CSS id from node */
-                let nodeId: string = nav._UID_ROWID_PREFIX + node.uid /*+ nav._UID_ROWID_SUFFIX*/;
+                let nodeId: string = nav._UID_ROWID_PREFIX + node.uid;
                 // console.log("looking up using element id: "+nodeId);
 
                 return util.domElm(nodeId);
@@ -195,7 +194,7 @@ class Nav {
                     console.log("found highlighted node.id=" + node.id);
 
                     /* now make CSS id from node */
-                    let nodeId: string = nav._UID_ROWID_PREFIX + node.uid /*+ nav._UID_ROWID_SUFFIX*/;
+                    let nodeId: string = nav._UID_ROWID_PREFIX + node.uid;
                     console.log("looking up using element id: " + nodeId);
 
                     return util.polyElm(nodeId);

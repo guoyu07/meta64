@@ -445,6 +445,9 @@ public class AppController {
 	public @ResponseBody InsertBookResponse insertBook(@RequestBody InsertBookRequest req) throws Exception {
 		logRequest("insertBook", req);
 		InsertBookResponse res = new InsertBookResponse();
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("admin only function.");
+		}
 		checkHttpSession();
 		importBookService.insertBook(null, req, res);
 		return res;
@@ -590,6 +593,9 @@ public class AppController {
 	@OakSession
 	public @ResponseBody BrowseFolderResponse browseFolder(@RequestBody BrowseFolderRequest req) throws Exception {
 		logRequest("browseFolder", req);
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("admin only function.");
+		}
 		BrowseFolderResponse res = new BrowseFolderResponse();
 		checkHttpSession();
 		fileSystemService.browseFolder(null, req, res);
@@ -648,6 +654,9 @@ public class AppController {
 	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("admin only function.");
+		}
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
 		checkHttpSession();
@@ -659,6 +668,9 @@ public class AppController {
 	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) throws Exception {
 		logRequest("generateRSS", req);
 		GenerateRSSResponse res = new GenerateRSSResponse();
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("admin only function.");
+		}
 		rssService.readFeedsNow();
 		res.setSuccess(true);
 		checkHttpSession();
@@ -698,6 +710,9 @@ public class AppController {
 		logRequest("splitNode", req);
 		SplitNodeResponse res = new SplitNodeResponse();
 		checkHttpSession();
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("generateRSS is an admin only function.");
+		}
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}

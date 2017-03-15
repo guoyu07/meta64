@@ -15,7 +15,6 @@ import { SearchResultsPanel } from "./SearchResultsPanel";
 import { tag } from "./Tag";
 
 export class Search {
-    //_UID_ROWID_SUFFIX: string = "_srch_row";
     _UID_ROWID_PREFIX: string = "srch_row_";
 
     searchNodes: any = null;
@@ -174,7 +173,7 @@ export class Search {
         let uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
-        let cssId = srch._UID_ROWID_PREFIX + uid /*+ srch._UID_ROWID_SUFFIX*/;
+        let cssId = srch._UID_ROWID_PREFIX + uid;
         // console.log("Rendering Node Row[" + index + "] with id: " +cssId)
 
         let buttonBarHtml = srch.makeButtonBarHtml("" + uid);
@@ -232,7 +231,7 @@ export class Search {
         }
 
         /* now make CSS id from node */
-        let nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid /*+ srch._UID_ROWID_SUFFIX*/;
+        let nodeId = srch._UID_ROWID_PREFIX + srch.highlightRowNode.uid;
 
         let elm: HTMLElement = util.domElm(nodeId);
         if (elm) {

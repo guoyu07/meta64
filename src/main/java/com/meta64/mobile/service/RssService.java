@@ -44,7 +44,6 @@ import com.meta64.mobile.util.JcrUtil;
 
 /**
  * RSS Feed Processing
- *
  */
 @Component
 public class RssService {
@@ -87,6 +86,40 @@ public class RssService {
 	 */
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
+	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
+	public void readFeeds() throws Exception {
+		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
+		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
+		readFeedsNow();
+	}
+	
+	public void readFeedsNow() throws Exception {
+		if (processing) return;
+
+		synchronized (processingLock) {
+			try {
+				processing = true;
+
+				adminRunner.run((Session session) -> {
+					init(session);
+				});
+				AppServer.shutdownCheck();
+
+				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
+				reader.run(feedNodeInfos);
+				log.info("All RSS processing complete.");
+			}
+			catch (Exception e) {
+				log.error("Failed processing RSS feeds", e);
+			}
+			finally {
+				feedNodeInfos.clear();
+				feedItemsByLink.clear();
+				processing = false;
+			}
+		}
+	}
+	
 	public void setPlayerInfo(SetPlayerInfoRequest req) {
 		if (sessionContext.isAnonUser()) {
 			return;
@@ -95,7 +128,7 @@ public class RssService {
 		String key = currentUser + ":" + req.getUrl();
 		PlayerInfo info = new PlayerInfo();
 		info.setTimeOffset(req.getTimeOffset());
-		//info.setNodePath(req.getNodePath());
+		// info.setNodePath(req.getNodePath());
 		// log.debug("SetPlayer info: offset="+req.getTimeOffset());
 		synchronized (playerInfoMap) {
 			playerInfoMap.put(key, info);
@@ -132,40 +165,6 @@ public class RssService {
 		return sb.toString();
 	}
 
-	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
-	public void readFeeds() throws Exception {
-		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
-		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
-		readFeedsNow();
-	}
-
-	public void readFeedsNow() throws Exception {
-		if (processing) return;
-
-		synchronized (processingLock) {
-			try {
-				processing = true;
-
-				adminRunner.run((Session session) -> {
-					init(session);
-				});
-				AppServer.shutdownCheck();
-
-				RssReader reader = (RssReader) SpringContextUtil.getBean(RssReader.class);
-				reader.run(feedNodeInfos);
-				log.info("All RSS processing complete.");
-			}
-			catch (Exception e) {
-				log.error("Failed processing RSS feeds", e);
-			}
-			finally {
-				feedNodeInfos.clear();
-				feedItemsByLink.clear();
-				processing = false;
-			}
-		}
-	}
-
 	public Node getFeedsRootNode() {
 		return feedsRootNode;
 	}
@@ -178,7 +177,7 @@ public class RssService {
 
 	private void init(Session session) throws Exception {
 		rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
-		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "#RSS Feeds");
+		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "# RSS Feeds");
 		AccessControlUtil.makeNodePublic(session, feedsRootNode);
 		/* todo-1: not sure if I need disable_insert here or not */
 		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
@@ -293,8 +292,8 @@ public class RssService {
 			int urlStart = key.indexOf(":");
 			if (urlStart != -1) {
 				String url = key.substring(urlStart);
-				//String path = info.getNodePath();
-				//log.debug("URL CACHED=" + url + " path=" + info.getNodePath());
+				// String path = info.getNodePath();
+				// log.debug("URL CACHED=" + url + " path=" + info.getNodePath());
 				// Node node = JcrUtil.findNode(session, path);
 
 				//////////////////

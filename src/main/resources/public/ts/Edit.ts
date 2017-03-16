@@ -269,11 +269,7 @@ class Edit {
 
         meta64.saveUserPreferences();
     }
-
-    //todo-0: found a bug here that could be LOTS of other places. This is wired up as an onclick-event and originally had a 'uid', but now
-    //when just called from an ONCLICK it will cram in an event object as the first parameter, so checking for null is no longer correct
-    //because we must check for non-null and 'string' now. Must search ALL code for this type of mistake. argh!!!!! Actually solution is
-    //just don't assume any parameters ever!!!!!
+    
     moveNodeUp = (): void => {
         let selNode: I.NodeInfo = meta64.getHighlightedNode();
         let uid = selNode.uid;

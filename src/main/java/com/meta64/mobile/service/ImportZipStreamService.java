@@ -33,6 +33,9 @@ public class ImportZipStreamService {
 
 	@Autowired
 	private AttachmentService attachmentService;
+	
+	@Autowired
+	private JsonToJcrService jsonToJcrService;
 
 	private String targetPath;
 
@@ -87,7 +90,11 @@ public class ImportZipStreamService {
 
 		Node fileNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
 
-		if (mimeUtil.isTextTypeFileName(fileName)) {
+		if (mimeUtil.isJsonFileType(fileName)) {
+			String json = IOUtils.toString(zis, "UTF-8");
+			jsonToJcrService.importJsonFile(json, fileNode);
+		}
+		else if (mimeUtil.isTextTypeFileName(fileName)) {
 			String text = IOUtils.toString(zis, "UTF-8");
 			fileNode.setProperty(JcrProp.CONTENT, fileName + "\n\n" + text);
 		}
@@ -97,7 +104,7 @@ public class ImportZipStreamService {
 			String mimeType = URLConnection.guessContentTypeFromName(fileName);
 
 			/*
-			 * the JCR api force closes the stream so for now I just pass a stream that it's ok to
+			 * the JCR api force closes the stream so for now we just pass a stream that it's ok to
 			 * close. Better solution is probably to create an InputStream wrapper that has an
 			 * overridden close() method that does nothing, because we cannot close the zip stream
 			 * we are reading from!
@@ -110,4 +117,9 @@ public class ImportZipStreamService {
 		fileNode.setProperty(JcrProp.FILENAME, fileName);
 		JcrUtil.timestampNewNode(session, fileNode);
 	}
+	
+	//Step 1:  convert JSON to Java object using 'GSON' or 'Jackson'
+
+	//Step 2: convert java object to jcr node using 'Jcrom'
 }
+

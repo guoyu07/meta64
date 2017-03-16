@@ -74,15 +74,6 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             dictDefaultMessage: "Drag & Drop files here, or Click",
             hiddenInputContainer: "#" + this.hiddenInputContaier.getId(),
 
-            /*
-            This doesn't work at all. Dropzone apparently claims to support this but doesn't.
-            See the "sending" function below, where I ended up passing these parameters.
-            headers : {
-                "nodeId" : attachment.uploadNode.id,
-                "explodeZips" : explodeZips ? "true" : "false"
-            },
-            */
-
             init: function() {
                 let dropzone = this; // closure
 
@@ -98,8 +89,8 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
                 this.on("sending", function(file, xhr, formData) {
                     formData.append("nodeId", attachment.uploadNode.id);
-                    formData.append("explodeZips", this.explodeZips ? "true" : "false");
-                    this.zipQuestionAnswered = false;
+                    formData.append("explodeZips", dlg.explodeZips ? "true" : "false");
+                    dlg.zipQuestionAnswered = false;
                 });
 
                 this.on("queuecomplete", function(file) {
@@ -113,7 +104,6 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     }
 
     updateFileList = (dropzoneEvt: any): void => {
-        let thiz = this;
         this.fileList = dropzoneEvt.getAddedFiles();
         this.fileList = this.fileList.concat(dropzoneEvt.getQueuedFiles());
 
@@ -128,12 +118,13 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
                     "title": "Explode Zips?",
                     "message": "Do you want Zip files exploded onto the tree when uploaded?",
                     "buttonText": "Yes, explode zips",
-                    "yesCallback":
-                    function() {
-                        thiz.explodeZips = true;
+                    "yesCallback": () => {
+                      debugger;
+                        this.explodeZips = true;
                     },
-                    "noCallback": function() {
-                        thiz.explodeZips = false;
+                    "noCallback": () => {
+                      debugger;
+                        this.explodeZips = false;
                     }
                 });
         }

@@ -88,18 +88,20 @@ public class ImportZipStreamService {
 		Node folderNode = folderMap.get(folderNoSlash + "/");
 		if (folderNode == null) throw new Exception("unable to find folder node: " + folderNoSlash + "/");
 
-		Node fileNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+		Node newNode = null;
 
 		if (mimeUtil.isJsonFileType(fileName)) {
 			String json = IOUtils.toString(zis, "UTF-8");
-			jsonToJcrService.importJsonFile(json, fileNode);
+			newNode = jsonToJcrService.importJsonFile(json, folderNode);
 		}
 		else if (mimeUtil.isTextTypeFileName(fileName)) {
+			newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
 			String text = IOUtils.toString(zis, "UTF-8");
-			fileNode.setProperty(JcrProp.CONTENT, fileName + "\n\n" + text);
+			newNode.setProperty(JcrProp.CONTENT, fileName + "\n\n" + text);
 		}
 		else {
-			fileNode.setProperty(JcrProp.CONTENT, fileName);
+			newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.CONTENT, fileName);
 
 			String mimeType = URLConnection.guessContentTypeFromName(fileName);
 
@@ -112,14 +114,10 @@ public class ImportZipStreamService {
 			byte[] bytes = IOUtils.toByteArray(zis);
 			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 
-			attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1, -1, fileNode);
+			attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1, -1, newNode);
 		}
-		fileNode.setProperty(JcrProp.FILENAME, fileName);
-		JcrUtil.timestampNewNode(session, fileNode);
+		newNode.setProperty(JcrProp.FILENAME, fileName);
+		JcrUtil.timestampNewNode(session, newNode);
 	}
-	
-	//Step 1:  convert JSON to Java object using 'GSON' or 'Jackson'
-
-	//Step 2: convert java object to jcr node using 'Jcrom'
 }
 

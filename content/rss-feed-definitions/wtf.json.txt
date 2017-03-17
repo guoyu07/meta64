@@ -1,0 +1,4 @@
+{
+  	"jcrType" : "meta64:rssfeed",
+	"meta64:rssFeedSrc" : "http://wtfpod.libsyn.com/rss"
+}

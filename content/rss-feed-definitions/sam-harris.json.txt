@@ -1,0 +1,4 @@
+{
+  	"jcrType" : "meta64:rssfeed",
+	"meta64:rssFeedSrc" : "http://feeds.soundcloud.com/users/soundcloud:users:59753170/sounds.rss"
+}

@@ -19,6 +19,8 @@ import { systemfolder } from "./SystemFolder";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { Factory } from "./Factory";
 import { domBind } from "./DomBind";
+import { rssPlugin } from "./plugins/RssPlugin";
+import { coreTypesPlugin } from "./plugins/CoreTypesPlugin";
 
 declare const System: any;
 
@@ -504,7 +506,7 @@ class Meta64 {
         util.setEnablement("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setEnablement("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setEnablement("userPreferencesMainAppButton", !meta64.isAnonUser);
-        
+
         util.setElmDisplayById("editModeButton", meta64.state.allowEditMode);
         util.setElmDisplayById("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
         util.setElmDisplayById("openLoginDlgButton", meta64.isAnonUser);
@@ -513,7 +515,7 @@ class Meta64 {
         util.setElmDisplayById("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setElmDisplayById("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setElmDisplayById("userPreferencesMainAppButton", !meta64.isAnonUser);
-   
+
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
     }
@@ -651,12 +653,12 @@ class Meta64 {
     initApp(): void {
         console.log("initApp running.");
 
-        meta64.renderFunctionsByJcrType["meta64:rssfeed"] = podcast.renderFeedNode;
-        meta64.renderFunctionsByJcrType["meta64:rssitem"] = podcast.renderItemNode;
-        meta64.propOrderingFunctionsByJcrType["meta64:rssfeed"] = podcast.propOrderingFeedNode;
-        meta64.propOrderingFunctionsByJcrType["meta64:rssitem"] = podcast.propOrderingItemNode;
+        rssPlugin.init();
+        coreTypesPlugin.init();
 
-        // SystemFolder and File handling stuff is disabled for now (todo-0)
+        // SystemFolder and File handling stuff is disabled for now (todo-0), but will eventually be brought
+        // back as a plugin similar to rssPlugin, coreTypesPlugin, etc.
+        //
         // meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
         // meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
         //
@@ -762,6 +764,15 @@ class Meta64 {
         this.initStaticHtmlOnClicks();
 
         console.log("initApp complete.");
+    }
+
+    addTypeHandlers(typeName: string, renderFunction: Function, orderingFunction: Function): void {
+        if (renderFunction) {
+            meta64.renderFunctionsByJcrType[typeName] = renderFunction;
+        }
+        if (orderingFunction) {
+            meta64.propOrderingFunctionsByJcrType[typeName] = orderingFunction;
+        }
     }
 
     /* Eventually i'll refactor to have all these domIds in a component, and the component will contain the assignment of the onclicks */

@@ -71,8 +71,9 @@ public class ImportZipStreamService {
 		String nameNoSlash = XString.truncateAfterLast(name, "/");
 		String lastPart = XString.parseAfterLast(nameNoSlash, "/");
 		log.info("DIR: " + name);
-		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, lastPart, JcrConstants.NT_UNSTRUCTURED, false);
-		node.setProperty(JcrProp.FILENAME, lastPart);
+			
+		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null /* lastPart */, "meta64:folder", false);
+		node.setProperty(JcrProp.NAME, lastPart);
 		JcrUtil.timestampNewNode(session, node);
 		if (node == null) throw new Exception("Failed to create directory node");
 

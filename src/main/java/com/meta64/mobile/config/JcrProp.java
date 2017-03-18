@@ -77,6 +77,7 @@ public class JcrProp {
 	public static final String LAST_MODIFIED = "jcr:lastModified";
 	public static final String LAST_MODIFIED_BY = "jcr:lastModifiedBy";
 	public static final String FILENAME = "fileName";
+	public static final String NAME = "meta64:name";
 	public static final String JSON_FILE_SEARCH_RESULT = "jsonFileSearchResult";
 	public static final String DISABLE_INSERT = "disableInsert";
 

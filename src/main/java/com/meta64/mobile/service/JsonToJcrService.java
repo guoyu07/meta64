@@ -30,7 +30,7 @@ public class JsonToJcrService {
 	public Node importJsonFile(String json, Node parentNode) {
 		try {
 			HashMap map = jsonMapper.readValue(json, HashMap.class);
-			//JcrTypedObjBase obj = jsonMapper.convertValue(map, JcrTypedObjBase.class);
+			// JcrTypedObjBase obj = jsonMapper.convertValue(map, JcrTypedObjBase.class);
 			return loadJcrNodeFromMap(map, parentNode);
 		}
 		catch (Exception e) {

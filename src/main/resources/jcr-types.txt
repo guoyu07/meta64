@@ -1,5 +1,9 @@
 <'meta64'='http://meta64.com/jcr/'>
 
+[meta64:folder]
+	> nt:unstructured orderable 
+ 	- meta64:name (string) = '' autocreated 
+
 [meta64:systemfolder]
 	> nt:unstructured orderable
 	- meta64:json (string) = '' 

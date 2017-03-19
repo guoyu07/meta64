@@ -2,7 +2,6 @@ package com.meta64.mobile.service;
 
 import java.util.List;
 
-
 import javax.jcr.Node;
 import javax.jcr.Session;
 
@@ -68,7 +67,7 @@ public class LuceneService {
 			return;
 		}
 
-		//&&& Basically need to load a json object for browsing folders also.
+		// todo-1: need to load a json object for browsing folders also.
 		String json = jsonMapper.writeValueAsString(resultList);
 		log.debug("RESULT STRING: " + json);
 

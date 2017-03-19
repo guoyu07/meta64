@@ -183,7 +183,7 @@ public class AppController {
 
 	@Autowired
 	private SystemService systemService;
-	
+
 	@Autowired
 	private FileSystemService fileSystemService;
 
@@ -600,8 +600,8 @@ public class AppController {
 		checkHttpSession();
 		fileSystemService.browseFolder(null, req, res);
 		return res;
-	}	
-	
+	}
+
 	@RequestMapping(value = API_PATH + "/fileSearch", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) throws Exception {

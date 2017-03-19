@@ -174,7 +174,7 @@ public class NodeRenderService {
 			if (offset == 0 && scanToNode) {
 				slidingWindow = new LinkedList<Node>();
 			}
-			
+
 			while (true) {
 				Node n = nodeIter.nextNode();
 
@@ -192,12 +192,15 @@ public class NodeRenderService {
 							 */
 							if (testPath.equals(path)) {
 								scanToNode = false;
-								
-								/* If we found our target node, and it's on the first page, then we don't need to set idxOfNodeFound,
-								 * but just leave it unset, and we need to load in the nodes we had collected so far, before continuing
+
+								/*
+								 * If we found our target node, and it's on the first page, then we
+								 * don't need to set idxOfNodeFound, but just leave it unset, and we
+								 * need to load in the nodes we had collected so far, before
+								 * continuing
 								 */
 								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
-									
+
 									/* loop over all our precached nodes */
 									for (Node sn : slidingWindow) {
 										count++;
@@ -217,7 +220,7 @@ public class NodeRenderService {
 								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
 									slidingWindow.add(n);
 								}
-								
+
 								continue;
 							}
 						}

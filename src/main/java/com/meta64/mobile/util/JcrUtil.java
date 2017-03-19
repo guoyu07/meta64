@@ -30,7 +30,8 @@ import com.meta64.mobile.model.RefInfo;
 /**
  * Assorted general utility functions related to JCR nodes.
  * 
- * todo-0: there's a lot of code calling these static methods, but need to transition to singleton scope bean and non-static methods.
+ * todo-0: there's a lot of code calling these static methods, but need to transition to singleton
+ * scope bean and non-static methods.
  */
 @Component
 public class JcrUtil {
@@ -39,7 +40,7 @@ public class JcrUtil {
 
 	@Value("${jcrAdminPassword}")
 	private String jcrAdminPassword;
-	
+
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
 
 	/*
@@ -73,16 +74,17 @@ public class JcrUtil {
 		return new SimpleCredentials(jcrAdminUserName, jcrAdminPassword.toCharArray());
 	}
 
-//	public void impersonateAdminCredentials(Session session) throws Exception {
-//		/* if already as admin creds, just return */
-//		if (JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
-//			return;
-//		}
-//		log.debug("Impersonating admin on session.");
-//		//&&&
-//		//oops this is tricky. need to grant impersonation first, and i'm not going to get side tracked into that right now.
-//		session.impersonate(getAdminCredentials());
-//	}
+	// public void impersonateAdminCredentials(Session session) throws Exception {
+	// /* if already as admin creds, just return */
+	// if (JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
+	// return;
+	// }
+	// log.debug("Impersonating admin on session.");
+	// //&&&
+	// //oops this is tricky. need to grant impersonation first, and i'm not going to get side
+	// tracked into that right now.
+	// session.impersonate(getAdminCredentials());
+	// }
 
 	public static NodeType safeGetNodeType(NodeTypeManager mgr, String nodeTypeName) {
 		try {

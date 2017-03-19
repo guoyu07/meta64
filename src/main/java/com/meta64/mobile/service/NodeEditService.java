@@ -152,11 +152,12 @@ public class NodeEditService {
 			 * node we do not own. Account root nodes are technically owned by admin
 			 */
 			if (createUnderRoot) {
-				/* get the newNodeId from 'newNode' object, and beware we cannot access the 'newNode' object 
-				 * itself in memory after we close this current session.
+				/*
+				 * get the newNodeId from 'newNode' object, and beware we cannot access the
+				 * 'newNode' object itself in memory after we close this current session.
 				 */
 				String newNodeId = newNode.getIdentifier();
-				
+
 				if (!asAdminNow) {
 					log.debug("switching to admin.");
 					session.logout();

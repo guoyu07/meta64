@@ -140,11 +140,11 @@ public class NodeSearchService {
 
 			if (useContains) {
 				/*
-				 * I noticed searching 2/12/2017 that contains doesn't work right without '*'. It does
-				 * full word searches ONLY, without wildcard and so it's behaving like a LIKE clause,
-				 * contrary to what you'd think since the function is named 'contains'. I'm adding '*'
-				 * without researching for now, as a quick fix, unless user has already put in wildcard.
-				 * (todo-1, read docs on 'contains' method)
+				 * I noticed searching 2/12/2017 that contains doesn't work right without '*'. It
+				 * does full word searches ONLY, without wildcard and so it's behaving like a LIKE
+				 * clause, contrary to what you'd think since the function is named 'contains'. I'm
+				 * adding '*' without researching for now, as a quick fix, unless user has already
+				 * put in wildcard. (todo-1, read docs on 'contains' method)
 				 */
 				if (!searchText.contains("*")) {
 					searchText = "*" + searchText + "*";

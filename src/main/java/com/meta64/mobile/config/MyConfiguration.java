@@ -1,18 +1,21 @@
 package com.meta64.mobile.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-/**
- * Keeping this for future reference.
+/* 
+ * The Environment stuff commented out in here is not needed because we just Autowire Environment wherever we need to.
  */
-// todo-1: don't checkin dev file hardcoded here, bc this will break production
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
 
+	private static final Logger log = LoggerFactory.getLogger(MyConfiguration.class);
+		
 	@Value("${jsBaseFolder}")
 	private String jsBaseFolder;
 

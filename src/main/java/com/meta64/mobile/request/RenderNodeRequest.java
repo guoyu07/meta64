@@ -19,7 +19,7 @@ public class RenderNodeRequest {
 	 */
 	private int upLevel;
 	private boolean renderParentIfLeaf;
-	
+
 	private boolean goToLastPage;
 
 	public String getNodeId() {

@@ -12,13 +12,12 @@ public class MimeUtil {
 
 		// todo-2: will be getting these from a properties file eventually
 		if (ext.equalsIgnoreCase("txt") || //
-				ext.equalsIgnoreCase("md") ||
-				ext.equalsIgnoreCase("json")) {
+				ext.equalsIgnoreCase("md") || ext.equalsIgnoreCase("json")) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isJsonFileType(String fileName) {
 		if (!fileName.contains(".")) return false;
 		if (fileName.toLowerCase().endsWith(".json.txt")) return true;

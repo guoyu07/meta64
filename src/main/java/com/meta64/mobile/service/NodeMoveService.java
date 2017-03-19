@@ -113,7 +113,8 @@ public class NodeMoveService {
 		return translateName;
 	}
 
-	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread, boolean allowPrivalegeEscalation) throws Exception {
+	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread,
+			boolean allowPrivalegeEscalation) throws Exception {
 		String parentPath = parentNode.getPath() + "/";
 
 		/*

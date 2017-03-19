@@ -92,7 +92,7 @@ public class RssService {
 		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
 		readFeedsNow();
 	}
-	
+
 	public void readFeedsNow() throws Exception {
 		if (processing) return;
 
@@ -119,7 +119,7 @@ public class RssService {
 			}
 		}
 	}
-	
+
 	public void setPlayerInfo(SetPlayerInfoRequest req) {
 		if (sessionContext.isAnonUser()) {
 			return;

@@ -33,7 +33,7 @@ public class ImportZipStreamService {
 
 	@Autowired
 	private AttachmentService attachmentService;
-	
+
 	@Autowired
 	private JsonToJcrService jsonToJcrService;
 
@@ -71,7 +71,7 @@ public class ImportZipStreamService {
 		String nameNoSlash = XString.truncateAfterLast(name, "/");
 		String lastPart = XString.parseAfterLast(nameNoSlash, "/");
 		log.info("DIR: " + name);
-			
+
 		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null /* lastPart */, "meta64:folder", false);
 		node.setProperty(JcrProp.NAME, lastPart);
 		JcrUtil.timestampNewNode(session, node);
@@ -121,4 +121,3 @@ public class ImportZipStreamService {
 		JcrUtil.timestampNewNode(session, newNode);
 	}
 }
-

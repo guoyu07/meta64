@@ -1,7 +1,6 @@
 package com.meta64.mobile.util;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 import javax.imageio.ImageReader;
 

@@ -18,7 +18,6 @@ import javax.annotation.PreDestroy;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.FileUtils;
@@ -52,6 +51,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
 import com.meta64.mobile.AppServer;
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
@@ -73,8 +73,8 @@ import com.mongodb.MongoTimeoutException;
 /**
  * Instance of a JCR Repository (both RDB and MongoDB are supported).
  * 
- * If you configure db.store.type=="rdb", then set the rdb.* properties in this class.
- * If you configure db.store.type=="mongo", then set the mongo.* properties in this class.
+ * If you configure db.store.type=="rdb", then set the rdb.* properties in this class. If you
+ * configure db.store.type=="mongo", then set the mongo.* properties in this class.
  * 
  * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
  * called.
@@ -83,29 +83,23 @@ import com.mongodb.MongoTimeoutException;
 public class OakRepository {
 	private static final Logger log = LoggerFactory.getLogger(OakRepository.class);
 
-	//hack for now to make RSS deamon wait.
+	// hack for now to make RSS deamon wait.
 	public static boolean fullInit = false;
-	
+
+	@Autowired
+	private AppProp appProp;
+
 	@Value("${forceIndexRebuild}")
 	private boolean forceIndexRebuild;
-	
+
 	@Value("${indexingEnabled}")
 	private boolean indexingEnabled;
-
-	@Value("${adminDataFolder}")
-	private String adminDataFolder;
 
 	@Value("${db.store.type}")
 	private String dbStoreType;
 
 	@Value("${rdb.driver}")
 	private String rdbDriver;
-
-	@Value("${rdb.url}")
-	private String rdbUrl;
-
-	@Value("${rdb.shutdown}")
-	private String rdbShutdown;
 
 	@Value("${rdb.user}")
 	private String rdbUser;
@@ -118,7 +112,7 @@ public class OakRepository {
 
 	@Autowired
 	private JcrUtil jcrUtil;
-	
+
 	private LuceneIndexProvider indexProvider;
 	private DocumentNodeStore nodeStore;
 	private DocumentNodeState root;
@@ -190,6 +184,10 @@ public class OakRepository {
 	@Autowired
 	private TypeService typeService;
 
+	/*
+	 * Warning: Spring will NOT be fully initialized in this constructor when this runs.
+	 * Use @PostConstruct instead for spring processing.
+	 */
 	public OakRepository() {
 		instance = this;
 
@@ -206,13 +204,17 @@ public class OakRepository {
 		close();
 	}
 
-	@PostConstruct
-	public void postConstruct() {
-		adminDataFolder = FileTools.translateDirs(adminDataFolder);
-		rdbUrl = FileTools.translateDirs(rdbUrl);
-		rdbShutdown = FileTools.translateDirs(rdbShutdown);
-	}
-	
+//	@PostConstruct
+//	public void postConstruct() {
+//		//adminDataFolder = FileTools.translateDirs(adminDataFolder);
+//		//rdbUrl = FileTools.translateDirs(rdbUrl);
+//		//rdbShutdown = FileTools.translateDirs(rdbShutdown);
+//
+//		String test = appProp.getAdminDataFolder();
+//		//String test = env.getProperty("adminDataFolder");
+//		log.debug("adminDataFolder=" + test);
+//	}
+
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
 
@@ -239,7 +241,7 @@ public class OakRepository {
 	public Session newAdminSession() throws Exception {
 		return getRepository().login(jcrUtil.getAdminCredentials());
 	}
-	
+
 	public void init() throws Exception {
 		if (initialized) return;
 
@@ -277,8 +279,8 @@ public class OakRepository {
 					// String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 					Class.forName(rdbDriver).newInstance();
 
-					log.debug("rdbUrl: "+rdbUrl);
-					dataSource = RDBDataSourceFactory.forJdbcUrl(rdbUrl, rdbUser, rdbPassword);
+					log.debug("rdbUrl: " + appProp.getRdbUrl());
+					dataSource = RDBDataSourceFactory.forJdbcUrl(appProp.getRdbUrl(), rdbUser, rdbPassword);
 					builder = builder.setRDBConnection(dataSource, options);
 
 					// This was ORIGINAL way of getting 'repository' with RDB
@@ -354,16 +356,18 @@ public class OakRepository {
 
 	public void createIndexes() throws Exception {
 		adminRunner.run((Session session) -> {
-			
-			String luceneIndexesDir = adminDataFolder + File.separator + "luceneIndexes";
-			
-			/* If we are going to be rebuilding indexes, let's blow away the actual files also. Probably not required but 
-			 * definitely will be sure no outdated indexes can ever be used again!
+
+			String luceneIndexesDir = appProp.getAdminDataFolder() + File.separator + "luceneIndexes";
+
+			/*
+			 * If we are going to be rebuilding indexes, let's blow away the actual files also.
+			 * Probably not required but definitely will be sure no outdated indexes can ever be
+			 * used again!
 			 */
 			if (forceIndexRebuild) {
 				FileUtils.deleteDirectory(new File(luceneIndexesDir));
 			}
-			
+
 			FileTools.createDirectory(luceneIndexesDir);
 
 			/* Create indexes to support timeline query (order by dates) */
@@ -429,7 +433,7 @@ public class OakRepository {
 
 		/* using filesystem */
 		indexDefNode.setProperty("persistence", "file");
-		indexDefNode.setProperty("path", adminDataFolder + File.separator + "luceneIndexes" + File.separator + indexName);
+		indexDefNode.setProperty("path", appProp.getAdminDataFolder() + File.separator + "luceneIndexes" + File.separator + indexName);
 
 		Node indexRulesNode = indexDefNode.addNode("indexRules", "nt:unstructured");
 		Node ntBaseNode = indexRulesNode.addNode(targetType);
@@ -596,11 +600,11 @@ public class OakRepository {
 					mongoDb = null;
 				}
 
-				if (dataSource != null && rdbShutdown != null) {
+				if (dataSource != null && appProp.getRdbShutdown() != null) {
 					log.info("Closing RDBMS.");
 					dataSource = null;
 					try {
-						DriverManager.getConnection(rdbShutdown);
+						DriverManager.getConnection(appProp.getRdbShutdown());
 					}
 					catch (SQLException e) {
 						/*

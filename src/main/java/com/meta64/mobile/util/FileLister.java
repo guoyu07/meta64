@@ -7,7 +7,7 @@ import java.util.Observer;
 
 public class FileLister implements Observer {
 	private FileWalker fw;
-	//private int errors = 0;
+	// private int errors = 0;
 	private boolean recursive = true;
 	private boolean includeFolders = false;
 	private boolean includeFiles = true;
@@ -92,7 +92,7 @@ public class FileLister implements Observer {
 			}
 		}
 		catch (Exception e) {
-			//errors++;
+			// errors++;
 			e.printStackTrace();
 		}
 	}

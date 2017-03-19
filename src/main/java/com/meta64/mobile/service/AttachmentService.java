@@ -320,7 +320,7 @@ public class AttachmentService {
 				HttpResponse response = client.execute(request);
 				log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
 				InputStream is = response.getEntity().getContent();
-				
+
 				uis = new LimitedInputStreamEx(is, maxFileSize);
 				attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
 			}
@@ -330,7 +330,7 @@ public class AttachmentService {
 			 * its an image we can handle it as one.
 			 */
 			else {
-				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {					
+				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {
 					HttpClient client = HttpClientBuilder.create().build();
 					HttpGet request = new HttpGet(sourceUrl);
 					request.addHeader("User-Agent", FAKE_USER_AGENT);

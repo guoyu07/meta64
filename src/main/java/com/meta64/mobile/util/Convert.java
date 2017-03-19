@@ -85,7 +85,8 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) throws Exception {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit)
+			throws Exception {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;

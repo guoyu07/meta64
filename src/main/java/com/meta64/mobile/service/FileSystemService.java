@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.model.FileSearchResult;
 import com.meta64.mobile.request.BrowseFolderRequest;
 import com.meta64.mobile.response.BrowseFolderResponse;
@@ -30,24 +27,24 @@ import com.meta64.mobile.util.ThreadLocals;
 @Component
 public class FileSystemService {
 	private static final Logger log = LoggerFactory.getLogger(FileSystemService.class);
-	
+
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
 	public void browseFolder(Session session, BrowseFolderRequest req, BrowseFolderResponse res) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		
+
 		FileLister lister = new FileLister(false, true, true);
 		Node folderNode = JcrUtil.findNode(session, req.getNodeId());
 		String folderName = JcrUtil.getRequiredStringProp(folderNode, "meta64:path");
-		
+
 		List<FileSearchResult> results = new LinkedList<FileSearchResult>();
 
 		class FileListingCallback implements IFileListingCallback {
 			@Override
 			public void update(File f) {
-				//log.debug("FILE: " + f);
+				// log.debug("FILE: " + f);
 				FileSearchResult fsr = new FileSearchResult();
 				try {
 					fsr.setFileName(f.getCanonicalPath());
@@ -62,9 +59,9 @@ public class FileSystemService {
 		FileListingCallback callback = new FileListingCallback();
 		lister.setCallback(callback);
 		lister.list(folderName);
-		
+
 		String json = jsonMapper.writeValueAsString(results);
-		//log.debug("RESULT STRING: " + json);
+		// log.debug("RESULT STRING: " + json);
 
 		folderNode.setProperty("meta64:json", json);
 		JcrUtil.timestampNewNode(session, folderNode);

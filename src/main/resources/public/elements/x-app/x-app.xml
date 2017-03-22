@@ -162,7 +162,7 @@
                         paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
                     <span
                         class="title"
-                        id="headerAppName">m64</span>
+                        id="headerAppName">subnod</span>
                     <paper-icon-button
                         icon="icons:home"
                         id="navHomeButton">Home</paper-icon-button>

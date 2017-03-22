@@ -1,6 +1,9 @@
 package com.meta64.mobile.service;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -18,16 +21,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.request.ImportRequest;
+import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.MimeUtil;
+import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.XString;
 
 @Component
 @Scope("prototype")
-public class ImportZipStreamService {
-	private static final Logger log = LoggerFactory.getLogger(ImportZipStreamService.class);
+public class ImportZipService {
+	private static final Logger log = LoggerFactory.getLogger(ImportZipService.class);
 
+	@Autowired
+	private AppProp appProp;
+	
 	@Autowired
 	private MimeUtil mimeUtil;
 
@@ -37,6 +49,9 @@ public class ImportZipStreamService {
 	@Autowired
 	private JsonToJcrService jsonToJcrService;
 
+	@Autowired
+	private SessionContext sessionContext;
+	
 	private String targetPath;
 
 	private ZipInputStream zis = null;
@@ -72,7 +87,7 @@ public class ImportZipStreamService {
 		String lastPart = XString.parseAfterLast(nameNoSlash, "/");
 		log.info("DIR: " + name);
 
-		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null /* lastPart */, "meta64:folder", false);
+		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null, "meta64:folder", false);
 		node.setProperty(JcrProp.NAME, lastPart);
 		JcrUtil.timestampNewNode(session, node);
 		if (node == null) throw new Exception("Failed to create directory node");
@@ -120,4 +135,55 @@ public class ImportZipStreamService {
 		newNode.setProperty(JcrProp.FILENAME, fileName);
 		JcrUtil.timestampNewNode(session, newNode);
 	}
+	
+	/* todo-0: this is older code written before the rest of the code in this class, that I just haven't reenabled yet,
+	 * which reads from an actual file-system source. Will bring this back online soon.
+	 */
+	public void importFromZip(Session session, ImportRequest req, ImportResponse res) throws Exception {
+		if (session == null) {
+			session = ThreadLocals.getJcrSession();
+		}
+
+		if (!sessionContext.isAdmin()) {
+			throw new Exception("import is an admin-only feature.");
+		}
+
+		String nodeId = req.getNodeId();
+		Node importNode = JcrUtil.findNode(session, nodeId);
+		log.debug("Import to Node: " + importNode.getPath());
+
+		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
+			throw new Exception("adminDataFolder does not exist");
+		}
+
+		String fileName = req.getSourceFileName();
+		fileName = fileName.replace(".", "_");
+		fileName = fileName.replace(File.separator, "_");
+		String fullFileName = appProp.getAdminDataFolder() + File.separator + req.getSourceFileName();
+
+		if (!FileTools.fileExists(fullFileName)) {
+			throw new Exception("Import file not found.");
+		}
+
+		ZipInputStream zis = null;
+		try {
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fullFileName));
+
+			/*
+			 * todo-1: Currently we only support importing a zip by using the upload featuer (not
+			 * direct file reading as is here) but I can call the method in
+			 * ImportZipStreamService.inputZipFileFromStream to import from a file here. I just
+			 * don't have time to put that line of code here and test it but adding that one line
+			 * here should theoretically 'just work'
+			 */
+		}
+		finally {
+			if (zis != null) {
+				zis.close();
+			}
+		}
+
+		res.setSuccess(true);
+	}
+
 }

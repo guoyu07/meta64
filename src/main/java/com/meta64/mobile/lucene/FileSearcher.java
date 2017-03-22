@@ -25,9 +25,10 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.model.FileSearchResult;
 
 /* 
@@ -37,6 +38,9 @@ import com.meta64.mobile.model.FileSearchResult;
 public class FileSearcher {
 	private static final Logger log = LoggerFactory.getLogger(FileSearcher.class);
 
+	@Autowired
+	public AppProp appProp;
+	
 	/** lucene version */
 	private static final Version VERSION = Version.LUCENE_47;
 
@@ -48,21 +52,17 @@ public class FileSearcher {
 
 	private static final QueryParser parser = new QueryParser(VERSION, "contents", new StandardAnalyzer(VERSION));
 
-	/** lucene directory */
-	@Value("${lucene.index.dir}")
-	private String luceneDir;
-
 	public boolean initialized = false;
 
 	private synchronized void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
 
-		if (StringUtils.isEmpty(luceneDir)) {
+		if (StringUtils.isEmpty(appProp.getLuceneDir())) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
 
-		fsDir = FSDirectory.open(new File(luceneDir));
+		fsDir = FSDirectory.open(new File(appProp.getLuceneDir()));
 		reader = DirectoryReader.open(fsDir);
 		searcher = new IndexSearcher(reader);
 		if (searcher != null) {

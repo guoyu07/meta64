@@ -11,7 +11,10 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
@@ -23,9 +26,13 @@ import com.meta64.mobile.util.JcrUtil;
  * Utilities related to user management.
  *
  */
+@Component
 public class UserManagerUtil {
 	private static final Logger log = LoggerFactory.getLogger(UserManagerUtil.class);
 
+	@Autowired
+	private AppProp appProp;
+	
 	public static boolean isNormalUserName(String userName) {
 		userName = userName.trim();
 		return !userName.equalsIgnoreCase("admin") && !userName.equalsIgnoreCase("everyone");
@@ -124,18 +131,18 @@ public class UserManagerUtil {
 		return true;
 	}
 
-	public static void changePassword(Session session, String userId, String newPassword) throws Exception {
+	public void changePassword(Session session, String userId, String newPassword) throws Exception {
 		UserManager userManager = ((JackrabbitSession) session).getUserManager();
 		Authorizable authorizable = userManager.getAuthorizable(userId);
 		((User) authorizable).changePassword(newPassword);
 	}
 
 	/* todo-0 Why isn't this method using the standard Admin JCR runner ? */
-	public static void verifyAdminAccountReady(OakRepository oak) throws Exception {
+	public void verifyAdminAccountReady(OakRepository oak) throws Exception {
 		Session session = null;
 
 		try {
-			session = oak.getRepository().login(new SimpleCredentials(oak.getJcrAdminUserName(), oak.getJcrAdminPassword().toCharArray()));
+			session = oak.getRepository().login(new SimpleCredentials(appProp.getJcrAdminUserName(), appProp.getJcrAdminPassword().toCharArray()));
 			log.debug("Admin user login verified, on first attempt.");
 		}
 		catch (Exception e) {
@@ -145,7 +152,7 @@ public class UserManagerUtil {
 				session = oak.getRepository().login(new SimpleCredentials(JcrPrincipal.ADMIN, "admin".toCharArray()));
 				log.debug("Admin user login verified, using defaults.");
 
-				changePassword(session, JcrPrincipal.ADMIN, oak.getJcrAdminPassword());
+				changePassword(session, JcrPrincipal.ADMIN, appProp.getJcrAdminPassword());
 				session.save();
 			}
 			catch (Exception e2) {

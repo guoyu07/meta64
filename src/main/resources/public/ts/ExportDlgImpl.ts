@@ -14,10 +14,14 @@ import { Help } from "./widget/Help";
 import { ButtonBar } from "./widget/ButtonBar";
 import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";
+import { RadioButton } from "./widget/RadioButton";
+import { RadioButtonGroup } from "./widget/RadioButtonGroup";
 
 export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     exportToFileNameTextField: TextField;
+    zipRadioButton: RadioButton;
+    xmlRadioButton: RadioButton;
 
     constructor() {
         super();
@@ -26,8 +30,12 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Export to XML"),
+            new Header("Export Node"),
             this.exportToFileNameTextField = new TextField("Export to File Name"),
+            new RadioButtonGroup([
+                this.xmlRadioButton = new RadioButton("Output to XML", true),
+                this.zipRadioButton = new RadioButton("Output to ZIP", false),
+            ]),
             new ButtonBar([
                 new Button("Export", this.exportNodes, null, true, this),
                 new Button("Close", null, null, true, this)
@@ -47,9 +55,10 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
         }
 
         if (highlightNode) {
-            util.ajax<I.ExportRequest, I.ExportResponse>("exportToXml", {
+            util.ajax<I.ExportRequest, I.ExportResponse>("export", {
                 "nodeId": highlightNode.id,
-                "targetFileName": targetFileName
+                "targetFileName": targetFileName,
+                "exportExt": this.xmlRadioButton.getChecked() ? "xml" : "zip"
             }, this.exportResponse);
         }
     }

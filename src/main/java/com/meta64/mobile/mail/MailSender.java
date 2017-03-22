@@ -13,8 +13,10 @@ import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.meta64.mobile.config.AppProp;
 
 /*
  * Implements and processes the sending of emails.
@@ -24,18 +26,9 @@ public class MailSender implements TransportListener {
 
 	private static final Logger log = LoggerFactory.getLogger(MailSender.class);
 
-	@Value("${mail.host}")
-	public String mailHost;
-
-	@Value("${mail.port}")
-	public String mailPort;
-
-	@Value("${mail.user}")
-	public String mailUser;
-
-	@Value("${mail.password}")
-	public String mailPassword;
-
+	@Autowired
+	private AppProp appProp;
+	
 	public static final String MIME_HTML = "text/html";
 	public int TIMEOUT = 10000; // ten seconds
 	public int TIMESLICE = 250; // quarter second
@@ -59,16 +52,16 @@ public class MailSender implements TransportListener {
 
 			props = new Properties();
 			props.put("mail.transport.protocol", "smtp");
-			props.put("mail.host", mailHost);
+			props.put("mail.host", appProp.getMailHost());
 
 			/*
 			 * how did I end up with 'put' instead of 'setProperty' here? Cut-n-paste from somewhere
 			 */
 			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.port", mailPort);
+			props.put("mail.smtp.port", appProp.getMailPort());
 
-			props.put("mail.user", mailUser);
-			props.put("mail.password", mailPassword);
+			props.put("mail.user", appProp.getMailUser());
+			props.put("mail.password", appProp.getMailPassword());
 		}
 
 		/* close any existing mail transport */
@@ -81,7 +74,7 @@ public class MailSender implements TransportListener {
 
 		transport = mailSession.getTransport("smtp");
 		transport.addTransportListener(this);
-		transport.connect(mailHost, mailUser, mailPassword);
+		transport.connect(appProp.getMailHost(), appProp.getMailUser(), appProp.getMailPassword());
 	}
 
 	public void close() throws Exception {
@@ -113,7 +106,7 @@ public class MailSender implements TransportListener {
 		MimeMessage message = new MimeMessage(mailSession);
 		message.setSentDate(new Date());
 		message.setSubject(subjectLine);
-		message.setFrom(new InternetAddress(mailUser));
+		message.setFrom(new InternetAddress(appProp.getMailUser()));
 		message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToAddress));
 
 		// MULTIPART

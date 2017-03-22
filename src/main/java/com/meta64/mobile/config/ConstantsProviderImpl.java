@@ -1,6 +1,6 @@
 package com.meta64.mobile.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,23 +13,14 @@ import org.springframework.stereotype.Component;
 @Component("constantsProvider")
 public class ConstantsProviderImpl implements ConstantsProvider {
 
-	@Value("${metaHost}")
-	private String metaHost;
-
-	@Value("${server.port}")
-	private String serverPort;
-
-	@Value("${brandingMetaContent}")
-	private String brandingMetaContent;
-
-	@Value("${profileName}")
-	private String profileName;
-
+	@Autowired
+	private AppProp appProp;
+	
 	public static String cacheVersion;
 
 	@Override
 	public String getHostAndPort() {
-		return "http://" + metaHost + ":" + serverPort;
+		return "http://" + appProp.getMetaHost() + ":" + appProp.getServerPort();
 	}
 
 	@Override
@@ -39,7 +30,7 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Override
 	public String getProfileName() {
-		return profileName;
+		return appProp.getProfileName();
 	}
 
 	public static void setCacheVersion(String v) {
@@ -48,6 +39,6 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Override
 	public String getBrandingMetaContent() {
-		return brandingMetaContent;
+		return appProp.getBrandingMetaContent();
 	}
 }

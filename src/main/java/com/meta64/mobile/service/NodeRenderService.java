@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
@@ -43,9 +43,9 @@ import com.meta64.mobile.util.ThreadLocals;
 public class NodeRenderService {
 	private static final Logger log = LoggerFactory.getLogger(NodeRenderService.class);
 
-	@Value("${anonUserLandingPageNode}")
-	private String anonUserLandingPageNode;
-
+	@Autowired
+	private AppProp appProp;
+	
 	@Autowired
 	private Convert convert;
 
@@ -324,7 +324,7 @@ public class NodeRenderService {
 				allowRootAutoPrefix = true;
 			}
 			else {
-				id = anonUserLandingPageNode;
+				id = appProp.getUserLandingPageNode();
 			}
 		}
 

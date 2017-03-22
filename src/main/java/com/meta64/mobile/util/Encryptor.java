@@ -6,8 +6,10 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.meta64.mobile.config.AppProp;
 
 /**
  * Symmetric Encryption using AES
@@ -20,18 +22,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class Encryptor {
 
-	@Value("${aeskey}")
-	private String keyStr;
-
+	@Autowired
+	public AppProp appProp;
+	
 	private Key aesKey = null;
 	private Cipher cipher = null;
 
 	synchronized private void init() throws Exception {
-		if (keyStr == null || keyStr.length() != 16) {
+		if (appProp.getAesKey() == null || appProp.getAesKey().length() != 16) {
 			throw new Exception("bad aes key configured");
 		}
 		if (aesKey == null) {
-			aesKey = new SecretKeySpec(keyStr.getBytes(), "AES");
+			aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
 			cipher = Cipher.getInstance("AES");
 		}
 	}

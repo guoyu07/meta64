@@ -25,17 +25,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
+
 @Component
 public class FileIndexer {
 	private final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private static final Logger log = LoggerFactory.getLogger(FileIndexer.class);
 
+	@Autowired
+	private AppProp appProp;
+	
 	private IndexWriter writer;
 	private FSDirectory fsDir;
-
-	/** lucene directory */
-	@Value("${lucene.index.dir}")
-	private String luceneDir;
 
 	/* This searcher is used for searching to avoid duplicates before each insert */
 	@Autowired
@@ -56,11 +57,11 @@ public class FileIndexer {
 	private void init() throws Exception {
 		if (initialized) return;
 		initialized = true;
-		if (StringUtils.isEmpty(luceneDir)) {
+		if (StringUtils.isEmpty(appProp.getLuceneDir())) {
 			throw new Exception("Lucend Data Dir is not configured.");
 		}
 
-		fsDir = FSDirectory.open(new File(luceneDir));
+		fsDir = FSDirectory.open(new File(appProp.getLuceneDir()));
 		writer = new IndexWriter(fsDir, FileSearcher.config);
 	}
 

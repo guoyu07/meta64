@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.util.FileTools;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -34,29 +34,14 @@ import com.mongodb.MongoClient;
 public class BackupService {
 	private static final Logger log = LoggerFactory.getLogger(BackupService.class);
 
-	@Value("${adminDataFolder}")
-	private String adminDataFolder;
-
-	/*
-	 * MongoDb Server Connection Info
-	 */
-	@Value("${mongodb.host}")
-	private String mongoDbHost;
-
-	@Value("${mongodb.port}")
-	private Integer mongoDbPort;
-
-	@Value("${mongodb.name}")
-	private String mongoDbName;
-
+	@Autowired
+	private AppProp appProp;
+	
 	private DocumentNodeStore nodeStore;
 	private DB db;
 
-	@Autowired
-	private Environment env;
-
 	public void runCommandLine() throws Exception {
-		String cmd = env.getProperty("cmd");
+		String cmd = appProp.getProp("cmd");
 		if ("backup".equals(cmd)) {
 			backup();
 		}
@@ -67,11 +52,11 @@ public class BackupService {
 
 	public void backup() throws Exception {
 		try {
-			connect(mongoDbName);
-			if (!FileTools.dirExists(adminDataFolder)) {
-				throw new Exception("adminDataFolder does not exist: " + adminDataFolder);
+			connect(appProp.getMongoDbName());
+			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
+				throw new Exception("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
 			}
-			String targetFolder = adminDataFolder + File.separator + "BK" + System.currentTimeMillis();
+			String targetFolder = appProp.getAdminDataFolder() + File.separator + "BK" + System.currentTimeMillis();
 			log.debug("Backing up to: " + targetFolder);
 			FileTools.createDirectory(targetFolder);
 			FileStoreBackup.backup(nodeStore, new File(targetFolder));
@@ -83,18 +68,18 @@ public class BackupService {
 
 	public void restore() throws Exception {
 		try {
-			String restoreToMongoDbName = env.getProperty("restoreToMongoDbName");
+			String restoreToMongoDbName = appProp.getProp("restoreToMongoDbName");
 			if (restoreToMongoDbName == null) {
 				throw new Exception("Missing 'restoreToMongoDbName' parameter.");
 			}
 
 			connect(restoreToMongoDbName);
-			String srcFolder = env.getProperty("restoreFromFolder");
+			String srcFolder = appProp.getProp("restoreFromFolder");
 
-			if (!FileTools.dirExists(adminDataFolder)) {
-				throw new Exception("adminDataFolder does not exist: " + adminDataFolder);
+			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
+				throw new Exception("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
 			}
-			String fullSrcFolder = adminDataFolder + File.separator + srcFolder;
+			String fullSrcFolder = appProp.getAdminDataFolder() + File.separator + srcFolder;
 			log.debug("Restoring from folder: " + fullSrcFolder);
 
 			if (!FileTools.dirExists(fullSrcFolder)) {
@@ -112,7 +97,7 @@ public class BackupService {
 		if (db != null || nodeStore != null) {
 			throw new Exception("already connected.");
 		}
-		db = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoName);
+		db = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(mongoName);
 		nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
 	}
 

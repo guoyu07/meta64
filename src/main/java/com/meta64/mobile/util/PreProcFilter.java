@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.ConstantsProviderImpl;
 
@@ -36,6 +36,9 @@ public class PreProcFilter implements Filter {
 
 	private static boolean useWriter = false;
 
+	@Autowired
+	private AppProp appProp;
+	
 	@Autowired
 	private ConstantsProvider constProvider;
 
@@ -60,9 +63,6 @@ public class PreProcFilter implements Filter {
 	static {
 		ConstantsProviderImpl.setCacheVersion(String.valueOf(cacheVersion));
 	}
-
-	@Value("${brandingMetaContent}")
-	private String brandingMetaContent;
 
 	public void init(FilterConfig config) throws ServletException {
 		this.config = config;
@@ -102,7 +102,7 @@ public class PreProcFilter implements Filter {
 
 		// content = content.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
 		content = content.replace("{{cacheVersion}}", cacheVersionStr);
-		content = content.replace("{{brandingMetaContent}}", brandingMetaContent);
+		content = content.replace("{{brandingMetaContent}}", appProp.getBrandingMetaContent());
 		content = content.replace("{{profileName}}", constProvider.getProfileName());
 
 		/*

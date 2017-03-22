@@ -105,9 +105,11 @@ import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.ExportXmlService;
+import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
-import com.meta64.mobile.service.ImportExportService;
+import com.meta64.mobile.service.ImportXmlService;
 import com.meta64.mobile.service.LuceneService;
 import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
@@ -164,8 +166,14 @@ public class AppController {
 	private NodeSearchService nodeSearchService;
 
 	@Autowired
-	private ImportExportService importExportService;
+	private ImportXmlService importXmlService;
 
+	@Autowired
+	private ExportXmlService exportXmlService;
+
+	@Autowired
+	private ExportZipService exportZipService;
+	
 	@Autowired
 	private ImportBookService importBookService;
 
@@ -358,13 +366,22 @@ public class AppController {
 		return res;
 	}
 
-	@RequestMapping(value = API_PATH + "/exportToXml", method = RequestMethod.POST)
+	@RequestMapping(value = API_PATH + "/export", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) throws Exception {
 		logRequest("exportToXml", req);
 		ExportResponse res = new ExportResponse();
 		checkHttpSession();
-		importExportService.exportToXml(null, req, res);
+		if ("xml".equalsIgnoreCase(req.getExportExt())) {
+			exportXmlService.export(null, req, res);
+		}
+		if ("zip".equalsIgnoreCase(req.getExportExt())) {
+			//Work in progress: Next thing to do will be add radio button to GUI so we can select which we want XML or ZIP
+			exportZipService.export(null, req, res);
+		}
+		else {
+			throw new Exception("Unsupported file extension.");
+		}
 		return res;
 	}
 
@@ -377,7 +394,7 @@ public class AppController {
 
 		String fileName = req.getSourceFileName();
 		if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
-			importExportService.importFromXml(null, req, res);
+			importXmlService.importFromXml(null, req, res);
 			/*
 			 * It is not a mistake that there is no session.save() here. The import is using the
 			 * workspace object which specifically documents that the saving on the session is not
@@ -385,8 +402,9 @@ public class AppController {
 			 */
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
-			importExportService.importFromZip(null, req, res);
-			ThreadLocals.getJcrSession().save();
+			throw new Exception("This code path is currently disabled, but adding an attachment zip file can do this.");
+			// importXmlService.importFromZip(null, req, res);
+			// ThreadLocals.getJcrSession().save();
 		}
 		else {
 			throw new Exception("Unable to import from file with unknown extension: " + fileName);

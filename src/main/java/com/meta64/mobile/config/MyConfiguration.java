@@ -3,7 +3,7 @@ package com.meta64.mobile.config;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -13,11 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
-
 	private static final Logger log = LoggerFactory.getLogger(MyConfiguration.class);
-		
-	@Value("${jsBaseFolder}")
-	private String jsBaseFolder;
+	
+	@Autowired
+	private AppProp appProp;
 
 	// @Override
 	// public void addViewControllers(ViewControllerRegistry registry) {
@@ -58,8 +57,8 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
 		 * course be empty (unused) in production environment, or any time the JAR (build) should be
 		 * used exclusively at runtime
 		 */
-		if (!StringUtils.isEmpty(jsBaseFolder)) {
-			registry.addResourceHandler("/js/**").addResourceLocations(jsBaseFolder);
+		if (!StringUtils.isEmpty(appProp.getJsBaseFolder())) {
+			registry.addResourceHandler("/js/**").addResourceLocations(appProp.getJsBaseFolder());
 		}
 
 		super.addResourceHandlers(registry);

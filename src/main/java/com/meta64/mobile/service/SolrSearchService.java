@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
@@ -39,22 +40,19 @@ public class SolrSearchService {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
-	@Value("${solr.search.host}")
-	private String solrSearchHost;
-
 	@Autowired
-	private UserManagerService userManagerService;
+	private AppProp appProp;
 
 	public void search(Session session, FileSearchRequest req, FileSearchResponse res) throws Exception {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
 
-		if (!userManagerService.isAllowFileSystemSearch()) {
+		if (!appProp.isAllowFileSystemSearch()) {
 			throw new Exception("File system search is not enabled on the server.");
 		}
 
-		SolrClient solr = new HttpSolrClient.Builder(solrSearchHost).build();
+		SolrClient solr = new HttpSolrClient.Builder(appProp.getSolrSearchHost()).build();
 
 		SolrQuery query = new SolrQuery();
 		query.setQuery(req.getSearchText());

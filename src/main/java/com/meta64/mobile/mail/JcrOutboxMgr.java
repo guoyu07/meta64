@@ -40,16 +40,7 @@ public class JcrOutboxMgr {
 	@Autowired
 	private ConstantsProvider constProvider;
 
-	/*
-	 * For some reason this property cannot be loaded from properties file. Extremely strange.
-	 * 
-	 * @Value("${mailBatchSize}")
-	 */
 	private String mailBatchSize = "10";
-
-	public JcrOutboxMgr() {
-		log.debug("Created OutboxMgr. batchSize = " + mailBatchSize);
-	}
 
 	/*
 	 * node=Node that was created. userName = username of person who just created node.

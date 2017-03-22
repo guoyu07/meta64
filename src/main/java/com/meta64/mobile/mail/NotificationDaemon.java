@@ -9,11 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
@@ -33,6 +33,9 @@ public class NotificationDaemon {
 	private static final Logger log = LoggerFactory.getLogger(NotificationDaemon.class);
 
 	@Autowired
+	private AppProp appProp;
+	
+	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
 	@Autowired
@@ -40,9 +43,6 @@ public class NotificationDaemon {
 
 	@Autowired
 	private MailSender mailSender;
-
-	@Value("${mail.host}")
-	public String mailHost;
 
 	private int runCounter = 0;
 
@@ -67,7 +67,7 @@ public class NotificationDaemon {
 		}
 
 		/* fail fast if no mail host is configured. */
-		if (StringUtils.isEmpty(mailHost)) {
+		if (StringUtils.isEmpty(appProp.getMailHost())) {
 			if (runCounter < 3) {
 				log.debug("NotificationDaemon is disabled, because no mail server is configured.");
 			}

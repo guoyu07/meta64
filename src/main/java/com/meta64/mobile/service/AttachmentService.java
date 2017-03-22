@@ -162,7 +162,7 @@ public class AttachmentService {
 
 		if (explodeZips && "application/zip".equalsIgnoreCase(mimeType)) {
 			/* This is a prototype bean, with state for processing one import at a time */
-			ImportZipStreamService importZipStreamService = (ImportZipStreamService) SpringContextUtil.getBean(ImportZipStreamService.class);
+			ImportZipService importZipStreamService = (ImportZipService) SpringContextUtil.getBean(ImportZipService.class);
 
 			importZipStreamService.inputZipFileFromStream(session, is, node);
 		}

@@ -146,6 +146,7 @@ export interface ExpandAbbreviatedNodeRequest {
 export interface ExportRequest {
     nodeId: string;
     targetFileName: string;
+    exportExt: string;
 }
 
 export interface GetNodePrivilegesRequest {

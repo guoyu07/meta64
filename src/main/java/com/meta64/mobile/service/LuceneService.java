@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
@@ -29,6 +30,9 @@ public class LuceneService {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
+	@Autowired
+	private AppProp appProp;
+	
 	@Autowired
 	private UserManagerService userManagerService;
 
@@ -57,7 +61,7 @@ public class LuceneService {
 			session = ThreadLocals.getJcrSession();
 		}
 
-		if (!userManagerService.isAllowFileSystemSearch()) {
+		if (!appProp.isAllowFileSystemSearch()) {
 			throw new Exception("File system search is not enabled on the server.");
 		}
 

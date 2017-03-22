@@ -14,11 +14,10 @@ import org.apache.jackrabbit.oak.spi.security.principal.EveryonePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrPrincipal;
@@ -56,21 +55,15 @@ import com.meta64.mobile.util.Validator;
  */
 @Component
 public class UserManagerService {
-	private static final Random rand = new Random();
 	private static final Logger log = LoggerFactory.getLogger(UserManagerService.class);
-
+	
+	private static final Random rand = new Random();
+	
 	@Autowired
-	private Environment env;
-
-	@Value("${anonUserLandingPageNode}")
-	private String anonUserLandingPageNode;
-
-	/*
-	 * We only use mailHost in this class to detect if email is configured and if not we fail all
-	 * signups. Currently this system does require email to be in the process for signing up users.
-	 */
-	@Value("${mail.host}")
-	public String mailHost;
+	private AppProp appProp;
+	
+	@Autowired
+	private UserManagerUtil userManagerUtil;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -136,7 +129,7 @@ public class UserManagerService {
 			sessionContext.setRootRefInfo(rootRefInfo);
 			res.setRootNode(rootRefInfo);
 			res.setUserName(userName);
-			res.setAllowFileSystemSearch(isAllowFileSystemSearch());
+			res.setAllowFileSystemSearch(appProp.isAllowFileSystemSearch());
 
 			try {
 				UserPreferences userPreferences = getUserPreferences();
@@ -152,10 +145,8 @@ public class UserManagerService {
 			}
 			res.setSuccess(true);
 		}
-		res.setAnonUserLandingPageNode(anonUserLandingPageNode);
-
+		res.setAnonUserLandingPageNode(appProp.getUserLandingPageNode());
 		log.debug("Processing Login: urlId=" + (sessionContext.getUrlId() != null ? sessionContext.getUrlId() : "null"));
-
 		res.setHomeNodeOverride(sessionContext.getUrlId());
 
 		if (res.getUserPreferences() == null) {
@@ -330,7 +321,7 @@ public class UserManagerService {
 
 		addPendingSignupNode(userName, password, email, signupCode);
 
-		if (!StringUtils.isEmpty(mailHost)) {
+		if (!StringUtils.isEmpty(appProp.getMailHost())) {
 			outboxMgr.queueEmail(email, "Meta64 Account Signup Confirmation", content);
 		}
 	}
@@ -494,7 +485,7 @@ public class UserManagerService {
 			final String userName = userForPassCode != null ? userForPassCode : sessionContext.getUserName();
 
 			String password = req.getNewPassword();
-			UserManagerUtil.changePassword(session, userName, password);
+			userManagerUtil.changePassword(session, userName, password);
 
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 			prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
@@ -629,9 +620,5 @@ public class UserManagerService {
 			password.setVal(encryptor.decrypt(encPwd));
 		});
 		return password.getVal();
-	}
-
-	public boolean isAllowFileSystemSearch() {
-		return "true".equalsIgnoreCase(env.getRequiredProperty("allowFileSystemSearch"));
 	}
 }

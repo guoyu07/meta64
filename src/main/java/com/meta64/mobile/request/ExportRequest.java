@@ -10,6 +10,9 @@ public class ExportRequest {
 	 * rejected, and aborted with error. (i.e. Will never overwrite existing files)
 	 */
 	private String targetFileName;
+	
+	//must be XML+ZIP, and selects which type of file to export
+	private String exportExt;
 
 	public String getNodeId() {
 		return nodeId;
@@ -25,5 +28,13 @@ public class ExportRequest {
 
 	public void setTargetFileName(String targetFileName) {
 		this.targetFileName = targetFileName;
+	}
+
+	public String getExportExt() {
+		return exportExt;
+	}
+
+	public void setExportExt(String exportExt) {
+		this.exportExt = exportExt;
 	}
 }

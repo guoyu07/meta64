@@ -16,11 +16,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
@@ -47,15 +47,15 @@ import com.meta64.mobile.util.JcrUtil;
  */
 @Component
 public class RssService {
-	@Value("${enableRssDaemon}")
-	private String enableRssDaemon;
-
 	private static final Logger log = LoggerFactory.getLogger(RssService.class);
 
 	/* State when feeds are currently being processed */
 	private boolean processing = false;
 	private Object processingLock = new Object();
 
+	@Autowired
+	private AppProp appProp;
+	
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -89,7 +89,7 @@ public class RssService {
 	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
 	public void readFeeds() throws Exception {
 		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
-		if (!"true".equalsIgnoreCase(enableRssDaemon)) return;
+		if (!appProp.isEnableRssDaemon()) return;
 		readFeedsNow();
 	}
 

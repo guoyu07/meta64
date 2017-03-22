@@ -30,12 +30,13 @@ class User {
     }
 
     setTitleUsingLoginResponse(res): void {
-        var title = "M64";
+        var title = "Subnod";
 
         /* todo-1: If users go with very long usernames this is gonna be ugly */
-        if (!meta64.isAnonUser) {
-            title += ":" + res.userName;
-        }
+        // showing username will need to go somewhere else, this is ugly and moile doesn't have the space for it.
+        // if (!meta64.isAnonUser) {
+        //     title += ":  " + res.userName;
+        // }
 
         util.setInnerHTMLById("headerAppName", title);
     }

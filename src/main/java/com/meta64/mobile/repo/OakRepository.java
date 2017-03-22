@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -45,7 +44,6 @@ import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -89,27 +87,12 @@ public class OakRepository {
 	@Autowired
 	private AppProp appProp;
 
-	@Value("${forceIndexRebuild}")
-	private boolean forceIndexRebuild;
-
-	@Value("${indexingEnabled}")
-	private boolean indexingEnabled;
-
-	@Value("${db.store.type}")
-	private String dbStoreType;
-
-	@Value("${rdb.driver}")
-	private String rdbDriver;
-
-	@Value("${rdb.user}")
-	private String rdbUser;
-
-	@Value("${rdb.password}")
-	private String rdbPassword;
-
 	@Autowired
 	private UserManagerService userManagerService;
 
+	@Autowired
+	private UserManagerUtil userManagerUtil;
+	
 	@Autowired
 	private JcrUtil jcrUtil;
 
@@ -148,36 +131,6 @@ public class OakRepository {
 
 	private boolean initialized = false;
 
-	/*
-	 * MongoDb Server Connection Info
-	 */
-	@Value("${mongodb.host}")
-	private String mongoDbHost;
-
-	@Value("${mongodb.port}")
-	private Integer mongoDbPort;
-
-	@Value("${mongodb.name}")
-	private String mongoDbName;
-
-	@Value("${testUserAccounts}")
-	private String testUserAccounts;
-
-	/*
-	 * JCR Info
-	 */
-	@Value("${jcrAdminUserName}")
-	private String jcrAdminUserName;
-
-	@Value("${jcrAdminPassword}")
-	private String jcrAdminPassword;
-
-	@Value("${anonUserLandingPageNode}")
-	private String userLandingPageNode;
-
-	@Value("${helpNode}")
-	private String helpNode;
-
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -204,16 +157,6 @@ public class OakRepository {
 		close();
 	}
 
-//	@PostConstruct
-//	public void postConstruct() {
-//		//adminDataFolder = FileTools.translateDirs(adminDataFolder);
-//		//rdbUrl = FileTools.translateDirs(rdbUrl);
-//		//rdbShutdown = FileTools.translateDirs(rdbShutdown);
-//
-//		String test = appProp.getAdminDataFolder();
-//		//String test = env.getProperty("adminDataFolder");
-//		log.debug("adminDataFolder=" + test);
-//	}
 
 	public void initRequiredNodes() throws Exception {
 		adminRunner.run((Session session) -> {
@@ -223,7 +166,7 @@ public class OakRepository {
 			 * file, and also need to make the DB aware of time stamp so it can just check timestamp
 			 * of file to determine if it needs to be loaded into DB or is already up to date
 			 */
-			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", userLandingPageNode, "Landing Page");
+			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", appProp.getUserLandingPageNode(), "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
 
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
@@ -261,15 +204,15 @@ public class OakRepository {
 				/*
 				 * Initialize Mongo DB
 				 */
-				if ("mongo".equalsIgnoreCase(dbStoreType)) {
-					log.info("Initializing Mongo Repository: " + mongoDbName + " host=" + mongoDbHost + " port=" + mongoDbPort);
-					mongoDb = new MongoClient(mongoDbHost, mongoDbPort).getDB(mongoDbName);
+				if ("mongo".equalsIgnoreCase(appProp.getDbStoreType())) {
+					log.info("Initializing Mongo Repository: " + appProp.getMongoDbName() + " host=" + appProp.getMongoDbHost() + " port=" + appProp.getMongoDbPort());
+					mongoDb = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(appProp.getMongoDbName());
 					builder = builder.setMongoDB(mongoDb);
 				}
 				/*
 				 * or else initialize RDBMS
 				 */
-				else if ("rdb".equalsIgnoreCase(dbStoreType)) {
+				else if ("rdb".equalsIgnoreCase(appProp.getDbStoreType())) {
 					log.debug("Initializing RDB.");
 					options = new RDBOptions().tablePrefix(TABLEPREFIX);
 
@@ -277,17 +220,17 @@ public class OakRepository {
 					// options = options.dropTablesOnClose(true);
 
 					// String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-					Class.forName(rdbDriver).newInstance();
+					Class.forName(appProp.getRdbDriver()).newInstance();
 
 					log.debug("rdbUrl: " + appProp.getRdbUrl());
-					dataSource = RDBDataSourceFactory.forJdbcUrl(appProp.getRdbUrl(), rdbUser, rdbPassword);
+					dataSource = RDBDataSourceFactory.forJdbcUrl(appProp.getRdbUrl(), appProp.getRdbUser(), appProp.getRdbPassword());
 					builder = builder.setRDBConnection(dataSource, options);
 
 					// This was ORIGINAL way of getting 'repository' with RDB
 					// repository = new Jcr(nodeStore)/* .with(getQueryEngineSettings())
 					// */.with(getSecurityProvider()).createRepository();
 				}
-				else if ("filesystem".equalsIgnoreCase(dbStoreType)) {
+				else if ("filesystem".equalsIgnoreCase(appProp.getDbStoreType())) {
 					throw new Exception("filesystem storage not yet supported.");
 					/*
 					 * The below code is just a sample of what I found online which I think works
@@ -313,7 +256,7 @@ public class OakRepository {
 				jcr = new Jcr(oak);
 				jcr = jcr.with(getSecurityProvider());
 
-				if (indexingEnabled) {
+				if (appProp.isIndexingEnabled()) {
 					indexProvider = new LuceneIndexProvider();
 
 					jcr = jcr.withAsyncIndexing();
@@ -338,7 +281,7 @@ public class OakRepository {
 				 */
 				initialized = true;
 
-				UserManagerUtil.verifyAdminAccountReady(this);
+				userManagerUtil.verifyAdminAccountReady(this);
 				createIndexes();
 				initRequiredNodes();
 				createTestAccounts();
@@ -364,7 +307,7 @@ public class OakRepository {
 			 * Probably not required but definitely will be sure no outdated indexes can ever be
 			 * used again!
 			 */
-			if (forceIndexRebuild) {
+			if (appProp.isForceIndexRebuild()) {
 				FileUtils.deleteDirectory(new File(luceneIndexesDir));
 			}
 
@@ -408,7 +351,7 @@ public class OakRepository {
 		Node indexNode = JcrUtil.findNode(session, JcrConst.PATH_INDEX);
 		Node indexDefNode = JcrUtil.safeFindNode(session, JcrConst.PATH_INDEX + "/" + indexName);
 		if (indexDefNode != null) {
-			if (forceIndexRebuild) {
+			if (appProp.isForceIndexRebuild()) {
 				log.info("Forcing new index definition for " + indexName + " and overwriting previous definition");
 				indexDefNode.remove();
 			}
@@ -486,7 +429,7 @@ public class OakRepository {
 		 * 
 		 * todo-1: could change the format of this info to JSON.
 		 */
-		final List<String> testUserAccountsList = XString.tokenize(testUserAccounts, ",", true);
+		final List<String> testUserAccountsList = XString.tokenize(appProp.getTestUserAccounts(), ",", true);
 		if (testUserAccountsList == null) {
 			return;
 		}
@@ -623,22 +566,6 @@ public class OakRepository {
 
 	public DocumentNodeState getRoot() throws Exception {
 		return root;
-	}
-
-	public String getJcrAdminUserName() {
-		return jcrAdminUserName;
-	}
-
-	public String getJcrAdminPassword() {
-		return jcrAdminPassword;
-	}
-
-	public String getHelpNode() {
-		return helpNode;
-	}
-
-	public void setHelpNode(String helpNode) {
-		this.helpNode = helpNode;
 	}
 
 	public boolean isTestAccountName(String userName) {

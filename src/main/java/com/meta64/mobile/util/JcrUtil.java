@@ -18,9 +18,10 @@ import javax.jcr.nodetype.NodeTypeManager;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
@@ -35,14 +36,11 @@ import com.meta64.mobile.model.RefInfo;
  */
 @Component
 public class JcrUtil {
-	@Value("${jcrAdminUserName}")
-	private String jcrAdminUserName;
-
-	@Value("${jcrAdminPassword}")
-	private String jcrAdminPassword;
-
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
-
+	
+	@Autowired
+	private AppProp appProp;
+	
 	/*
 	 * These are properties we should never allow the client to send back as part of a save
 	 * operation.
@@ -71,7 +69,7 @@ public class JcrUtil {
 
 	// todo-1: could I be using the same instance everywhere here (like singleton pattern?)
 	public SimpleCredentials getAdminCredentials() {
-		return new SimpleCredentials(jcrAdminUserName, jcrAdminPassword.toCharArray());
+		return new SimpleCredentials(appProp.getJcrAdminUserName(), appProp.getJcrAdminPassword().toCharArray());
 	}
 
 	// public void impersonateAdminCredentials(Session session) throws Exception {

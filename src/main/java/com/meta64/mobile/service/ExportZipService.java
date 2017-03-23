@@ -64,12 +64,6 @@ public class ExportZipService {
 
 	private ZipOutputStream zos;
 
-	/*
-	 * Operates like a stack during generation to always contain the current path to write to based
-	 * on tree recursion
-	 */
-	// private List<String> curPath = new LinkedList<String>();
-
 	/* This object IS Threadsafe so this is the correct usage 'static final' */
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	static {
@@ -79,18 +73,6 @@ public class ExportZipService {
 
 	@Autowired
 	private AppProp appProp;
-
-	@Autowired
-	private Convert convert;
-
-	// @Autowired
-	// private MimeUtil mimeUtil;
-	//
-	// @Autowired
-	// private AttachmentService attachmentService;
-	//
-	// @Autowired
-	// private JsonToJcrService jsonToJcrService;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -115,7 +97,6 @@ public class ExportZipService {
 		}
 
 		if (nodeId.equals("/")) {
-			// exportEntireRepository(session);
 			throw new Exception("Backing up entire repository is not supported.");
 		}
 		else {
@@ -138,25 +119,6 @@ public class ExportZipService {
 				Node node = JcrUtil.findNode(session, nodeId);
 				recurseNode("", node, 0);
 				success = true;
-				// /*
-				// * For now, out of an abundance of caution for backups do all for combinations of
-				// SYSTEM
-				// * v.s. DOCUMENT export both with and without binaries.
-				// */
-				//
-				// log.info("Exporting System View.");
-				// exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM,
-				// true);
-				// exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM,
-				// false);
-				//
-				// log.info("Exporting Document View.");
-				// exportNodeToXMLFile(session, nodeId, dirName, fileName,
-				// ExportXMLViewType.DOCUMENT, true);
-				// exportNodeToXMLFile(session, nodeId, dirName, fileName,
-				// ExportXMLViewType.DOCUMENT, false);
-
-				// exportNodeToFileSingleTextFile(session, nodeId, fileName);
 			}
 			finally {
 				if (zos != null) {
@@ -176,26 +138,16 @@ public class ExportZipService {
 		if (node == null) return;
 
 		String folder = processNodeExport(parentFolder, node);
-
-		// push onto stack
-		// curPath.add(folder);
-
 		NodeIterator nodeIter = node.getNodes();
 
-		// String indent = getIndentString(level);
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
-				// appendContent(n, level, indent, nodeCount, content);
 				recurseNode(parentFolder + "/" + folder, n, level + 1);
 			}
 		}
 		catch (NoSuchElementException ex) {
 			// not an error. Normal iterator end condition.
-		}
-		finally {
-			/* pop from stack */
-			// curPath.remove(curPath.size()-1);
 		}
 	}
 
@@ -226,8 +178,6 @@ public class ExportZipService {
 		zos.write(json.getBytes());
 		zos.closeEntry();
 
-		log.debug(json);
-		log.debug("__________________________________");
 		return fileName;
 	}
 

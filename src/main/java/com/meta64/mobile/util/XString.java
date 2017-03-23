@@ -53,6 +53,7 @@ public class XString {
 		return sb.toString();
 	}
 
+	/* Truncates after delimiter including truncating the delimiter */
 	public final static String truncateAfter(String text, String delim) {
 		if (text == null) return null;
 

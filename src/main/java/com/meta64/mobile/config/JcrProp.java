@@ -10,6 +10,8 @@ public class JcrProp {
 	// ---------------------------------------------
 	// BEGIN jcr-types.txt file
 	// ---------------------------------------------
+	
+	public static final String META6_TYPE_FOLDER = "meta64:folder";
 
 	public static final String TYPE_RSS_FEED = "meta64:rssfeed";
 	public static final String RSS_FEED_TITLE = "meta64:rssFeedTitle";

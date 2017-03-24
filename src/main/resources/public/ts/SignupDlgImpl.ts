@@ -30,14 +30,14 @@ export default class SignupDlgImpl extends DialogBaseImpl implements SignupDlg {
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Node Sharing"),
+            new Header("Create Sbnode Account"),
             this.userTextField = new TextField("User"),
             this.passwordTextField = new PasswordTextField("Password"),
             this.emailTextField = new TextField("Email"),
             this.captchaTextField = new TextField("Captcha"),
             this.captchaImage = new Captcha(),
             new ButtonBar([
-                new Button("Signup", this.signup),
+                new Button("Create Account", this.signup),
                 new Button("Try Different Image", this.tryAnotherCaptcha),
                 new Button("Close", null, null, true, this)
             ])

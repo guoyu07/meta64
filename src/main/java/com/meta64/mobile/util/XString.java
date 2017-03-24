@@ -25,6 +25,12 @@ public class XString {
 		}
 		return list;
 	}
+	
+	public static String trimToMaxLen(String val, int maxLen) {
+		if (val==null) return null;
+		if (val.length() <= maxLen) return val;
+		return val.substring(0, maxLen-1);
+	}
 
 	public static String loadResourceIntoString(Resource resource) {
 		BufferedReader in = null;

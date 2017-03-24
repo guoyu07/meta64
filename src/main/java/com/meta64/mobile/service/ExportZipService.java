@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -65,6 +65,12 @@ public class ExportZipService {
 	}
 	private static final ObjectWriter jsonWriter = objectMapper.writerWithDefaultPrettyPrinter();
 
+	/*
+	 * It's possible that nodes under a given node can have same name, so we have to detect that and
+	 * number them, so we use this hashset to detect existing filenames.
+	 */
+	private HashSet<String> fileNameSet = new HashSet<String>();
+
 	@Autowired
 	private AppProp appProp;
 
@@ -101,13 +107,6 @@ public class ExportZipService {
 			boolean success = false;
 			try {
 				zos = new ZipOutputStream(new FileOutputStream(fullZipName));
-
-				/*
-				 * Timestamp-based folder name groups the 4 redundant files we export
-				 */
-				Date date = new Date();
-				String dirName = dateFormat.format(date);
-				dirName = FileTools.ensureValidFileNameChars(dirName);
 
 				Node node = JcrUtil.findNode(session, nodeId);
 				recurseNode("", node, 0);
@@ -152,6 +151,8 @@ public class ExportZipService {
 	private String processNodeExport(String parentFolder, Node node) throws Exception {
 		PropertyIterator propsIter = node.getProperties();
 		List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
+
+		log.debug("Processing Node: " + node.getPath());
 
 		/*
 		 * Top preference for fileName is the nodeName if there is one todo-0: need to add valid
@@ -206,7 +207,37 @@ public class ExportZipService {
 		return fileName;
 	}
 
+	private String cleanupFileName(String fileName) {
+		fileName = fileName.trim();
+		fileName = FileTools.ensureValidFileNameChars(fileName);
+		
+		while (fileName.startsWith("-")) {
+			fileName = fileName.substring(1);
+			fileName = fileName.trim();
+		}
+		
+		while (fileName.endsWith("-")) {
+			fileName = fileName.substring(0, fileName.length()-1);
+			fileName = fileName.trim();
+		}
+		
+		return fileName;
+	}
+	
 	private void addFileEntry(String fileName, byte[] bytes) throws Exception {
+		/* If we have dupliated a filename, number it */
+		if (fileNameSet.contains(fileName)) {
+			int idx = 1;
+			String numberedFileName = fileName + String.valueOf(idx);
+			while (fileNameSet.contains(numberedFileName)) {
+				numberedFileName = fileName + String.valueOf(++idx);
+			}
+			fileName = numberedFileName;
+		}
+		
+		fileNameSet.add(fileName);
+
+		log.debug("ZIPENTRY: " + fileName);
 		ZipEntry zi = new ZipEntry(fileName);
 		zos.putNextEntry(zi);
 		zos.write(bytes);
@@ -231,6 +262,7 @@ public class ExportZipService {
 
 		if (StringUtils.isEmpty(fileName)) {
 			fileName = JcrUtil.safeGetStringProp(node, JcrProp.CONTENT);
+			fileName = fileName.trim();
 			fileName = XString.truncateAfter(fileName, "\n");
 			fileName = XString.truncateAfter(fileName, "\r");
 		}
@@ -238,9 +270,12 @@ public class ExportZipService {
 		if (StringUtils.isEmpty(fileName)) {
 			fileName = node.getName();
 		}
+		
+		fileName = cleanupFileName(fileName);
 
 		// log.debug(" nodePath="+node.getPath()+" ident="+node.getIdentifier()+"
 		// fileName=["+fileName+"]");
+		fileName = XString.trimToMaxLen(fileName, 120);
 		return fileName;
 	}
 

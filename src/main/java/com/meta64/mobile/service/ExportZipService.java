@@ -2,6 +2,7 @@ package com.meta64.mobile.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
@@ -32,35 +34,27 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.model.ExportNodeInfo;
 import com.meta64.mobile.model.ExportPropertyInfo;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
-import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
+import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.XString;
 
 /*
- * This class is still a work in progress but aside from some tweaking filenames, and writing 'content' text into a separate
- * file and minor things it's basically complete.
- * 
- * Writing binary attachment is not yet done (todo-0), but is actually trivial.
- * 
+ * todo-0: need to alphabetically sort the properties in the outpout JSON text file
+ *
  */
 @Component
 @Scope("prototype")
 public class ExportZipService {
 	private static final Logger log = LoggerFactory.getLogger(ExportZipService.class);
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
-
-	/*
-	 * We have varibles specific to this instance of an export run becasue this is a 'prototype'
-	 * scope bean and so a new instance of this bean will be created for each export run
-	 */
-	private Session session;
 
 	private ZipOutputStream zos;
 
@@ -81,7 +75,6 @@ public class ExportZipService {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
-		this.session = session;
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
@@ -166,19 +159,58 @@ public class ExportZipService {
 		 */
 		String fileName = generateFileNameFromNode(node);
 
+		ValContainer<String> contentText = new ValContainer<String>();
+		ValContainer<Property> binDataProp = new ValContainer<Property>();
+		ValContainer<String> binFileName = new ValContainer<String>();
+
 		while (propsIter.hasNext()) {
 			Property prop = propsIter.nextProperty();
-			processProperty(prop, allProps);
+			processProperty(prop, allProps, contentText, binDataProp, binFileName);
 		}
 
-		String json = jsonWriter.writeValueAsString(allProps);
+		ExportNodeInfo expInfo = new ExportNodeInfo();
+		expInfo.setPath(node.getPath());
+		expInfo.setId(node.getIdentifier());
+		expInfo.setType(node.getPrimaryNodeType().getName());
+		expInfo.setProps(allProps);
+		String json = jsonWriter.writeValueAsString(expInfo);
 
-		ZipEntry zi = new ZipEntry(parentFolder + "/" + fileName + "/json.txt");
-		zos.putNextEntry(zi);
-		zos.write(json.getBytes());
-		zos.closeEntry();
+		addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".json", json.getBytes());
+
+		/* If content property was found write it into separate file */
+		if (contentText.getVal() != null) {
+			/*
+			 * In situations where the fileName happens to equal the contentText it is desirable to
+			 * not even write the content text file because it would be redundant.
+			 */
+			if (!fileName.trim().equals(contentText.getVal().trim())) {
+				addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".txt", contentText.getVal().getBytes());
+			}
+		}
+
+		if (binDataProp.getVal() != null) {
+			String binFileNameStr = binFileName.getVal() == null ? "binary" : binFileName.getVal();
+
+			InputStream is = null;
+			try {
+				is = binDataProp.getVal().getBinary().getStream();
+				addFileEntry(parentFolder + "/" + fileName + "/" + binFileNameStr, IOUtils.toByteArray(is));
+			}
+			finally {
+				if (is != null) {
+					is.close();
+				}
+			}
+		}
 
 		return fileName;
+	}
+
+	private void addFileEntry(String fileName, byte[] bytes) throws Exception {
+		ZipEntry zi = new ZipEntry(fileName);
+		zos.putNextEntry(zi);
+		zos.write(bytes);
+		zos.closeEntry();
 	}
 
 	private String generateFileNameFromNode(Node node) throws Exception {
@@ -212,37 +244,43 @@ public class ExportZipService {
 		return fileName;
 	}
 
-	private void processProperty(Property prop, List<ExportPropertyInfo> allProps) throws Exception {
+	/*
+	 * Adds prop to allProps, unless it's sent back in contentText because content property will be
+	 * written to a separate file.
+	 */
+	private void processProperty(Property prop, List<ExportPropertyInfo> allProps, ValContainer<String> contentText, ValContainer<Property> binDataProp,
+			ValContainer<String> binFileName) throws Exception {
 		ExportPropertyInfo propInfo = new ExportPropertyInfo();
 
 		propInfo.setName(prop.getName());
 
-		// todo-0: do I need type names?: probably should be an export option.
-		// propInfo.setType(type);
-
 		/* multivalue */
 		if (prop.isMultiple()) {
 			// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-			propInfo.setValues(new LinkedList<String>());
+			propInfo.setVals(new LinkedList<String>());
 
 			// int valIdx = 0;
 			for (Value v : prop.getValues()) {
 				String strVal = formatValue(sessionContext, v);
 				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-				propInfo.getValues().add(strVal);
+				propInfo.getVals().add(strVal);
 				// valIdx++;
 			}
 		}
 		/* else single value */
 		else {
-			if (prop.getName().equals(JcrProp.BIN_DATA)) {
-				// log.trace(String.format("prop[%s] isBinary", prop.getName()));
-				propInfo.setValue("[bin]");
+			if (prop.getName().equals(JcrProp.CONTENT)) {
+				contentText.setVal(formatValue(sessionContext, prop.getValue()));
 			}
-			else
-			// if (prop.getName().equals(JcrProp.CONTENT))
-			{
-				propInfo.setValue(formatValue(sessionContext, prop.getValue()));
+			else if (prop.getName().equals(JcrProp.BIN_DATA)) {
+				// log.trace(String.format("prop[%s] isBinary", prop.getName()));
+				binDataProp.setVal(prop);
+			}
+			else if (prop.getName().equals(JcrProp.BIN_FILENAME)) {
+				binFileName.setVal(formatValue(sessionContext, prop.getValue()));
+			}
+			else {
+				propInfo.setVal(formatValue(sessionContext, prop.getValue()));
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
 		}

@@ -195,6 +195,7 @@ public class AttachmentService {
 		 */
 		if (ImageUtil.isImageMime(mimeType)) {
 			if (width == -1 || height == -1) {
+				//todo-000 (BUG! It is up to us to close this stream!!! */
 				BufferedImage image = ImageIO.read(binary.getStream());
 				width = image.getWidth();
 				height = image.getHeight();
@@ -274,6 +275,13 @@ public class AttachmentService {
 			return ResponseEntity.ok().contentLength(binary.getSize())//
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")//
 					.contentType(MediaType.parseMediaType(mimeTypeProp.getValue().getString()))//
+					/*
+					 * todo-000 (BUG! It is up to us to close this stream!!! 
+					 * 
+					 * ( will have to set stream into a threalocal variable, and pick it up upon exiting out of the ServletFilter
+					 * because there's no other way to inject code into the point where the request is complete and the 
+					 * stream is fully consumed by the browser
+					 */
 					.body(new InputStreamResource(binary.getStream()));
 		}
 		catch (Exception e) {

@@ -92,7 +92,8 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Can switch between simple or advanced mode editing
 * Change password feature.
 * Multiple nodes selectable
-* Import/Export to XML (admin only)
+* Import/Export to XML Files (format determined by JCR)
+* Import/Export to ZIP file containing JSON text and binary attachments
 * Admin feature to insert entire book "War and Peace", for quickly
   creating test data for exploring all the features, and especially 'search'.
 * Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.

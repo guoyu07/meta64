@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ExportPropertyInfo {
-	private int type;
 	private String name;
 
 	/*
@@ -14,27 +15,28 @@ public class ExportPropertyInfo {
 	 * Also the 'value' is the actual text stored in the DB, and is assumed to be markdown for
 	 * content nodes.
 	 */
-	private String value;
-	private List<String> values;
+	private String val;
+	private List<String> vals;
+	
+	public String getVal() {
+		return val;
+	}
 
+	public void setVal(String val) {
+		this.val = val;
+	}
+
+	public List<String> getVals() {
+		return vals;
+	}
+
+	public void setVals(List<String> vals) {
+		this.vals = vals;
+	}
+
+	@JsonIgnore
 	public boolean isEmpty() {
-		return StringUtils.isEmpty(value) && (values == null || values.size() == 0);
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
+		return StringUtils.isEmpty(val) && (vals == null || vals.size() == 0);
 	}
 
 	public String getName() {
@@ -44,13 +46,4 @@ public class ExportPropertyInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public List<String> getValues() {
-		return values;
-	}
-
-	public void setValues(List<String> values) {
-		this.values = values;
-	}
-
 }

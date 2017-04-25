@@ -8,6 +8,7 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class ImportXmlService {
 
 	@Autowired
 	private SessionContext sessionContext;
-	
+
 	@Autowired
 	private AppProp appProp;
 
@@ -125,7 +126,7 @@ public class ImportXmlService {
 		}
 
 		log.debug("Import to Node: " + targetNode.getPath());
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(fullFileName));
+		BufferedInputStream in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
 
 		/*
 		 * This REPLACE_EXISTING option has the effect (in my own words) as meaning that even if the
@@ -141,7 +142,7 @@ public class ImportXmlService {
 
 		/*
 		 * since importXML is documented to close the inputstream, we don't need to close it. This
-		 * is not a mistake.
+		 * is not a mistake, plus we have AutoCloseInputStream for additional assurance
 		 */
 	}
 }

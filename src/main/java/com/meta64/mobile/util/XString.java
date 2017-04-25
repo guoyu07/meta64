@@ -48,13 +48,7 @@ public class XString {
 			sb.setLength(0);
 		}
 		finally {
-			if (in != null) {
-				try {
-					in.close();
-				}
-				catch (IOException e) {
-				}
-			}
+			StreamUtil.close(in);
 		}
 		return sb.toString();
 	}

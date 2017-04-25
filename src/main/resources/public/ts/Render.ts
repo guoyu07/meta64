@@ -297,7 +297,6 @@ export class Render {
             for (let entry of list) {
                 content += tag.div({
                     "class": "systemFile",
-                    //todo-0: need to check all 'onclick' attributes in the entire app and make sure none are using string representation any longer.
                     //"onclick": () => {meta64.editSystemFile(entry.fileName);}
                 }, entry.fileName);
 
@@ -1131,25 +1130,25 @@ export class Render {
             "id": fieldId
         });
     }
-
-    makeEditField(fieldName: string, fieldId: string): string {
-        return tag.input({
-            "name": fieldId,
-            "label": fieldName,
-            "id": fieldId
-        });
-    }
-
-    makePasswordField(fieldName: string, fieldId: string): string {
-        return tag.input({
-            "type": "password",
-            "name": fieldId,
-            "label": fieldName,
-            "id": fieldId,
-            "class": "meta64-input"
-        });
-    }
-
+    //
+    // makeEditField(fieldName: string, fieldId: string): string {
+    //     return tag.input({
+    //         "name": fieldId,
+    //         "label": fieldName,
+    //         "id": fieldId
+    //     });
+    // }
+    //
+    // makePasswordField(fieldName: string, fieldId: string): string {
+    //     return tag.input({
+    //         "type": "password",
+    //         "name": fieldId,
+    //         "label": fieldName,
+    //         "id": fieldId,
+    //         "class": "meta64-input"
+    //     });
+    // }
+    //
     makeButton(text: string, id: string, callback: Function): string {
         let attribs = {
             "raised": "raised",
@@ -1163,7 +1162,6 @@ export class Render {
         else {
             throw "makeButton using invalid function: buttonId=" + id;
         }
-
 
         return tag.button(attribs, text);
     }

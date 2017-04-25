@@ -35,9 +35,9 @@ export abstract class Comp {
 
     /* Function refreshes all enablement and visibility based on current state of app */
     refreshState(): void {
-        //todo-0: need to make this the smart routine which does a minimal-only DOM update on the dom tree branches, but first
-        //simply to prove working we do just brute force updating here.
-        //todo-0: future optimization. For components that don't implement any enablement/visibilty functions, we need can
+        //todo-1: Eventually we will make this a smart routine which does a minimal-only DOM update on the dom tree branches, but first, for now
+        //simply to prove all the code is working we do just brute force updating here.
+        //todo-1: future optimization. For components that don't implement any enablement/visibilty functions, we can
         //just only do this enablement stuff ONCE and then not do it again on that same element.
         this.updateState();
         this.setVisible(this.visible);
@@ -121,13 +121,6 @@ export abstract class Comp {
 
     whenElm = (func: Function) => {
         domBind.whenElm(this.getId(), func);
-    }
-
-    //todo-0: oops this methid is a dupliate of setVisible() delete it.
-    setDisplay = (showing: boolean): void => {
-        domBind.whenElm(this.getId(), (elm) => {
-            util.setElmDisplay(elm, showing);
-        });
     }
 
     /* WARNING: this is NOT a setter for 'this.visible'. Perhaps i need to rename it for better clarity, it takes

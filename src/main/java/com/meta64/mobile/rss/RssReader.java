@@ -29,6 +29,7 @@ import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
+import com.meta64.mobile.util.StreamUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -116,11 +117,6 @@ public class RssReader {
 
 		long startTime = System.currentTimeMillis();
 		try {
-			/*
-			 * TODO-0: HttpClient is better than URLConnection, so I need to also look for other
-			 * places in the code (like image downloading) where I'm streaming from arbitrary URLs
-			 * and change them over to HttpClient.
-			 */
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(feedUrl);
 			request.addHeader("User-Agent", FAKE_USER_AGENT);
@@ -166,15 +162,7 @@ public class RssReader {
 			return null;
 		}
 		finally {
-			if (reader != null) {
-				reader.close();
-			}
-
-			if (is != null) {
-				is.close();
-				is = null;
-			}
-
+			StreamUtil.close(reader, is);
 			log.info("Stream read took: " + (System.currentTimeMillis() - startTime) + "ms");
 		}
 		return wFeed;
@@ -233,20 +221,8 @@ public class RssReader {
 			return null;
 		}
 		finally {
-			if (reader != null) {
-				reader.close();
-			}
-
-			if (uis != null) {
-				uis.close();
-				uis = null;
-			}
-
-			if (is != null) {
-				is.close();
-				is = null;
-			}
-
+			StreamUtil.close(reader, uis, is);
+		
 			/*
 			 * I may not need this after the stream was close, but I'm calling it just in case
 			 */

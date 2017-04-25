@@ -1,14 +1,14 @@
-## Sbnode: Open-Source CMS/Portal
+## SubNode: Open-Source CMS/Portal
 
-Sbnode (pronounced "sub-node", formerly Meta64) is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb back-end (on Java SpringBoot), with Google Polymer-based front-end. The sbnode.com website itself (not yet online) is running an instance of the Sbnode portal software. In other words, this is not just documentation *about* Sbnode, but it *actually is* a Sbnode node that you are now viewing.
+SubNode (formerly Meta64) is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb back-end (on Java SpringBoot), with Google Polymer-based front-end. The sbnode.com website itself is running an instance of the SubNode portal software. In other words, this is not just documentation *about* SubNode, but it *actually is* a SubNode node that you are now viewing.
 
 The **sbnode.com** website is currently geared towards the web developer audience, and the development of the platform; but the technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
 ## News: 
 
-### meta64.com is moving to sbnode.com ("sub-node")
+### meta64.com is moving to sbnode.com
 
-This is not a pivot of the product itself, but only a change to a better name. Meta64 will remain the Github project name, in the source code, but the website and app are now called "Sbnode". 
+This is not a pivot of the product itself, but only a name change. Meta64 will remain the Github project name, in the source code, but the website and app are now called "SubNode". 
 
 ### Recent Awesome Changes (3/8/2017) 
 
@@ -30,12 +30,12 @@ If you look at the BuildGUI() method on that class it should be obvious that thi
 [GitHub Docs](https://github.com/Clay-Ferguson/meta64/tree/master/docs/)   
 [Browse Demo Content (Book: War and Peace)](http://www.sbnode.com/?id=/meta64/war-and-peace)   
 
-## Sbnode Overview
-Sbnode is at it's core a **Content Repository Browser**, or an app for interacting with hierarchical data. The website you are now reading (if you're on sbnode.com) is actually running this portal, and makes up everything you are seeing. The technology however is much more than a Content Browser, because it presents a GUI front end appropriate to both non-technical users, as well as the more technical users of back-end content repositories. The theory here is that *"everything is content"* and since both end users and technical users need to be able to interact with hierarchical data stores, it's desirable to have one system architecture that serves both roles well.
+## SubNode Overview
+SubNode is at it's core a **Content Repository Browser**, or an app for interacting with hierarchical data. The website you are now reading (if you're on sbnode.com) is actually running this portal, and makes up everything you are seeing. The technology however is much more than a Content Browser, because it presents a GUI front end appropriate to both non-technical users, as well as the more technical users of back-end content repositories. The theory here is that *"everything is content"* and since both end users and technical users need to be able to interact with hierarchical data stores, it's desirable to have one system architecture that serves both roles well.
 
-The sbnode website and content on it is now geared towards the developer and is online as a demonstration of platform, but the ultimate goal is to provide capabilities very similar to Facebook, Reddit, and Wikipedia, etc. if you could imagine them all rolled into one system. With the power of Lucene and MongoDB on the backend, plus the fully standards-based open stack, this only 4-month old codebase is already able to provide incredible power only found in other commercial content repositories that are proprietary products, which are also mostly built on much older technology stacks.
+The SubNode website and content on it is now geared towards the developer and is online as a demonstration of platform, but the ultimate goal is to provide capabilities very similar to Facebook, Reddit, and Wikipedia, etc. if you could imagine them all rolled into one system. With the power of Lucene and MongoDB on the backend, plus the fully standards-based open stack, this only 4-month old codebase is already able to provide incredible power only found in other commercial content repositories that are proprietary products, which are also mostly built on much older technology stacks.
 
-For a social media user, sbnode can function as a blogging platform, file-sharing platform, social commenting platform, wiki system, personal website host, etc., while simultaneously functioning as a full-blown back-end JCR repository used by technical users like software developers, data architects, DB admins, etc. The way this is accomplished is by having a simplified set of features (i.e. rendering of the GUI) presented to non-technical users, while having the full featured JCR browser capabilities available at the flip of a switch, using a single button click. There is a 'simple' mode and 'advanced' mode, that does this.
+For a social media user, SubNode can function as a blogging platform, file-sharing platform, social commenting platform, wiki system, personal website host, etc., while simultaneously functioning as a full-blown back-end JCR repository used by technical users like software developers, data architects, DB admins, etc. The way this is accomplished is by having a simplified set of features (i.e. rendering of the GUI) presented to non-technical users, while having the full featured JCR browser capabilities available at the flip of a switch, using a single button click. There is a 'simple' mode and 'advanced' mode, that does this.
 
 There are just a few key concepts to know for a basic understanding of what JCR is all about, if you aren't familiar with the term:
 
@@ -51,10 +51,10 @@ There are just a few key concepts to know for a basic understanding of what JCR 
 * Nodes can be created, edited, moved, and deleted just like in a file system.
 * Any type of binary content can be uploaded onto nodes, and attached images show up as part of the page.
 * Each node can be referenced by direct-linking to it on the URL, so users can publish their own pages with specific urls.
-* Essentially sbnode itself is a kind of tree-structured wiki, or just a tree of editable, sharable content, just like you see on social media, but completely general purpose.
+* Essentially SubNode itself is a kind of tree-structured wiki, or just a tree of editable, sharable content, just like you see on social media, but completely general purpose.
 
 ## Source Code
-The code is "Open Source" (and on GitHub) but still pre-alpha prototype currently, meaning it's not considered production ready, but does follow architectural best practices. The project is currently being managed and developed by Clay Ferguson (author of this document). I'm actively developing Sbnode nearly every day, and looking for other interested developers to join the effort.
+The code is "Open Source" (and on GitHub) but still pre-alpha prototype currently, meaning it's not considered production ready, but does follow architectural best practices. The project is currently being managed and developed by Clay Ferguson (author of this document). I'm actively developing SubNode nearly every day, and looking for other interested developers to join the effort.
 
 ## List of Features
 
@@ -132,7 +132,7 @@ The code is "Open Source" (and on GitHub) but still pre-alpha prototype currentl
 * Spring Java-only configuration with Annotations, and no XML configs.
 
 ## Apache Jackrabbit Oak
-Other than SpringBoot, the main dependency needed for running/building Sbnode is Jackrabbit Oak. This project is currently being hosted here:
+Other than SpringBoot, the main dependency needed for running/building SubNode is Jackrabbit Oak. This project is currently being hosted here:
 
 https://github.com/apache/jackrabbit-oak   
 https://jackrabbit.apache.org/oak/docs/index.html
@@ -140,7 +140,7 @@ https://jackrabbit.apache.org/oak/docs/index.html
 Jackrabbit Oak is an Adobe-sponsored Open Source project for creating the best world class JCR implementation. It is extremely high performance and hugely scalable largely due to Lucene as the search technology in use, and also because of MongoDB. As with any "NoSQL" the primary concern is indeed performance and scalability so the ACID transactions of an RDBMS are sacrificed for the "eventually consistent" model offered by a NoSQL approach.
 
 ## About the Developer
-Sbnode is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a Java Developer living in Dallas, Texas. I have 25 years of coding experience consisting of 10 years of C++ followed by 16 years of Java, primarily on Web Apps, and mostly on analytical systems, accounting systems, and other database-intensive kinds of applications.
+SubNode is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a Java Developer living in Dallas, Texas. I have 25 years of coding experience consisting of 10 years of C++ followed by 16 years of Java, primarily on Web Apps, and mostly on analytical systems, accounting systems, and other database-intensive kinds of applications.
 
 **linkedin.com:** http://www.linkedin.com/in/wclayf  
 **GitHub:** https://github.com/Clay-Ferguson  

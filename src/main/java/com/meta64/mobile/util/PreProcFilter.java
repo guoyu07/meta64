@@ -38,7 +38,7 @@ public class PreProcFilter implements Filter {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	@Autowired
 	private ConstantsProvider constProvider;
 
@@ -115,9 +115,14 @@ public class PreProcFilter implements Filter {
 		 * this code flexible for future use leave the getWriter() stuff here but commented out.
 		 */
 		if (useWriter) {
-			PrintWriter out = res.getWriter();
-			out.write(content);
-			out.close();
+			PrintWriter out = null;
+			try {
+				out = res.getWriter();
+				out.write(content);
+			}
+			finally {
+				StreamUtil.close(out);
+			}
 		}
 		else {
 			res.getOutputStream().write(content.getBytes(Charset.forName("UTF-8")));

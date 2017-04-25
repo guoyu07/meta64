@@ -32,7 +32,7 @@ public class UserManagerUtil {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	public static boolean isNormalUserName(String userName) {
 		userName = userName.trim();
 		return !userName.equalsIgnoreCase("admin") && !userName.equalsIgnoreCase("everyone");
@@ -137,7 +137,10 @@ public class UserManagerUtil {
 		((User) authorizable).changePassword(newPassword);
 	}
 
-	/* todo-0 Why isn't this method using the standard Admin JCR runner ? */
+	/*
+	 * Initialize admin user account credentials into repository if not yet done. This should only
+	 * get triggered the first time the repository is created, the first time the app is started.
+	 */
 	public void verifyAdminAccountReady(OakRepository oak) throws Exception {
 		Session session = null;
 

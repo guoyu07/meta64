@@ -656,7 +656,7 @@ class Meta64 {
         rssPlugin.init();
         coreTypesPlugin.init();
 
-        // SystemFolder and File handling stuff is disabled for now (todo-0), but will eventually be brought
+        // SystemFolder and File handling stuff is disabled for now (todo-1), but will eventually be brought
         // back as a plugin similar to rssPlugin, coreTypesPlugin, etc.
         //
         // meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;

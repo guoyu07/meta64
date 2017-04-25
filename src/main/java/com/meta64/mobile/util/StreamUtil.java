@@ -10,10 +10,6 @@ import org.slf4j.LoggerFactory;
 public class StreamUtil {
 	private static final Logger log = LoggerFactory.getLogger(StreamUtil.class);
 
-	/*
-	 * todo-0: need to identify ALL places in the code where this method can be called from and call
-	 * it
-	 */
 	public static void close(Object... objects) {
 		for (Object obj : objects) {
 			if (obj instanceof Closeable) {
@@ -24,14 +20,16 @@ public class StreamUtil {
 					e.printStackTrace();
 				}
 			}
-
-			if (obj instanceof ImageReader) {
+			else if (obj instanceof ImageReader) {
 				try {
 					((ImageReader) obj).dispose();
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+			else {
+				throw new RuntimeException("Object to close was of unsupported type: " + obj.getClass().getName());
 			}
 		}
 	}

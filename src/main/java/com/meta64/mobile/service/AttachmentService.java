@@ -3,7 +3,6 @@ package com.meta64.mobile.service;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -15,14 +14,9 @@ import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,6 +25,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jackrabbit.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,6 +42,7 @@ import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.ImageSize;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.meta64.mobile.util.StreamUtil;
@@ -62,6 +58,9 @@ import com.meta64.mobile.util.ThreadLocals;
 public class AttachmentService {
 	private static final Logger log = LoggerFactory.getLogger(AttachmentService.class);
 
+	@Autowired
+	private JcrUtil jcrUtil;
+	
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
 	 */
@@ -179,8 +178,7 @@ public class AttachmentService {
 		// stream.close();
 	}
 
-	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) throws ValueFormatException,
-			RepositoryException, UnsupportedRepositoryOperationException, IOException, VersionException, LockException, ConstraintViolationException {
+	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) throws Exception {
 		long version = System.currentTimeMillis();
 		Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
 		if (binVerProp != null) {
@@ -195,10 +193,9 @@ public class AttachmentService {
 		 */
 		if (ImageUtil.isImageMime(mimeType)) {
 			if (width == -1 || height == -1) {
-				//todo-000 (BUG! It is up to us to close this stream!!! */
-				BufferedImage image = ImageIO.read(binary.getStream());
-				width = image.getWidth();
-				height = image.getHeight();
+				ImageSize size = jcrUtil.getImageSizeFromBinary(binary);
+				width = size.width;
+				height = size.height;
 			}
 
 			node.setProperty(JcrProp.IMG_WIDTH, String.valueOf(width));
@@ -275,14 +272,7 @@ public class AttachmentService {
 			return ResponseEntity.ok().contentLength(binary.getSize())//
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")//
 					.contentType(MediaType.parseMediaType(mimeTypeProp.getValue().getString()))//
-					/*
-					 * todo-000 (BUG! It is up to us to close this stream!!! 
-					 * 
-					 * ( will have to set stream into a threalocal variable, and pick it up upon exiting out of the ServletFilter
-					 * because there's no other way to inject code into the point where the request is complete and the 
-					 * stream is fully consumed by the browser
-					 */
-					.body(new InputStreamResource(binary.getStream()));
+					.body(new InputStreamResource(new AutoCloseInputStream(binary.getStream())));
 		}
 		catch (Exception e) {
 			log.error(e.getMessage());
@@ -329,7 +319,7 @@ public class AttachmentService {
 				log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
 				InputStream is = response.getEntity().getContent();
 
-				uis = new LimitedInputStreamEx(is, maxFileSize);
+				uis = new AutoCloseInputStream(new LimitedInputStreamEx(is, maxFileSize));
 				attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
 			}
 			/*
@@ -345,7 +335,7 @@ public class AttachmentService {
 					HttpResponse response = client.execute(request);
 					log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
 					InputStream is = response.getEntity().getContent();
-					uis = new LimitedInputStreamEx(is, maxFileSize);
+					uis = new AutoCloseInputStream(new LimitedInputStreamEx(is, maxFileSize));
 					attachBinaryFromStream(session, null, nodeId, sourceUrl, is, "", -1, -1, false, false);
 				}
 			}

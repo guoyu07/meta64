@@ -33,7 +33,6 @@ export default class MenuPanel extends Comp {
             //     menuItem("Timeline", "timelinePageButton", "meta64.selectTab('timelineTabName');");
             // let pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
-            //todo-0: check all functions called here and verify they take zero arguments. arg will be some event, not a uid.
             new Menu("RSS", [
                 new MenuItem("Feeds", nav.openRssFeedsNode)
             ]),

@@ -132,8 +132,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 let isMulti = prop.values && prop.values.length > 0;
                 let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
                 let isBinaryProp = render.isBinaryProperty(prop.name);
-
-                //todo-0: did I ever cleanup PropEntry so that it doesn't contain unused stuff like fieldId and checkboxId ?
                 let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
 
                 this.propEntries.push(propEntry);

@@ -49,8 +49,8 @@ class Nav {
 
     login(): void {
         Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
-            //todo-0: this call was always missing populateFromCookies, is this right ?
-            //dlg.populateFromCookies();
+            debugger;
+            dlg.populateFromCookies(); //<---- new 4/1/17
             dlg.open();
         });
     }

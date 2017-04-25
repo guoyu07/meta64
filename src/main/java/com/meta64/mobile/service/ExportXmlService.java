@@ -22,6 +22,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -196,9 +197,7 @@ public class ExportXmlService {
 			output.flush();
 		}
 		finally {
-			if (output != null) {
-				output.close();
-			}
+			StreamUtil.close(output);
 		}
 	}
 }

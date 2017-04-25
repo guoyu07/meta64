@@ -143,7 +143,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     runButtonEnablement = (dropzoneEvt: any): void => {
         let filesSelected = dropzoneEvt.getAddedFiles().length > 0 ||
             dropzoneEvt.getQueuedFiles().length > 0;
-        this.uploadButton.setDisplay(filesSelected);
+        this.uploadButton.setVisible(filesSelected);
     }
 
     init = (): void => {

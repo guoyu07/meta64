@@ -94,9 +94,7 @@ public class ImportWarAndPeace {
 			}
 		}
 		finally {
-			if (in != null) {
-				in.close();
-			}
+			StreamUtil.close(in);
 		}
 		log.debug("book import successful.");
 	}

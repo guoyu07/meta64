@@ -29,6 +29,7 @@ import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.MimeUtil;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.XString;
 
@@ -178,9 +179,7 @@ public class ImportZipService {
 			 */
 		}
 		finally {
-			if (zis != null) {
-				zis.close();
-			}
+			StreamUtil.close(zis);
 		}
 
 		res.setSuccess(true);

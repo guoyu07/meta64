@@ -12,6 +12,8 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import com.meta64.mobile.util.StreamUtil;
+
 /**
  * Implements the captcha image as seen on the Signup Page. I would normally use some existing
  * framework for something like this but I wrote this a long time ago and it works well, so I always
@@ -126,9 +128,7 @@ public class CaptchaMaker {
 			ImageIO.write(scaledImage, "png", tmp);
 		}
 		finally {
-			if (tmp != null) {
-				tmp.close();
-			}
+			StreamUtil.close(tmp);
 		}
 		return tmp.toByteArray();
 	}

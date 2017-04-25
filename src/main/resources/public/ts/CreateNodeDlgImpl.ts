@@ -58,7 +58,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (node) {
             let canInsertInline: boolean = meta64.homeNodeId != node.id;
-            this.inlineButton.setDisplay(canInsertInline);
+            this.inlineButton.setVisible(canInsertInline);
         }
     }
 }

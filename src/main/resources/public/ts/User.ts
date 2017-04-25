@@ -30,7 +30,7 @@ class User {
     }
 
     setTitleUsingLoginResponse(res): void {
-        var title = "sbnode";
+        var title = "SubNode";
 
         /* todo-1: If users go with very long usernames this is gonna be ugly */
         // showing username will need to go somewhere else, this is ugly and moile doesn't have the space for it.

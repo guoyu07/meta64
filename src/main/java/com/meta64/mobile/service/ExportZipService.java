@@ -42,6 +42,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.XString;
@@ -104,6 +105,14 @@ public class ExportZipService {
 			if (!fullZipName.toLowerCase().endsWith(".zip")) {
 				fullZipName += ".zip";
 			}
+			
+			/* We don't support overwriting existing files, since exported files are so important, so we just require 
+			 * a filename that does not already exist.
+			 */
+			if (FileTools.fileExists(fullZipName)) {
+				throw new Exception("File already exists: "+fullZipName);
+			}
+			
 			boolean success = false;
 			try {
 				zos = new ZipOutputStream(new FileOutputStream(fullZipName));
@@ -113,12 +122,10 @@ public class ExportZipService {
 				success = true;
 			}
 			finally {
-				if (zos != null) {
-					zos.close();
-				}
+				StreamUtil.close(zos);
 
 				if (!success) {
-					// todo-0: delete the file we failed to write here in case it exists.
+					FileTools.deleteFile(fullZipName);
 				}
 			}
 		}
@@ -198,9 +205,7 @@ public class ExportZipService {
 				addFileEntry(parentFolder + "/" + fileName + "/" + binFileNameStr, IOUtils.toByteArray(is));
 			}
 			finally {
-				if (is != null) {
-					is.close();
-				}
+				StreamUtil.close(is);
 			}
 		}
 

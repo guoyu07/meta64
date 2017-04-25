@@ -24,6 +24,7 @@ import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.StreamUtil;
 
 /* References:
  * 
@@ -84,9 +85,7 @@ public class TypeService {
 			}
 		}
 		finally {
-			if (in != null) {
-				in.close();
-			}
+			StreamUtil.close(in);
 		}
 	}
 

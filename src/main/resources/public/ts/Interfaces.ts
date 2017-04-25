@@ -15,8 +15,9 @@ export class AdSegment {
 }
 
 export class PropEntry {
-    //ID is of the EditPropTextarea element, I can probably make this hold the ACTUAL EditPropTextarea object reference itself
-    //but i'm paranoid about introducing more circular ref risk so i leave as a string for now. With ID we can always get comp by Comp.findById()
+    //The 'id' is of the EditPropTextarea element. We could theoretially make this hold the ACTUAL EditPropTextarea object reference itself
+    //and when doing so probably use an interface of EditPRopTextarea just to be safer against circular references since this interfeces
+    //module is imported into pretty much every other module.
     constructor(public id: string, //
         public checkboxId : string, //
         public property: PropertyInfo, //

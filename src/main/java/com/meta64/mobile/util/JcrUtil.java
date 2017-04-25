@@ -1,10 +1,14 @@
 package com.meta64.mobile.util;
 
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -31,16 +35,16 @@ import com.meta64.mobile.model.RefInfo;
 /**
  * Assorted general utility functions related to JCR nodes.
  * 
- * todo-0: there's a lot of code calling these static methods, but need to transition to singleton
+ * todo-1: there's a lot of code calling these static methods, but need to transition to singleton
  * scope bean and non-static methods.
  */
 @Component
 public class JcrUtil {
 	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
-	
+
 	@Autowired
 	private AppProp appProp;
-	
+
 	/*
 	 * These are properties we should never allow the client to send back as part of a save
 	 * operation.
@@ -90,6 +94,21 @@ public class JcrUtil {
 		}
 		catch (Exception e) {
 			return null;
+		}
+	}
+
+	public ImageSize getImageSizeFromBinary(Binary binary) throws Exception {
+		InputStream is = null;
+		try {
+			is = binary.getStream();
+			BufferedImage image = ImageIO.read(is);
+			ImageSize ret = new ImageSize();
+			ret.width = image.getWidth();
+			ret.height = image.getHeight();
+			return ret;
+		}
+		finally {
+			StreamUtil.close(is);
 		}
 	}
 

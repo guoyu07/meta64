@@ -13,6 +13,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.meta64.mobile.util.StreamUtil;
+
 /**
  * Standard SpringBoot entry point. Starts up entire application, which will run an instance of
  * Tomcat embedded and open the port specified in the properties file and start serving up requests.
@@ -80,28 +82,14 @@ public class AppServer {
 					System.exit(0);
 				}
 			}
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 		}
 		catch (Exception er) {
 			er.printStackTrace();
 			loopz = false;
 		}
 		finally {
-			try {
-				if (br != null) {
-					br.close();
-				}
-			}
-			catch (Exception e) {
-			}
-
-			try {
-				if (isr != null) {
-					isr.close();
-				}
-			}
-			catch (Exception e) {
-			}
+			StreamUtil.close(br, isr);
 		}
 	}
 

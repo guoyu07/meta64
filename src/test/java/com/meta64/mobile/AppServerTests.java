@@ -42,9 +42,6 @@ public class AppServerTests {
 	private static OakRepository _oakRepository;
 
 	@Autowired
-	private UserManagerService userManagerService;
-
-	@Autowired
 	private AppController controller;
 
 	@Autowired

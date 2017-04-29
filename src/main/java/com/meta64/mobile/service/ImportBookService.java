@@ -45,12 +45,7 @@ public class ImportBookService {
 		ImportWarAndPeace iwap = SpringContextUtil.getApplicationContext().getBean(ImportWarAndPeace.class);
 		iwap.importBook(session, "classpath:war-and-peace.txt", node, VarUtil.safeBooleanVal(req.getTruncated()) ? 2 : Integer.MAX_VALUE);
 
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		JcrUtil.save(session);
 		res.setSuccess(true);
 	}
 }

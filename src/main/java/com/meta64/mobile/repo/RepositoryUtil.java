@@ -64,7 +64,7 @@ public class RepositoryUtil {
 			node.setProperty(JcrProp.CONTENT, content);
 			AccessControlUtil.makeNodePublic(session, node);
 			node.setProperty(JcrProp.DISABLE_INSERT, "y");
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception e) {
 			// IMPORTANT: don't rethrow from here, or this could blow up app

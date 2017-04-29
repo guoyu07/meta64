@@ -90,7 +90,7 @@ public class LuceneService {
 			newNode.setProperty(JcrProp.CREATED_BY, userName);
 			newNode.setProperty("meta64:json", json);
 			JcrUtil.timestampNewNode(session, newNode);
-			session.save();
+			JcrUtil.save(session);
 
 			res.setSearchResultNodeId(newNode.getIdentifier());
 		}

@@ -139,7 +139,7 @@ public class NodeMoveService {
 				 * 'save()' on the 'session'. This is similar to a commit on a RDBMS also where
 				 * other sessions won't see data until committed.
 				 */
-				session.save();
+				JcrUtil.save(session);
 
 				adminRunner.run((Session adminSession) -> {
 					try {
@@ -147,7 +147,7 @@ public class NodeMoveService {
 						JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());
 						parentNode2.orderBefore(nodePath, siblingPath);
 						if (immediateSave) {
-							adminSession.save();
+							JcrUtil.save(adminSession);
 						}
 					}
 					catch (Exception ex) {
@@ -159,7 +159,7 @@ public class NodeMoveService {
 				JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
 				parentNode.orderBefore(nodePath, siblingPath);
 				if (immediateSave) {
-					session.save();
+					JcrUtil.save(session);
 				}
 			}
 		}
@@ -192,12 +192,7 @@ public class NodeMoveService {
 		 * scope is now logged out and unuable actually.
 		 */
 		if (!VarUtil.safeBooleanVal(switchedToAdminSession.getVal())) {
-			try {
-				session.save();
-			}
-			catch (Exception ex) {
-				throw new RuntimeEx(ex);
-			}
+			JcrUtil.save(session);
 		}
 		res.setSuccess(true);
 	}
@@ -228,7 +223,7 @@ public class NodeMoveService {
 					switchedToAdminSession.setVal(true);
 				}
 				node.remove();
-				session.save();
+				JcrUtil.save(session);
 			}
 			else {
 				JcrUtil.checkWriteAuthorized(node, session.getUserID());
@@ -246,30 +241,30 @@ public class NodeMoveService {
 	 */
 	public void moveNodes(Session session, MoveNodesRequest req, MoveNodesResponse res) {
 		try {
-		if (session == null) {
-			session = ThreadLocals.getJcrSession();
-		}
+			if (session == null) {
+				session = ThreadLocals.getJcrSession();
+			}
 
-		String targetId = req.getTargetNodeId();
-		Node targetNode = JcrUtil.findNode(session, targetId);
-		String targetPath = targetNode.getPath() + "/";
+			String targetId = req.getTargetNodeId();
+			Node targetNode = JcrUtil.findNode(session, targetId);
+			String targetPath = targetNode.getPath() + "/";
 
-		/*
-		 * If the user is moving nodes to his root note, that root node will be owned by admin so we
-		 * must run the processing using adminRunner session
-		 */
-		if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
-			adminRunner.run((Session adminSession) -> {
-				moveNodesInternal(adminSession, req, res);
-			});
-		}
-		/*
-		 * Otherwise this user is just moving a node somewhere other than their root and we can use
-		 * their own actual session
-		 */
-		else {
-			moveNodesInternal(session, req, res);
-		}
+			/*
+			 * If the user is moving nodes to his root note, that root node will be owned by admin
+			 * so we must run the processing using adminRunner session
+			 */
+			if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+				adminRunner.run((Session adminSession) -> {
+					moveNodesInternal(adminSession, req, res);
+				});
+			}
+			/*
+			 * Otherwise this user is just moving a node somewhere other than their root and we can
+			 * use their own actual session
+			 */
+			else {
+				moveNodesInternal(session, req, res);
+			}
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);
@@ -280,32 +275,32 @@ public class NodeMoveService {
 	private void moveNodesInternal(Session session, MoveNodesRequest req, MoveNodesResponse res) {
 		try {
 
-		String targetId = req.getTargetNodeId();
-		Node targetNode = JcrUtil.findNode(session, targetId);
-		String targetPath = targetNode.getPath() + "/";
+			String targetId = req.getTargetNodeId();
+			Node targetNode = JcrUtil.findNode(session, targetId);
+			String targetPath = targetNode.getPath() + "/";
 
-		for (String nodeId : req.getNodeIds()) {
-			// log.debug("Moving ID: " + nodeId);
-			try {
-				Node node = JcrUtil.findNode(session, nodeId);
-				JcrUtil.checkWriteAuthorized(node, session.getUserID());
-				/*
-				 * This code moves the copied nodes to the bottom of child list underneath the
-				 * target node (i.e. targetNode being the parent) for the new node locations.
-				 */
+			for (String nodeId : req.getNodeIds()) {
+				// log.debug("Moving ID: " + nodeId);
+				try {
+					Node node = JcrUtil.findNode(session, nodeId);
+					JcrUtil.checkWriteAuthorized(node, session.getUserID());
+					/*
+					 * This code moves the copied nodes to the bottom of child list underneath the
+					 * target node (i.e. targetNode being the parent) for the new node locations.
+					 */
 
-				String srcPath = node.getPath();
-				String dstPath = targetPath + node.getName();
-				// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" +
-				// dstPath + "]");
-				session.move(srcPath, dstPath);
+					String srcPath = node.getPath();
+					String dstPath = targetPath + node.getName();
+					// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" +
+					// dstPath + "]");
+					session.move(srcPath, dstPath);
+				}
+				catch (Exception e) {
+					// silently ignore if node cannot be found.
+				}
 			}
-			catch (Exception e) {
-				// silently ignore if node cannot be found.
-			}
-		}
-		session.save();
-		res.setSuccess(true);
+			JcrUtil.save(session);
+			res.setSuccess(true);
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

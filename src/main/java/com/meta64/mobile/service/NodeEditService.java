@@ -138,7 +138,7 @@ public class NodeEditService {
 			}
 
 			log.debug("session.save()");
-			session.save();
+			JcrUtil.save(session);
 
 			res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
 			res.setSuccess(true);
@@ -208,13 +208,11 @@ public class NodeEditService {
 
 			JcrUtil.timestampNewNode(session, newNode);
 
-			// session.save();
-
 			if (!StringUtils.isEmpty(req.getTargetName())) {
 				parentNode.orderBefore(newNode.getName(), req.getTargetName());
 			}
 
-			session.save();
+			JcrUtil.save(session);
 			res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
 			res.setSuccess(true);
 		}
@@ -284,7 +282,7 @@ public class NodeEditService {
 			if (nodeBelow != null) {
 				parentNode.orderBefore(newName, nodeBelow.getName());
 			}
-			session.save();
+			JcrUtil.save(session);
 
 			/*
 			 * Now lookup the new node using new path, so we get the value that node.getIdentifier()
@@ -314,7 +312,7 @@ public class NodeEditService {
 			Node node = JcrUtil.findNode(session, nodeId);
 			JcrUtil.checkWriteAuthorized(node, session.getUserID());
 			node.setProperty(req.getPropertyName(), req.getPropertyValue());
-			session.save();
+			JcrUtil.save(session);
 
 			PropertyInfo propertySaved = new PropertyInfo(-1, req.getPropertyName(), req.getPropertyValue(), false, null);
 			res.setPropertySaved(propertySaved);
@@ -390,7 +388,7 @@ public class NodeEditService {
 
 				NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
 				res.setNode(nodeInfo);
-				session.save();
+				JcrUtil.save(session);
 			}
 
 			res.setSuccess(true);
@@ -428,12 +426,7 @@ public class NodeEditService {
 			log.info("Failed to delete property: " + propertyName + " Reason: " + e.getMessage());
 		}
 
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		JcrUtil.save(session);
 		res.setSuccess(true);
 	}
 
@@ -503,7 +496,7 @@ public class NodeEditService {
 				idx++;
 			}
 
-			session.save();
+			JcrUtil.save(session);
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
@@ -528,7 +521,7 @@ public class NodeEditService {
 				Node iterNode = nodes.nextNode();
 				iterNode.setProperty(propName, val);
 			}
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

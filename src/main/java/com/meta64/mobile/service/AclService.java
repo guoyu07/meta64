@@ -123,7 +123,7 @@ public class AclService {
 			}
 
 			if (success) {
-				session.save();
+				JcrUtil.save(session);
 			}
 			else {
 				res.setMessage("Unable to alter privileges on node.");
@@ -152,12 +152,7 @@ public class AclService {
 
 		boolean success = AccessControlUtil.removeAclEntry(session, node, principal, privilege);
 
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		JcrUtil.save(session);
 		res.setSuccess(success);
 	}
 }

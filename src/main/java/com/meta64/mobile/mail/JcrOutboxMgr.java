@@ -1,7 +1,7 @@
 package com.meta64.mobile.mail;
 
-import java.io.IOException;
 import java.util.LinkedList;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -92,7 +92,7 @@ public class JcrOutboxMgr {
 			newNode.setProperty(JcrProp.EMAIL_SUBJECT, subject);
 			newNode.setProperty(JcrProp.EMAIL_RECIP, recipients);
 			JcrUtil.timestampNewNode(session, newNode);
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception e) {
 			throw new RuntimeEx(e);

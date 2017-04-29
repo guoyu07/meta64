@@ -171,35 +171,35 @@ public class ExportXmlService {
 
 		Node exportNode = JcrUtil.findNode(session, nodeId);
 		try {
-		log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
+			log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
 
-		BufferedOutputStream output = null;
-		try {
-			output = new BufferedOutputStream(new FileOutputStream(fullFileName));
-			String exportPath = exportNode.getPath();
+			BufferedOutputStream output = null;
+			try {
+				output = new BufferedOutputStream(new FileOutputStream(fullFileName));
+				String exportPath = exportNode.getPath();
 
-			/*
-			 * Refer to JCR 2.0 Spec regarding difference between SYSTEM v.s. DOCUMENT XML format,
-			 * but in a nutshell SYSTEM is better for serializing export data for backup or
-			 * specifically for reimporting later onto a JCR repository. DOCUMENT is more for
-			 * compatibility with XML standards itself and is helpful if something other than a JCR
-			 * DB might need to process the XML
-			 */
-			switch (formatType) {
-			case SYSTEM:
-				session.exportSystemView(exportPath, output, !includeBinaries, false);
-				break;
-			case DOCUMENT:
-				session.exportDocumentView(exportPath, output, !includeBinaries, false);
-				break;
-			default:
-				throw new RuntimeEx("Invalid format type");
+				/*
+				 * Refer to JCR 2.0 Spec regarding difference between SYSTEM v.s. DOCUMENT XML
+				 * format, but in a nutshell SYSTEM is better for serializing export data for backup
+				 * or specifically for reimporting later onto a JCR repository. DOCUMENT is more for
+				 * compatibility with XML standards itself and is helpful if something other than a
+				 * JCR DB might need to process the XML
+				 */
+				switch (formatType) {
+				case SYSTEM:
+					session.exportSystemView(exportPath, output, !includeBinaries, false);
+					break;
+				case DOCUMENT:
+					session.exportDocumentView(exportPath, output, !includeBinaries, false);
+					break;
+				default:
+					throw new RuntimeEx("Invalid format type");
+				}
+				output.flush();
 			}
-			output.flush();
-		}
-		finally {
-			StreamUtil.close(output);
-		}
+			finally {
+				StreamUtil.close(output);
+			}
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

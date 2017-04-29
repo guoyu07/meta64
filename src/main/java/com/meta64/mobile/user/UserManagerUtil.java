@@ -68,7 +68,7 @@ public class UserManagerUtil {
 			if (authorizable == null) {
 				User user = userManager.createUser(userName, password);
 				if (user != null) {
-					session.save();
+					JcrUtil.save(session);
 					ret = true;
 				}
 			}
@@ -146,7 +146,7 @@ public class UserManagerUtil {
 
 			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
 				newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
-				session.save();
+				JcrUtil.save(session);
 			}
 
 			return true;
@@ -186,7 +186,7 @@ public class UserManagerUtil {
 				log.debug("Admin user login verified, using defaults.");
 
 				changePassword(session, JcrPrincipal.ADMIN, appProp.getJcrAdminPassword());
-				session.save();
+				JcrUtil.save(session);
 			}
 			catch (Exception e2) {
 				log.debug("Admin user login failed with configured credentials AND default. Unable to connect. Server will fail.");

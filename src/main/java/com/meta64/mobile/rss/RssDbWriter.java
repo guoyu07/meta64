@@ -67,7 +67,7 @@ public class RssDbWriter {
 					}
 				}
 
-				session.save();
+				JcrUtil.save(session);
 			}
 			catch (Exception e) {
 				throw new RuntimeEx(e);

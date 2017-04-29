@@ -57,7 +57,7 @@ public class TypeService {
 
 				NodeTypeManager mgr = workspace.getNodeTypeManager();
 				loadCNDTypeFile(session);
-				session.save();
+				JcrUtil.save(session);
 
 				if (dumpTypesAtStartup) {
 					log.info("Dumping NodeTypes:");

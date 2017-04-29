@@ -94,7 +94,7 @@ public class AttachmentService {
 					attachBinaryFromStream(session, node, nodeId, fileName, uploadFile.getInputStream(), null, -1, -1, addAsChildren, explodeZips);
 				}
 			}
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception e) {
 			log.error(e.getMessage());
@@ -232,12 +232,7 @@ public class AttachmentService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		deleteAllBinaryProperties(node);
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		JcrUtil.save(session);
 		res.setSuccess(true);
 	}
 
@@ -361,7 +356,7 @@ public class AttachmentService {
 			finally {
 				StreamUtil.close(uis);
 			}
-			session.save();
+			JcrUtil.save(session);
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {

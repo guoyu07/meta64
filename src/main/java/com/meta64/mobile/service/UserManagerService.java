@@ -177,7 +177,7 @@ public class UserManagerService {
 				if (prefsNode != null) {
 					prefsNode.remove();
 				}
-				session.save();
+				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
 				throw new RuntimeEx(ex);
@@ -211,7 +211,7 @@ public class UserManagerService {
 					 */
 					model.addAttribute("signupCode", "ok");
 					node.remove();
-					session.save();
+					JcrUtil.save(session);
 				}
 				else {
 					throw new RuntimeEx("Signup Code is invalid.");
@@ -236,7 +236,7 @@ public class UserManagerService {
 				prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
 
 				setDefaultUserPreferences(prefsNode);
-				session.save();
+				JcrUtil.save(session);
 				log.debug("Successful signup complete.");
 			}
 		}
@@ -363,7 +363,7 @@ public class UserManagerService {
 				newNode.setProperty(JcrProp.EMAIL, email);
 				newNode.setProperty(JcrProp.CODE, signupCode);
 				JcrUtil.timestampNewNode(session, newNode);
-				session.save();
+				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
 				throw new RuntimeEx(ex);
@@ -410,7 +410,7 @@ public class UserManagerService {
 				boolean showMetaData = reqUserPrefs.isShowMetaData();
 				prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
 
-				session.save();
+				JcrUtil.save(session);
 
 				/*
 				 * Also update session-scope object, because server-side functions that need
@@ -481,7 +481,7 @@ public class UserManagerService {
 
 			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
 				newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
-				session.save();
+				JcrUtil.save(session);
 			}
 
 			return allUsersRoot;
@@ -525,8 +525,7 @@ public class UserManagerService {
 				}
 
 				res.setUser(userName);
-
-				session.save();
+				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
 				throw new RuntimeEx(ex);
@@ -632,7 +631,7 @@ public class UserManagerService {
 				long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
 
 				userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
-				session.save();
+				JcrUtil.save(session);
 
 				String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);
 				String content = "Password reset was requested on meta64 account: " + user + //

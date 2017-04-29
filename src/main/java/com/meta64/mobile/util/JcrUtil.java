@@ -477,12 +477,21 @@ public class JcrUtil {
 			}
 
 			if (saveImmediate && nodesCreated) {
-				session.save();
+				JcrUtil.save(session);
 			}
 			return parent;
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);
+		}
+	}
+
+	public static void save(Session session) {
+		try {
+			session.save();
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
 		}
 	}
 
@@ -513,12 +522,7 @@ public class JcrUtil {
 		safeRemoveNode(session, "/root");
 		safeRemoveNode(session, "/meta64");
 
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		save(session);
 	}
 
 	public static void safeRemoveNode(Session session, String nodeId) {

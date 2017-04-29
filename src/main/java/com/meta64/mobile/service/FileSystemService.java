@@ -67,7 +67,7 @@ public class FileSystemService {
 
 			folderNode.setProperty("meta64:json", json);
 			JcrUtil.timestampNewNode(session, folderNode);
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

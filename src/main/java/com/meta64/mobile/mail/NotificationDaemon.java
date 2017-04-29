@@ -102,7 +102,7 @@ public class NotificationDaemon {
 
 				if (mailSender.sendMail(email, content, subject)) {
 					try {
-					node.remove();
+						node.remove();
 					}
 					catch (Exception e) {
 						throw new RuntimeEx(e);
@@ -114,7 +114,7 @@ public class NotificationDaemon {
 		finally {
 			try {
 				if (sessionDirty) {
-					session.save();
+					JcrUtil.save(session);
 				}
 			}
 			catch (Exception e) {

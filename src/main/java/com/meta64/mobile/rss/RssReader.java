@@ -298,13 +298,7 @@ public class RssReader {
 				}
 			}
 
-			try {
-				/* We need to save often or else the JCR will start using way too much memory */
-				session.save();
-			}
-			catch (Exception ex) {
-				throw new RuntimeEx(ex);
-			}
+			JcrUtil.save(session);
 			SystemService.logMemory();
 		});
 

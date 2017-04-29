@@ -89,7 +89,7 @@ public class MailSender implements TransportListener {
 			waiting = false;
 
 			try {
-			transport.close();
+				transport.close();
 			}
 			catch (Exception e) {
 				throw new RuntimeEx(e);
@@ -115,11 +115,11 @@ public class MailSender implements TransportListener {
 		log.debug("send mail to address [" + sendToAddress + "]");
 
 		MimeMessage message = new MimeMessage(mailSession);
-		try{
-		message.setSentDate(new Date());
-		message.setSubject(subjectLine);
-		message.setFrom(new InternetAddress(appProp.getMailUser()));
-		message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToAddress));
+		try {
+			message.setSentDate(new Date());
+			message.setSubject(subjectLine);
+			message.setFrom(new InternetAddress(appProp.getMailUser()));
+			message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToAddress));
 		}
 		catch (Exception e) {
 			throw new RuntimeEx(e);
@@ -135,12 +135,12 @@ public class MailSender implements TransportListener {
 		// SIMPLE (no multipart)
 		// ---------------
 		try {
-		message.setContent(content, MIME_HTML);
+			message.setContent(content, MIME_HTML);
 		}
 		catch (Exception e) {
 			throw new RuntimeEx(e);
 		}
-		
+
 		// can get alreadyconnected exception here ??
 		// transport.connect(mailHost, mailUser, mailPassword);
 
@@ -154,16 +154,16 @@ public class MailSender implements TransportListener {
 		int timeRemaining = TIMEOUT;
 		waiting = true;
 		try {
-		transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-		while (waiting && timeRemaining > 0) {
-			Thread.sleep(TIMESLICE);
-			timeRemaining -= TIMESLICE;
-		}
+			transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+			while (waiting && timeRemaining > 0) {
+				Thread.sleep(TIMESLICE);
+				timeRemaining -= TIMESLICE;
+			}
 		}
 		catch (Exception e) {
 			throw new RuntimeEx(e);
 		}
-		
+
 		/* if we are still pending, that means a timeout so we give up */
 		if (waiting) {
 			waiting = false;

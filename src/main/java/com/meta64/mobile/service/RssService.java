@@ -189,7 +189,7 @@ public class RssService {
 			feedItemsByLink.clear();
 			scanForFeedNodes(session, feedsRootNode);
 
-			session.save();
+			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);
@@ -266,12 +266,7 @@ public class RssService {
 		try {
 			adminRunner.run(session -> {
 				if (persistPlayerInfo(session)) {
-					try {
-						session.save();
-					}
-					catch (Exception ex) {
-						throw new RuntimeEx(ex);
-					}
+					JcrUtil.save(session);
 				}
 			});
 		}

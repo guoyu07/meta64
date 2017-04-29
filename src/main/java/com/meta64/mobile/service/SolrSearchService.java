@@ -95,7 +95,7 @@ public class SolrSearchService {
 			newNode.setProperty(JcrProp.CREATED_BY, userName);
 			newNode.setProperty(JcrProp.JSON_FILE_SEARCH_RESULT, json);
 			JcrUtil.timestampNewNode(session, newNode);
-			session.save();
+			JcrUtil.save(session);
 
 			res.setSearchResultNodeId(newNode.getIdentifier());
 		}

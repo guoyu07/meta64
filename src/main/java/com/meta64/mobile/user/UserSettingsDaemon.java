@@ -16,6 +16,7 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.RuntimeEx;
 
 /**
@@ -94,12 +95,7 @@ public class UserSettingsDaemon {
 			saveSettingsForUser(session, entry.getKey(), entry.getValue());
 		}
 
-		try {
-			session.save();
-		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
+		JcrUtil.save(session);
 	}
 
 	private void saveSettingsForUser(Session session, String userName, UnsavedUserSettings settings) {

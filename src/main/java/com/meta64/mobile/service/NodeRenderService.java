@@ -138,7 +138,7 @@ public class NodeRenderService {
 			 */
 			int offset = scanToNode ? 0 : req.getOffset();
 
-			NodeIterator nodeIter = node.getNodes();
+			NodeIterator nodeIter = JcrUtil.getNodes(node);
 			int idx = 0, count = 0, idxOfNodeFound = -1;
 			boolean endReached = false;
 			try {

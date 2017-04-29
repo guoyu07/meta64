@@ -3,6 +3,7 @@ package com.meta64.mobile.util;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -171,9 +172,18 @@ public class JcrUtil {
 		}
 	}
 
+	public static NodeIterator getNodes(Node node) {
+		try {
+			return node.getNodes();
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
+	}
+	
 	public static Node getFirstChild(Session session, Node parentNode, boolean includeSystemNodes) {
 		try {
-			NodeIterator nodeIter = parentNode.getNodes();
+			NodeIterator nodeIter = getNodes(parentNode);
 			Node node = null;
 			try {
 				while (true) {
@@ -221,7 +231,7 @@ public class JcrUtil {
 			}
 
 			// log.debug("Finding node below node: " + nodeName);
-			NodeIterator nodeIter = parentNode.getNodes();
+			NodeIterator nodeIter = getNodes(parentNode);
 			boolean foundNode = false;
 
 			try {
@@ -265,7 +275,7 @@ public class JcrUtil {
 			}
 
 			// log.debug("Finding node below node: " + nodeName);
-			NodeIterator nodeIter = parentNode.getNodes();
+			NodeIterator nodeIter = getNodes(parentNode);
 			Node lastNode = null;
 
 			try {
@@ -375,7 +385,7 @@ public class JcrUtil {
 				return node.hasNodes();
 			}
 
-			NodeIterator nodeIter = node.getNodes();
+			NodeIterator nodeIter = getNodes(node);
 			try {
 				while (true) {
 					if (nodeVisibleInSimpleMode(nodeIter.nextNode())) {

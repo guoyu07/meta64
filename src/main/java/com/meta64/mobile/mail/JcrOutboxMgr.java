@@ -108,7 +108,7 @@ public class JcrOutboxMgr {
 		Node outboxNode = getSystemOutbox(session);
 
 		try {
-			NodeIterator nodeIter = outboxNode.getNodes();
+			NodeIterator nodeIter = JcrUtil.getNodes(outboxNode);
 
 			try {
 				int nodeCount = 0;

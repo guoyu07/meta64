@@ -215,7 +215,7 @@ public class RssService {
 				return;
 			}
 
-			NodeIterator nodeIter = node.getNodes();
+			NodeIterator nodeIter = JcrUtil.getNodes(node);
 			try {
 				while (true) {
 					Node nextNode = nodeIter.nextNode();
@@ -233,7 +233,7 @@ public class RssService {
 
 	private void cacheFeedItems(Node feedNode) {
 		try {
-			NodeIterator nodeIter = feedNode.getNodes();
+			NodeIterator nodeIter = JcrUtil.getNodes(feedNode);
 			try {
 				while (true) {
 					Node itemNode = nodeIter.nextNode();

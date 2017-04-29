@@ -144,7 +144,7 @@ public class ExportZipService {
 		String folder = processNodeExport(parentFolder, node);
 		NodeIterator nodeIter;
 		try {
-			nodeIter = node.getNodes();
+			nodeIter = JcrUtil.getNodes(node);
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

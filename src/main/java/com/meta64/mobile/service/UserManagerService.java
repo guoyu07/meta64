@@ -156,7 +156,7 @@ public class UserManagerService {
 
 	public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) throws Exception {
 		log.debug("Closing Account: " + sessionContext.getUserName());
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			String userName = sessionContext.getUserName();
 
 			/* Remove user from JCR user manager */
@@ -186,7 +186,7 @@ public class UserManagerService {
 	 */
 	public void processSignupCode(final String signupCode, final Model model) throws Exception {
 		log.debug("User is trying signupCode: " + signupCode);
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			try {
 				Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.SIGNUP, //
 						JcrProp.CODE, signupCode);
@@ -236,7 +236,7 @@ public class UserManagerService {
 
 	public List<String> getOwnerNames(final Node node) throws Exception {
 		final ValContainer<List<String>> ret = new ValContainer<List<String>>();
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			ret.setVal(AccessControlUtil.getOwnerNames(session, node));
 		});
 		return ret.getVal();
@@ -331,7 +331,7 @@ public class UserManagerService {
 	 */
 	public void addPendingSignupNode(final String userName, final String password, final String email, final String signupCode) throws Exception {
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 
 			try {
 				session.getNode("/" + JcrName.SIGNUP + "/" + userName);
@@ -372,7 +372,7 @@ public class UserManagerService {
 
 		final String userName = sessionContext.getUserName();
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
 			UserPreferences reqUserPrefs = req.getUserPreferences();
@@ -414,7 +414,7 @@ public class UserManagerService {
 		final String userName = sessionContext.getUserName();
 		final UserPreferences userPrefs = new UserPreferences();
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
 			/* for polymer conversion, forcing to true here */
@@ -467,7 +467,7 @@ public class UserManagerService {
 	 */
 	public void changePassword(final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			String userForPassCode = null;
 			String passCode = req.getPassCode();
 			if (passCode != null) {
@@ -541,7 +541,7 @@ public class UserManagerService {
 	 */
 	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) throws Exception {
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			String user = req.getUser();
 			String email = req.getEmail();
 
@@ -614,7 +614,7 @@ public class UserManagerService {
 	 */
 	public String getPasswordOfUser(final String userName) throws Exception {
 		final ValContainer<String> password = new ValContainer<String>();
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 			String encPwd = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.PWD);
 			password.setVal(encryptor.decrypt(encPwd));

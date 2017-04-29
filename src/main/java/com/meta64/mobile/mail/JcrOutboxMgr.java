@@ -50,7 +50,7 @@ public class JcrOutboxMgr {
 		 * put in a catch block, because nothing going wrong in here should be allowed to blow up
 		 * the save operation
 		 */
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			try {
 				Node parentNode = node.getParent();
 				if (parentNode != null) {
@@ -75,7 +75,7 @@ public class JcrOutboxMgr {
 	}
 
 	public void queueEmail(final String recipients, final String subject, final String content) throws Exception {
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			queueMailUsingAdminSession(session, recipients, subject, content);
 		});
 	}

@@ -45,7 +45,7 @@ public class TypeService {
 
 	/* New experimental code, to create types. Not using this yet */
 	public void initNodeTypes() throws Exception {
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 
 			Workspace workspace = session.getWorkspace();
 			NamespaceRegistry registry = workspace.getNamespaceRegistry();

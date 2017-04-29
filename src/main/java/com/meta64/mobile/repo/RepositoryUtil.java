@@ -40,7 +40,7 @@ public class RepositoryUtil {
 	private HashSet<String> testAccountNames = new HashSet<String>();
 	
 	public void initRequiredNodes() throws Exception {
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 
 			/*
 			 * todo-1: need to make all these markdown files able to be specified in a properties

@@ -44,7 +44,7 @@ public class RssDbWriter {
 	 */
 	public void updateFeedNode(SyndFeed feed, FeedNodeInfo feedNodeInfo) throws Exception {
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {

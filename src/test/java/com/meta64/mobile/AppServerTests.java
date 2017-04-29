@@ -2,8 +2,6 @@ package com.meta64.mobile;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.jcr.Session;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,9 +18,7 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.SignupResponse;
-import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.ThreadLocals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AppServer.class)
@@ -76,7 +72,7 @@ public class AppServerTests {
 		// run. Autowiring a static won't work
 		_oakRepository = oakRepository;
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 			SignupRequest signupReq = new SignupRequest();
 
 			/* setup fake captcha */

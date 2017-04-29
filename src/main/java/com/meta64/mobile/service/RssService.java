@@ -100,7 +100,7 @@ public class RssService {
 			try {
 				processing = true;
 
-				adminRunner.run((Session session) -> {
+				adminRunner.run(session -> {
 					init(session);
 				});
 				AppServer.shutdownCheck();
@@ -249,7 +249,7 @@ public class RssService {
 		if (AppServer.isShuttingDown() || !AppServer.isEnableScheduling()) return;
 
 		try {
-			adminRunner.run((Session session) -> {
+			adminRunner.run(session -> {
 				if (persistPlayerInfo(session)) {
 					session.save();
 				}

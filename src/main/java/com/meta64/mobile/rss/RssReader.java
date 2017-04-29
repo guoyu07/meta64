@@ -241,7 +241,7 @@ public class RssReader {
 		log.debug("writing feed: " + feed.getTitle());
 		dbWriter.updateFeedNode(feed, feedNodeInfo);
 
-		adminRunner.run((Session session) -> {
+		adminRunner.run(session -> {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {

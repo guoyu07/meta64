@@ -53,7 +53,7 @@ public class UserSettingsDaemon {
 		// log.trace("Saving settings.");
 
 		try {
-			adminRunner.run((Session session) -> {
+			adminRunner.run(session -> {
 				saveSettings(session);
 			});
 		}

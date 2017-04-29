@@ -24,7 +24,7 @@ public class RunAsJcrAdmin {
 	@Autowired
 	private OakRepository oak;
 
-	public void run(JcrRunnable runner) throws Exception {
+	public void run(JcrRunnable runner) {
 		Session session = null;
 
 		try {

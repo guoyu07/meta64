@@ -19,6 +19,7 @@ import com.meta64.mobile.response.BrowseFolderResponse;
 import com.meta64.mobile.util.FileLister;
 import com.meta64.mobile.util.IFileListingCallback;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -30,7 +31,7 @@ public class FileSystemService {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
-	public void browseFolder(Session session, BrowseFolderRequest req, BrowseFolderResponse res) throws Exception {
+	public void browseFolder(Session session, BrowseFolderRequest req, BrowseFolderResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -60,11 +61,16 @@ public class FileSystemService {
 		lister.setCallback(callback);
 		lister.list(folderName);
 
-		String json = jsonMapper.writeValueAsString(results);
-		// log.debug("RESULT STRING: " + json);
+		try {
+			String json = jsonMapper.writeValueAsString(results);
+			// log.debug("RESULT STRING: " + json);
 
-		folderNode.setProperty("meta64:json", json);
-		JcrUtil.timestampNewNode(session, folderNode);
-		session.save();
+			folderNode.setProperty("meta64:json", json);
+			JcrUtil.timestampNewNode(session, folderNode);
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 }

@@ -10,8 +10,8 @@ public class ExportRequest {
 	 * rejected, and aborted with error. (i.e. Will never overwrite existing files)
 	 */
 	private String targetFileName;
-	
-	//must be XML+ZIP, and selects which type of file to export
+
+	// must be XML+ZIP, and selects which type of file to export
 	private String exportExt;
 
 	public String getNodeId() {

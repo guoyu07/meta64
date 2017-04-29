@@ -21,6 +21,7 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * Utilities related to user management.
@@ -38,13 +39,18 @@ public class UserManagerUtil {
 		return !userName.equalsIgnoreCase("admin") && !userName.equalsIgnoreCase("everyone");
 	}
 
-	public static Authorizable getUser(Session session, String userName) throws Exception {
-		UserManager userManager = ((JackrabbitSession) session).getUserManager();
-		Authorizable authorizable = userManager.getAuthorizable(userName);
-		return authorizable;
+	public static Authorizable getUser(Session session, String userName) {
+		try {
+			UserManager userManager = ((JackrabbitSession) session).getUserManager();
+			Authorizable authorizable = userManager.getAuthorizable(userName);
+			return authorizable;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	// public static boolean userExists(Session session, String userName) throws Exception {
+	// public static boolean userExists(Session session, String userName) {
 	// boolean ret = false;
 	// UserManager userManager = ((JackrabbitSession) session).getUserManager();
 	// Authorizable authorizable = userManager.getAuthorizable(userName);
@@ -54,94 +60,118 @@ public class UserManagerUtil {
 	// return ret;
 	// }
 
-	public static boolean createUser(Session session, String userName, String password, boolean automated) throws Exception {
-		boolean ret = false;
-		UserManager userManager = ((JackrabbitSession) session).getUserManager();
-		Authorizable authorizable = userManager.getAuthorizable(userName);
-		if (authorizable == null) {
-			User user = userManager.createUser(userName, password);
-			if (user != null) {
-				session.save();
-				ret = true;
-			}
-		}
-		else {
-			/*
-			 * if this is an automated signup then we don't need to throw an exception if the user
-			 * already exist, because during most startups when the DB already exists, this is going
-			 * to be the normal flow. Test accounts already exist, etc.
-			 */
-			if (automated) {
-				log.trace("Account Verified to Exist: " + userName);
+	public static boolean createUser(Session session, String userName, String password, boolean automated) {
+		try {
+			boolean ret = false;
+			UserManager userManager = ((JackrabbitSession) session).getUserManager();
+			Authorizable authorizable = userManager.getAuthorizable(userName);
+			if (authorizable == null) {
+				User user = userManager.createUser(userName, password);
+				if (user != null) {
+					session.save();
+					ret = true;
+				}
 			}
 			else {
-				throw new Exception("UserName is already taken.");
+				/*
+				 * if this is an automated signup then we don't need to throw an exception if the
+				 * user already exist, because during most startups when the DB already exists, this
+				 * is going to be the normal flow. Test accounts already exist, etc.
+				 */
+				if (automated) {
+					log.trace("Account Verified to Exist: " + userName);
+				}
+				else {
+					throw new RuntimeEx("UserName is already taken.");
+				}
 			}
+			return ret;
 		}
-		return ret;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static boolean removeUser(Session session, String userName) throws Exception {
-		boolean ret = false;
-		UserManager userManager = ((JackrabbitSession) session).getUserManager();
-		Authorizable authorizable = userManager.getAuthorizable(userName);
-		if (authorizable != null) {
-			authorizable.remove();
+	public static boolean removeUser(Session session, String userName) {
+		try {
+			boolean ret = false;
+			UserManager userManager = ((JackrabbitSession) session).getUserManager();
+			Authorizable authorizable = userManager.getAuthorizable(userName);
+			if (authorizable != null) {
+				authorizable.remove();
+			}
+			else {
+				// if user not found we just do nothing, and throw no exception so
+				// that the rest
+				// of the clean up of the account will continue
+			}
+			return ret;
 		}
-		else {
-			// if user not found we just do nothing, and throw no exception so
-			// that the rest
-			// of the clean up of the account will continue
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		return ret;
 	}
 
-	public static RefInfo getRootNodeRefInfoForUser(Session session, String userName) throws Exception {
+	public static RefInfo getRootNodeRefInfoForUser(Session session, String userName) {
 		Node rootNode = null;
 
-		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN)) {
-			rootNode = session.getRootNode();
+		try {
+			if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN)) {
+				rootNode = session.getRootNode();
+			}
+			else {
+				rootNode = session.getNode("/" + JcrName.ROOT + "/" + userName);
+			}
+			return new RefInfo(rootNode.getIdentifier(), rootNode.getPath());
 		}
-		else {
-			rootNode = session.getNode("/" + JcrName.ROOT + "/" + userName);
+		catch (Exception e) {
+			throw new RuntimeEx(e);
 		}
-		return new RefInfo(rootNode.getIdentifier(), rootNode.getPath());
 	}
 
-	public static boolean createUserRootNode(Session session, String userName) throws Exception {
+	public static boolean createUserRootNode(Session session, String userName) {
+		try {
+			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
+			if (allUsersRoot == null) {
+				throw new RuntimeEx("/root not found!");
+			}
 
-		Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
-		if (allUsersRoot == null) {
-			throw new Exception("/root not found!");
+			log.debug("Creating root node, which didn't exist.");
+
+			Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
+			JcrUtil.timestampNewNode(session, newNode);
+			if (newNode == null) {
+				throw new RuntimeEx("unable to create root");
+			}
+
+			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
+				newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
+				session.save();
+			}
+
+			return true;
 		}
-
-		log.debug("Creating root node, which didn't exist.");
-
-		Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-		JcrUtil.timestampNewNode(session, newNode);
-		if (newNode == null) {
-			throw new Exception("unable to create root");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-
-		if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
-			newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
-			session.save();
-		}
-
-		return true;
 	}
 
-	public void changePassword(Session session, String userId, String newPassword) throws Exception {
-		UserManager userManager = ((JackrabbitSession) session).getUserManager();
-		Authorizable authorizable = userManager.getAuthorizable(userId);
-		((User) authorizable).changePassword(newPassword);
+	public void changePassword(Session session, String userId, String newPassword) {
+		try {
+			UserManager userManager = ((JackrabbitSession) session).getUserManager();
+			Authorizable authorizable = userManager.getAuthorizable(userId);
+			((User) authorizable).changePassword(newPassword);
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*
 	 * Initialize admin user account credentials into repository if not yet done. This should only
 	 * get triggered the first time the repository is created, the first time the app is started.
 	 */
-	public void verifyAdminAccountReady(OakRepository oak) throws Exception {
+	public void verifyAdminAccountReady(OakRepository oak) {
 		Session session = null;
 
 		try {
@@ -160,7 +190,7 @@ public class UserManagerUtil {
 			}
 			catch (Exception e2) {
 				log.debug("Admin user login failed with configured credentials AND default. Unable to connect. Server will fail.");
-				throw e2;
+				throw new RuntimeEx(e2);
 			}
 		}
 		finally {

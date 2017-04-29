@@ -42,6 +42,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
@@ -78,7 +79,7 @@ public class ExportZipService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	public void export(Session session, ExportRequest req, ExportResponse res) throws Exception {
+	public void export(Session session, ExportRequest req, ExportResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -87,17 +88,17 @@ public class ExportZipService {
 		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
 
 		if (!exportAllowed && !sessionContext.isAdmin()) {
-			throw new Exception("export is an admin-only feature.");
+			throw new RuntimeEx("export is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new Exception("adminDataFolder does not exist");
+			throw new RuntimeEx("adminDataFolder does not exist");
 		}
 
 		if (nodeId.equals("/")) {
-			throw new Exception("Backing up entire repository is not supported.");
+			throw new RuntimeEx("Backing up entire repository is not supported.");
 		}
 		else {
 			String fileName = req.getTargetFileName();
@@ -105,14 +106,15 @@ public class ExportZipService {
 			if (!fullZipName.toLowerCase().endsWith(".zip")) {
 				fullZipName += ".zip";
 			}
-			
-			/* We don't support overwriting existing files, since exported files are so important, so we just require 
-			 * a filename that does not already exist.
+
+			/*
+			 * We don't support overwriting existing files, since exported files are so important,
+			 * so we just require a filename that does not already exist.
 			 */
 			if (FileTools.fileExists(fullZipName)) {
-				throw new Exception("File already exists: "+fullZipName);
+				throw new RuntimeEx("File already exists: " + fullZipName);
 			}
-			
+
 			boolean success = false;
 			try {
 				zos = new ZipOutputStream(new FileOutputStream(fullZipName));
@@ -120,6 +122,9 @@ public class ExportZipService {
 				Node node = JcrUtil.findNode(session, nodeId);
 				recurseNode("", node, 0);
 				success = true;
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
 			}
 			finally {
 				StreamUtil.close(zos);
@@ -133,12 +138,17 @@ public class ExportZipService {
 		res.setSuccess(true);
 	}
 
-	private void recurseNode(String parentFolder, Node node, int level) throws Exception {
+	private void recurseNode(String parentFolder, Node node, int level) {
 		if (node == null) return;
 
 		String folder = processNodeExport(parentFolder, node);
-		NodeIterator nodeIter = node.getNodes();
-
+		NodeIterator nodeIter;
+		try {
+			nodeIter = node.getNodes();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
@@ -155,81 +165,86 @@ public class ExportZipService {
 	 * let exceptions bubble all the way up to abort and even cause the zip file itself to be
 	 * deleted since it was unable to be written to.
 	 */
-	private String processNodeExport(String parentFolder, Node node) throws Exception {
-		PropertyIterator propsIter = node.getProperties();
-		List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
+	private String processNodeExport(String parentFolder, Node node) {
+		try {
+			PropertyIterator propsIter = node.getProperties();
+			List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
 
-		log.debug("Processing Node: " + node.getPath());
+			log.debug("Processing Node: " + node.getPath());
 
-		/*
-		 * Top preference for fileName is the nodeName if there is one todo-0: need to add valid
-		 * characters conversion if necessary.
-		 */
-		String fileName = generateFileNameFromNode(node);
-
-		ValContainer<String> contentText = new ValContainer<String>();
-		ValContainer<Property> binDataProp = new ValContainer<Property>();
-		ValContainer<String> binFileName = new ValContainer<String>();
-
-		while (propsIter.hasNext()) {
-			Property prop = propsIter.nextProperty();
-			processProperty(prop, allProps, contentText, binDataProp, binFileName);
-		}
-
-		ExportNodeInfo expInfo = new ExportNodeInfo();
-		expInfo.setPath(node.getPath());
-		expInfo.setId(node.getIdentifier());
-		expInfo.setType(node.getPrimaryNodeType().getName());
-		expInfo.setProps(allProps);
-		String json = jsonWriter.writeValueAsString(expInfo);
-
-		addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".json", json.getBytes());
-
-		/* If content property was found write it into separate file */
-		if (contentText.getVal() != null) {
 			/*
-			 * In situations where the fileName happens to equal the contentText it is desirable to
-			 * not even write the content text file because it would be redundant.
+			 * Top preference for fileName is the nodeName if there is one todo-0: need to add valid
+			 * characters conversion if necessary.
 			 */
-			if (!fileName.trim().equals(contentText.getVal().trim())) {
-				addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".txt", contentText.getVal().getBytes());
+			String fileName = generateFileNameFromNode(node);
+
+			ValContainer<String> contentText = new ValContainer<String>();
+			ValContainer<Property> binDataProp = new ValContainer<Property>();
+			ValContainer<String> binFileName = new ValContainer<String>();
+
+			while (propsIter.hasNext()) {
+				Property prop = propsIter.nextProperty();
+				processProperty(prop, allProps, contentText, binDataProp, binFileName);
 			}
+
+			ExportNodeInfo expInfo = new ExportNodeInfo();
+			expInfo.setPath(node.getPath());
+			expInfo.setId(node.getIdentifier());
+			expInfo.setType(node.getPrimaryNodeType().getName());
+			expInfo.setProps(allProps);
+			String json = jsonWriter.writeValueAsString(expInfo);
+
+			addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".json", json.getBytes());
+
+			/* If content property was found write it into separate file */
+			if (contentText.getVal() != null) {
+				/*
+				 * In situations where the fileName happens to equal the contentText it is desirable
+				 * to not even write the content text file because it would be redundant.
+				 */
+				if (!fileName.trim().equals(contentText.getVal().trim())) {
+					addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".txt", contentText.getVal().getBytes());
+				}
+			}
+
+			if (binDataProp.getVal() != null) {
+				String binFileNameStr = binFileName.getVal() == null ? "binary" : binFileName.getVal();
+
+				InputStream is = null;
+				try {
+					is = binDataProp.getVal().getBinary().getStream();
+					addFileEntry(parentFolder + "/" + fileName + "/" + binFileNameStr, IOUtils.toByteArray(is));
+				}
+				finally {
+					StreamUtil.close(is);
+				}
+			}
+
+			return fileName;
 		}
-
-		if (binDataProp.getVal() != null) {
-			String binFileNameStr = binFileName.getVal() == null ? "binary" : binFileName.getVal();
-
-			InputStream is = null;
-			try {
-				is = binDataProp.getVal().getBinary().getStream();
-				addFileEntry(parentFolder + "/" + fileName + "/" + binFileNameStr, IOUtils.toByteArray(is));
-			}
-			finally {
-				StreamUtil.close(is);
-			}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-
-		return fileName;
 	}
 
 	private String cleanupFileName(String fileName) {
 		fileName = fileName.trim();
 		fileName = FileTools.ensureValidFileNameChars(fileName);
-		
+
 		while (fileName.startsWith("-")) {
 			fileName = fileName.substring(1);
 			fileName = fileName.trim();
 		}
-		
+
 		while (fileName.endsWith("-")) {
-			fileName = fileName.substring(0, fileName.length()-1);
+			fileName = fileName.substring(0, fileName.length() - 1);
 			fileName = fileName.trim();
 		}
-		
+
 		return fileName;
 	}
-	
-	private void addFileEntry(String fileName, byte[] bytes) throws Exception {
+
+	private void addFileEntry(String fileName, byte[] bytes) {
 		/* If we have dupliated a filename, number it */
 		if (fileNameSet.contains(fileName)) {
 			int idx = 1;
@@ -239,49 +254,59 @@ public class ExportZipService {
 			}
 			fileName = numberedFileName;
 		}
-		
+
 		fileNameSet.add(fileName);
 
 		log.debug("ZIPENTRY: " + fileName);
 		ZipEntry zi = new ZipEntry(fileName);
-		zos.putNextEntry(zi);
-		zos.write(bytes);
-		zos.closeEntry();
+		try {
+			zos.putNextEntry(zi);
+			zos.write(bytes);
+			zos.closeEntry();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	private String generateFileNameFromNode(Node node) throws Exception {
+	private String generateFileNameFromNode(Node node) {
 		String fileName = null;
+		try {
+			if ("meta64:folder".equalsIgnoreCase(node.getPrimaryNodeType().getName())) {
+				fileName = JcrUtil.safeGetStringProp(node, JcrProp.META6_TYPE_FOLDER);
+			}
 
-		if ("meta64:folder".equalsIgnoreCase(node.getPrimaryNodeType().getName())) {
-			fileName = JcrUtil.safeGetStringProp(node, JcrProp.META6_TYPE_FOLDER);
+			/*
+			 * The only way I know to tell if the 'node.getName()' will return something the user
+			 * named it to (meaning not some long hex code GUI), is by checking if we set
+			 * referencable or not. Not sure if this is a good long term solution but is good for
+			 * now
+			 */
+			if (StringUtils.isEmpty(fileName) && node.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+				fileName = node.getName();
+			}
+
+			if (StringUtils.isEmpty(fileName)) {
+				fileName = JcrUtil.safeGetStringProp(node, JcrProp.CONTENT);
+				fileName = fileName.trim();
+				fileName = XString.truncateAfter(fileName, "\n");
+				fileName = XString.truncateAfter(fileName, "\r");
+			}
+
+			if (StringUtils.isEmpty(fileName)) {
+				fileName = node.getName();
+			}
+
+			fileName = cleanupFileName(fileName);
+
+			// log.debug(" nodePath="+node.getPath()+" ident="+node.getIdentifier()+"
+			// fileName=["+fileName+"]");
+			fileName = XString.trimToMaxLen(fileName, 120);
+			return fileName;
 		}
-
-		/*
-		 * The only way I know to tell if the 'node.getName()' will return something the user named
-		 * it to (meaning not some long hex code GUI), is by checking if we set referencable or not.
-		 * Not sure if this is a good long term solution but is good for now
-		 */
-		if (StringUtils.isEmpty(fileName) && node.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
-			fileName = node.getName();
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-
-		if (StringUtils.isEmpty(fileName)) {
-			fileName = JcrUtil.safeGetStringProp(node, JcrProp.CONTENT);
-			fileName = fileName.trim();
-			fileName = XString.truncateAfter(fileName, "\n");
-			fileName = XString.truncateAfter(fileName, "\r");
-		}
-
-		if (StringUtils.isEmpty(fileName)) {
-			fileName = node.getName();
-		}
-		
-		fileName = cleanupFileName(fileName);
-
-		// log.debug(" nodePath="+node.getPath()+" ident="+node.getIdentifier()+"
-		// fileName=["+fileName+"]");
-		fileName = XString.trimToMaxLen(fileName, 120);
-		return fileName;
 	}
 
 	/*
@@ -289,54 +314,64 @@ public class ExportZipService {
 	 * written to a separate file.
 	 */
 	private void processProperty(Property prop, List<ExportPropertyInfo> allProps, ValContainer<String> contentText, ValContainer<Property> binDataProp,
-			ValContainer<String> binFileName) throws Exception {
-		ExportPropertyInfo propInfo = new ExportPropertyInfo();
+			ValContainer<String> binFileName) {
+		try {
+			ExportPropertyInfo propInfo = new ExportPropertyInfo();
 
-		propInfo.setName(prop.getName());
+			propInfo.setName(prop.getName());
 
-		/* multivalue */
-		if (prop.isMultiple()) {
-			// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-			propInfo.setVals(new LinkedList<String>());
+			/* multivalue */
+			if (prop.isMultiple()) {
+				// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
+				propInfo.setVals(new LinkedList<String>());
 
-			// int valIdx = 0;
-			for (Value v : prop.getValues()) {
-				String strVal = formatValue(sessionContext, v);
-				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-				propInfo.getVals().add(strVal);
-				// valIdx++;
+				// int valIdx = 0;
+				for (Value v : prop.getValues()) {
+					String strVal = formatValue(sessionContext, v);
+					// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
+					propInfo.getVals().add(strVal);
+					// valIdx++;
+				}
 			}
-		}
-		/* else single value */
-		else {
-			if (prop.getName().equals(JcrProp.CONTENT)) {
-				contentText.setVal(formatValue(sessionContext, prop.getValue()));
-			}
-			else if (prop.getName().equals(JcrProp.BIN_DATA)) {
-				// log.trace(String.format("prop[%s] isBinary", prop.getName()));
-				binDataProp.setVal(prop);
-			}
-			else if (prop.getName().equals(JcrProp.BIN_FILENAME)) {
-				binFileName.setVal(formatValue(sessionContext, prop.getValue()));
-			}
+			/* else single value */
 			else {
-				propInfo.setVal(formatValue(sessionContext, prop.getValue()));
-				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+				if (prop.getName().equals(JcrProp.CONTENT)) {
+					contentText.setVal(formatValue(sessionContext, prop.getValue()));
+				}
+				else if (prop.getName().equals(JcrProp.BIN_DATA)) {
+					// log.trace(String.format("prop[%s] isBinary", prop.getName()));
+					binDataProp.setVal(prop);
+				}
+				else if (prop.getName().equals(JcrProp.BIN_FILENAME)) {
+					binFileName.setVal(formatValue(sessionContext, prop.getValue()));
+				}
+				else {
+					propInfo.setVal(formatValue(sessionContext, prop.getValue()));
+					/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+				}
+			}
+
+			if (!propInfo.isEmpty()) {
+				allProps.add(propInfo);
 			}
 		}
-
-		if (!propInfo.isEmpty()) {
-			allProps.add(propInfo);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	public String formatValue(SessionContext sessionContext, Value value) throws Exception {
-		if (value.getType() == PropertyType.DATE) {
-			return sessionContext.formatTime(value.getDate().getTime());
+	public String formatValue(SessionContext sessionContext, Value value) {
+		try {
+			if (value.getType() == PropertyType.DATE) {
+				return sessionContext.formatTime(value.getDate().getTime());
+			}
+			else {
+				String ret = value.getString();
+				return ret;
+			}
 		}
-		else {
-			String ret = value.getString();
-			return ret;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 }

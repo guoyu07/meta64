@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
 	private static final Logger log = LoggerFactory.getLogger(MyConfiguration.class);
-	
+
 	@Autowired
 	private AppProp appProp;
 

@@ -31,6 +31,7 @@ import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -45,7 +46,7 @@ public class NodeRenderService {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	@Autowired
 	private Convert convert;
 
@@ -62,212 +63,216 @@ public class NodeRenderService {
 	 * This is the call that gets all the data to show on a page. Whenever user is browsing to a new
 	 * page, this method gets called once per page and retrieves all the data for that page.
 	 */
-	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix) throws Exception {
-
-		if (session == null) {
-			session = ThreadLocals.getJcrSession();
-		}
-		res.setOffsetOfNodeFound(-1);
-
-		List<NodeInfo> children = new LinkedList<NodeInfo>();
-		res.setChildren(children);
-		String targetId = req.getNodeId();
-
-		log.trace("renderNode targetId:" + targetId);
-		Node node = JcrUtil.safeFindNode(session, targetId);
-
-		/*
-		 * if the node was a path type and was not found then try with the "/root" prefix before
-		 * giving up. We allow ID parameters to omit the leading "/root" part of the path for
-		 * shortening the path just for end user convenience.
-		 */
-		if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
-			targetId = "/root" + targetId;
-			node = JcrUtil.safeFindNode(session, targetId);
-		}
-
-		if (node == null) {
-			res.setMessage("Node not found.");
-			res.setSuccess(false);
-			return;
-		}
-		log.trace("found node:" + targetId);
-
-		String path = node.getPath();
-		userSettingsDaemon.setSettingVal(sessionContext.getUserName(), JcrProp.USER_PREF_LAST_NODE, path);
-
-		UserPreferences userPreferences = sessionContext.getUserPreferences();
-		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
-		// boolean showMetaData = userPreferences != null ? userPreferences.isShowMetaData() :
-		// false;
-
-		/*
-		 * If this is true it means we need to keep scanning child nodes until we find the targetId,
-		 * so we can make that one be the first of the search results to display, and set that
-		 * offset upon return. During the scan once the node is found, we do set this scanToNode var
-		 * back to false, so it represents always if we're still scanning or not.
-		 */
-		boolean scanToNode = false;
-
-		if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
-			res.setDisplayedParent(true);
-			req.setUpLevel(1);
-		}
-
-		int levelsUpRemaining = req.getUpLevel();
-		if (levelsUpRemaining > 0) {
-			scanToNode = true;
-			while (node != null && levelsUpRemaining > 0) {
-				node = node.getParent();
-				log.trace("   upLevel to nodeid: " + node.getPath());
-				levelsUpRemaining--;
-			}
-		}
-
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
-		NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
-		boolean ordered = type == null ? false : type.hasOrderableChildNodes();
-		nodeInfo.setChildrenOrdered(ordered);
-		// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
-		res.setNode(nodeInfo);
-
-		/*
-		 * If we are scanning to a node we know we need to start from zero offset, or else we use
-		 * the offset passed in
-		 */
-		int offset = scanToNode ? 0 : req.getOffset();
-
-		NodeIterator nodeIter = node.getNodes();
-		int idx = 0, count = 0, idxOfNodeFound = -1;
-		boolean endReached = false;
+	public void renderNode(Session session, RenderNodeRequest req, RenderNodeResponse res, boolean allowRootAutoPrefix) {
 		try {
-			if (req.isGoToLastPage()) {
-				offset = (int) nodeIter.getSize() - ROWS_PER_PAGE;
-				if (offset < 0) {
-					offset = 0;
+			if (session == null) {
+				session = ThreadLocals.getJcrSession();
+			}
+			res.setOffsetOfNodeFound(-1);
+
+			List<NodeInfo> children = new LinkedList<NodeInfo>();
+			res.setChildren(children);
+			String targetId = req.getNodeId();
+
+			log.trace("renderNode targetId:" + targetId);
+			Node node = JcrUtil.safeFindNode(session, targetId);
+
+			/*
+			 * if the node was a path type and was not found then try with the "/root" prefix before
+			 * giving up. We allow ID parameters to omit the leading "/root" part of the path for
+			 * shortening the path just for end user convenience.
+			 */
+			if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
+				targetId = "/root" + targetId;
+				node = JcrUtil.safeFindNode(session, targetId);
+			}
+
+			if (node == null) {
+				res.setMessage("Node not found.");
+				res.setSuccess(false);
+				return;
+			}
+			log.trace("found node:" + targetId);
+
+			String path = node.getPath();
+			userSettingsDaemon.setSettingVal(sessionContext.getUserName(), JcrProp.USER_PREF_LAST_NODE, path);
+
+			UserPreferences userPreferences = sessionContext.getUserPreferences();
+			boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
+			// boolean showMetaData = userPreferences != null ? userPreferences.isShowMetaData() :
+			// false;
+
+			/*
+			 * If this is true it means we need to keep scanning child nodes until we find the
+			 * targetId, so we can make that one be the first of the search results to display, and
+			 * set that offset upon return. During the scan once the node is found, we do set this
+			 * scanToNode var back to false, so it represents always if we're still scanning or not.
+			 */
+			boolean scanToNode = false;
+
+			if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
+				res.setDisplayedParent(true);
+				req.setUpLevel(1);
+			}
+
+			int levelsUpRemaining = req.getUpLevel();
+			if (levelsUpRemaining > 0) {
+				scanToNode = true;
+				while (node != null && levelsUpRemaining > 0) {
+					node = node.getParent();
+					log.trace("   upLevel to nodeid: " + node.getPath());
+					levelsUpRemaining--;
 				}
-				res.setOffsetOfNodeFound(offset);
 			}
+
+			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
+			NodeType type = JcrUtil.safeGetPrimaryNodeType(node);
+			boolean ordered = type == null ? false : type.hasOrderableChildNodes();
+			nodeInfo.setChildrenOrdered(ordered);
+			// log.debug("Primary type: " + type.getName() + " childrenOrdered=" +ordered);
+			res.setNode(nodeInfo);
 
 			/*
-			 * Calling 'skip' here technically violates the fact that nodeVisibleInSimpleMode() can
-			 * return false for some nodes, but because of the performance boost it offers i'm doing
-			 * it anyway. I don't think skipping to far or too little by one or two will ever be a
-			 * noticeable issue in the paginating so this should be fine, because there will be a
-			 * very small number of nodes that are not visible to the user, so I can't think of a
-			 * pathological case here.
+			 * If we are scanning to a node we know we need to start from zero offset, or else we
+			 * use the offset passed in
 			 */
-			if (!scanToNode && offset > 0) {
-				nodeIter.skip(offset);
-				idx = offset;
-			}
+			int offset = scanToNode ? 0 : req.getOffset();
 
-			List<Node> slidingWindow = null;
+			NodeIterator nodeIter = node.getNodes();
+			int idx = 0, count = 0, idxOfNodeFound = -1;
+			boolean endReached = false;
+			try {
+				if (req.isGoToLastPage()) {
+					offset = (int) nodeIter.getSize() - ROWS_PER_PAGE;
+					if (offset < 0) {
+						offset = 0;
+					}
+					res.setOffsetOfNodeFound(offset);
+				}
 
-			/*
-			 * If we are scanning for a specific node, and starting at zero offset, then we need to
-			 * be capturing all the nodes as we go, in a sliding window, so that in case we find
-			 * this node on the first page then we can use the slidingWindow nodes to build the
-			 * entire first page, because we will need to send back these nodes starting from the
-			 * first one.
-			 */
-			if (offset == 0 && scanToNode) {
-				slidingWindow = new LinkedList<Node>();
-			}
+				/*
+				 * Calling 'skip' here technically violates the fact that nodeVisibleInSimpleMode()
+				 * can return false for some nodes, but because of the performance boost it offers
+				 * i'm doing it anyway. I don't think skipping to far or too little by one or two
+				 * will ever be a noticeable issue in the paginating so this should be fine, because
+				 * there will be a very small number of nodes that are not visible to the user, so I
+				 * can't think of a pathological case here.
+				 */
+				if (!scanToNode && offset > 0) {
+					nodeIter.skip(offset);
+					idx = offset;
+				}
 
-			while (true) {
-				Node n = nodeIter.nextNode();
+				List<Node> slidingWindow = null;
 
-				if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
-					idx++;
+				/*
+				 * If we are scanning for a specific node, and starting at zero offset, then we need
+				 * to be capturing all the nodes as we go, in a sliding window, so that in case we
+				 * find this node on the first page then we can use the slidingWindow nodes to build
+				 * the entire first page, because we will need to send back these nodes starting
+				 * from the first one.
+				 */
+				if (offset == 0 && scanToNode) {
+					slidingWindow = new LinkedList<Node>();
+				}
 
-					if (idx > offset) {
+				while (true) {
+					Node n = nodeIter.nextNode();
 
-						if (scanToNode) {
-							String testPath = n.getPath();
+					if (advancedMode || JcrUtil.nodeVisibleInSimpleMode(node)) {
+						idx++;
 
-							/*
-							 * If this is the node we are scanning for turn off scan mode, but
-							 * record its index position
-							 */
-							if (testPath.equals(path)) {
-								scanToNode = false;
+						if (idx > offset) {
+
+							if (scanToNode) {
+								String testPath = n.getPath();
 
 								/*
-								 * If we found our target node, and it's on the first page, then we
-								 * don't need to set idxOfNodeFound, but just leave it unset, and we
-								 * need to load in the nodes we had collected so far, before
-								 * continuing
+								 * If this is the node we are scanning for turn off scan mode, but
+								 * record its index position
 								 */
-								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
+								if (testPath.equals(path)) {
+									scanToNode = false;
 
-									/* loop over all our precached nodes */
-									for (Node sn : slidingWindow) {
-										count++;
-										children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true, false));
+									/*
+									 * If we found our target node, and it's on the first page, then
+									 * we don't need to set idxOfNodeFound, but just leave it unset,
+									 * and we need to load in the nodes we had collected so far,
+									 * before continuing
+									 */
+									if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
+
+										/* loop over all our precached nodes */
+										for (Node sn : slidingWindow) {
+											count++;
+											children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true, false));
+										}
+									}
+									else {
+										idxOfNodeFound = idx;
 									}
 								}
+								/*
+								 * else, we can continue while loop after we incremented 'idx'.
+								 * Nothing else to do on this iteration/node
+								 */
 								else {
-									idxOfNodeFound = idx;
+									/* Are we still within the bounds of the first page ? */
+									if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
+										slidingWindow.add(n);
+									}
+
+									continue;
 								}
 							}
-							/*
-							 * else, we can continue while loop after we incremented 'idx'. Nothing
-							 * else to do on this iteration/node
-							 */
-							else {
-								/* Are we still within the bounds of the first page ? */
-								if (idx <= ROWS_PER_PAGE && slidingWindow != null) {
-									slidingWindow.add(n);
+
+							count++;
+							children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true, false));
+
+							if (count >= ROWS_PER_PAGE) {
+								try {
+									Node finalNode = nodeIter.nextNode();
+									if (!advancedMode && !JcrUtil.nodeVisibleInSimpleMode(finalNode)) {
+										endReached = true;
+									}
 								}
-
-								continue;
-							}
-						}
-
-						count++;
-						children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true, false));
-
-						if (count >= ROWS_PER_PAGE) {
-							try {
-								Node finalNode = nodeIter.nextNode();
-								if (!advancedMode && !JcrUtil.nodeVisibleInSimpleMode(finalNode)) {
+								catch (Exception e) {
 									endReached = true;
+									// we don't rethrow or log this exception. It's normal flow
 								}
-							}
-							catch (Exception e) {
-								endReached = true;
-								// we don't rethrow or log this exception. It's normal flow
-							}
 
-							/* break out of while loop, we have enough children to send back */
-							break;
+								/* break out of while loop, we have enough children to send back */
+								break;
+							}
 						}
-					}
 
-					// log.trace(" node[" + nodeCount + "] path: " + n.getPath());
-				}
-				else {
-					log.trace("    MODE-REJECT node[" + idx + "] path: " + n.getPath());
+						// log.trace(" node[" + nodeCount + "] path: " + n.getPath());
+					}
+					else {
+						log.trace("    MODE-REJECT node[" + idx + "] path: " + n.getPath());
+					}
 				}
 			}
-		}
-		catch (NoSuchElementException ex) {
-			endReached = true;
-			// not an error. Normal iterator end condition.
-		}
+			catch (NoSuchElementException ex) {
+				endReached = true;
+				// not an error. Normal iterator end condition.
+			}
 
-		if (idx == 0) {
-			log.trace("    no child nodes found.");
-		}
+			if (idx == 0) {
+				log.trace("    no child nodes found.");
+			}
 
-		if (idxOfNodeFound != -1) {
-			res.setOffsetOfNodeFound(idxOfNodeFound);
+			if (idxOfNodeFound != -1) {
+				res.setOffsetOfNodeFound(idxOfNodeFound);
+			}
+			res.setEndReached(endReached);
 		}
-		res.setEndReached(endReached);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) throws Exception {
+	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) {
 
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
@@ -287,7 +292,7 @@ public class NodeRenderService {
 		res.setSuccess(true);
 	}
 
-	public void expandAbbreviatedNode(Session session, ExpandAbbreviatedNodeRequest req, ExpandAbbreviatedNodeResponse res) throws Exception {
+	public void expandAbbreviatedNode(Session session, ExpandAbbreviatedNodeRequest req, ExpandAbbreviatedNodeResponse res) {
 
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
@@ -312,7 +317,7 @@ public class NodeRenderService {
 	 * browser when a non-logged in user (i.e. anonymouse user) is browsing the site, and this
 	 * method retrieves that page data.
 	 */
-	public void anonPageLoad(Session session, AnonPageLoadRequest req, AnonPageLoadResponse res) throws Exception {
+	public void anonPageLoad(Session session, AnonPageLoadRequest req, AnonPageLoadResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}

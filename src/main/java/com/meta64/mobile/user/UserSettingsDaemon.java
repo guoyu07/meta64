@@ -16,6 +16,7 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * This is a "Background Thread" which saves user settings for all users (who are logged in)
@@ -62,7 +63,7 @@ public class UserSettingsDaemon {
 		}
 	}
 
-	private void saveSettings(Session session) throws Exception {
+	private void saveSettings(Session session) {
 
 		/*
 		 * In order to not hold the lock for more than on the order of a millisecond we use a local
@@ -92,24 +93,35 @@ public class UserSettingsDaemon {
 		for (Map.Entry<String, UnsavedUserSettings> entry : mapByUserLocal.entrySet()) {
 			saveSettingsForUser(session, entry.getKey(), entry.getValue());
 		}
-		session.save();
+
+		try {
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	private void saveSettingsForUser(Session session, String userName, UnsavedUserSettings settings) throws Exception {
-		if (userName == null || JcrPrincipal.ANONYMOUS.equalsIgnoreCase(userName)) {
-			return;
-		}
-
-		Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, userName);
-
-		/* one iteration here per unsaved property */
-		for (Map.Entry<String, Object> entry : settings.getMap().entrySet()) {
-			if (entry.getValue() != null) {
-				// log.debug(entry.getKey() + " = " + entry.getValue());
-				prefsNode.setProperty(entry.getKey(), (String) entry.getValue());
+	private void saveSettingsForUser(Session session, String userName, UnsavedUserSettings settings) {
+		try {
+			if (userName == null || JcrPrincipal.ANONYMOUS.equalsIgnoreCase(userName)) {
+				return;
 			}
+
+			Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, userName);
+
+			/* one iteration here per unsaved property */
+			for (Map.Entry<String, Object> entry : settings.getMap().entrySet()) {
+				if (entry.getValue() != null) {
+					// log.debug(entry.getKey() + " = " + entry.getValue());
+					prefsNode.setProperty(entry.getKey(), (String) entry.getValue());
+				}
+			}
+			settings.getMap().clear();
 		}
-		settings.getMap().clear();
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*

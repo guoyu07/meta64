@@ -13,6 +13,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 
 /**
@@ -93,8 +94,8 @@ public class AppServer {
 		}
 	}
 
-	public static void shutdownCheck() throws Exception {
-		if (shuttingDown) throw new Exception("Server is shutting down.");
+	public static void shutdownCheck() {
+		if (shuttingDown) throw new RuntimeEx("Server is shutting down.");
 	}
 
 	public static boolean isShuttingDown() {

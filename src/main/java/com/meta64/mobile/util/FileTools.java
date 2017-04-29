@@ -15,20 +15,20 @@ public class FileTools {
 
 		return new File(fileName).isFile();
 	}
-	
+
 	public static boolean dirExists(String fileName) {
 		if (fileName == null || fileName.equals("")) return false;
 
 		return new File(fileName).isDirectory();
 	}
 
-	public static boolean deleteFile(String fileName) throws Exception {
+	public static boolean deleteFile(String fileName) {
 		File f = new File(fileName);
 		boolean exists = f.exists();
 		if (!exists) return true;
 		return f.delete();
 	}
-	
+
 	public static boolean createDirectory(String dir) {
 		File file = new File(dir);
 		if (file.isDirectory()) return true;
@@ -37,14 +37,19 @@ public class FileTools {
 		return success;
 	}
 
-	public static void writeEntireFile(String fileName, String content) throws Exception {
-		BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+	public static void writeEntireFile(String fileName, String content) {
 		try {
-			out.write(content);
-			out.flush();
+			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+			try {
+				out.write(content);
+				out.flush();
+			}
+			finally {
+				StreamUtil.close(out);
+			}
 		}
-		finally {
-			StreamUtil.close(out);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 

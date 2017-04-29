@@ -25,6 +25,7 @@ import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -42,7 +43,7 @@ public class AclService {
 	/**
 	 * Returns the privileges that exist on the node identified in the request.
 	 */
-	public void getNodePrivileges(Session session, GetNodePrivilegesRequest req, GetNodePrivilegesResponse res) throws Exception {
+	public void getNodePrivileges(Session session, GetNodePrivilegesRequest req, GetNodePrivilegesResponse res) {
 
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
@@ -52,7 +53,7 @@ public class AclService {
 		Node node = JcrUtil.findNode(session, nodeId);
 
 		if (!req.isIncludeAcl() && !req.isIncludeOwners()) {
-			throw new Exception("no specific information requested for getNodePrivileges");
+			throw new RuntimeEx("no specific information requested for getNodePrivileges");
 		}
 
 		res.setPublicAppend(JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND));
@@ -79,7 +80,7 @@ public class AclService {
 	 * 
 	 * Adds a new privilege to a node. Request object is self explanatory.
 	 */
-	public void addPrivilege(Session session, AddPrivilegeRequest req, AddPrivilegeResponse res) throws Exception {
+	public void addPrivilege(Session session, AddPrivilegeRequest req, AddPrivilegeResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -109,22 +110,27 @@ public class AclService {
 			}
 		}
 
-		if (req.getPublicAppend() != null) {
-			boolean publicAppend = req.getPublicAppend().booleanValue();
-			if (!publicAppend) {
-				JcrUtil.safeDeleteProperty(node, JcrProp.PUBLIC_APPEND);
+		try {
+			if (req.getPublicAppend() != null) {
+				boolean publicAppend = req.getPublicAppend().booleanValue();
+				if (!publicAppend) {
+					JcrUtil.safeDeleteProperty(node, JcrProp.PUBLIC_APPEND);
+				}
+				else {
+					node.setProperty(JcrProp.PUBLIC_APPEND, true);
+				}
+				success = true;
+			}
+
+			if (success) {
+				session.save();
 			}
 			else {
-				node.setProperty(JcrProp.PUBLIC_APPEND, true);
+				res.setMessage("Unable to alter privileges on node.");
 			}
-			success = true;
 		}
-
-		if (success) {
-			session.save();
-		}
-		else {
-			res.setMessage("Unable to alter privileges on node.");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 		res.setSuccess(success);
 	}
@@ -132,7 +138,7 @@ public class AclService {
 	/*
 	 * Removes the privilege specified in the request from the node specified in the request
 	 */
-	public void removePrivilege(Session session, RemovePrivilegeRequest req, RemovePrivilegeResponse res) throws Exception {
+	public void removePrivilege(Session session, RemovePrivilegeRequest req, RemovePrivilegeResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -145,7 +151,13 @@ public class AclService {
 		String privilege = req.getPrivilege();
 
 		boolean success = AccessControlUtil.removeAclEntry(session, node, principal, privilege);
-		session.save();
+
+		try {
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		res.setSuccess(success);
 	}
 }

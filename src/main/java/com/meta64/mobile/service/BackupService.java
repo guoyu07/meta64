@@ -9,11 +9,11 @@ import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.util.FileTools;
+import com.meta64.mobile.util.RuntimeEx;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
@@ -36,11 +36,11 @@ public class BackupService {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	private DocumentNodeStore nodeStore;
 	private DB db;
 
-	public void runCommandLine() throws Exception {
+	public void runCommandLine() {
 		String cmd = appProp.getProp("cmd");
 		if ("backup".equals(cmd)) {
 			backup();
@@ -50,40 +50,43 @@ public class BackupService {
 		}
 	}
 
-	public void backup() throws Exception {
+	public void backup() {
 		try {
 			connect(appProp.getMongoDbName());
 			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-				throw new Exception("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
+				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
 			}
 			String targetFolder = appProp.getAdminDataFolder() + File.separator + "BK" + System.currentTimeMillis();
 			log.debug("Backing up to: " + targetFolder);
 			FileTools.createDirectory(targetFolder);
 			FileStoreBackup.backup(nodeStore, new File(targetFolder));
 		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		finally {
 			disconnect();
 		}
 	}
 
-	public void restore() throws Exception {
+	public void restore() {
 		try {
 			String restoreToMongoDbName = appProp.getProp("restoreToMongoDbName");
 			if (restoreToMongoDbName == null) {
-				throw new Exception("Missing 'restoreToMongoDbName' parameter.");
+				throw new RuntimeEx("Missing 'restoreToMongoDbName' parameter.");
 			}
 
 			connect(restoreToMongoDbName);
 			String srcFolder = appProp.getProp("restoreFromFolder");
 
 			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-				throw new Exception("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
+				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
 			}
 			String fullSrcFolder = appProp.getAdminDataFolder() + File.separator + srcFolder;
 			log.debug("Restoring from folder: " + fullSrcFolder);
 
 			if (!FileTools.dirExists(fullSrcFolder)) {
-				throw new Exception("adminDataFolder does not exist: " + fullSrcFolder);
+				throw new RuntimeEx("adminDataFolder does not exist: " + fullSrcFolder);
 			}
 
 			FileStoreRestore.restore(new File(fullSrcFolder), nodeStore);
@@ -93,15 +96,20 @@ public class BackupService {
 		}
 	}
 
-	private void connect(String mongoName) throws Exception {
+	private void connect(String mongoName) {
 		if (db != null || nodeStore != null) {
-			throw new Exception("already connected.");
+			throw new RuntimeEx("already connected.");
 		}
-		db = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(mongoName);
-		nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+		try {
+			db = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(mongoName);
+			nodeStore = new DocumentMK.Builder().setMongoDB(db).getNodeStore();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	private void disconnect() throws Exception {
+	private void disconnect() {
 		if (nodeStore != null) {
 			log.debug("disposing nodeStore.");
 			nodeStore.dispose();

@@ -6,9 +6,9 @@ public class ExportNodeInfo {
 	private String id;
 	private String type;
 	private String path;
-	
+
 	private List<ExportPropertyInfo> props;
-	
+
 	public String getId() {
 		return id;
 	}

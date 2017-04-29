@@ -36,6 +36,7 @@ import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
  * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
@@ -55,7 +56,7 @@ public class RssService {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -87,13 +88,13 @@ public class RssService {
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
 	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
-	public void readFeeds() throws Exception {
+	public void readFeeds() {
 		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
 		if (!appProp.isEnableRssDaemon()) return;
 		readFeedsNow();
 	}
 
-	public void readFeedsNow() throws Exception {
+	public void readFeedsNow() {
 		if (processing) return;
 
 		synchronized (processingLock) {
@@ -175,18 +176,24 @@ public class RssService {
 		return found;
 	}
 
-	private void init(Session session) throws Exception {
+	private void init(Session session) {
 		rssRoot = JcrUtil.ensureNodeExists(session, "/", JcrName.RSS, "RSS");
 		feedsRootNode = JcrUtil.ensureNodeExists(session, "/" + JcrName.RSS + "/", JcrName.RSS_FEEDS, "# RSS Feeds");
 		AccessControlUtil.makeNodePublic(session, feedsRootNode);
 		/* todo-1: not sure if I need disable_insert here or not */
-		feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
 
-		feedNodeInfos.clear();
-		feedItemsByLink.clear();
-		scanForFeedNodes(session, feedsRootNode);
+		try {
+			feedsRootNode.setProperty(JcrProp.DISABLE_INSERT, "y");
 
-		session.save();
+			feedNodeInfos.clear();
+			feedItemsByLink.clear();
+			scanForFeedNodes(session, feedsRootNode);
+
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		log.info("RSS init complete.");
 	}
 
@@ -195,46 +202,54 @@ public class RssService {
 	 * a query for the rssfeed type itself, and just process the results of the query. Leaving that
 	 * as a future enhancement (todo-1)
 	 */
-	private void scanForFeedNodes(Session session, Node node) throws Exception {
-
-		if (node.getPrimaryNodeType().getName().equals("meta64:rssfeed")) {
-			String nodeId = node.getIdentifier();
-			String url = JcrUtil.getRequiredStringProp(node, JcrProp.RSS_FEED_SRC);
-			FeedNodeInfo feedNodeInfo = new FeedNodeInfo();
-			feedNodeInfo.setUrl(url);
-			feedNodeInfo.setNodeId(nodeId);
-			feedNodeInfos.add(feedNodeInfo);
-			cacheFeedItems(node);
-			return;
-		}
-
-		NodeIterator nodeIter = node.getNodes();
+	private void scanForFeedNodes(Session session, Node node) {
 		try {
-			while (true) {
-				Node nextNode = nodeIter.nextNode();
-				scanForFeedNodes(session, nextNode);
+			if (node.getPrimaryNodeType().getName().equals("meta64:rssfeed")) {
+				String nodeId = node.getIdentifier();
+				String url = JcrUtil.getRequiredStringProp(node, JcrProp.RSS_FEED_SRC);
+				FeedNodeInfo feedNodeInfo = new FeedNodeInfo();
+				feedNodeInfo.setUrl(url);
+				feedNodeInfo.setNodeId(nodeId);
+				feedNodeInfos.add(feedNodeInfo);
+				cacheFeedItems(node);
+				return;
+			}
+
+			NodeIterator nodeIter = node.getNodes();
+			try {
+				while (true) {
+					Node nextNode = nodeIter.nextNode();
+					scanForFeedNodes(session, nextNode);
+				}
+			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
 			}
 		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	private void cacheFeedItems(Node feedNode) throws Exception {
-
-		NodeIterator nodeIter = feedNode.getNodes();
+	private void cacheFeedItems(Node feedNode) {
 		try {
-			while (true) {
-				Node itemNode = nodeIter.nextNode();
-				String linkProp = JcrUtil.safeGetStringProp(itemNode, JcrProp.RSS_ITEM_LINK);
-				if (!StringUtils.isEmpty(linkProp)) {
-					log.debug("CACHING ENTRY: link=" + linkProp);
-					feedItemsByLink.add(linkProp);
+			NodeIterator nodeIter = feedNode.getNodes();
+			try {
+				while (true) {
+					Node itemNode = nodeIter.nextNode();
+					String linkProp = JcrUtil.safeGetStringProp(itemNode, JcrProp.RSS_ITEM_LINK);
+					if (!StringUtils.isEmpty(linkProp)) {
+						log.debug("CACHING ENTRY: link=" + linkProp);
+						feedItemsByLink.add(linkProp);
+					}
 				}
 			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
+			}
 		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
@@ -251,7 +266,12 @@ public class RssService {
 		try {
 			adminRunner.run(session -> {
 				if (persistPlayerInfo(session)) {
-					session.save();
+					try {
+						session.save();
+					}
+					catch (Exception ex) {
+						throw new RuntimeEx(ex);
+					}
 				}
 			});
 		}
@@ -280,7 +300,7 @@ public class RssService {
 	 * available after reboot. For now a server restart/redeploy wipes out everyone's info regarding
 	 * where the were last listening to any given podcast.
 	 */
-	private boolean persistPlayerInfo(Session session) throws Exception {
+	private boolean persistPlayerInfo(Session session) {
 		boolean workDone = false;
 		Iterator it = playerInfoMap.entrySet().iterator();
 

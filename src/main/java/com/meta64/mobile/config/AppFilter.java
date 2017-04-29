@@ -63,6 +63,10 @@ public class AppFilter implements Filter {
 		try {
 			chain.doFilter(req, res);
 		}
+		catch (RuntimeException ex) {
+			log.error("Request Failed", ex);
+			throw ex;
+		}
 		finally {
 			/* Set thread back to clean slate, for it's next cycle time in threadpool */
 			ThreadLocals.removeAll();

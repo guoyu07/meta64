@@ -76,7 +76,7 @@ public class JcrUtil {
 		return new SimpleCredentials(appProp.getJcrAdminUserName(), appProp.getJcrAdminPassword().toCharArray());
 	}
 
-	// public void impersonateAdminCredentials(Session session) throws Exception {
+	// public void impersonateAdminCredentials(Session session) {
 	// /* if already as admin creds, just return */
 	// if (JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
 	// return;
@@ -97,18 +97,23 @@ public class JcrUtil {
 		}
 	}
 
-	public ImageSize getImageSizeFromBinary(Binary binary) throws Exception {
-		InputStream is = null;
+	public ImageSize getImageSizeFromBinary(Binary binary) {
 		try {
-			is = binary.getStream();
-			BufferedImage image = ImageIO.read(is);
-			ImageSize ret = new ImageSize();
-			ret.width = image.getWidth();
-			ret.height = image.getHeight();
-			return ret;
+			InputStream is = null;
+			try {
+				is = binary.getStream();
+				BufferedImage image = ImageIO.read(is);
+				ImageSize ret = new ImageSize();
+				ret.width = image.getWidth();
+				ret.height = image.getHeight();
+				return ret;
+			}
+			finally {
+				StreamUtil.close(is);
+			}
 		}
-		finally {
-			StreamUtil.close(is);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
@@ -116,19 +121,29 @@ public class JcrUtil {
 		return JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND);
 	}
 
-	public static void checkWriteAuthorized(Node node, String userName) throws Exception {
+	public static void checkWriteAuthorized(Node node, String userName) {
 		if (JcrPrincipal.ADMIN.equals(userName)) return;
 
-		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw new Exception("Access failed.");
+		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw new RuntimeEx("Access failed.");
 	}
 
-	public static boolean isUserAccountRoot(SessionContext sessionContext, Node node) throws Exception {
-		RefInfo refInfo = sessionContext.getRootRefInfo();
-		return node.getPath().equals(refInfo.getPath()) || node.getPath().equals(refInfo.getId());
+	public static boolean isUserAccountRoot(SessionContext sessionContext, Node node) {
+		try {
+			RefInfo refInfo = sessionContext.getRootRefInfo();
+			return node.getPath().equals(refInfo.getPath()) || node.getPath().equals(refInfo.getId());
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static Node findNode(Session session, String id) throws Exception {
-		return id.startsWith("/") ? session.getNode(id) : session.getNodeByIdentifier(id);
+	public static Node findNode(Session session, String id) {
+		try {
+			return id.startsWith("/") ? session.getNode(id) : session.getNodeByIdentifier(id);
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public static NodeType safeGetPrimaryNodeType(Node node) {
@@ -156,29 +171,34 @@ public class JcrUtil {
 		}
 	}
 
-	public static Node getFirstChild(Session session, Node parentNode, boolean includeSystemNodes) throws Exception {
-		NodeIterator nodeIter = parentNode.getNodes();
-		Node node = null;
+	public static Node getFirstChild(Session session, Node parentNode, boolean includeSystemNodes) {
 		try {
-			while (true) {
-				Node n = nodeIter.nextNode();
+			NodeIterator nodeIter = parentNode.getNodes();
+			Node node = null;
+			try {
+				while (true) {
+					Node n = nodeIter.nextNode();
 
-				if (!includeSystemNodes) {
-					NodeType nodeType = n.getPrimaryNodeType();
-					if (nodeType.getName().startsWith("rep:")) {
-						continue;
+					if (!includeSystemNodes) {
+						NodeType nodeType = n.getPrimaryNodeType();
+						if (nodeType.getName().startsWith("rep:")) {
+							continue;
+						}
 					}
+
+					node = n;
+					break;
 				}
-
-				node = n;
-				break;
 			}
-		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
-		}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
+			}
 
-		return node;
+			return node;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*
@@ -189,78 +209,88 @@ public class JcrUtil {
 	 * Note: We don't support or expect to find multiple nodes of the same name under any given
 	 * parent even though that's technically supported by the JCR (for some strange reason)
 	 */
-	public static Node getNodeBelow(Session session, Node parentNode, Node node, String nodeName) throws Exception {
-		Node ret = null;
-		if (parentNode == null) {
-			parentNode = node.getParent();
-		}
-
-		if (nodeName == null) {
-			nodeName = node.getName();
-		}
-
-		// log.debug("Finding node below node: " + nodeName);
-		NodeIterator nodeIter = parentNode.getNodes();
-		boolean foundNode = false;
-
+	public static Node getNodeBelow(Session session, Node parentNode, Node node, String nodeName) {
 		try {
-			while (true) {
-				Node n = nodeIter.nextNode();
-				// log.debug(" NAME: " + n.getName());
-				if (foundNode) {
-					ret = n;
-					break;
-				}
-				if (n.getName().equals(nodeName)) {
-					foundNode = true;
+			Node ret = null;
+			if (parentNode == null) {
+				parentNode = node.getParent();
+			}
+
+			if (nodeName == null) {
+				nodeName = node.getName();
+			}
+
+			// log.debug("Finding node below node: " + nodeName);
+			NodeIterator nodeIter = parentNode.getNodes();
+			boolean foundNode = false;
+
+			try {
+				while (true) {
+					Node n = nodeIter.nextNode();
+					// log.debug(" NAME: " + n.getName());
+					if (foundNode) {
+						ret = n;
+						break;
+					}
+					if (n.getName().equals(nodeName)) {
+						foundNode = true;
+					}
 				}
 			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
+			}
+			if (ret == null) {
+				log.debug("didn't find a node below: " + nodeName);
+			}
+			return ret;
 		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		if (ret == null) {
-			log.debug("didn't find a node below: " + nodeName);
-		}
-		return ret;
 	}
 
 	/*
 	 * You can either pass node, or nodeName.
 	 */
-	public static Node getNodeAbove(Session session, Node parentNode, Node node, String nodeName) throws Exception {
-		Node ret = null;
-		if (parentNode == null) {
-			parentNode = node.getParent();
-		}
-
-		if (nodeName == null) {
-			nodeName = node.getName();
-		}
-
-		// log.debug("Finding node below node: " + nodeName);
-		NodeIterator nodeIter = parentNode.getNodes();
-		Node lastNode = null;
-
+	public static Node getNodeAbove(Session session, Node parentNode, Node node, String nodeName) {
 		try {
-			while (true) {
-				Node n = nodeIter.nextNode();
-				// log.debug(" NAME: " + n.getName());
-				if (n.getName().equals(nodeName)) {
-					ret = lastNode;
-					break;
-				}
-				lastNode = n;
+			Node ret = null;
+			if (parentNode == null) {
+				parentNode = node.getParent();
 			}
-		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
-		}
 
-		if (ret == null) {
-			log.debug("didn't find a node above: " + nodeName);
+			if (nodeName == null) {
+				nodeName = node.getName();
+			}
+
+			// log.debug("Finding node below node: " + nodeName);
+			NodeIterator nodeIter = parentNode.getNodes();
+			Node lastNode = null;
+
+			try {
+				while (true) {
+					Node n = nodeIter.nextNode();
+					// log.debug(" NAME: " + n.getName());
+					if (n.getName().equals(nodeName)) {
+						ret = lastNode;
+						break;
+					}
+					lastNode = n;
+				}
+			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
+			}
+
+			if (ret == null) {
+				log.debug("didn't find a node above: " + nodeName);
+			}
+			return ret;
 		}
-		return ret;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*
@@ -272,54 +302,62 @@ public class JcrUtil {
 		return !nonSavableProperties.contains(propertyName);
 	}
 
-	public static void savePropertyToNode(Node node, PropertyInfo property) throws Exception {
+	public static void savePropertyToNode(Node node, PropertyInfo property) {
+		try {
+			/* if multi-valued */
+			if (property.getValues() != null) {
+				String[] values = new String[property.getValues().size()];
+				int idx = 0;
+				for (String val : property.getValues()) {
+					values[idx++] = val;
+				}
 
-		/* if multi-valued */
-		if (property.getValues() != null) {
-			String[] values = new String[property.getValues().size()];
-			int idx = 0;
-			for (String val : property.getValues()) {
-				values[idx++] = val;
+				/*
+				 * Because jackrabbit s if you try to set a single-valued property to multi-valued
+				 * property without nulling it out first, we have to do that check.
+				 */
+				Property prop = JcrUtil.getProperty(node, property.getName());
+				if (prop != null && !prop.isMultiple()) {
+					node.setProperty(property.getName(), (String) null);
+				}
+				node.setProperty(property.getName(), values);
 			}
-
-			/*
-			 * Because jackrabbit throws exceptions if you try to set a single-valued property to
-			 * multi-valued property without nulling it out first, we have to do that check.
-			 */
-			Property prop = JcrUtil.getProperty(node, property.getName());
-			if (prop != null && !prop.isMultiple()) {
-				node.setProperty(property.getName(), (String) null);
+			/* else is single valued */
+			else {
+				/*
+				 * Because jackrabbit s if you try to set a multi-valued property to single-valued
+				 * property without nulling it out first, we have to do that check.
+				 */
+				Property prop = JcrUtil.getProperty(node, property.getName());
+				if (prop != null && prop.isMultiple()) {
+					node.setProperty(property.getName(), (String) null);
+				}
+				node.setProperty(property.getName(), property.getValue());
 			}
-			node.setProperty(property.getName(), values);
 		}
-		/* else is single valued */
-		else {
-			/*
-			 * Because jackrabbit throws exceptions if you try to set a multi-valued property to
-			 * single-valued property without nulling it out first, we have to do that check.
-			 */
-			Property prop = JcrUtil.getProperty(node, property.getName());
-			if (prop != null && prop.isMultiple()) {
-				node.setProperty(property.getName(), (String) null);
-			}
-			node.setProperty(property.getName(), property.getValue());
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	public static void timestampNewNode(Session session, Node node) throws Exception {
+	public static void timestampNewNode(Session session, Node node) {
+		try {
+			// mix:created -> jcr:created + jcr:createdBy
+			if (!node.hasProperty(JcrProp.CREATED)) {
+				node.addMixin("mix:created");
+			}
 
-		// mix:created -> jcr:created + jcr:createdBy
-		if (!node.hasProperty(JcrProp.CREATED)) {
-			node.addMixin("mix:created");
+			// mix:lastModified -> jcr:lastModified + jcr:lastModifiedBy
+			if (!node.hasProperty(JcrProp.LAST_MODIFIED)) {
+				node.addMixin("mix:lastModified");
+			}
 		}
-
-		// mix:lastModified -> jcr:lastModified + jcr:lastModifiedBy
-		if (!node.hasProperty(JcrProp.LAST_MODIFIED)) {
-			node.addMixin("mix:lastModified");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent) throws Exception {
+	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent) {
 		return ensureNodeExists(session, parentPath, name, defaultContent, JcrConstants.NT_UNSTRUCTURED, true);
 	}
 
@@ -327,112 +365,125 @@ public class JcrUtil {
 	 * Repository nodes that are shared will have ACL subnodes which will only be visible if the
 	 * user is in 'Advanced Editing' mode.
 	 */
-	public static boolean hasDisplayableNodes(boolean isAdvancedEditingMode, Node node) throws Exception {
-		/*
-		 * If advanced editing mode is on, we want to consider the node to have children if there
-		 * Literally are any because they will all be visible.
-		 */
-		if (isAdvancedEditingMode) {
-			return node.hasNodes();
-		}
-
-		NodeIterator nodeIter = node.getNodes();
+	public static boolean hasDisplayableNodes(boolean isAdvancedEditingMode, Node node) {
 		try {
-			while (true) {
-				if (nodeVisibleInSimpleMode(nodeIter.nextNode())) {
-					return true;
+			/*
+			 * If advanced editing mode is on, we want to consider the node to have children if
+			 * there Literally are any because they will all be visible.
+			 */
+			if (isAdvancedEditingMode) {
+				return node.hasNodes();
+			}
+
+			NodeIterator nodeIter = node.getNodes();
+			try {
+				while (true) {
+					if (nodeVisibleInSimpleMode(nodeIter.nextNode())) {
+						return true;
+					}
 				}
 			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
+			}
+			return false;
 		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		return false;
 	}
 
-	public static boolean nodeVisibleInSimpleMode(Node node) throws Exception {
-		if (node == null) return false;
+	public static boolean nodeVisibleInSimpleMode(Node node) {
+		try {
+			if (node == null) return false;
 
-		String name = node.getName();
+			String name = node.getName();
 
-		/*
-		 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply same
-		 * logic.
-		 */
-		if (name.startsWith("rep:")) {
-			return false;
+			/*
+			 * Note: Mainly it's 'rep:policy' we will get here but all 'rep:*' items would imply
+			 * same logic.
+			 */
+			if (name.startsWith("rep:")) {
+				return false;
+			}
+
+			String typeName = node.getPrimaryNodeType().getName();
+			if (name.equals("allow") && typeName.contains("rep:GrantACE")) {
+				return false;
+			}
+
+			return true;
 		}
-
-		String typeName = node.getPrimaryNodeType().getName();
-		if (name.equals("allow") && typeName.contains("rep:GrantACE")) {
-			return false;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-
-		return true;
 	}
 
 	/*
 	 * If name contains '/' then it's split and this method ends up creating all the subnodes
 	 * required to make the path exist,
 	 */
-	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent, String primaryTypeName, boolean saveImmediate)
-			throws Exception {
+	public static Node ensureNodeExists(Session session, String parentPath, String name, String defaultContent, String primaryTypeName, boolean saveImmediate) {
+		try {
+			if (!parentPath.endsWith("/")) {
+				parentPath += "/";
+			}
 
-		if (!parentPath.endsWith("/")) {
-			parentPath += "/";
-		}
-
-		// log.debug("Looking up node by path: "+(parentPath+name));
-		Node node = JcrUtil.getNodeByPath(session, fixPath(parentPath + name));
-		if (node != null) {
-			return node;
-		}
-
-		List<String> nameTokens = XString.tokenize(name, "/", true);
-		if (nameTokens == null) {
-			return null;
-		}
-
-		Node parent = session.getNode(parentPath);
-		if (parent == null) {
-			throw new Exception("Expected parent not found: " + parentPath);
-		}
-
-		boolean nodesCreated = false;
-		for (String nameToken : nameTokens) {
-
-			String path = fixPath(parentPath + nameToken);
-			log.debug("ensuring node exists: parentPath=" + path);
-			node = JcrUtil.getNodeByPath(session, path);
-
-			/*
-			 * if this node is found continue on, using it as current parent to build on
-			 */
+			// log.debug("Looking up node by path: "+(parentPath+name));
+			Node node = JcrUtil.getNodeByPath(session, fixPath(parentPath + name));
 			if (node != null) {
-				parent = node;
+				return node;
 			}
-			else {
-				log.debug("Creating " + nameToken + " node, which didn't exist.");
 
-				parent = parent.addNode(nameToken, primaryTypeName);
-				if (parent == null) {
-					throw new Exception("unable to create " + nameToken);
+			List<String> nameTokens = XString.tokenize(name, "/", true);
+			if (nameTokens == null) {
+				return null;
+			}
+
+			Node parent = session.getNode(parentPath);
+			if (parent == null) {
+				throw new RuntimeEx("Expected parent not found: " + parentPath);
+			}
+
+			boolean nodesCreated = false;
+			for (String nameToken : nameTokens) {
+
+				String path = fixPath(parentPath + nameToken);
+				log.debug("ensuring node exists: parentPath=" + path);
+				node = JcrUtil.getNodeByPath(session, path);
+
+				/*
+				 * if this node is found continue on, using it as current parent to build on
+				 */
+				if (node != null) {
+					parent = node;
 				}
-				nodesCreated = true;
+				else {
+					log.debug("Creating " + nameToken + " node, which didn't exist.");
 
-				parent.setProperty(JcrProp.CONTENT, "");
+					parent = parent.addNode(nameToken, primaryTypeName);
+					if (parent == null) {
+						throw new RuntimeEx("unable to create " + nameToken);
+					}
+					nodesCreated = true;
+
+					parent.setProperty(JcrProp.CONTENT, "");
+				}
+				parentPath += nameToken + "/";
 			}
-			parentPath += nameToken + "/";
-		}
 
-		if (defaultContent != null) {
-			parent.setProperty(JcrProp.CONTENT, defaultContent);
-		}
+			if (defaultContent != null) {
+				parent.setProperty(JcrProp.CONTENT, defaultContent);
+			}
 
-		if (saveImmediate && nodesCreated) {
-			session.save();
+			if (saveImmediate && nodesCreated) {
+				session.save();
+			}
+			return parent;
 		}
-		return parent;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public static String fixPath(String path) {
@@ -454,7 +505,7 @@ public class JcrUtil {
 	/*
 	 * This fails. Doesnt' work.
 	 */
-	public static void removeRootNodes(Session session) throws Exception {
+	public static void removeRootNodes(Session session) {
 		safeRemoveNode(session, "/jcr:system");
 		safeRemoveNode(session, "/rep:security");
 		safeRemoveNode(session, "/oak:index");
@@ -462,14 +513,24 @@ public class JcrUtil {
 		safeRemoveNode(session, "/root");
 		safeRemoveNode(session, "/meta64");
 
-		session.save();
+		try {
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static void safeRemoveNode(Session session, String nodeId) throws Exception {
+	public static void safeRemoveNode(Session session, String nodeId) {
 		Node node = JcrUtil.safeFindNode(session, nodeId);
 		if (node != null) {
 			log.debug("Removing Node: " + nodeId);
-			node.remove();
+			try {
+				node.remove();
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 		}
 	}
 
@@ -499,10 +560,15 @@ public class JcrUtil {
 	}
 
 	/*
-	 * Gets string property from node. Throws exception of anything goes wrong
+	 * Gets string property from node. of anything goes wrong
 	 */
-	public static String getRequiredStringProp(Node node, String propName) throws Exception {
-		return node.getProperty(propName).getValue().getString();
+	public static String getRequiredStringProp(Node node, String propName) {
+		try {
+			return node.getProperty(propName).getValue().getString();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public static String safeGetStringProp(Node node, String propName) {
@@ -515,10 +581,15 @@ public class JcrUtil {
 	}
 
 	/*
-	 * Gets string property from node. Throws exception of anything goes wrong
+	 * Gets string property from node. of anything goes wrong
 	 */
-	public static boolean getRequiredBooleanProp(Node node, String propName) throws Exception {
-		return node.getProperty(propName).getValue().getBoolean();
+	public static boolean getRequiredBooleanProp(Node node, String propName) {
+		try {
+			return node.getProperty(propName).getValue().getBoolean();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public static boolean safeGetBooleanProp(Node node, String propName) {
@@ -546,7 +617,7 @@ public class JcrUtil {
 	 * that will not cause any problems, other than default node names being the full string, which
 	 * is kind of long
 	 */
-	public static String getGUID() throws Exception {
+	public static String getGUID() {
 		String uid = UUID.randomUUID().toString();
 		StringBuilder sb = new StringBuilder();
 		int len = uid.length();

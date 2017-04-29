@@ -1,5 +1,6 @@
 package com.meta64.mobile.mail;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,6 +21,7 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * Meta64 has a node where it stores all emails that are queued up to be sent for whatever reason.
@@ -45,7 +47,7 @@ public class JcrOutboxMgr {
 	/*
 	 * node=Node that was created. userName = username of person who just created node.
 	 */
-	public void sendNotificationForChildNodeCreate(final Node node, final String userName, final String parentProp) throws Exception {
+	public void sendNotificationForChildNodeCreate(final Node node, final String userName, final String parentProp) {
 		/*
 		 * put in a catch block, because nothing going wrong in here should be allowed to blow up
 		 * the save operation
@@ -74,46 +76,58 @@ public class JcrOutboxMgr {
 		});
 	}
 
-	public void queueEmail(final String recipients, final String subject, final String content) throws Exception {
+	public void queueEmail(final String recipients, final String subject, final String content) {
 		adminRunner.run(session -> {
 			queueMailUsingAdminSession(session, recipients, subject, content);
 		});
 	}
 
-	public void queueMailUsingAdminSession(Session session, final String recipients, final String subject, final String content) throws Exception {
+	public void queueMailUsingAdminSession(Session session, final String recipients, final String subject, final String content) {
 		Node outboxNode = getSystemOutbox(session);
 
 		String name = JcrUtil.getGUID();
-		Node newNode = outboxNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
-		newNode.setProperty(JcrProp.EMAIL_CONTENT, content);
-		newNode.setProperty(JcrProp.EMAIL_SUBJECT, subject);
-		newNode.setProperty(JcrProp.EMAIL_RECIP, recipients);
-		JcrUtil.timestampNewNode(session, newNode);
-		session.save();
+		try {
+			Node newNode = outboxNode.addNode(name, JcrConstants.NT_UNSTRUCTURED);
+			newNode.setProperty(JcrProp.EMAIL_CONTENT, content);
+			newNode.setProperty(JcrProp.EMAIL_SUBJECT, subject);
+			newNode.setProperty(JcrProp.EMAIL_RECIP, recipients);
+			JcrUtil.timestampNewNode(session, newNode);
+			session.save();
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
 	/*
 	 * Loads only up to mailBatchSize emails at a time
 	 */
-	public List<Node> getMailNodes(Session session) throws Exception {
+	public List<Node> getMailNodes(Session session) {
 		List<Node> mailNodes = null;
 
 		Node outboxNode = getSystemOutbox(session);
-		NodeIterator nodeIter = outboxNode.getNodes();
-		try {
-			int nodeCount = 0;
-			int mailBatchSizeInt = Integer.parseInt(mailBatchSize);
-			while (nodeCount++ < mailBatchSizeInt) {
-				Node n = nodeIter.nextNode();
 
-				if (mailNodes == null) {
-					mailNodes = new LinkedList<Node>();
+		try {
+			NodeIterator nodeIter = outboxNode.getNodes();
+
+			try {
+				int nodeCount = 0;
+				int mailBatchSizeInt = Integer.parseInt(mailBatchSize);
+				while (nodeCount++ < mailBatchSizeInt) {
+					Node n = nodeIter.nextNode();
+
+					if (mailNodes == null) {
+						mailNodes = new LinkedList<Node>();
+					}
+					mailNodes.add(n);
 				}
-				mailNodes.add(n);
+			}
+			catch (NoSuchElementException ex) {
+				// not an error. Normal iterator end condition.
 			}
 		}
-		catch (NoSuchElementException ex) {
-			// not an error. Normal iterator end condition.
+		catch (Exception e) {
+			throw new RuntimeEx(e);
 		}
 		return mailNodes;
 	}
@@ -121,7 +135,7 @@ public class JcrOutboxMgr {
 	/*
 	 * Get node that contains all preferences for this user, as properties on it.
 	 */
-	public static Node getSystemOutbox(Session session) throws Exception {
+	public static Node getSystemOutbox(Session session) {
 		return JcrUtil.ensureNodeExists(session, "/" + JcrName.OUTBOX + "/", JcrName.SYSTEM, "System Messages");
 	}
 }

@@ -3,7 +3,6 @@ package com.meta64.mobile.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ public class AppProp /* implements EnvironmentAware */ {
 
 	@Autowired
 	private Environment env;
-	
+
 	public String getMetaHost() {
 		return env.getProperty("metaHost");
 	}
@@ -38,7 +37,7 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getMongoDbName() {
 		return env.getProperty("mongodb.name");
 	}
-	
+
 	public String getDbStoreType() {
 		return env.getProperty("db.store.type");
 	}
@@ -50,11 +49,11 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getRdbUser() {
 		return env.getProperty("rdb.user");
 	}
-	
+
 	public String getRdbPassword() {
 		return env.getProperty("rdb.password");
 	}
-	
+
 	public String getAdminDataFolder() {
 		return getPathProperty("adminDataFolder");
 	}
@@ -74,7 +73,7 @@ public class AppProp /* implements EnvironmentAware */ {
 	public boolean isIndexingEnabled() {
 		return getBooleanProp("indexingEnabled");
 	}
-	
+
 	public String getTestUserAccounts() {
 		return env.getProperty("testUserAccounts");
 	}
@@ -94,11 +93,11 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getHelpNode() {
 		return env.getProperty("helpNode");
 	}
-	
+
 	public String getBrandingMetaContent() {
 		return env.getProperty("brandingMetaContent");
 	}
-	
+
 	public String getJsBaseFolder() {
 		return env.getProperty("jsBaseFolder");
 	}
@@ -106,15 +105,15 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getSolrSearchHost() {
 		return env.getProperty("solr.search.host");
 	}
-	
+
 	public String getLuceneDir() {
 		return env.getProperty("lucene.index.dir");
 	}
-	
+
 	public String getMailHost() {
 		return env.getProperty("mail.host");
 	}
-	
+
 	public String getMailPort() {
 		return env.getProperty("mail.port");
 	}
@@ -126,15 +125,15 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getMailPassword() {
 		return env.getProperty("mail.password");
 	}
-	
+
 	public String getAesKey() {
 		return env.getProperty("aeskey");
 	}
-	
+
 	public boolean isAllowFileSystemSearch() {
 		return getBooleanProp("allowFileSystemSearch");
 	}
-	
+
 	public boolean isEnableRssDaemon() {
 		return getBooleanProp("enableRssDaemon");
 	}
@@ -150,7 +149,7 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getProp(String propName) {
 		return env.getProperty(propName);
 	}
-	
+
 	public String getPathProperty(String propName) {
 		return translateDirs(env.getProperty(propName));
 	}

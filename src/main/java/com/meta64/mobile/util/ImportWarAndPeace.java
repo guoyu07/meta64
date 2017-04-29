@@ -38,105 +38,120 @@ public class ImportWarAndPeace {
 	private boolean halt;
 	private Session session;
 
-	public void importBook(Session session, String resourceName, Node root, int maxBooks) throws Exception {
-		this.root = root;
-		this.session = session;
-		this.maxBooks = maxBooks;
-		Resource resource = SpringContextUtil.getApplicationContext().getResource(resourceName);
-		InputStream is = resource.getInputStream();
-		BufferedReader in = new BufferedReader(new InputStreamReader(is));
-
+	public void importBook(Session session, String resourceName, Node root, int maxBooks) {
 		try {
-			String line;
-			int lineCount = 0;
+			this.root = root;
+			this.session = session;
+			this.maxBooks = maxBooks;
+			Resource resource = SpringContextUtil.getApplicationContext().getResource(resourceName);
+			InputStream is = resource.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
 
-			while (!halt && (line = in.readLine()) != null) {
-				line = line.trim();
+			try {
+				String line;
+				int lineCount = 0;
 
-				/*
-				 * if we see a blank line we add the current paragraph text as a node and continue
-				 */
-				if (line.length() == 0) {
-					if (paragraph.length() > 0) {
-						addParagraph();
+				while (!halt && (line = in.readLine()) != null) {
+					line = line.trim();
+
+					/*
+					 * if we see a blank line we add the current paragraph text as a node and
+					 * continue
+					 */
+					if (line.length() == 0) {
+						if (paragraph.length() > 0) {
+							addParagraph();
+						}
+						continue;
 					}
-					continue;
-				}
 
-				if (debug) {
-					log.debug("INPUT: " + line);
-				}
+					if (debug) {
+						log.debug("INPUT: " + line);
+					}
 
-				/*
-				 * if we processed the chapter, the last paragraph is also added before starting the
-				 * new chapter
-				 */
-				if (processChapter(line)) {
-					continue;
-				}
+					/*
+					 * if we processed the chapter, the last paragraph is also added before starting
+					 * the new chapter
+					 */
+					if (processChapter(line)) {
+						continue;
+					}
 
-				/*
-				 * if we processed the book, the last paragraph is also added before starting the
-				 * new book
-				 */
-				if (processBook(line)) {
-					continue;
-				}
-				if (globalBook > maxBooks) break;
+					/*
+					 * if we processed the book, the last paragraph is also added before starting
+					 * the new book
+					 */
+					if (processBook(line)) {
+						continue;
+					}
+					if (globalBook > maxBooks) break;
 
-				/* keep appending each line to the current paragraph */
-				if (paragraph.length() > 0) {
-					paragraph.append(" ");
-				}
-				paragraph.append(line);
+					/* keep appending each line to the current paragraph */
+					if (paragraph.length() > 0) {
+						paragraph.append(" ");
+					}
+					paragraph.append(line);
 
-				if (++lineCount > maxLines) break;
+					if (++lineCount > maxLines) break;
+				}
 			}
+			finally {
+				StreamUtil.close(in);
+			}
+			log.debug("book import successful.");
 		}
-		finally {
-			StreamUtil.close(in);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		log.debug("book import successful.");
 	}
 
-	private boolean processChapter(String line) throws Exception {
+	private boolean processChapter(String line) {
+		try {
+			if (line.startsWith("CHAPTER ")) {
+				globalChapter++;
+				log.debug("Processing Chapter: " + line);
+				if (curBook == null) throw new RuntimeEx("book is null.");
 
-		if (line.startsWith("CHAPTER ")) {
-			globalChapter++;
-			log.debug("Processing Chapter: " + line);
-			if (curBook == null) throw new Exception("book is null.");
+				addParagraph();
 
-			addParagraph();
+				curChapter = curBook.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+				curChapter.setProperty(JcrProp.CONTENT, "C" + String.valueOf(globalChapter) + ". " + line);
+				JcrUtil.timestampNewNode(session, curChapter);
+				return true;
+			}
 
-			curChapter = curBook.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-			curChapter.setProperty(JcrProp.CONTENT, "C" + String.valueOf(globalChapter) + ". " + line);
-			JcrUtil.timestampNewNode(session, curChapter);
+			return false;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
+	}
+
+	private boolean addParagraph() {
+		try {
+			String line = paragraph.toString();
+
+			/*
+			 * remove any places where my algorithm stuffed an extra space that just happened to be
+			 * at a sentence end
+			 */
+			line = line.replace(".   ", ".  ");
+
+			if (line.length() == 0) return false;
+			if (curChapter == null || curBook == null) return false;
+			globalVerse++;
+
+			// line = XString.injectForQuotations(line);
+
+			Node paraNode = curChapter.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+			paraNode.setProperty(JcrProp.CONTENT, "VS" + globalVerse + ". " + line);
+			JcrUtil.timestampNewNode(session, paraNode);
+			paragraph.setLength(0);
 			return true;
 		}
-
-		return false;
-	}
-
-	private boolean addParagraph() throws Exception {
-		String line = paragraph.toString();
-
-		/*
-		 * remove any places where my algorithm stuffed an extra space that just happened to be at a
-		 * sentence end
-		 */
-		line = line.replace(".   ", ".  ");
-
-		if (line.length() == 0) return false;
-		if (curChapter == null || curBook == null) return false;
-		globalVerse++;
-
-		// line = XString.injectForQuotations(line);
-
-		Node paraNode = curChapter.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-		paraNode.setProperty(JcrProp.CONTENT, "VS" + globalVerse + ". " + line);
-		JcrUtil.timestampNewNode(session, paraNode);
-		paragraph.setLength(0);
-		return true;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	private boolean anyEpilogue(String line) {
@@ -146,17 +161,22 @@ public class ImportWarAndPeace {
 				line.startsWith("FOURTH EPILOGUE");
 	}
 
-	private boolean processBook(String line) throws Exception {
-		if (line.startsWith("BOOK ") || anyEpilogue(line)) {
-			globalBook++;
-			if (globalBook > maxBooks) return false;
-			addParagraph();
+	private boolean processBook(String line) {
+		try {
+			if (line.startsWith("BOOK ") || anyEpilogue(line)) {
+				globalBook++;
+				if (globalBook > maxBooks) return false;
+				addParagraph();
 
-			curBook = root.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-			curBook.setProperty(JcrProp.CONTENT, "B" + String.valueOf(globalBook) + ". " + line);
-			JcrUtil.timestampNewNode(session, curBook);
-			return true;
+				curBook = root.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+				curBook.setProperty(JcrProp.CONTENT, "B" + String.valueOf(globalBook) + ". " + line);
+				JcrUtil.timestampNewNode(session, curBook);
+				return true;
+			}
+			return false;
 		}
-		return false;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 }

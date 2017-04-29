@@ -8,10 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 
 /**
@@ -41,7 +43,7 @@ public class CaptchaMaker {
 	private static Font fontKnown = null;
 
 	/* writes captcha image out to stream */
-	public static byte[] makeCaptcha(String captchaCode) throws Exception {
+	public static byte[] makeCaptcha(String captchaCode) {
 
 		/* set some parameters */
 		int len = captchaCode.length();
@@ -125,7 +127,12 @@ public class CaptchaMaker {
 		try {
 			BufferedImage scaledImage = ImageUtil.scaleImage(outBufferedImage, imgWidth);
 			tmp = new ByteArrayOutputStream();
-			ImageIO.write(scaledImage, "png", tmp);
+			try {
+				ImageIO.write(scaledImage, "png", tmp);
+			}
+			catch (IOException e) {
+				throw new RuntimeEx(e);
+			}
 		}
 		finally {
 			StreamUtil.close(tmp);

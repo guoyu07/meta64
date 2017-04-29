@@ -45,6 +45,7 @@ import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ImageSize;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -60,11 +61,11 @@ public class AttachmentService {
 
 	@Autowired
 	private JcrUtil jcrUtil;
-	
+
 	/*
 	 * Upload from User's computer. Standard HTML form-based uploading of a file from user machine
 	 */
-	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles, boolean explodeZips) throws Exception {
+	public ResponseEntity<?> uploadMultipleFiles(Session session, String nodeId, MultipartFile[] uploadFiles, boolean explodeZips) {
 		try {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();
@@ -82,7 +83,7 @@ public class AttachmentService {
 			 */
 			Node node = JcrUtil.findNode(session, nodeId);
 			if (node == null) {
-				throw new Exception("Node not found.");
+				throw new RuntimeEx("Node not found.");
 			}
 			boolean addAsChildren = Convert.getBinaryVersion(node) > 0;
 
@@ -119,7 +120,7 @@ public class AttachmentService {
 	 * node specified in 'nodeId'
 	 */
 	private void attachBinaryFromStream(Session session, Node node, String nodeId, String fileName, InputStream is, String mimeType, int width, int height,
-			boolean addAsChild, boolean explodeZips) throws Exception {
+			boolean addAsChild, boolean explodeZips) {
 
 		/* If caller already has 'node' it can pass node, and avoid looking up node again */
 		if (node == null && nodeId != null) {
@@ -132,10 +133,15 @@ public class AttachmentService {
 		 */
 		if (addAsChild) {
 			/* NT_UNSTRUCTURED IS ORDERABLE */
-			Node newNode = node.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-			newNode.setProperty(JcrProp.CONTENT, "File: " + fileName);
-			JcrUtil.timestampNewNode(session, newNode);
-			node = newNode;
+			try {
+				Node newNode = node.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+				newNode.setProperty(JcrProp.CONTENT, "File: " + fileName);
+				JcrUtil.timestampNewNode(session, newNode);
+				node = newNode;
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 		}
 
 		/* mimeType can be passed as null if it's not yet determined */
@@ -178,42 +184,47 @@ public class AttachmentService {
 		// stream.close();
 	}
 
-	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) throws Exception {
-		long version = System.currentTimeMillis();
-		Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
-		if (binVerProp != null) {
-			version = binVerProp.getValue().getLong();
-		}
-
-		Binary binary = session.getValueFactory().createBinary(is);
-
-		/*
-		 * The above 'createBinary' call will have already read the entire stream so we can now
-		 * assume all data is present and width/height of image will ba available.
-		 */
-		if (ImageUtil.isImageMime(mimeType)) {
-			if (width == -1 || height == -1) {
-				ImageSize size = jcrUtil.getImageSizeFromBinary(binary);
-				width = size.width;
-				height = size.height;
+	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) {
+		try {
+			long version = System.currentTimeMillis();
+			Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
+			if (binVerProp != null) {
+				version = binVerProp.getValue().getLong();
 			}
 
-			node.setProperty(JcrProp.IMG_WIDTH, String.valueOf(width));
-			node.setProperty(JcrProp.IMG_HEIGHT, String.valueOf(height));
-		}
+			Binary binary = session.getValueFactory().createBinary(is);
 
-		node.setProperty(JcrProp.BIN_DATA, binary);
-		node.setProperty(JcrProp.BIN_MIME, mimeType);
-		if (fileName != null) {
-			node.setProperty(JcrProp.BIN_FILENAME, fileName);
+			/*
+			 * The above 'createBinary' call will have already read the entire stream so we can now
+			 * assume all data is present and width/height of image will ba available.
+			 */
+			if (ImageUtil.isImageMime(mimeType)) {
+				if (width == -1 || height == -1) {
+					ImageSize size = jcrUtil.getImageSizeFromBinary(binary);
+					width = size.width;
+					height = size.height;
+				}
+
+				node.setProperty(JcrProp.IMG_WIDTH, String.valueOf(width));
+				node.setProperty(JcrProp.IMG_HEIGHT, String.valueOf(height));
+			}
+
+			node.setProperty(JcrProp.BIN_DATA, binary);
+			node.setProperty(JcrProp.BIN_MIME, mimeType);
+			if (fileName != null) {
+				node.setProperty(JcrProp.BIN_FILENAME, fileName);
+			}
+			node.setProperty(JcrProp.BIN_VER, version + 1);
 		}
-		node.setProperty(JcrProp.BIN_VER, version + 1);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*
 	 * Removes the attachment from the node specified in the request.
 	 */
-	public void deleteAttachment(Session session, DeleteAttachmentRequest req, DeleteAttachmentResponse res) throws Exception {
+	public void deleteAttachment(Session session, DeleteAttachmentRequest req, DeleteAttachmentResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -221,7 +232,12 @@ public class AttachmentService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		JcrUtil.checkWriteAuthorized(node, session.getUserID());
 		deleteAllBinaryProperties(node);
-		session.save();
+		try {
+			session.save();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		res.setSuccess(true);
 	}
 
@@ -242,7 +258,7 @@ public class AttachmentService {
 	 * data from a node). This is the method that services all calls from the browser to get the
 	 * data for the attachment to download/display the attachment.
 	 */
-	public ResponseEntity<InputStreamResource> getBinary(Session session, String nodeId) throws Exception {
+	public ResponseEntity<InputStreamResource> getBinary(Session session, String nodeId) {
 		try {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();
@@ -251,14 +267,14 @@ public class AttachmentService {
 
 			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
 			if (mimeTypeProp == null) {
-				throw new Exception("unable to find mimeType property");
+				throw new RuntimeEx("unable to find mimeType property");
 			}
 			// log.debug("Retrieving mime: " +
 			// mimeTypeProp.getValue().getString());
 
 			Property dataProp = node.getProperty(JcrProp.BIN_DATA);
 			if (dataProp == null) {
-				throw new Exception("unable to find data property");
+				throw new RuntimeEx("unable to find data property");
 			}
 
 			Binary binary = dataProp.getBinary();
@@ -284,7 +300,7 @@ public class AttachmentService {
 	 * Uploads an image attachment not from the user's machine but from some arbitrary internet URL
 	 * they have provided, that could be pointing to an image or any other kind of content actually.
 	 */
-	public void uploadFromUrl(Session session, UploadFromUrlRequest req, UploadFromUrlResponse res) throws Exception {
+	public void uploadFromUrl(Session session, UploadFromUrlRequest req, UploadFromUrlResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -293,66 +309,71 @@ public class AttachmentService {
 		String FAKE_USER_AGENT = "Mozilla/5.0";
 		int maxFileSize = 20 * 1024 * 1024;
 
-		URL url = new URL(sourceUrl);
-		InputStream uis = null;
-
 		try {
-			String mimeType = URLConnection.guessContentTypeFromName(sourceUrl);
+			URL url = new URL(sourceUrl);
+			InputStream uis = null;
 
-			/*
-			 * if this is an image extension, handle it in a special way, mainly to extract the
-			 * width, height from it
-			 */
-			if (ImageUtil.isImageMime(mimeType)) {
+			try {
+				String mimeType = URLConnection.guessContentTypeFromName(sourceUrl);
 
 				/*
-				 * DO NOT DELETE
-				 * 
-				 * Basic version without masquerading as a web browser can cause a 403 error because
-				 * some sites don't want just any old stream reading from them. Leave this note here
-				 * as a warning and explanation
+				 * if this is an image extension, handle it in a special way, mainly to extract the
+				 * width, height from it
 				 */
-				HttpClient client = HttpClientBuilder.create().build();
-				HttpGet request = new HttpGet(sourceUrl);
-				request.addHeader("User-Agent", FAKE_USER_AGENT);
-				HttpResponse response = client.execute(request);
-				log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
-				InputStream is = response.getEntity().getContent();
+				if (ImageUtil.isImageMime(mimeType)) {
 
-				uis = new AutoCloseInputStream(new LimitedInputStreamEx(is, maxFileSize));
-				attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
-			}
-			/*
-			 * if not an image extension, we can just stream directly into the database, but we want
-			 * to try to get the mime type first, from calling detectImage so that if we do detect
-			 * its an image we can handle it as one.
-			 */
-			else {
-				if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {
+					/*
+					 * DO NOT DELETE
+					 * 
+					 * Basic version without masquerading as a web browser can cause a 403 error
+					 * because some sites don't want just any old stream reading from them. Leave
+					 * this note here as a warning and explanation
+					 */
 					HttpClient client = HttpClientBuilder.create().build();
 					HttpGet request = new HttpGet(sourceUrl);
 					request.addHeader("User-Agent", FAKE_USER_AGENT);
 					HttpResponse response = client.execute(request);
 					log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
 					InputStream is = response.getEntity().getContent();
+
 					uis = new AutoCloseInputStream(new LimitedInputStreamEx(is, maxFileSize));
-					attachBinaryFromStream(session, null, nodeId, sourceUrl, is, "", -1, -1, false, false);
+					attachBinaryFromStream(session, null, nodeId, sourceUrl, uis, mimeType, -1, -1, false, false);
+				}
+				/*
+				 * if not an image extension, we can just stream directly into the database, but we
+				 * want to try to get the mime type first, from calling detectImage so that if we do
+				 * detect its an image we can handle it as one.
+				 */
+				else {
+					if (!detectAndSaveImage(session, nodeId, sourceUrl, url)) {
+						HttpClient client = HttpClientBuilder.create().build();
+						HttpGet request = new HttpGet(sourceUrl);
+						request.addHeader("User-Agent", FAKE_USER_AGENT);
+						HttpResponse response = client.execute(request);
+						log.debug("Response Code: " + response.getStatusLine().getStatusCode() + " reason=" + response.getStatusLine().getReasonPhrase());
+						InputStream is = response.getEntity().getContent();
+						uis = new AutoCloseInputStream(new LimitedInputStreamEx(is, maxFileSize));
+						attachBinaryFromStream(session, null, nodeId, sourceUrl, is, "", -1, -1, false, false);
+					}
 				}
 			}
+			/* finally block just for extra safety */
+			finally {
+				StreamUtil.close(uis);
+			}
+			session.save();
+			res.setSuccess(true);
 		}
-		/* finally block just for extra safety */
-		finally {
-			StreamUtil.close(uis);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		session.save();
-		res.setSuccess(true);
 	}
 
 	// FYI: Warning: this way of getting content type doesn't work.
 	// String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
 	//
 	/* returns true if it was detected AND saved as an image */
-	private boolean detectAndSaveImage(Session session, String nodeId, String fileName, URL url) throws Exception {
+	private boolean detectAndSaveImage(Session session, String nodeId, String fileName, URL url) {
 		ImageInputStream is = null;
 		InputStream is2 = null;
 		ImageReader reader = null;
@@ -382,9 +403,13 @@ public class AttachmentService {
 				}
 			}
 		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		finally {
 			StreamUtil.close(is, is2, reader);
 		}
+
 		return false;
 	}
 }

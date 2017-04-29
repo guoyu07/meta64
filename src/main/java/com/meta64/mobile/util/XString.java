@@ -1,7 +1,6 @@
 package com.meta64.mobile.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +24,11 @@ public class XString {
 		}
 		return list;
 	}
-	
+
 	public static String trimToMaxLen(String val, int maxLen) {
-		if (val==null) return null;
+		if (val == null) return null;
 		if (val.length() <= maxLen) return val;
-		return val.substring(0, maxLen-1);
+		return val.substring(0, maxLen - 1);
 	}
 
 	public static String loadResourceIntoString(Resource resource) {

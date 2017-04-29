@@ -26,6 +26,7 @@ import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.base.OakResponseBase;
 import com.meta64.mobile.util.NotLoggedInException;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -59,7 +60,7 @@ public class OakSessionAspect {
 	@Around("@annotation(com.meta64.mobile.aspect.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 		if (AppServer.isShuttingDown()) {
-			throw new Exception("Server is shutting down.");
+			throw new RuntimeEx("Server is shutting down.");
 		}
 
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
@@ -85,7 +86,7 @@ public class OakSessionAspect {
 			}
 		}
 		catch (Exception e) {
-			log.error("exception: " + e.getMessage());
+			log.error("exception in aspect", e);
 
 			/*
 			 * if exception was thrown we get response from threadlocal, but really if we wanted to
@@ -130,7 +131,7 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) throws Exception {
+	private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) {
 		Object[] args = joinPoint.getArgs();
 		String userName = JcrPrincipal.ANONYMOUS;
 		String password = JcrPrincipal.ANONYMOUS;
@@ -191,7 +192,7 @@ public class OakSessionAspect {
 				res.setSuccess(false);
 				res.setMessage("Wrong username/password.");
 			}
-			throw e;
+			throw new RuntimeEx(e);
 		}
 	}
 }

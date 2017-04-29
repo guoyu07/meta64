@@ -24,6 +24,7 @@ import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 
 /* References:
@@ -44,28 +45,32 @@ public class TypeService {
 	private boolean dumpTypesAtStartup = false;
 
 	/* New experimental code, to create types. Not using this yet */
-	public void initNodeTypes() throws Exception {
+	public void initNodeTypes() {
 		adminRunner.run(session -> {
+			try {
+				Workspace workspace = session.getWorkspace();
+				NamespaceRegistry registry = workspace.getNamespaceRegistry();
 
-			Workspace workspace = session.getWorkspace();
-			NamespaceRegistry registry = workspace.getNamespaceRegistry();
-
-			if (!Arrays.asList(registry.getPrefixes()).contains("meta64")) {
-				registry.registerNamespace("meta64", "http://meta64.com/jcr/");
-			}
-
-			NodeTypeManager mgr = workspace.getNodeTypeManager();
-			loadCNDTypeFile(session);
-			session.save();
-
-			if (dumpTypesAtStartup) {
-				log.info("Dumping NodeTypes:");
-				NodeTypeIterator iter = mgr.getAllNodeTypes();
-				while (iter.hasNext()) {
-					NodeType nodeType = iter.nextNodeType();
-					String nodeTypeName = nodeType.getName();
-					log.info("NodeType: " + nodeTypeName);
+				if (!Arrays.asList(registry.getPrefixes()).contains("meta64")) {
+					registry.registerNamespace("meta64", "http://meta64.com/jcr/");
 				}
+
+				NodeTypeManager mgr = workspace.getNodeTypeManager();
+				loadCNDTypeFile(session);
+				session.save();
+
+				if (dumpTypesAtStartup) {
+					log.info("Dumping NodeTypes:");
+					NodeTypeIterator iter = mgr.getAllNodeTypes();
+					while (iter.hasNext()) {
+						NodeType nodeType = iter.nextNodeType();
+						String nodeTypeName = nodeType.getName();
+						log.info("NodeType: " + nodeTypeName);
+					}
+				}
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
 			}
 		});
 	}
@@ -73,19 +78,24 @@ public class TypeService {
 	/**
 	 * http://jackrabbit.apache.org/jcr/node-type-notation.html
 	 */
-	public void loadCNDTypeFile(Session session) throws Exception {
-		Resource resource = SpringContextUtil.getApplicationContext().getResource("classpath:jcr-types.txt");
-		InputStream is = resource.getInputStream();
-		BufferedReader in = new BufferedReader(new InputStreamReader(is));
-
+	public void loadCNDTypeFile(Session session) {
 		try {
-			NodeType[] nodeTypes = CndImporter.registerNodeTypes(in, session, true /* reregisterExisting */);
-			if (nodeTypes != null) {
-				log.info("Registered " + nodeTypes.length + " JCR types.");
+			Resource resource = SpringContextUtil.getApplicationContext().getResource("classpath:jcr-types.txt");
+			InputStream is = resource.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+
+			try {
+				NodeType[] nodeTypes = CndImporter.registerNodeTypes(in, session, true /* reregisterExisting */);
+				if (nodeTypes != null) {
+					log.info("Registered " + nodeTypes.length + " JCR types.");
+				}
+			}
+			finally {
+				StreamUtil.close(in);
 			}
 		}
-		finally {
-			StreamUtil.close(in);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
@@ -95,24 +105,29 @@ public class TypeService {
 	 * need any Java-based registration other than what the CndImporter already does with the Type
 	 * file
 	 */
-	public void createPodcastTypes(NodeTypeManager mgr) throws Exception {
-		String typeName = "podcast";
+	public void createPodcastTypes(NodeTypeManager mgr) {
+		try {
+			String typeName = "podcast";
 
-		NodeType checkNode = JcrUtil.safeGetNodeType(mgr, "meta64:" + typeName);
-		if (checkNode != null) {
-			log.info("Node type already found.");
-			return;
+			NodeType checkNode = JcrUtil.safeGetNodeType(mgr, "meta64:" + typeName);
+			if (checkNode != null) {
+				log.info("Node type already found.");
+				return;
+			}
+
+			// Create a template for the node type ...
+			NodeTypeTemplate type = mgr.createNodeTypeTemplate();
+			type.setName("meta64:" + typeName);
+			// type.setDeclaredSuperTypeNames(declaredSuperTypes);
+			// type.setAbstract(false);
+			// type.setOrderableChildNodes(true);
+			// type.setMixin(mixin);
+			// type.setQueryable(queryable);
+			mgr.registerNodeType(type, true);
 		}
-
-		// Create a template for the node type ...
-		NodeTypeTemplate type = mgr.createNodeTypeTemplate();
-		type.setName("meta64:" + typeName);
-		// type.setDeclaredSuperTypeNames(declaredSuperTypes);
-		// type.setAbstract(false);
-		// type.setOrderableChildNodes(true);
-		// type.setMixin(mixin);
-		// type.setQueryable(queryable);
-		mgr.registerNodeType(type, true);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 }

@@ -17,6 +17,7 @@ import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * This is a 'dedicated thread' for sending emails periodically. We need this daemon so that we can
@@ -34,7 +35,7 @@ public class NotificationDaemon {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
@@ -87,7 +88,7 @@ public class NotificationDaemon {
 		}
 	}
 
-	private void sendAllMail(Session session, List<Node> nodes) throws Exception {
+	private void sendAllMail(Session session, List<Node> nodes) {
 
 		boolean sessionDirty = false;
 
@@ -100,7 +101,12 @@ public class NotificationDaemon {
 				String content = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_CONTENT);
 
 				if (mailSender.sendMail(email, content, subject)) {
+					try {
 					node.remove();
+					}
+					catch (Exception e) {
+						throw new RuntimeEx(e);
+					}
 					sessionDirty = true;
 				}
 			}

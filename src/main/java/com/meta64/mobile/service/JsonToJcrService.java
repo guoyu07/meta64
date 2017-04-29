@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 /* 
  * Work in progress. Developing a way to import structured content out of JSON files stored in the uploaded zips so that the JSON 
@@ -40,26 +41,36 @@ public class JsonToJcrService {
 	}
 
 	/* There will be a better map-lookup implementation for this eventually */
-	public Node loadJcrNodeFromMap(HashMap map, Node parentNode) throws Exception {
+	public Node loadJcrNodeFromMap(HashMap map, Node parentNode) {
 		String jcrType = (String) map.get("jcrType");
 		log.debug("JcrType detected: " + jcrType);
 
 		Node newNode = null;
 		if ("meta64:rssfeed".equalsIgnoreCase(jcrType)) {
-			newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:rssfeed");
+			try {
+				newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:rssfeed");
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 			loadJcrRssFeedNode(map, newNode);
 		}
 		else {
-			throw new Exception("no JCROM class known for type: " + jcrType);
+			throw new RuntimeEx("no JCROM class known for type: " + jcrType);
 		}
 		return newNode;
 	}
 
-	public void loadJcrRssFeedNode(HashMap map, Node node) throws Exception {
+	public void loadJcrRssFeedNode(HashMap map, Node node) {
 		setMapPropOnNode(map, node, "meta64:rssFeedSrc");
 	}
 
-	public void setMapPropOnNode(HashMap map, Node node, String propName) throws Exception {
-		node.setProperty(propName, (String) map.get(propName));
+	public void setMapPropOnNode(HashMap map, Node node, String propName) {
+		try {
+			node.setProperty(propName, (String) map.get(propName));
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 }

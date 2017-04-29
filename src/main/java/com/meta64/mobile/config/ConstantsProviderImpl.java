@@ -15,7 +15,7 @@ public class ConstantsProviderImpl implements ConstantsProvider {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	public static String cacheVersion;
 
 	@Override

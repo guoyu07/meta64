@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.meta64.mobile.config.JcrProp;
@@ -47,7 +48,7 @@ public class Convert {
 
 	private static final Logger log = LoggerFactory.getLogger(Convert.class);
 
-	public static String JsonStringify(Object obj) throws Exception {
+	public static String JsonStringify(Object obj) {
 		/*
 		 * I haven't investigated the overhead of creating an ObjectMapper here, instead of using an
 		 * already created one or pooling pattern for them, but I do know they aren't threadsafe, so
@@ -55,7 +56,12 @@ public class Convert {
 		 */
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		return mapper.writeValueAsString(obj);
+		try {
+			return mapper.writeValueAsString(obj);
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
 	public static List<AccessControlEntryInfo> convertToAclListInfo(AccessControlEntry[] aclEntries) {
@@ -85,8 +91,7 @@ public class Convert {
 	/*
 	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
 	 */
-	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit)
-			throws Exception {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;
@@ -116,14 +121,19 @@ public class Convert {
 		 * primaryTypeName + " hasBinary=" + hasBinary);
 		 */
 
-		NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
-				imageSize != null ? imageSize.getWidth() : 0, //
-				imageSize != null ? imageSize.getHeight() : 0, //
-				primaryTypeName);
-		return nodeInfo;
+		try {
+			NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
+					imageSize != null ? imageSize.getWidth() : 0, //
+					imageSize != null ? imageSize.getHeight() : 0, //
+					primaryTypeName);
+			return nodeInfo;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static long getBinaryVersion(Node node) throws Exception {
+	public static long getBinaryVersion(Node node) {
 		try {
 			Property versionProperty = node.getProperty(JcrProp.BIN_VER);
 			if (versionProperty != null) {
@@ -137,109 +147,134 @@ public class Convert {
 		return 0;
 	}
 
-	public static ImageSize getImageSize(Node node) throws Exception {
-		ImageSize imageSize = new ImageSize();
+	public static ImageSize getImageSize(Node node) {
+		try {
+			ImageSize imageSize = new ImageSize();
 
-		Property widthProperty = node.getProperty(JcrProp.IMG_WIDTH);
-		if (widthProperty != null) {
-			imageSize.setWidth((int) widthProperty.getValue().getLong());
-		}
+			Property widthProperty = node.getProperty(JcrProp.IMG_WIDTH);
+			if (widthProperty != null) {
+				imageSize.setWidth((int) widthProperty.getValue().getLong());
+			}
 
-		Property heightProperty = node.getProperty(JcrProp.IMG_HEIGHT);
-		if (heightProperty != null) {
-			imageSize.setHeight((int) heightProperty.getValue().getLong());
+			Property heightProperty = node.getProperty(JcrProp.IMG_HEIGHT);
+			if (heightProperty != null) {
+				imageSize.setHeight((int) heightProperty.getValue().getLong());
+			}
+			return imageSize;
 		}
-		return imageSize;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static boolean isImageAttached(Node node) throws Exception {
-		Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
-		return (mimeTypeProp != null && //
-				mimeTypeProp.getValue() != null && //
-				ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
+	public static boolean isImageAttached(Node node) {
+		try {
+			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
+			return (mimeTypeProp != null && //
+					mimeTypeProp.getValue() != null && //
+					ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
-			boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) throws Exception {
-		List<PropertyInfo> props = null;
-		PropertyIterator propsIter = node.getProperties();
-		PropertyInfo contentPropInfo = null;
+			boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
+		try {
+			List<PropertyInfo> props = null;
+			PropertyIterator propsIter = node.getProperties();
+			PropertyInfo contentPropInfo = null;
 
-		while (propsIter.hasNext()) {
-			/* lazy create props */
-			if (props == null) {
-				props = new LinkedList<PropertyInfo>();
-			}
-			Property p = propsIter.nextProperty();
+			while (propsIter.hasNext()) {
+				/* lazy create props */
+				if (props == null) {
+					props = new LinkedList<PropertyInfo>();
+				}
+				Property p = propsIter.nextProperty();
 
-			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, initNodeEdit);
-			// log.debug(" PROP Name: " + p.getName());
+				PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, initNodeEdit);
+				// log.debug(" PROP Name: " + p.getName());
 
-			/*
-			 * grab the content property, and don't put it in the return list YET, because we will
-			 * be sorting the list and THEN putting the content at the top of that sorted list.
-			 */
-			if (p.getName().equals(JcrProp.CONTENT)) {
-				contentPropInfo = propInfo;
+				/*
+				 * grab the content property, and don't put it in the return list YET, because we
+				 * will be sorting the list and THEN putting the content at the top of that sorted
+				 * list.
+				 */
+				if (p.getName().equals(JcrProp.CONTENT)) {
+					contentPropInfo = propInfo;
+				}
+				else {
+					props.add(propInfo);
+				}
 			}
-			else {
-				props.add(propInfo);
+
+			if (props != null) {
+				Collections.sort(props, propertyInfoComparator);
+
+				/* put content prop always at top of list */
+				if (contentPropInfo != null) {
+					props.add(0, contentPropInfo);
+				}
 			}
+			return props;
 		}
-
-		if (props != null) {
-			Collections.sort(props, propertyInfoComparator);
-
-			/* put content prop always at top of list */
-			if (contentPropInfo != null) {
-				props.add(0, contentPropInfo);
-			}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-		return props;
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit)
-			throws Exception {
-		String value = null;
-		boolean abbreviated = false;
-		List<String> values = null;
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
+		try {
+			String value = null;
+			boolean abbreviated = false;
+			List<String> values = null;
 
-		/* multivalue */
-		if (prop.isMultiple()) {
-			// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-			values = new LinkedList<String>();
+			/* multivalue */
+			if (prop.isMultiple()) {
+				// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
+				values = new LinkedList<String>();
 
-			// int valIdx = 0;
-			for (Value v : prop.getValues()) {
-				String strVal = formatValue(sessionContext, v, false, initNodeEdit);
-				// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-				values.add(strVal);
-				// valIdx++;
+				// int valIdx = 0;
+				for (Value v : prop.getValues()) {
+					String strVal = formatValue(sessionContext, v, false, initNodeEdit);
+					// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
+					values.add(strVal);
+					// valIdx++;
+				}
 			}
-		}
-		/* else single value */
-		else {
-			if (prop.getName().equals(JcrProp.BIN_DATA)) {
-				// log.trace(String.format("prop[%s] isBinary", prop.getName()));
-				value = "[binary data]";
-			}
-			else if (prop.getName().equals(JcrProp.CONTENT)) {
-				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
-				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-			}
+			/* else single value */
 			else {
-				value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
-				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+				if (prop.getName().equals(JcrProp.BIN_DATA)) {
+					// log.trace(String.format("prop[%s] isBinary", prop.getName()));
+					value = "[binary data]";
+				}
+				else if (prop.getName().equals(JcrProp.CONTENT)) {
+					value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
+					/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+				}
+				else {
+					value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
+					/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+				}
 			}
+			PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated, values);
+			return propInfo;
 		}
-		PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated, values);
-		return propInfo;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public String buildMoreLink(Node node) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav', function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
-		return sb.toString();
+	public String buildMoreLink(Node node) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav', function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
+			return sb.toString();
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public String basicTextFormatting(String val) {

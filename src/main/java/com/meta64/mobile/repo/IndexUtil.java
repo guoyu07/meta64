@@ -18,6 +18,7 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 
 @Component
 public class IndexUtil {
@@ -25,11 +26,11 @@ public class IndexUtil {
 
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
-	
+
 	@Autowired
 	private AppProp appProp;
-	
-	public void createIndexes() throws Exception {
+
+	public void createIndexes() {
 		adminRunner.run((Session session) -> {
 
 			String luceneIndexesDir = appProp.getAdminDataFolder() + File.separator + "luceneIndexes";
@@ -40,7 +41,12 @@ public class IndexUtil {
 			 * used again!
 			 */
 			if (appProp.isForceIndexRebuild()) {
-				FileUtils.deleteDirectory(new File(luceneIndexesDir));
+				try {
+					FileUtils.deleteDirectory(new File(luceneIndexesDir));
+				}
+				catch (Exception e) {
+					throw new RuntimeEx(e);
+				}
 			}
 
 			FileTools.createDirectory(luceneIndexesDir);
@@ -78,14 +84,18 @@ public class IndexUtil {
 	 * server. (i.e. deleting folders WHILE server is shutdown first) Indexes get rebuild when the
 	 * server starts if the folders are missing.
 	 */
-	public void createIndex(Session session, String indexName, boolean ordered, boolean fulltext, String sortPropName, String sortPropType, String targetType)
-			throws Exception {
+	public void createIndex(Session session, String indexName, boolean ordered, boolean fulltext, String sortPropName, String sortPropType, String targetType) {
 		Node indexNode = JcrUtil.findNode(session, JcrConst.PATH_INDEX);
 		Node indexDefNode = JcrUtil.safeFindNode(session, JcrConst.PATH_INDEX + "/" + indexName);
 		if (indexDefNode != null) {
 			if (appProp.isForceIndexRebuild()) {
 				log.info("Forcing new index definition for " + indexName + " and overwriting previous definition");
-				indexDefNode.remove();
+				try {
+					indexDefNode.remove();
+				}
+				catch (Exception e) {
+					throw new RuntimeEx(e);
+				}
 			}
 			else {
 				log.info("Index definition for " + indexName + " exists. Not creating.");
@@ -94,59 +104,69 @@ public class IndexUtil {
 		}
 		log.info("Creating index definition: " + indexName);
 
-		indexDefNode = indexNode.addNode(indexName, "oak:QueryIndexDefinition");
+		try {
+			indexDefNode = indexNode.addNode(indexName, "oak:QueryIndexDefinition");
 
-		/* properties required for all indexes */
-		indexDefNode.setProperty("compatVersion", 2);
-		indexDefNode.setProperty("type", "lucene");
-		indexDefNode.setProperty("async", "async");
-		indexDefNode.setProperty("reindex", true);
+			/* properties required for all indexes */
+			indexDefNode.setProperty("compatVersion", 2);
+			indexDefNode.setProperty("type", "lucene");
+			indexDefNode.setProperty("async", "async");
+			indexDefNode.setProperty("reindex", true);
 
-		if (fulltext) {
-			indexDefNode.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true);
-		}
-
-		/* using filesystem */
-		indexDefNode.setProperty("persistence", "file");
-		indexDefNode.setProperty("path", appProp.getAdminDataFolder() + File.separator + "luceneIndexes" + File.separator + indexName);
-
-		Node indexRulesNode = indexDefNode.addNode("indexRules", "nt:unstructured");
-		Node ntBaseNode = indexRulesNode.addNode(targetType);
-		Node propertiesNode = ntBaseNode.addNode("properties", "nt:unstructured");
-
-		Node propNode = propertiesNode.addNode(indexName);
-
-		if (!fulltext) {
-			propNode.setProperty("name", sortPropName);
-			propNode.setProperty("propertyIndex", true);
-
-			if (ordered) {
-				propNode.setProperty("ordered", true);
+			if (fulltext) {
+				indexDefNode.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true);
 			}
 
-			if (sortPropType != null) {
-				propNode.setProperty("type", sortPropType);
-			}
-		}
-		else {
-			enableFulltextIndex(propNode, null);
-		}
+			/* using filesystem */
+			indexDefNode.setProperty("persistence", "file");
+			indexDefNode.setProperty("path", appProp.getAdminDataFolder() + File.separator + "luceneIndexes" + File.separator + indexName);
 
-		session.save();
+			Node indexRulesNode = indexDefNode.addNode("indexRules", "nt:unstructured");
+			Node ntBaseNode = indexRulesNode.addNode(targetType);
+			Node propertiesNode = ntBaseNode.addNode("properties", "nt:unstructured");
+
+			Node propNode = propertiesNode.addNode(indexName);
+
+			if (!fulltext) {
+				propNode.setProperty("name", sortPropName);
+				propNode.setProperty("propertyIndex", true);
+
+				if (ordered) {
+					propNode.setProperty("ordered", true);
+				}
+
+				if (sortPropType != null) {
+					propNode.setProperty("type", sortPropType);
+				}
+			}
+			else {
+				enableFulltextIndex(propNode, null);
+			}
+
+			session.save();
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
-	private void enableFulltextIndex(Node propNode, String propertyName) throws Exception {
-		propNode.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true);
+	private void enableFulltextIndex(Node propNode, String propertyName) {
+		try {
+			propNode.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true);
 
-		if (propertyName == null) {
-			/* This codepath IS tested */
-			propNode.setProperty(LuceneIndexConstants.PROP_NAME, LuceneIndexConstants.REGEX_ALL_PROPS);
-			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, true);
+			if (propertyName == null) {
+				/* This codepath IS tested */
+				propNode.setProperty(LuceneIndexConstants.PROP_NAME, LuceneIndexConstants.REGEX_ALL_PROPS);
+				propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, true);
+			}
+			else {
+				/* WARNING: this codepath is untested */
+				propNode.setProperty(LuceneIndexConstants.PROP_NAME, propertyName);
+				propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
+			}
 		}
-		else {
-			/* WARNING: this codepath is untested */
-			propNode.setProperty(LuceneIndexConstants.PROP_NAME, propertyName);
-			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
+		catch (Exception e) {
+			throw new RuntimeEx(e);
 		}
 	}
 }

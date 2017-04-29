@@ -14,6 +14,7 @@ import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -42,86 +43,94 @@ public class RssDbWriter {
 	 * 
 	 * returns the Node of the new feed node created
 	 */
-	public void updateFeedNode(SyndFeed feed, FeedNodeInfo feedNodeInfo) throws Exception {
+	public void updateFeedNode(SyndFeed feed, FeedNodeInfo feedNodeInfo) {
 
 		adminRunner.run(session -> {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {
-				throw new Exception("unable to find feed node id: " + feedNodeInfo.getNodeId());
+				throw new RuntimeEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
 			}
 
 			// todo-1: need to check these and see if they are changed before we expend the cycles
 			// to do an update/save. For now we just always resave.
+			try {
+				feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
+				feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
+				feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
+				feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
 
-			feedNode.setProperty(JcrProp.RSS_FEED_TITLE, feed.getTitle());
-			feedNode.setProperty(JcrProp.RSS_FEED_DESC, feed.getDescription());
-			feedNode.setProperty(JcrProp.RSS_FEED_URI, feed.getUri());
-			feedNode.setProperty(JcrProp.RSS_FEED_LINK, feed.getLink());
-
-			SyndImage image = feed.getImage();
-			if (image != null) {
-				if (image.getUrl() != null) {
-					feedNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+				SyndImage image = feed.getImage();
+				if (image != null) {
+					if (image.getUrl() != null) {
+						feedNode.setProperty(JcrProp.RSS_FEED_IMAGE_URL, image.getUrl());
+					}
 				}
-			}
 
-			session.save();
+				session.save();
+			}
+			catch (Exception e) {
+				throw new RuntimeEx(e);
+			}
 		});
 	}
 
 	/*
 	 * Write a specific SyndEntry
 	 */
-	public void write(Session session, Node feedNode, final FeedNodeInfo feedNodeInfo, final SyndEntry entry) throws Exception {
+	public void write(Session session, Node feedNode, final FeedNodeInfo feedNodeInfo, final SyndEntry entry) {
 
-		String name = JcrUtil.getGUID();
+		try {
+			String name = JcrUtil.getGUID();
 
-		/* NT_UNSTRUCTURED IS ORDERABLE */
-		Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
+			/* NT_UNSTRUCTURED IS ORDERABLE */
+			Node newNode = feedNode.addNode(name, JcrProp.TYPE_RSS_ITEM);
 
-		nodeMoveService.moveNodeToTop(session, newNode, false, false, true);
-		JcrUtil.timestampNewNode(session, newNode);
+			nodeMoveService.moveNodeToTop(session, newNode, false, false, true);
+			JcrUtil.timestampNewNode(session, newNode);
 
-		if (StringUtils.isEmpty(entry.getTitle())) {
-			throw new Exception("SyndEntry.title is empty.");
-		}
-
-		newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
-
-		if (entry.getDescription() != null) {
-			String desc = entry.getDescription().getValue();
-			if (StringUtils.isEmpty(desc)) {
-				throw new Exception("SyndEntry.desc is empty.");
+			if (StringUtils.isEmpty(entry.getTitle())) {
+				throw new RuntimeEx("SyndEntry.title is empty.");
 			}
 
-			desc = desc.replaceAll("[^\\p{ASCII}]", "");
-			newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
-		}
-		newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
-		newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
-		newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
+			newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
 
-		// entry.getPublishedDate();
-		// entry.getUpdatedDate();
+			if (entry.getDescription() != null) {
+				String desc = entry.getDescription().getValue();
+				if (StringUtils.isEmpty(desc)) {
+					throw new RuntimeEx("SyndEntry.desc is empty.");
+				}
 
-		for (Object encObj : entry.getEnclosures()) {
-			if (encObj instanceof SyndEnclosureImpl) {
-				SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
-				newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
+				desc = desc.replaceAll("[^\\p{ASCII}]", "");
+				newNode.setProperty(JcrProp.RSS_ITEM_DESC, desc);
+			}
+			newNode.setProperty(JcrProp.RSS_ITEM_URI, entry.getUri());
+			newNode.setProperty(JcrProp.RSS_ITEM_LINK, entry.getLink());
+			newNode.setProperty(JcrProp.RSS_ITEM_AUTHOR, entry.getAuthor());
 
-				/*
-				 * todo-1: for now we just support the first enclosure which will work for for all
-				 * known situations, and will normally just be the pointer to the media content of a
-				 * podcast.
-				 */
-				// break out of for loop
-				break;
+			// entry.getPublishedDate();
+			// entry.getUpdatedDate();
+
+			for (Object encObj : entry.getEnclosures()) {
+				if (encObj instanceof SyndEnclosureImpl) {
+					SyndEnclosureImpl enc = (SyndEnclosureImpl) encObj;
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_TYPE, enc.getType());
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_LENGTH, enc.getLength());
+					newNode.setProperty(JcrProp.RSS_ITEM_ENC_URL, enc.getUrl());
+
+					/*
+					 * todo-1: for now we just support the first enclosure which will work for for
+					 * all known situations, and will normally just be the pointer to the media
+					 * content of a podcast.
+					 */
+					// break out of for loop
+					break;
+				}
 			}
 		}
-
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
 	//
@@ -177,7 +186,7 @@ public class RssDbWriter {
 	//
 	// private static void renderMediaModules(SyndEntry entry, MessageCollector msgCollector,
 	// StringBuilder sb, HashSet<String> mediaUrls)
-	// throws Exception {
+	// {
 	// Module module = entry.getModule(MediaModule.URI);
 	// if (module instanceof MediaEntryModule) {
 	// MediaEntryModule mem = (MediaEntryModule) module;

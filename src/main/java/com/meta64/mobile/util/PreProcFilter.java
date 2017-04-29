@@ -129,11 +129,16 @@ public class PreProcFilter implements Filter {
 		}
 	}
 
-	private void ensurePropsLoaded() throws Exception {
+	private void ensurePropsLoaded() {
 		/* if props already loaded, nothing to do here */
 		if (props != null) return;
 		props = new Properties();
-		props.load(ClassLoader.getSystemResourceAsStream("html-" + constProvider.getProfileName() + ".properties"));
+		try {
+			props.load(ClassLoader.getSystemResourceAsStream("html-" + constProvider.getProfileName() + ".properties"));
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 		dumpProps();
 	}
 

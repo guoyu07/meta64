@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -29,6 +28,7 @@ import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -61,7 +61,7 @@ public class RssReader {
 	public RssReader() {
 	}
 
-	public void run(List<FeedNodeInfo> feedNodeInfos) throws Exception {
+	public void run(List<FeedNodeInfo> feedNodeInfos) {
 
 		int counter = 0;
 		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
@@ -86,29 +86,35 @@ public class RssReader {
 	 * todo-3: there is no finally block in this method. will be memory leak. Currently this method
 	 * isn't being used so i'm not worrying about it for now.
 	 */
-	public void readUrl__unused(String url) throws Exception {
-		if (true) throw new Exception("don't call this until you fix missing finally block memory leak.");
+	public void readUrl__unused(String url) {
+		if (true) throw new RuntimeEx("don't call this until you fix missing finally block memory leak.");
 		// HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 
 		// add request header
 		request.addHeader("User-Agent", FAKE_USER_AGENT);
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpResponse response = client.execute(request);
 
-		log.debug("RawRead of " + url + " -> Response Code : " + response.getStatusLine().getStatusCode());
+		try {
+			HttpResponse response = client.execute(request);
 
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			log.debug("RawRead of " + url + " -> Response Code : " + response.getStatusLine().getStatusCode());
 
-		StringBuilder result = new StringBuilder();
-		String line = null;
-		while ((line = rd.readLine()) != null) {
-			result.append(line);
+			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+			StringBuilder result = new StringBuilder();
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			log.debug("CONTENT: " + result.toString());
 		}
-		log.debug("CONTENT: " + result.toString());
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
-	public RssFeedWrapper readFeed(String feedUrl) throws Exception {
+	public RssFeedWrapper readFeed(String feedUrl) {
 		log.debug("processing RSS url: " + feedUrl);
 
 		XmlReader reader = null;
@@ -175,67 +181,72 @@ public class RssReader {
 	 * BUT it may have been the addition of the longer FAKE_USER_AGENT that was the real fix. I
 	 * don't know, but I do consider this method dead and will eventually delete it.
 	 */
-	public RssFeedWrapper readFeed_original(String feedUrl) throws Exception {
+	public RssFeedWrapper readFeed_original(String feedUrl) {
 		log.debug("processing RSS url: " + feedUrl);
 
-		URL url = new URL(feedUrl);
-		XmlReader reader = null;
-		RssFeedWrapper wFeed = null;
-		InputStream uis = null;
-		InputStream is = null;
-		HttpURLConnection httpcon = null;
-
 		try {
-			httpcon = (HttpURLConnection) url.openConnection();
-			httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
-			httpcon.connect();
-			is = httpcon.getInputStream();
-			uis = new LimitedInputStreamEx(is, maxFileSize);
+			URL url = new URL(feedUrl);
+			XmlReader reader = null;
+			RssFeedWrapper wFeed = null;
+			InputStream uis = null;
+			InputStream is = null;
+			HttpURLConnection httpcon = null;
 
-			// String content = IOUtils.toString(uis, "UTF-8");
-			// log.debug("content: "+content);
+			try {
+				httpcon = (HttpURLConnection) url.openConnection();
+				httpcon.addRequestProperty("User-Agent", FAKE_USER_AGENT);
+				httpcon.connect();
+				is = httpcon.getInputStream();
+				uis = new LimitedInputStreamEx(is, maxFileSize);
 
-			reader = new XmlReader(uis);
-			// reader = new XmlReader(httpcon);
+				// String content = IOUtils.toString(uis, "UTF-8");
+				// log.debug("content: "+content);
 
-			SyndFeed feed = new SyndFeedInput().build(reader);
-			wFeed = new RssFeedWrapper(feed, feedUrl);
-			int entryCounter = 0;
+				reader = new XmlReader(uis);
+				// reader = new XmlReader(httpcon);
 
-			for (Object e : feed.getEntries()) {
-				SyndEntry entry = (SyndEntry) e;
+				SyndFeed feed = new SyndFeedInput().build(reader);
+				wFeed = new RssFeedWrapper(feed, feedUrl);
+				int entryCounter = 0;
 
-				log.debug("RSS Entry in Feed: " + entry.getLink());
-				wFeed.getEntryList().add(new RssEntryWrapper(entry));
+				for (Object e : feed.getEntries()) {
+					SyndEntry entry = (SyndEntry) e;
 
-				if (++entryCounter >= MAX_RSS_ENTRIES) break;
+					log.debug("RSS Entry in Feed: " + entry.getLink());
+					wFeed.getEntryList().add(new RssEntryWrapper(entry));
+
+					if (++entryCounter >= MAX_RSS_ENTRIES) break;
+				}
 			}
+			catch (Exception e) {
+				log.error("*** ERROR reading feed: " + feedUrl, e);
+
+				/*
+				 * It is by design that we don't rethrow this exception, because if a feed fails we
+				 * return null, and let the system continue processing the rest of the feeds.
+				 */
+				return null;
+			}
+			finally {
+				StreamUtil.close(reader, uis, is);
+
+				/*
+				 * I may not need this after the stream was close, but I'm calling it just in case
+				 */
+				if (httpcon != null) {
+					httpcon.disconnect();
+					httpcon = null;
+				}
+			}
+			return wFeed;
 		}
 		catch (Exception e) {
-			log.error("*** ERROR reading feed: " + feedUrl, e);
-
-			/*
-			 * It is by design that we don't rethrow this exception, because if a feed fails we
-			 * return null, and let the system continue processing the rest of the feeds.
-			 */
-			return null;
+			throw new RuntimeEx(e);
 		}
-		finally {
-			StreamUtil.close(reader, uis, is);
-		
-			/*
-			 * I may not need this after the stream was close, but I'm calling it just in case
-			 */
-			if (httpcon != null) {
-				httpcon.disconnect();
-				httpcon = null;
-			}
-		}
-		return wFeed;
 	}
 
 	/* Writes all the entries in the specific RssFeedWrapper to the db */
-	private void writeFeedToDb(RssFeedWrapper wFeed, FeedNodeInfo feedNodeInfo) throws Exception {
+	private void writeFeedToDb(RssFeedWrapper wFeed, FeedNodeInfo feedNodeInfo) {
 		SyndFeed feed = wFeed.getFeed();
 
 		log.debug("writing feed: " + feed.getTitle());
@@ -245,7 +256,7 @@ public class RssReader {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {
-				throw new Exception("unable to find feed node id: " + feedNodeInfo.getNodeId());
+				throw new RuntimeEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
 			}
 			/*
 			 * now we have the Feed node in place so we can write all RSS entries to the db
@@ -287,8 +298,13 @@ public class RssReader {
 				}
 			}
 
-			/* We need to save often or else the JCR will start using way too much memory */
-			session.save();
+			try {
+				/* We need to save often or else the JCR will start using way too much memory */
+				session.save();
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 			SystemService.logMemory();
 		});
 

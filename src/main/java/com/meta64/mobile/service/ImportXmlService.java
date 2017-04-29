@@ -23,6 +23,7 @@ import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -38,7 +39,7 @@ public class ImportXmlService {
 	@Autowired
 	private AppProp appProp;
 
-	public void importFromXml(Session session, ImportRequest req, ImportResponse res) throws Exception {
+	public void importFromXml(Session session, ImportRequest req, ImportResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -47,13 +48,13 @@ public class ImportXmlService {
 		boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
 
 		if (!importAllowed && !sessionContext.isAdmin()) {
-			throw new Exception("import is an admin-only feature.");
+			throw new RuntimeEx("import is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new Exception("adminDataFolder does not exist");
+			throw new RuntimeEx("adminDataFolder does not exist");
 		}
 
 		String sourceFileName = req.getSourceFileName();
@@ -63,7 +64,7 @@ public class ImportXmlService {
 			// JcrUtil.removeRootNodes(session);
 
 			/* See notes above about backing up root not being doable */
-			throw new Exception("root restore not supported.");
+			throw new RuntimeEx("root restore not supported.");
 
 			// importFromFileToNode(session, sourceFileName +
 			// "-jcr_systemNodeTypes.xml", nodeId);
@@ -96,7 +97,7 @@ public class ImportXmlService {
 			 * user.
 			 */
 			if (!session.getUserID().equals(createdBy) && !JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
-				throw new Exception("You cannot import onto a node you do not own.");
+				throw new RuntimeEx("You cannot import onto a node you do not own.");
 			}
 
 			// adminRunner.run((Session adminSession) -> {
@@ -116,33 +117,38 @@ public class ImportXmlService {
 		res.setSuccess(true);
 	}
 
-	private void importFromFileToNode(Session session, String sourceFileName, Node targetNode) throws Exception {
+	private void importFromFileToNode(Session session, String sourceFileName, Node targetNode) {
 		sourceFileName = sourceFileName.replace(File.separator, "_");
 
 		String fullFileName = appProp.getAdminDataFolder() + File.separator + sourceFileName;
 
 		if (!FileTools.fileExists(fullFileName)) {
-			throw new Exception("Import file not found.");
+			throw new RuntimeEx("Import file not found.");
 		}
 
-		log.debug("Import to Node: " + targetNode.getPath());
-		BufferedInputStream in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
+		try {
+			log.debug("Import to Node: " + targetNode.getPath());
+			BufferedInputStream in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
 
-		/*
-		 * This REPLACE_EXISTING option has the effect (in my own words) as meaning that even if the
-		 * some of the nodes have moved around since they were first exported they will be updated
-		 * 'in their current place' as part of this import.
-		 * 
-		 * This UUID behavior is so interesting and powerful it really needs to be an option
-		 * specified at the user level that determines how this should work.
-		 */
-		session.getWorkspace().importXML(targetNode.getPath(), in,
-				// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
-				ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+			/*
+			 * This REPLACE_EXISTING option has the effect (in my own words) as meaning that even if
+			 * the some of the nodes have moved around since they were first exported they will be
+			 * updated 'in their current place' as part of this import.
+			 * 
+			 * This UUID behavior is so interesting and powerful it really needs to be an option
+			 * specified at the user level that determines how this should work.
+			 */
+			session.getWorkspace().importXML(targetNode.getPath(), in,
+					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
+					ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
 
-		/*
-		 * since importXML is documented to close the inputstream, we don't need to close it. This
-		 * is not a mistake, plus we have AutoCloseInputStream for additional assurance
-		 */
+			/*
+			 * since importXML is documented to close the inputstream, we don't need to close it.
+			 * This is not a mistake, plus we have AutoCloseInputStream for additional assurance
+			 */
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 }

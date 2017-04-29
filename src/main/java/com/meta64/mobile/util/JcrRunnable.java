@@ -6,5 +6,5 @@ import javax.jcr.Session;
  * Runs a unit of work in a specific JCR session.
  */
 public interface JcrRunnable {
-	public void run(Session session) throws Exception;
+	public void run(Session session);
 }

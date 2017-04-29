@@ -122,6 +122,7 @@ import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.DesktopApi;
 import com.meta64.mobile.util.NotLoggedInException;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
@@ -173,7 +174,7 @@ public class AppController {
 
 	@Autowired
 	private ExportZipService exportZipService;
-	
+
 	@Autowired
 	private ImportBookService importBookService;
 
@@ -220,7 +221,7 @@ public class AppController {
 			@RequestParam(value = "cmd", required = false) String cmd, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
 			// @RequestParam(value = "passCode", required = false) String passCode, //
-			Model model) throws Exception {
+			Model model) {
 		logRequest("mobile", null);
 
 		if (signupCode != null) {
@@ -241,7 +242,7 @@ public class AppController {
 	}
 
 	@RequestMapping(value = API_PATH + "/captcha", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-	public @ResponseBody byte[] captcha() throws Exception {
+	public @ResponseBody byte[] captcha() {
 		logRequest("captcha", null);
 		String captcha = CaptchaMaker.createCaptchaString();
 		sessionContext.setCaptcha(captcha);
@@ -250,7 +251,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/signup", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) throws Exception {
+	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) {
 		logRequest("signup", req);
 		SignupResponse res = new SignupResponse();
 		userManagerService.signup(null, req, res, false);
@@ -259,7 +260,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/login", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody LoginResponse login(@RequestBody LoginRequest req) throws Exception {
+	public @ResponseBody LoginResponse login(@RequestBody LoginRequest req) {
 		logRequest("login", req);
 		LoginResponse res = new LoginResponse();
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));
@@ -269,7 +270,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/closeAccount", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req, HttpSession session) throws Exception {
+	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req, HttpSession session) {
 		logRequest("closeAccount", req);
 		CloseAccountResponse res = new CloseAccountResponse();
 		checkHttpSession();
@@ -284,7 +285,7 @@ public class AppController {
 	@RequestMapping(value = API_PATH + "/logout", method = RequestMethod.POST)
 	// @OakSession // commenting since we currently don't touch the DB during a
 	// logout.
-	public @ResponseBody LogoutResponse logout(@RequestBody LogoutRequest req, HttpSession session) throws Exception {
+	public @ResponseBody LogoutResponse logout(@RequestBody LogoutRequest req, HttpSession session) {
 		logRequest("logout", req);
 
 		/*
@@ -307,7 +308,7 @@ public class AppController {
 	@RequestMapping(value = API_PATH + "/renderNode", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody RenderNodeResponse renderNode(@RequestBody RenderNodeRequest req, //
-			HttpServletRequest httpReq) throws Exception {
+			HttpServletRequest httpReq) {
 
 		logRequest("renderNode", req);
 		RenderNodeResponse res = new RenderNodeResponse();
@@ -318,7 +319,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/initNodeEdit", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody InitNodeEditResponse initNodeEdit(@RequestBody InitNodeEditRequest req) throws Exception {
+	public @ResponseBody InitNodeEditResponse initNodeEdit(@RequestBody InitNodeEditRequest req) {
 		logRequest("initNodeEdit", req);
 		InitNodeEditResponse res = new InitNodeEditResponse();
 		checkHttpSession();
@@ -328,7 +329,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/expandAbbreviatedNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ExpandAbbreviatedNodeResponse expandAbbreviatedNode(@RequestBody ExpandAbbreviatedNodeRequest req) throws Exception {
+	public @ResponseBody ExpandAbbreviatedNodeResponse expandAbbreviatedNode(@RequestBody ExpandAbbreviatedNodeRequest req) {
 		logRequest("expandAbbreviatedNode", req);
 		ExpandAbbreviatedNodeResponse res = new ExpandAbbreviatedNodeResponse();
 		checkHttpSession();
@@ -338,7 +339,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/getNodePrivileges", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) throws Exception {
+	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) {
 		logRequest("getNodePrivileges", req);
 		GetNodePrivilegesResponse res = new GetNodePrivilegesResponse();
 		checkHttpSession();
@@ -348,7 +349,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/addPrivilege", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody AddPrivilegeResponse addPrivilege(@RequestBody AddPrivilegeRequest req) throws Exception {
+	public @ResponseBody AddPrivilegeResponse addPrivilege(@RequestBody AddPrivilegeRequest req) {
 		logRequest("addPrivilege", req);
 		AddPrivilegeResponse res = new AddPrivilegeResponse();
 		checkHttpSession();
@@ -358,7 +359,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/removePrivilege", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody RemovePrivilegeRequest req) throws Exception {
+	public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody RemovePrivilegeRequest req) {
 		logRequest("removePrivilege", req);
 		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
 		checkHttpSession();
@@ -368,7 +369,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/export", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) throws Exception {
+	public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) {
 		logRequest("exportToXml", req);
 		ExportResponse res = new ExportResponse();
 		checkHttpSession();
@@ -376,18 +377,19 @@ public class AppController {
 			exportXmlService.export(null, req, res);
 		}
 		if ("zip".equalsIgnoreCase(req.getExportExt())) {
-			//Work in progress: Next thing to do will be add radio button to GUI so we can select which we want XML or ZIP
+			// Work in progress: Next thing to do will be add radio button to GUI so we can select
+			// which we want XML or ZIP
 			exportZipService.export(null, req, res);
 		}
 		else {
-			throw new Exception("Unsupported file extension.");
+			throw new RuntimeEx("Unsupported file extension.");
 		}
 		return res;
 	}
 
 	@RequestMapping(value = API_PATH + "/import", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ImportResponse importFromFile(@RequestBody ImportRequest req) throws Exception {
+	public @ResponseBody ImportResponse importFromFile(@RequestBody ImportRequest req) {
 		logRequest("import", req);
 		ImportResponse res = new ImportResponse();
 		checkHttpSession();
@@ -402,19 +404,19 @@ public class AppController {
 			 */
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
-			throw new Exception("This code path is currently disabled, but adding an attachment zip file can do this.");
+			throw new RuntimeEx("This code path is currently disabled, but adding an attachment zip file can do this.");
 			// importXmlService.importFromZip(null, req, res);
 			// ThreadLocals.getJcrSession().save();
 		}
 		else {
-			throw new Exception("Unable to import from file with unknown extension: " + fileName);
+			throw new RuntimeEx("Unable to import from file with unknown extension: " + fileName);
 		}
 		return res;
 	}
 
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) throws Exception {
+	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) {
 		logRequest("setNodePosition", req);
 		SetNodePositionResponse res = new SetNodePositionResponse();
 		checkHttpSession();
@@ -427,7 +429,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = API_PATH + "/createSubNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody CreateSubNodeResponse createSubNode(@RequestBody CreateSubNodeRequest req) throws Exception {
+	public @ResponseBody CreateSubNodeResponse createSubNode(@RequestBody CreateSubNodeRequest req) {
 		logRequest("createSubNode", req);
 		CreateSubNodeResponse res = new CreateSubNodeResponse();
 		checkHttpSession();
@@ -440,7 +442,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = API_PATH + "/insertNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody InsertNodeResponse insertNode(@RequestBody InsertNodeRequest req) throws Exception {
+	public @ResponseBody InsertNodeResponse insertNode(@RequestBody InsertNodeRequest req) {
 		logRequest("insertNode", req);
 		InsertNodeResponse res = new InsertNodeResponse();
 		checkHttpSession();
@@ -450,7 +452,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/renameNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody RenameNodeResponse renameNode(@RequestBody RenameNodeRequest req) throws Exception {
+	public @ResponseBody RenameNodeResponse renameNode(@RequestBody RenameNodeRequest req) {
 		logRequest("renameNode", req);
 		RenameNodeResponse res = new RenameNodeResponse();
 		checkHttpSession();
@@ -460,11 +462,11 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/insertBook", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody InsertBookResponse insertBook(@RequestBody InsertBookRequest req) throws Exception {
+	public @ResponseBody InsertBookResponse insertBook(@RequestBody InsertBookRequest req) {
 		logRequest("insertBook", req);
 		InsertBookResponse res = new InsertBookResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("admin only function.");
+			throw new RuntimeEx("admin only function.");
 		}
 		checkHttpSession();
 		importBookService.insertBook(null, req, res);
@@ -473,7 +475,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/deleteNodes", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody DeleteNodesResponse deleteNodes(@RequestBody DeleteNodesRequest req) throws Exception {
+	public @ResponseBody DeleteNodesResponse deleteNodes(@RequestBody DeleteNodesRequest req) {
 		logRequest("deleteNodes", req);
 		DeleteNodesResponse res = new DeleteNodesResponse();
 		checkHttpSession();
@@ -483,7 +485,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/moveNodes", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody MoveNodesResponse moveNodes(@RequestBody MoveNodesRequest req) throws Exception {
+	public @ResponseBody MoveNodesResponse moveNodes(@RequestBody MoveNodesRequest req) {
 		logRequest("moveNodes", req);
 		MoveNodesResponse res = new MoveNodesResponse();
 		checkHttpSession();
@@ -493,7 +495,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/deleteAttachment", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req) throws Exception {
+	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req) {
 		logRequest("deleteAttachment", req);
 		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
 		checkHttpSession();
@@ -503,7 +505,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/deleteProperty", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody DeletePropertyResponse deleteProperty(@RequestBody DeletePropertyRequest req) throws Exception {
+	public @ResponseBody DeletePropertyResponse deleteProperty(@RequestBody DeletePropertyRequest req) {
 		logRequest("deleteProperty", req);
 		DeletePropertyResponse res = new DeletePropertyResponse();
 		checkHttpSession();
@@ -513,7 +515,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/saveNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SaveNodeResponse saveNode(@RequestBody SaveNodeRequest req) throws Exception {
+	public @ResponseBody SaveNodeResponse saveNode(@RequestBody SaveNodeRequest req) {
 		logRequest("saveNode", req);
 		SaveNodeResponse res = new SaveNodeResponse();
 		checkHttpSession();
@@ -523,7 +525,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/saveProperty", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SavePropertyResponse saveProperty(@RequestBody SavePropertyRequest req) throws Exception {
+	public @ResponseBody SavePropertyResponse saveProperty(@RequestBody SavePropertyRequest req) {
 		logRequest("saveProperty", req);
 		SavePropertyResponse res = new SavePropertyResponse();
 		checkHttpSession();
@@ -533,7 +535,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) throws Exception {
+	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) {
 		logRequest("changePassword", req);
 		ChangePasswordResponse res = new ChangePasswordResponse();
 		checkHttpSession();
@@ -543,7 +545,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest req) throws Exception {
+	public @ResponseBody ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest req) {
 		logRequest("resetPassword", req);
 		ResetPasswordResponse res = new ResetPasswordResponse();
 		checkHttpSession();
@@ -558,8 +560,7 @@ public class AppController {
 	 */
 	@RequestMapping(value = API_PATH + "/bin/{fileName}", method = RequestMethod.GET)
 	@OakSession
-	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName, @RequestParam("nodeId") String nodeId)
-			throws Exception {
+	public @ResponseBody ResponseEntity<InputStreamResource> getBinary(@PathVariable("fileName") String fileName, @RequestParam("nodeId") String nodeId) {
 		logRequest("bin", null);
 		return attachmentService.getBinary(null, nodeId);
 	}
@@ -569,7 +570,7 @@ public class AppController {
 	public @ResponseBody ResponseEntity<?> upload(//
 			@RequestParam(value = "nodeId", required = true) String nodeId, //
 			@RequestParam(value = "explodeZips", required = true) String explodeZips, //
-			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) throws Exception {
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
 		logRequest("upload", null);
 		if (nodeId == null) {
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -579,7 +580,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) throws Exception {
+	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) {
 		logRequest("uploadFromUrl", req);
 		UploadFromUrlResponse res = new UploadFromUrlResponse();
 		checkHttpSession();
@@ -589,7 +590,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/anonPageLoad", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody AnonPageLoadResponse anonPageLoad(@RequestBody AnonPageLoadRequest req) throws Exception {
+	public @ResponseBody AnonPageLoadResponse anonPageLoad(@RequestBody AnonPageLoadRequest req) {
 		logRequest("anonPageLoad", req);
 		AnonPageLoadResponse res = new AnonPageLoadResponse();
 		checkHttpSession();
@@ -599,7 +600,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/nodeSearch", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody NodeSearchResponse nodeSearch(@RequestBody NodeSearchRequest req) throws Exception {
+	public @ResponseBody NodeSearchResponse nodeSearch(@RequestBody NodeSearchRequest req) {
 		logRequest("nodeSearch", req);
 		NodeSearchResponse res = new NodeSearchResponse();
 		checkHttpSession();
@@ -609,10 +610,10 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/browseFolder", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody BrowseFolderResponse browseFolder(@RequestBody BrowseFolderRequest req) throws Exception {
+	public @ResponseBody BrowseFolderResponse browseFolder(@RequestBody BrowseFolderRequest req) {
 		logRequest("browseFolder", req);
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("admin only function.");
+			throw new RuntimeEx("admin only function.");
 		}
 		BrowseFolderResponse res = new BrowseFolderResponse();
 		checkHttpSession();
@@ -622,7 +623,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/fileSearch", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) throws Exception {
+	public @ResponseBody FileSearchResponse fileSearch(@RequestBody FileSearchRequest req) {
 		logRequest("fileSearch", req);
 		FileSearchResponse res = new FileSearchResponse();
 		checkHttpSession();
@@ -647,7 +648,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req) throws Exception {
+	public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest req) {
 		logRequest("getSharedNodes", req);
 		GetSharedNodesResponse res = new GetSharedNodesResponse();
 		checkHttpSession();
@@ -657,7 +658,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/saveUserPreferences", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SaveUserPreferencesResponse saveUserPreferences(@RequestBody SaveUserPreferencesRequest req) throws Exception {
+	public @ResponseBody SaveUserPreferencesResponse saveUserPreferences(@RequestBody SaveUserPreferencesRequest req) {
 		logRequest("saveUserPreferences", req);
 		SaveUserPreferencesResponse res = new SaveUserPreferencesResponse();
 		checkHttpSession();
@@ -669,11 +670,11 @@ public class AppController {
 	// IMPORTANT: No OakSession annotation here, purposefully
 	// @OakSession
 	//
-	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) throws Exception {
+	public @ResponseBody GetServerInfoResponse getServerInfo(@RequestBody GetServerInfoRequest req) {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("admin only function.");
+			throw new RuntimeEx("admin only function.");
 		}
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
@@ -683,11 +684,11 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/generateRSS", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) throws Exception {
+	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) {
 		logRequest("generateRSS", req);
 		GenerateRSSResponse res = new GenerateRSSResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("admin only function.");
+			throw new RuntimeEx("admin only function.");
 		}
 		rssService.readFeedsNow();
 		res.setSuccess(true);
@@ -702,7 +703,7 @@ public class AppController {
 	 * it should respond fast (being a background operation of the browser)
 	 */
 	// @OakSession
-	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) throws Exception {
+	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) {
 		logRequest("setPlayerInfo", req);
 		SetPlayerInfoResponse res = new SetPlayerInfoResponse();
 		rssService.setPlayerInfo(req);
@@ -713,7 +714,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/getPlayerInfo", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody GetPlayerInfoResponse getPlayerInfo(@RequestBody GetPlayerInfoRequest req) throws Exception {
+	public @ResponseBody GetPlayerInfoResponse getPlayerInfo(@RequestBody GetPlayerInfoRequest req) {
 		logRequest("getPlayerInfo", req);
 		GetPlayerInfoResponse res = new GetPlayerInfoResponse();
 		rssService.getPlayerInfo(req, res);
@@ -724,12 +725,12 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/splitNode", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody SplitNodeResponse splitNode(@RequestBody SplitNodeRequest req) throws Exception {
+	public @ResponseBody SplitNodeResponse splitNode(@RequestBody SplitNodeRequest req) {
 		logRequest("splitNode", req);
 		SplitNodeResponse res = new SplitNodeResponse();
 		checkHttpSession();
 		if (!sessionContext.isAdmin()) {
-			throw new Exception("generateRSS is an admin only function.");
+			throw new RuntimeEx("generateRSS is an admin only function.");
 		}
 		nodeEditService.splitNode(null, req, res);
 		return res;
@@ -737,7 +738,7 @@ public class AppController {
 
 	@RequestMapping(value = API_PATH + "/openSystemFile", method = RequestMethod.POST)
 	@OakSession
-	public @ResponseBody OpenSystemFileResponse saveUserPreferences(@RequestBody OpenSystemFileRequest req) throws Exception {
+	public @ResponseBody OpenSystemFileResponse saveUserPreferences(@RequestBody OpenSystemFileRequest req) {
 		logRequest("openSystemFile", req);
 		OpenSystemFileResponse res = new OpenSystemFileResponse();
 		checkHttpSession();
@@ -745,7 +746,7 @@ public class AppController {
 		return res;
 	}
 
-	private static void logRequest(String url, Object req) throws Exception {
+	private static void logRequest(String url, Object req) {
 		if (logRequests) {
 			log.debug("REQ=" + url + " " + (req == null ? "none" : Convert.JsonStringify(req)));
 		}

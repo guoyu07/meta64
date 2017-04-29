@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
+import com.meta64.mobile.util.RuntimeEx;
 
 /*
  * Implements and processes the sending of emails.
@@ -28,7 +29,7 @@ public class MailSender implements TransportListener {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	public static final String MIME_HTML = "text/html";
 	public int TIMEOUT = 10000; // ten seconds
 	public int TIMESLICE = 250; // quarter second
@@ -45,7 +46,7 @@ public class MailSender implements TransportListener {
 	 * This method can and should be called before sending mails, close() method should be called
 	 * after mail is sent
 	 */
-	public void init() throws Exception {
+	public void init() {
 
 		if (props == null) {
 			log.debug("Initializing mail sender.");
@@ -72,17 +73,27 @@ public class MailSender implements TransportListener {
 			mailSession.setDebug(debug);
 		}
 
-		transport = mailSession.getTransport("smtp");
-		transport.addTransportListener(this);
-		transport.connect(appProp.getMailHost(), appProp.getMailUser(), appProp.getMailPassword());
+		try {
+			transport = mailSession.getTransport("smtp");
+			transport.addTransportListener(this);
+			transport.connect(appProp.getMailHost(), appProp.getMailUser(), appProp.getMailPassword());
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
-	public void close() throws Exception {
+	public void close() {
 		if (transport != null) {
 			success = false;
 			waiting = false;
 
+			try {
 			transport.close();
+			}
+			catch (Exception e) {
+				throw new RuntimeEx(e);
+			}
 			transport = null;
 		}
 	}
@@ -91,24 +102,28 @@ public class MailSender implements TransportListener {
 		return waiting;
 	}
 
-	public boolean sendMail(String sendToAddress, String content, String subjectLine) throws Exception {
+	public boolean sendMail(String sendToAddress, String content, String subjectLine) {
 
 		if (transport == null) {
-			throw new Exception("Tried to use MailSender after close() call or without initializing.");
+			throw new RuntimeEx("Tried to use MailSender after close() call or without initializing.");
 		}
 
 		if (waiting) {
-			throw new Exception("concurrency must be done via 'isBusy' before each call");
+			throw new RuntimeEx("concurrency must be done via 'isBusy' before each call");
 		}
 
 		log.debug("send mail to address [" + sendToAddress + "]");
 
 		MimeMessage message = new MimeMessage(mailSession);
+		try{
 		message.setSentDate(new Date());
 		message.setSubject(subjectLine);
 		message.setFrom(new InternetAddress(appProp.getMailUser()));
 		message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToAddress));
-
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 		// MULTIPART
 		// ---------------
 		// MimeMultipart multipart = new MimeMultipart("part");
@@ -119,8 +134,13 @@ public class MailSender implements TransportListener {
 
 		// SIMPLE (no multipart)
 		// ---------------
+		try {
 		message.setContent(content, MIME_HTML);
-
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
+		
 		// can get alreadyconnected exception here ??
 		// transport.connect(mailHost, mailUser, mailPassword);
 
@@ -133,17 +153,22 @@ public class MailSender implements TransportListener {
 		 */
 		int timeRemaining = TIMEOUT;
 		waiting = true;
+		try {
 		transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
 		while (waiting && timeRemaining > 0) {
 			Thread.sleep(TIMESLICE);
 			timeRemaining -= TIMESLICE;
 		}
-
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
+		
 		/* if we are still pending, that means a timeout so we give up */
 		if (waiting) {
 			waiting = false;
 			log.debug("mail send failed.");
-			throw new Exception("mail system is not responding.  Email send failed.");
+			throw new RuntimeEx("mail system is not responding.  Email send failed.");
 		}
 
 		return success;

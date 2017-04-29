@@ -17,7 +17,7 @@ public class ExportPropertyInfo {
 	 */
 	private String val;
 	private List<String> vals;
-	
+
 	public String getVal() {
 		return val;
 	}

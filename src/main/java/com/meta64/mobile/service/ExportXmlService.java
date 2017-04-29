@@ -22,6 +22,7 @@ import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -47,7 +48,7 @@ public class ExportXmlService {
 	 * Exports the node specified in the req. If the node specified is "/", or the repository root,
 	 * then we don't expect a filename, because we will generate a timestamped one.
 	 */
-	public void export(Session session, ExportRequest req, ExportResponse res) throws Exception {
+	public void export(Session session, ExportRequest req, ExportResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
@@ -56,18 +57,18 @@ public class ExportXmlService {
 		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
 
 		if (!exportAllowed && !sessionContext.isAdmin()) {
-			throw new Exception("export is an admin-only feature.");
+			throw new RuntimeEx("export is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new Exception("adminDataFolder does not exist");
+			throw new RuntimeEx("adminDataFolder does not exist");
 		}
 
 		if (nodeId.equals("/")) {
 			// exportEntireRepository(session);
-			throw new Exception("Backing up entire repository is not supported.");
+			throw new RuntimeEx("Backing up entire repository is not supported.");
 		}
 		else {
 			String fileName = req.getTargetFileName();
@@ -108,7 +109,7 @@ public class ExportXmlService {
 	 * seems the only way to backup a reposity is to back up the actual MongoDB files themselves,
 	 * which is not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
 	 */
-	// private void exportEntireRepository(Session session) throws Exception {
+	// private void exportEntireRepository(Session session) {
 	// long time = System.currentTimeMillis();
 	//
 	// String fileName = String.format("full-backup-%d-jcr_systemActivities",
@@ -138,8 +139,7 @@ public class ExportXmlService {
 	// exportNodeToXMLFile(session, "/root", fileName);
 	// }
 
-	private void exportNodeToXMLFile(Session session, String nodeId, String dirName, String fileName, ExportXMLViewType formatType, boolean includeBinaries)
-			throws Exception {
+	private void exportNodeToXMLFile(Session session, String nodeId, String dirName, String fileName, ExportXMLViewType formatType, boolean includeBinaries) {
 
 		String fileNameSuffix = null;
 		switch (formatType) {
@@ -150,11 +150,11 @@ public class ExportXmlService {
 			fileNameSuffix = "DOCVIEW" + (includeBinaries ? "_BIN" : "_NOBIN");
 			break;
 		default:
-			throw new Exception("Invalid format type");
+			throw new RuntimeEx("Invalid format type");
 		}
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new Exception("adminDataFolder does not exist.");
+			throw new RuntimeEx("adminDataFolder does not exist.");
 		}
 
 		fileName = fileName.replace(".", "_");
@@ -166,10 +166,11 @@ public class ExportXmlService {
 		String fullFileName = fullDir + File.separator + fileName + "-" + fileNameSuffix + ".xml";
 
 		if (FileTools.fileExists(fullFileName)) {
-			throw new Exception("File already exists.");
+			throw new RuntimeEx("File already exists.");
 		}
 
 		Node exportNode = JcrUtil.findNode(session, nodeId);
+		try {
 		log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
 
 		BufferedOutputStream output = null;
@@ -192,12 +193,16 @@ public class ExportXmlService {
 				session.exportDocumentView(exportPath, output, !includeBinaries, false);
 				break;
 			default:
-				throw new Exception("Invalid format type");
+				throw new RuntimeEx("Invalid format type");
 			}
 			output.flush();
 		}
 		finally {
 			StreamUtil.close(output);
+		}
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 }

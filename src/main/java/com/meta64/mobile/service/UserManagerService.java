@@ -44,6 +44,7 @@ import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
@@ -56,12 +57,12 @@ import com.meta64.mobile.util.Validator;
 @Component
 public class UserManagerService {
 	private static final Logger log = LoggerFactory.getLogger(UserManagerService.class);
-	
+
 	private static final Random rand = new Random();
-	
+
 	@Autowired
 	private AppProp appProp;
-	
+
 	@Autowired
 	private UserManagerUtil userManagerUtil;
 
@@ -89,7 +90,7 @@ public class UserManagerService {
 	 * the time we are in this method we can safely assume the userName and password resulted in a
 	 * successful login. If login fails the getJcrSession() call below will return null also.
 	 */
-	public void login(Session session, LoginRequest req, LoginResponse res) throws Exception {
+	public void login(Session session, LoginRequest req, LoginResponse res) {
 
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
@@ -154,28 +155,33 @@ public class UserManagerService {
 		}
 	}
 
-	public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) throws Exception {
+	public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) {
 		log.debug("Closing Account: " + sessionContext.getUserName());
 		adminRunner.run(session -> {
-			String userName = sessionContext.getUserName();
+			try {
+				String userName = sessionContext.getUserName();
 
-			/* Remove user from JCR user manager */
-			UserManagerUtil.removeUser(session, userName);
+				/* Remove user from JCR user manager */
+				UserManagerUtil.removeUser(session, userName);
 
-			/*
-			 * And remove the two nodes on the tree that we have for this user (root and
-			 * preferences)
-			 */
-			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
-			if (allUsersRoot != null) {
-				allUsersRoot.remove();
+				/*
+				 * And remove the two nodes on the tree that we have for this user (root and
+				 * preferences)
+				 */
+				Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
+				if (allUsersRoot != null) {
+					allUsersRoot.remove();
+				}
+
+				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+				if (prefsNode != null) {
+					prefsNode.remove();
+				}
+				session.save();
 			}
-
-			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-			if (prefsNode != null) {
-				prefsNode.remove();
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
 			}
-			session.save();
 		});
 	}
 
@@ -184,7 +190,7 @@ public class UserManagerService {
 	 * clicked the link they were sent during the signup email verification, and they are sending in
 	 * a signupCode that will turn on their account and actually create their account.
 	 */
-	public void processSignupCode(final String signupCode, final Model model) throws Exception {
+	public void processSignupCode(final String signupCode, final Model model) {
 		log.debug("User is trying signupCode: " + signupCode);
 		adminRunner.run(session -> {
 			try {
@@ -208,7 +214,7 @@ public class UserManagerService {
 					session.save();
 				}
 				else {
-					throw new Exception("Signup Code is invalid.");
+					throw new RuntimeEx("Signup Code is invalid.");
 				}
 			}
 			catch (Exception e) {
@@ -217,24 +223,29 @@ public class UserManagerService {
 		});
 	}
 
-	public void initNewUser(Session session, String userName, String password, String email, boolean automated) throws Exception {
-		if (UserManagerUtil.createUser(session, userName, password, automated)) {
-			UserManagerUtil.createUserRootNode(session, userName);
+	public void initNewUser(Session session, String userName, String password, String email, boolean automated) {
+		try {
+			if (UserManagerUtil.createUser(session, userName, password, automated)) {
+				UserManagerUtil.createUserRootNode(session, userName);
 
-			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-			if (email != null) {
-				prefsNode.setProperty(JcrProp.EMAIL, email);
+				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+				if (email != null) {
+					prefsNode.setProperty(JcrProp.EMAIL, email);
+				}
+
+				prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
+
+				setDefaultUserPreferences(prefsNode);
+				session.save();
+				log.debug("Successful signup complete.");
 			}
-
-			prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-
-			setDefaultUserPreferences(prefsNode);
-			session.save();
-			log.debug("Successful signup complete.");
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	public List<String> getOwnerNames(final Node node) throws Exception {
+	public List<String> getOwnerNames(final Node node) {
 		final ValContainer<List<String>> ret = new ValContainer<List<String>>();
 		adminRunner.run(session -> {
 			ret.setVal(AccessControlUtil.getOwnerNames(session, node));
@@ -242,7 +253,7 @@ public class UserManagerService {
 		return ret.getVal();
 	}
 
-	public boolean userExists(Session session, String userName, ValContainer<String> passwordContainer) throws Exception {
+	public boolean userExists(Session session, String userName, ValContainer<String> passwordContainer) {
 		Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" + userName);
 		if (prefsNode != null) {
 			if (passwordContainer != null) {
@@ -260,15 +271,15 @@ public class UserManagerService {
 	 * email goes out to them that when they click on the link in the email the signupCode comes
 	 * back and actually creates their account at that time.
 	 */
-	public void signup(Session session, SignupRequest req, SignupResponse res, boolean automated) throws Exception {
+	public void signup(Session session, SignupRequest req, SignupResponse res, boolean automated) {
 
 		final String userName = req.getUserName();
 		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN) || userName.equalsIgnoreCase("administrator")) {
-			throw new Exception("Sorry, you can't be the new admin.");
+			throw new RuntimeEx("Sorry, you can't be the new admin.");
 		}
 
 		if (userName.equalsIgnoreCase(EveryonePrincipal.NAME)) {
-			throw new Exception("Sorry, you can't be everyone.");
+			throw new RuntimeEx("Sorry, you can't be everyone.");
 		}
 
 		final String password = req.getPassword();
@@ -288,7 +299,7 @@ public class UserManagerService {
 			 */
 			if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
 				log.debug("Captcha match!");
-				throw new Exception("Wrong captcha text.");
+				throw new RuntimeEx("Wrong captcha text.");
 			}
 
 			initiateSignup(userName, password, email);
@@ -305,7 +316,7 @@ public class UserManagerService {
 	 * Adds user to the JCR list of pending accounts and they will stay in pending status until
 	 * their signupCode has been used to validate their email address.
 	 */
-	public void initiateSignup(String userName, String password, String email) throws Exception {
+	public void initiateSignup(String userName, String password, String email) {
 
 		String signupCode = JcrUtil.getGUID();
 		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
@@ -329,80 +340,94 @@ public class UserManagerService {
 	/*
 	 * Creates the node on the tree that holds the user info pending email validation.
 	 */
-	public void addPendingSignupNode(final String userName, final String password, final String email, final String signupCode) throws Exception {
+	public void addPendingSignupNode(final String userName, final String password, final String email, final String signupCode) {
 
 		adminRunner.run(session -> {
-
 			try {
-				session.getNode("/" + JcrName.SIGNUP + "/" + userName);
-				throw new Exception("User name is already pending signup.");
-			}
-			catch (Exception e) {
-				// normal flow. Not an error here.
-			}
+				try {
+					session.getNode("/" + JcrName.SIGNUP + "/" + userName);
+					throw new RuntimeEx("User name is already pending signup.");
+				}
+				catch (Exception e) {
+					// normal flow. Not an error here.
+				}
 
-			Node signupNode = session.getNode("/" + JcrName.SIGNUP);
-			if (signupNode == null) {
-				throw new Exception("Signup node not found.");
-			}
+				Node signupNode = session.getNode("/" + JcrName.SIGNUP);
+				if (signupNode == null) {
+					throw new RuntimeEx("Signup node not found.");
+				}
 
-			Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-			newNode.setProperty(JcrProp.USER, userName);
-			newNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-			newNode.setProperty(JcrProp.EMAIL, email);
-			newNode.setProperty(JcrProp.CODE, signupCode);
-			JcrUtil.timestampNewNode(session, newNode);
-			session.save();
+				Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
+				newNode.setProperty(JcrProp.USER, userName);
+				newNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
+				newNode.setProperty(JcrProp.EMAIL, email);
+				newNode.setProperty(JcrProp.CODE, signupCode);
+				JcrUtil.timestampNewNode(session, newNode);
+				session.save();
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 		});
 	}
 
 	/*
 	 * Get node that contains all preferences for this user, as properties on it.
 	 */
-	public static Node getPrefsNodeForSessionUser(Session session, String userName) throws Exception {
+	public static Node getPrefsNodeForSessionUser(Session session, String userName) {
 		return JcrUtil.ensureNodeExists(session, "/" + JcrName.USER_PREFERENCES + "/", userName, userName);
 	}
 
-	public void setDefaultUserPreferences(Node prefsNode) throws Exception {
-		prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
-		prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, false);
+	public void setDefaultUserPreferences(Node prefsNode) {
+		try {
+			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, false);
+			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, false);
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) throws Exception {
+	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) {
 
 		final String userName = sessionContext.getUserName();
 
 		adminRunner.run(session -> {
-			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+			try {
+				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
 
-			UserPreferences reqUserPrefs = req.getUserPreferences();
+				UserPreferences reqUserPrefs = req.getUserPreferences();
 
-			/*
-			 * Assign preferences as properties on this node,
-			 */
-			boolean advancedMode = reqUserPrefs.isAdvancedMode();
-			prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, advancedMode);
+				/*
+				 * Assign preferences as properties on this node,
+				 */
+				boolean advancedMode = reqUserPrefs.isAdvancedMode();
+				prefsNode.setProperty(JcrProp.USER_PREF_ADV_MODE, advancedMode);
 
-			boolean editMode = reqUserPrefs.isEditMode();
-			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, editMode);
+				boolean editMode = reqUserPrefs.isEditMode();
+				prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, editMode);
 
-			boolean showMetaData = reqUserPrefs.isShowMetaData();
-			prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
+				boolean showMetaData = reqUserPrefs.isShowMetaData();
+				prefsNode.setProperty(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
 
-			session.save();
+				session.save();
 
-			/*
-			 * Also update session-scope object, because server-side functions that need preference
-			 * information will get it from there instead of loading it from repository. The only
-			 * time we load user preferences from repository is during login when we can't get it
-			 * form anywhere else at that time.
-			 */
-			UserPreferences userPreferences = sessionContext.getUserPreferences();
-			userPreferences.setAdvancedMode(advancedMode);
-			userPreferences.setEditMode(editMode);
-			userPreferences.setShowMetaData(showMetaData);
+				/*
+				 * Also update session-scope object, because server-side functions that need
+				 * preference information will get it from there instead of loading it from
+				 * repository. The only time we load user preferences from repository is during
+				 * login when we can't get it form anywhere else at that time.
+				 */
+				UserPreferences userPreferences = sessionContext.getUserPreferences();
+				userPreferences.setAdvancedMode(advancedMode);
+				userPreferences.setEditMode(editMode);
+				userPreferences.setShowMetaData(showMetaData);
 
-			res.setSuccess(true);
+				res.setSuccess(true);
+			}
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
+			}
 		});
 	}
 
@@ -410,7 +435,7 @@ public class UserManagerService {
 		return new UserPreferences();
 	}
 
-	public UserPreferences getUserPreferences() throws Exception {
+	public UserPreferences getUserPreferences() {
 		final String userName = sessionContext.getUserName();
 		final UserPreferences userPrefs = new UserPreferences();
 
@@ -438,78 +463,87 @@ public class UserManagerService {
 	 * Each user has a node on the tree that holds all their user preferences. This method retrieves
 	 * that node for the user logged into the current HTTP Session (Session Scope Bean)
 	 */
-	public Node getUserPrefsNode(Session session) throws Exception {
+	public Node getUserPrefsNode(Session session) {
+		try {
+			String userName = sessionContext.getUserName();
+			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
+			if (allUsersRoot == null) {
+				throw new RuntimeEx("/root not found!");
+			}
 
-		String userName = sessionContext.getUserName();
-		Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
-		if (allUsersRoot == null) {
-			throw new Exception("/root not found!");
+			log.debug("Creating root node, which didn't exist.");
+
+			Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
+			JcrUtil.timestampNewNode(session, newNode);
+			if (newNode == null) {
+				throw new RuntimeEx("unable to create root");
+			}
+
+			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
+				newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
+				session.save();
+			}
+
+			return allUsersRoot;
 		}
-
-		log.debug("Creating root node, which didn't exist.");
-
-		Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-		JcrUtil.timestampNewNode(session, newNode);
-		if (newNode == null) {
-			throw new Exception("unable to create root");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
-
-		if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
-			newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
-			session.save();
-		}
-
-		return allUsersRoot;
 	}
 
 	/*
 	 * Runs when user is doing the 'change password' or 'reset password'
 	 */
-	public void changePassword(final ChangePasswordRequest req, ChangePasswordResponse res) throws Exception {
+	public void changePassword(final ChangePasswordRequest req, ChangePasswordResponse res) {
 
 		adminRunner.run(session -> {
-			String userForPassCode = null;
-			String passCode = req.getPassCode();
-			if (passCode != null) {
-				userForPassCode = getUserFromPassCode(session, passCode);
-				if (userForPassCode == null) {
-					throw new Exception("Invalid password reset code.");
+			try {
+				String userForPassCode = null;
+				String passCode = req.getPassCode();
+				if (passCode != null) {
+					userForPassCode = getUserFromPassCode(session, passCode);
+					if (userForPassCode == null) {
+						throw new RuntimeEx("Invalid password reset code.");
+					}
 				}
+				/*
+				 * Warning: Always get userName from sessionContext, and not from anything coming
+				 * from the browser, or else this would be a wide open security hole. We should
+				 * probably be even safer here and require the EXISTING password to be retyped again
+				 * by the user, even though we think they are logged in right now.
+				 */
+				final String userName = userForPassCode != null ? userForPassCode : sessionContext.getUserName();
+
+				String password = req.getNewPassword();
+				userManagerUtil.changePassword(session, userName, password);
+
+				Node prefsNode = getPrefsNodeForSessionUser(session, userName);
+				prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
+
+				if (passCode != null) {
+					JcrUtil.safeDeleteProperty(prefsNode, JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
+				}
+
+				res.setUser(userName);
+
+				session.save();
 			}
-			/*
-			 * Warning: Always get userName from sessionContext, and not from anything coming from
-			 * the browser, or else this would be a wide open security hole. We should probably be
-			 * even safer here and require the EXISTING password to be retyped again by the user,
-			 * even though we think they are logged in right now.
-			 */
-			final String userName = userForPassCode != null ? userForPassCode : sessionContext.getUserName();
-
-			String password = req.getNewPassword();
-			userManagerUtil.changePassword(session, userName, password);
-
-			Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-			prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-
-			if (passCode != null) {
-				JcrUtil.safeDeleteProperty(prefsNode, JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
 			}
-
-			res.setUser(userName);
-
-			session.save();
 		});
 
 		sessionContext.setPassword(req.getNewPassword());
 		res.setSuccess(true);
 	}
 
-	public String getUserFromPassCode(Session session, final String passCode) throws Exception {
+	public String getUserFromPassCode(Session session, final String passCode) {
 		String userName = null;
 
 		try {
 			long passCodeTime = Long.valueOf(passCode);
 			if (new Date().getTime() > passCodeTime) {
-				throw new Exception("Password Reset auth code has expired.");
+				throw new RuntimeEx("Password Reset auth code has expired.");
 			}
 
 			/* search for the node with passCode property */
@@ -526,7 +560,7 @@ public class UserManagerService {
 				userName = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
 			}
 			else {
-				throw new Exception("Signup Code is invalid.");
+				throw new RuntimeEx("Signup Code is invalid.");
 			}
 		}
 		catch (Exception e) {
@@ -539,80 +573,86 @@ public class UserManagerService {
 	/*
 	 * Runs when user is doing the 'reset password'.
 	 */
-	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) throws Exception {
+	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) {
 
 		adminRunner.run(session -> {
-			String user = req.getUser();
-			String email = req.getEmail();
+			try {
+				String user = req.getUser();
+				String email = req.getEmail();
 
-			/* make sure username itself is acceptalbe */
-			if (!UserManagerUtil.isNormalUserName(user)) {
-				res.setMessage("User name is illegal.");
-				res.setSuccess(false);
-				return;
+				/* make sure username itself is acceptalbe */
+				if (!UserManagerUtil.isNormalUserName(user)) {
+					res.setMessage("User name is illegal.");
+					res.setSuccess(false);
+					return;
+				}
+
+				/* make sure the user name does exist */
+				Authorizable auth = UserManagerUtil.getUser(session, user);
+				if (auth == null) {
+					res.setMessage("User does not exist.");
+					res.setSuccess(false);
+					return;
+				}
+
+				/* lookup preferences node for this user */
+				Node userPrefsNode = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" + user);
+				if (userPrefsNode == null) {
+					res.setMessage("User info is missing.");
+					res.setSuccess(false);
+					return;
+				}
+
+				/*
+				 * IMPORTANT!
+				 * 
+				 * verify that the email address provides IS A MATCH to the email address for this
+				 * user! Important step here because without this check anyone would be able to
+				 * completely hijack anyone else's account simply by issuing a password change to
+				 * that account!
+				 */
+				String nodeEmail = userPrefsNode.getProperty("email").getString();
+				if (nodeEmail == null || !nodeEmail.equals(email)) {
+					res.setMessage("Wrong user name and/or email.");
+					res.setSuccess(false);
+					return;
+				}
+
+				/*
+				 * if we make it to here the user and email are both correct, and we can initiate
+				 * the password reset. We pick some random time between 1 and 2 days from now into
+				 * the future to serve as the unguessable auth code AND the expire time for it.
+				 * Later we can create a deamon processor that cleans up expired authCodes, but for
+				 * now we just need to HAVE the auth code.
+				 * 
+				 * User will be emailed this code and we will perform reset when we see it, and the
+				 * user has entered new password we can use.
+				 */
+				int oneDayMillis = 60 * 60 * 1000;
+				long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
+
+				userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
+				session.save();
+
+				String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);
+				String content = "Password reset was requested on meta64 account: " + user + //
+				"<p>\nGo to this link to reset your password: <br>\n" + link;
+
+				outboxMgr.queueEmail(email, "Meta64 Password Reset", content);
+
+				res.setMessage("A password reset link has been sent to your email. Check your inbox in a minute or so.");
+				res.setSuccess(true);
 			}
-
-			/* make sure the user name does exist */
-			Authorizable auth = UserManagerUtil.getUser(session, user);
-			if (auth == null) {
-				res.setMessage("User does not exist.");
-				res.setSuccess(false);
-				return;
+			catch (Exception ex) {
+				throw new RuntimeEx(ex);
 			}
-
-			/* lookup preferences node for this user */
-			Node userPrefsNode = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" + user);
-			if (userPrefsNode == null) {
-				res.setMessage("User info is missing.");
-				res.setSuccess(false);
-				return;
-			}
-
-			/*
-			 * IMPORTANT!
-			 * 
-			 * verify that the email address provides IS A MATCH to the email address for this user!
-			 * Important step here because without this check anyone would be able to completely
-			 * hijack anyone else's account simply by issuing a password change to that account!
-			 */
-			String nodeEmail = userPrefsNode.getProperty("email").getString();
-			if (nodeEmail == null || !nodeEmail.equals(email)) {
-				res.setMessage("Wrong user name and/or email.");
-				res.setSuccess(false);
-				return;
-			}
-
-			/*
-			 * if we make it to here the user and email are both correct, and we can initiate the
-			 * password reset. We pick some random time between 1 and 2 days from now into the
-			 * future to serve as the unguessable auth code AND the expire time for it. Later we can
-			 * create a deamon processor that cleans up expired authCodes, but for now we just need
-			 * to HAVE the auth code.
-			 * 
-			 * User will be emailed this code and we will perform reset when we see it, and the user
-			 * has entered new password we can use.
-			 */
-			int oneDayMillis = 60 * 60 * 1000;
-			long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
-
-			userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
-			session.save();
-
-			String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);
-			String content = "Password reset was requested on meta64 account: " + user + //
-			"<p>\nGo to this link to reset your password: <br>\n" + link;
-
-			outboxMgr.queueEmail(email, "Meta64 Password Reset", content);
-
-			res.setMessage("A password reset link has been sent to your email. Check your inbox in a minute or so.");
-			res.setSuccess(true);
 		});
 	}
 
 	/*
 	 * Warning: not yet tested. Ended up not needing this yet.
 	 */
-	public String getPasswordOfUser(final String userName) throws Exception {
+	public String getPasswordOfUser(final String userName) {
 		final ValContainer<String> password = new ValContainer<String>();
 		adminRunner.run(session -> {
 			Node prefsNode = getPrefsNodeForSessionUser(session, userName);

@@ -1,6 +1,7 @@
 package com.meta64.mobile.lucene;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,10 +23,10 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
+import com.meta64.mobile.util.RuntimeEx;
 
 @Component
 public class FileIndexer {
@@ -34,7 +35,7 @@ public class FileIndexer {
 
 	@Autowired
 	private AppProp appProp;
-	
+
 	private IndexWriter writer;
 	private FSDirectory fsDir;
 
@@ -44,7 +45,7 @@ public class FileIndexer {
 
 	private boolean initialized = false;
 
-	public void index(final String dirToIndex, final String suffix) throws Exception {
+	public void index(final String dirToIndex, final String suffix) {
 		init();
 		final long now = System.currentTimeMillis();
 
@@ -54,15 +55,20 @@ public class FileIndexer {
 		log.info("Indexing completed in {} milliseconds.", System.currentTimeMillis() - now);
 	}
 
-	private void init() throws Exception {
+	private void init() {
 		if (initialized) return;
 		initialized = true;
 		if (StringUtils.isEmpty(appProp.getLuceneDir())) {
-			throw new Exception("Lucend Data Dir is not configured.");
+			throw new RuntimeEx("Lucend Data Dir is not configured.");
 		}
 
-		fsDir = FSDirectory.open(new File(appProp.getLuceneDir()));
-		writer = new IndexWriter(fsDir, FileSearcher.config);
+		try {
+			fsDir = FSDirectory.open(new File(appProp.getLuceneDir()));
+			writer = new IndexWriter(fsDir, FileSearcher.config);
+		}
+		catch (IOException e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
 	/**

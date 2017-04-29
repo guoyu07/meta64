@@ -27,19 +27,19 @@ import com.meta64.mobile.util.XString;
 @Component
 public class RepositoryUtil {
 	private static final Logger log = LoggerFactory.getLogger(RepositoryUtil.class);
-	
+
 	@Autowired
 	private UserManagerService userManagerService;
-	
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
-	
+
 	@Autowired
 	private AppProp appProp;
-	
+
 	private HashSet<String> testAccountNames = new HashSet<String>();
-	
-	public void initRequiredNodes() throws Exception {
+
+	public void initRequiredNodes() {
 		adminRunner.run(session -> {
 
 			/*
@@ -56,7 +56,7 @@ public class RepositoryUtil {
 			JcrUtil.ensureNodeExists(session, "/", JcrName.SIGNUP, "Pending Signups");
 		});
 	}
-	
+
 	private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
 		try {
 			Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);
@@ -72,12 +72,12 @@ public class RepositoryUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
 	 * nodes from user to user, etc) without first having to manually register users.
 	 */
-	public void createTestAccounts() throws Exception {
+	public void createTestAccounts() {
 		/*
 		 * The testUserAccounts is a comma delimited list of user accounts where each user account
 		 * is a colon-delimited list like username:password:email.

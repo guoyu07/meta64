@@ -22,6 +22,8 @@ import org.apache.jackrabbit.oak.spi.security.principal.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.meta64.mobile.util.RuntimeEx;
+
 /**
  * Utility methods for changing access controls on nodes. This is: who can read nodes, modify nodes,
  * delete nodes, etc. Standard access privileges provided by JCR specification.
@@ -48,48 +50,63 @@ public class AccessControlUtil {
 		return name;
 	}
 
-	public static void makeNodePublic(Session session, Node node) throws Exception {
+	public static void makeNodePublic(Session session, Node node) {
 		List<String> privileges = new LinkedList<String>();
 		privileges.add(Privilege.JCR_READ);
 		grantPrivileges(session, node, EveryonePrincipal.getInstance(), privileges);
 	}
 
-	public static Privilege[] makePrivilegesFromNames(AccessControlManager acMgr, List<String> names) throws Exception {
-		List<Privilege> privileges = new LinkedList<Privilege>();
+	public static Privilege[] makePrivilegesFromNames(AccessControlManager acMgr, List<String> names) {
+		try {
+			List<Privilege> privileges = new LinkedList<Privilege>();
 
-		for (String name : names) {
-			name = interpretPrivilegeName(name);
-			privileges.add(acMgr.privilegeFromName(name));
+			for (String name : names) {
+				name = interpretPrivilegeName(name);
+				privileges.add(acMgr.privilegeFromName(name));
+			}
+
+			Privilege[] privArr = new Privilege[privileges.size()];
+			return privileges.toArray(privArr);
 		}
-
-		Privilege[] privArr = new Privilege[privileges.size()];
-		return privileges.toArray(privArr);
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	/*
 	 * I tried this as a replacement for my grantPrivileges (below) which works perfectly but this
 	 * new one doesn't work. Keeping it here anyway, and will look into this later.
 	 */
-	public static boolean grantPrivileges_new(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
-		return AccessControlUtils.allow(node, principal.getName(), privilegeNames.toArray(new String[privilegeNames.size()]));
-	}
-
-	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) throws Exception {
-		AccessControlList acl = getAccessControlList(session, node);
-
-		if (acl != null) {
-			AccessControlManager acMgr = session.getAccessControlManager();
-			Privilege[] privileges = makePrivilegesFromNames(acMgr, privilegeNames);
-			acl.addAccessControlEntry(principal, privileges);
-			acMgr.setPolicy(node.getPath(), (AccessControlPolicy) acl);
-			return true;
+	public static boolean grantPrivileges_new(Session session, Node node, Principal principal, List<String> privilegeNames) {
+		try {
+			return AccessControlUtils.allow(node, principal.getName(), privilegeNames.toArray(new String[privilegeNames.size()]));
 		}
-		else {
-			throw new Exception("Unable to find AccessControlList");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	public static List<String> getOwnerNames(Session session, Node node) throws Exception {
+	public static boolean grantPrivileges(Session session, Node node, Principal principal, List<String> privilegeNames) {
+		try {
+			AccessControlList acl = getAccessControlList(session, node);
+
+			if (acl != null) {
+				AccessControlManager acMgr = session.getAccessControlManager();
+				Privilege[] privileges = makePrivilegesFromNames(acMgr, privilegeNames);
+				acl.addAccessControlEntry(principal, privileges);
+				acMgr.setPolicy(node.getPath(), (AccessControlPolicy) acl);
+				return true;
+			}
+			else {
+				throw new RuntimeEx("Unable to find AccessControlList");
+			}
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
+	}
+
+	public static List<String> getOwnerNames(Session session, Node node) {
 		Set<String> ownerSet = new HashSet<String>();
 
 		/*
@@ -121,69 +138,83 @@ public class AccessControlUtil {
 		return ownerList;
 	}
 
-	public static List<Principal> getNodePrincipals(Session session, Node node) throws Exception {
-		List<Principal> principals = new LinkedList<Principal>();
+	public static List<Principal> getNodePrincipals(Session session, Node node) {
+		try {
+			List<Principal> principals = new LinkedList<Principal>();
 
-		AccessControlList acl = getAccessControlList(session, node);
-		if (acl != null) {
-			AccessControlEntry[] aclEntries = acl.getAccessControlEntries();
+			AccessControlList acl = getAccessControlList(session, node);
+			if (acl != null) {
+				AccessControlEntry[] aclEntries = acl.getAccessControlEntries();
 
-			if (aclEntries != null) {
-				for (AccessControlEntry aclEntry : aclEntries) {
-					for (Privilege priv : aclEntry.getPrivileges()) {
-						if ("jcr:all".equals(priv.getName())) {
-							principals.add(aclEntry.getPrincipal());
-							break;
+				if (aclEntries != null) {
+					for (AccessControlEntry aclEntry : aclEntries) {
+						for (Privilege priv : aclEntry.getPrivileges()) {
+							if ("jcr:all".equals(priv.getName())) {
+								principals.add(aclEntry.getPrincipal());
+								break;
+							}
 						}
 					}
 				}
 			}
-		}
 
-		return principals;
+			return principals;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static AccessControlEntry[] getAccessControlEntries(Session session, Node node) throws Exception {
-		AccessControlList acl = getAccessControlList(session, node);
+	public static AccessControlEntry[] getAccessControlEntries(Session session, Node node) {
+		try {
+			AccessControlList acl = getAccessControlList(session, node);
 
-		if (acl != null) {
-			log.debug(dumpPrivileges(acl.getAccessControlEntries()));
+			if (acl != null) {
+				log.debug(dumpPrivileges(acl.getAccessControlEntries()));
+			}
+
+			return acl != null ? acl.getAccessControlEntries() : null;
 		}
-
-		return acl != null ? acl.getAccessControlEntries() : null;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static AccessControlList getAccessControlList(Session session, Node node) throws Exception {
+	public static AccessControlList getAccessControlList(Session session, Node node) {
+		try {
+			String path = node.getPath();
+			AccessControlManager acMgr = session.getAccessControlManager();
 
-		String path = node.getPath();
-		AccessControlManager acMgr = session.getAccessControlManager();
+			AccessControlPolicyIterator iter = acMgr.getApplicablePolicies(path);
+			if (iter != null) {
+				while (iter.hasNext()) {
+					AccessControlPolicy policy = iter.nextAccessControlPolicy();
+					// log.debug("policy: " + policy.getClass().getName());
 
-		AccessControlPolicyIterator iter = acMgr.getApplicablePolicies(path);
-		if (iter != null) {
-			while (iter.hasNext()) {
-				AccessControlPolicy policy = iter.nextAccessControlPolicy();
-				// log.debug("policy: " + policy.getClass().getName());
-
-				if (policy instanceof AccessControlList) {
-					return (AccessControlList) policy;
+					if (policy instanceof AccessControlList) {
+						return (AccessControlList) policy;
+					}
 				}
 			}
-		}
 
-		AccessControlPolicy[] list = acMgr.getPolicies(path);
-		if (list != null) {
-			for (AccessControlPolicy policy : list) {
-				// log.debug("policy: " + policy.getClass().getName());
+			AccessControlPolicy[] list = acMgr.getPolicies(path);
+			if (list != null) {
+				for (AccessControlPolicy policy : list) {
+					// log.debug("policy: " + policy.getClass().getName());
 
-				if (policy instanceof AccessControlList) {
-					return (AccessControlList) policy;
+					if (policy instanceof AccessControlList) {
+						return (AccessControlList) policy;
+					}
 				}
 			}
-		}
 
-		/* No access control list found */
-		log.debug("No modifyable ACL found on node.");
-		return null;
+			/* No access control list found */
+			log.debug("No modifyable ACL found on node.");
+			return null;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
 	public static String dumpPrivileges(AccessControlEntry[] aclEntries) {
@@ -208,55 +239,62 @@ public class AccessControlUtil {
 	/*
 	 * search for removePolicy in commented code below for a better way to do this
 	 */
-	public static boolean removeAclEntry(Session session, Node node, String principle, String privilege) throws Exception {
-		boolean policyChanged = false;
-		String path = node.getPath();
+	public static boolean removeAclEntry(Session session, Node node, String principle, String privilege) {
+		try {
+			boolean policyChanged = false;
+			String path = node.getPath();
 
-		log.trace("Privileges for node: " + path + " ");
+			log.trace("Privileges for node: " + path + " ");
 
-		AccessControlList acl = getAccessControlList(session, node);
-		AccessControlEntry[] aclArray = acl.getAccessControlEntries();
-		log.trace("ACL entry count: " + (aclArray == null ? 0 : aclArray.length));
+			AccessControlList acl = getAccessControlList(session, node);
+			AccessControlEntry[] aclArray = acl.getAccessControlEntries();
+			log.trace("ACL entry count: " + (aclArray == null ? 0 : aclArray.length));
 
-		if (aclArray != null) {
-			for (AccessControlEntry ace : aclArray) {
-				log.trace("ACL entry (principal name): " + ace.getPrincipal().getName());
-				if (ace.getPrincipal().getName().equals(principle)) {
-					log.trace("  Found PRINCIPLE to remove priv for: " + principle);
-					Privilege[] privileges = ace.getPrivileges();
+			if (aclArray != null) {
+				for (AccessControlEntry ace : aclArray) {
+					log.trace("ACL entry (principal name): " + ace.getPrincipal().getName());
+					if (ace.getPrincipal().getName().equals(principle)) {
+						log.trace("  Found PRINCIPLE to remove priv for: " + principle);
+						Privilege[] privileges = ace.getPrivileges();
 
-					if (privileges != null) {
-						for (Privilege priv : privileges) {
-							if (priv.getName().equals(privilege)) {
-								log.trace("    Found PRIVILEGE to remove: " + principle);
+						if (privileges != null) {
+							for (Privilege priv : privileges) {
+								if (priv.getName().equals(privilege)) {
+									log.trace("    Found PRIVILEGE to remove: " + principle);
 
-								/*
-								 * we remove the entire 'ace' from the 'acl' here. I don't know of a
-								 * more find-grained way to remove privileges than to remove entire
-								 * 'ace' which can have multiple privileges on it. :(
-								 */
-								acl.removeAccessControlEntry(ace);
-								policyChanged = true;
+									/*
+									 * we remove the entire 'ace' from the 'acl' here. I don't know
+									 * of a more find-grained way to remove privileges than to
+									 * remove entire 'ace' which can have multiple privileges on it.
+									 * :(
+									 */
+									acl.removeAccessControlEntry(ace);
+									policyChanged = true;
 
-								/*
-								 * break out of privileges scanning, this entire 'ace' is dead now
-								 */
-								break;
+									/*
+									 * break out of privileges scanning, this entire 'ace' is dead
+									 * now
+									 */
+									break;
+								}
 							}
 						}
 					}
-				}
 
-				if (policyChanged) {
-					AccessControlManager acMgr = session.getAccessControlManager();
-					acMgr.setPolicy(path, (AccessControlPolicy) acl);
+					if (policyChanged) {
+						AccessControlManager acMgr = session.getAccessControlManager();
+						acMgr.setPolicy(path, (AccessControlPolicy) acl);
+					}
 				}
 			}
+			return policyChanged;
 		}
-		return policyChanged;
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	public static boolean grantFullAccess(Session session, Node node, final String ownerName) throws Exception {
+	public static boolean grantFullAccess(Session session, Node node, final String ownerName) {
 		Principal principal = new PrincipalImpl(ownerName);
 		List<String> privs = new LinkedList<String>();
 		privs.add(Privilege.JCR_ALL);

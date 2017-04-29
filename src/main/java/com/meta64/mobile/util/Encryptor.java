@@ -24,29 +24,44 @@ public class Encryptor {
 
 	@Autowired
 	public AppProp appProp;
-	
+
 	private Key aesKey = null;
 	private Cipher cipher = null;
 
-	synchronized private void init() throws Exception {
-		if (appProp.getAesKey() == null || appProp.getAesKey().length() != 16) {
-			throw new Exception("bad aes key configured");
+	synchronized private void init() {
+		try {
+			if (appProp.getAesKey() == null || appProp.getAesKey().length() != 16) {
+				throw new RuntimeEx("bad aes key configured");
+			}
+			if (aesKey == null) {
+				aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
+				cipher = Cipher.getInstance("AES");
+			}
 		}
-		if (aesKey == null) {
-			aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
-			cipher = Cipher.getInstance("AES");
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
 		}
 	}
 
-	synchronized public String encrypt(String text) throws Exception {
-		init();
-		cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-		return DatatypeConverter.printBase64Binary(cipher.doFinal(text.getBytes()));
+	synchronized public String encrypt(String text) {
+		try {
+			init();
+			cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+			return DatatypeConverter.printBase64Binary(cipher.doFinal(text.getBytes()));
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 
-	synchronized public String decrypt(String text) throws Exception {
-		init();
-		cipher.init(Cipher.DECRYPT_MODE, aesKey);
-		return new String(cipher.doFinal(DatatypeConverter.parseBase64Binary(text)));
+	synchronized public String decrypt(String text) {
+		try {
+			init();
+			cipher.init(Cipher.DECRYPT_MODE, aesKey);
+			return new String(cipher.doFinal(DatatypeConverter.parseBase64Binary(text)));
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
 	}
 }

@@ -38,9 +38,9 @@ import com.google.common.collect.ImmutableMap;
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.service.TypeService;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
@@ -60,19 +60,19 @@ public class OakRepository {
 
 	// hack for now to make RSS deamon wait.
 	public static boolean fullInit = false;
-	
+
 	@Autowired
 	private IndexUtil indexUtil;
 
 	@Autowired
 	private RepositoryUtil repoUtil;
-	
+
 	@Autowired
 	private AppProp appProp;
 
 	@Autowired
 	private UserManagerUtil userManagerUtil;
-	
+
 	@Autowired
 	private JcrUtil jcrUtil;
 
@@ -132,16 +132,21 @@ public class OakRepository {
 		close();
 	}
 
-	public Repository getRepository() throws Exception {
+	public Repository getRepository() {
 		init();
 		return repository;
 	}
 
-	public Session newAdminSession() throws Exception {
-		return getRepository().login(jcrUtil.getAdminCredentials());
+	public Session newAdminSession() {
+		try {
+			return getRepository().login(jcrUtil.getAdminCredentials());
+		}
+		catch (Exception e) {
+			throw new RuntimeEx(e);
+		}
 	}
 
-	public void init() throws Exception {
+	public void init() {
 		if (initialized) return;
 
 		synchronized (lock) {
@@ -187,7 +192,7 @@ public class OakRepository {
 					// */.with(getSecurityProvider()).createRepository();
 				}
 				else if ("filesystem".equalsIgnoreCase(appProp.getDbStoreType())) {
-					throw new Exception("filesystem storage not yet supported.");
+					throw new RuntimeEx("filesystem storage not yet supported.");
 					/*
 					 * The below code is just a sample of what I found online which I think works
 					 * but I've never tested. Since Java includes DerbyDB support alread built-in, i
@@ -249,6 +254,9 @@ public class OakRepository {
 			catch (MongoTimeoutException e) {
 				log.error("********** Is the MongoDb or RDBMS Server reachable ? **********", e);
 				throw e;
+			}
+			catch (Exception e) {
+				throw new RuntimeEx(e);
 			}
 		}
 	}
@@ -332,7 +340,7 @@ public class OakRepository {
 		}
 	}
 
-	public DocumentNodeState getRoot() throws Exception {
+	public DocumentNodeState getRoot() {
 		return root;
 	}
 }

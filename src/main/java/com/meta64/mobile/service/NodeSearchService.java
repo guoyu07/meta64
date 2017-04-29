@@ -1,10 +1,12 @@
 package com.meta64.mobile.service;
 
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -24,6 +26,7 @@ import com.meta64.mobile.request.NodeSearchRequest;
 import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -39,6 +42,7 @@ import com.meta64.mobile.util.ThreadLocals;
 @Component
 public class NodeSearchService {
 	private static final Logger log = LoggerFactory.getLogger(NodeSearchService.class);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
 
 	private static boolean useLike = false;
 
@@ -196,7 +200,10 @@ public class NodeSearchService {
 		res.setSearchResults(searchResults);
 
 		while (nodes.hasNext()) {
-			NodeInfo info = convert.convertToNodeInfo(sessionContext, session, nodes.nextNode(), true, true, false);
+			Node node = nodes.nextNode();
+			Property lastModProp = JcrUtil.getProperty(node, JcrProp.LAST_MODIFIED);
+			log.debug("NODE: lastModified: "+dateFormat.format(lastModProp.getDate().getTime()));
+			NodeInfo info = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
 			searchResults.add(info);
 			if (counter++ > MAX_NODES) {
 				break;

@@ -1,26 +1,17 @@
 package com.meta64.mobile.repo;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
-
-import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
-import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.sql.DataSource;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.jackrabbit.oak.jcr.repository.RepositoryImpl;
@@ -29,9 +20,6 @@ import org.apache.jackrabbit.oak.plugins.document.DocumentNodeState;
 import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
 import org.apache.jackrabbit.oak.plugins.document.rdb.RDBDataSourceFactory;
 import org.apache.jackrabbit.oak.plugins.document.rdb.RDBOptions;
-import org.apache.jackrabbit.oak.plugins.index.aggregate.NodeAggregator;
-import org.apache.jackrabbit.oak.plugins.index.aggregate.SimpleNodeAggregator;
-import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexConstants;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexEditorProvider;
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider;
 import org.apache.jackrabbit.oak.security.SecurityProviderImpl;
@@ -44,26 +32,15 @@ import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.config.SpringContextUtil;
-import com.meta64.mobile.request.SignupRequest;
-import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.TypeService;
-import com.meta64.mobile.service.UserManagerService;
-import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
-import com.meta64.mobile.util.FileTools;
-import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.XString;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
@@ -83,12 +60,15 @@ public class OakRepository {
 
 	// hack for now to make RSS deamon wait.
 	public static boolean fullInit = false;
+	
+	@Autowired
+	private IndexUtil indexUtil;
 
+	@Autowired
+	private RepositoryUtil repoUtil;
+	
 	@Autowired
 	private AppProp appProp;
-
-	@Autowired
-	private UserManagerService userManagerService;
 
 	@Autowired
 	private UserManagerUtil userManagerUtil;
@@ -120,8 +100,6 @@ public class OakRepository {
 	 */
 	private static OakRepository instance;
 
-	private HashSet<String> testAccountNames = new HashSet<String>();
-
 	/*
 	 * We only need this lock to protect against startup and/or shutdown concurrency. Remember
 	 * during debugging, etc the server process can be shutdown (CTRL-C) even while it's in the
@@ -130,9 +108,6 @@ public class OakRepository {
 	private static final Object lock = new Object();
 
 	private boolean initialized = false;
-
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
 
 	@Autowired
 	private TypeService typeService;
@@ -155,25 +130,6 @@ public class OakRepository {
 	@PreDestroy
 	public void preDestroy() {
 		close();
-	}
-
-
-	public void initRequiredNodes() throws Exception {
-		adminRunner.run((Session session) -> {
-
-			/*
-			 * todo-1: need to make all these markdown files able to be specified in a properties
-			 * file, and also need to make the DB aware of time stamp so it can just check timestamp
-			 * of file to determine if it needs to be loaded into DB or is already up to date
-			 */
-			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", appProp.getUserLandingPageNode(), "Landing Page");
-			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
-
-			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
-			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");
-			JcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
-			JcrUtil.ensureNodeExists(session, "/", JcrName.SIGNUP, "Pending Signups");
-		});
 	}
 
 	public Repository getRepository() throws Exception {
@@ -282,9 +238,9 @@ public class OakRepository {
 				initialized = true;
 
 				userManagerUtil.verifyAdminAccountReady(this);
-				createIndexes();
-				initRequiredNodes();
-				createTestAccounts();
+				indexUtil.createIndexes();
+				repoUtil.initRequiredNodes();
+				repoUtil.createTestAccounts();
 				typeService.initNodeTypes();
 
 				log.debug("Repository fully initialized.");
@@ -295,194 +251,6 @@ public class OakRepository {
 				throw e;
 			}
 		}
-	}
-
-	public void createIndexes() throws Exception {
-		adminRunner.run((Session session) -> {
-
-			String luceneIndexesDir = appProp.getAdminDataFolder() + File.separator + "luceneIndexes";
-
-			/*
-			 * If we are going to be rebuilding indexes, let's blow away the actual files also.
-			 * Probably not required but definitely will be sure no outdated indexes can ever be
-			 * used again!
-			 */
-			if (appProp.isForceIndexRebuild()) {
-				FileUtils.deleteDirectory(new File(luceneIndexesDir));
-			}
-
-			FileTools.createDirectory(luceneIndexesDir);
-
-			/* Create indexes to support timeline query (order by dates) */
-			createIndex(session, "lastModified", true, false, JcrProp.LAST_MODIFIED, "Date", "nt:base");
-			createIndex(session, "created", true, false, JcrProp.CREATED, "Date", "nt:base");
-
-			/* Indexes for lookups involved in user registration and password changes */
-			createIndex(session, "codeIndex", false, false, JcrProp.CODE, null, "nt:base");
-			createIndex(session, "pwdResetAuthIndex", false, false, JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, null, "nt:base");
-
-			/* Index all properties of all nodes for fulltext search capability */
-			createIndex(session, "fullText", false, true, null, null, "nt:base");
-		});
-	}
-
-	/**
-	 * Creates the index definition. This code is capable of creating property indexes that do
-	 * sorting or searching for exact matches of properties OR else defining an index that does full
-	 * text search on ALL properties.
-	 * 
-	 * For sorting capability to make "ORDER BY" queries work on the specified 'sortPropName',
-	 * specify ordered=true, otherwise false.
-	 * 
-	 * If you have ordered=false, then you can specify fulltext=true, and it will configure for a
-	 * fulltext index on ALL properties, so in that case the sortPropName can be null, and will be
-	 * ignored.
-	 * 
-	 * You must specify one of ordered or fulltext as true but not both.
-	 * 
-	 * You can remove the 'persistence' and 'path' properties if you want the data stored in the
-	 * repository rather than on the file system. This code currently uses file system so that
-	 * forcing a rebuild of indexes is as simple as deleting the index folders and restarting the
-	 * server. (i.e. deleting folders WHILE server is shutdown first) Indexes get rebuild when the
-	 * server starts if the folders are missing.
-	 */
-	public void createIndex(Session session, String indexName, boolean ordered, boolean fulltext, String sortPropName, String sortPropType, String targetType)
-			throws Exception {
-		Node indexNode = JcrUtil.findNode(session, JcrConst.PATH_INDEX);
-		Node indexDefNode = JcrUtil.safeFindNode(session, JcrConst.PATH_INDEX + "/" + indexName);
-		if (indexDefNode != null) {
-			if (appProp.isForceIndexRebuild()) {
-				log.info("Forcing new index definition for " + indexName + " and overwriting previous definition");
-				indexDefNode.remove();
-			}
-			else {
-				log.info("Index definition for " + indexName + " exists. Not creating.");
-				return;
-			}
-		}
-		log.info("Creating index definition: " + indexName);
-
-		indexDefNode = indexNode.addNode(indexName, "oak:QueryIndexDefinition");
-
-		/* properties required for all indexes */
-		indexDefNode.setProperty("compatVersion", 2);
-		indexDefNode.setProperty("type", "lucene");
-		indexDefNode.setProperty("async", "async");
-		indexDefNode.setProperty("reindex", true);
-
-		if (fulltext) {
-			indexDefNode.setProperty(LuceneIndexConstants.EVALUATE_PATH_RESTRICTION, true);
-		}
-
-		/* using filesystem */
-		indexDefNode.setProperty("persistence", "file");
-		indexDefNode.setProperty("path", appProp.getAdminDataFolder() + File.separator + "luceneIndexes" + File.separator + indexName);
-
-		Node indexRulesNode = indexDefNode.addNode("indexRules", "nt:unstructured");
-		Node ntBaseNode = indexRulesNode.addNode(targetType);
-		Node propertiesNode = ntBaseNode.addNode("properties", "nt:unstructured");
-
-		Node propNode = propertiesNode.addNode(indexName);
-
-		if (!fulltext) {
-			propNode.setProperty("name", sortPropName);
-			propNode.setProperty("propertyIndex", true);
-
-			if (ordered) {
-				propNode.setProperty("ordered", true);
-			}
-
-			if (sortPropType != null) {
-				propNode.setProperty("type", sortPropType);
-			}
-		}
-		else {
-			enableFulltextIndex(propNode, null);
-		}
-
-		session.save();
-	}
-
-	private void enableFulltextIndex(Node propNode, String propertyName) throws Exception {
-		propNode.setProperty(LuceneIndexConstants.PROP_NODE_SCOPE_INDEX, true);
-
-		if (propertyName == null) {
-			/* This codepath IS tested */
-			propNode.setProperty(LuceneIndexConstants.PROP_NAME, LuceneIndexConstants.REGEX_ALL_PROPS);
-			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, true);
-		}
-		else {
-			/* WARNING: this codepath is untested */
-			propNode.setProperty(LuceneIndexConstants.PROP_NAME, propertyName);
-			propNode.setProperty(LuceneIndexConstants.PROP_IS_REGEX, false);
-		}
-	}
-
-	/*
-	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
-	 * nodes from user to user, etc) without first having to manually register users.
-	 */
-	private void createTestAccounts() throws Exception {
-		/*
-		 * The testUserAccounts is a comma delimited list of user accounts where each user account
-		 * is a colon-delimited list like username:password:email.
-		 * 
-		 * todo-1: could change the format of this info to JSON.
-		 */
-		final List<String> testUserAccountsList = XString.tokenize(appProp.getTestUserAccounts(), ",", true);
-		if (testUserAccountsList == null) {
-			return;
-		}
-
-		adminRunner.run((Session session) -> {
-			for (String accountInfo : testUserAccountsList) {
-				final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
-				if (accountInfoList == null || accountInfoList.size() != 3) {
-					log.debug("Invalid User Info substring: " + accountInfo);
-					continue;
-				}
-
-				String userName = accountInfoList.get(0);
-
-				SignupRequest signupReq = new SignupRequest();
-				signupReq.setUserName(userName);
-				signupReq.setPassword(accountInfoList.get(1));
-				signupReq.setEmail(accountInfoList.get(2));
-
-				SignupResponse res = new SignupResponse();
-				userManagerService.signup(session, signupReq, res, true);
-
-				/*
-				 * keep track of these names, because some API methods need to know if a given
-				 * account is a test account
-				 */
-				testAccountNames.add(userName);
-			}
-		});
-	}
-
-	private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
-		try {
-			Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);
-			String content = XString.loadResourceIntoString(resource);
-			node.setProperty(JcrProp.CONTENT, content);
-			AccessControlUtil.makeNodePublic(session, node);
-			node.setProperty(JcrProp.DISABLE_INSERT, "y");
-			session.save();
-		}
-		catch (Exception e) {
-			// IMPORTANT: don't rethrow from here, or this could blow up app
-			// initialization.
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * I don't fully understand what this aggregator is for. Need to research this some.
-	 */
-	private static NodeAggregator getNodeAggregator() {
-		return new SimpleNodeAggregator().newRuleWithName(JcrConstants.NT_UNSTRUCTURED, //
-				newArrayList(JCR_CONTENT, JCR_CONTENT + "/*"));
 	}
 
 	private SecurityProvider getSecurityProvider() {
@@ -566,9 +334,5 @@ public class OakRepository {
 
 	public DocumentNodeState getRoot() throws Exception {
 		return root;
-	}
-
-	public boolean isTestAccountName(String userName) {
-		return testAccountNames.contains(userName);
 	}
 }

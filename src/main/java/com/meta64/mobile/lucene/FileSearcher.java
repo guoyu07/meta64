@@ -74,7 +74,7 @@ public class FileSearcher {
 		init();
 		BooleanQuery matchingQuery = new BooleanQuery();
 
-		// todo-0: do we really need the 'SHOULD' there. Is that simplest way ?
+		// todo-1: do we really need the 'SHOULD' there. Is that simplest way ?
 		matchingQuery.add(new TermQuery(new Term("filepath", filePath)), Occur.SHOULD);
 		TopDocs topDocs = searcher.search(matchingQuery, 1);
 

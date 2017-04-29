@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.repo.RepositoryUtil;
 import com.meta64.mobile.util.DateUtil;
 
 /**
@@ -32,6 +33,9 @@ import com.meta64.mobile.util.DateUtil;
 public class SessionContext {
 	private static final Logger log = LoggerFactory.getLogger(SessionContext.class);
 
+	@Autowired
+	RepositoryUtil repoUtil;
+	
 	/*
 	 * This lock ensures that only one server side function can be running at a time for any give
 	 * session. Although WebUtils.getSessionMutex is also available for the same purpose we use our
@@ -83,7 +87,7 @@ public class SessionContext {
 	}
 
 	public boolean isTestAccount() {
-		return oak.isTestAccountName(userName);
+		return repoUtil.isTestAccountName(userName);
 	}
 
 	public String formatTime(Date date) {

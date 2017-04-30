@@ -58,9 +58,6 @@ public class NodeEditService {
 	private Convert convert;
 
 	@Autowired
-	private JcrUtil jcrUtil;
-
-	@Autowired
 	private OakRepository oak;
 
 	@Autowired
@@ -71,9 +68,6 @@ public class NodeEditService {
 
 	@Autowired
 	private NodeMoveService nodeMoveService;
-
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
 
 	/*
 	 * Creates a new node as a *child* node of the node specified in the request.
@@ -108,8 +102,7 @@ public class NodeEditService {
 				// todo-0: everywhere that I'm doing this pattern of logout of active session, and
 				// switch to more powerful admin session,
 				// I should try using the session.impersonate() which i think was designed for this
-				// very
-				// purpose I need.
+				// very purpose I need.
 				log.debug("Switch to admin user.");
 				session.logout();
 				session = oak.newAdminSession();
@@ -146,7 +139,7 @@ public class NodeEditService {
 			/*
 			 * todo-0: enhancement here would be to detect if this is the first child added to this
 			 * node, and if so, then skip the code to move the new node to the top, because it's
-			 * wasted cycles.
+			 * wasted CPU cycles.
 			 */
 			if (req.isCreateAtTop()) {
 				log.debug("is create at top");

@@ -173,8 +173,9 @@ public class ExportZipService {
 			log.debug("Processing Node: " + node.getPath());
 
 			/*
-			 * Top preference for fileName is the nodeName if there is one todo-0: need to add valid
-			 * characters conversion if necessary.
+			 * Top preference for fileName is the nodeName if there is one
+			 * 
+			 * todo-0: need to add valid characters conversion if necessary.
 			 */
 			String fileName = generateFileNameFromNode(node);
 

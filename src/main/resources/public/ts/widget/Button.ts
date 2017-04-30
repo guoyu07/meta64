@@ -14,8 +14,8 @@ of meta64 will be able to undeniably demonstrate that fact.
 
 export class Button extends Comp {
 
-    constructor(public text: string, public callback: Function, _attribs: Object = null, public isDlgCloser: boolean = false, public dlg: DialogBase = null, initiallyVisible = true, //
-        public delayCloseCallback: number = 0) {
+    constructor(public text: string, public callback: Function, _attribs: Object = null, public isDlgCloser: boolean = false, //
+        public dlg: DialogBase = null, initiallyVisible = true, public delayCloseCallback: number = 0) {
         super(_attribs);
         util.mergeProps(this.attribs, {
             "raised": "raised",

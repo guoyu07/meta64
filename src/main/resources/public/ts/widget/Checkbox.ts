@@ -8,8 +8,8 @@ import { DialogBase } from "../DialogBase";
 
 export class Checkbox extends Comp {
 
-    constructor(label: string = null, checked: boolean = false) {
-        super(null);
+    constructor(label: string = null, checked: boolean = false, _attribs: Object = null) {
+        super(_attribs);
         (<any>this.attribs).label = label;
         if (checked) {
             (<any>this.attribs).checked = "checked";

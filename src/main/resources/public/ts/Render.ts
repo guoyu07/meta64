@@ -13,6 +13,9 @@ import { MessageDlg } from "./MessageDlg";
 import { tag } from "./Tag";
 import { domBind } from "./DomBind";
 import { Comp } from "./widget/base/Comp";
+import { Button } from "./widget/Button";
+import { ButtonBar } from "./widget/ButtonBar";
+import { Checkbox } from "./widget/Checkbox";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -361,7 +364,8 @@ export class Render {
         let focusNode: I.NodeInfo = meta64.getHighlightedNode();
         let selected: boolean = (focusNode && focusNode.uid === uid);
 
-        let buttonBarHtmlRet: string = render.makeRowButtonBarHtml(node, canMoveUp, canMoveDown, editingAllowed);
+        let buttonBar: ButtonBar = render.makeRowButtonBar(node, canMoveUp, canMoveDown, editingAllowed);
+        let buttonBarHtmlRet: string = buttonBar.render();
         let bkgStyle: string = render.getNodeBkgImageStyle(node);
 
         let cssId: string = "row_" + uid;
@@ -443,50 +447,34 @@ export class Render {
         }, buttons);
     }
 
-    makeRowButtonBarHtml(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean) {
+    makeRowButtonBar(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean): ButtonBar {
 
         let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 
-        let openButton: string = "";
-        let selButton: string = "";
-        let createSubNodeButton: string = "";
-        let editNodeButton: string = "";
-        let moveNodeUpButton: string = "";
-        let moveNodeDownButton: string = "";
-        let insertNodeButton: string = "";
-        let replyButton: string = "";
+        let openButton: Button;
+        let selButton: Checkbox;
+        let createSubNodeButton: Button;
+        let editNodeButton: Button;
+        let moveNodeUpButton: Button;
+        let moveNodeDownButton: Button;
+        let insertNodeButton: Button;
+        let replyButton: Button;
 
         /*
          * Show Reply button if this is a publicly appendable node and not created by current user,
          * or having been added as comment by current user
          */
         if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-            replyButton = tag.button({
-                "raised": "raised",
-                "onclick": () => { meta64.replyToComment(node.uid); } //
-            }, //
-                "Reply");
+            replyButton = new Button("Reply", () => { meta64.replyToComment(node.uid); });
         }
-
-        let buttonCount: number = 0;
 
         /* Construct Open Button */
         if (render.nodeHasChildren(node.uid)) {
-            buttonCount++;
-
-            openButton = tag.button({
-
-                /* For some unknown reason the ability to style this with the class broke, and even
-                after dedicating several hours trying to figure out why I'm still baffled. I checked everything
-                a hundred times and still don't know what I'm doing wrong...I just finally put the god damn fucking style attribute
-                here to accomplish the same thing */
-                "style": "background-color: #4caf50;color:white;",
-                "raised": "raised",
-                "onclick": () => { meta64.openNode(node.uid); }
-            }, //
-                "Open");
+            /* For some unknown reason the ability to style this with a class broke isn't working, so i used a 'style' attibute
+                 as a last resort */
+            openButton = new Button("Open", () => { meta64.openNode(node.uid) }, { "style": "background-color: #4caf50;color:white;" });
         }
 
         /*
@@ -499,104 +487,54 @@ export class Render {
 
             let selected: boolean = meta64.selectedNodes[node.uid] ? true : false;
 
-            // console.log(" nodeId " + node.uid + " selected=" + selected);
-            buttonCount++;
-
-            let attrs: Object = selected ? {
-                "id": node.uid + "_sel",
-                "onclick": () => { meta64.toggleNodeSel(node.uid) },
-                "checked": "checked",
-                //padding is a back hack to make checkbox line up with other icons.
-                //(i will probably end up using a paper-icon-button that toggles here, instead of checkbox)
-                "style": "margin-top: 11px;"
-            } : //
-                {
-                    "id": node.uid + "_sel",
-                    "onclick": () => { meta64.toggleNodeSel(node.uid) },
-                    "style": "margin-top: 11px;"
-                };
-
-            selButton = tag.checkbox(attrs);
+            selButton = new Checkbox(null, selected, {
+                "style": "margin-top: 11px;",
+                "onclick": () => { nav.toggleNodeSel(selButton.getChecked(), node.uid) },
+            });
 
             if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
-                buttonCount++;
-                createSubNodeButton = tag.button({
+                createSubNodeButton = new Button("Add", () => { meta64.createSubNode(node.uid); }, {
                     "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
-                    "id": "addNodeButtonId" + node.uid,
-                    "raised": "raised",
-                    "onclick": () => { meta64.createSubNode(node.uid); }
-                }, "Add");
+                });
             }
 
             if (cnst.INS_ON_TOOLBAR && !commentBy) {
-                buttonCount++;
                 /* Construct Create Subnode Button */
-                insertNodeButton = tag.button({
-                    "icon": "icons:picture-in-picture", //"icons:more-horiz",
-                    "id": "insertNodeButtonId" + node.uid,
-                    "raised": "raised",
-                    "onclick": () => { meta64.insertNode(node.uid); }
-                }, "Ins");
+                insertNodeButton = new Button("Ins", () => { meta64.insertNode(node.uid); }, {
+                    "icon": "icons:picture-in-picture" //"icons:more-horiz",
+                });
             }
         }
 
         //Polmer Icons Reference: https://elements.polymer-project.org/elements/iron-icons?view=demo:demo/index.html
 
         if (meta64.userPreferences.editMode && editingAllowed) {
-            buttonCount++;
             /* Construct Create Subnode Button */
-            editNodeButton = tag.button({
-                "alt": "Edit node.",
-                "icon": "editor:mode-edit",
-                "raised": "raised",
-                "onclick": () => { meta64.runEditNode(node.uid); }
-            }, "Edit");
+            editNodeButton = new Button("Edit", () => { meta64.runEditNode(node.uid); }, {
+                "icon": "editor:mode-edit"
+            });
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
 
                 if (canMoveUp) {
-                    buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeUpButton = tag.button({
-                        "icon": "icons:arrow-upward",
-                        "raised": "raised",
-                        "onclick": () => { meta64.moveNodeUp(node.uid); }
-                    }, "Up");
+                    moveNodeUpButton = new Button("Up", () => { meta64.moveNodeUp(node.uid); }, {
+                        "icon": "icons:arrow-upward"
+                    });
                 }
 
                 if (canMoveDown) {
-                    buttonCount++;
                     /* Construct Create Subnode Button */
-                    moveNodeDownButton = tag.button({
-                        "icon": "icons:arrow-downward",
-                        "raised": "raised",
-                        "onclick": () => { meta64.moveNodeDown(node.uid); }
-                    }, "Dn");
+                    moveNodeDownButton = new Button("Dn", () => { meta64.moveNodeDown(node.uid); }, {
+                        "icon": "icons:arrow-downward"
+                    });
                 }
             }
         }
 
-        /*
-         * i will be finding a reusable/DRY way of doing tooltops soon, this is just my first experiment.
-         *
-         * However tooltips ALWAYS cause problems. Mystery for now.
-         */
-        let insertNodeTooltip: string = "";
-        //			 tag("paper-tooltip", {
-        //			 "for" : "insertNodeButtonId" + node.uid
-        //			 }, "INSERTS a new node at the current tree position. As a sibling on this level.");
-
-        let addNodeTooltip: string = "";
-
-        //			 tag("paper-tooltip", {
-        //			 "for" : "addNodeButtonId" + node.uid
-        //			 }, "ADDS a new node inside the current node, as a child of it.");
-
-        let allButtons: string = selButton + openButton + insertNodeButton + createSubNodeButton + insertNodeTooltip
-            + addNodeTooltip + editNodeButton + moveNodeUpButton + moveNodeDownButton + replyButton;
-
-        return allButtons.length > 0 ? render.makeHorizontalFieldSet(allButtons, "row-toolbar") : "";
+        return new ButtonBar([selButton, openButton, insertNodeButton, createSubNodeButton, editNodeButton, moveNodeUpButton, moveNodeDownButton, replyButton],
+            "left-justified");
     }
 
     makeHorizontalFieldSet(content?: string, extraClasses?: string): string {
@@ -1006,7 +944,7 @@ export class Render {
 
         /* AudioPlayer Support */
         let onTimeUpdate: Function = null;
-        let onCanPlay : Function = null;
+        let onCanPlay: Function = null;
 
         let id: string = null;
 

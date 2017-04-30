@@ -13,8 +13,6 @@ NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
 class Podcast {
-    //todo-0: changing this to HTMLAudioElement was a WAG until I retest Podcast dialog, soon. For now the only thing
-    //i cared about was ripping out the last vestages of jquery.
     player: HTMLAudioElement = null;
     startTimePending: number = null;
 

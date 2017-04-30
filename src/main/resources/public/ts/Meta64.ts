@@ -881,10 +881,6 @@ class Meta64 {
         nav.openNode(uid);
     }
 
-    toggleNodeSel(uid): void {
-        nav.toggleNodeSel(uid);
-    }
-
     createSubNode(uid?: any, typeName?: string, createAtTop?: boolean): void {
         edit.createSubNode(uid, typeName, createAtTop);
     }

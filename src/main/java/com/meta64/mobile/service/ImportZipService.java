@@ -157,7 +157,8 @@ public class ImportZipService {
 	/*
 	 * todo-0: this is older code written before the rest of the code in this class, that I just
 	 * haven't reenabled yet, which reads from an actual file-system source. Will bring this back
-	 * online soon.
+	 * online soon. This would be used for admin purposes in order to load into the repository data
+	 * from a zip file located on a filesystem directly visible to the server.
 	 */
 	public void importFromZip(Session session, ImportRequest req, ImportResponse res) {
 		try {

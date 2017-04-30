@@ -247,8 +247,8 @@ class Nav {
         }
     }
 
-    toggleNodeSel(uid: string): void {
-        if (util.getCheckBoxStateById(uid + "_sel")) {
+    toggleNodeSel(selected: boolean, uid : string): void {
+        if (selected) { //todo-0: is this method still needed ? --> util.getCheckBoxStateById(uid + "_sel")) {
             meta64.selectedNodes[uid] = true;
         } else {
             delete meta64.selectedNodes[uid];

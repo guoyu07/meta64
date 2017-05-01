@@ -16,6 +16,8 @@ import { Comp } from "./widget/base/Comp";
 import { Button } from "./widget/Button";
 import { ButtonBar } from "./widget/ButtonBar";
 import { Checkbox } from "./widget/Checkbox";
+import { Div } from "./widget/Div";
+import { Span } from "./widget/Span";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -73,7 +75,65 @@ export class Render {
         }
     }
 
-    buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): string {
+    buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div {
+        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+
+        //let headerText: string = "";
+        let pathDiv: Div = null;
+        let commentSpan: Span = null;
+        let createdBySpan: Span = null;
+        let ownerDisplaySpan: Span = null;
+        let lastModifiedSpan: Span = null;
+
+        if (cnst.SHOW_PATH_ON_ROWS) {
+            pathDiv = new Div("Path: " + render.formatPath(node), {
+                "class": "path-display"
+            });
+        }
+
+        //let spans: string = "";
+        if (commentBy) {
+            let clazz: string = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
+            commentSpan = new Span("Comment By: " + commentBy, {
+                "class": clazz
+            });
+        } //
+        else if (node.createdBy) {
+            let clazz: string = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
+            createdBySpan = new Span("Created By: " + node.createdBy, {
+                "class": clazz
+            });
+        }
+
+        //todo-000: this ID is gonna be a problem. fix.
+        ownerDisplaySpan = new Span("", { "id": `ownerDisplay${node.uid}` });
+        if (node.lastModified) {
+            lastModifiedSpan = new Span(`  Mod: ${node.lastModified}`);
+        }
+
+        let allSpansDiv = new Div(null, null, [commentSpan, createdBySpan, ownerDisplaySpan, lastModifiedSpan]);
+
+        let nodeNameSpan : Span = null;
+        /*
+         * on root node name will be empty string so don't show that
+         *
+         * commenting: I decided users will understand the path as a single long entity with less confusion than
+         * breaking out the name for them. They already unserstand internet URLs. This is the same concept. No need
+         * to baby them.
+         *
+         * The !showPath condition here is because if we are showing the path then the end of that is always the
+         * name, so we don't need to show the path AND the name. One is a substring of the other.
+         */
+        if (showName && !showPath && node.name) {
+            nodeNameSpan = new Span(`Name: ${node.name} [uid=${node.uid}]`);
+        }
+
+        return new Div(null, {
+            "class": "header-text"
+        }, [pathDiv, allSpansDiv, nodeNameSpan]);
+    }
+
+    buildRowHeader_orig(node: I.NodeInfo, showPath: boolean, showName: boolean): string {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
         let headerText: string = "";
@@ -198,7 +258,7 @@ export class Render {
 
         /* todo-2: enable headerText when appropriate here */
         if (meta64.showMetaData) {
-            ret += showHeader ? render.buildRowHeader(node, showPath, showName) : "";
+            ret += showHeader ? render.buildRowHeader(node, showPath, showName).render() : "";
         }
 
         if (meta64.showProperties) {

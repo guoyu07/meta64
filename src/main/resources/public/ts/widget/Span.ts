@@ -4,7 +4,7 @@ import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 
 /* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
-export class Div extends Comp {
+export class Span extends Comp {
 
     constructor(public content: string = "", attribs : Object = {}, initialChildren: Comp[] = null) {
         super(attribs);
@@ -13,6 +13,6 @@ export class Div extends Comp {
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
     render = (): string => {
-        return tag.div(this.attribs, (this.content || "") + this.renderChildren());
+        return tag.span(this.attribs, (this.content || "") + this.renderChildren());
     }
 }

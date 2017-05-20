@@ -146,10 +146,6 @@ export abstract class Comp {
         (<any>this.attribs).onclick = onclick;
     }
 
-    // createElement(): HTMLElement {
-    //     document.createElement("paper-dialog");
-    // }
-
     /* If caller happens to have this element it can be passed, to avoid one DOM lookup */
     renderToDom = (elm?: HTMLElement): void => {
         if (this.renderPending) return;

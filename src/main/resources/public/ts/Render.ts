@@ -18,6 +18,9 @@ import { ButtonBar } from "./widget/ButtonBar";
 import { Checkbox } from "./widget/Checkbox";
 import { Div } from "./widget/Div";
 import { Span } from "./widget/Span";
+import { Img } from "./widget/Img";
+import { Anchor } from "./widget/Anchor";
+import { Heading } from "./widget/Heading";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -34,7 +37,7 @@ export class Render {
         return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
     }
 
-    private renderBinary(node: I.NodeInfo): string {
+    private renderBinary(node: I.NodeInfo): Comp {
         /*
          * If this is an image render the image directly onto the page as a visible image
          */
@@ -45,13 +48,10 @@ export class Render {
          * If not an image we render a link to the attachment, so that it can be downloaded.
          */
         else {
-            let anchor: string = tag.a({
-                "href": render.getUrlForNodeAttachment(node)
-            }, "[Download Attachment]");
-
-            return tag.div({
+            let anchor = new Anchor(render.getUrlForNodeAttachment(node), "[Download Attachment]");
+            return new Div("", {
                 "class": "binary-link"
-            }, anchor);
+            }, [anchor]);
         }
     }
 
@@ -78,7 +78,6 @@ export class Render {
     buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
-        //let headerText: string = "";
         let pathDiv: Div = null;
         let commentSpan: Span = null;
         let createdBySpan: Span = null;
@@ -91,7 +90,6 @@ export class Render {
             });
         }
 
-        //let spans: string = "";
         if (commentBy) {
             let clazz: string = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
             commentSpan = new Span("Comment By: " + commentBy, {
@@ -105,15 +103,16 @@ export class Render {
             });
         }
 
-        //todo-000: this ID is gonna be a problem. fix.
-        ownerDisplaySpan = new Span("", { "id": `ownerDisplay${node.uid}` });
+        ownerDisplaySpan = new Span("");
+        meta64.setNodeData(node.uid, {"ownerDisplaySpan" : ownerDisplaySpan});
+
         if (node.lastModified) {
             lastModifiedSpan = new Span(`  Mod: ${node.lastModified}`);
         }
 
         let allSpansDiv = new Div(null, null, [commentSpan, createdBySpan, ownerDisplaySpan, lastModifiedSpan]);
 
-        let nodeNameSpan : Span = null;
+        let nodeNameSpan: Span = null;
         /*
          * on root node name will be empty string so don't show that
          *
@@ -131,62 +130,6 @@ export class Render {
         return new Div(null, {
             "class": "header-text"
         }, [pathDiv, allSpansDiv, nodeNameSpan]);
-    }
-
-    buildRowHeader_orig(node: I.NodeInfo, showPath: boolean, showName: boolean): string {
-        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-
-        let headerText: string = "";
-
-        if (cnst.SHOW_PATH_ON_ROWS) {
-            headerText += tag.div({
-                "class": "path-display"
-            },
-                "Path: " + render.formatPath(node));
-        }
-
-        let spans: string = "";
-        if (commentBy) {
-            let clazz: string = (commentBy === meta64.userName) ? "created-by-me" : "created-by-other";
-            spans += tag.span({
-                "class": clazz
-            },
-                "Comment By: " + commentBy);
-        } //
-        else if (node.createdBy) {
-            let clazz: string = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
-            spans += tag.span({
-                "class": clazz
-            },
-                "Created By: " + node.createdBy);
-        }
-
-        spans += tag.span({ "id": `ownerDisplay${node.uid}` });
-        if (node.lastModified) {
-            spans += `  Mod: ${node.lastModified}`;
-        }
-
-        headerText += tag.div(null, spans);
-
-        /*
-         * on root node name will be empty string so don't show that
-         *
-         * commenting: I decided users will understand the path as a single long entity with less confusion than
-         * breaking out the name for them. They already unserstand internet URLs. This is the same concept. No need
-         * to baby them.
-         *
-         * The !showPath condition here is because if we are showing the path then the end of that is always the
-         * name, so we don't need to show the path AND the name. One is a substring of the other.
-         */
-        if (showName && !showPath && node.name) {
-            headerText += `Name: ${node.name} [uid=${node.uid}]`;
-        }
-
-        headerText = tag.div({
-            "class": "header-text"
-        }, headerText);
-
-        return headerText;
     }
 
     /*
@@ -244,17 +187,20 @@ export class Render {
         util.setInnerHTMLById(uid + "_content", rowContent);
     }
 
-    //
     /*
      * This is the function that renders each node in the main window. The rendering in here is very central to the
      * app and is what the user sees covering 90% of the screen most of the time. The "content* nodes.
      *
      * todo-1: Rather than having this node renderer itself be responsible for rendering all the different types
-     * of nodes, need a more pluggable design, where rendeing of different things is delegated to some
+     * of nodes, need a more pluggable design, where rendering of different things is delegated to some
      * appropriate object/service
      */
     renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
-        var ret: string = render.getTopRightImageTag(node);
+        //todo-1; bring back top right image support. disabling for nw to ease refactoring.
+        debugger;
+        let topRightImgTag = null; //render.getTopRightImageTag(node);
+
+        let ret: string = topRightImgTag ? topRightImgTag.render() : "";
 
         /* todo-2: enable headerText when appropriate here */
         if (meta64.showMetaData) {
@@ -262,9 +208,9 @@ export class Render {
         }
 
         if (meta64.showProperties) {
-            var properties = props.renderProperties(node.properties);
-            if (properties) {
-                ret += properties;
+            let propTable = props.renderProperties(node.properties);
+            if (propTable) {
+                ret += propTable.render();
             }
         } else {
             let renderComplete: boolean = false;
@@ -316,36 +262,38 @@ export class Render {
 
             if (!renderComplete) {
                 if (node.path.trim() == "/") {
-                    ret += "<h1>Root Node</h1>";
+                    ret += new Heading(1, "Root Node").render();
                 }
                 /* ret += "< div>[No Content Property]</div>"; */
-                let properties: string = props.renderProperties(node.properties);
+                let properties = props.renderProperties(node.properties);
                 if (properties) {
-                    ret += /* "<br>" + */properties;
+                    ret += /* "<br>" + */properties.render();
                 }
             }
         }
 
         if (renderBin && node.hasBinary) {
-            let binary: string = render.renderBinary(node);
+            let binary = render.renderBinary(node);
 
             /*
              * We append the binary image or resource link either at the end of the text or at the location where
              * the user has put {{insert-attachment}} if they are using that to make the image appear in a specific
              * locatio in the content text.
+             *
+             * NOTE: temporarily removing during refactoring into Widgets.
              */
-            if (util.contains(ret, cnst.INSERT_ATTACHMENT)) {
-                ret = util.replaceAll(ret, cnst.INSERT_ATTACHMENT, binary);
-            } else {
-                ret += binary;
-            }
+            // if (util.contains(ret, cnst.INSERT_ATTACHMENT)) {
+            //     ret = util.replaceAll(ret, cnst.INSERT_ATTACHMENT, binary.render());
+            // } else {
+                ret += binary.render();
+            //}
         }
 
         let tags: string = props.getNodePropertyVal(jcrCnst.TAGS, node);
         if (tags) {
-            ret += tag.div({
+            ret += new Div("Tags: " + tags, {
                 "class": "tags-content"
-            }, "Tags: " + tags);
+            }).render();
         }
 
         return ret;
@@ -460,14 +408,14 @@ export class Render {
         util.showMessage(message);
     }
 
-    getTopRightImageTag(node: I.NodeInfo) {
-        let topRightImg: string = props.getNodePropertyVal('img.top.right', node);
-        let topRightImgTag: string = "";
+    getTopRightImageTag(node: I.NodeInfo): Img {
+        let topRightImg: string = props.getNodePropertyVal("img.top.right", node);
+        let topRightImgTag: Img;
         if (topRightImg) {
-            topRightImgTag = render.tag("img", {
+            topRightImgTag = new Img({
                 "src": topRightImg,
                 "class": "top-right-image"
-            }, "", false);
+            });
         }
         return topRightImgTag;
     }
@@ -653,6 +601,7 @@ export class Render {
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
     renderPageFromData(data?: I.RenderNodeResponse, scrollToTop?: boolean): string {
+      debugger;
         meta64.codeFormatDirty = false;
         console.log("render.renderPageFromData()");
 
@@ -937,7 +886,59 @@ export class Render {
     }
 
     /* see also: adjustImageSize() */
-    makeImageTag(node: I.NodeInfo) {
+    makeImageTag(node: I.NodeInfo): Img {
+        let img : Img;
+        let src: string = render.getUrlForNodeAttachment(node);
+
+        if (node.width && node.height) {
+
+            /*
+             * if image won't fit on screen we want to size it down to fit
+             *
+             * Yes, it would have been simpler to just use something like width=100% for the image width but then
+             * the hight would not be set explicitly and that would mean that as images are loading into the page,
+             * the effective scroll position of each row will be increasing each time the URL request for a new
+             * image completes. What we want is to have it so that once we set the scroll position to scroll a
+             * particular row into view, it will stay the correct scroll location EVEN AS the images are streaming
+             * in asynchronously.
+             *
+             */
+            if (node.width > meta64.deviceWidth - 50) {
+
+                /* set the width we want to go for */
+                let width: number = meta64.deviceWidth - 50;
+
+                /*
+                 * and set the height to the value it needs to be at for same w/h ratio (no image stretching)
+                 */
+                let height: number = width * node.height / node.width;
+
+                img = new Img({
+                    "src": src,
+                    "width": width + "px",
+                    "height": height + "px"
+                });
+            }
+            /* Image does fit on screen so render it at it's exact size */
+            else {
+                img = new Img({
+                    "src": src,
+                    "width": node.width + "px",
+                    "height": node.height + "px"
+                });
+            }
+        } else {
+            img = new Img({
+                "src": src
+            });
+        }
+
+        //node.imgId = "imgUid_" + node.uid;
+        node.imgId = img.getId();
+        return img;
+    }
+
+    makeImageTag_original(node: I.NodeInfo) {
         let src: string = render.getUrlForNodeAttachment(node);
         node.imgId = "imgUid_" + node.uid;
 

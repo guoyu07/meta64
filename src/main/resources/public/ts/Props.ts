@@ -8,6 +8,11 @@ import { view } from "./View";
 import { edit } from "./Edit";
 import * as I from "./Interfaces";
 import { tag } from "./Tag";
+import { PropTable } from "./widget/PropTable";
+import { PropTableRow } from "./widget/PropTableRow";
+import { PropTableCell } from "./widget/PropTableCell";
+import { Div } from "./widget/Div";
+import { Span } from "./widget/Span";
 
 class Props {
 
@@ -96,53 +101,47 @@ class Props {
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
-    renderProperties(properties): string {
+    renderProperties(properties): PropTable {
         if (properties) {
-            let table: string = "";
-            let propCount: number = 0;
+            let propTable = new PropTable({
+                "border": "1",
+                "class": "property-table"
+                // "sourceClass" : "[propsTable]"
+            });
 
             util.forEachArrElm(properties, (property, i) => {
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
-                    propCount++;
-                    let td: string = tag.td({
+                    let propNameCell = new PropTableCell(render.sanitizePropertyName(property.name), {
                         "class": "prop-table-name-col"
-                    }, render.sanitizePropertyName(property.name));
+                    });
 
-                    let val: string;
+                    let valCellAttrs = {
+                        "class": "prop-table-val-col"
+                    };
+                    let propValCell: PropTableCell;
+
                     if (isBinaryProp) {
-                        val = "[binary]";
+                        propValCell = new PropTableCell("[binary]", valCellAttrs);
                     } else if (!property.values) {
-                        val = tag.div(null, property.value);
+                        propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);
                     } else {
-                        val = props.renderPropertyValues(property.values);
+                        propValCell = new PropTableCell(props.renderPropertyValues(property.values), valCellAttrs);
                     }
 
-                    td += tag.td({
-                        "class": "prop-table-val-col"
-                    }, val);
-
-                    table += tag.tr({
+                    let propTableRow = new PropTableRow({
                         "class": "prop-table-row"
-                    }, td);
+                    }, [propNameCell, propValCell])
+                    propTable.addChild(propTableRow);
 
                 } else {
                     console.log("Hiding property: " + property.name);
                 }
             });
-
-            if (propCount == 0) {
-                return "";
-            }
-
-            return tag.table({
-                "border": "1",
-                "class": "property-table"
-                // "sourceClass" : "[propsTable]"
-            }, table);
+            return propTable;
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -199,7 +198,7 @@ class Props {
     }
 
     /*
-     * Returns string representation of property value, even if multiple properties
+     * Returns Span representation of property value, even if multiple properties
      */
     renderProperty(property): string {
         /* If this is a single-value type property */
@@ -207,7 +206,7 @@ class Props {
 
             /* if property is missing return empty string */
             if (!property.value || property.value.length == 0) {
-                return "";
+                return null;
             }
 
             return property.value;
@@ -218,14 +217,16 @@ class Props {
         }
     }
 
+    //todo-1: this needs to be retested after widget refactoring.
     renderPropertyValues(values): string {
-        let ret: string = "";
+        let ret = "";
 
         util.forEachArrElm(values, (value, i: number) => {
-            ret += tag.div(null, value);
+            ret += value;
+            ret += "\n\n";
         });
 
-        return tag.div(null, ret);
+        return ret;
     }
 }
 export let props: Props = new Props();

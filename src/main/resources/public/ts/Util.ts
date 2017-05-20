@@ -588,7 +588,6 @@ class Util {
         elm.style.display = showing ? "" : "none";
     }
 
-
     getPropertyCount(obj: Object): number {
         let count = 0;
         let prop;

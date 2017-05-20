@@ -1,3 +1,5 @@
+import { Span } from "./widget/Span";
+
 console.log("Interfaces.ts");
 
 /* These are Client-side only models, and are not seen on the server side ever */

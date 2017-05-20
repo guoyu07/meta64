@@ -73,6 +73,7 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Modified", srch.timelineByModTime, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
             ]),
             new Menu("View", [
+                //todo-1: properties toggle really should be a preferences setting i think, and not a menu option here.
                 new MenuItem("Toggle Properties", props.propsToggle, () => { return meta64.state.propsToggle }, () => { return !meta64.isAnonUser }), //
                 new MenuItem("Refresh", meta64.refresh), //
                 new MenuItem("Show URL", render.showNodeUrl, () => { return meta64.state.highlightNode != null }), //

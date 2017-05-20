@@ -33,6 +33,11 @@ export class Tag {
         return render.tag("div", attr, content || "", true);
     }
 
+    heading(level: number, content: string): string {
+        return render.tag("h"+level, null, content, true);
+    }
+
+    //todo-0: remove this and use heading() always instead
     h2(attr?: Object, content?: string): string {
         return render.tag("h2", attr, content, true);
     }

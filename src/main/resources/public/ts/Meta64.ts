@@ -13,6 +13,7 @@ import { srch } from "./Search";
 import { share } from "./Share";
 import { user } from "./User";
 import { view } from "./View";
+import { Span } from "./widget/Span";
 import { MenuPanel } from "./MenuPanel";
 import { podcast } from "./Podcast";
 import { systemfolder } from "./SystemFolder";
@@ -99,6 +100,11 @@ class Meta64 {
      */
     uidToNodeMap: { [key: string]: I.NodeInfo } = {};
 
+    /* NodeData is a 'client-state' only object that holds information per-node that is in an object
+    that is never used on server but only on client
+    */
+    uidToNodeDataMap: { [key: string]: Object } = {};
+
     /*
      * maps node.id values to NodeInfo.java objects
      */
@@ -183,6 +189,26 @@ class Meta64 {
         "exportAllowed": false,
         "showMetaData": false
     };
+
+    setNodeData(uid: string, data: Object) {
+        /* lookup object by uid */
+        let foundObj = this.uidToNodeDataMap[uid];
+
+        /* if no object found for uid, then create one and put it in map */
+        if (!foundObj) {
+            foundObj = {};
+            this.uidToNodeDataMap[uid] = foundObj;
+        }
+
+        /* now we can add data properties onto foundObj */
+        util.mergeProps(foundObj, data);
+    }
+
+    /* gets the value associated with the given uid and property */
+    getNodeData(uid: string, prop: string): any {
+        let foundObj = this.uidToNodeDataMap[uid];
+        return foundObj != null ? foundObj[prop] : null;
+    }
 
     updateMainMenuPanel() {
         console.log("building main menu panel");
@@ -373,15 +399,29 @@ class Meta64 {
 
         if (ownerBuf.length > 0) {
             node.owner = ownerBuf;
-            let elmId = "#ownerDisplay" + node.uid;
-            let elm = document.querySelector(elmId);
+            // let elmId = "#ownerDisplay" + node.uid;
+            // let elm = document.querySelector(elmId);
+            // if (elm) {
+            //     elm.innerHTML = " (Manager: " + ownerBuf + ")";
+            //     if (mine) {
+            //         util.changeOrAddClass(elmId, "created-by-other", "created-by-me");
+            //     } else {
+            //         util.changeOrAddClass(elmId, "created-by-me", "created-by-other");
+            //     }
+            // }
+            let elm = <Span>meta64.getNodeData(node.uid, "ownerDisplaySpan");
             if (elm) {
-                elm.innerHTML = " (Manager: " + ownerBuf + ")";
+                elm.content = " (Manager: " + ownerBuf + ")";
+
+                /* this class may not persist after other updates, because class info is not currently persisted INSIDE the widget
+                properties, so this code needs work/testing, but i'll to ahead and leave as is for now, since this is basically
+                a nice-to-see background color chagne and not critical. (toto-1) */
                 if (mine) {
-                    util.changeOrAddClass(elmId, "created-by-other", "created-by-me");
+                    util.changeOrAddClass(elm.getId(), "created-by-other", "created-by-me");
                 } else {
-                    util.changeOrAddClass(elmId, "created-by-me", "created-by-other");
+                    util.changeOrAddClass(elm.getId(), "created-by-me", "created-by-other");
                 }
+                elm.renderToDom();
             }
         }
     }

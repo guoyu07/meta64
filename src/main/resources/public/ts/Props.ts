@@ -201,20 +201,24 @@ class Props {
      * Returns Span representation of property value, even if multiple properties
      */
     renderProperty(property): string {
+        let ret: string = null;
         /* If this is a single-value type property */
         if (!property.values) {
 
             /* if property is missing return empty string */
             if (!property.value || property.value.length == 0) {
-                return null;
+                ret = "";
             }
-
-            return property.value;
+            else {
+                ret = property.value;
+            }
         }
         /* else render multi-value property */
         else {
-            return props.renderPropertyValues(property.values);
+            ret = props.renderPropertyValues(property.values);
         }
+
+        return ret || "";
     }
 
     //todo-1: this needs to be retested after widget refactoring.

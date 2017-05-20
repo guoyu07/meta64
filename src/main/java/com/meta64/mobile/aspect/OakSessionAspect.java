@@ -183,6 +183,7 @@ public class OakSessionAspect {
 		}
 
 		try {
+			//log.debug("userName[" + userName + "] password[" + password + "]");
 			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;

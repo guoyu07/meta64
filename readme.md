@@ -29,7 +29,7 @@ If you look at the BuildGUI() method on that class it should be obvious that thi
 
 ## Links
 
-[Live SubNode Instance](http://sbnode.com)
+Live SubNode Instance -> http://sbnode.com
 
 [GitHub Docs](https://github.com/Clay-Ferguson/meta64/tree/master/docs/)   
 

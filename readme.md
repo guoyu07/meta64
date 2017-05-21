@@ -31,9 +31,9 @@ If you look at the BuildGUI() method on that class it should be obvious that thi
 
 Live SubNode Instance -> http://sbnode.com
 
-[GitHub Docs](https://github.com/Clay-Ferguson/meta64/tree/master/docs/)   
+GitHub Docs -> https://github.com/Clay-Ferguson/meta64/tree/master/docs/   
 
-[Sample Content: War and Peace](http://www.sbnode.com/?id=/meta64/war-and-peace)   
+Sample Content: War and Peace -> http://www.sbnode.com/?id=/meta64/war-and-peace
 
 ## SubNode Overview
 

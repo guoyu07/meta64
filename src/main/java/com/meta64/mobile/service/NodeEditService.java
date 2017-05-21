@@ -164,7 +164,7 @@ public class NodeEditService {
 					/* gets a different 'newNode' object, this time specific to the new session */
 					newNode = JcrUtil.findNode(session, newNodeId);
 				}
-				nodeMoveService.moveNodeToTop(session, newNode, true, true, false);
+				nodeMoveService.moveNodeToTop(session, newNode, true, true, true);
 			}
 		}
 		catch (Exception ex) {

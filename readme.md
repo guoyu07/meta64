@@ -16,7 +16,9 @@ Created a "Widget Framework" that eliminates any need for "HTML Templates" (and/
 
 Because of the power of having full OOP (Classes, etc) in TypeScript it has opened up web development to the possibility of what was possible in Java Swing, and GWT, which are two technologies that were great for what they were, and not built on top of any templating nonsense. Not only does a GUI Component widget system in TypeScript eliminate any need to work with templates, it totally decouples the HTML also, so that for the most part the the developer never even notices he's dealing with an HTML, because everything is just clean OOP calls on Widget Components, with the HTML specifics abstracted into lower layers that never need be worried about.
 
-[For example, here is the entire "Change Password Dialog"] (https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts)
+For example, here is the entire "Change Password Dialog"...
+
+https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts
 
 If you look at the BuildGUI() method on that class it should be obvious that this widget technique is superior to any template-based system. 
 

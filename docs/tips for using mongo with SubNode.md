@@ -1,3 +1,7 @@
+Anyone can probably find better notes on how to get MongoDB started (and may be incomplete, obsolete, etc), but this was my two cents worth of notes i thought might be helpful.
+
+If you are just getting started using SubNode, just building using the Embedded Derby RDBMS which is described in the document about building and running.
+
 ## Default MongoDB Config File
     /etc/mongod.conf 
     

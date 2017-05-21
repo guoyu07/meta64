@@ -1,9 +1,5 @@
 package com.meta64.mobile.service;
 
-import java.io.File;
-
-import org.apache.jackrabbit.oak.plugins.backup.FileStoreBackup;
-import org.apache.jackrabbit.oak.plugins.backup.FileStoreRestore;
 import org.apache.jackrabbit.oak.plugins.document.DocumentMK;
 import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
 import org.slf4j.Logger;
@@ -12,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.RuntimeEx;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+
 
 /**
  * This class is experimental and is not yet working!
@@ -51,49 +47,60 @@ public class BackupService {
 	}
 
 	public void backup() {
-		try {
-			connect(appProp.getMongoDbName());
-			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
-			}
-			String targetFolder = appProp.getAdminDataFolder() + File.separator + "BK" + System.currentTimeMillis();
-			log.debug("Backing up to: " + targetFolder);
-			FileTools.createDirectory(targetFolder);
-			FileStoreBackup.backup(nodeStore, new File(targetFolder));
+		//todo-0: investigate this.
+		if (true) {
+			//After upgrading to Jackrabbit 1.6.1 this broke. Not the fault of SubNode
+			throw new RuntimeException("FileStoreBackup was refactored or removed from Jackrabbit");
 		}
-		catch (Exception ex) {
-			throw new RuntimeEx(ex);
-		}
-		finally {
-			disconnect();
-		}
+//		try {
+//			connect(appProp.getMongoDbName());
+//			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
+//				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
+//			}
+//			String targetFolder = appProp.getAdminDataFolder() + File.separator + "BK" + System.currentTimeMillis();
+//			log.debug("Backing up to: " + targetFolder);
+//			FileTools.createDirectory(targetFolder);
+//			
+//			//FileStoreBackup.backup(nodeStore, new File(targetFolder));
+//		}
+//		catch (Exception ex) {
+//			throw new RuntimeEx(ex);
+//		}
+//		finally {
+//			disconnect();
+//		}
 	}
 
 	public void restore() {
-		try {
-			String restoreToMongoDbName = appProp.getProp("restoreToMongoDbName");
-			if (restoreToMongoDbName == null) {
-				throw new RuntimeEx("Missing 'restoreToMongoDbName' parameter.");
-			}
-
-			connect(restoreToMongoDbName);
-			String srcFolder = appProp.getProp("restoreFromFolder");
-
-			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
-			}
-			String fullSrcFolder = appProp.getAdminDataFolder() + File.separator + srcFolder;
-			log.debug("Restoring from folder: " + fullSrcFolder);
-
-			if (!FileTools.dirExists(fullSrcFolder)) {
-				throw new RuntimeEx("adminDataFolder does not exist: " + fullSrcFolder);
-			}
-
-			FileStoreRestore.restore(new File(fullSrcFolder), nodeStore);
+		if (true) {
+			//todo-0: investigate this.
+			//After upgrading to Jackrabbit 1.6.1 this broke. Not the fault of SubNode
+			throw new RuntimeException("FileStoreBackup was refactored or removed from Jackrabbit");
 		}
-		finally {
-			disconnect();
-		}
+//		try {
+//			String restoreToMongoDbName = appProp.getProp("restoreToMongoDbName");
+//			if (restoreToMongoDbName == null) {
+//				throw new RuntimeEx("Missing 'restoreToMongoDbName' parameter.");
+//			}
+//
+//			connect(restoreToMongoDbName);
+//			String srcFolder = appProp.getProp("restoreFromFolder");
+//
+//			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
+//				throw new RuntimeEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
+//			}
+//			String fullSrcFolder = appProp.getAdminDataFolder() + File.separator + srcFolder;
+//			log.debug("Restoring from folder: " + fullSrcFolder);
+//
+//			if (!FileTools.dirExists(fullSrcFolder)) {
+//				throw new RuntimeEx("adminDataFolder does not exist: " + fullSrcFolder);
+//			}
+//
+//			FileStoreRestore.restore(new File(fullSrcFolder), nodeStore);
+//		}
+//		finally {
+//			disconnect();
+//		}
 	}
 
 	private void connect(String mongoName) {

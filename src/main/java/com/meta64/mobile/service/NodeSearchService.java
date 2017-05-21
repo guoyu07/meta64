@@ -78,12 +78,48 @@ public class NodeSearchService {
 			queryStr.append(propVal);
 			queryStr.append("'");
 
-			Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);
+			String qStr = queryStr.toString();
+			log.debug("property query: " + qStr);
+			Query q = qm.createQuery(qStr, Query.JCR_SQL2);
 			QueryResult r = q.execute();
 			NodeIterator nodes = r.getNodes();
 			Node ret = null;
 			if (nodes.hasNext()) {
 				ret = nodes.nextNode();
+			}
+
+			log.debug(ret == null ? "Node not found." : "node found.");
+			return ret;
+		}
+		catch (Exception ex) {
+			throw new RuntimeEx(ex);
+		}
+	}
+	
+	public Node findNodeByProperty_test(Session session, String parentPath, String propName, String propVal) {
+		try {
+			QueryManager qm = session.getWorkspace().getQueryManager();
+
+			/*
+			 * Note: This is a bad way to lookup a value that's expected to be an exact match!
+			 */
+			StringBuilder queryStr = new StringBuilder();
+			queryStr.append("SELECT * from [nt:base] AS t WHERE ISDESCENDANTNODE([");
+			queryStr.append(parentPath);
+			queryStr.append("])");
+			//queryStr.append("]) AND t.[" + propName + "]='");
+			//queryStr.append(propVal);
+			//queryStr.append("'");
+
+			String qStr = queryStr.toString();
+			log.debug("property query: " + qStr);
+			Query q = qm.createQuery(qStr, Query.JCR_SQL2);
+			QueryResult r = q.execute();
+			NodeIterator nodes = r.getNodes();
+			Node ret = null;
+			while (nodes.hasNext()) {
+				ret = nodes.nextNode();
+				log.debug("   FOUND: path="+ret.getPath());
 			}
 
 			log.debug(ret == null ? "Node not found." : "node found.");

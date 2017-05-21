@@ -762,9 +762,12 @@ class Meta64 {
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
          * $ (window).on("orientationchange", _.orientationHandler);
          */
-        window.onbeforeunload = () => {
-            return "Leave Meta64 ?";
-        };
+
+         //todo-0: actually this is a nuisance unless user is actually EDITING a node right now
+         //so until i make it able to detect if user is editing i'm removing this.
+        // window.onbeforeunload = () => {
+        //     return "Leave Meta64 ?";
+        // };
 
         /*
          * I thought this was a good idea, but actually it destroys the session, when the user is entering an

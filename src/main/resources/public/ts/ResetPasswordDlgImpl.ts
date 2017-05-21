@@ -26,8 +26,8 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
         this.setChildren([
             new Header("Reset Password"),
             new TextContent("Enter your user name and email address and a change-password link will be sent to you"),
-            new TextField("User"),
-            new TextField("Email Address"),
+            this.userTextField = new TextField("User"),
+            this.emailTextField = new TextField("Email Address"),
             new ButtonBar([
                 new Button("Reset my Password", this.resetPassword, null, true, this),
                 new Button("Close", null, null, true, this)
@@ -39,7 +39,8 @@ export default class ResetPasswordDlgImpl extends DialogBaseImpl implements Rese
         var userName = this.userTextField.getValue();
         var emailAddress = this.emailTextField.getValue();
 
-        if (userName && emailAddress) {
+        /* Note: Admin check is done also on server, so no browser hacking can get around this */
+        if (userName && emailAddress && userName.toLowerCase()!="admin") {
             util.ajax<I.ResetPasswordRequest, I.ResetPasswordResponse>("resetPassword", {
                 "user": userName,
                 "email": emailAddress

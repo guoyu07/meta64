@@ -1,6 +1,8 @@
 package com.meta64.mobile;
 
-import static org.junit.Assert.assertTrue;
+import javax.jcr.Node;
+
+//see deprecation notes below.
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -9,21 +11,29 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.meta64.mobile.config.JcrName;
+import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
-import com.meta64.mobile.request.SignupRequest;
-import com.meta64.mobile.response.SignupResponse;
+import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 
+//NOTE: One online post said use this: (haven't tried this)
+//      @RunWith(SpringRunner.class)
+//      @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AppServer.class)
+@ContextConfiguration(classes = AppServer.class)
 @WebAppConfiguration
-@TestPropertySource({"classpath:application.properties", "classpath:application-dev.properties", "file:/home/clay/ferguson/meta64Oak-private/test.properties"})
+/* NOTE: You'll need a test.properties file (specify your own path to it), that contains the properties that you want to override from 
+ * the defaults in application.properties, because you'll need your own passwords, and email servers, etc.
+ */
+@TestPropertySource({"classpath:application.properties", "file:/home/clay/ferguson/meta64Oak-private/test.properties"})
 public class AppServerTests {
 
 	private static final String fakeCaptcha = "nocaptcha";
@@ -32,9 +42,9 @@ public class AppServerTests {
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
+	//we probably only need on oakRepository property here and not two, but I'm just not sure how yet. Is a JUnit detail I haven't worked out yet.
 	@Autowired
 	private OakRepository oakRepository;
-
 	private static OakRepository _oakRepository;
 
 	@Autowired
@@ -42,6 +52,9 @@ public class AppServerTests {
 
 	@Autowired
 	private SessionContext sessionContext;
+	
+	@Autowired
+	private NodeSearchService nodeSearchService;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -73,22 +86,29 @@ public class AppServerTests {
 		_oakRepository = oakRepository;
 
 		adminRunner.run(session -> {
-			SignupRequest signupReq = new SignupRequest();
-
-			/* setup fake captcha */
-			sessionContext.setCaptcha(fakeCaptcha);
-
-			/*
-			 * Signup a new user
-			 */
-			String userName = "beavis";
-			signupReq.setUserName(userName);
-			signupReq.setPassword(userName);
-			signupReq.setEmail("beavis@gmail.com");
-			signupReq.setCaptcha(fakeCaptcha);
-			SignupResponse signupRes = controller.signup(signupReq);
-			assertTrue(signupRes.isSuccess());
-
+//			Node node = nodeSearchService.findNodeByProperty_test(session, "/" + JcrName.USER_PREFERENCES, //
+//					JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, "149544543281fake");
+//			
+//			if (node == null) {
+//				throw new RuntimeException("passcode search failed.");
+//			}
+			//
+//			SignupRequest signupReq = new SignupRequest();
+//
+//			/* setup fake captcha */
+//			sessionContext.setCaptcha(fakeCaptcha);
+//
+//			/*
+//			 * Signup a new user
+//			 */
+//			String userName = "beavis";
+//			signupReq.setUserName(userName);
+//			signupReq.setPassword(userName);
+//			signupReq.setEmail("beavis@gmail.com");
+//			signupReq.setCaptcha(fakeCaptcha);
+//			SignupResponse signupRes = controller.signup(signupReq);
+//			assertTrue(signupRes.isSuccess());
+//------------------------------------------
 //			/*
 //			 * Login the new user
 //			 */

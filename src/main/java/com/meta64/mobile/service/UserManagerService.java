@@ -548,7 +548,7 @@ public class UserManagerService {
 			/* search for the node with passCode property */
 			Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.USER_PREFERENCES, //
 					JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, passCode);
-
+			
 			if (node != null) {
 				/*
 				 * it's a bit ugly that the JCR content is the property that holds the user, but
@@ -630,14 +630,14 @@ public class UserManagerService {
 				int oneDayMillis = 60 * 60 * 1000;
 				long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
 
-				userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, authCode);
+				userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, String.valueOf(authCode));
 				JcrUtil.save(session);
 
 				String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);
-				String content = "Password reset was requested on meta64 account: " + user + //
+				String content = "Password reset was requested on SubNode account: " + user + //
 				"<p>\nGo to this link to reset your password: <br>\n" + link;
 
-				outboxMgr.queueEmail(email, "Meta64 Password Reset", content);
+				outboxMgr.queueEmail(email, "SubNode Password Reset", content);
 
 				res.setMessage("A password reset link has been sent to your email. Check your inbox in a minute or so.");
 				res.setSuccess(true);

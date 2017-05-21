@@ -122,7 +122,9 @@ public class OakRepository {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				instance.close();
+				if (instance != null) {
+					instance.close();
+				}
 			}
 		}));
 	}

@@ -16,10 +16,12 @@ export class ListBox extends Comp {
 
         /* For each of the ListBoxRows we need to tell them all who their parent is */
         util.forEachArrElm(initialRows, (row: ListBoxRow, idx) => {
-            if (row.selected) {
-                this.selectedRow = row;
+            if (row) {
+                if (row.selected) {
+                    this.selectedRow = row;
+                }
+                row.setListBox(this);
             }
-            row.setListBox(this);
         });
     }
 

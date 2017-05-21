@@ -134,7 +134,10 @@ public class PreProcFilter implements Filter {
 		if (props != null) return;
 		props = new Properties();
 		try {
-			props.load(ClassLoader.getSystemResourceAsStream("html-" + constProvider.getProfileName() + ".properties"));
+			String propFile = "/html-" + constProvider.getProfileName() + ".properties";
+			log.debug("Loading prop file: " + propFile);
+			//props.load(ClassLoader.getSystemResourceAsStream(propFile)); 
+			props.load(getClass().getResourceAsStream(propFile));
 		}
 		catch (Exception ex) {
 			throw new RuntimeEx(ex);

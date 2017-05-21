@@ -33,8 +33,10 @@ export default class MenuPanel extends Comp {
             //     menuItem("Timeline", "timelinePageButton", "meta64.selectTab('timelineTabName');");
             // let pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
-            new Menu("RSS", [
-                new MenuItem("Feeds", nav.openRssFeedsNode)
+            new Menu("Locations", [
+                new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
+                new MenuItem("Your Home", nav.navHome),
+                new MenuItem("RSS Feeds", nav.openRssFeedsNode)
             ]),
             new Menu("Edit", [
                 new MenuItem("Create", edit.createNode, () => { return meta64.state.canCreateNode }), //

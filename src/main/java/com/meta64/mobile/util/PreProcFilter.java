@@ -17,10 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.ConstantsProviderImpl;
+import com.meta64.mobile.config.SpringContextUtil;
 
 /**
  * This WebFilter is used to eliminate any need for something like JSPs or Thymeleaf, by providing
@@ -136,7 +138,11 @@ public class PreProcFilter implements Filter {
 		try {
 			String propFile = "/html-" + constProvider.getProfileName() + ".properties";
 			log.debug("Loading prop file: " + propFile);
-			//props.load(ClassLoader.getSystemResourceAsStream(propFile)); 
+			// props.load(ClassLoader.getSystemResourceAsStream(propFile));
+
+			// actually this may be better, than getResourceAsSteam (todo-1):
+			// Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);
+			// String content = XString.loadResourceIntoString(resource);
 			props.load(getClass().getResourceAsStream(propFile));
 		}
 		catch (Exception ex) {

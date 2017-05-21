@@ -31,7 +31,7 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
                 new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),
                 /* Note: the isAdminUser is a temporary hack, and there will be a better way to do this eventually (i.e. types themselves
                    probably will specify what roles of users they are available on or something like that) */
-                !meta64.isAdminUser ? null : new ListBoxRow("RSS Feed(a)", () => { this.selType = "meta64:rssfeed"; }, false),
+                !meta64.isAdminUser ? null : new ListBoxRow("RSS Feed", () => { this.selType = "meta64:rssfeed"; }, false),
                 !meta64.isAdminUser ? null : new ListBoxRow("RSS Item", () => { this.selType = "meta64:rssitem"; }, false),
                 !meta64.isAdminUser ? null : new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
             ]),

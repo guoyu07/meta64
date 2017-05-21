@@ -45,7 +45,8 @@ public class RepositoryUtil {
 			/*
 			 * todo-1: need to make all these markdown files able to be specified in a properties
 			 * file, and also need to make the DB aware of time stamp so it can just check timestamp
-			 * of file to determine if it needs to be loaded into DB or is already up to date
+			 * of file to determine if it needs to be loaded into repo or if repo is already up to
+			 * date
 			 */
 			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", appProp.getUserLandingPageNode(), "Landing Page");
 			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");

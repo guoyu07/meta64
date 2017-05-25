@@ -42,10 +42,10 @@ import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ImageSize;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -83,7 +83,7 @@ public class AttachmentService {
 			 */
 			Node node = JcrUtil.findNode(session, nodeId);
 			if (node == null) {
-				throw new RuntimeEx("Node not found.");
+				throw ExUtil.newEx("Node not found.");
 			}
 			boolean addAsChildren = Convert.getBinaryVersion(node) > 0;
 
@@ -140,7 +140,7 @@ public class AttachmentService {
 				node = newNode;
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		}
 
@@ -217,7 +217,7 @@ public class AttachmentService {
 			node.setProperty(JcrProp.BIN_VER, version + 1);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -262,14 +262,14 @@ public class AttachmentService {
 
 			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
 			if (mimeTypeProp == null) {
-				throw new RuntimeEx("unable to find mimeType property");
+				throw ExUtil.newEx("unable to find mimeType property");
 			}
 			// log.debug("Retrieving mime: " +
 			// mimeTypeProp.getValue().getString());
 
 			Property dataProp = node.getProperty(JcrProp.BIN_DATA);
 			if (dataProp == null) {
-				throw new RuntimeEx("unable to find data property");
+				throw ExUtil.newEx("unable to find data property");
 			}
 
 			Binary binary = dataProp.getBinary();
@@ -360,7 +360,7 @@ public class AttachmentService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -399,7 +399,7 @@ public class AttachmentService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		finally {
 			StreamUtil.close(is, is2, reader);

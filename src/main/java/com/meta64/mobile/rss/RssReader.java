@@ -26,9 +26,9 @@ import com.meta64.mobile.rss.model.RssFeedWrapper;
 import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -87,7 +87,7 @@ public class RssReader {
 	 * isn't being used so i'm not worrying about it for now.
 	 */
 	public void readUrl__unused(String url) {
-		if (true) throw new RuntimeEx("don't call this until you fix missing finally block memory leak.");
+		if (true) throw ExUtil.newEx("don't call this until you fix missing finally block memory leak.");
 		// HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 
@@ -110,7 +110,7 @@ public class RssReader {
 			log.debug("CONTENT: " + result.toString());
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -241,7 +241,7 @@ public class RssReader {
 			return wFeed;
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -256,7 +256,7 @@ public class RssReader {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {
-				throw new RuntimeEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
+				throw ExUtil.newEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
 			}
 			/*
 			 * now we have the Feed node in place so we can write all RSS entries to the db

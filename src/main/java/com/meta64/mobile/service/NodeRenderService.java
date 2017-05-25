@@ -30,8 +30,8 @@ import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -268,7 +268,7 @@ public class NodeRenderService {
 			res.setEndReached(endReached);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

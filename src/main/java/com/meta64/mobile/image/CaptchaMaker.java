@@ -13,7 +13,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.StreamUtil;
 
 /**
@@ -131,7 +131,7 @@ public class CaptchaMaker {
 				ImageIO.write(scaledImage, "png", tmp);
 			}
 			catch (IOException e) {
-				throw new RuntimeEx(e);
+				throw ExUtil.newEx(e);
 			}
 		}
 		finally {

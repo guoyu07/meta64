@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /* 
  * Work in progress. Developing a way to import structured content out of JSON files stored in the uploaded zips so that the JSON 
@@ -51,12 +51,12 @@ public class JsonToJcrService {
 				newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:rssfeed");
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 			loadJcrRssFeedNode(map, newNode);
 		}
 		else {
-			throw new RuntimeEx("no JCROM class known for type: " + jcrType);
+			throw ExUtil.newEx("no JCROM class known for type: " + jcrType);
 		}
 		return newNode;
 	}
@@ -70,7 +70,7 @@ public class JsonToJcrService {
 			node.setProperty(propName, (String) map.get(propName));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

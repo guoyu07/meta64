@@ -21,8 +21,8 @@ import com.meta64.mobile.lucene.FileSearcher;
 import com.meta64.mobile.model.FileSearchResult;
 import com.meta64.mobile.request.FileSearchRequest;
 import com.meta64.mobile.response.FileSearchResponse;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 @Component
@@ -52,7 +52,7 @@ public class LuceneService {
 		Node node = JcrUtil.findNode(session, nodeId);
 		String path = JcrUtil.safeGetStringProp(node, "meta64:path");
 		if (StringUtils.isEmpty(path)) {
-			throw new RuntimeEx("No path specified to be indexed.");
+			throw ExUtil.newEx("No path specified to be indexed.");
 		}
 		fileIndexer.index(path, null);
 	}
@@ -64,7 +64,7 @@ public class LuceneService {
 			}
 
 			if (!appProp.isAllowFileSystemSearch()) {
-				throw new RuntimeEx("File system search is not enabled on the server.");
+				throw ExUtil.newEx("File system search is not enabled on the server.");
 			}
 
 			List<FileSearchResult> resultList = searcher.search(req.getSearchText(), 100);
@@ -95,7 +95,7 @@ public class LuceneService {
 			res.setSearchResultNodeId(newNode.getIdentifier());
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

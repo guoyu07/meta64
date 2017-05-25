@@ -16,10 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta64.mobile.model.FileSearchResult;
 import com.meta64.mobile.request.BrowseFolderRequest;
 import com.meta64.mobile.response.BrowseFolderResponse;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileLister;
 import com.meta64.mobile.util.IFileListingCallback;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -70,7 +70,7 @@ public class FileSystemService {
 			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

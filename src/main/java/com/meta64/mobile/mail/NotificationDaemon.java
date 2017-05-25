@@ -16,8 +16,8 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * This is a 'dedicated thread' for sending emails periodically. We need this daemon so that we can
@@ -105,7 +105,7 @@ public class NotificationDaemon {
 						node.remove();
 					}
 					catch (Exception e) {
-						throw new RuntimeEx(e);
+						throw ExUtil.newEx(e);
 					}
 					sessionDirty = true;
 				}

@@ -101,7 +101,7 @@ public class ImportWarAndPeace {
 			log.debug("book import successful.");
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class ImportWarAndPeace {
 			if (line.startsWith("CHAPTER ")) {
 				globalChapter++;
 				log.debug("Processing Chapter: " + line);
-				if (curBook == null) throw new RuntimeEx("book is null.");
+				if (curBook == null) throw ExUtil.newEx("book is null.");
 
 				addParagraph();
 
@@ -123,7 +123,7 @@ public class ImportWarAndPeace {
 			return false;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class ImportWarAndPeace {
 			return true;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -176,7 +176,7 @@ public class ImportWarAndPeace {
 			return false;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

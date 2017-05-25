@@ -60,7 +60,7 @@ public class Convert {
 			return mapper.writeValueAsString(obj);
 		}
 		catch (JsonProcessingException e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class Convert {
 			return nodeInfo;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class Convert {
 			return imageSize;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class Convert {
 					ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -220,7 +220,7 @@ public class Convert {
 			return props;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class Convert {
 			return propInfo;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -273,7 +273,7 @@ public class Convert {
 			return sb.toString();
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

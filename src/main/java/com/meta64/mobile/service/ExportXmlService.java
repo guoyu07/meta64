@@ -20,9 +20,9 @@ import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -57,18 +57,17 @@ public class ExportXmlService {
 		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
 
 		if (!exportAllowed && !sessionContext.isAdmin()) {
-			throw new RuntimeEx("export is an admin-only feature.");
+			throw ExUtil.newEx("export is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new RuntimeEx("adminDataFolder does not exist");
+			throw ExUtil.newEx("adminDataFolder does not exist");
 		}
 
 		if (nodeId.equals("/")) {
-			// exportEntireRepository(session);
-			throw new RuntimeEx("Backing up entire repository is not supported.");
+			throw ExUtil.newEx("Backing up entire repository is not supported.");
 		}
 		else {
 			String fileName = req.getTargetFileName();
@@ -92,52 +91,10 @@ public class ExportXmlService {
 			log.info("Exporting Document View.");
 			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, true);
 			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, false);
-
-			// exportNodeToFileSingleTextFile(session, nodeId, fileName);
 		}
 
 		res.setSuccess(true);
 	}
-
-	/*
-	 * Unfortunately the Apache Oak fails with errors related to UUID any time we try to import
-	 * something at the root like "/jcr:system" (confirmed by other users online also, this is not a
-	 * mistake I'm making but a mistake made by the Oak developers). As a second last ditch effort I
-	 * tried to backup one level down deeper (activities, nodeTypes, and versionStorage), but that
-	 * also results in exception getting thrown from inside Oak. Not my fault. They just don't have
-	 * this stuff working. I will leave this in place to show what has been tried, but for now, it
-	 * seems the only way to backup a reposity is to back up the actual MongoDB files themselves,
-	 * which is not a tragedy, but is definitely "bad" because we cannot back up in ASCII.
-	 */
-	// private void exportEntireRepository(Session session) {
-	// long time = System.currentTimeMillis();
-	//
-	// String fileName = String.format("full-backup-%d-jcr_systemActivities",
-	// time);
-	// exportNodeToXMLFile(session, "/jcr:system/jcr:activities", fileName);
-	//
-	// fileName = String.format("full-backup-%d-jcr_systemNodeTypes", time);
-	// exportNodeToXMLFile(session, "/jcr:system/jcr:nodeTypes", fileName);
-	//
-	// fileName = String.format("full-backup-%d-jcr_systemVersionStorage",
-	// time);
-	// exportNodeToXMLFile(session, "/jcr:system/jcr:versionStorage", fileName);
-	//
-	// fileName = String.format("full-backup-%d-rep_security", time);
-	// exportNodeToXMLFile(session, "/rep:security", fileName);
-	//
-	// fileName = String.format("full-backup-%d-oak_index", time);
-	// exportNodeToXMLFile(session, "/oak:index", fileName);
-	//
-	// fileName = String.format("full-backup-%d-meta64", time);
-	// exportNodeToXMLFile(session, "/meta64", fileName);
-	//
-	// fileName = String.format("full-backup-%d-userPreferences", time);
-	// exportNodeToXMLFile(session, "/userPreferences", fileName);
-	//
-	// fileName = String.format("full-backup-%d-root", time);
-	// exportNodeToXMLFile(session, "/root", fileName);
-	// }
 
 	private void exportNodeToXMLFile(Session session, String nodeId, String dirName, String fileName, ExportXMLViewType formatType, boolean includeBinaries) {
 
@@ -150,11 +107,11 @@ public class ExportXmlService {
 			fileNameSuffix = "DOCVIEW" + (includeBinaries ? "_BIN" : "_NOBIN");
 			break;
 		default:
-			throw new RuntimeEx("Invalid format type");
+			throw ExUtil.newEx("Invalid format type");
 		}
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new RuntimeEx("adminDataFolder does not exist.");
+			throw ExUtil.newEx("adminDataFolder does not exist.");
 		}
 
 		fileName = fileName.replace(".", "_");
@@ -166,7 +123,7 @@ public class ExportXmlService {
 		String fullFileName = fullDir + File.separator + fileName + "-" + fileNameSuffix + ".xml";
 
 		if (FileTools.fileExists(fullFileName)) {
-			throw new RuntimeEx("File already exists.");
+			throw ExUtil.newEx("File already exists.");
 		}
 
 		Node exportNode = JcrUtil.findNode(session, nodeId);
@@ -193,7 +150,7 @@ public class ExportXmlService {
 					session.exportDocumentView(exportPath, output, !includeBinaries, false);
 					break;
 				default:
-					throw new RuntimeEx("Invalid format type");
+					throw ExUtil.newEx("Invalid format type");
 				}
 				output.flush();
 			}
@@ -202,7 +159,7 @@ public class ExportXmlService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

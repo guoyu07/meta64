@@ -3,7 +3,6 @@ package com.meta64.mobile.util;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -114,7 +113,7 @@ public class JcrUtil {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -125,7 +124,7 @@ public class JcrUtil {
 	public static void checkWriteAuthorized(Node node, String userName) {
 		if (JcrPrincipal.ADMIN.equals(userName)) return;
 
-		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw new RuntimeEx("Access failed.");
+		if (userName == null || !userName.equals(getRequiredStringProp(node, JcrProp.CREATED_BY))) throw ExUtil.newEx("Access failed.");
 	}
 
 	public static boolean isUserAccountRoot(SessionContext sessionContext, Node node) {
@@ -134,7 +133,7 @@ public class JcrUtil {
 			return node.getPath().equals(refInfo.getPath()) || node.getPath().equals(refInfo.getId());
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -143,7 +142,7 @@ public class JcrUtil {
 			return id.startsWith("/") ? session.getNode(id) : session.getNodeByIdentifier(id);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -177,10 +176,10 @@ public class JcrUtil {
 			return node.getNodes();
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
-	
+
 	public static Node getFirstChild(Session session, Node parentNode, boolean includeSystemNodes) {
 		try {
 			NodeIterator nodeIter = getNodes(parentNode);
@@ -207,7 +206,7 @@ public class JcrUtil {
 			return node;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -256,7 +255,7 @@ public class JcrUtil {
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -299,7 +298,7 @@ public class JcrUtil {
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -346,7 +345,7 @@ public class JcrUtil {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -363,7 +362,7 @@ public class JcrUtil {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -399,7 +398,7 @@ public class JcrUtil {
 			return false;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -425,7 +424,7 @@ public class JcrUtil {
 			return true;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -452,7 +451,7 @@ public class JcrUtil {
 
 			Node parent = session.getNode(parentPath);
 			if (parent == null) {
-				throw new RuntimeEx("Expected parent not found: " + parentPath);
+				throw ExUtil.newEx("Expected parent not found: " + parentPath);
 			}
 
 			boolean nodesCreated = false;
@@ -473,7 +472,7 @@ public class JcrUtil {
 
 					parent = parent.addNode(nameToken, primaryTypeName);
 					if (parent == null) {
-						throw new RuntimeEx("unable to create " + nameToken);
+						throw ExUtil.newEx("unable to create " + nameToken);
 					}
 					nodesCreated = true;
 
@@ -492,7 +491,7 @@ public class JcrUtil {
 			return parent;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -501,7 +500,7 @@ public class JcrUtil {
 			session.save();
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -543,7 +542,7 @@ public class JcrUtil {
 				node.remove();
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		}
 	}
@@ -581,7 +580,7 @@ public class JcrUtil {
 			return node.getProperty(propName).getValue().getString();
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -602,7 +601,7 @@ public class JcrUtil {
 			return node.getProperty(propName).getValue().getBoolean();
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

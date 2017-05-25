@@ -25,8 +25,8 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.NotLoggedInException;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -60,7 +60,7 @@ public class OakSessionAspect {
 	@Around("@annotation(com.meta64.mobile.aspect.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 		if (AppServer.isShuttingDown()) {
-			throw new RuntimeEx("Server is shutting down.");
+			throw ExUtil.newEx("Server is shutting down.");
 		}
 
 		// ServletRequestAttributes attr = (ServletRequestAttributes)
@@ -193,7 +193,7 @@ public class OakSessionAspect {
 				res.setSuccess(false);
 				res.setMessage("Wrong username/password.");
 			}
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 }

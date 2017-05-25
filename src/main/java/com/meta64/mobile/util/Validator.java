@@ -14,12 +14,12 @@ public class Validator {
 	 */
 	public static void checkUserName(String text) {
 		int len = text.length();
-		if (len < 3 || len > 100) throw new RuntimeEx("Username must be between 3 and 100 characters long.");
+		if (len < 3 || len > 100) throw ExUtil.newEx("Username must be between 3 and 100 characters long.");
 
 		for (int i = 0; i < len; i++) {
 			char c = text.charAt(i);
 			if (!(Character.isLetterOrDigit(c) || c == '-' || c == '_' || c == ' ')) {
-				throw new RuntimeEx("Username can contain only letters, digits, dashes, underscores, and spaces. invalid[" + text + "]");
+				throw ExUtil.newEx("Username can contain only letters, digits, dashes, underscores, and spaces. invalid[" + text + "]");
 			}
 		}
 	}
@@ -27,11 +27,11 @@ public class Validator {
 	/* passwords are only checked for length of 5 thru 100 */
 	public static void checkPassword(String text) {
 		int len = text.length();
-		if (len < 5 || len > 40) throw new RuntimeEx("Password must be between 5 and 40 characters long.");
+		if (len < 5 || len > 40) throw ExUtil.newEx("Password must be between 5 and 40 characters long.");
 	}
 
 	public static void checkEmail(String text) {
 		int len = text.length();
-		if (len < 7 || len > 100) throw new RuntimeEx("Invalid email address");
+		if (len < 7 || len > 100) throw ExUtil.newEx("Invalid email address");
 	}
 }

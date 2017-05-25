@@ -13,8 +13,8 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -49,7 +49,7 @@ public class RssDbWriter {
 
 			Node feedNode = JcrUtil.findNode(session, feedNodeInfo.getNodeId());
 			if (feedNode == null) {
-				throw new RuntimeEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
+				throw ExUtil.newEx("unable to find feed node id: " + feedNodeInfo.getNodeId());
 			}
 
 			// todo-1: need to check these and see if they are changed before we expend the cycles
@@ -70,7 +70,7 @@ public class RssDbWriter {
 				JcrUtil.save(session);
 			}
 			catch (Exception e) {
-				throw new RuntimeEx(e);
+				throw ExUtil.newEx(e);
 			}
 		});
 	}
@@ -90,7 +90,7 @@ public class RssDbWriter {
 			JcrUtil.timestampNewNode(session, newNode);
 
 			if (StringUtils.isEmpty(entry.getTitle())) {
-				throw new RuntimeEx("SyndEntry.title is empty.");
+				throw ExUtil.newEx("SyndEntry.title is empty.");
 			}
 
 			newNode.setProperty(JcrProp.RSS_ITEM_TITLE, entry.getTitle());
@@ -98,7 +98,7 @@ public class RssDbWriter {
 			if (entry.getDescription() != null) {
 				String desc = entry.getDescription().getValue();
 				if (StringUtils.isEmpty(desc)) {
-					throw new RuntimeEx("SyndEntry.desc is empty.");
+					throw ExUtil.newEx("SyndEntry.desc is empty.");
 				}
 
 				desc = desc.replaceAll("[^\\p{ASCII}]", "");
@@ -129,7 +129,7 @@ public class RssDbWriter {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 

@@ -19,8 +19,8 @@ import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.VarUtil;
@@ -65,7 +65,7 @@ public class NodeMoveService {
 			setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread, allowPrivelegeEscalation);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -99,28 +99,28 @@ public class NodeMoveService {
 			if (translateName.equalsIgnoreCase("[nodeBelow]")) {
 				Node nodeBelow = JcrUtil.getNodeBelow(session, parentNode, null, nodeId);
 				if (nodeBelow == null) {
-					throw new RuntimeEx("no next sibling found.");
+					throw ExUtil.newEx("no next sibling found.");
 				}
 				translateName = nodeBelow.getName();
 			}
 			else if (translateName.equalsIgnoreCase("[nodeAbove]")) {
 				Node nodeAbove = JcrUtil.getNodeAbove(session, parentNode, null, nodeId);
 				if (nodeAbove == null) {
-					throw new RuntimeEx("no previous sibling found.");
+					throw ExUtil.newEx("no previous sibling found.");
 				}
 				translateName = nodeAbove.getName();
 			}
 			else if (translateName.equalsIgnoreCase("[topNode]")) {
 				Node topNode = JcrUtil.getFirstChild(session, parentNode, false);
 				if (topNode == null) {
-					throw new RuntimeEx("no first child found under parent node.");
+					throw ExUtil.newEx("no first child found under parent node.");
 				}
 				translateName = topNode.getName();
 			}
 			return translateName;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -153,7 +153,7 @@ public class NodeMoveService {
 						}
 					}
 					catch (Exception ex) {
-						throw new RuntimeEx(ex);
+						throw ExUtil.newEx(ex);
 					}
 				});
 			}
@@ -166,7 +166,7 @@ public class NodeMoveService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class NodeMoveService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -269,7 +269,7 @@ public class NodeMoveService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -305,7 +305,7 @@ public class NodeMoveService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class FileTools {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

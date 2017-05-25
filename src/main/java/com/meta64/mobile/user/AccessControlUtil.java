@@ -22,7 +22,7 @@ import org.apache.jackrabbit.oak.spi.security.principal.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.ExUtil;
 
 /**
  * Utility methods for changing access controls on nodes. This is: who can read nodes, modify nodes,
@@ -69,7 +69,7 @@ public class AccessControlUtil {
 			return privileges.toArray(privArr);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class AccessControlUtil {
 			return AccessControlUtils.allow(node, principal.getName(), privilegeNames.toArray(new String[privilegeNames.size()]));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -98,11 +98,11 @@ public class AccessControlUtil {
 				return true;
 			}
 			else {
-				throw new RuntimeEx("Unable to find AccessControlList");
+				throw ExUtil.newEx("Unable to find AccessControlList");
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class AccessControlUtil {
 			return principals;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -176,7 +176,7 @@ public class AccessControlUtil {
 			return acl != null ? acl.getAccessControlEntries() : null;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -213,7 +213,7 @@ public class AccessControlUtil {
 			return null;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -290,7 +290,7 @@ public class AccessControlUtil {
 			return policyChanged;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

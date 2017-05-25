@@ -12,9 +12,9 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.request.InsertBookRequest;
 import com.meta64.mobile.response.InsertBookResponse;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ImportWarAndPeace;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
@@ -30,7 +30,7 @@ public class ImportBookService {
 			session = ThreadLocals.getJcrSession();
 		}
 		if (!sessionContext.isAdmin() && !sessionContext.isTestAccount()) {
-			throw new RuntimeEx("insertBook is an admin-only feature.");
+			throw ExUtil.newEx("insertBook is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();

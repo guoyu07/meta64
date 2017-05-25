@@ -121,8 +121,8 @@ import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.DesktopApi;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.NotLoggedInException;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
@@ -382,7 +382,7 @@ public class AppController {
 			exportZipService.export(null, req, res);
 		}
 		else {
-			throw new RuntimeEx("Unsupported file extension.");
+			throw ExUtil.newEx("Unsupported file extension.");
 		}
 		return res;
 	}
@@ -404,12 +404,12 @@ public class AppController {
 			 */
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
-			throw new RuntimeEx("This code path is currently disabled, but adding an attachment zip file can do this.");
+			throw ExUtil.newEx("This code path is currently disabled, but adding an attachment zip file can do this.");
 			// importXmlService.importFromZip(null, req, res);
 			// ThreadLocals.getJcrSession().save();
 		}
 		else {
-			throw new RuntimeEx("Unable to import from file with unknown extension: " + fileName);
+			throw ExUtil.newEx("Unable to import from file with unknown extension: " + fileName);
 		}
 		return res;
 	}
@@ -466,7 +466,7 @@ public class AppController {
 		logRequest("insertBook", req);
 		InsertBookResponse res = new InsertBookResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new RuntimeEx("admin only function.");
+			throw ExUtil.newEx("admin only function.");
 		}
 		checkHttpSession();
 		importBookService.insertBook(null, req, res);
@@ -613,7 +613,7 @@ public class AppController {
 	public @ResponseBody BrowseFolderResponse browseFolder(@RequestBody BrowseFolderRequest req) {
 		logRequest("browseFolder", req);
 		if (!sessionContext.isAdmin()) {
-			throw new RuntimeEx("admin only function.");
+			throw ExUtil.newEx("admin only function.");
 		}
 		BrowseFolderResponse res = new BrowseFolderResponse();
 		checkHttpSession();
@@ -674,7 +674,7 @@ public class AppController {
 		logRequest("getServerInfo", req);
 		GetServerInfoResponse res = new GetServerInfoResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new RuntimeEx("admin only function.");
+			throw ExUtil.newEx("admin only function.");
 		}
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
@@ -688,7 +688,7 @@ public class AppController {
 		logRequest("generateRSS", req);
 		GenerateRSSResponse res = new GenerateRSSResponse();
 		if (!sessionContext.isAdmin()) {
-			throw new RuntimeEx("admin only function.");
+			throw ExUtil.newEx("admin only function.");
 		}
 		rssService.readFeedsNow();
 		res.setSuccess(true);
@@ -730,7 +730,7 @@ public class AppController {
 		SplitNodeResponse res = new SplitNodeResponse();
 		checkHttpSession();
 		if (!sessionContext.isAdmin()) {
-			throw new RuntimeEx("generateRSS is an admin only function.");
+			throw ExUtil.newEx("generateRSS is an admin only function.");
 		}
 		nodeEditService.splitNode(null, req, res);
 		return res;

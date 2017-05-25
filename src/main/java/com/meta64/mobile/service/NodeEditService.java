@@ -39,10 +39,9 @@ import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SplitNodeResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -168,7 +167,7 @@ public class NodeEditService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -210,7 +209,7 @@ public class NodeEditService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -241,7 +240,7 @@ public class NodeEditService {
 
 			String newName = req.getNewName().trim();
 			if (newName.length() == 0) {
-				throw new RuntimeEx("No node name provided.");
+				throw ExUtil.newEx("No node name provided.");
 			}
 
 			log.debug("Renaming node: " + nodeId);
@@ -256,7 +255,7 @@ public class NodeEditService {
 
 			Node checkExists = JcrUtil.safeFindNode(session, newPath);
 			if (checkExists != null) {
-				throw new RuntimeEx("Node already exists");
+				throw ExUtil.newEx("Node already exists");
 			}
 
 			/*
@@ -283,13 +282,13 @@ public class NodeEditService {
 			 */
 			node = JcrUtil.findNode(session, newPath);
 			if (node == null) {
-				throw new RuntimeEx("Failed to be able to readback node just named: " + newPath);
+				throw ExUtil.newEx("Failed to be able to readback node just named: " + newPath);
 			}
 			res.setNewId(node.getIdentifier());
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -312,7 +311,7 @@ public class NodeEditService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -332,7 +331,7 @@ public class NodeEditService {
 			String commentBy = JcrUtil.safeGetStringProp(node, JcrProp.COMMENT_BY);
 			if (commentBy != null) {
 				if (!commentBy.equals(session.getUserID())) {
-					throw new RuntimeEx("You cannot edit someone elses comment.");
+					throw ExUtil.newEx("You cannot edit someone elses comment.");
 				}
 				session.logout();
 				session = oak.newAdminSession();
@@ -387,7 +386,7 @@ public class NodeEditService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -408,7 +407,7 @@ public class NodeEditService {
 				prop.remove();
 			}
 			else {
-				throw new RuntimeEx("Unable to find property to delete: " + propertyName);
+				throw ExUtil.newEx("Unable to find property to delete: " + propertyName);
 			}
 		}
 		catch (Exception e) {
@@ -493,7 +492,7 @@ public class NodeEditService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -517,7 +516,7 @@ public class NodeEditService {
 			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

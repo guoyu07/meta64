@@ -29,8 +29,8 @@ import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.request.FileSearchRequest;
 import com.meta64.mobile.response.FileSearchResponse;
 import com.meta64.mobile.user.UserManagerUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /* Performs searching against some Solr Client (over the network, like a microservice) */
@@ -50,7 +50,7 @@ public class SolrSearchService {
 			}
 
 			if (!appProp.isAllowFileSystemSearch()) {
-				throw new RuntimeEx("File system search is not enabled on the server.");
+				throw ExUtil.newEx("File system search is not enabled on the server.");
 			}
 
 			SolrClient solr = new HttpSolrClient.Builder(appProp.getSolrSearchHost()).build();
@@ -100,7 +100,7 @@ public class SolrSearchService {
 			res.setSearchResultNodeId(newNode.getIdentifier());
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

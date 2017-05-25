@@ -20,8 +20,8 @@ import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * Utilities related to user management.
@@ -46,7 +46,7 @@ public class UserManagerUtil {
 			return authorizable;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -85,13 +85,13 @@ public class UserManagerUtil {
 					//todo-0: i get this failure obviously even after removing the nodes representing the user, because the user is STILL in the JCR!!!
 					//I had been mistakenly thinking i can just delete a user's SubNode root node, and that removes the user, but this is not the case
 					//because the JCR itself has the user registered.
-					throw new RuntimeEx("UserName is already taken."); 
+					throw ExUtil.newEx("UserName is already taken."); 
 				}
 			}
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class UserManagerUtil {
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -128,7 +128,7 @@ public class UserManagerUtil {
 			return new RefInfo(rootNode.getIdentifier(), rootNode.getPath());
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -136,7 +136,7 @@ public class UserManagerUtil {
 		try {
 			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
 			if (allUsersRoot == null) {
-				throw new RuntimeEx("/root not found!");
+				throw ExUtil.newEx("/root not found!");
 			}
 
 			log.debug("Creating root node, which didn't exist.");
@@ -144,7 +144,7 @@ public class UserManagerUtil {
 			Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
 			JcrUtil.timestampNewNode(session, newNode);
 			if (newNode == null) {
-				throw new RuntimeEx("unable to create root");
+				throw ExUtil.newEx("unable to create root");
 			}
 
 			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
@@ -155,7 +155,7 @@ public class UserManagerUtil {
 			return true;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -166,7 +166,7 @@ public class UserManagerUtil {
 			((User) authorizable).changePassword(newPassword);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -193,7 +193,7 @@ public class UserManagerUtil {
 			}
 			catch (Exception e2) {
 				log.debug("Admin user login failed with configured credentials AND default. Unable to connect. Server will fail.");
-				throw new RuntimeEx(e2);
+				throw ExUtil.newEx(e2);
 			}
 		}
 		finally {

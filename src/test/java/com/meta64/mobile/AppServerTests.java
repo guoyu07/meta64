@@ -1,9 +1,5 @@
 package com.meta64.mobile;
 
-import javax.jcr.Node;
-
-//see deprecation notes below.
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +12,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.service.NodeSearchService;
@@ -26,7 +20,6 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 //NOTE: One online post said use this: (haven't tried this)
 //      @RunWith(SpringRunner.class)
 //      @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppServer.class)
 @WebAppConfiguration
@@ -41,7 +34,6 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 @TestPropertySource({ "classpath:application.properties", "file:/home/clay/ferguson/meta64Oak-private/test.properties" })
 public class AppServerTests {
 
-	private static final String fakeCaptcha = "nocaptcha";
 	private static final Logger log = LoggerFactory.getLogger(AppServerTests.class);
 
 	@Autowired
@@ -84,7 +76,19 @@ public class AppServerTests {
 		_oakRepository = oakRepository;
 
 		adminRunner.run(session -> {
-			log.debug("$$$$$$$$$$$$$$$$$$$$ SubNode is running! You did it!");
+			log.debug("$$$$$$$$$$$$$$$$$$$$ SubNode test is running! You did it!");
+		});
+	}
+	
+	@Test
+	public void secondTest() throws Exception {
+
+		// we must save on a static variable to have the @AfterClass able to
+		// run. Autowiring a static won't work
+		_oakRepository = oakRepository;
+
+		adminRunner.run(session -> {
+			log.debug("$$$$$$$$$$$$$$$$$$$$ Second SubNode test is running.");
 		});
 	}
 }

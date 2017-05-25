@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.model.FileSearchResult;
-import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.ExUtil;
 
 /* 
  * Take another look at synchornized blocks in this code. I'm troubleshooting and putting in temporary sync code right now.
@@ -60,7 +60,7 @@ public class FileSearcher {
 		initialized = true;
 
 		if (StringUtils.isEmpty(appProp.getLuceneDir())) {
-			throw new RuntimeEx("Lucend Data Dir is not configured.");
+			throw ExUtil.newEx("Lucend Data Dir is not configured.");
 		}
 
 		try {
@@ -68,7 +68,7 @@ public class FileSearcher {
 			reader = DirectoryReader.open(fsDir);
 		}
 		catch (IOException e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 		searcher = new IndexSearcher(reader);
 		if (searcher != null) {
@@ -93,7 +93,7 @@ public class FileSearcher {
 			}
 		}
 		catch (IOException e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 		return null;
 	}
@@ -122,7 +122,7 @@ public class FileSearcher {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 		return results;
 	}

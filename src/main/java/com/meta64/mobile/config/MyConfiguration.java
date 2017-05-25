@@ -4,7 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -18,6 +21,14 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
 	@Autowired
 	private AppProp appProp;
 
+	/* To avoid error message during startup "No qualifying bean of type 'org.springframework.scheduling.TaskScheduler' available" 
+	 * we have to provide spring with a Task Scheduler.
+	 */
+	@Bean
+	public TaskScheduler taskScheduler() {
+	    return new ConcurrentTaskScheduler(); //single threaded by default
+	}
+	
 	// @Override
 	// public void addViewControllers(ViewControllerRegistry registry) {
 	// /* can use redirect or forward */

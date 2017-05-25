@@ -1,7 +1,6 @@
 package com.meta64.mobile.mail;
 
 import java.util.LinkedList;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -20,8 +19,8 @@ import com.meta64.mobile.config.JcrName;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * Meta64 has a node where it stores all emails that are queued up to be sent for whatever reason.
@@ -95,7 +94,7 @@ public class JcrOutboxMgr {
 			JcrUtil.save(session);
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -127,7 +126,7 @@ public class JcrOutboxMgr {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 		return mailNodes;
 	}

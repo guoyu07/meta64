@@ -31,7 +31,7 @@ public class Encryptor {
 	synchronized private void init() {
 		try {
 			if (appProp.getAesKey() == null || appProp.getAesKey().length() != 16) {
-				throw new RuntimeEx("bad aes key configured");
+				throw ExUtil.newEx("bad aes key configured");
 			}
 			if (aesKey == null) {
 				aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
@@ -39,7 +39,7 @@ public class Encryptor {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -50,7 +50,7 @@ public class Encryptor {
 			return DatatypeConverter.printBase64Binary(cipher.doFinal(text.getBytes()));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class Encryptor {
 			return new String(cipher.doFinal(DatatypeConverter.parseBase64Binary(text)));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 
 /* References:
@@ -70,7 +70,7 @@ public class TypeService {
 				}
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 	}
@@ -95,7 +95,7 @@ public class TypeService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -126,7 +126,7 @@ public class TypeService {
 			mgr.registerNodeType(type, true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

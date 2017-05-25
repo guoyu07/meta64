@@ -40,9 +40,9 @@ import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
@@ -88,17 +88,17 @@ public class ExportZipService {
 		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
 
 		if (!exportAllowed && !sessionContext.isAdmin()) {
-			throw new RuntimeEx("export is an admin-only feature.");
+			throw ExUtil.newEx("export is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new RuntimeEx("adminDataFolder does not exist");
+			throw ExUtil.newEx("adminDataFolder does not exist");
 		}
 
 		if (nodeId.equals("/")) {
-			throw new RuntimeEx("Backing up entire repository is not supported.");
+			throw ExUtil.newEx("Backing up entire repository is not supported.");
 		}
 		else {
 			String fileName = req.getTargetFileName();
@@ -112,7 +112,7 @@ public class ExportZipService {
 			 * so we just require a filename that does not already exist.
 			 */
 			if (FileTools.fileExists(fullZipName)) {
-				throw new RuntimeEx("File already exists: " + fullZipName);
+				throw ExUtil.newEx("File already exists: " + fullZipName);
 			}
 
 			boolean success = false;
@@ -124,7 +124,7 @@ public class ExportZipService {
 				success = true;
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 			finally {
 				StreamUtil.close(zos);
@@ -147,7 +147,7 @@ public class ExportZipService {
 			nodeIter = JcrUtil.getNodes(node);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		try {
 			while (true) {
@@ -224,7 +224,7 @@ public class ExportZipService {
 			return fileName;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -266,7 +266,7 @@ public class ExportZipService {
 			zos.closeEntry();
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -306,7 +306,7 @@ public class ExportZipService {
 			return fileName;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -357,7 +357,7 @@ public class ExportZipService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -372,7 +372,7 @@ public class ExportZipService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

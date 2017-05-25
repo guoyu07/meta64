@@ -27,8 +27,8 @@ import com.meta64.mobile.response.GetSharedNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -92,7 +92,7 @@ public class NodeSearchService {
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class NodeSearchService {
 			return ret;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -178,7 +178,7 @@ public class NodeSearchService {
 				whereCount++;
 
 				if (useContains && useLike) {
-					throw new RuntimeEx("oops. Like + Contains. Use one or the other, not both.");
+					throw ExUtil.newEx("oops. Like + Contains. Use one or the other, not both.");
 				}
 
 				// For now the general search can just be made to search all properties, and so we
@@ -258,7 +258,7 @@ public class NodeSearchService {
 			log.debug("search results count: " + counter);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -336,7 +336,7 @@ public class NodeSearchService {
 			log.debug("search results count: " + counter);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

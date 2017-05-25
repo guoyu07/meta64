@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.ExUtil;
 
 /*
  * Implements and processes the sending of emails.
@@ -79,7 +79,7 @@ public class MailSender implements TransportListener {
 			transport.connect(appProp.getMailHost(), appProp.getMailUser(), appProp.getMailPassword());
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class MailSender implements TransportListener {
 				transport.close();
 			}
 			catch (Exception e) {
-				throw new RuntimeEx(e);
+				throw ExUtil.newEx(e);
 			}
 			transport = null;
 		}
@@ -105,11 +105,11 @@ public class MailSender implements TransportListener {
 	public boolean sendMail(String sendToAddress, String content, String subjectLine) {
 
 		if (transport == null) {
-			throw new RuntimeEx("Tried to use MailSender after close() call or without initializing.");
+			throw ExUtil.newEx("Tried to use MailSender after close() call or without initializing.");
 		}
 
 		if (waiting) {
-			throw new RuntimeEx("concurrency must be done via 'isBusy' before each call");
+			throw ExUtil.newEx("concurrency must be done via 'isBusy' before each call");
 		}
 
 		log.debug("send mail to address [" + sendToAddress + "]");
@@ -122,7 +122,7 @@ public class MailSender implements TransportListener {
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToAddress));
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 		// MULTIPART
 		// ---------------
@@ -138,7 +138,7 @@ public class MailSender implements TransportListener {
 			message.setContent(content, MIME_HTML);
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 
 		// can get alreadyconnected exception here ??
@@ -161,14 +161,14 @@ public class MailSender implements TransportListener {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 
 		/* if we are still pending, that means a timeout so we give up */
 		if (waiting) {
 			waiting = false;
 			log.debug("mail send failed.");
-			throw new RuntimeEx("mail system is not responding.  Email send failed.");
+			throw ExUtil.newEx("mail system is not responding.  Email send failed.");
 		}
 
 		return success;

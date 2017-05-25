@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.user.RunAsJcrAdmin;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 @Component
 public class IndexUtil {
@@ -45,7 +45,7 @@ public class IndexUtil {
 					FileUtils.deleteDirectory(new File(luceneIndexesDir));
 				}
 				catch (Exception e) {
-					throw new RuntimeEx(e);
+					throw ExUtil.newEx(e);
 				}
 			}
 
@@ -93,7 +93,7 @@ public class IndexUtil {
 					indexDefNode.remove();
 				}
 				catch (Exception e) {
-					throw new RuntimeEx(e);
+					throw ExUtil.newEx(e);
 				}
 			}
 			else {
@@ -145,7 +145,7 @@ public class IndexUtil {
 			JcrUtil.save(session);
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class IndexUtil {
 			}
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 }

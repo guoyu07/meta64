@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.ExUtil;
 
 @Component
 public class FileIndexer {
@@ -59,7 +59,7 @@ public class FileIndexer {
 		if (initialized) return;
 		initialized = true;
 		if (StringUtils.isEmpty(appProp.getLuceneDir())) {
-			throw new RuntimeEx("Lucend Data Dir is not configured.");
+			throw ExUtil.newEx("Lucend Data Dir is not configured.");
 		}
 
 		try {
@@ -67,7 +67,7 @@ public class FileIndexer {
 			writer = new IndexWriter(fsDir, FileSearcher.config);
 		}
 		catch (IOException e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 

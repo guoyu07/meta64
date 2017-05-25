@@ -16,8 +16,8 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.JcrPrincipal;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /**
  * This is a "Background Thread" which saves user settings for all users (who are logged in)
@@ -116,7 +116,7 @@ public class UserSettingsDaemon {
 			settings.getMap().clear();
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

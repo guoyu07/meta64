@@ -35,8 +35,8 @@ import com.meta64.mobile.rss.model.PlayerInfo;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.DateUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 
 /* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
  * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
@@ -192,7 +192,7 @@ public class RssService {
 			JcrUtil.save(session);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		log.info("RSS init complete.");
 	}
@@ -227,7 +227,7 @@ public class RssService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -249,7 +249,7 @@ public class RssService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

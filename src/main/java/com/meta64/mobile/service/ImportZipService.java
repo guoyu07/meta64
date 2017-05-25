@@ -26,10 +26,10 @@ import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.MimeUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.XString;
@@ -84,7 +84,7 @@ public class ImportZipService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -99,10 +99,10 @@ public class ImportZipService {
 			node.setProperty(JcrProp.NAME, lastPart);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		JcrUtil.timestampNewNode(session, node);
-		if (node == null) throw new RuntimeEx("Failed to create directory node");
+		if (node == null) throw ExUtil.newEx("Failed to create directory node");
 
 		/* Note: these entries end with "/" because they are all folders */
 		folderMap.put(entry.getName(), node);
@@ -114,7 +114,7 @@ public class ImportZipService {
 		String fileName = name.substring(name.lastIndexOf("/") + 1);
 		String folderNoSlash = XString.truncateAfterLast(name, "/");
 		Node folderNode = folderMap.get(folderNoSlash + "/");
-		if (folderNode == null) throw new RuntimeEx("unable to find folder node: " + folderNoSlash + "/");
+		if (folderNode == null) throw ExUtil.newEx("unable to find folder node: " + folderNoSlash + "/");
 
 		Node newNode = null;
 
@@ -150,7 +150,7 @@ public class ImportZipService {
 			JcrUtil.timestampNewNode(session, newNode);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -167,7 +167,7 @@ public class ImportZipService {
 			}
 
 			if (!sessionContext.isAdmin()) {
-				throw new RuntimeEx("import is an admin-only feature.");
+				throw ExUtil.newEx("import is an admin-only feature.");
 			}
 
 			String nodeId = req.getNodeId();
@@ -175,7 +175,7 @@ public class ImportZipService {
 			log.debug("Import to Node: " + importNode.getPath());
 
 			if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-				throw new RuntimeEx("adminDataFolder does not exist");
+				throw ExUtil.newEx("adminDataFolder does not exist");
 			}
 
 			String fileName = req.getSourceFileName();
@@ -184,7 +184,7 @@ public class ImportZipService {
 			String fullFileName = appProp.getAdminDataFolder() + File.separator + req.getSourceFileName();
 
 			if (!FileTools.fileExists(fullFileName)) {
-				throw new RuntimeEx("Import file not found.");
+				throw ExUtil.newEx("Import file not found.");
 			}
 
 			ZipInputStream zis = null;
@@ -206,7 +206,7 @@ public class ImportZipService {
 			res.setSuccess(true);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 

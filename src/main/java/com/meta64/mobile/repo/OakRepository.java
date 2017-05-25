@@ -39,8 +39,8 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.service.TypeService;
 import com.meta64.mobile.user.UserManagerUtil;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoTimeoutException;
@@ -144,10 +144,11 @@ public class OakRepository {
 			return getRepository().login(jcrUtil.getAdminCredentials());
 		}
 		catch (Exception e) {
-			throw new RuntimeEx(e);
+			throw ExUtil.newEx(e);
 		}
 	}
 
+	/* Called from SpringContextUtil#setApplicationContext, because we want to call only after all of Spring context is fully initialized */
 	public void init() {
 		if (initialized) return;
 
@@ -194,7 +195,7 @@ public class OakRepository {
 					// */.with(getSecurityProvider()).createRepository();
 				}
 				else if ("filesystem".equalsIgnoreCase(appProp.getDbStoreType())) {
-					throw new RuntimeEx("filesystem storage not yet supported.");
+					throw ExUtil.newEx("filesystem storage not yet supported.");
 					/*
 					 * The below code is just a sample of what I found online which I think works
 					 * but I've never tested. Since Java includes DerbyDB support alread built-in, i
@@ -222,7 +223,8 @@ public class OakRepository {
 				if (appProp.isIndexingEnabled()) {
 					indexProvider = new LuceneIndexProvider();
 
-					jcr = jcr.withAsyncIndexing();
+					/* JCR code uses 'sync' name here but i'm not sure where they get that from, I Just know it's their default (todo-1: research) */
+					jcr = jcr.withAsyncIndexing("async", 5);
 					jcr = jcr.with(new LuceneIndexEditorProvider());
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
 					jcr = jcr.with((Observer) indexProvider);
@@ -258,7 +260,7 @@ public class OakRepository {
 				throw e;
 			}
 			catch (Exception e) {
-				throw new RuntimeEx(e);
+				throw ExUtil.newEx(e);
 			}
 		}
 	}
@@ -285,6 +287,7 @@ public class OakRepository {
 
 					log.info("Awaiting executor shutdown");
 					try {
+						/* todo-1: If this timeout is too short, what would be the bad consequences of this? Hopefully no data corruption!!!?? */
 						executor.awaitTermination(5, TimeUnit.MINUTES);
 						log.info("Executor shutdown completed ok.");
 					}

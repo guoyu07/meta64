@@ -43,8 +43,8 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
@@ -180,7 +180,7 @@ public class UserManagerService {
 				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 	}
@@ -214,7 +214,7 @@ public class UserManagerService {
 					JcrUtil.save(session);
 				}
 				else {
-					throw new RuntimeEx("Signup Code is invalid.");
+					throw ExUtil.newEx("Signup Code is invalid.");
 				}
 			}
 			catch (Exception e) {
@@ -241,7 +241,7 @@ public class UserManagerService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -275,11 +275,11 @@ public class UserManagerService {
 
 		final String userName = req.getUserName();
 		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN) || userName.equalsIgnoreCase("administrator")) {
-			throw new RuntimeEx("Sorry, you can't be the new admin.");
+			throw ExUtil.newEx("Sorry, you can't be the new admin.");
 		}
 
 		if (userName.equalsIgnoreCase(EveryonePrincipal.NAME)) {
-			throw new RuntimeEx("Sorry, you can't be everyone.");
+			throw ExUtil.newEx("Sorry, you can't be everyone.");
 		}
 
 		final String password = req.getPassword();
@@ -299,7 +299,7 @@ public class UserManagerService {
 			 */
 			if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
 				log.debug("Captcha match!");
-				throw new RuntimeEx("Wrong captcha text.");
+				throw ExUtil.newEx("Wrong captcha text.");
 			}
 
 			initiateSignup(userName, password, email);
@@ -346,7 +346,7 @@ public class UserManagerService {
 			try {
 				try {
 					session.getNode("/" + JcrName.SIGNUP + "/" + userName);
-					throw new RuntimeEx("User name is already pending signup.");
+					throw ExUtil.newEx("User name is already pending signup.");
 				}
 				catch (Exception e) {
 					// normal flow. Not an error here.
@@ -354,7 +354,7 @@ public class UserManagerService {
 
 				Node signupNode = session.getNode("/" + JcrName.SIGNUP);
 				if (signupNode == null) {
-					throw new RuntimeEx("Signup node not found.");
+					throw ExUtil.newEx("Signup node not found.");
 				}
 
 				Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
@@ -366,7 +366,7 @@ public class UserManagerService {
 				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 	}
@@ -384,7 +384,7 @@ public class UserManagerService {
 			prefsNode.setProperty(JcrProp.USER_PREF_EDIT_MODE, false);
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -426,7 +426,7 @@ public class UserManagerService {
 				res.setSuccess(true);
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 	}
@@ -468,7 +468,7 @@ public class UserManagerService {
 			String userName = sessionContext.getUserName();
 			Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
 			if (allUsersRoot == null) {
-				throw new RuntimeEx("/root not found!");
+				throw ExUtil.newEx("/root not found!");
 			}
 
 			log.debug("Creating root node, which didn't exist.");
@@ -476,7 +476,7 @@ public class UserManagerService {
 			Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
 			JcrUtil.timestampNewNode(session, newNode);
 			if (newNode == null) {
-				throw new RuntimeEx("unable to create root");
+				throw ExUtil.newEx("unable to create root");
 			}
 
 			if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
@@ -487,7 +487,7 @@ public class UserManagerService {
 			return allUsersRoot;
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 
@@ -503,7 +503,7 @@ public class UserManagerService {
 				if (passCode != null) {
 					userForPassCode = getUserFromPassCode(session, passCode);
 					if (userForPassCode == null) {
-						throw new RuntimeEx("Invalid password reset code.");
+						throw ExUtil.newEx("Invalid password reset code.");
 					}
 				}
 				/*
@@ -528,7 +528,7 @@ public class UserManagerService {
 				JcrUtil.save(session);
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 
@@ -542,7 +542,7 @@ public class UserManagerService {
 		try {
 			long passCodeTime = Long.valueOf(passCode);
 			if (new Date().getTime() > passCodeTime) {
-				throw new RuntimeEx("Password Reset auth code has expired.");
+				throw ExUtil.newEx("Password Reset auth code has expired.");
 			}
 
 			/* search for the node with passCode property */
@@ -559,7 +559,7 @@ public class UserManagerService {
 				userName = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
 			}
 			else {
-				throw new RuntimeEx("Signup Code is invalid.");
+				throw ExUtil.newEx("Signup Code is invalid.");
 			}
 		}
 		catch (Exception e) {
@@ -643,7 +643,7 @@ public class UserManagerService {
 				res.setSuccess(true);
 			}
 			catch (Exception ex) {
-				throw new RuntimeEx(ex);
+				throw ExUtil.newEx(ex);
 			}
 		});
 	}

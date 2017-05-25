@@ -17,12 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.ConstantsProviderImpl;
-import com.meta64.mobile.config.SpringContextUtil;
 
 /**
  * This WebFilter is used to eliminate any need for something like JSPs or Thymeleaf, by providing
@@ -146,7 +144,7 @@ public class PreProcFilter implements Filter {
 			props.load(getClass().getResourceAsStream(propFile));
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		dumpProps();
 	}

@@ -21,9 +21,9 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -48,13 +48,13 @@ public class ImportXmlService {
 		boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
 
 		if (!importAllowed && !sessionContext.isAdmin()) {
-			throw new RuntimeEx("import is an admin-only feature.");
+			throw ExUtil.newEx("import is an admin-only feature.");
 		}
 
 		String nodeId = req.getNodeId();
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-			throw new RuntimeEx("adminDataFolder does not exist");
+			throw ExUtil.newEx("adminDataFolder does not exist");
 		}
 
 		String sourceFileName = req.getSourceFileName();
@@ -64,7 +64,7 @@ public class ImportXmlService {
 			// JcrUtil.removeRootNodes(session);
 
 			/* See notes above about backing up root not being doable */
-			throw new RuntimeEx("root restore not supported.");
+			throw ExUtil.newEx("root restore not supported.");
 
 			// importFromFileToNode(session, sourceFileName +
 			// "-jcr_systemNodeTypes.xml", nodeId);
@@ -97,7 +97,7 @@ public class ImportXmlService {
 			 * user.
 			 */
 			if (!session.getUserID().equals(createdBy) && !JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
-				throw new RuntimeEx("You cannot import onto a node you do not own.");
+				throw ExUtil.newEx("You cannot import onto a node you do not own.");
 			}
 
 			// adminRunner.run((Session adminSession) -> {
@@ -123,7 +123,7 @@ public class ImportXmlService {
 		String fullFileName = appProp.getAdminDataFolder() + File.separator + sourceFileName;
 
 		if (!FileTools.fileExists(fullFileName)) {
-			throw new RuntimeEx("Import file not found.");
+			throw ExUtil.newEx("Import file not found.");
 		}
 
 		try {
@@ -148,7 +148,7 @@ public class ImportXmlService {
 			 */
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 	}
 }

@@ -24,8 +24,8 @@ import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -53,7 +53,7 @@ public class AclService {
 		Node node = JcrUtil.findNode(session, nodeId);
 
 		if (!req.isIncludeAcl() && !req.isIncludeOwners()) {
-			throw new RuntimeEx("no specific information requested for getNodePrivileges");
+			throw ExUtil.newEx("no specific information requested for getNodePrivileges");
 		}
 
 		res.setPublicAppend(JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND));
@@ -130,7 +130,7 @@ public class AclService {
 			}
 		}
 		catch (Exception ex) {
-			throw new RuntimeEx(ex);
+			throw ExUtil.newEx(ex);
 		}
 		res.setSuccess(success);
 	}

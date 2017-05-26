@@ -82,6 +82,7 @@ public class ImportZipService {
 				}
 				zis.closeEntry();
 			}
+			zis.close();
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
@@ -95,6 +96,8 @@ public class ImportZipService {
 		log.info("DIR: " + name);
 
 		Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null, "meta64:folder", false);
+		if (node == null) throw ExUtil.newEx("Failed to create directory node");
+
 		try {
 			node.setProperty(JcrProp.NAME, lastPart);
 		}
@@ -102,7 +105,6 @@ public class ImportZipService {
 			throw ExUtil.newEx(ex);
 		}
 		JcrUtil.timestampNewNode(session, node);
-		if (node == null) throw ExUtil.newEx("Failed to create directory node");
 
 		/* Note: these entries end with "/" because they are all folders */
 		folderMap.put(entry.getName(), node);
@@ -143,6 +145,7 @@ public class ImportZipService {
 				byte[] bytes = IOUtils.toByteArray(zis);
 				ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 
+				/* Note: bais stream IS closed inside this method, so we don't close it here */
 				attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1, -1, newNode);
 			}
 
@@ -160,7 +163,7 @@ public class ImportZipService {
 	 * online soon. This would be used for admin purposes in order to load into the repository data
 	 * from a zip file located on a filesystem directly visible to the server.
 	 */
-	public void importFromZip(Session session, ImportRequest req, ImportResponse res) {
+	public void importFromZip_currently_not_used(Session session, ImportRequest req, ImportResponse res) {
 		try {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();

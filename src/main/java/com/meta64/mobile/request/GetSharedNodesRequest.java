@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class GetSharedNodesRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class GetSharedNodesRequest extends OakRequestBase {
 
 	/* can be node id or path. server interprets correctly no matter which */
 	private String nodeId;

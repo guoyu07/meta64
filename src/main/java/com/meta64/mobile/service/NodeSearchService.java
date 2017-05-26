@@ -95,7 +95,7 @@ public class NodeSearchService {
 			throw ExUtil.newEx(ex);
 		}
 	}
-	
+
 	public Node findNodeByProperty_test(Session session, String parentPath, String propName, String propVal) {
 		try {
 			QueryManager qm = session.getWorkspace().getQueryManager();
@@ -107,9 +107,9 @@ public class NodeSearchService {
 			queryStr.append("SELECT * from [nt:base] AS t WHERE ISDESCENDANTNODE([");
 			queryStr.append(parentPath);
 			queryStr.append("])");
-			//queryStr.append("]) AND t.[" + propName + "]='");
-			//queryStr.append(propVal);
-			//queryStr.append("'");
+			// queryStr.append("]) AND t.[" + propName + "]='");
+			// queryStr.append(propVal);
+			// queryStr.append("'");
 
 			String qStr = queryStr.toString();
 			log.debug("property query: " + qStr);
@@ -119,7 +119,7 @@ public class NodeSearchService {
 			Node ret = null;
 			while (nodes.hasNext()) {
 				ret = nodes.nextNode();
-				log.debug("   FOUND: path="+ret.getPath());
+				log.debug("   FOUND: path=" + ret.getPath());
 			}
 
 			log.debug(ret == null ? "Node not found." : "node found.");

@@ -127,15 +127,21 @@ public class NodeMoveService {
 	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread,
 			boolean allowPrivalegeEscalation) {
 		try {
-			//String parentPath = parentNode.getPath() + "/";
+			// String parentPath = parentNode.getPath() + "/";
 
 			/*
 			 * if we are moving nodes around on the root, the root belongs to admin and needs
 			 * special access (adminRunner)
 			 */
-			//todo-0: I'm slightly hastily removing the parentPath.equals check becuase this needs to cover the case where a user is simply
-			//creating a node under a node they don't own, and in that case also we need to escalate priv.
-			if (allowPrivalegeEscalation && isSessionThread /* && parentPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/") */) {
+			// todo-0: I'm slightly hastily removing the parentPath.equals check becuase this needs
+			// to cover the case where a user is simply
+			// creating a node under a node they don't own, and in that case also we need to
+			// escalate priv.
+			if (allowPrivalegeEscalation
+					&& isSessionThread /*
+										 * && parentPath.equals("/" + JcrName.ROOT + "/" +
+										 * sessionContext.getUserName() + "/")
+										 */) {
 				/*
 				 * Since we need to get access to this node on a different session we need to do a
 				 * 'save()' on the 'session'. This is similar to a commit on a RDBMS also where

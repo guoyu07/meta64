@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class ResetPasswordRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class ResetPasswordRequest extends OakRequestBase {
 	private String user;
 	private String email;
 

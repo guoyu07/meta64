@@ -1,4 +1,6 @@
 package com.meta64.mobile.request;
 
-public class GetServerInfoRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class GetServerInfoRequest extends OakRequestBase {
 }

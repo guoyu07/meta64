@@ -82,10 +82,12 @@ public class UserManagerUtil {
 					log.trace("Account Verified to Exist: " + userName);
 				}
 				else {
-					//todo-0: i get this failure obviously even after removing the nodes representing the user, because the user is STILL in the JCR!!!
-					//I had been mistakenly thinking i can just delete a user's SubNode root node, and that removes the user, but this is not the case
-					//because the JCR itself has the user registered.
-					throw ExUtil.newEx("UserName is already taken."); 
+					// todo-0: i get this failure obviously even after removing the nodes
+					// representing the user, because the user is STILL in the JCR!!!
+					// I had been mistakenly thinking i can just delete a user's SubNode root node,
+					// and that removes the user, but this is not the case
+					// because the JCR itself has the user registered.
+					throw ExUtil.newEx("UserName is already taken.");
 				}
 			}
 			return ret;

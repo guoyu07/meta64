@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class LoginRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class LoginRequest extends OakRequestBase {
 	private String userName;
 	private String password;
 

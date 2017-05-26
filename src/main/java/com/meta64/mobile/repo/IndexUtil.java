@@ -81,7 +81,8 @@ public class IndexUtil {
 	 * You can remove the 'persistence' and 'path' properties if you want the data stored in the
 	 * repository rather than on the file system.
 	 * 
-	 * NOTE: To force a rebuild of the indexes, set forceIndexRebuid to 'true' in the properties file, and restart the server.
+	 * NOTE: To force a rebuild of the indexes, set forceIndexRebuid to 'true' in the properties
+	 * file, and restart the server.
 	 */
 	public void createIndex(Session session, String indexName, boolean ordered, boolean fulltext, String sortPropName, String sortPropType, String targetType) {
 		Node indexNode = JcrUtil.findNode(session, JcrConst.PATH_INDEX);

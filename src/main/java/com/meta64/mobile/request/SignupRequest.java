@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class SignupRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class SignupRequest extends OakRequestBase {
 	private String userName;
 	private String password;
 	private String email;

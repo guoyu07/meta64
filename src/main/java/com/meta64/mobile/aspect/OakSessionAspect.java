@@ -30,6 +30,9 @@ import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
+ * todo-0: With java 8 Lambdas we can easily remove the need for any AOP from this app and simplify.
+ * (Spring AOP is ugly because of Proxies, so I plan to get rid if it)
+ * 
  * This is the core (and maybe only) chunk of AOP that we use in this app, that wraps the processing
  * of a JSON call and handles all the boilerplate for performing a JSON call on the server which
  * comes from the JQuery ajax calls from the client. Primarily we use the cross cutting concerns of
@@ -183,7 +186,7 @@ public class OakSessionAspect {
 		}
 
 		try {
-			//log.debug("userName[" + userName + "] password[" + password + "]");
+			// log.debug("userName[" + userName + "] password[" + password + "]");
 			Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new SimpleCredentials(userName, password.toCharArray());
 			Session session = oak.getRepository().login(cred);
 			return session;

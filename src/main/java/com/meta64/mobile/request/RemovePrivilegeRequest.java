@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class RemovePrivilegeRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class RemovePrivilegeRequest extends OakRequestBase {
 
 	private String nodeId;
 

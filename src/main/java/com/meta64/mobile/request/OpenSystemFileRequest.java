@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class OpenSystemFileRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class OpenSystemFileRequest extends OakRequestBase {
 	private String fileName;
 
 	public String getFileName() {

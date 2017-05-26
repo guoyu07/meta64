@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class DeletePropertyRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class DeletePropertyRequest extends OakRequestBase {
 	private String nodeId;
 	private String propName;
 

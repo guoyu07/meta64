@@ -21,14 +21,16 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
 	@Autowired
 	private AppProp appProp;
 
-	/* To avoid error message during startup "No qualifying bean of type 'org.springframework.scheduling.TaskScheduler' available" 
-	 * we have to provide spring with a Task Scheduler.
+	/*
+	 * To avoid error message during startup
+	 * "No qualifying bean of type 'org.springframework.scheduling.TaskScheduler' available" we have
+	 * to provide spring with a Task Scheduler.
 	 */
 	@Bean
 	public TaskScheduler taskScheduler() {
-	    return new ConcurrentTaskScheduler(); //single threaded by default
+		return new ConcurrentTaskScheduler(); // single threaded by default
 	}
-	
+
 	// @Override
 	// public void addViewControllers(ViewControllerRegistry registry) {
 	// /* can use redirect or forward */

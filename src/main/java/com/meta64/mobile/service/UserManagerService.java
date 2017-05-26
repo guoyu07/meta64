@@ -548,7 +548,7 @@ public class UserManagerService {
 			/* search for the node with passCode property */
 			Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.USER_PREFERENCES, //
 					JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, passCode);
-			
+
 			if (node != null) {
 				/*
 				 * it's a bit ugly that the JCR content is the property that holds the user, but

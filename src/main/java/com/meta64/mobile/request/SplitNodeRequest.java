@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class SplitNodeRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class SplitNodeRequest extends OakRequestBase {
 
 	private String nodeId;
 	private String nodeBelowId;

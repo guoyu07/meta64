@@ -1,9 +1,11 @@
 package com.meta64.mobile.request;
 
+import com.meta64.mobile.request.base.OakRequestBase;
+
 /* 
  * Moves a nodeId to be before siblingId. Setting siblingId null or empty moves nodeId to end of list 
  */
-public class SetNodePositionRequest {
+public class SetNodePositionRequest extends OakRequestBase {
 	private String parentNodeId;
 	private String nodeId;
 	private String siblingId;

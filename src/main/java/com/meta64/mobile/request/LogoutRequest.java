@@ -1,4 +1,6 @@
 package com.meta64.mobile.request;
 
-public class LogoutRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class LogoutRequest extends OakRequestBase {
 }

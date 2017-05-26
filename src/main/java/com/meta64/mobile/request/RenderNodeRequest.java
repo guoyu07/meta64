@@ -1,8 +1,9 @@
 package com.meta64.mobile.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.meta64.mobile.request.base.OakRequestBase;
 
-public class RenderNodeRequest {
+public class RenderNodeRequest extends OakRequestBase {
 
 	/* can be node id or path. server interprets correctly no matter which */
 	private String nodeId;

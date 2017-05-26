@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class ExpandAbbreviatedNodeRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class ExpandAbbreviatedNodeRequest extends OakRequestBase {
 	private String nodeId;
 
 	public String getNodeId() {

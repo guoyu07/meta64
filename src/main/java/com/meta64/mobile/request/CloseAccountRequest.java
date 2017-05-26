@@ -1,4 +1,6 @@
 package com.meta64.mobile.request;
 
-public class CloseAccountRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class CloseAccountRequest extends OakRequestBase {
 }

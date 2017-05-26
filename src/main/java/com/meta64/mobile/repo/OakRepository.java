@@ -148,7 +148,10 @@ public class OakRepository {
 		}
 	}
 
-	/* Called from SpringContextUtil#setApplicationContext, because we want to call only after all of Spring context is fully initialized */
+	/*
+	 * Called from SpringContextUtil#setApplicationContext, because we want to call only after all
+	 * of Spring context is fully initialized
+	 */
 	public void init() {
 		if (initialized) return;
 
@@ -223,7 +226,10 @@ public class OakRepository {
 				if (appProp.isIndexingEnabled()) {
 					indexProvider = new LuceneIndexProvider();
 
-					/* JCR code uses 'sync' name here but i'm not sure where they get that from, I Just know it's their default (todo-1: research) */
+					/*
+					 * JCR code uses 'sync' name here but i'm not sure where they get that from, I
+					 * Just know it's their default (todo-1: research)
+					 */
 					jcr = jcr.withAsyncIndexing("async", 5);
 					jcr = jcr.with(new LuceneIndexEditorProvider());
 					jcr = jcr.with((QueryIndexProvider) indexProvider);
@@ -287,7 +293,10 @@ public class OakRepository {
 
 					log.info("Awaiting executor shutdown");
 					try {
-						/* todo-1: If this timeout is too short, what would be the bad consequences of this? Hopefully no data corruption!!!?? */
+						/*
+						 * todo-1: If this timeout is too short, what would be the bad consequences
+						 * of this? Hopefully no data corruption!!!??
+						 */
 						executor.awaitTermination(5, TimeUnit.MINUTES);
 						log.info("Executor shutdown completed ok.");
 					}

@@ -184,7 +184,7 @@ public class AttachmentService {
 		// stream.close();
 	}
 
-	public void saveBinaryStreamToNode(Session session, InputStream is, String mimeType, String fileName, int width, int height, Node node) {
+	public void saveBinaryStreamToNode(Session session, InputStream inputStream, String mimeType, String fileName, int width, int height, Node node) {
 		try {
 			long version = System.currentTimeMillis();
 			Property binVerProp = JcrUtil.getProperty(node, JcrProp.BIN_VER);
@@ -192,7 +192,11 @@ public class AttachmentService {
 				version = binVerProp.getValue().getLong();
 			}
 
-			Binary binary = session.getValueFactory().createBinary(is);
+			/*
+			 * NOTE: 'inputStream' stream IS is closed inside 'createBinary' so we don't close it
+			 * here
+			 */
+			Binary binary = session.getValueFactory().createBinary(inputStream);
 
 			/*
 			 * The above 'createBinary' call will have already read the entire stream so we can now

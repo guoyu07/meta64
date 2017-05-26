@@ -3,7 +3,6 @@ package com.meta64.mobile.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +38,6 @@ import com.meta64.mobile.model.ExportPropertyInfo;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
-import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
@@ -48,15 +46,13 @@ import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.XString;
 
-/*
- * todo-0: need to alphabetically sort the properties in the outpout JSON text file
- *
+/**
+ * todo-0: need to alphabetically sort the properties in the output JSON text file
  */
 @Component
 @Scope("prototype")
 public class ExportZipService {
 	private static final Logger log = LoggerFactory.getLogger(ExportZipService.class);
-	private SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
 
 	private ZipOutputStream zos;
 
@@ -68,8 +64,8 @@ public class ExportZipService {
 	private static final ObjectWriter jsonWriter = objectMapper.writerWithDefaultPrettyPrinter();
 
 	/*
-	 * It's possible that nodes under a given node can have same name, so we have to detect that and
-	 * number them, so we use this hashset to detect existing filenames.
+	 * It's possible that nodes recursively contained under a given node can have same name, so we
+	 * have to detect that and number them, so we use this hashset to detect existing filenames.
 	 */
 	private HashSet<String> fileNameSet = new HashSet<String>();
 
@@ -79,6 +75,13 @@ public class ExportZipService {
 	@Autowired
 	private SessionContext sessionContext;
 
+	/**
+	 * Exports the node specified in 'req' into a zip file.
+	 * 
+	 * @param session
+	 * @param req
+	 * @param res
+	 */
 	public void export(Session session, ExportRequest req, ExportResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
@@ -91,11 +94,11 @@ public class ExportZipService {
 			throw ExUtil.newEx("export is an admin-only feature.");
 		}
 
-		String nodeId = req.getNodeId();
-
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
 			throw ExUtil.newEx("adminDataFolder does not exist");
 		}
+
+		String nodeId = req.getNodeId();
 
 		if (nodeId.equals("/")) {
 			throw ExUtil.newEx("Backing up entire repository is not supported.");
@@ -103,13 +106,15 @@ public class ExportZipService {
 		else {
 			String fileName = req.getTargetFileName();
 			String fullZipName = appProp.getAdminDataFolder() + File.separator + fileName;
+
+			// append zip extension if not provided
 			if (!fullZipName.toLowerCase().endsWith(".zip")) {
 				fullZipName += ".zip";
 			}
 
 			/*
 			 * We don't support overwriting existing files, since exported files are so important,
-			 * so we just require a filename that does not already exist.
+			 * so we always require a filename that does not already exist.
 			 */
 			if (FileTools.fileExists(fullZipName)) {
 				throw ExUtil.newEx("File already exists: " + fullZipName);
@@ -141,7 +146,10 @@ public class ExportZipService {
 	private void recurseNode(String parentFolder, Node node, int level) {
 		if (node == null) return;
 
+		/* process the current node */
 		String folder = processNodeExport(parentFolder, node);
+
+		/* then recursively process all children of the current node */
 		NodeIterator nodeIter;
 		try {
 			nodeIter = JcrUtil.getNodes(node);
@@ -149,6 +157,7 @@ public class ExportZipService {
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
 		}
+
 		try {
 			while (true) {
 				Node n = nodeIter.nextNode();
@@ -162,23 +171,22 @@ public class ExportZipService {
 
 	/*
 	 * NOTE: It's correct that there's no finally block in here enforcing the closeEntry, becasue we
-	 * let exceptions bubble all the way up to abort and even cause the zip file itself to be
-	 * deleted since it was unable to be written to.
+	 * let exceptions bubble all the way up to abort and even cause the zip file itself (to be
+	 * deleted) since it was unable to be written to.
 	 */
 	private String processNodeExport(String parentFolder, Node node) {
 		try {
 			PropertyIterator propsIter = node.getProperties();
-			List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
 
 			log.debug("Processing Node: " + node.getPath());
 
-			/*
-			 * Top preference for fileName is the nodeName if there is one
-			 * 
-			 * todo-0: need to add valid characters conversion if necessary.
-			 */
 			String fileName = generateFileNameFromNode(node);
 
+			/*
+			 * the processProperty calls in the while loop below loads into these variables, in
+			 * addition to doing what it does.
+			 */
+			List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
 			ValContainer<String> contentText = new ValContainer<String>();
 			ValContainer<Property> binDataProp = new ValContainer<Property>();
 			ValContainer<String> binFileName = new ValContainer<String>();
@@ -200,14 +208,18 @@ public class ExportZipService {
 			/* If content property was found write it into separate file */
 			if (contentText.getVal() != null) {
 				/*
-				 * In situations where the fileName happens to equal the contentText it is desirable
-				 * to not even write the content text file because it would be redundant.
+				 * In situations where the fileName happens to equal the contentText we do not even
+				 * write the content text file because it would be redundant.
 				 */
 				if (!fileName.trim().equals(contentText.getVal().trim())) {
 					addFileEntry(parentFolder + "/" + fileName + "/" + fileName + ".txt", contentText.getVal().getBytes());
 				}
 			}
 
+			/*
+			 * If we had a binary property on this node we write the binary file into a separate
+			 * file
+			 */
 			if (binDataProp.getVal() != null) {
 				String binFileNameStr = binFileName.getVal() == null ? "binary" : binFileName.getVal();
 
@@ -246,7 +258,7 @@ public class ExportZipService {
 	}
 
 	private void addFileEntry(String fileName, byte[] bytes) {
-		/* If we have dupliated a filename, number it */
+		/* If we have duplicated a filename, number it sequentially to create a unique file */
 		if (fileNameSet.contains(fileName)) {
 			int idx = 1;
 			String numberedFileName = fileName + String.valueOf(idx);
@@ -279,9 +291,9 @@ public class ExportZipService {
 
 			/*
 			 * The only way I know to tell if the 'node.getName()' will return something the user
-			 * named it to (meaning not some long hex code GUI), is by checking if we set
+			 * named it to (meaning not some long hex code GUID), is by checking if we set
 			 * referencable or not. Not sure if this is a good long term solution but is good for
-			 * now
+			 * now.
 			 */
 			if (StringUtils.isEmpty(fileName) && node.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
 				fileName = node.getName();

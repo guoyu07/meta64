@@ -13,9 +13,6 @@ import com.meta64.mobile.util.JcrRunnable;
 /**
  * Helper class to run some processing workload as the admin user. Simplifies by encapsulating the
  * session management at this abstracted layer.
- * 
- * The use of this class really shows off the new features of Java 8, if you look at the syntax of
- * where this run method is called from.
  */
 @Component
 public class RunAsJcrAdmin {
@@ -31,10 +28,10 @@ public class RunAsJcrAdmin {
 			session = oak.newAdminSession();
 			runner.run(session);
 		}
-		catch (Exception ex) {
-			log.error("error", ex);
-			throw ex;
-		}
+		// catch (Exception ex) {
+		// log.error("error", ex);
+		// throw ex;
+		// }
 		finally {
 			if (session != null) {
 				session.logout();

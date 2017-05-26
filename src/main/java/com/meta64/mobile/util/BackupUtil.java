@@ -20,7 +20,7 @@ public class BackupUtil {
 		log.debug("App Started, and will shutdown now.");
 
 		try {
-			//command line app can run here.
+			// command line app can run here.
 		}
 		catch (Exception e) {
 			log.error("Backup failed.", e);

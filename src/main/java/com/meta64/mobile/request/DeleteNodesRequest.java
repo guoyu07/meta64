@@ -2,7 +2,9 @@ package com.meta64.mobile.request;
 
 import java.util.List;
 
-public class DeleteNodesRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class DeleteNodesRequest extends OakRequestBase {
 	private List<String> nodeIds;
 
 	public List<String> getNodeIds() {

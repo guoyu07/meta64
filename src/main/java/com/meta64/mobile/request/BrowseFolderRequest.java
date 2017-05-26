@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class BrowseFolderRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class BrowseFolderRequest extends OakRequestBase {
 
 	private String nodeId;
 

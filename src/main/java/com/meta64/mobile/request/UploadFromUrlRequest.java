@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class UploadFromUrlRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class UploadFromUrlRequest extends OakRequestBase {
 
 	private String nodeId;
 	private String sourceUrl;

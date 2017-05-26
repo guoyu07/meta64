@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class ImportRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class ImportRequest extends OakRequestBase {
 	private String nodeId;
 
 	/*

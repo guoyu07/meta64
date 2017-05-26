@@ -61,28 +61,8 @@ public class ImportXmlService {
 
 		if (nodeId.equals("/") && sourceFileName.startsWith("full-backup-")) {
 
-			// JcrUtil.removeRootNodes(session);
-
 			/* See notes above about backing up root not being doable */
 			throw ExUtil.newEx("root restore not supported.");
-
-			// importFromFileToNode(session, sourceFileName +
-			// "-jcr_systemNodeTypes.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName +
-			// "-jcr_systemVersionStorage.xml",
-			// nodeId);
-			// importFromFileToNode(session, sourceFileName +
-			// "-jcr_systemActivities.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName +
-			// "-rep_security.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-oak_index.xml",
-			// nodeId);
-			// importFromFileToNode(session, sourceFileName +
-			// "-userPreferences.xml", nodeId);
-			// importFromFileToNode(session, sourceFileName + "-root.xml",
-			// nodeId);
-			// importFromFileToNode(session, sourceFileName + "-meta64.xml",
-			// nodeId);
 		}
 		else {
 			Node targetNode = JcrUtil.findNode(session, nodeId);

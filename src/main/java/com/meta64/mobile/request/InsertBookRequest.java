@@ -1,6 +1,8 @@
 package com.meta64.mobile.request;
 
-public class InsertBookRequest {
+import com.meta64.mobile.request.base.OakRequestBase;
+
+public class InsertBookRequest extends OakRequestBase {
 	private String nodeId;
 	private String bookName;
 

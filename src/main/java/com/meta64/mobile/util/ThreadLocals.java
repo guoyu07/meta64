@@ -7,7 +7,9 @@ import com.meta64.mobile.response.base.OakResponseBase;
 
 /**
  * Thread Local Storage
- * 
+ * <p>
+ * All thread locals are stored in this class.
+ * <p>
  * Note: We opt for ThreadLocals instead of a Spring Bean with Request scope, so that we can
  * decouple from Web Requests, and have these variables available on a *any* thread even if it's a
  * worker or deamon thread that isn't an actual Web Request. I never use "Request Scoping" unless

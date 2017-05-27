@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/*
- * This backup utility DOES NOT WORK YET, due to Oak bug acknowledged by Oak developers on their 
- * mailing list.
+/**
+ * For future reference only, I'm keeping this is as an example of how to call a SpringBoot
+ * app as a command line app.
  */
 @SpringBootApplication
 // @EnableScheduling

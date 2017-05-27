@@ -1,5 +1,9 @@
 package com.meta64.mobile.model;
 
+/**
+ * Models a Referenceable node.
+ *
+ */
 public class RefInfo {
 	private String id;
 	private String path;

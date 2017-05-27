@@ -38,13 +38,12 @@ import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 
-/* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
- * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
- * Bottom line, don't try to use any RSS code or features yet.
- */
-
 /**
  * RSS Feed Processing
+ * <p>
+ * WARNING: Experimental work in progress. To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
+ * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
+ * Bottom line, don't try to use any RSS code or features yet.
  */
 @Component
 public class RssService {

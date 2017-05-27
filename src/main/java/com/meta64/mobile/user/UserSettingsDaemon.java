@@ -20,7 +20,7 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * This is a "Background Thread" which saves user settings for all users (who are logged in)
+ * This is a Deamon which saves user settings for all users (who are logged in)
  * 
  * todo-1: this was a bad idea because it won't be compatible with load-balancers. It holds state on
  * the one node. Not good. What do I loose if I take this away ? check into it.

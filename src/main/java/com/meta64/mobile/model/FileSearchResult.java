@@ -1,5 +1,9 @@
 package com.meta64.mobile.model;
 
+/**
+ * Model representing a filename
+ *
+ */
 public class FileSearchResult {
 	private String fileName;
 

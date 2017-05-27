@@ -34,7 +34,7 @@ import com.meta64.mobile.model.RefInfo;
 
 /**
  * Assorted general utility functions related to JCR nodes.
- * 
+ * <p>
  * todo-1: there's a lot of code calling these static methods, but need to transition to singleton
  * scope bean and non-static methods.
  */

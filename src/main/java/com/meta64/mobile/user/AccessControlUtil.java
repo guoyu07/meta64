@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.meta64.mobile.util.ExUtil;
 
 /**
- * Utility methods for changing access controls on nodes. This is: who can read nodes, modify nodes,
+ * Utility methods for changing access controls on nodes. That is: who can read nodes, modify nodes,
  * delete nodes, etc. Standard access privileges provided by JCR specification.
  * 
  * http://jackrabbit.apache.org/oak/docs/security/accesscontrol/editing.html

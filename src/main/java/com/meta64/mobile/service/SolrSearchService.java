@@ -33,7 +33,13 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
-/* Performs searching against some Solr Client (over the network, like a microservice) */
+/**
+ * Performs searching against some Solr Client (over the network, like a microservice)
+ * <p>
+ * This was part of a short experiment that was simply left in the code for future reference. There
+ * is currently no significant integration with Solr in any meaningful way but this code was part of
+ * a proof-of-concept test.
+ */
 @Component
 public class SolrSearchService {
 	private static final Logger log = LoggerFactory.getLogger(SolrSearchService.class);

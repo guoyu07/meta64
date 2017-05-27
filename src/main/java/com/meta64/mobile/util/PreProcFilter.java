@@ -26,6 +26,16 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
  * This WebFilter is used to eliminate any need for something like JSPs or Thymeleaf, by providing
  * all we need in this app which the ability to substitute strings into the HTML at runtime, which
  * is done in the 'transform' method.
+ * <p>
+ * We have far more control over templating by doing it this way, and the code is kept much simpler
+ * than by using some other form of templating, using Velocity or whatever template processor you
+ * can name.
+ * <p>
+ * On a side note, the philosophy if the SubNode architecture is that 'Templating is BAD'. We
+ * generate nearly all of our HTML from "TypeScript Widgets", because that approach is a billions
+ * times simpler than templates. This topic "TypeScript Widgets" is something i plan to publish a
+ * paper on very soon. It's a massive topic, and massive technological advancement, if I can say so
+ * even as it's inventor.
  */
 @WebFilter(urlPatterns = { "/", "/elements/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
 public class PreProcFilter implements Filter {

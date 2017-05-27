@@ -34,6 +34,9 @@ import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.XString;
 
+/**
+ * Import from ZIP files.
+ */
 @Component
 @Scope("prototype")
 public class ImportZipService {

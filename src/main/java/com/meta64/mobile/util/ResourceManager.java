@@ -4,6 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Dead class. I want to keep it for future reference.
+ */
 @Component
 public class ResourceManager {
 	private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);

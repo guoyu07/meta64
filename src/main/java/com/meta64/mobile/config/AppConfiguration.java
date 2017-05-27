@@ -11,8 +11,8 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-/* 
- * The Environment stuff commented out in here is not needed because we just Autowire Environment wherever we need to.
+/**
+ * Standard Spring WebMvcConfigurerAdapter-derived class.
  */
 @Configuration
 public class AppConfiguration extends WebMvcConfigurerAdapter {
@@ -76,4 +76,24 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 
 		super.addResourceHandlers(registry);
 	}
+	
+	// @PostConstruct
+		// public void extension() {
+		//// FileTemplateResolver resolver = new FileTemplateResolver();
+		//// resolver.setPrefix("D:\\templates\\");
+		//// resolver.setSuffix(".html");
+		//// resolver.setTemplateMode("HTML5");
+		//// resolver.setOrder(templateEngine.getTemplateResolvers().size());
+		//// resolver.setCacheable(false);
+		//
+		// ServletContextTemplateResolver webTemplateResolver = new ServletContextTemplateResolver();
+		// webTemplateResolver.setPrefix("/templates/");
+		// webTemplateResolver.setSuffix(".xml");
+		// webTemplateResolver.setTemplateMode("HTML5");
+		// webTemplateResolver.setCharacterEncoding("UTF-8");
+		// webTemplateResolver.setOrder(1);
+		// //templatesResolvers.add(webTemplateResolver);
+		//
+		// templateEngine.addTemplateResolver(webTemplateResolver);
+		// }
 }

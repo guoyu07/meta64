@@ -27,7 +27,9 @@ import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Import and Export to and from XML files
+ * Import from XML files.
+ * <p> 
+ * NOTE: This does not import arbitrary XML but only xml that was exported from ExportXmlService.java in SubNode.
  */
 @Component
 public class ImportXmlService {

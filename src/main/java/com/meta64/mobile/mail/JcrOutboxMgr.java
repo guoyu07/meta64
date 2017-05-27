@@ -23,12 +23,11 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * Meta64 has a node where it stores all emails that are queued up to be sent for whatever reason.
- * Emails related to User Signups in progress can be cached on the tree, or email notifications
- * because of node editing can also be cached on the tree. So basically this is a persistent queue
- * of emails that are ready to be sent. This class manages storing the emails on the tree. There are
- * other classes that handle the actual sending of the messages, and a background deamon thread that
- * periodically checks for emails ready to be sent and sends them.
+ * Manages the node where we store all emails that are queued up to be sent.
+ * <p>
+ * The system always sends emails out in a batch operation every 30seconds or so, by emptying out
+ * this queue.
+ * 
  */
 @Component
 public class JcrOutboxMgr {

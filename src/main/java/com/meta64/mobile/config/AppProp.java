@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-/* NOTE: We could use EnvironmentAware but under normal circumstances apps can just Autowire the Env, so that's what we do. */
+/**
+ * Primary class for accessing application properties.
+ * <p>
+ * NOTE: We could use EnvironmentAware but under normal circumstances apps can just Autowire the
+ * Env, so that's what we do.
+ */
 @Component
 public class AppProp /* implements EnvironmentAware */ {
 	private static final Logger log = LoggerFactory.getLogger(AppProp.class);

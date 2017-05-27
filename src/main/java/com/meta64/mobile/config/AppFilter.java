@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * This is Filter layer to measure statistics
+ * This is Web Filter to measure basic application statistics (number of users, etc)
  */
 @Component
 public class AppFilter implements Filter {

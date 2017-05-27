@@ -7,6 +7,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Part of a desktop-integration (i.e. for standalone mode of this app, running in a person's PC), which allows
+ * opening and/or running files on a user's PC.
+ *
+ */
 public class DesktopApi {
 
 	/* Once this is assigned we know what it is and use it from then on */

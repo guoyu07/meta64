@@ -24,7 +24,10 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 
 /**
- * Utilities related to user management.
+ * Utilities related to user management. Creating and removing users, etc.
+ * <p>
+ * NOTE: SubNode relies on the JCR itself to manage all users, and the Node privileges of users. All
+ * is part of the Spec of Oak Jackrabbit.
  *
  */
 @Component

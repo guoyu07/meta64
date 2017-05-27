@@ -50,10 +50,12 @@ import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Service for editing node attachments. Node attachments are binary attachments that the user can
- * opload onto a node. Each node allows either zero or one attachments. Uploading a new attachment
- * wipes out and replaces the previous attachment. If the attachment is an 'image' type then it gets
- * displayed right on the page. Otherwise a download link is what gets displayed on the node.
+ * Service for managing node attachments.
+ * <p>
+ * Node attachments are binary attachments that the user can opload onto a node. Each node allows
+ * either zero or one attachments. Uploading a new attachment wipes out and replaces the previous
+ * attachment. If the attachment is an 'image' type then it gets displayed right on the page.
+ * Otherwise a download link is what gets displayed on the node.
  */
 @Component
 public class AttachmentService {

@@ -1,15 +1,13 @@
-/**
- * 
- * Walks through the directory named dir in the call to walk method and notifies 
- * the observer of each file encountered.
- * 
- * @author Clay Ferguson 
- */
 package com.meta64.mobile.util;
 
 import java.io.File;
 import java.util.Observable;
 
+/**
+ * 
+ * Walks through the directory named dir in the call to walk method and notifies 
+ * the observer of each file encountered.
+ */
 public class FileWalker extends Observable {
 	private int depth = 0;
 	private boolean abort = false;

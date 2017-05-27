@@ -27,7 +27,7 @@ import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Import and Export to and from XML files
+ * Export to and from XML files
  */
 @Component
 public class ExportXmlService {

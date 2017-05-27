@@ -47,10 +47,10 @@ import com.mongodb.MongoTimeoutException;
 
 /**
  * Instance of a JCR Repository (both RDB and MongoDB are supported).
- * 
+ * <p>
  * If you configure db.store.type=="rdb", then set the rdb.* properties in this class. If you
  * configure db.store.type=="mongo", then set the mongo.* properties in this class.
- * 
+ * <p>
  * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
  * called.
  */

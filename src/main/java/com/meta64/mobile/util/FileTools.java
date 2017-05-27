@@ -7,6 +7,10 @@ import java.io.FileWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Tools related to file management. Creating, deleting files, etc.
+ *
+ */
 public class FileTools {
 	private static final Logger log = LoggerFactory.getLogger(FileTools.class);
 

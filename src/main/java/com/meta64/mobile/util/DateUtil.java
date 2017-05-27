@@ -3,6 +3,9 @@ package com.meta64.mobile.util;
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * Date-related functions
+ */
 public class DateUtil {
 	public static final int SECOND_MILLIS = 1000;
 	public static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;

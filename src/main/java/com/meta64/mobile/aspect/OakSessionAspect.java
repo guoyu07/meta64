@@ -34,7 +34,7 @@ import com.meta64.mobile.util.ThreadLocals;
  * of a JSON call and handles all the boilerplate for performing a JSON call on the server which
  * comes from the JQuery ajax calls from the client. Primarily we use the cross cutting concerns of
  * user login, and JCR session lifecycle.
- * 
+ * <p>
  * Remember, Spring AOP is a bit awkward because of the use of Proxies. Problems WILL occur if you
  * have a method in a bean that's not annotated calling a method in a bean that IS annotated,
  * because in this case the AOP aspects that the annotations would imply WILL always happen actually

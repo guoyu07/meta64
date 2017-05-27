@@ -15,6 +15,11 @@ package com.meta64.mobile.util;
 //import cz.habarta.typescript.generator.TypeScriptGenerator;
 //import cz.habarta.typescript.generator.TypeScriptOutputKind;
 
+/**
+ * Currently unused 'CZ Habarta' implementation of TypeScript code generation from Java
+ * (I used this class when originally converting lots of Java to TypeScript, but haven't needed it since, because I don't 
+ * have the need to to this 'en masse' and just to it by hand currently)
+ */
 public class JavaToTypeScriptCodeGen {
 
 	// private static final Logger log = LoggerFactory.getLogger(JavaToTypeScriptCodeGen.class);

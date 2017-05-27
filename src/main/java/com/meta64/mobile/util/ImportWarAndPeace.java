@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SpringContextUtil;
 
+/**
+ * Reads the special proprietary-formatted file of the book 'War and Peace' to load into the
+ * repository, because we use this book as sample/example content.
+ */
 @Component
 @Scope("prototype")
 public class ImportWarAndPeace {

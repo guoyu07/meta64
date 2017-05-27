@@ -46,6 +46,8 @@ import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Service for editing content of nodes. That is, this method updates property values of JCR nodes.
+ * As the user is using the application and moving, copy+paste, or editing node content this is the
+ * service that performs those operations on the server, directly called from the HTML 'controller'
  */
 @Component
 public class NodeEditService {

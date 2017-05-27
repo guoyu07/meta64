@@ -1,7 +1,7 @@
 package com.meta64.mobile.config;
 
-/*
- * JCR Node names
+/**
+ * JCR Node names for architecturally significant system nodes
  */
 public class JcrName {
 	public static final String ROOT = "root";

@@ -3,6 +3,9 @@ package com.meta64.mobile.image;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+/**
+ * Image manipulation utilities 
+ */
 public class ImageUtil {
 
 	public static BufferedImage scaleImage(BufferedImage image, int width) {

@@ -2,6 +2,9 @@ package com.meta64.mobile.model;
 
 import java.util.List;
 
+/**
+ * Holds the value of a single JCR property (i.e. a 'value' on a JCR Node) 
+ */
 public class PropertyInfo {
 	private int type;
 	private String name;

@@ -47,6 +47,8 @@ import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.XString;
 
 /**
+ * Export to Zip file format
+ * <p>
  * todo-0: need to alphabetically sort the properties in the output JSON text file
  */
 @Component

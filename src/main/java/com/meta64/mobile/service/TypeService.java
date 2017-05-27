@@ -27,7 +27,9 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.StreamUtil;
 
-/* References:
+/**
+ * Utility service for managing custom 'JCR Node Types' that are specific to and defined by SubNode
+ * app. References:
  * 
  * https://www.onehippo.org/library/concepts/content-repository/defining-node-types.html
  * http://jackrabbit.apache.org/jcr/node-type-notation.html

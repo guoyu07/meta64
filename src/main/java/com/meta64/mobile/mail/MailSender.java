@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.util.ExUtil;
 
-/*
+/**
  * Implements and processes the sending of emails.
  */
 @Component

@@ -1,7 +1,7 @@
 package com.meta64.mobile.config;
 
-/*
- * JCR Node Property Names
+/**
+ * JCR Node Property Names (constants), node names, types...
  */
 public class JcrProp {
 

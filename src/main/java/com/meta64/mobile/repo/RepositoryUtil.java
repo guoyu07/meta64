@@ -24,6 +24,10 @@ import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.XString;
 
+/**
+ * Utilities related to management of the JCR Repository 
+ *
+ */
 @Component
 public class RepositoryUtil {
 	private static final Logger log = LoggerFactory.getLogger(RepositoryUtil.class);

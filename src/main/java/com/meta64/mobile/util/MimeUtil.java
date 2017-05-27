@@ -2,6 +2,9 @@ package com.meta64.mobile.util;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Mime-Type (content type) utilities
+ */
 @Component
 public class MimeUtil {
 

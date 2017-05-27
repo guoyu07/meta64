@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class for keeping track of number of sessions.
+ */
 @Component
 public class AppSessionListener implements HttpSessionListener {
 	private static int sessionCounter = 0;

@@ -1,5 +1,9 @@
 package com.meta64.mobile.lucene;
 
+/**
+ * Performs a test search (Java-main entry point) to perform a test search of files indexed by lucene)
+ * 
+ */
 public class Searcher {
 	public static void main(final String[] args) {
 		final String query = "coolant";

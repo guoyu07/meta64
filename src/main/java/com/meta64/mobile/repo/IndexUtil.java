@@ -20,6 +20,10 @@ import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrConst;
 import com.meta64.mobile.util.JcrUtil;
 
+/**
+ * Utilities to perform index management of the JCR Repository
+ *
+ */
 @Component
 public class IndexUtil {
 	private static final Logger log = LoggerFactory.getLogger(IndexUtil.class);

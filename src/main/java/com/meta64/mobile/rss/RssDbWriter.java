@@ -20,7 +20,11 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndImage;
 
-/* WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
+/**
+ * Utility methods related to writing RSS content pulled from online into the JCR Repository. The RSS-engine is sort of a separate 'Plugin' 
+ * built into SubNode as an experimental feature and is not really a 'core part' of what SubNode is.
+ * <p>
+ * WARNING: To anyone who downloads meta64, beware the RSS stuff is a work in progress that I started, and anything related to RSS
  * is untested code and the commented code you see comes from the older version of the software and is in the process of being converted.
  * Bottom line, don't try to use any RSS code or features yet.
  */

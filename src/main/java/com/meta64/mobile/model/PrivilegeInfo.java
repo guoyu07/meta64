@@ -1,5 +1,9 @@
 package com.meta64.mobile.model;
 
+/**
+ * Represents a privilege name
+ *
+ */
 public class PrivilegeInfo {
 	private String privilegeName;
 

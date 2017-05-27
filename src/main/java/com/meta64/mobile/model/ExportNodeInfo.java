@@ -2,6 +2,10 @@ package com.meta64.mobile.model;
 
 import java.util.List;
 
+/**
+ * Model object for export process
+ *
+ */
 public class ExportNodeInfo {
 	private String id;
 	private String type;

@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 import org.springframework.core.io.Resource;
 
 /**
- * General string utilities and validations.
+ * General string utilities.
  */
 public class XString {
 

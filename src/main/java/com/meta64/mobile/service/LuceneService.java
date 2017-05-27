@@ -25,6 +25,9 @@ import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
+/**
+ * Service for processing Lucene-related functions.
+ */
 @Component
 public class LuceneService {
 	private static final Logger log = LoggerFactory.getLogger(LuceneService.class);

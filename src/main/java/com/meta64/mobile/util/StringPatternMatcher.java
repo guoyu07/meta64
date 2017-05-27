@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+/**
+ * Some simple string pattern matching utilities.
+ *
+ */
 public class StringPatternMatcher {
 	private ArrayList<String> patternList = new ArrayList<String>();
 

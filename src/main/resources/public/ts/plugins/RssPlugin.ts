@@ -53,7 +53,6 @@ class RssPlugin {
     }
 
     renderItemNode = (node: I.NodeInfo, rowStyling: boolean): string => {
-        debugger;
         let ret: string = "";
         let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
         let rssDesc: I.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);

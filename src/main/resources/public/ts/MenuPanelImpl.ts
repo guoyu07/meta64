@@ -33,7 +33,7 @@ export default class MenuPanel extends Comp {
             //     menuItem("Timeline", "timelinePageButton", "meta64.selectTab('timelineTabName');");
             // let pageMenu = makeTopLevelMenu("Page", pageMenuItems);
 
-            new Menu("Locations", [
+            new Menu("Bookmarks", [
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
                 new MenuItem("RSS Feeds", nav.openRssFeedsNode)

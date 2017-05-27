@@ -55,7 +55,6 @@ class Podcast {
     }
 
     openPlayerDialog(_uid: string) {
-        debugger;
         podcast.uid = _uid;
         podcast.node = meta64.uidToNodeMap[podcast.uid];
 

@@ -46,13 +46,11 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
         console.log(`startTimePending in constructor: ${this.startTimePending}`);
         podcast.startTimePending = this.startTimePending;
 
-        debugger;
         console.log("AudioPlayer Dialog biuldGUI");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        debugger;
         let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", this.node);
 
         this.setChildren([

@@ -119,11 +119,9 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
                     "message": "Do you want Zip files exploded onto the tree when uploaded?",
                     "buttonText": "Yes, explode zips",
                     "yesCallback": () => {
-                      debugger;
                         this.explodeZips = true;
                     },
                     "noCallback": () => {
-                      debugger;
                         this.explodeZips = false;
                     }
                 });

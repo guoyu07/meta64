@@ -196,8 +196,7 @@ export class Render {
      * appropriate object/service
      */
     renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
-        //todo-1; bring back top right image support. disabling for nw to ease refactoring.
-        debugger;
+        //todo-1; bring back top right image support. disabling for nw to ease refactoring
         let topRightImgTag = null; //render.getTopRightImageTag(node);
 
         let ret: string = topRightImgTag ? topRightImgTag.render() : "";
@@ -601,7 +600,6 @@ export class Render {
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
     renderPageFromData(data?: I.RenderNodeResponse, scrollToTop?: boolean): string {
-      debugger;
         meta64.codeFormatDirty = false;
         console.log("render.renderPageFromData()");
 

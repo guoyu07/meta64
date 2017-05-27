@@ -4,6 +4,14 @@ NOTE: This file uses "Less CSS Compiler" (lesscss.org)
 WARNING: I (Clay Ferguson) personally use Atom editor for editing this file in addition to the TypeScript files,
 because Eclipse hasn't caught up with the rest of the modern world on their tooling, and has no good support yet.
 */
+.edit-prop-checkbox-col {
+  width: 50px;
+  display: table-cell;
+  margin-left: 16px;
+}
+.edit-prop-textfield-col {
+  display: table-cell;
+}
 .row-toolbar {
   margin-left: 16px;
 }

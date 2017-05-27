@@ -15,8 +15,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * The Environment stuff commented out in here is not needed because we just Autowire Environment wherever we need to.
  */
 @Configuration
-public class MyConfiguration extends WebMvcConfigurerAdapter {
-	private static final Logger log = LoggerFactory.getLogger(MyConfiguration.class);
+public class AppConfiguration extends WebMvcConfigurerAdapter {
+	private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
 
 	@Autowired
 	private AppProp appProp;

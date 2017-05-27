@@ -517,8 +517,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     makeSinglePropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry, aceFields: any): void => {
         console.log("Property single-type: " + propEntry.property.name);
 
-        let checkboxTableCell = new EditPropsTableCell();
-        let textareaTableCell = new EditPropsTableCell();
+        let checkboxTableCell = new EditPropsTableCell({"class": "edit-prop-checkbox-col"});
+        let textareaTableCell = new EditPropsTableCell({"class" : "edit-prop-textfield-col"});
 
         let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
         let label = render.sanitizePropertyName(propEntry.property.name);

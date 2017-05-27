@@ -162,38 +162,50 @@
                         paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
                     <span
                         class="title"
-                        id="headerAppName">SubNode</span>
+                        id="headerAppName">
+                        SubNode
+                    </span>
+                    <!-- this tooltip isn't working, but i will keep it because hopefully is fixed in Polymer2.0 -->
+                    <paper-tooltip for="headerAppName">Go to SubNode Public Home Page</paper-tooltip>
                     <paper-icon-button
                         icon="icons:home"
                         id="navHomeButton">Home</paper-icon-button>
+                    <paper-tooltip for="navHomeButton">Go to Your Root SubNode</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:change-history"
                         id="upLevelButton">Parent</paper-icon-button>
+                    <paper-tooltip for="upLevelButton">Go up to parent SubNode</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="editor:mode-edit"
                         id="editModeButton">Edit</paper-icon-button>
+                    <paper-tooltip for="editModeButton">Toggle edit mode on/off</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:search"
                         id="searchMainAppButton">Search</paper-icon-button>
+                    <paper-tooltip for="searchMainAppButton">Search under selected node</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:schedule"
                         id="timelineMainAppButton">Timeline</paper-icon-button>
+                    <paper-tooltip for="timelineMainAppButton">View Timeline of selected node</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:settings"
                         id="userPreferencesMainAppButton">Preferences</paper-icon-button>
+                    <paper-tooltip for="userPreferencesMainAppButton">Modify your preferences</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
                         id="openLoginDlgButton">Login</paper-icon-button>
+                    <paper-tooltip for="openLoginDlgButton">Login</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="icons:account-box"
                         id="navLogoutButton">Logout</paper-icon-button>
+                    <paper-tooltip for="navLogoutButton">Logout</paper-tooltip>
                     <paper-button
                         style="display:none;"
                         id="openSignupPgButton">Signup</paper-button>
@@ -233,12 +245,13 @@
                             id="timelineResultsPanel">No timeline displaying.</div>
                     </iron-pages>
                     <!-- All modal dialogs go in here -->
-                    <div id="modalsContainer"
+                    <div
+                        id="modalsContainer"
                         style="position: absolute; top: 0; left: 0; width: 1px; height: 1px;"></div>
                 </div>
             </paper-header-panel>
         </paper-drawer-panel>
-        
+
     </template>
     <script type="text/javascript">
         /*<![CDATA[*/

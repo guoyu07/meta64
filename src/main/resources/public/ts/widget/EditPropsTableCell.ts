@@ -8,7 +8,6 @@ export class EditPropsTableCell extends Comp {
 
     constructor(attribs : Object = {}) {
         super(attribs);
-        (<any>this.attribs).style = "display: table-cell;";
         (<any>this.attribs).sourceClass = "EditPropsTableCell";
     }
 

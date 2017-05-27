@@ -49,8 +49,7 @@ class Nav {
 
     login(): void {
         Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
-            debugger;
-            dlg.populateFromCookies(); //<---- new 4/1/17
+            dlg.populateFromCookies();
             dlg.open();
         });
     }
@@ -209,7 +208,6 @@ class Nav {
     }
 
     clickOnNodeRow(uid : string): void {
-        debugger;
         console.log("clickOnNodeRow: uid="+uid);
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {

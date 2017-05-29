@@ -211,9 +211,6 @@ public class AppController {
 
 	@Autowired
 	private RssService rssService;
-	
-	@Autowired
-	private Sha256Service sha256Service;
 
 	private static final boolean logRequests = false;
 
@@ -700,6 +697,7 @@ public class AppController {
 		if (!sessionContext.isAdmin()) {
 			throw ExUtil.newEx("admin only function.");
 		}
+		Sha256Service sha256Service = (Sha256Service) SpringContextUtil.getBean(Sha256Service.class);
 		sha256Service.generateNodeHash(null, req, res);
 		checkHttpSession();
 		return res;

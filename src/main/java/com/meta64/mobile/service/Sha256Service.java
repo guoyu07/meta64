@@ -29,7 +29,9 @@ import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
- * Generates SHA256 Hash of the given node, recursively including all subnodes.
+ * Generates SHA256 Hash of the given node, recursively including all subnodes. Note: As a prototype
+ * bean all the class properties are per-run. Objects of this instance are not reused. This is not a
+ * singleton.
  * <p>
  * The current version of this doesn not store the hash at each node but only the top node being
  * calculated. Need to make this optional. Eventually to be Merkle-like we will store a Hash at ever
@@ -41,6 +43,12 @@ import com.meta64.mobile.util.ThreadLocals;
 public class Sha256Service {
 	private static final Logger log = LoggerFactory.getLogger(Sha256Service.class);
 	private static final String SHA_ALGO = "SHA-256";
+
+	private static long nodeCount = 0;
+	private static long propertyCount = 0;
+	private static long binaryCount = 0;
+	private static long nonBinarySize = 0;
+	private static long binarySize = 0;
 
 	/*
 	 * This is the 'full-scan' digester only used when doing a full tree scan in one single shot,
@@ -63,7 +71,9 @@ public class Sha256Service {
 			recurseNode(node, 0);
 
 			byte[] hashBytes = globalDigester.digest();
-			res.setHashInfo(Hex.encodeHexString(hashBytes));
+			String hash = Hex.encodeHexString(hashBytes);
+			log.debug("Hash=" + hash + "\n   nodeCount=" + nodeCount + "\n   propCount=" + propertyCount);
+			res.setHashInfo(hash);
 			success = true;
 		}
 		catch (Exception ex) {
@@ -75,6 +85,7 @@ public class Sha256Service {
 
 	private void recurseNode(Node node, int level) {
 		if (node == null) return;
+		nodeCount++;
 
 		try {
 			/* process the current node */
@@ -116,6 +127,7 @@ public class Sha256Service {
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNames = JcrUtil.getPropertyNames(node, true);
 			for (String propName : propNames) {
+				propertyCount++;
 				Property prop = node.getProperty(propName);
 				digestProperty(prop);
 			}
@@ -137,7 +149,7 @@ public class Sha256Service {
 			/* multivalue */
 			if (prop.isMultiple()) {
 				for (Value v : prop.getValues()) {
-					updateDigest(v);
+					nonBinarySize += updateDigest(v);
 				}
 			}
 			/* else single value */
@@ -148,10 +160,11 @@ public class Sha256Service {
 				 * with arbitrary binary nodes.
 				 */
 				if (prop.getName().equals(JcrProp.BIN_DATA)) {
-					updateDigest(prop.getValue().getBinary().getStream());
+					binaryCount++;
+					binarySize += updateDigest(prop.getValue().getBinary().getStream());
 				}
 				else {
-					updateDigest(prop.getValue());
+					nonBinarySize += updateDigest(prop.getValue());
 				}
 			}
 		}
@@ -174,10 +187,13 @@ public class Sha256Service {
 	}
 
 	/* digest entire stream AND close the stream. */
-	private void updateDigest(InputStream inputStream) {
+	private long updateDigest(InputStream inputStream) {
+		long dataLen = 0;
 		try {
 			try {
-				updateDigest(IOUtils.toByteArray(inputStream));
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				dataLen = bytes.length;
+				updateDigest(bytes);
 			}
 			finally {
 				StreamUtil.close(inputStream);
@@ -186,10 +202,13 @@ public class Sha256Service {
 		catch (IOException ex) {
 			throw ExUtil.newEx(ex);
 		}
+		return dataLen;
 	}
 
-	private void updateDigest(Value v) {
-		updateDigest(valueToBytes(v));
+	private long updateDigest(Value v) {
+		byte[] bytes = valueToBytes(v);
+		updateDigest(bytes);
+		return bytes.length;
 	}
 
 	private void updateDigest(String val) {

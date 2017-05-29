@@ -200,6 +200,17 @@ class View {
             util.showMessage(res.serverInfo);
         });
     }
+
+    generateNodeHash() {
+        debugger;
+        let node = meta64.getHighlightedNode();
+        if (node) {
+            let nodeId: string = node.id;
+            util.ajax<I.GenerateNodeHashRequest, I.GenerateNodeHashResponse>("generateNodeHash", { "nodeId": nodeId }, function(res: I.GenerateNodeHashResponse) {
+                util.showMessage(res.hashInfo);
+            });
+        }
+    }
 }
 export let view: View = new View();
 export default view;

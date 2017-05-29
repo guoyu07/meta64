@@ -107,6 +107,7 @@ export default class MenuPanel extends Comp {
             new Menu("Admin", [
                 new MenuItem("Generate RSS", podcast.generateRSS, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
                 new MenuItem("Server Info", view.showServerInfo, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+                new MenuItem("Generate Hash", view.generateNodeHash, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
                 new MenuItem("Insert Book: War and Peace", edit.insertBookWarAndPeace,
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }

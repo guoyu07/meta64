@@ -2,7 +2,9 @@ package com.meta64.mobile.util;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -609,6 +611,27 @@ public class JcrUtil {
 		catch (Exception e) {
 			return false;
 		}
+	}
+
+	/* Returns list of property names or null of there are none */
+	public static List<String> getPropertyNames(Node node, boolean ordered) throws RepositoryException {
+		List<String> names = null;
+		PropertyIterator iter = node.getProperties();
+		while (iter.hasNext()) {
+			Property prop = iter.nextProperty();
+
+			/* lazy create reutn value */
+			if (names == null) {
+				names = new LinkedList<String>();
+			}
+			names.add(prop.getName());
+		}
+
+		if (ordered) {
+			Collections.sort(names);
+		}
+		
+		return names;
 	}
 
 	public static int getPropertyCount(Node node) throws RepositoryException {

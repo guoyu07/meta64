@@ -161,6 +161,10 @@ export interface GetNodePrivilegesRequest {
 export interface GetServerInfoRequest {
 }
 
+export interface GenerateNodeHashRequest {
+  nodeId: string;
+}
+
 export interface GetSharedNodesRequest {
     nodeId: string;
 }
@@ -342,6 +346,10 @@ export interface GetNodePrivilegesResponse extends OakResponseBase {
 
 export interface GetServerInfoResponse extends OakResponseBase {
     serverInfo: string;
+}
+
+export interface GenerateNodeHashResponse extends OakResponseBase {
+    hashInfo: string;
 }
 
 export interface GetSharedNodesResponse extends OakResponseBase {

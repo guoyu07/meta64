@@ -560,6 +560,7 @@ class Meta64 {
         Polymer.updateStyles();
     }
 
+    /* WARNING: This is NOT the highlighted node. This is whatever node has the CHECKBOX selection */
     getSingleSelectedNode(): I.NodeInfo {
         let ret = null;
         util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {

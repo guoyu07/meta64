@@ -39,6 +39,7 @@ import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExpandAbbreviatedNodeRequest;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.FileSearchRequest;
+import com.meta64.mobile.request.GenerateNodeHashRequest;
 import com.meta64.mobile.request.GenerateRSSRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetPlayerInfoRequest;
@@ -77,6 +78,7 @@ import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExpandAbbreviatedNodeResponse;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.FileSearchResponse;
+import com.meta64.mobile.response.GenerateNodeHashResponse;
 import com.meta64.mobile.response.GenerateRSSResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetPlayerInfoResponse;
@@ -116,6 +118,7 @@ import com.meta64.mobile.service.NodeMoveService;
 import com.meta64.mobile.service.NodeRenderService;
 import com.meta64.mobile.service.NodeSearchService;
 import com.meta64.mobile.service.RssService;
+import com.meta64.mobile.service.Sha256Service;
 import com.meta64.mobile.service.SolrSearchService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
@@ -208,6 +211,9 @@ public class AppController {
 
 	@Autowired
 	private RssService rssService;
+	
+	@Autowired
+	private Sha256Service sha256Service;
 
 	private static final boolean logRequests = false;
 
@@ -682,6 +688,19 @@ public class AppController {
 		}
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/generateNodeHash", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GenerateNodeHashResponse generateNodeHash(@RequestBody GenerateNodeHashRequest req) {
+		logRequest("generateNodeHash", req);
+		GenerateNodeHashResponse res = new GenerateNodeHashResponse();
+		if (!sessionContext.isAdmin()) {
+			throw ExUtil.newEx("admin only function.");
+		}
+		sha256Service.generateNodeHash(null, req, res);
 		checkHttpSession();
 		return res;
 	}

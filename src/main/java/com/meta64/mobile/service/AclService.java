@@ -56,8 +56,6 @@ public class AclService {
 			throw ExUtil.newEx("no specific information requested for getNodePrivileges");
 		}
 
-		res.setPublicAppend(JcrUtil.safeGetBooleanProp(node, JcrProp.PUBLIC_APPEND));
-
 		if (req.isIncludeAcl()) {
 			AccessControlEntry[] aclEntries = AccessControlUtil.getAccessControlEntries(session, node);
 			List<AccessControlEntryInfo> aclEntriesInfo = Convert.convertToAclListInfo(aclEntries);

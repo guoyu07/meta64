@@ -16,13 +16,15 @@ public class ExUtil {
 	private static final Logger log = LoggerFactory.getLogger(ExUtil.class);
 
 	public static RuntimeEx newEx(Throwable ex) {
-		log.error("logAndRethrow", ex);
+		//removing logging, because some exception throwing is intentional (not error)
+		//log.error("logAndRethrow", ex);
 		throw new RuntimeEx(ex);
 	}
 
 	public static RuntimeEx newEx(String msg) {
 		RuntimeEx ex = new RuntimeEx(msg);
-		log.error("logThrow", ex);
+		//removing logging, because some exception throwing is intentional (not error)
+		//log.error("logThrow", ex);
 		return ex;
 	}
 }

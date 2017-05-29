@@ -308,6 +308,10 @@ public class AttachmentService {
 		String nodeId = req.getNodeId();
 		String sourceUrl = req.getSourceUrl();
 		String FAKE_USER_AGENT = "Mozilla/5.0";
+		
+		/* todo-0: This value exists in properties file, and also in TypeScript variable. Need to have better way
+		 * to define this ONLY in properties file.
+		 */
 		int maxFileSize = 20 * 1024 * 1024;
 
 		try {

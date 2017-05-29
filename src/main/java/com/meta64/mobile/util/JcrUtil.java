@@ -593,9 +593,6 @@ public class JcrUtil {
 		}
 	}
 
-	/*
-	 * Gets string property from node. of anything goes wrong
-	 */
 	public static boolean getRequiredBooleanProp(Node node, String propName) {
 		try {
 			return node.getProperty(propName).getValue().getBoolean();

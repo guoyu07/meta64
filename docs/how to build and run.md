@@ -31,8 +31,8 @@ Program Arguments:
   --allowFileSystemSearch=true
   --adminDataFolder=/home/clay/ferguson/jcr-admin
   --lucene.index.dir=/home/clay/ferguson/lucene-index
-  --multipart.maxFileSize = 100Mb
-  --multipart.maxRequestSize = 400Mb
+  --spring.http.multipart.max-file-size="10MB" 
+  --spring.http.multipart.max-request-size="10MB" 
   --jsBaseFolder=file:///home/clay/ferguson/meta64Oak/src/main/resources/public/js/
   --jcrAdminPassword=xxxxxxxxxxx
   --spring.config.location=classpath:/application.properties

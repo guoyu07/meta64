@@ -53,6 +53,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     }
 
     upload = (): void => {
+        debugger;
         this.dropzone.processQueue();
     }
 
@@ -64,8 +65,8 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",
-            maxFilesize: 2,
-            parallelUploads: 10,
+            maxFilesize: 20, //<---- I assume this is in MB ?
+            parallelUploads: 2,
 
             /* Not sure what's this is for, but the 'files' parameter on the server is always NULL, unless
             the uploadMultiple is false */

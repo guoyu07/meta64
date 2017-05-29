@@ -66,10 +66,11 @@ class Attachment {
     }
 
     deleteAttachmentResponse(res: I.DeleteAttachmentResponse, uid: string): void {
+        debugger;
         if (util.checkSuccess("Delete attachment", res)) {
             meta64.removeBinaryByUid(uid);
             // force re-render from local data.
-            meta64.goToMainPage(true);
+            meta64.goToMainPage(true, true);
         }
     }
 }

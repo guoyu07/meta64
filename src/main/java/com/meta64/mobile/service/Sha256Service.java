@@ -44,11 +44,11 @@ public class Sha256Service {
 	private static final Logger log = LoggerFactory.getLogger(Sha256Service.class);
 	private static final String SHA_ALGO = "SHA-256";
 
-	private static long nodeCount = 0;
-	private static long propertyCount = 0;
-	private static long binaryCount = 0;
-	private static long nonBinarySize = 0;
-	private static long binarySize = 0;
+	private long nodeCount = 0;
+	private long propertyCount = 0;
+	private long binaryCount = 0;
+	private long nonBinarySize = 0;
+	private long binarySize = 0;
 
 	/*
 	 * This is the 'full-scan' digester only used when doing a full tree scan in one single shot,
@@ -56,7 +56,7 @@ public class Sha256Service {
 	 * the root has you would get when doing a Merkle-style scan which is eventually what will also
 	 * be done in here.
 	 */
-	MessageDigest globalDigester;
+	private MessageDigest globalDigester;
 
 	public void generateNodeHash(Session session, GenerateNodeHashRequest req, GenerateNodeHashResponse res) {
 		if (session == null) {
@@ -115,21 +115,18 @@ public class Sha256Service {
 		}
 	}
 
-	/*
-	 * NOTE: It's correct that there's no finally block in here enforcing the closeEntry, becasue we
-	 * let exceptions bubble all the way up to abort and even cause the zip file itself (to be
-	 * deleted) since it was unable to be written to.
-	 */
 	private void processNode(Node node) {
 		try {
-			log.debug("Processing Node: " + node.getPath());
+			//log.debug("Processing Node: " + node.getPath());
 
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNames = JcrUtil.getPropertyNames(node, true);
 			for (String propName : propNames) {
-				propertyCount++;
-				Property prop = node.getProperty(propName);
-				digestProperty(prop);
+				if (!ignoreProperty(propName)) {
+					propertyCount++;
+					Property prop = node.getProperty(propName);
+					digestProperty(prop);
+				}
 			}
 
 			updateDigest("type");
@@ -138,6 +135,10 @@ public class Sha256Service {
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
 		}
+	}
+
+	private boolean ignoreProperty(String propName) {
+		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName);
 	}
 
 	private void digestProperty(Property prop) {
@@ -210,6 +211,7 @@ public class Sha256Service {
 	}
 
 	private void updateDigest(String val) {
+		val = val.trim();
 		try {
 			updateDigest(val.getBytes(StandardCharsets.UTF_8));
 		}

@@ -132,8 +132,6 @@ public class Sha256Service {
 				digestProperty(prop);
 			}
 
-			updateDigest("id");
-			updateDigest(node.getIdentifier());
 			updateDigest("type");
 			updateDigest(node.getPrimaryNodeType().getName());
 		}

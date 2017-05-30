@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.util.ExUtil;
@@ -160,19 +161,16 @@ public class ImportZipService {
 		}
 	}
 
-	/*
-	 * todo-0: this is older code written before the rest of the code in this class, that I just
-	 * haven't reenabled yet, which reads from an actual file-system source. Will bring this back
-	 * online soon. This would be used for admin purposes in order to load into the repository data
-	 * from a zip file located on a filesystem directly visible to the server.
-	 */
-	public void importFromZip_currently_not_used(Session session, ImportRequest req, ImportResponse res) {
+	public void importFromLocalZipFile(Session session, ImportRequest req, ImportResponse res) {
 		try {
 			if (session == null) {
 				session = ThreadLocals.getJcrSession();
 			}
 
-			if (!sessionContext.isAdmin()) {
+			UserPreferences userPreferences = sessionContext.getUserPreferences();
+			boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
+			
+			if (!importAllowed && !sessionContext.isAdmin()) {
 				throw ExUtil.newEx("import is an admin-only feature.");
 			}
 
@@ -193,17 +191,10 @@ public class ImportZipService {
 				throw ExUtil.newEx("Import file not found.");
 			}
 
-			ZipInputStream zis = null;
+			BufferedInputStream bis = null;
 			try {
-				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fullFileName));
-
-				/*
-				 * todo-1: Currently we only support importing a zip by using the upload featuer
-				 * (not direct file reading as is here) but I can call the method in
-				 * ImportZipStreamService.inputZipFileFromStream to import from a file here. I just
-				 * don't have time to put that line of code here and test it but adding that one
-				 * line here should theoretically 'just work'
-				 */
+				bis = new BufferedInputStream(new FileInputStream(fullFileName));
+				inputZipFileFromStream(session, bis, importNode);
 			}
 			finally {
 				StreamUtil.close(zis);

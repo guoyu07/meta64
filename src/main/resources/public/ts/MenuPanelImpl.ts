@@ -81,6 +81,15 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Show URL", render.showNodeUrl, () => { return meta64.state.highlightNode != null }), //
                 new MenuItem("Preferences", edit.editPreferences, () => { return !meta64.isAnonUser }) //
             ]),
+            new Menu("Tools", [
+                new MenuItem("Import", edit.openImportDlg, //
+                    () => { return meta64.state.importFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },//
+                    () => { return meta64.state.importFeatureEnabled }), //
+                new MenuItem("Export", edit.openExportDlg, //
+                    () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
+                    () => { return meta64.state.exportFeatureEnabled }
+                )
+            ]),
             // WORK IN PROGRESS ( do not delete)
             // let fileSystemMenuItems = //
             //     menuItem("Reindex", "fileSysReindexButton", "systemfolder.reindex();") + //
@@ -94,13 +103,6 @@ export default class MenuPanel extends Comp {
             new Menu("Account", [
                 new MenuItem("Change Password", edit.openChangePasswordDlg, () => { return !meta64.isAnonUser }), //
                 new MenuItem("Manage Account", edit.openManageAccountDlg, () => { return !meta64.isAnonUser }), //
-                new MenuItem("Import", edit.openImportDlg, //
-                    () => { return meta64.state.importFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },//
-                    () => { return meta64.state.importFeatureEnabled }), //
-                new MenuItem("Export", edit.openExportDlg, //
-                    () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
-                    () => { return meta64.state.exportFeatureEnabled }
-                ), //
                 // menuItem("Full Repository Export", "fullRepositoryExport", "
                 // edit.fullRepositoryExport();") + //
             ]),

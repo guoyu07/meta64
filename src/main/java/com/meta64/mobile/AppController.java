@@ -112,6 +112,7 @@ import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
 import com.meta64.mobile.service.ImportXmlService;
+import com.meta64.mobile.service.ImportZipService;
 import com.meta64.mobile.service.LuceneService;
 import com.meta64.mobile.service.NodeEditService;
 import com.meta64.mobile.service.NodeMoveService;
@@ -175,6 +176,9 @@ public class AppController {
 
 	@Autowired
 	private ImportXmlService importXmlService;
+	
+	@Autowired
+	private ImportZipService importZipService;
 
 	@Autowired
 	private ExportXmlService exportXmlService;
@@ -383,7 +387,7 @@ public class AppController {
 		if ("xml".equalsIgnoreCase(req.getExportExt())) {
 			exportXmlService.export(null, req, res);
 		}
-		if ("zip".equalsIgnoreCase(req.getExportExt())) {
+		else if ("zip".equalsIgnoreCase(req.getExportExt())) {
 			// Work in progress: Next thing to do will be add radio button to GUI so we can select
 			// which we want XML or ZIP
 			exportZipService.export(null, req, res);
@@ -411,9 +415,7 @@ public class AppController {
 			 */
 		}
 		else if (fileName.toLowerCase().endsWith(".zip")) {
-			throw ExUtil.newEx("This code path is currently disabled, but adding an attachment zip file can do this.");
-			// importXmlService.importFromZip(null, req, res);
-			// ThreadLocals.getJcrSession().save();
+			importZipService.importFromLocalZipFile(null, req, res);
 		}
 		else {
 			throw ExUtil.newEx("Unable to import from file with unknown extension: " + fileName);

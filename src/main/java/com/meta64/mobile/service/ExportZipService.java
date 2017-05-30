@@ -303,9 +303,11 @@ public class ExportZipService {
 
 			if (StringUtils.isEmpty(fileName)) {
 				fileName = JcrUtil.safeGetStringProp(node, JcrProp.CONTENT);
-				fileName = fileName.trim();
-				fileName = XString.truncateAfter(fileName, "\n");
-				fileName = XString.truncateAfter(fileName, "\r");
+				if (fileName != null) {
+					fileName = fileName.trim();
+					fileName = XString.truncateAfter(fileName, "\n");
+					fileName = XString.truncateAfter(fileName, "\r");
+				}
 			}
 
 			if (StringUtils.isEmpty(fileName)) {

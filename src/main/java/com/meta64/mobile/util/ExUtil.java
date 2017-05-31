@@ -18,7 +18,7 @@ public class ExUtil {
 	public static RuntimeEx newEx(Throwable ex) {
 
 		// removing logging, because some exception throwing is intentional (not error)
-		// log.error("logAndRethrow", ex);
+		//log.error("logAndRethrow", ex);
 		if (ex instanceof RuntimeEx) {
 			return (RuntimeEx) ex;
 		}
@@ -28,7 +28,7 @@ public class ExUtil {
 	public static RuntimeEx newEx(String msg) {
 		RuntimeEx ex = new RuntimeEx(msg);
 		// removing logging, because some exception throwing is intentional (not error)
-		// log.error("logThrow", ex);
+		//log.error("logThrow", ex);
 		return ex;
 	}
 }

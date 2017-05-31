@@ -137,8 +137,9 @@ public class Sha256Service {
 		}
 	}
 
+	/* todo-1: For verification of import/export we need to ignore these, but for DB replication in P2P we wouldn't */
 	private boolean ignoreProperty(String propName) {
-		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName);
+		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName) || JcrProp.CREATED_BY.equals(propName);
 	}
 
 	private void digestProperty(Property prop) {

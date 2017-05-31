@@ -64,6 +64,7 @@ public class CompareSubGraphService {
 			Node nodeA = JcrUtil.findNode(session, nodeIdA);
 			Node nodeB = JcrUtil.findNode(session, nodeIdB);
 			recurseNode(nodeA, nodeB, 0);
+			res.setCompareInfo("Nodes are identical.");
 			success = true;
 		}
 		/*
@@ -72,6 +73,7 @@ public class CompareSubGraphService {
 		 */
 		catch (CompareFailedException ex) {
 			String compareInfo = "Compare Failed: " + ex.getMessage();
+			log.debug("Compare Failed", ex);
 			res.setCompareInfo(compareInfo);
 			success = true;
 		}
@@ -149,7 +151,7 @@ public class CompareSubGraphService {
 					Property propB = nodeB.getProperty(propName);
 
 					/* verify property data is identical */
-					compareProperties(propA, propB);
+					compareProperties(propName, propA, propB);
 				}
 			}
 
@@ -168,11 +170,12 @@ public class CompareSubGraphService {
 		}
 	}
 
+	/* todo-1: For verification of import/export we need to ignore these, but for DB replication in P2P we wouldn't */
 	private boolean ignoreProperty(String propName) {
-		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName);
+		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName) || JcrProp.CREATED_BY.equals(propName);
 	}
 
-	private void compareProperties(Property propA, Property propB) {
+	private void compareProperties(String propName, Property propA, Property propB) {
 		try {
 			if (!propA.getName().equals(propB.getName())) {
 				throw new RuntimeEx("bug in compare code. Property names different.");
@@ -181,19 +184,19 @@ public class CompareSubGraphService {
 			/* multivalue */
 			if (propA.isMultiple()) {
 				if (!propB.isMultiple()) {
-					throw new CompareFailedException("multiplicity difference");
+					throw new CompareFailedException("multiplicity difference: " + propName);
 				}
 
 				Value[] vA = propA.getValues();
 				Value[] vB = propB.getValues();
-				compareValArrays(vA, vB);
+				compareValArrays(propName, vA, vB);
 			}
 			/* else single value */
 			else {
 				// todo-0: add binary stream compare. Skipping for now. The code for stream handling
 				// can be easily be gleaned
 				// from Sha256Service class which is similar to this class.
-				compareVals(propA.getValue(), propB.getValue());
+				compareVals(propName, propA.getValue(), propB.getValue());
 			}
 		}
 		catch (Exception ex) {
@@ -201,20 +204,20 @@ public class CompareSubGraphService {
 		}
 	}
 
-	private void compareValArrays(Value[] vA, Value[] vB) {
+	private void compareValArrays(String propName, Value[] vA, Value[] vB) {
 		if (vA.length != vB.length) {
-			throw new CompareFailedException("multi value count mismatch");
+			throw new CompareFailedException("multi value count mismatch: propName=" + propName);
 		}
 
 		for (int i = 0; i < vA.length; i++) {
-			compareVals(vA[i], vB[i]);
+			compareVals(propName, vA[i], vB[i]);
 		}
 	}
 
-	private void compareVals(Value valueA, Value valueB) {
+	private void compareVals(String propName, Value valueA, Value valueB) {
 		try {
 			if (!valueA.getString().equals(valueB.getString())) {
-				throw new CompareFailedException("values compare failed");
+				throw new CompareFailedException("values compare failed: propName=" + propName + " A=" + valueA.getString() + " B=" + valueB.getString());
 			}
 		}
 		catch (Exception ex) {

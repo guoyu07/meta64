@@ -9,44 +9,56 @@ import javax.jcr.Property;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.request.CompareSubGraphsRequest;
-import com.meta64.mobile.response.CompareSubGraphsResponse;
+import com.meta64.mobile.request.CompareSubGraphRequest;
+import com.meta64.mobile.response.CompareSubGraphResponse;
 import com.meta64.mobile.util.CompareFailedException;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.ThreadLocals;
-
-/* 
- * WARNING WARNING WARNING
- * 
- * i pounded this code out in one sitting, and it is not tested OR EVEN PROOFREAD yet!
- * 
- * Very much a work in progress, where i left off eod 5/29/2017
- * 
- */
 
 /**
  * Recurses into two separate tree subgraphs to see if the two trees are identical or not, possibly
- * ignoring certain unimportant things like timestamp, etc.
+ * ignoring certain things like timestamp, etc.
  */
 @Component
 @Scope("prototype")
-public class CompareSubGraphs {
-	private static final Logger log = LoggerFactory.getLogger(CompareSubGraphs.class);
+public class CompareSubGraphService {
+	private static final Logger log = LoggerFactory.getLogger(CompareSubGraphService.class);
 
-	public void generateNodeHash(Session session, CompareSubGraphsRequest req, CompareSubGraphsResponse res) {
+	public void compare(Session session, CompareSubGraphRequest req, CompareSubGraphResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getJcrSession();
 		}
 
 		String nodeIdA = req.getNodeIdA();
 		String nodeIdB = req.getNodeIdB();
+
+		/* validate nodes IDs were sent */
+		if (StringUtils.isEmpty(nodeIdA) || StringUtils.isEmpty(nodeIdB)) {
+			throw new RuntimeEx("Must specify two nodes to compare.");
+		}
+
+		nodeIdA = nodeIdA.trim();
+		nodeIdB = nodeIdB.trim();
+
+		if (nodeIdA.equals(nodeIdB)) {
+			throw new RuntimeEx("Cannot compare node to itself. Please supply two different nodes.");
+		}
+
+		/*
+		 * todo-1: if we wanted to we could also run a search to be sure none of the parent nodes of
+		 * A is B, and vice versa just for one more sanity check before we start processing to be
+		 * sure user doesn't have a case where A is a SubGraph of B or vice versa
+		 */
+
 		boolean success = false;
 		try {
 			Node nodeA = JcrUtil.findNode(session, nodeIdA);
@@ -67,6 +79,10 @@ public class CompareSubGraphs {
 			throw ExUtil.newEx(ex);
 		}
 
+		/*
+		 * Success here indicates nothing failed about how the compare was done, and is not the same
+		 * as saying the nodes are identical or not.
+		 */
 		res.setSuccess(success);
 	}
 
@@ -87,15 +103,22 @@ public class CompareSubGraphs {
 				throw ExUtil.newEx(ex);
 			}
 
+			int oddEven = 0;
 			try {
 				while (true) {
 					Node nA = nodeIterA.nextNode();
+					oddEven++;
 					Node nB = nodeIterB.nextNode();
+					oddEven++;
 					recurseNode(nA, nB, level + 1);
 				}
 			}
 			catch (NoSuchElementException ex) {
 				// not an error. Normal iterator end condition.
+				// but we check oddEven to verify child counts were identical.
+				if (oddEven % 2 != 0) {
+					throw new CompareFailedException("child nodes are not same count");
+				}
 			}
 		}
 		catch (Exception e) {
@@ -111,19 +134,29 @@ public class CompareSubGraphs {
 			List<String> propNamesA = JcrUtil.getPropertyNames(nodeA, true);
 			List<String> propNamesB = JcrUtil.getPropertyNames(nodeB, true);
 
-			/* todo: add code to actually check property names all match too */
+			/*
+			 * todo: add code to actually check property names all match too (i.e. identical list
+			 * condition)
+			 */
 			if (propNamesA.size() != propNamesB.size()) {
 				throw new CompareFailedException("Property cound difference detected.");
 			}
 
 			for (String propName : propNamesA) {
 				if (!ignoreProperty(propName)) {
+					/* get this property value on both nodes */
 					Property propA = nodeA.getProperty(propName);
 					Property propB = nodeB.getProperty(propName);
+
+					/* verify property data is identical */
 					compareProperties(propA, propB);
 				}
 			}
 
+			/*
+			 * Check primary node types identical. todo-0: we can add mix-ins, to be more strict
+			 * about the definition of truely identical types
+			 */
 			String typeA = nodeA.getPrimaryNodeType().getName();
 			String typeB = nodeB.getPrimaryNodeType().getName();
 			if (!typeA.equals(typeB)) {
@@ -141,7 +174,9 @@ public class CompareSubGraphs {
 
 	private void compareProperties(Property propA, Property propB) {
 		try {
-			// updateDigest(prop.getName());
+			if (!propA.getName().equals(propB.getName())) {
+				throw new RuntimeEx("bug in compare code. Property names different.");
+			}
 
 			/* multivalue */
 			if (propA.isMultiple()) {
@@ -151,28 +186,28 @@ public class CompareSubGraphs {
 
 				Value[] vA = propA.getValues();
 				Value[] vB = propB.getValues();
-
-				if (vA.length != vB.length) {
-					throw new CompareFailedException("multi value count mismatch");
-				}
-
-				for (int i = 0; i < vA.length; i++) {
-					compareVals(vA[i], vB[i]);
-				}
+				compareValArrays(vA, vB);
 			}
 			/* else single value */
 			else {
-				// todo-0: add binary stream compare. Skipping for now.
-				// if (prop.getName().equals(JcrProp.BIN_DATA)) {
-				// //updateDigest(prop.getValue().getBinary().getStream());
-				// }
-				// else {
+				// todo-0: add binary stream compare. Skipping for now. The code for stream handling
+				// can be easily be gleaned
+				// from Sha256Service class which is similar to this class.
 				compareVals(propA.getValue(), propB.getValue());
-				// }
 			}
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
+		}
+	}
+
+	private void compareValArrays(Value[] vA, Value[] vB) {
+		if (vA.length != vB.length) {
+			throw new CompareFailedException("multi value count mismatch");
+		}
+
+		for (int i = 0; i < vA.length; i++) {
+			compareVals(vA[i], vB[i]);
 		}
 	}
 
@@ -186,24 +221,4 @@ public class CompareSubGraphs {
 			throw ExUtil.newEx(ex);
 		}
 	}
-
-	/* digest entire stream AND close the stream. */
-	// private long updateDigest(InputStream inputStream) {
-	// long dataLen = 0;
-	// try {
-	// try {
-	// byte[] bytes = IOUtils.toByteArray(inputStream);
-	// dataLen = bytes.length;
-	// // updateDigest(bytes);
-	// }
-	// finally {
-	// StreamUtil.close(inputStream);
-	// }
-	// }
-	// catch (IOException ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// return dataLen;
-	// }
-
 }

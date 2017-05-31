@@ -32,6 +32,7 @@ import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.BrowseFolderRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.CloseAccountRequest;
+import com.meta64.mobile.request.CompareSubGraphRequest;
 import com.meta64.mobile.request.CreateSubNodeRequest;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.DeleteNodesRequest;
@@ -71,6 +72,7 @@ import com.meta64.mobile.response.AnonPageLoadResponse;
 import com.meta64.mobile.response.BrowseFolderResponse;
 import com.meta64.mobile.response.ChangePasswordResponse;
 import com.meta64.mobile.response.CloseAccountResponse;
+import com.meta64.mobile.response.CompareSubGraphResponse;
 import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.DeleteNodesResponse;
@@ -107,6 +109,7 @@ import com.meta64.mobile.response.SplitNodeResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.CompareSubGraphService;
 import com.meta64.mobile.service.ExportXmlService;
 import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
@@ -701,6 +704,20 @@ public class AppController {
 		}
 		Sha256Service sha256Service = (Sha256Service) SpringContextUtil.getBean(Sha256Service.class);
 		sha256Service.generateNodeHash(null, req, res);
+		checkHttpSession();
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/compareSubGraphs", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody CompareSubGraphResponse generateNodeHash(@RequestBody CompareSubGraphRequest req) {
+		logRequest("compareSubGraphs", req);
+		CompareSubGraphResponse res = new CompareSubGraphResponse();
+		if (!sessionContext.isAdmin()) {
+			throw ExUtil.newEx("admin only function.");
+		}
+		CompareSubGraphService csgs = (CompareSubGraphService) SpringContextUtil.getBean(CompareSubGraphService.class);
+		csgs.compare(null, req, res);
 		checkHttpSession();
 		return res;
 	}

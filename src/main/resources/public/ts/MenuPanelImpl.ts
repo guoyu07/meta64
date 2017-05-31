@@ -87,8 +87,11 @@ export default class MenuPanel extends Comp {
                     () => { return meta64.state.importFeatureEnabled }), //
                 new MenuItem("Export", edit.openExportDlg, //
                     () => { return meta64.state.exportFeatureEnabled && (meta64.state.selNodeIsMine || (meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id)) },
-                    () => { return meta64.state.exportFeatureEnabled }
-                )
+                    () => { return meta64.state.exportFeatureEnabled } //
+                ), //
+                new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null}, () => { return meta64.isAdminUser }), //
+                new MenuItem("Compare as B (to A)", view.compareAsBtoA, () => { return meta64.isAdminUser  && meta64.state.highlightNode != null}, () => { return meta64.isAdminUser }), //
+                new MenuItem("Generate Hash", view.generateNodeHash, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             // WORK IN PROGRESS ( do not delete)
             // let fileSystemMenuItems = //
@@ -109,7 +112,6 @@ export default class MenuPanel extends Comp {
             new Menu("Admin", [
                 new MenuItem("Generate RSS", podcast.generateRSS, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
                 new MenuItem("Server Info", view.showServerInfo, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
-                new MenuItem("Generate Hash", view.generateNodeHash, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
                 new MenuItem("Insert Book: War and Peace", edit.insertBookWarAndPeace,
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }

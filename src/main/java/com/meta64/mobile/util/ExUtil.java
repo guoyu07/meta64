@@ -10,21 +10,25 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Note: This code doesn't ignore exceptions or alter our ability to properly handle ALL exceptions
  * of both types, but it just makes the code cleaner, by doing what he Java-language SHOULD have
- * done to begin with. 
+ * done to begin with.
  */
 public class ExUtil {
 	private static final Logger log = LoggerFactory.getLogger(ExUtil.class);
 
 	public static RuntimeEx newEx(Throwable ex) {
-		//removing logging, because some exception throwing is intentional (not error)
-		//log.error("logAndRethrow", ex);
-		throw new RuntimeEx(ex);
+
+		// removing logging, because some exception throwing is intentional (not error)
+		// log.error("logAndRethrow", ex);
+		if (ex instanceof RuntimeEx) {
+			return (RuntimeEx) ex;
+		}
+		return new RuntimeEx(ex);
 	}
 
 	public static RuntimeEx newEx(String msg) {
 		RuntimeEx ex = new RuntimeEx(msg);
-		//removing logging, because some exception throwing is intentional (not error)
-		//log.error("logThrow", ex);
+		// removing logging, because some exception throwing is intentional (not error)
+		// log.error("logThrow", ex);
 		return ex;
 	}
 }

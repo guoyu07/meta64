@@ -21,7 +21,7 @@ export class PropEntry {
     //and when doing so probably use an interface of EditPRopTextarea just to be safer against circular references since this interfeces
     //module is imported into pretty much every other module.
     constructor(public id: string, //
-        public checkboxId : string, //
+        public checkboxId: string, //
         public property: PropertyInfo, //
         public multi: boolean, //
         public readOnly: boolean, //
@@ -162,7 +162,12 @@ export interface GetServerInfoRequest {
 }
 
 export interface GenerateNodeHashRequest {
-  nodeId: string;
+    nodeId: string;
+}
+
+export interface CompareSubGraphRequest {
+    nodeIdA: string;
+    nodeIdB: string;
 }
 
 export interface GetSharedNodesRequest {
@@ -350,6 +355,10 @@ export interface GetServerInfoResponse extends OakResponseBase {
 
 export interface GenerateNodeHashResponse extends OakResponseBase {
     hashInfo: string;
+}
+
+export interface CompareSubGraphResponse extends OakResponseBase {
+    compareInfo: string;
 }
 
 export interface GetSharedNodesResponse extends OakResponseBase {

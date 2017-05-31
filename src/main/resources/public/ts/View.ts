@@ -10,6 +10,7 @@ import * as I from "./Interfaces";
 
 class View {
 
+    compareNodeA: I.NodeInfo;
     scrollToSelNodePending: boolean = false;
 
     updateStatusBar(): void {
@@ -199,6 +200,24 @@ class View {
         util.ajax<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {}, function(res: I.GetServerInfoResponse) {
             util.showMessage(res.serverInfo);
         });
+    }
+
+    setCompareNodeA() {
+        view.compareNodeA = meta64.getHighlightedNode();
+    }
+
+    compareAsBtoA() {
+        debugger;
+        let nodeB = meta64.getHighlightedNode();
+        if (nodeB) {
+            if (view.compareNodeA.id && nodeB.id) {
+                util.ajax<I.CompareSubGraphRequest, I.CompareSubGraphResponse>("compareSubGraphs", //
+                    { "nodeIdA": view.compareNodeA.id, "nodeIdB": nodeB.id }, //
+                    function(res: I.CompareSubGraphResponse) {
+                        util.showMessage(res.compareInfo);
+                    });
+            }
+        }
     }
 
     generateNodeHash() {

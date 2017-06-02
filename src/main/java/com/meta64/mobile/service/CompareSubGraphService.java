@@ -131,8 +131,8 @@ public class CompareSubGraphService {
 
 	private void processNode(Node nodeA, Node nodeB) {
 		try {
-			log.debug("Processing NodeA: " + nodeA.getPath() + " ident: " + nodeA.getIdentifier());
-			log.debug("Processing NodeB: " + nodeB.getPath() + " ident: " + nodeB.getIdentifier());
+			//log.debug("Processing NodeA: " + nodeA.getPath() + " ident: " + nodeA.getIdentifier());
+			//log.debug("Processing NodeB: " + nodeB.getPath() + " ident: " + nodeB.getIdentifier());
 
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNamesA = JcrUtil.getPropertyNames(nodeA, true);

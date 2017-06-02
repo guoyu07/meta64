@@ -124,24 +124,7 @@ public class ImportXmlService {
 		try {
 			log.debug("Import to Node: " + targetNode.getPath());
 			BufferedInputStream in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
-
-			/*
-			 * This REPLACE_EXISTING option has the effect (in my own words) as meaning that even if
-			 * the some of the nodes have moved around since they were first exported they will be
-			 * updated 'in their current place' as part of this import.
-			 * 
-			 * This UUID behavior is so interesting and powerful it really needs to be an option
-			 * specified at the user level that determines how this should work.
-			 */
-			session.getWorkspace().importXML(targetNode.getPath(), in,
-					// NOTE: I'm not sure if this is a bug yet or not, but if you import using
-					// IMPORT_UUID_CREATE_NEW and a node with mix:referencable+jcr:uuid (renamed
-					// node)
-					// this option brings those nodes in at BOTTOM of treen and then therefore
-					// breaks Merkle verification, and compareSubGrap also.
-					ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW); // IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-																		// //
-																		// IMPORT_UUID_CREATE_NEW);
+			session.getWorkspace().importXML(targetNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW);
 
 			/*
 			 * since importXML is documented to close the inputstream, we don't need to close it.

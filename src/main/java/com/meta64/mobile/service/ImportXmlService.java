@@ -28,8 +28,21 @@ import com.meta64.mobile.util.ThreadLocals;
 
 /**
  * Import from XML files.
- * <p> 
- * NOTE: This does not import arbitrary XML but only xml that was exported from ExportXmlService.java in SubNode.
+ * <p>
+ * Note: If you have any "mix:referencable" nodes (which will have jcr:uuid set on them) from when
+ * you exported from some repository and then you are trying to import that identical data BACK into
+ * the same repository at some other location. (Maybe you are testing export/import feature for
+ * example), then you will get an exception (because of IMPORT_UUID_COLLISION_THROW), which is
+ * CORRECT behavior. This is simply because the JCR will now allow two nodes on the same repo to
+ * have the same UUID (for obvious reasons), so the only way to safely import data that will
+ * duplicate IDs is that you must first edit the XML of what you are about to import, and just
+ * literally put a NEW (i.e. different) value in all of the jcr:uuids. Obviously i need an automated
+ * way to do this by machine, by preprocessing the XML file (after prompting the user when uuids are
+ * detected), and automatically taking a 'hash of the hash' of the existing hash, before attempting
+ * the import.
+ * <p>
+ * NOTE: This does not import arbitrary XML but only xml that was exported from
+ * ExportXmlService.java in SubNode.
  */
 @Component
 public class ImportXmlService {
@@ -121,8 +134,14 @@ public class ImportXmlService {
 			 * specified at the user level that determines how this should work.
 			 */
 			session.getWorkspace().importXML(targetNode.getPath(), in,
-					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING);
-					ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+					// NOTE: I'm not sure if this is a bug yet or not, but if you import using
+					// IMPORT_UUID_CREATE_NEW and a node with mix:referencable+jcr:uuid (renamed
+					// node)
+					// this option brings those nodes in at BOTTOM of treen and then therefore
+					// breaks Merkle verification, and compareSubGrap also.
+					ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW); // IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+																		// //
+																		// IMPORT_UUID_CREATE_NEW);
 
 			/*
 			 * since importXML is documented to close the inputstream, we don't need to close it.

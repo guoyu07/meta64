@@ -2,6 +2,7 @@ package com.meta64.mobile.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -63,7 +64,7 @@ public class CompareSubGraphService {
 		try {
 			Node nodeA = JcrUtil.findNode(session, nodeIdA);
 			Node nodeB = JcrUtil.findNode(session, nodeIdB);
-			recurseNode(nodeA, nodeB, 0);
+			recurseNode(nodeA, nodeB);
 			res.setCompareInfo("Nodes are identical.");
 			success = true;
 		}
@@ -88,8 +89,8 @@ public class CompareSubGraphService {
 		res.setSuccess(success);
 	}
 
-	private void recurseNode(Node nodeA, Node nodeB, int level) {
-		if (nodeA == null) return;
+	private void recurseNode(Node nodeA, Node nodeB) {
+		if (nodeA == null || nodeB == null) return;
 
 		try {
 			/* process the current node */
@@ -112,7 +113,7 @@ public class CompareSubGraphService {
 					oddEven++;
 					Node nB = nodeIterB.nextNode();
 					oddEven++;
-					recurseNode(nA, nB, level + 1);
+					recurseNode(nA, nB);
 				}
 			}
 			catch (NoSuchElementException ex) {
@@ -130,29 +131,32 @@ public class CompareSubGraphService {
 
 	private void processNode(Node nodeA, Node nodeB) {
 		try {
-			log.debug("Processing NodeA: " + nodeA.getPath());
+			log.debug("Processing NodeA: " + nodeA.getPath() + " ident: " + nodeA.getIdentifier());
+			log.debug("Processing NodeB: " + nodeB.getPath() + " ident: " + nodeB.getIdentifier());
 
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNamesA = JcrUtil.getPropertyNames(nodeA, true);
 			List<String> propNamesB = JcrUtil.getPropertyNames(nodeB, true);
 
-			/*
-			 * todo: add code to actually check property names all match too (i.e. identical list
-			 * condition)
-			 */
-			if (propNamesA.size() != propNamesB.size()) {
-				throw new CompareFailedException("Property cound difference detected.");
+			propNamesA = removeIgnoredProps(propNamesA);
+			propNamesB = removeIgnoredProps(propNamesB);
+
+			// jcr:uuid is a fly in ointment here when you have done an IMPORT of a node that was
+			// "renamed" and thus is referencable
+			// and has jcr:uuid on it.
+
+			//verify propNames lists identical 
+			if (!propNamesA.equals(propNamesB)) {
+				throw new CompareFailedException("Property count difference detected.");
 			}
 
 			for (String propName : propNamesA) {
-				if (!ignoreProperty(propName)) {
-					/* get this property value on both nodes */
-					Property propA = nodeA.getProperty(propName);
-					Property propB = nodeB.getProperty(propName);
+				/* get this property value on both nodes */
+				Property propA = nodeA.getProperty(propName);
+				Property propB = nodeB.getProperty(propName);
 
-					/* verify property data is identical */
-					compareProperties(propName, propA, propB);
-				}
+				/* verify property data is identical */
+				compareProperties(propName, propA, propB);
 			}
 
 			/*
@@ -161,6 +165,7 @@ public class CompareSubGraphService {
 			 */
 			String typeA = nodeA.getPrimaryNodeType().getName();
 			String typeB = nodeB.getPrimaryNodeType().getName();
+			
 			if (!typeA.equals(typeB)) {
 				throw new CompareFailedException("types mismatched.");
 			}
@@ -170,9 +175,16 @@ public class CompareSubGraphService {
 		}
 	}
 
-	/* todo-1: For verification of import/export we need to ignore these, but for DB replication in P2P we wouldn't */
+	private List<String> removeIgnoredProps(List<String> list) {
+		return list.stream().filter(item -> !ignoreProperty(item)).collect(Collectors.toList());
+	}
+
+	/*
+	 * todo-1: For verification of import/export we need to ignore these, but for DB replication in
+	 * P2P we wouldn't
+	 */
 	private boolean ignoreProperty(String propName) {
-		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName) || JcrProp.CREATED_BY.equals(propName);
+		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName) || JcrProp.CREATED_BY.equals(propName) || "jcr:uuid".equals(propName);
 	}
 
 	private void compareProperties(String propName, Property propA, Property propB) {
@@ -217,7 +229,7 @@ public class CompareSubGraphService {
 	private void compareVals(String propName, Value valueA, Value valueB) {
 		try {
 			if (!valueA.getString().equals(valueB.getString())) {
-				throw new CompareFailedException("values compare failed: propName=" + propName + " A=" + valueA.getString() + " B=" + valueB.getString());
+				throw new CompareFailedException("values compare failed: propName=" + propName + "\n  A=" + valueA.getString() + "\n  B=" + valueB.getString());
 			}
 		}
 		catch (Exception ex) {

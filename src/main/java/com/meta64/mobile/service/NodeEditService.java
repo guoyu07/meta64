@@ -231,10 +231,6 @@ public class NodeEditService {
 
 			/* make the node referencable, required for accessing via URL */
 			if (node != null) {
-				/*
-				 * if node already has uuid then we can do nothing here, we just silently return
-				 * success
-				 */
 				if (!node.hasProperty(JcrProp.UUID)) {
 					node.addMixin(JcrConstants.MIX_REFERENCEABLE);
 				}

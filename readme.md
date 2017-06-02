@@ -1,26 +1,15 @@
 ## SubNode: Open-Source CMS/Portal
 
-SubNode (formerly Meta64) is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb back-end (on Java SpringBoot), with Google Polymer-based and TypeScript coded front-end. The sbnode.com website itself is running an instance of the SubNode portal software. 
+SubNode is an Open Source "Mobile First" Wiki-type content repository (or CMS) built on Apache Oak JCR and MongoDb back-end (on Java SpringBoot), with Google Polymer-based and TypeScript coded front-end. The sbnode.com website itself is running an instance of the SubNode portal software. 
 
 This technology itself is a platform for building portals. This "Portal Platform" allows users to signup and create accounts where they can host content. The content can be any kind of text, data, images, and/or binaries, and can be shared to other users, who can then browse and/or edit the content collaboratively. The goal is to create a portal that is somewhat similar to Wikipedia (collaborative editing and sharing), but having many Social Media-types of capabilities. Another goal, from a technology standpoint, was to use only content repository open-standards for data, open source APIs, highly scalable data storage, and a very modern Mobile front end.
 
-## News: 
+## News & Latest Developments
 
-### meta64.com is moving to sbnode.com
+The next step in evolution of SubNode is the addition of **blockchain technology**. The goal will be to have a secure public-key encrypted, publicly open (like BitCoin is), decentralized P2P, democratic concensus-based, social media solution that will commoditize this server technology and put control back in the hands of the people. Currently the social media space is completely monopolized and controlled by Facebook, Google, Twitter, etc. These monopolies take your data, sell it, claim to own it, push ADs, and try to manipulate and control society. People who are already well versed in blockchain know that the world is abuzz right now about the fact that blockchain technologies are poised to destroy these monopolies. SubNode will hopefully help move in this direction, and show at least one complete end-to-end vision of how a new blockchain-based web would be architected on top of Content Repository databases. SubNode is actually a bit more generalized than just a "Social Media" technology, because it's just plainly a shared content tree, just like blockchains are a simple a shared 'linked-list'. In order for a blockchain to become widely usable as a general purpose data structure it has to be really a form of (a Merkle) tree, which is why the JCR is the one and only obvious core technology for it.
 
-This is not a pivot of the product itself, but only a name change. Meta64 will remain the Github project name, in the source code, but the website and app are now called "SubNode". 
-
-### Recent Awesome Changes (3/8/2017) 
-
-Created a "Widget Framework" that eliminates any need for "HTML Templates" (and/or JSX, etc), by using TypeScript custom components that programatically represent GUI layout and definition in a way that is actually more expressive, simpler to read, and more dynamic than any templating system could ever be. 
-
-Because of the power of having full OOP (Classes, etc) in TypeScript it has opened up web development to the possibility of what was possible in Java Swing, and GWT, which are two technologies that were great for what they were, and not built on top of any templating nonsense. Not only does a GUI Component widget system in TypeScript eliminate any need to work with templates, it totally decouples the HTML also, so that for the most part the the developer never even notices he's dealing with an HTML, because everything is just clean OOP calls on Widget Components, with the HTML specifics abstracted into lower layers that never need be worried about.
-
-For example, here is the entire "Change Password Dialog"...
-
-https://github.com/Clay-Ferguson/meta64/blob/master/src/main/resources/public/ts/ChangePasswordDlgImpl.ts
-
-If you look at the BuildGUI() method on that class it should be obvious that this widget technique is superior to any template-based system. 
+What will make up the core of the SubNode blockchain, at the data layer, will be a Merkle Tree (same algorithm at the core of all blockchains) layer on top of the JCR layer, so that every piece of information created by any user will go onto the chain (as a tree node, or "SubNode") and be public, authenticatable back to each user, and uncorruptable (because of hashes). The immediate plan is just to have a system where each instance holds a full copy of the database (like a Blockchain miner), and participates in the distributed system. 
+ 
 
 ## Technology Stack
 

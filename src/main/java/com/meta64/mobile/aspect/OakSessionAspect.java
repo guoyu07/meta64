@@ -81,7 +81,7 @@ public class OakSessionAspect {
 			}
 		}
 		catch (Exception e) {
-			log.error("exception in aspect", e);
+			ExUtil.error(log, "exception in aspect", e);
 
 			/*
 			 * if exception was thrown we get response from threadlocal, but really if we wanted to

@@ -41,6 +41,8 @@ public class JcrProp {
 	// END jcr-types.txt file
 	// ---------------------------------------------
 
+	public static final String MERKLE_HASH = "meta64:merkle";
+	
 	/*
 	 * "true" means any user can add subnode under the node that has this property
 	 */

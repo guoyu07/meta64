@@ -212,6 +212,22 @@ public class JcrUtil {
 		}
 	}
 
+	/**
+	 * Check if this is a node that can only be modified by JCR API internals, and not even allow to be changed
+	 * directly by admins.
+	 * 
+	 * @param node
+	 * @return true if a protected node.
+	 */
+	public static boolean isProtectedNode(Node node) {
+		try {
+			return node.getPrimaryNodeType().getName().startsWith("rep:");
+		}
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
+		}
+	}
+
 	/*
 	 * Returns the node that is below this node in the siblings list. If parent node happens to
 	 * already be available you can pass it in, but if you pass a null parent instead that works too
@@ -630,7 +646,7 @@ public class JcrUtil {
 		if (ordered) {
 			Collections.sort(names);
 		}
-		
+
 		return names;
 	}
 

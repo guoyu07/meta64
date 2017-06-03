@@ -23,6 +23,7 @@ import com.meta64.mobile.util.CompareFailedException;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.RuntimeEx;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -131,8 +132,10 @@ public class CompareSubGraphService {
 
 	private void processNode(Node nodeA, Node nodeB) {
 		try {
-			//log.debug("Processing NodeA: " + nodeA.getPath() + " ident: " + nodeA.getIdentifier());
-			//log.debug("Processing NodeB: " + nodeB.getPath() + " ident: " + nodeB.getIdentifier());
+			// log.debug("Processing NodeA: " + nodeA.getPath() + " ident: " +
+			// nodeA.getIdentifier());
+			// log.debug("Processing NodeB: " + nodeB.getPath() + " ident: " +
+			// nodeB.getIdentifier());
 
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNamesA = JcrUtil.getPropertyNames(nodeA, true);
@@ -145,7 +148,7 @@ public class CompareSubGraphService {
 			// "renamed" and thus is referencable
 			// and has jcr:uuid on it.
 
-			//verify propNames lists identical 
+			// verify propNames lists identical
 			if (!propNamesA.equals(propNamesB)) {
 				throw new CompareFailedException("Property count difference detected.");
 			}
@@ -165,7 +168,7 @@ public class CompareSubGraphService {
 			 */
 			String typeA = nodeA.getPrimaryNodeType().getName();
 			String typeB = nodeB.getPrimaryNodeType().getName();
-			
+
 			if (!typeA.equals(typeB)) {
 				throw new CompareFailedException("types mismatched.");
 			}
@@ -184,7 +187,11 @@ public class CompareSubGraphService {
 	 * P2P we wouldn't
 	 */
 	private boolean ignoreProperty(String propName) {
-		return JcrProp.CREATED.equals(propName) || JcrProp.LAST_MODIFIED.equals(propName) || JcrProp.CREATED_BY.equals(propName) || "jcr:uuid".equals(propName);
+		return JcrProp.CREATED.equals(propName) || //
+				JcrProp.LAST_MODIFIED.equals(propName) || //
+				JcrProp.CREATED_BY.equals(propName) || //
+				JcrProp.UUID.equals(propName) || //
+				JcrProp.BIN_VER.equals(propName);
 	}
 
 	private void compareProperties(String propName, Property propA, Property propB) {
@@ -193,7 +200,7 @@ public class CompareSubGraphService {
 				throw new RuntimeEx("bug in compare code. Property names different.");
 			}
 
-			/* multivalue */
+			/* multi-value */
 			if (propA.isMultiple()) {
 				if (!propB.isMultiple()) {
 					throw new CompareFailedException("multiplicity difference: " + propName);
@@ -203,12 +210,16 @@ public class CompareSubGraphService {
 				Value[] vB = propB.getValues();
 				compareValArrays(propName, vA, vB);
 			}
-			/* else single value */
+			/* single valued property */
 			else {
-				// todo-0: add binary stream compare. Skipping for now. The code for stream handling
-				// can be easily be gleaned
-				// from Sha256Service class which is similar to this class.
-				compareVals(propName, propA.getValue(), propB.getValue());
+				if (propName.equals(JcrProp.BIN_DATA)) {
+					if (!StreamUtil.streamsIdentical(propA.getValue().getBinary().getStream(), propB.getValue().getBinary().getStream())) {
+						throw new CompareFailedException("binary data did not match.");
+					}
+				}
+				else {
+					compareVals(propName, propA.getValue(), propB.getValue());
+				}
 			}
 		}
 		catch (Exception ex) {

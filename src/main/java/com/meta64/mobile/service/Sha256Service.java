@@ -1,5 +1,6 @@
 package com.meta64.mobile.service;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,13 +14,8 @@ import java.util.stream.Collectors;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
@@ -224,8 +220,9 @@ public class Sha256Service {
 		return JcrProp.CREATED.equals(propName) || //
 				JcrProp.LAST_MODIFIED.equals(propName) || //
 				JcrProp.CREATED_BY.equals(propName) || //
-				"jcr:uuid".equals(propName) || //
-				JcrProp.MERKLE_HASH.equals(propName);
+				JcrProp.UUID.equals(propName) || //
+				JcrProp.MERKLE_HASH.equals(propName) || //
+				JcrProp.BIN_VER.equals(propName);
 	}
 
 	private void digestProperty(MessageDigest digester, Property prop) {
@@ -291,19 +288,22 @@ public class Sha256Service {
 	/* digest entire stream AND close the stream. */
 	private long updateDigest(MessageDigest digester, InputStream inputStream) {
 		long dataLen = 0;
+		BufferedInputStream bis = null;
+
 		try {
-			try {
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-				dataLen = bytes.length;
-				updateDigest(digester, bytes);
-			}
-			finally {
-				StreamUtil.close(inputStream);
-			}
+			/* Wrap stream if it's not alrady a buffered one */
+			bis = (inputStream instanceof BufferedInputStream) ? (BufferedInputStream)inputStream : new BufferedInputStream(inputStream);
+			byte[] bytes = IOUtils.toByteArray(inputStream);
+			dataLen = bytes.length;
+			updateDigest(digester, bytes);
 		}
 		catch (IOException ex) {
 			throw ExUtil.newEx(ex);
 		}
+		finally {
+			StreamUtil.close(bis);
+		}
+
 		return dataLen;
 	}
 
@@ -341,7 +341,8 @@ public class Sha256Service {
 	 * remote repository subgraphs, etc.
 	 */
 	private void writeAllMerkleHashes() {
-		//todo-0: Once a bit more testing is done, i can boost this batch size to a more reasonable number like 100 or several hundered.
+		// todo-0: Once a bit more testing is done, i can boost this batch size to a more reasonable
+		// number like 100 or several hundered.
 		int maxBatchSize = 10;
 
 		adminRunner.run((Session session) -> {
@@ -363,13 +364,13 @@ public class Sha256Service {
 					 * only write the merkle hash if it's changed (otherwise would have no effect)
 					 */
 					if (!merkleHash.equals(prevMerkleHash)) {
-						
+
 						/* only attemp to set merkle if node is not repository-controlled */
 						if (!JcrUtil.isProtectedNode(node)) {
 							changeCount++;
 							log.debug("Writing merkle to: " + node.getPath() + " type=" + node.getPrimaryNodeType().getName());
 							node.setProperty(JcrProp.MERKLE_HASH, merkleHash);
-							
+
 							if (++curBatchSize >= maxBatchSize) {
 								curBatchSize = 0;
 								log.debug("Saving Batch " + String.valueOf(++batchNumber));
@@ -392,9 +393,9 @@ public class Sha256Service {
 					session.save();
 				}
 
-				log.info("All Merkle Hashes successfully written.\n"+//
-				"Change count=" + String.valueOf(changeCount)+"\n"+//
-				"Identical count="+String.valueOf(identicalCount));
+				log.info("All Merkle Hashes successfully written.\n" + //
+				"Change count=" + String.valueOf(changeCount) + "\n" + //
+				"Identical count=" + String.valueOf(identicalCount));
 			}
 			catch (Exception ex) {
 				throw ExUtil.newEx(ex);

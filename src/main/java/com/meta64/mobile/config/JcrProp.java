@@ -101,6 +101,8 @@ public class JcrProp {
 	public static final String EMAIL = "email";
 	public static final String CODE = "code";
 
+	/* todo-0: this implementation on the server will not work for my current purposes. Need a TRUE hash of the binary here instead,
+	 * although we may be able to get away with a very shortened one. */
 	public static final String BIN_VER = "binVer";
 
 	/*

@@ -213,8 +213,8 @@ public class JcrUtil {
 	}
 
 	/**
-	 * Check if this is a node that can only be modified by JCR API internals, and not even allow to be changed
-	 * directly by admins.
+	 * Check if this is a node that can only be modified by JCR API internals, and not even allow to
+	 * be changed directly by admins.
 	 * 
 	 * @param node
 	 * @return true if a protected node.

@@ -179,7 +179,7 @@ public class AppController {
 
 	@Autowired
 	private ImportXmlService importXmlService;
-	
+
 	@Autowired
 	private ImportZipService importZipService;
 
@@ -693,7 +693,7 @@ public class AppController {
 		checkHttpSession();
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/generateNodeHash", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GenerateNodeHashResponse generateNodeHash(@RequestBody GenerateNodeHashRequest req) {
@@ -704,10 +704,11 @@ public class AppController {
 		}
 		Sha256Service sha256Service = (Sha256Service) SpringContextUtil.getBean(Sha256Service.class);
 		sha256Service.generateNodeHash(null, req, res);
+
 		checkHttpSession();
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/compareSubGraphs", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody CompareSubGraphResponse generateNodeHash(@RequestBody CompareSubGraphRequest req) {
@@ -741,6 +742,7 @@ public class AppController {
 	/*
 	 * We don't want @OakSession here, because this is called at regular interval and also because
 	 * it should respond fast (being a background operation of the browser)
+	 * 
 	 */
 	// @OakSession
 	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) {

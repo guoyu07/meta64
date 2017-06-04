@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Model object used in export process 
+ * Model object used in export process
  */
 public class ExportPropertyInfo {
 	private String name;

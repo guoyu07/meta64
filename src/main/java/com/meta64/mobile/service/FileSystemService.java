@@ -25,7 +25,8 @@ import com.meta64.mobile.util.ThreadLocals;
 /**
  * Service methods for File System related functions.
  * <p>
- * Very much an experimental work in progress, and not part of any features that are yet ready to be used.
+ * Very much an experimental work in progress, and not part of any features that are yet ready to be
+ * used.
  */
 @Component
 public class FileSystemService {

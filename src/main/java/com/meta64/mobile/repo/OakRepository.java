@@ -1,5 +1,6 @@
 package com.meta64.mobile.repo;
 
+import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -27,8 +28,11 @@ import org.apache.jackrabbit.oak.spi.commit.Observer;
 import org.apache.jackrabbit.oak.spi.query.QueryIndexProvider;
 import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
+import org.apache.jackrabbit.oak.spi.security.authorization.AuthorizationConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.UserConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.UserConstants;
+import org.apache.jackrabbit.oak.spi.xml.ImportBehavior;
+import org.apache.jackrabbit.oak.spi.xml.ProtectedItemImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +52,9 @@ import com.mongodb.MongoTimeoutException;
 /**
  * Instance of a JCR Repository (both RDB and MongoDB are supported).
  * <p>
- * If you configure db.store.type=="rdb", then set the rdb.* properties in this class. If you
- * configure db.store.type=="mongo", then set the mongo.* properties in this class.
+ * If you configure db.store.type=="rdb", then set the rdb.* properties.
+ * <p>
+ * If you configure db.store.type=="mongo", then set the mongo.* properties.
  * <p>
  * NOTE: Even inside this class always use getRepository() to ensure that the init() has been
  * called.
@@ -165,8 +170,9 @@ public class OakRepository {
 						 * one node and without setting this.
 						 */
 						// .setClusterId(1)//
+						// todo-1: make this cache size configurable i properties file.
 						.memoryCacheSize(10 * 1024 * 1024)//
-						.setPersistentCache("target/persistentCache,time");
+						.setPersistentCache(appProp.getAdminDataFolder() + File.separatorChar + "cache" + File.separatorChar + "persistentCache,time");
 
 				/*
 				 * Initialize Mongo DB
@@ -275,8 +281,17 @@ public class OakRepository {
 		Map<String, Object> userParams = new HashMap<String, Object>();
 		userParams.put(UserConstants.PARAM_ADMIN_ID, "admin");
 		userParams.put(UserConstants.PARAM_OMIT_ADMIN_PW, false);
+		userParams.put(ProtectedItemImporter.PARAM_IMPORT_BEHAVIOR, ImportBehavior.NAME_BESTEFFORT);
 
-		securityParams = ConfigurationParameters.of(ImmutableMap.of(UserConfiguration.NAME, ConfigurationParameters.of(userParams)));
+		Map<String, Object> authParams = new HashMap<String, Object>();
+		authParams.put(ProtectedItemImporter.PARAM_IMPORT_BEHAVIOR, ImportBehavior.NAME_BESTEFFORT);
+
+		securityParams = ConfigurationParameters.of(//
+				ImmutableMap.of(//
+						UserConfiguration.NAME, ConfigurationParameters.of(userParams), //
+						AuthorizationConfiguration.NAME, ConfigurationParameters.of(authParams) //
+				));
+
 		securityProvider = new SecurityProviderImpl(securityParams);
 		return securityProvider;
 	}

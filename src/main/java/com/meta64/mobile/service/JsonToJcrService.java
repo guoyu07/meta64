@@ -14,14 +14,16 @@ import com.meta64.mobile.util.JcrUtil;
 
 /**
  * Utility to read JSON and store into JCR automatically.
- * <p> 
- * Work in progress. Developing a way to import structured content out of JSON files stored in the uploaded zips so that the JSON 
- * files in zips result in importing properties onto the node. The immediate plan and need for this is to be able to load RSS Feed definitions
- * without having to manually create them by hand. The exported XML that can be exported from a repository is not very convenient to work with
- * but the JSON will be perfect and only take a few more lines of code to accomplish.
  * <p>
- * I am aware of JCROM which could be used in this code, but my needs are so simple at this point I will just use a getter 
- * on the jsonMapper-created object instead of a fullblown ORM api.
+ * Work in progress. Developing a way to import structured content out of JSON files stored in the
+ * uploaded zips so that the JSON files in zips result in importing properties onto the node. The
+ * immediate plan and need for this is to be able to load RSS Feed definitions without having to
+ * manually create them by hand. The exported XML that can be exported from a repository is not very
+ * convenient to work with but the JSON will be perfect and only take a few more lines of code to
+ * accomplish.
+ * <p>
+ * I am aware of JCROM which could be used in this code, but my needs are so simple at this point I
+ * will just use a getter on the jsonMapper-created object instead of a fullblown ORM api.
  */
 @Component
 public class JsonToJcrService {

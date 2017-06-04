@@ -24,6 +24,7 @@ import com.meta64.mobile.response.ImportResponse;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -96,17 +97,6 @@ public class ImportXmlService {
 				throw ExUtil.newEx("You cannot import onto a node you do not own.");
 			}
 
-			// adminRunner.run((Session adminSession) -> {
-			// try {
-			// importFromFileToNode(adminSession, sourceFileName, targetNode);
-			// javax.jcr.Value val = adminSession.getValueFactory().createValue(createdBy);
-			// nodeEditService.recursiveSetPropertyOnAllNodes(adminSession, targetNode,
-			// JcrProp.CREATED_BY, val);
-			// } catch (Exception e) {
-			// log.debug("failed importing nodes", e);
-			// }
-			// });
-
 			importFromFileToNode(session, sourceFileName, targetNode);
 		}
 
@@ -122,21 +112,28 @@ public class ImportXmlService {
 			throw ExUtil.newEx("Import file not found.");
 		}
 
+		BufferedInputStream in = null;
 		try {
 			log.debug("Import to Node: " + targetNode.getPath());
-			BufferedInputStream in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
+			in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
+
+			/*
+			 * TIP: Search this codebase for "SecurityProvider" and "PARAM_IMPORT_BEHAVIOR" if you
+			 * are troubleshooting why this import may with errors related to security and user
+			 * authorizations.
+			 */
+
 			session.getWorkspace().importXML(targetNode.getPath(), in, //
 					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW//
 					ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW //
 			);
-
-			/*
-			 * since importXML is documented to close the inputstream, we don't need to close it.
-			 * This is not a mistake, plus we have AutoCloseInputStream for additional assurance
-			 */
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
+		}
+		finally {
+			/* The importXML should have already closed, but we add here just to be sure */
+			StreamUtil.close(in);
 		}
 	}
 }

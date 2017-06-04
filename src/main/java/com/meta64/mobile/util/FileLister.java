@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-/** 
+/**
  * Encapsulates the process of recursively walking a folder to process each file contained under it.
  *
  */

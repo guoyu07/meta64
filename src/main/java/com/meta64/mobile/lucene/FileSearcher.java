@@ -34,8 +34,9 @@ import com.meta64.mobile.util.ExUtil;
 
 /**
  * Searches files indexed by Lucene (i.e. a Lucene Search)
- * <p> 
- * Take another look at synchornized blocks in this code. I'm troubleshooting and putting in temporary sync code right now.
+ * <p>
+ * Take another look at synchornized blocks in this code. I'm troubleshooting and putting in
+ * temporary sync code right now.
  */
 @Component
 public class FileSearcher {

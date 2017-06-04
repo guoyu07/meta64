@@ -5,8 +5,8 @@ import java.util.Observable;
 
 /**
  * 
- * Walks through the directory named dir in the call to walk method and notifies 
- * the observer of each file encountered.
+ * Walks through the directory named dir in the call to walk method and notifies the observer of
+ * each file encountered.
  */
 public class FileWalker extends Observable {
 	private int depth = 0;

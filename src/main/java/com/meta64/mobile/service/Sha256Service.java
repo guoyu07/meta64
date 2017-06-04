@@ -292,7 +292,7 @@ public class Sha256Service {
 
 		try {
 			/* Wrap stream if it's not alrady a buffered one */
-			bis = (inputStream instanceof BufferedInputStream) ? (BufferedInputStream)inputStream : new BufferedInputStream(inputStream);
+			bis = (inputStream instanceof BufferedInputStream) ? (BufferedInputStream) inputStream : new BufferedInputStream(inputStream);
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			dataLen = bytes.length;
 			updateDigest(digester, bytes);

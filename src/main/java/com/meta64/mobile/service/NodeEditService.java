@@ -6,7 +6,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -495,7 +494,8 @@ public class NodeEditService {
 	}
 
 	/* Sets the property value of propName to propVal on 'node' and ALL subnodes recursively */
-	public void recursiveSetPropertyOnAllNodes(Session session, Node node, String propName, Value val) {
+	public void recursiveSetPropertyOnAllNodes(Session session, Node node, String propName,
+			String val /* Value val */) {
 		try {
 			QueryManager qm = session.getWorkspace().getQueryManager();
 

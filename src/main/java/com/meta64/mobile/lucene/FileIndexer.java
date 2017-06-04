@@ -1,7 +1,6 @@
 package com.meta64.mobile.lucene;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +29,7 @@ import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.util.ExUtil;
 
 /**
- * Recursively scans all files in a folder (and subfolders) and indexes them into Lucene 
+ * Recursively scans all files in a folder (and subfolders) and indexes them into Lucene
  */
 @Component
 public class FileIndexer {

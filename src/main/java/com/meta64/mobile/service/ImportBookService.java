@@ -19,9 +19,9 @@ import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 
 /**
- * Special-purpose code for importing the book War and Peace which ships with SubNode, and is 
- * used for demonstration purposes to show how browsing, searching, etc. works, and for testing
- * with a reasonable sized chunk of data (i.e. the entire book)
+ * Special-purpose code for importing the book War and Peace which ships with SubNode, and is used
+ * for demonstration purposes to show how browsing, searching, etc. works, and for testing with a
+ * reasonable sized chunk of data (i.e. the entire book)
  */
 @Component
 public class ImportBookService {

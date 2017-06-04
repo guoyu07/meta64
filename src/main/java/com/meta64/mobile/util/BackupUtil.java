@@ -6,8 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * For future reference only, I'm keeping this is as an example of how to call a SpringBoot
- * app as a command line app.
+ * For future reference only, I'm keeping this is as an example of how to call a SpringBoot app as a
+ * command line app.
  */
 @SpringBootApplication
 // @EnableScheduling

@@ -19,8 +19,8 @@ import com.meta64.mobile.config.AppProp;
  * your actual launch script to see the password.
  * 
  * I need to revisit the StackOverflow.com thread on this, because some people posted comments about
- * this code that i would like to implement. Should be easy to find, at last check, my post was the top search
- * result from googling it.
+ * this code that i would like to implement. Should be easy to find, at last check, my post was the
+ * top search result from googling it.
  * 
  */
 @Component

@@ -2,7 +2,6 @@ package com.meta64.mobile.util;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageReader;
@@ -47,25 +46,31 @@ public class StreamUtil {
 		/* wrap in Buffered streams only if not currently buffered */
 		BufferedInputStream aBuffered = (a instanceof BufferedInputStream) ? (BufferedInputStream) a : new BufferedInputStream(a);
 		BufferedInputStream bBuffered = (b instanceof BufferedInputStream) ? (BufferedInputStream) b : new BufferedInputStream(b);
-		
+
 		try {
 			int aByte, bByte;
-			
+
 			/* read a byte from 'a' */
 			while ((aByte = aBuffered.read()) != -1) {
-				
-				/* if got an 'a' but can't get a 'b' then streams are not same length, and this is the case where stream 'a' was longer */
+
+				/*
+				 * if got an 'a' but can't get a 'b' then streams are not same length, and this is
+				 * the case where stream 'a' was longer
+				 */
 				if ((bByte = bBuffered.read()) == -1) {
 					return false;
 				}
-				
+
 				/* if we got both bytes, compare them */
 				if (aByte != bByte) {
 					return false;
 				}
 			}
-			
-			/* once we ran to end of stream 'a' make sure stream 'b' is also ended (checking that 'b' isn't longer than 'a') */
+
+			/*
+			 * once we ran to end of stream 'a' make sure stream 'b' is also ended (checking that
+			 * 'b' isn't longer than 'a')
+			 */
 			if (bBuffered.read() != -1) {
 				return false;
 			}

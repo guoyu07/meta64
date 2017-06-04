@@ -1,7 +1,7 @@
 package com.meta64.mobile.lucene;
 
 /**
- * File-related constants 
+ * File-related constants
  *
  */
 public enum FileProperties {

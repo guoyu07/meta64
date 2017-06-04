@@ -1,7 +1,7 @@
 package com.meta64.mobile.image;
 
 /**
- * Data encapsulation of width+height 
+ * Data encapsulation of width+height
  */
 public class ImageSize {
 	private int width;

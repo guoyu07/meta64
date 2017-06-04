@@ -4,7 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /**
- * Image manipulation utilities 
+ * Image manipulation utilities
  */
 public class ImageUtil {
 

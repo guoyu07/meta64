@@ -169,7 +169,7 @@ public class ImportZipService {
 
 			UserPreferences userPreferences = sessionContext.getUserPreferences();
 			boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
-			
+
 			if (!importAllowed && !sessionContext.isAdmin()) {
 				throw ExUtil.newEx("import is an admin-only feature.");
 			}

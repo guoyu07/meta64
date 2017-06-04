@@ -72,12 +72,9 @@ public class ExportXmlService {
 		else {
 			String fileName = req.getTargetFileName();
 
-			/*
-			 * Timestamp-based folder name groups the 4 redundant files we export
-			 */
-			Date date = new Date();
-			String dirName = dateFormat.format(date);
-			dirName = FileTools.ensureValidFileNameChars(dirName);
+			// Date date = new Date();
+			// String dirName = dateFormat.format(date);
+			// dirName = FileTools.ensureValidFileNameChars(dirName);
 
 			/*
 			 * For now, out of an abundance of caution for backups do all for combinations of SYSTEM
@@ -85,18 +82,18 @@ public class ExportXmlService {
 			 */
 
 			log.info("Exporting System View.");
-			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM, true);
-			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.SYSTEM, false);
+			exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.SYSTEM, true);
+			// exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.SYSTEM, false);
 
-			log.info("Exporting Document View.");
-			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, true);
-			exportNodeToXMLFile(session, nodeId, dirName, fileName, ExportXMLViewType.DOCUMENT, false);
+			// log.info("Exporting Document View.");
+			// exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.DOCUMENT, true);
+			// exportNodeToXMLFile(session, nodeId, fileName, ExportXMLViewType.DOCUMENT, false);
 		}
 
 		res.setSuccess(true);
 	}
 
-	private void exportNodeToXMLFile(Session session, String nodeId, String dirName, String fileName, ExportXMLViewType formatType, boolean includeBinaries) {
+	private void exportNodeToXMLFile(Session session, String nodeId, String fileName, ExportXMLViewType formatType, boolean includeBinaries) {
 
 		String fileNameSuffix = null;
 		switch (formatType) {
@@ -117,49 +114,46 @@ public class ExportXmlService {
 		fileName = fileName.replace(".", "_");
 		fileName = fileName.replace(File.separator, "_");
 
-		/* not a bug, I'm including the fileName onto part of dirName */
-		String fullDir = appProp.getAdminDataFolder() + File.separator + dirName + "-" + fileName;
-		FileTools.createDirectory(fullDir);
-		String fullFileName = fullDir + File.separator + fileName + "-" + fileNameSuffix + ".xml";
+		String fullFileName = appProp.getAdminDataFolder() + File.separator + fileName + "-" + fileNameSuffix + ".xml";
 
 		if (FileTools.fileExists(fullFileName)) {
 			throw ExUtil.newEx("File already exists.");
 		}
 
 		Node exportNode = JcrUtil.findNode(session, nodeId);
+
+		BufferedOutputStream output = null;
 		try {
 			log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
+			output = new BufferedOutputStream(new FileOutputStream(fullFileName));
+			String exportPath = exportNode.getPath();
 
-			BufferedOutputStream output = null;
-			try {
-				output = new BufferedOutputStream(new FileOutputStream(fullFileName));
-				String exportPath = exportNode.getPath();
-
-				/*
-				 * Refer to JCR 2.0 Spec regarding difference between SYSTEM v.s. DOCUMENT XML
-				 * format, but in a nutshell SYSTEM is better for serializing export data for backup
-				 * or specifically for reimporting later onto a JCR repository. DOCUMENT is more for
-				 * compatibility with XML standards itself and is helpful if something other than a
-				 * JCR DB might need to process the XML
-				 */
-				switch (formatType) {
-				case SYSTEM:
-					session.exportSystemView(exportPath, output, !includeBinaries, false);
-					break;
-				case DOCUMENT:
-					session.exportDocumentView(exportPath, output, !includeBinaries, false);
-					break;
-				default:
-					throw ExUtil.newEx("Invalid format type");
-				}
-				output.flush();
+			/*
+			 * Refer to JCR 2.0 Spec regarding difference between SYSTEM v.s. DOCUMENT XML format,
+			 * but in a nutshell SYSTEM is better for serializing export data for backup or
+			 * specifically for reimporting later onto a JCR repository. DOCUMENT is more for
+			 * compatibility with XML standards itself and is helpful if something other than a JCR
+			 * DB might need to process the XML.
+			 * 
+			 */
+			switch (formatType) {
+			case SYSTEM:
+				session.exportSystemView(exportPath, output, !includeBinaries, false);
+				break;
+			case DOCUMENT:
+				session.exportDocumentView(exportPath, output, !includeBinaries, false);
+				break;
+			default:
+				throw ExUtil.newEx("Invalid format type");
 			}
-			finally {
-				StreamUtil.close(output);
-			}
+			output.flush();
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
 		}
+		finally {
+			StreamUtil.close(output);
+		}
+
 	}
 }

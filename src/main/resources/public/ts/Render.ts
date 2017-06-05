@@ -132,45 +132,8 @@ export class Render {
         }, [pathDiv, allSpansDiv, nodeNameSpan]);
     }
 
-    /*
-     * Pegdown markdown processor will create <code> blocks and the class if provided, so in order to get google
-     * prettifier to process it the rest of the way (when we call prettyPrint() for the whole page) we now run
-     * another stage of transformation to get the <pre> tag put in with 'prettyprint' etc.
-     */
-    injectCodeFormatting(content: string): string {
-        if (!content) return content;
-        // example markdown:
-        // ```js
-        // var x = 10;
-        // var y = "test";
-        // ```
-        //
-        if (util.contains(content, "<code")) {
-            meta64.codeFormatDirty = true;
-            content = render.encodeLanguages(content);
-            content = util.replaceAll(content, "</code>", "</pre>");
-        }
-
-        return content;
-    }
-
     injectSubstitutions(content: string): string {
         return util.replaceAll(content, "{{locationOrigin}}", window.location.origin);
-    }
-
-    encodeLanguages(content: string): string {
-        /*
-         * todo-1: need to provide some way of having these language types configurable in a properties file
-         * somewhere, and fill out a lot more file types.
-         */
-        let langs = ["js", "html", "htm", "css"];
-        for (let i = 0; i < langs.length; i++) {
-            content = util.replaceAll(content, "<code class=\"" + langs[i] + "\">", //
-                "<?prettify lang=" + langs[i] + "?><pre class='prettyprint'>");
-        }
-        content = util.replaceAll(content, "<code>", "<pre class='prettyprint'>");
-
-        return content;
     }
 
     /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
@@ -244,7 +207,6 @@ export class Render {
 
                     //When doing server-side markdown we had this processing the HTML that was generated
                     //but I haven't looked into how to get this back now that we are doing markdown on client.
-                    //jcrContent = injectCodeFormatting(jcrContent);
                     //jcrContent = injectSubstitutions(jcrContent);
 
                     if (rowStyling) {

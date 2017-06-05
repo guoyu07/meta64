@@ -19,7 +19,7 @@ What will make up the core of the SubNode blockchain, at the data layer, will be
 
 ## Technology Stack
 
-* Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax, Ace Editor, Pegdown Markdown
+* Web App (Front End): Google Polymer (Web Components), TypeScript/JavaScript, JSON/Ajax
 * Server (Back End): Java, SpringBoot, Apache Oak JCR, Lucene, MongoDb or RDB via Tomcat Embedded
 
 ## Links
@@ -119,10 +119,7 @@ There are just a few key concepts to know for a basic understanding of what JCR 
 * App is "Mobile First", meaning a primary objective is to run well on mobile
 * Using Google Closure Compiler for JS Minification (https://developers.google.com/closure/compiler/)
 * Pure Java on Server (https://www.oracle.com/java/index.html)
-* Markdown support provided by PegDown (https://github.com/sirthias/pegdown)
 * DropzoneJS API for Drag&Drop uploading (http://dropzonejs.com)
-* Google Code Prettifier (https://github.com/google/code-prettify)
-* Ace Editor for code editing (https://ace.c9.io/#nav=about)
 * Built using Maven (https://maven.apache.org/)
 * Bower Package Manager (http://bower.io/)
 * Launches from a single SpringBoot "uber jar" containing Tomcat embedded and pre-configured

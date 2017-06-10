@@ -32,6 +32,15 @@ public class ExUtil {
 		return ex;
 	}
 
+	public static void debug(Logger logger, String msg, Throwable e) {
+		logger.debug(msg, e);
+
+		/* Not showing all sub-causes in the chain, but just the immediate one */
+		if (e.getCause() != null) {
+			logger.debug("cause:", e);
+		}
+	}
+	
 	public static void error(Logger logger, String msg, Throwable e) {
 		logger.error(msg, e);
 

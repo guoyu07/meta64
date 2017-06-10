@@ -6,10 +6,10 @@ import { DialogBase } from "../DialogBase";
 
 export class MenuItem extends Comp {
 
-    constructor(public name: string, clickFunc: Function, isEnabledFunc?: Function, isVisibleFunc?: Function) {
-        super(null);
+    constructor(public name: string, public clickFunc: Function, isEnabledFunc?: Function, isVisibleFunc?: Function, bottomSeparator?: boolean) {
+        super(bottomSeparator ? {"style" : "border-bottom: 3px dotted lightGray;"} : null);
         if (!this.getId()) {
-            throw "wtf no id set?";
+            throw "no id set";
         }
         this.setOnClick(clickFunc);
         this.setIsEnabledFunc(isEnabledFunc);

@@ -30,6 +30,7 @@ import com.meta64.mobile.request.GenerateNodeHashRequest;
 import com.meta64.mobile.response.GenerateNodeHashResponse;
 import com.meta64.mobile.user.RunAsJcrAdmin;
 import com.meta64.mobile.util.ExUtil;
+import com.meta64.mobile.util.HashVerifyFailedException;
 import com.meta64.mobile.util.JcrUtil;
 import com.meta64.mobile.util.RuntimeEx;
 import com.meta64.mobile.util.StreamUtil;
@@ -57,11 +58,17 @@ public class Sha256Service {
 	private static final Logger log = LoggerFactory.getLogger(Sha256Service.class);
 	private static final String SHA_ALGO = "SHA-256";
 
+	/*
+	 * If 'verify' is true we don't actually WRITE any merkle properties but just perform a
+	 * read-only validation of the existing hashes.
+	 */
+	private boolean verify;
+
 	@Autowired
 	private RunAsJcrAdmin adminRunner;
 
-	// private final boolean trace = true;
-	// private final StringBuilder traceReport = new StringBuilder();
+	private final boolean trace = false;
+	private final StringBuilder traceReport = new StringBuilder();
 
 	private long nodeCount = 0;
 	private long binaryCount = 0;
@@ -79,11 +86,7 @@ public class Sha256Service {
 	/*
 	 * This is the 'full-scan' digester only used when doing a full tree scan in one single shot,
 	 * for a full brute-force calculation of a hash of an entire tree branch. This will NOT match
-	 * the root has you would get when doing a Merkle-style scan which is eventually what will also
-	 * be done in here.
-	 * 
-	 * todo-0: Once i'm done transitioning to merkle-type hashing i will be able to either not use
-	 * this globalDigester at all or else make it optional.
+	 * the root has you would get when doing a Merkle-style scan.
 	 */
 	// private MessageDigest globalDigester;
 
@@ -92,18 +95,20 @@ public class Sha256Service {
 			session = ThreadLocals.getJcrSession();
 		}
 
+		verify = req.isVerify();
 		String nodeId = req.getNodeId();
 		boolean success = false;
 		try {
 			// globalDigester = MessageDigest.getInstance(SHA_ALGO);
 			Node node = JcrUtil.findNode(session, nodeId);
 			byte[] rootHash = recurseNode(node);
+			if (rootHash == null) {
+				throw new RuntimeEx("no root hash data was able to be generated. Is this entier node protected?");
+			}
 
 			session.logout();
 
 			writeAllMerkleHashes();
-
-			// log.debug("TRACE: " + traceReport.toString());
 
 			/*
 			 * Note: rootHash will be correct even before any nodeIdToHashMap values are written out
@@ -116,8 +121,18 @@ public class Sha256Service {
 			res.setHashInfo(hash);
 			success = true;
 		}
+		catch (HashVerifyFailedException hvfe) {
+			ExUtil.debug(log, "Hash Verify Failed.", hvfe);
+			res.setHashInfo(hvfe.getMessage());
+			success = true;
+		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
+		}
+		finally {
+			if (trace) {
+				log.debug("TRACE: " + traceReport.toString());
+			}
 		}
 
 		res.setSuccess(success);
@@ -131,6 +146,10 @@ public class Sha256Service {
 	private byte[] recurseNode(Node node) {
 		if (node == null) return null;
 		nodeCount++;
+
+		if (JcrUtil.isProtectedNode(node)) {
+			return null;
+		}
 
 		try {
 			MessageDigest digester = MessageDigest.getInstance(SHA_ALGO);
@@ -150,13 +169,19 @@ public class Sha256Service {
 					byte[] hashBytes = recurseNode(n);
 
 					/*
-					 * Currently since each node doesn't internally store the hashes of all its
-					 * children, our live-updating (realtime-updating) of any node will be slow, to
-					 * the extent that when a node is rehashed at least its immediate children will
-					 * need to be collected and all their hash properties pulled. But i'm leaving
-					 * that for later as it is essentially an optimization step.
+					 * If hashBytes is null it can mean the node was protected (repository managed
+					 * node) so we ignore this one
 					 */
-					digester.update(hashBytes);
+					if (hashBytes != null) {
+						/*
+						 * Currently since each node doesn't internally store the hashes of all its
+						 * children, our live-updating (realtime-updating) of any node will be slow,
+						 * to the extent that when a node is rehashed at least its immediate
+						 * children will need to be collected and all their hash properties pulled.
+						 * But i'm leaving that for later as it is essentially an optimization step.
+						 */
+						digester.update(hashBytes);
+					}
 				}
 			}
 			catch (NoSuchElementException ex) {
@@ -169,14 +194,31 @@ public class Sha256Service {
 			byte[] hashBytes = digester.digest();
 
 			/*
-			 * make sure this ID is unique. JCR should never allow but we still check.
-			 * 
-			 * todo-0: For mix:referencable nodes this getIdentifier is still a GUID right? Even
-			 * with the jcr:uuid value being a standard property value ? I'm 95% sure this is
-			 * correct, but I need to run tests to verify.
+			 * If 'verifying only' all we do is check that the merkle value of each node is correct,
+			 * and do nothing else
 			 */
-			if (nodeIdToHashMap.put(node.getIdentifier(), hashBytes) != null) {
-				throw new RuntimeEx("unexpected dupliate identifier encountered: " + node.getIdentifier());
+			if (verify) {
+				String merkleHash = Hex.encodeHexString(hashBytes);
+
+				/* get existing merkle hash from node */
+				String prevMerkleHash = JcrUtil.safeGetStringProp(node, JcrProp.MERKLE_HASH);
+
+				if (!merkleHash.equals(prevMerkleHash)) {
+					throw new HashVerifyFailedException("hash incorrect on node: " + node.getPath());
+				}
+			}
+			else {
+				/*
+				 * We check hash map return value from 'put' to make sure this ID is unique. JCR
+				 * should never allow non-unique but we still check.
+				 * 
+				 * todo-0: For mix:referencable nodes this getIdentifier is still a GUID right? Even
+				 * with the jcr:uuid value being a standard property value ? I'm 95% sure this is
+				 * correct, but I need to run tests to verify.
+				 */
+				if (nodeIdToHashMap.put(node.getIdentifier(), hashBytes) != null) {
+					throw new RuntimeEx("unexpected duplicate identifier encountered: " + node.getIdentifier());
+				}
 			}
 			return hashBytes;
 		}
@@ -187,9 +229,9 @@ public class Sha256Service {
 
 	private void processNode(MessageDigest digester, Node node) {
 		try {
-			// if (trace) {
-			// traceReport.append("Processing Node:\n"); // + node.getIdentifier()+"\n");
-			// }
+			if (trace) {
+				traceReport.append("Processing Node:" + node.getIdentifier() + "\n");
+			}
 
 			/* Get ordered set of property names. Ordering is significant for SHA256 obviously */
 			List<String> propNames = JcrUtil.getPropertyNames(node, true);
@@ -228,9 +270,9 @@ public class Sha256Service {
 	private void digestProperty(MessageDigest digester, Property prop) {
 		try {
 			updateDigest(digester, prop.getName());
-			// if (trace) {
-			// traceReport.append(" prop=" + prop.getName() + "\n");
-			// }
+			 if (trace) {
+			 traceReport.append(" prop=" + prop.getName() + "\n");
+			 }
 
 			/* multivalue */
 			if (prop.isMultiple()) {
@@ -238,9 +280,9 @@ public class Sha256Service {
 				for (Value v : prop.getValues()) {
 					nonBinaryCount++;
 					nonBinarySize += updateDigest(digester, v);
-					// if (trace) {
-					// traceReport.append(" multiVal=" + v.getString() + "\n");
-					// }
+					if (trace) {
+						traceReport.append(" multiVal=" + v.getString() + "\n");
+					}
 				}
 			}
 			/* else single value */
@@ -254,16 +296,16 @@ public class Sha256Service {
 					binaryCount++;
 					long thisBinarySize = updateDigest(digester, prop.getValue().getBinary().getStream());
 					binarySize += thisBinarySize;
-					// if (trace) {
-					// traceReport.append(" binarySize=" + thisBinarySize + "\n");
-					// }
+					if (trace) {
+						traceReport.append(" binarySize=" + thisBinarySize + "\n");
+					}
 				}
 				else {
 					nonBinaryCount++;
 					nonBinarySize += updateDigest(digester, prop.getValue());
-					// if (trace) {
-					// traceReport.append(" Val=" + prop.getValue().getString() + "\n");
-					// }
+					if (trace) {
+						traceReport.append(" Val=" + prop.getValue().getString() + "\n");
+					}
 				}
 			}
 		}
@@ -341,8 +383,13 @@ public class Sha256Service {
 	 * remote repository subgraphs, etc.
 	 */
 	private void writeAllMerkleHashes() {
+		/*
+		 * If we are only doing a verify of the tree, then we don't update the merkle property
+		 */
+		if (verify) return;
+
 		// todo-0: Once a bit more testing is done, i can boost this batch size to a more reasonable
-		// number like 100 or several hundered.
+		// number like 100 or several hundered (1000s?).
 		int maxBatchSize = 10;
 
 		adminRunner.run((Session session) -> {

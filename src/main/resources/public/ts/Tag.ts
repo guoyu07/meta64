@@ -34,7 +34,7 @@ export class Tag {
     }
 
     heading(level: number, content: string): string {
-        return render.tag("h"+level, null, content, true);
+        return render.tag("h" + level, null, content, true);
     }
 
     //todo-0: remove this and use heading() always instead

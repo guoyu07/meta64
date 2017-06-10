@@ -163,6 +163,7 @@ export interface GetServerInfoRequest {
 
 export interface GenerateNodeHashRequest {
     nodeId: string;
+    verify: boolean;
 }
 
 export interface CompareSubGraphRequest {

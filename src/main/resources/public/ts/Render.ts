@@ -199,7 +199,7 @@ export class Render {
                     //console.log("**************** jcrContent for MARKDOWN:\n"+jcrContent);
 
                     let markedContent = "<marked-element sanitize='true'>" +
-                        tag.div({ "class": "markdown-html" }) +
+                        tag.div({ "slot" : "markdown-html", "class": "markdown-html" }) +
                         "<script type='text/markdown'>\n" +
                         jcrContent +
                         "</script>" +

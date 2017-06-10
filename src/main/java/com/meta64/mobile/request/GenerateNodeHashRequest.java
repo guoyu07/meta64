@@ -4,6 +4,17 @@ import com.meta64.mobile.request.base.OakRequestBase;
 
 public class GenerateNodeHashRequest extends OakRequestBase {
 	private String nodeId;
+	
+	/* If this is true we ONLY do a verify, and do not actually write out any merkle properties */
+	private boolean verify;
+
+	public boolean isVerify() {
+		return verify;
+	}
+
+	public void setVerify(boolean verify) {
+		this.verify = verify;
+	}
 
 	public String getNodeId() {
 		return nodeId;

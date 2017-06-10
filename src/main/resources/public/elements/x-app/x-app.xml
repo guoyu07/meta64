@@ -114,6 +114,18 @@
         <style is="custom-style">
             /*<![CDATA[*/            
            
+                [slot="markdown-html"] pre {
+                    border: 3px solid lightGray;
+                    padding: 8px;
+                }
+                          
+                :root {
+                    /* 
+                    --icon-toggle-outline-color: red; 
+                    --syntax-bg: lightGray;
+                    */
+                }
+           
                 :host {
                     display: block;
                 }

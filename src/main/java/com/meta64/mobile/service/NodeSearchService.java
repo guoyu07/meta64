@@ -195,13 +195,13 @@ public class NodeSearchService {
 					 * unless user has already put in wildcard. (todo-1, read docs on 'contains'
 					 * method)
 					 */
-					if (!searchText.contains("*")) {
-						searchText = "*" + searchText + "*";
-					}
+					//if (!searchText.contains("*")) {
+					//	searchText = "*" + searchText + "*";
+					//}
 					queryStr.append("contains(t.[");
 					queryStr.append(searchProp);
 					queryStr.append("], '");
-					queryStr.append(escapeQueryString(searchText));
+					queryStr.append(escapeQueryStringForContains(searchText));
 					queryStr.append("')");
 				}
 
@@ -219,7 +219,7 @@ public class NodeSearchService {
 					}
 
 					queryStr.append(") like '%");
-					queryStr.append(escapeQueryString(searchText));
+					queryStr.append(escapeQueryStringForLike(searchText));
 					queryStr.append("%'");
 				}
 			}
@@ -340,7 +340,22 @@ public class NodeSearchService {
 		}
 	}
 
-	private String escapeQueryString(String query) {
-		return query.replaceAll("'", "''");
+	/*
+	 * The 'contains' function has special escaping requirement:
+	 * 
+	 * https://docs.adobe.com/docs/en/spec/jcr/1.0/6.6.5.2_jcr_contains_Function.html
+	 */
+	private String escapeQueryStringForContains(String query) {
+//		return query.replace("\\", "\\\\") //
+//				.replace("'", "\\'") //
+//				.replace("\"", "\\\"") //
+//				.replace("-", "\\-");
+		
+		//I ended up deciding just to let user enter any command string and just ignore single quotes in their input.
+		return query.replace("'", "");
+	}
+
+	private String escapeQueryStringForLike(String query) {
+		return query.replace("'", "");
 	}
 }

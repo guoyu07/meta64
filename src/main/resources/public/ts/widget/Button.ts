@@ -20,14 +20,21 @@ export class Button extends Comp {
         }
 
         (<any>this.attribs).onclick = () => {
-            if (this.callback) {
-                this.callback();
-            }
 
+            /* This timer, is so that if perhaps the 'callback' is going to result in
+            another dialog being opened, we can reduce screen 'flicker' by having a delayCloseCallback of like 1500 millis
+            and this will make the new dialog able to pop over the top of the one we are about to close here,
+            and the effect is much smoother and you never see the previous dialog disappear a millisecond before thw
+            new dialog opens, which is annoying, and nice to not have to see
+            */
             if (this.isDlgCloser) {
                 setTimeout(() => {
                     this.dlg.cancel.bind(this.dlg)();
                 }, this.delayCloseCallback);
+            }
+
+            if (this.callback) {
+                this.callback();
             }
         };
     }

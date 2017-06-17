@@ -59,7 +59,7 @@ export interface NodeInfo {
     childrenOrdered: boolean;
     uid: string;
     createdBy: string;
-    lastModified: Date;
+    lastModified: string;
     imgId: string;
     owner: string;
 }

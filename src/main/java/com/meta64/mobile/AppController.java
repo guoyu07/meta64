@@ -771,9 +771,6 @@ public class AppController {
 		logRequest("splitNode", req);
 		SplitNodeResponse res = new SplitNodeResponse();
 		checkHttpSession();
-		if (!sessionContext.isAdmin()) {
-			throw ExUtil.newEx("generateRSS is an admin only function.");
-		}
 		nodeEditService.splitNode(null, req, res);
 		return res;
 	}

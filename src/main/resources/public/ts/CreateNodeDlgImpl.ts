@@ -36,9 +36,9 @@ export default class CreateNodeDlgImpl extends DialogBaseImpl implements CreateN
                 !meta64.isAdminUser ? null : new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
             ]),
             new ButtonBar([
-                new Button("First", this.createFirstChild, null, true, this),
-                new Button("Last", this.createLastChild, null, true, this),
-                this.inlineButton = new Button("Inline", this.createInline, null, true, this),
+                new Button("First", this.createFirstChild, null, true, this, true, 1500),
+                new Button("Last", this.createLastChild, null, true, this, true, 1500),
+                this.inlineButton = new Button("Inline", this.createInline, null, true, this, true, 1500),
                 new Button("Cancel", null, null, true, this)
             ])
         ]);

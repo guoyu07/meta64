@@ -179,8 +179,16 @@ public class OakRepository {
 				 */
 				if ("mongo".equalsIgnoreCase(appProp.getDbStoreType())) {
 					log.info("Initializing Mongo Repository: " + appProp.getMongoDbName() + " host=" + appProp.getMongoDbHost() + " port=" + appProp.getMongoDbPort());
-					mongoDb = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(appProp.getMongoDbName());
-					builder = builder.setMongoDB(mongoDb);
+					
+					/* The 'getDB' method is currently 'deprecated' so i'm just disabling Mongo support for now by throwing this exception, and 
+					 * will re-enable Mongo once needed again. I'm currently using the low-tech Derby as the only storage engine I need
+					 */
+					
+					//Here is the code that should still work here, but having the deprecated call
+					//mongoDb = new MongoClient(appProp.getMongoDbHost(), appProp.getMongoDbPort()).getDB(appProp.getMongoDbName());
+					//builder = builder.setMongoDB(mongoDb);
+					
+					throw new RuntimeException("Mongo is currently disabled because of deprecated API.");
 				}
 				/*
 				 * or else initialize RDBMS

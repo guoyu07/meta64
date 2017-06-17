@@ -98,7 +98,7 @@ public class SessionContext {
 				dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
 				dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
 			}
-			return dateFormat.format(date) + " " + getTimeZoneAbbrev();
+			return dateFormat.format(date) + getTimeZoneAbbrev();
 		}
 		/* else display timezone in standard GMT format */
 		else {

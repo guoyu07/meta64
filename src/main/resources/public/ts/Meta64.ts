@@ -542,7 +542,6 @@ class Meta64 {
         util.setEnablement("openSignupPgButton", meta64.isAnonUser);
         util.setEnablement("editModeButton", meta64.state.allowEditMode);
         util.setEnablement("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setEnablement("manageAccountButton", !meta64.isAnonUser);
         util.setEnablement("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setEnablement("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
         util.setEnablement("userPreferencesMainAppButton", !meta64.isAnonUser);
@@ -651,7 +650,7 @@ class Meta64 {
          * simplify code.
          */
         node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-        node.lastModified = new Date(props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node));
+        node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
 
         if (updateMaps) {
             meta64.uidToNodeMap[node.uid] = node;

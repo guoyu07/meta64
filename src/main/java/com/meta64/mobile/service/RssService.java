@@ -87,11 +87,21 @@ public class RssService {
 	 */
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
-	@Scheduled(fixedDelay = 6 * DateUtil.HOUR_MILLIS)
+	private static final int HOURS_BETWEEN_RUNS = 6;
+	
+	/* Number of hours between RSS runs. Set initial run to happen only 1 hour after startup */
+	private int hoursCountdown = 1;
+	
+	@Scheduled(fixedDelay = DateUtil.HOUR_MILLIS)
 	public void readFeeds() {
+		if (hoursCountdown-- > 0) return;
+		
 		if (!OakRepository.fullInit || AppServer.isShuttingDown()) return;
 		if (!appProp.isEnableRssDaemon()) return;
 		readFeedsNow();
+		
+		//reset to wait another 6 hours
+		hoursCountdown = HOURS_BETWEEN_RUNS;
 	}
 
 	public void readFeedsNow() {

@@ -18,9 +18,29 @@ import com.meta64.mobile.config.AppProp;
  * command line parameter when the application is started so that a hacker has to gain access to
  * your actual launch script to see the password.
  * 
- * I need to revisit the StackOverflow.com thread on this, because some people posted comments about
- * this code that i would like to implement. Should be easy to find, at last check, my post was the
- * top search result from googling it.
+ * see also:
+ * http://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html#SimpleEncrEx
+ * 
+ * For password checking, it would be a bit better to use a one-way hash like this:
+ * https://stackoverflow.com/questions/22580853/reliable-implementation-of-pbkdf2-hmac-sha256-for-java
+ * 
+ * Two examples from that page of possible hash implementations (neither of which i have yet tested):
+ * 
+ * Snippet #1 (bouncy castle)
+ * 
+ * <code>
+ * PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
+ * gen.init("password".getBytes("UTF-8"), "salt".getBytes(), 4096);
+ * byte[] dk = ((KeyParameter) gen.generateDerivedParameters(256)).getKey();
+ * </code>
+ * 
+ * Snippet #2
+ * 
+ * <code>
+ *     KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, derivedKeyLength * 8);
+ *     SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+ *     String hash = f.generateSecret(spec).getEncoded();
+ * </code>
  * 
  */
 @Component
@@ -39,6 +59,11 @@ public class Encryptor {
 			}
 			if (aesKey == null) {
 				aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
+
+				/*
+				 * Per conversations on StackOverflow, and research, I think "AES/ECB/PKCS5Padding"
+				 * is better here than plain "AES" but I haven't researched more.
+				 */
 				cipher = Cipher.getInstance("AES");
 			}
 		}

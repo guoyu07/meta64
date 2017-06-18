@@ -115,8 +115,9 @@
             /*<![CDATA[*/            
            
                 [slot="markdown-html"] pre {
-                    border: 3px solid lightGray;
+                    border: 2px solid lightGray;
                     padding: 8px;
+                    overflow-x: auto;
                 }
                           
                 :root {

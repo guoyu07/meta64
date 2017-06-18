@@ -62,19 +62,18 @@ export class Search {
     }
 
     searchTabActivated() {
-        /*
-         * If a logged in user clicks the search tab, and no search results are currently displaying, then go ahead
-         * and open up the search dialog.
-         */
-        if (srch.numSearchResults() == 0 && !meta64.isAnonUser) {
-            Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
-                dlg.open();
-            });
-        }
     }
 
     searchNodesResponse(res: I.NodeSearchResponse) {
         srch.searchResults = res;
+       
+        if (this.numSearchResults() == 0) {
+            Factory.createDefault("MessageDlgImpl",(dlg: MessageDlg) => {
+                dlg.open();
+            }, { "message": "No search results found." });
+            return;
+        }
+
         Factory.create("SearchResultsPanel", (panel: SearchResultsPanel) => {
             let content = panel.render();
             util.setHtml("searchResultsPanel", content);

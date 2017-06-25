@@ -48,7 +48,7 @@ export default class MenuPanel extends Comp {
             ]),
             new Menu("Move", [
                 new MenuItem("Up", edit.moveNodeUp, () => { return meta64.state.canMoveUp; }), //
-                new MenuItem("Down", edit.moveNodeDown, () => { return meta64.state.canMoveDown; }, () => {return true;}, true), //
+                new MenuItem("Down", edit.moveNodeDown, () => { return meta64.state.canMoveDown; }, () => { return true; }, true), //
                 new MenuItem("to Top", edit.moveNodeToTop, () => { return meta64.state.canMoveUp; }), //
                 new MenuItem("to Bottom", edit.moveNodeToBottom, () => { return meta64.state.canMoveDown; })//
             ]),
@@ -79,7 +79,6 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Toggle Properties", props.propsToggle, () => { return meta64.state.propsToggle }, () => { return !meta64.isAnonUser }), //
                 new MenuItem("Refresh", meta64.refresh), //
                 new MenuItem("Show URL", render.showNodeUrl, () => { return meta64.state.highlightNode != null }), //
-                new MenuItem("Preferences", edit.editPreferences, () => { return !meta64.isAnonUser }) //
             ]),
             new Menu("Tools", [
                 new MenuItem("Import", edit.openImportDlg, //
@@ -90,14 +89,14 @@ export default class MenuPanel extends Comp {
                     () => { return meta64.state.exportFeatureEnabled },
                     true//
                 ), //
-                new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null}, () => { return meta64.isAdminUser }), //
+                new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, () => { return meta64.isAdminUser }), //
                 new MenuItem("Compare as B (to A)", view.compareAsBtoA, //
-                  () => { return meta64.isAdminUser  && meta64.state.highlightNode != null}, //
-                  () => { return meta64.isAdminUser }, //
-                  true
+                    () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, //
+                    () => { return meta64.isAdminUser }, //
+                    true
                 ), //
-                new MenuItem("Generate Hashes", () => {view.processNodeHashes(false);}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
-                new MenuItem("Verify Hashes", () => {view.processNodeHashes(true);}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+                new MenuItem("Generate Hashes", () => { view.processNodeHashes(false); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+                new MenuItem("Verify Hashes", () => { view.processNodeHashes(true); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             // WORK IN PROGRESS ( do not delete)
             // let fileSystemMenuItems = //
@@ -110,6 +109,7 @@ export default class MenuPanel extends Comp {
              * whatever is commented is only commented for polymer conversion
              */
             new Menu("Account", [
+                new MenuItem("Preferences", edit.editPreferences, () => { return !meta64.isAnonUser }), //
                 new MenuItem("Change Password", edit.openChangePasswordDlg, () => { return !meta64.isAnonUser }), //
                 new MenuItem("Manage Account", edit.openManageAccountDlg, () => { return !meta64.isAnonUser }), //
                 // menuItem("Full Repository Export", "fullRepositoryExport", "

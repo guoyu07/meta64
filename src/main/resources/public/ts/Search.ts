@@ -66,7 +66,7 @@ export class Search {
 
     searchNodesResponse(res: I.NodeSearchResponse) {
         srch.searchResults = res;
-       
+        
         if (this.numSearchResults() == 0) {
             Factory.createDefault("MessageDlgImpl",(dlg: MessageDlg) => {
                 dlg.open();

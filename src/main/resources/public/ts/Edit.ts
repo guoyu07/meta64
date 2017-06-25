@@ -19,8 +19,11 @@ import { ExportDlg } from "./ExportDlg";
 import { PrefsDlg } from "./PrefsDlg";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { ManageAccountDlg } from "./ManageAccountDlg";
+import { ImportFromFileDropzoneDlg } from "./ImportFromFileDropzoneDlg";
 
 class Edit {
+    /* Node being uploaded to */
+    importTargetNode: any = null;
 
     createNode = (): void => {
         Factory.createDefault("CreateNodeDlgImpl", (dlg: CreateNodeDlg) => {
@@ -53,9 +56,25 @@ class Edit {
     }
 
     openImportDlg = (): void => {
+
+        let node: I.NodeInfo = meta64.getHighlightedNode();
+        if (!node) {
+            edit.importTargetNode = null;
+            util.showMessage("No node is selected.");
+            return;
+        }
+
+        edit.importTargetNode = node;
+
+        Factory.createDefault("ImportFromFileDropzoneDlgImpl", (dlg: ImportFromFileDropzoneDlg) => {
+            dlg.open();
+        })
+
+        /* This dialog is no longer needed, now that we support uploading from a stream
         Factory.createDefault("ImportDlgImpl", (dlg: ImportDlg) => {
             dlg.open();
         })
+        */
     }
 
     openExportDlg = (): void => {
@@ -269,7 +288,7 @@ class Edit {
 
         meta64.saveUserPreferences();
     }
-    
+
     moveNodeUp = (): void => {
         let selNode: I.NodeInfo = meta64.getHighlightedNode();
         let uid = selNode.uid;

@@ -585,9 +585,21 @@ public class AppController {
 			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
 		logRequest("upload", null);
 		if (nodeId == null) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			throw ExUtil.newEx("target nodeId not provided");
 		}
 		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles, explodeZips.equalsIgnoreCase("true"));
+	}
+	
+	@RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ResponseEntity<?> streamImport(//
+			@RequestParam(value = "nodeId", required = true) String nodeId, //
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
+		logRequest("upload", null);
+		if (nodeId == null) {
+			throw ExUtil.newEx("target nodeId not provided");
+		}
+		return importXmlService.streamImport(null, nodeId, uploadFiles);
 	}
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)

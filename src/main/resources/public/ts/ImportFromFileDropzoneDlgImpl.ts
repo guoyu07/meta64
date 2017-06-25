@@ -1,10 +1,10 @@
 import { DialogBaseImpl } from "./DialogBaseImpl";
-import { UploadFromFileDropzoneDlg } from "./UploadFromFileDropzoneDlg";
+import { ImportFromFileDropzoneDlg } from "./ImportFromFileDropzoneDlg";
 import { Factory } from "./Factory";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { cnst } from "./Constants";
 import { render } from "./Render";
-import { attachment } from "./Attachment";
+import { edit } from "./Edit";
 import { meta64 } from "./Meta64";
 import { util } from "./Util";
 import { Header } from "./widget/Header";
@@ -19,15 +19,16 @@ import { Form } from "./widget/Form";
 declare var Dropzone;
 declare var postTargetUrl;
 
-export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implements UploadFromFileDropzoneDlg {
+/* NOTE: This file will probably be extremely similar to UploadFromFileDropzoneDlgImpl, but I decided it was best to have
+two separate classes rather than one single more complicated class that does botoh functions
+*/
+export default class ImportFromFileDropzoneDlgImpl extends DialogBaseImpl implements ImportFromFileDropzoneDlg {
 
     hiddenInputContaier: Div;
     form: Form;
     uploadButton: Button;
 
     fileList: Object[] = null;
-    zipQuestionAnswered: boolean = false;
-    explodeZips: boolean = false;
     dropzone: any = null;
 
     constructor() {
@@ -37,8 +38,8 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Upload File"),
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
+            new Header("Import File"),
+            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(edit.importTargetNode), "path-display-in-editor") : null,
             this.form = new Form({
                 "action": postTargetUrl + "upload",
                 "autoProcessQueue": false,
@@ -46,14 +47,13 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
             }),
             this.hiddenInputContaier = new Div(null, { "style": "display: none;" }),
             new ButtonBar([
-                this.uploadButton = new Button("Upload", this.upload),
+                this.uploadButton = new Button("Import", this.upload),
                 new Button("Close", null, null, true, this)
             ])
         ]);
     }
 
     upload = (): void => {
-        debugger;
         this.dropzone.processQueue();
     }
 
@@ -61,7 +61,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
 
         let dlg = this;
         let config: Object = {
-            url: postTargetUrl + "upload",
+            url: postTargetUrl + "streamImport",
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",
@@ -89,9 +89,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
                 });
 
                 this.on("sending", function(file, xhr, formData) {
-                    formData.append("nodeId", attachment.uploadNode.id);
-                    formData.append("explodeZips", dlg.explodeZips ? "true" : "false");
-                    dlg.zipQuestionAnswered = false;
+                    formData.append("nodeId", edit.importTargetNode.id);
                 });
 
                 this.on("queuecomplete", function(file) {
@@ -107,36 +105,6 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     updateFileList = (dropzoneEvt: any): void => {
         this.fileList = dropzoneEvt.getAddedFiles();
         this.fileList = this.fileList.concat(dropzoneEvt.getQueuedFiles());
-
-        /* Detect if any ZIP files are currently selected, and ask user the question about whether they
-        should be extracted automatically during the upload, and uploaded as individual nodes
-        for each file */
-        if (!this.zipQuestionAnswered && this.hasAnyZipFiles()) {
-            this.zipQuestionAnswered = true;
-            Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-                dlg.open();
-            }, {
-                    "title": "Explode Zips?",
-                    "message": "Do you want Zip files exploded onto the tree when uploaded?",
-                    "buttonText": "Yes, explode zips",
-                    "yesCallback": () => {
-                        this.explodeZips = true;
-                    },
-                    "noCallback": () => {
-                        this.explodeZips = false;
-                    }
-                });
-        }
-    }
-
-    hasAnyZipFiles = (): boolean => {
-        let ret: boolean = false;
-        for (let file of this.fileList) {
-            if (util.endsWith(file["name"].toLowerCase(), ".zip")) {
-                return true;
-            }
-        }
-        return ret;
     }
 
     runButtonEnablement = (dropzoneEvt: any): void => {

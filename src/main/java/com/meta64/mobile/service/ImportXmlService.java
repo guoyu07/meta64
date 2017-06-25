@@ -3,16 +3,21 @@ package com.meta64.mobile.service;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.JcrPrincipal;
@@ -21,6 +26,7 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.request.ImportRequest;
 import com.meta64.mobile.response.ImportResponse;
+import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
 import com.meta64.mobile.util.JcrUtil;
@@ -55,6 +61,52 @@ public class ImportXmlService {
 
 	@Autowired
 	private AppProp appProp;
+
+	/*
+	 * Import from User's computer. Standard HTML form-based uploading of a file from user machine
+	 */
+	public ResponseEntity<?> streamImport(Session session, String nodeId, MultipartFile[] uploadFiles) {
+		try {
+			if (session == null) {
+				session = ThreadLocals.getJcrSession();
+			}
+
+			Node node = JcrUtil.findNode(session, nodeId);
+			if (node == null) {
+				throw ExUtil.newEx("Node not found.");
+			}
+
+			if (uploadFiles.length != 1) {
+				throw ExUtil.newEx("Multiple file import not allowed");
+			}
+
+			MultipartFile uploadFile = uploadFiles[0];
+
+			String fileName = uploadFile.getOriginalFilename();
+			if (!StringUtils.isEmpty(fileName)) {
+				log.debug("Uploading file: " + fileName);
+
+				if (!fileName.toLowerCase().endsWith(".xml")) {
+					throw ExUtil.newEx("Only XML files are currently supported for importing via upload stream.");
+				}
+
+				try {
+					importFromStreamToNode(session, uploadFile.getInputStream(), node);
+				}
+				catch (Exception ex) {
+					throw ExUtil.newEx(ex);
+				}
+			}
+
+			JcrUtil.save(session);
+		}
+		catch (Exception e) {
+			log.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 
 	public void importFromXml(Session session, ImportRequest req, ImportResponse res) {
 		if (session == null) {
@@ -94,7 +146,7 @@ public class ImportXmlService {
 			 * user.
 			 */
 			if (!session.getUserID().equals(createdBy) && !JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
-				throw ExUtil.newEx("You cannot import onto a node you do not own.");
+				throw ExUtil.newEx("You cannot import onto a node you do not own. Including your root.");
 			}
 
 			importFromFileToNode(session, sourceFileName, targetNode);
@@ -112,10 +164,19 @@ public class ImportXmlService {
 			throw ExUtil.newEx("Import file not found.");
 		}
 
+		try {
+			importFromStreamToNode(session, new FileInputStream(fullFileName), targetNode);
+		}
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
+		}
+	}
+
+	private void importFromStreamToNode(Session session, InputStream inputStream, Node targetNode) {
 		BufferedInputStream in = null;
 		try {
 			log.debug("Import to Node: " + targetNode.getPath());
-			in = new BufferedInputStream(new AutoCloseInputStream(new FileInputStream(fullFileName)));
+			in = new BufferedInputStream(new AutoCloseInputStream(inputStream));
 
 			/*
 			 * TIP: Search this codebase for "SecurityProvider" and "PARAM_IMPORT_BEHAVIOR" if you

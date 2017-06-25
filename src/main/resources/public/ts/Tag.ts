@@ -59,7 +59,10 @@ export class Tag {
     }
 
     /* We encapsulate/decouple here smartly so that if there's an 'icon' property, we automatically use an paper-icon-button instead of
-    a plain paper-button */
+    a plain paper-button,
+
+    todo-0: actually this is bad. What we need is the ability to also show a 'paper-button' that has an icon next to the text! Is this possible in polymer?
+    */
     button(attr?: Object, text?: string): string {
         let tagName = (<any>attr).icon ? "paper-icon-button" : "paper-button";
         return render.tag(tagName, attr, text, true);

@@ -187,7 +187,7 @@
                         style="display:none;"
                         icon="icons:change-history"
                         id="upLevelButton">Parent</paper-icon-button>
-                    <paper-tooltip for="upLevelButton">Go up to parent SubNode</paper-tooltip>
+                    <paper-tooltip for="upLevelButton">Go to Parent SubNode</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"
                         icon="editor:mode-edit"

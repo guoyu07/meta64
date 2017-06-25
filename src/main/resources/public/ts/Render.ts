@@ -104,7 +104,7 @@ export class Render {
         }
 
         ownerDisplaySpan = new Span("");
-        meta64.setNodeData(node.uid, {"ownerDisplaySpan" : ownerDisplaySpan});
+        meta64.setNodeData(node.uid, { "ownerDisplaySpan": ownerDisplaySpan });
 
         if (node.lastModified) {
             lastModifiedSpan = new Span(`  Mod: ${node.lastModified}`);
@@ -199,7 +199,7 @@ export class Render {
                     //console.log("**************** jcrContent for MARKDOWN:\n"+jcrContent);
 
                     let markedContent = "<marked-element sanitize='true'>" +
-                        tag.div({ "slot" : "markdown-html", "class": "markdown-html" }) +
+                        tag.div({ "slot": "markdown-html", "class": "markdown-html" }) +
                         "<script type='text/markdown'>\n" +
                         jcrContent +
                         "</script>" +
@@ -246,7 +246,7 @@ export class Render {
             // if (util.contains(ret, cnst.INSERT_ATTACHMENT)) {
             //     ret = util.replaceAll(ret, cnst.INSERT_ATTACHMENT, binary.render());
             // } else {
-                ret += binary.render();
+            ret += binary.render();
             //}
         }
 
@@ -443,7 +443,10 @@ export class Render {
         if (render.nodeHasChildren(node.uid)) {
             /* For some unknown reason the ability to style this with a class broke isn't working, so i used a 'style' attibute
                  as a last resort */
-            openButton = new Button("Open", () => { meta64.openNode(node.uid) }, { "style": "background-color: #4caf50;color:white;" });
+            openButton = new Button("Open", () => { meta64.openNode(node.uid) }, {
+              "style": "background-color: #4caf50;color:white;"
+              //"icon" : "icons:add", //oops, buttons AND icon are not currently supported
+             });
         }
 
         /*
@@ -619,11 +622,23 @@ export class Render {
 
         if (mainNodeContent.length > 0) {
             let uid: string = data.node.uid;
-            let cssId: string = "row_" + uid /*+ "_row"*/;
+            let cssId: string = "row_" + uid;
+
             let buttonBar: string = "";
             let editNodeButton: string = "";
             let createSubNodeButton: string = "";
             let replyButton: string = "";
+            let upLevelButton: string = "";
+
+            if (meta64.currentNode && nav.parentVisibleToUser()) {
+                upLevelButton = tag.button({
+                    "raised": "raised",
+                    "style": "background-color: #4caf50;color:white;",
+                    //"icon" : "icons:change-history", oops, buttons AND icon not currently supported
+                    "onclick": () => {nav.navUpLevel();} //
+                }, //
+                    "Parent");
+            }
 
             // console.log("data.node.path="+data.node.path);
             // console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
@@ -671,8 +686,8 @@ export class Render {
 
             // var rowHeader = buildRowHeader(data.node, true, true);
 
-            if (createSubNodeButton || editNodeButton || replyButton) {
-                buttonBar = render.makeHorizontalFieldSet(createSubNodeButton + editNodeButton + replyButton);
+            if (upLevelButton || createSubNodeButton || editNodeButton || replyButton) {
+                buttonBar = render.makeHorizontalFieldSet(upLevelButton + createSubNodeButton + editNodeButton + replyButton);
             }
 
             let content: string = tag.div({
@@ -847,7 +862,7 @@ export class Render {
 
     /* see also: adjustImageSize() */
     makeImageTag(node: I.NodeInfo): Img {
-        let img : Img;
+        let img: Img;
         let src: string = render.getUrlForNodeAttachment(node);
 
         if (node.width && node.height) {

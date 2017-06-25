@@ -24,11 +24,16 @@ What will make up the core of the SubNode blockchain, at the data layer, will be
 
 ## Links
 
-Live SubNode Instance -> http://sbnode.com
+Live Instance -> http://sbnode.com
 
 GitHub Docs -> https://github.com/Clay-Ferguson/meta64/tree/master/docs/   
 
 Sample Content: War and Peace -> http://www.sbnode.com/?id=/meta64/war-and-peace
+
+Menu Help -> http://www.sbnode.com?id=/meta64/public/help
+
+RSS Reader Demo -> http://www.sbnode.com?id=/rss/feeds
+
 
 ## SubNode Overview
 

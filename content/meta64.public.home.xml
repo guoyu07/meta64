@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node sv:name="home" xmlns:oak="http://jackrabbit.apache.org/oak/ns/1.0" xmlns:rep="internal" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:meta64="http://meta64.com/jcr/" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>rep:AccessControllable</sv:value></sv:property><sv:property sv:name="disableInsert" sv:type="String"><sv:value>y</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## Welcome to SubNode
+
+SubNode is like a cloud-based File System with Social Media features. 
+
+### What you can do in SubNode
+
+* Create online content to share with people
+
+* Share images or other files
+
+* Have multi-threaded conversations and collaborate
+
+* Edit content like a Wiki
+
+* Easily Search and view Timelines of your content
+
+* Manage your content with copy/paste so you can organize like a File System
+
+* And much more... Full summary of features listed at GitHub link below
+
+
+### Key Concepts of the App
+
+* When you signup you get an account SubNode that holds everything you ever create.
+
+* A SubNode is just like a File or Folder (think of a 'File System')
+
+* Every post, reply, or piece of content is a SubNode.
+
+* SubNodes behave like Folders because they can contain other SubNodes.
+
+* SubNodes behave like Files because they are editable and hold your actual content
+
+* In most 'Social Media' Apps you create a post, or a tweet, or whatever. In SubNode, you "Crate SubNodes"
+
+* To 'reply' to someone's post, you create a SubNode underneath the one you're replying to.
+
+
+### Quick Tips for Getting Started
+
+* At any time you will be viewing one SubNode (shown at the top of the page), and all the SubNodes it contains defines the content of your page.
+
+* If a node contains other SubNodes, it will show a Green "Open" button, to drill down into the content.
+
+* Once you drill down into content and want to climb back out, use the Triangle Icon (up function) at the upper right of the page, which will take you up one level to the parent SubNode of the one you are currently viewing.
+
+* You have to first click on a node to select it before you can, insert under it or edit it. There will be a RED bar indicator on the left of the selected node.
+
+* Use the "Pencil Icon" at the upper right, to put the app in "Edit Mode", or else you won't be able to modify any content.
+
+* To create new content use the menu on the left: "Edit -&gt; Create -&gt; First"
+
+* To edit a node click the "Pencil Icon" above it.
+
+### For Developers
+
+* GitHub: [https://github.com/Clay-Ferguson/meta64](https://github.com/Clay-Ferguson/meta64)
+
+
+
+ 
+</sv:value></sv:property><sv:node sv:name="rep:policy"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>rep:ACL</sv:value></sv:property><sv:node sv:name="allow"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>rep:GrantACE</sv:value></sv:property><sv:property sv:name="rep:principalName" sv:type="String"><sv:value>everyone</sv:value></sv:property><sv:property sv:name="rep:privileges" sv:type="Name" sv:multiple="true"><sv:value>jcr:read</sv:value></sv:property></sv:node></sv:node><sv:node sv:name="about-subnode"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value><sv:value>mix:referenceable</sv:value></sv:property><sv:property sv:name="jcr:uuid" sv:type="String"><sv:value>cac730d9-a1c6-4947-8236-070e339070d4</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value># SubNode: Technical Info</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:15:13.192-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T11:42:37.948-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:node sv:name="98914b43be1e3713"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## Overview
+
+SubNode is a content creation, editing, and sharing platform, that consists of user-created trees of information. The content can be any kind of text, images, or binary files, and can be shared to other users, who can then browse and/or edit the content collaboratively. The app is similar to a Wiki, because it consists of content edited completely online. The collaborative editing and sharing make SubNode also a form of Social Media similar to Facebook or other apps where users share and publish posts or documents with the public, or with specific sets of other users.
+
+SubNode can function as a blogging platform, file-sharing platform, social commenting platform, a corporate wiki, personal website host, etc. There is not necessarily any pre-defined way to use SubNode, just like there's no pre-defined way to use a file-system on a stand-alone computer. Because of the tree-structure of this data, probably the best way for non-technical users to think of this system is to use a file-system analogy. The key point to know is that the name of the app, "SubNode", is also the name given for every piece of information: i.e. like a Facebook post, a tweet, a paragraph, or sentence. That is, everything on the tree is a SubNode. The nodes on the tree are called SubNodes. When you create any piece of text or information you do so by inserting a SubNode onto the tree. You are completely free to organize your content in any way you would like, just like in a file system you can create as many files, and folders and organize those any way you want. 
+ 
+### P2P/Distributed: Future Goal
+
+The sbnode.com website is running an instance of SubNode platform software, and so sbnode.com is demonstrating the platform. However sbnode.com is not indended to be a monolighic portal like facebook.com or twitter.com. The goal of SubNode is to become a P2P app that is installed on large numbers of computers on private networks and/or the public internet which will function as one single distributed system just like Bitcoin Miners, other blockchain technology. The current plan is to have each "Network Node" (i.e. instance of SubNode server), host the 'same' database which will be verifiable the way all blockchains are (by SHA256 hashes and public key encryption). Currently however SubNode doesn't have any P2P capabilities and each instance runs separately.</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:16:15.078-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:46:29.520-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="1e8c8d4ebca639e4"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## Technical Overview
+
+(expand to read)</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T17:13:38.339-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:14:20.836-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:node sv:name="8b960a4e93845945"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>### JCR
+
+SubNode is based on the JCR Standard or Java Content Repository standard, and uses Apache Jackrabbit Oak implementation which is the leading open source and reference implementation of the spec. This is an extremely powerful technology API, and the Jackrabbit implementation leverages the power of Lucene for hugely scalable full-text search capability, and allows for any type of RDBMS or even MongoDB no-SQL as the backing store for data storage.</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T17:14:34.010-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:33:44.375-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="ab8a734e88db63f4"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>The JCR is not itself a database, but is a specification for how databases can present information to client systems via an API. This means when using a JCR you are not locked into any particular database, and your implementation is abstracted away from all those details. SubNode itself is essentially another layer on top of the JCR that is intended to provide a more application-centric way of interacting with the JCR and indeed a full-blown web app for working with data in a JCR.</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T17:27:22.647-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:29:05.249-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="8c1ec64b8103ce73"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>### Blockchain 
+
+From the beginning SubNode has had a goal just to be just the most basic content management, node editing, tree manipulation (copy, cut, paste), searching, timelines, sharing, publishing, browsing, navigating trees, and the most generic types of functions imaginable that users would need to interact with a tree in a 'user friendly' way. So at its core this is what SubNode is, however recently a new layer blockchain technology is being built on top of SubNode, so that it will become still a generic information navigation platform but with cryptographically provable history, and provenance of every piece of information using Merkle Tree and public key encryption in exactly the same way blockchains do. In this way SubNode will become a more powerful type of blockchain, because if will be using a full tree-structure just like the internet does, rather than what amounts to a linked-list ledger like the infamous Bitcoin data structure uses. In other words, all of today's blockchains are built on a growing list of pieces of data, but SubNode is a large Merkle Tree, what is scalable world-wide, and therefore, like most blockchain evangelists will tell you: "This is really like a new kind of internet"</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T17:27:22.647-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:34:25.836-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node></sv:node><sv:node sv:name="db1e184dbde23886"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## Links
+
+Live Instance -&gt; http://sbnode.com
+
+GitHub Docs -&gt; https://github.com/Clay-Ferguson/meta64/tree/master/docs/   
+
+Sample Content: War and Peace -&gt; http://sbnode.com/?id=/meta64/war-and-peace
+
+Menu Help -&gt; http://sbnode.com?id=/meta64/public/help
+
+RSS Reader Demo -&gt; http://sbnode.com?id=/rss/feeds
+</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:19:40.792-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T11:26:58.595-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="bf889e48b84ba01c"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## Key Concepts
+
+* Everything is content: Text, images, file attachments, etc. are individual content nodes (aka. SubNodes).
+* Data exists as a tree structure consisting of editable nodes.
+* Each user owns a branch on the tree (their account root node) which holds all data they create.
+* Node text and attachments can be edited after posting (like on a Wiki)
+* Markdown is used to do formatting of the text when displayed.
+* Each node can be shared by its owner to the public or to specific users.
+* Nodes can be created, edited, moved, and deleted just like in a file system.
+* Any type of binary content can be uploaded onto nodes, and attached images automatically display as part of the page.
+* Each node can be referenced by direct-linking to it on the URL, so users can publish their own pages with specific urls.
+* SubNode itself is a kind of tree-structured wiki, or just a tree of editable, sharable content, just like you see on social media, but completely general purpose.</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:22:06.444-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:38:45.342-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="1b6d994caf91210f"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>## News &amp; Latest Developments -&gt; Blockchain
+
+The next step in evolution of SubNode is the addition of **blockchain technology**. The goal will be to have a secure public-key encrypted, publicly open (like BitCoin is), decentralized P2P, democratic concensus-based, social media solution that will commoditize this server technology and put control back in the hands of the people. 
+
+Currently the social media space is completely monopolized and controlled by Facebook, Google, Twitter, etc. These monopolies take your data, sell it, claim to own it, push ADs, and try to manipulate and control society. People who are already well versed in blockchain know that the world is abuzz right now about the fact that blockchain technologies are poised to destroy these monopolies [1]. SubNode will hopefully help move in this direction, and show at least one complete end-to-end vision of how a new blockchain-based web would be architected on top of Content Repository databases. 
+
+[1] https://www.wired.com/2017/06/pied-pipers-new-internet-isnt-just-possible-almost
+
+SubNode is actually a bit more generalized than just a "Social Media" technology, because it's just plainly a shared content tree, just like blockchains are simply a shared 'linked-list'. In order for a blockchain to become widely usable as a general purpose data structure it has to be really a form of (a Merkle) tree, which is why the JCR is the one and only obvious core technology for it. Also for a generalized blockchain to become popular (as opposed to a cryptocurrency) and usable it needs to have a GUI layer to go with it, offering full-text search, data entry, organization, timelines, etc; so that it's more than just code miners can run. All of this is what SubNode has always been even before a blockchain addition to it was ever envisioned.
+
+What will make up the core of the SubNode blockchain, at the data layer, will be a Merkle Tree (same algorithm at the core of all blockchains) layer on top of the JCR layer, so that every piece of information created by any user will go onto the chain (as a tree node, or "SubNode") and be public, authenticatable back to each user, and uncorruptable (because of hashes). The immediate plan is just to have a system where each instance holds a full copy of the database (like a Blockchain miner), and participates in the distributed system. </sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:17:39.115-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:47:15.384-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="e37d5b4f9ec4492f"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>
+
+## List of Features
+
+* Basic JCR Browsing capability
+* Login/Logout
+* Auto-login using Cookies
+* Signup new users (including captcha, and password)
+* Signup process includes email receipt verification
+* Social Media Buttons for Login (Twitter, etc)
+* Node editing (plain text/markdown)
+* Orderable child nodes ("move up" and "move down" supported)
+* Creating Subnodes or Inline nodes
+* Full Text Search and/or Tag-based searches (by Lucene)
+* Timeline feature: Reverse Chronological list of any tree branch.
+* Deleting Nodes
+* Moving nodes to new locations (supports multi-select)
+* Renaming Nodes
+* Sharing a node as Public
+* Sharing a node to a specific User
+* Display of All Shared Nodes (under any branch)
+* Social Media-type Public Commenting (providing conversation under any node)
+* Removing individual Share privileges from nodes
+* Short URL GUID for any node, so it can be referenced by URL
+* Sends email notification when someone creates a new node under a node you own.
+* Uploading attachments (attached files) onto a node
+* Image Attachments automatically display in the content, anywhere you specify.
+* Upload from local machine
+* Drag &amp; Drop support (File Uploads)
+* Upload directly from any internet URL.
+* Deleting node attachments
+* Renders image attachments on the page (on the node)
+* Shows JCR properties for nodes.
+* Allows editing of properties (single value and multi-valued)
+* Creating/Deleting new JCR node properties
+* Can switch between simple or advanced mode editing
+* Change password feature.
+* Multiple nodes selectable
+* Import/Export to XML Files (format determined by JCR)
+* Import/Export to ZIP file containing JSON text and binary attachments
+* Currently Import from remote machine (upload) works, but export only can export to server folder.
+* Admin feature to insert entire book "War and Peace", for quickly
+  creating test data for exploring all the features, and especially 'search'.
+* Admin Info Dialog: Shows Free Memory, IPs of all browsers, number sessions active, etc.
+* Solr Remote Desktop Search (Connects to Solr Instances)
+* Lucene/Tika-based Local Desktop Search (search files on local filesystem)
+* Automatic Type Registration from CND file
+* RSS Reader with Podcast Player (implemented in HTML5)
+* For future planned features see file: **/docs/bugs-and-todos.md**
+* Supports either MongoDB or an RDBMS as backing store (provided by Jackrabbit/Oak)
+* Run with Derby embedded DB for completely self-contained installation, or connect to MongoDB for enterprise scalability
+* Merkle Tree Generation (part of for blockchain effort)
+* SubGraph comparison</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:22:06.444-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:49:27.532-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="8b3a024490fc1d96"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>
+
+## Technology Stack and APIs
+
+### Tech Stack Summary
+
+* Google Polymer (Web Components)
+* TypeScript/JavaScript
+* JSON/Ajax
+* Java + SpringBoot Back end,
+* Apache Oak JCR
+* Lucene
+* MongoDb or RDB via Tomcat Embedded
+
+### Tech Stack, Detailed Info
+
+* Single Page Application (SPA)
+* 100% TypeScript(zero raw JavaScript)/HTML/CSS. (https://www.typescriptlang.org/)
+* Most GUI using TypeScript Widget Framework (no Templating, JSX, JSP, or Mustach, etc)
+* Leverages Advanced Java 8 Language Features
+* JSON-based Ajax for Server Communication
+* All TypeScript in ES6 Modules, compiled to support ES5
+* SystemJS module loader, supporting bundled or non-bundles builds (https://github.com/systemjs/systemjs)
+* Google Polymer - Web Components (https://www.polymer-project.org/1.0/)
+* MongoDB as Data Storage (https://www.mongodb.com)
+* RDBMS Support (Derby is pre-configured in DEV environment)
+* Apache Jackrabbit Oak, for JCR interface (https://jackrabbit.apache.org/oak/)
+* Spring MVC, SpringBoot (http://projects.spring.io/spring-boot/)
+* App is "Mobile First", meaning a primary objective is to run well on mobile
+* Using Google Closure Compiler for JS Minification (https://developers.google.com/closure/compiler/)
+* Pure Java on Server (https://www.oracle.com/java/index.html)
+* DropzoneJS API for Drag&amp;Drop uploading (http://dropzonejs.com)
+* Built using Maven (https://maven.apache.org/)
+* Bower Package Manager (http://bower.io/)
+* Launches from a single SpringBoot "uber jar" containing Tomcat embedded and pre-configured
+* Spring Java-only configuration with Annotations, and no XML configs.
+</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:22:06.445-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T11:23:46.923-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="fec7ed4db44692c6"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>
+
+## Apache Jackrabbit Oak
+
+Other than SpringBoot, the main dependency is Jackrabbit Oak, which can be found here:
+
+https://github.com/apache/jackrabbit-oak   
+https://jackrabbit.apache.org/oak/docs/index.html
+
+Jackrabbit Oak is an Adobe-sponsored Open Source project for creating the best world-class JCR implementation. It is extremely high performance and hugely scalable largely due to Lucene as the search technology in use, and also because of MongoDB. As with any "NoSQL" the primary concern is indeed performance and scalability, instead of transactional concerns, so the ACID transactions of an RDBMS are sacrificed for the "eventually consistent" model offered by a NoSQL approach.
+</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:22:06.446-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:51:35.964-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node><sv:node sv:name="8bf259468600b676"><sv:property sv:name="jcr:primaryType" sv:type="Name"><sv:value>nt:unstructured</sv:value></sv:property><sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true"><sv:value>mix:created</sv:value><sv:value>mix:lastModified</sv:value></sv:property><sv:property sv:name="jcr:content" sv:type="String"><sv:value>
+
+## About the Developer
+
+SubNode is a FOSS (Free Open Source Software) project created by Clay Ferguson. I'm a Java Developer living in Dallas, Texas. I have 26 years of coding experience consisting of 10 years of C++ followed by 16 years of Java, all on Web Apps, and mostly on analytical systems, accounting systems, point-of-sale systems, financial institution modeling, back-end processing for banks, etc. 
+
+**linkedin.com:** http://www.linkedin.com/in/wclayf  
+**GitHub:** https://github.com/Clay-Ferguson  
+**email:** wclayf@gmail.com</sv:value></sv:property><sv:property sv:name="jcr:created" sv:type="Date"><sv:value>2017-06-25T11:22:06.446-05:00</sv:value></sv:property><sv:property sv:name="jcr:createdBy" sv:type="String"><sv:value>admin</sv:value></sv:property><sv:property sv:name="jcr:lastModified" sv:type="Date"><sv:value>2017-06-25T17:54:43.560-05:00</sv:value></sv:property><sv:property sv:name="jcr:lastModifiedBy" sv:type="String"><sv:value>admin</sv:value></sv:property></sv:node></sv:node></sv:node>

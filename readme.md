@@ -1,6 +1,4 @@
-## SubNode
+## SubNode Readme content here...
 
-NOTE: The readme file content has been moved to the SubNode main landing page here:
-
-http://sbnode.com
+http://www.sbnode.com?id=/meta64/public/home/about-subnode
   

@@ -80,7 +80,7 @@ public class NodeRenderService {
 			/*
 			 * if the node was a path type and was not found then try with the "/root" prefix before
 			 * giving up. We allow ID parameters to omit the leading "/root" part of the path for
-			 * shortening the path just for end user convenience.
+			 * shortening the path just for user convenience.
 			 */
 			if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
 				targetId = "/root" + targetId;
@@ -93,6 +93,13 @@ public class NodeRenderService {
 				return;
 			}
 			log.trace("found node:" + targetId);
+			
+			/* If user is trying to continue reading, we want to go to the next logical node after targetId node to continue reading, based off of
+			 * what the parent is of all the nodes on the page.
+			 */
+//			if (req.isContinueReadingMode()) {
+//				node = getContinuationNodeFromStartingNode(node);
+//			}
 
 			String path = node.getPath();
 			userSettingsDaemon.setSettingVal(sessionContext.getUserName(), JcrProp.USER_PREF_LAST_NODE, path);
@@ -272,6 +279,11 @@ public class NodeRenderService {
 		}
 	}
 
+	/* Returns the next node the user would want to read after the 'node' if they are simply trying to "continue reading" */
+	public Node getContinuationNodeFromStartingNode(Session session, Node node) {
+		throw ExUtil.newEx("feature is not yet enabled. Not yet coded.");
+	}
+	
 	public void initNodeEdit(Session session, InitNodeEditRequest req, InitNodeEditResponse res) {
 
 		if (session == null) {

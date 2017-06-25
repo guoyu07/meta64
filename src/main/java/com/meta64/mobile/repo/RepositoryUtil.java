@@ -52,8 +52,11 @@ public class RepositoryUtil {
 			 * of file to determine if it needs to be loaded into repo or if repo is already up to
 			 * date
 			 */
-			Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", appProp.getUserLandingPageNode(), "Landing Page");
-			initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
+			//NOTE: This is a way of automatically loading a content text file onto a node, to ensure it is always there when the app 
+			//instance is running without the admin having to manually create it whenever a new instance is installed. For now I am not using
+			//this feature and I'm manually exporting/importing the XML instead.
+			//Node landingPageNode = JcrUtil.ensureNodeExists(session, "/", appProp.getUserLandingPageNode(), "Landing Page");
+			//initPageNodeFromClasspath(session, landingPageNode, "classpath:/public/doc/landing-page.md");
 
 			JcrUtil.ensureNodeExists(session, "/", JcrName.ROOT, "Root of All Users");
 			JcrUtil.ensureNodeExists(session, "/", JcrName.USER_PREFERENCES, "Preferences of All Users");

@@ -11,6 +11,7 @@ public class RenderNodeRequest extends OakRequestBase {
 	/*
 	 * offset for render of a child node which works like OFFSET on RDBMS. It's the point at which
 	 * we start gathering nodes to return (or the number to skip over), use for pagination support.
+	 * In other words, offset is the index of the first child to render in the results.
 	 */
 	private int offset;
 
@@ -22,6 +23,13 @@ public class RenderNodeRequest extends OakRequestBase {
 	private boolean renderParentIfLeaf;
 
 	private boolean goToLastPage;
+
+	/*
+	 * Flag indicates the user clicked the 'Continue Reading' button, and we just want to
+	 * intelligently navigate them to whatever the next logical thing to read should be based on
+	 * their current location.
+	 */
+	private boolean continueReadingMode;
 
 	public String getNodeId() {
 		return nodeId;
@@ -62,5 +70,14 @@ public class RenderNodeRequest extends OakRequestBase {
 
 	public void setGoToLastPage(boolean goToLastPage) {
 		this.goToLastPage = goToLastPage;
+	}
+
+	@JsonProperty(required = false)
+	public boolean isContinueReadingMode() {
+		return continueReadingMode;
+	}
+
+	public void setContinueReadingMode(boolean continueReadingMode) {
+		this.continueReadingMode = continueReadingMode;
 	}
 }

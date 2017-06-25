@@ -444,9 +444,9 @@ export class Render {
             /* For some unknown reason the ability to style this with a class broke isn't working, so i used a 'style' attibute
                  as a last resort */
             openButton = new Button("Open", () => { meta64.openNode(node.uid) }, {
-              "style": "background-color: #4caf50;color:white;"
-              //"icon" : "icons:add", //oops, buttons AND icon are not currently supported
-             });
+                "style": "background-color: #4caf50;color:white;"
+                //"icon" : "icons:add", //oops, buttons AND icon are not currently supported
+            });
         }
 
         /*
@@ -635,7 +635,7 @@ export class Render {
                     "raised": "raised",
                     "style": "background-color: #4caf50;color:white;",
                     //"icon" : "icons:change-history", oops, buttons AND icon not currently supported
-                    "onclick": () => {nav.navUpLevel();} //
+                    "onclick": () => { nav.navUpLevel(); } //
                 }, //
                     "Parent");
             }
@@ -742,6 +742,10 @@ export class Render {
             let nextButton = render.makeButton("Next Page", "nextPageButton", render.nextPage);
             let lastButton = render.makeButton("Last Page", "lastPageButton", render.lastPage);
             output += render.centeredButtonBar(nextButton + lastButton, "paging-button-bar");
+        }
+        else {
+            //let continueReadingButton = render.makeButton("Continue Reading...", "continueReadingButton", nav.continueReading);
+            //output += render.centeredButtonBar(continueReadingButton, "paging-button-bar");
         }
 
         util.setHtml("listView", output);

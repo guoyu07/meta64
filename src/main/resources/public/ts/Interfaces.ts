@@ -244,6 +244,7 @@ export interface RenderNodeRequest {
     offset: number;
     renderParentIfLeaf: boolean;
     goToLastPage: boolean;
+    continueReadingMode?: boolean;
 }
 
 export interface ResetPasswordRequest {

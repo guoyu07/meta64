@@ -634,10 +634,10 @@ export class Render {
                 upLevelButton = tag.button({
                     "raised": "raised",
                     "style": "background-color: #4caf50;color:white;",
-                    //"icon" : "icons:change-history", oops, buttons AND icon not currently supported
+                    "icon" : "icons:change-history",
                     "onclick": () => { nav.navUpLevel(); } //
-                }, //
-                    "Parent");
+                }, //Note: this text "Up" won't actully appear because currently we don't support icons AND text on buttons
+                    "Up");
             }
 
             // console.log("data.node.path="+data.node.path);

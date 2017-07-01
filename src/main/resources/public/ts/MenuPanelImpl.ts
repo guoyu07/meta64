@@ -36,7 +36,8 @@ export default class MenuPanel extends Comp {
             new Menu("Bookmarks", [
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
-                new MenuItem("RSS Feeds", nav.openRssFeedsNode)
+                new MenuItem("RSS Feeds", nav.openRssFeedsNode),
+                new MenuItem("Sample Content", nav.browseSampleContent)
             ]),
             new Menu("Edit", [
                 new MenuItem("Create", edit.createNode, () => { return meta64.state.canCreateNode }), //

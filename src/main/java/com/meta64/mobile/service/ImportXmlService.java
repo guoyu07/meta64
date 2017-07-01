@@ -180,10 +180,9 @@ public class ImportXmlService {
 
 			/*
 			 * TIP: Search this codebase for "SecurityProvider" and "PARAM_IMPORT_BEHAVIOR" if you
-			 * are troubleshooting why this import may with errors related to security and user
+			 * are troubleshooting why this import may fail with errors related to security and user
 			 * authorizations.
 			 */
-
 			session.getWorkspace().importXML(targetNode.getPath(), in, //
 					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW//
 					ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW //

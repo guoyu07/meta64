@@ -129,6 +129,17 @@ class Nav {
         }, nav.navPageNodeResponse);
     }
 
+    browseSampleContent(): void {
+        nav.mainOffset = 0;
+        util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
+            "nodeId": "/meta64/war-and-peace",
+            "upLevel": null,
+            "renderParentIfLeaf": null,
+            "offset": nav.mainOffset,
+            "goToLastPage": false
+        }, nav.navPageNodeResponse);
+    }
+
     expandMore(nodeId: string): void {
 
         /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button

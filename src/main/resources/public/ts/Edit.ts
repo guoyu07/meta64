@@ -70,7 +70,9 @@ class Edit {
             dlg.open();
         })
 
-        /* This dialog is no longer needed, now that we support uploading from a stream
+        /* This dialog is no longer needed, now that we support uploading from a stream. This older dialog imports a file
+        as specified by the admin by filename, but has the limitation of requiring that file to already exist
+        in the server admin folder ON the actual server where the webapp is running.
         Factory.createDefault("ImportDlgImpl", (dlg: ImportDlg) => {
             dlg.open();
         })

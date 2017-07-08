@@ -4,14 +4,20 @@ import { util } from "./Util";
 import { EncryptionKeyPair } from "./EncryptionKeyPair";
 import { LocalDB } from "./LocalDB";
 
-/* This class is for proof-of-concept work related to doing Public Key Encryption on the client using the
-Web Crypto API, for a "Secure Messaging" feature of SubNode. Currently the way this test is run is simply via
+/*
+This class is for proof-of-concept work related to doing Public Key Encryption on the client using the
+WebCryptoAPI, for a "Secure Messaging" feature of SubNode. Currently the way this test is run is simply via
 a call to 'new Encryption().test()' from an admin option
 
-NOTE: We could allow users to upload key files using something like this:
-https://stackoverflow.com/questions/40146768/how-filereader-readastext-in-html5-file-api-works
-and when store the keys into the browser storage. But what i'll do for now instead is to allow
-user to select the JSON and cut-n-paste to make their own safe (outside the browser) storage for their keys.
+We will be using LocalDB.ts implementation to store the keys in the browser, but we will also support
+allowing the user to cut-n-paste they Key JSON, so that of something goes wrong with the
+browser storage they user will not loose their keys (and therefore data) because they wil be able
+to reimport teh JSON key text back in at any time in the future, and even onto another machine or
+browser installation.
+
+At no point in time does the users Private Key ever leave their own machine. Is never sent down the wire, and
+not even any encrypted copy is ever sent down the wire either for the best-practices that are available for
+Secure Messaging, short of special-purpose hardware key-storage
 */
 export class Encryption {
 
@@ -26,6 +32,7 @@ export class Encryption {
     static OP_DECRYPT: string[] = ["decrypt"];
 
     crypto = window.crypto || (<any>window).msCrypto;
+    subtle = null;
     vector = null;
     keyPair = new EncryptionKeyPair(null, null);
 
@@ -37,9 +44,15 @@ export class Encryption {
     decrypted_data = null;
 
     constructor() {
-        if (!this.crypto || !this.crypto.subtle) {
-            throw "WebCryptoAPI not enabled";
+        if (!this.crypto) {
+            throw "WebCryptoAPI not available";
         }
+
+        this.subtle = this.crypto.subtle;
+        if (!this.subtle) {
+            throw "WebCryptoAPI Subtle not available";
+        }
+
         this.vector = this.crypto.getRandomValues(new Uint8Array(16));
     }
 
@@ -54,7 +67,7 @@ export class Encryption {
         // });
 
         /* NOTE: These parameters are all production-quality */
-        let promise = this.crypto.subtle.generateKey({ //
+        let promise = this.subtle.generateKey({ //
             name: Encryption.ENC_ALGO, //
             modulusLength: 2048, //
             publicExponent: new Uint8Array([0x01, 0x00, 0x01]), //
@@ -79,7 +92,7 @@ export class Encryption {
      Verifies that both keys can be exported to text (JSON), and then successfully reimported back from that text to usable form
      */
     exportKeys = (keyPair: EncryptionKeyPair) => {
-        this.crypto.subtle.exportKey(
+        this.subtle.exportKey(
             Encryption.KEY_SAVE_FORMAT,
             keyPair.publicKey
         )
@@ -92,7 +105,7 @@ export class Encryption {
                 console.error(err);
             });
 
-        this.crypto.subtle.exportKey(
+        this.subtle.exportKey(
             Encryption.KEY_SAVE_FORMAT,
             keyPair.privateKey
         )
@@ -107,7 +120,7 @@ export class Encryption {
     }
 
     importKey = (algoOp: string[], keyName: string, key: string) => {
-        this.crypto.subtle.importKey(
+        this.subtle.importKey(
             Encryption.KEY_SAVE_FORMAT,
             JSON.parse(key),
             {
@@ -125,7 +138,7 @@ export class Encryption {
     }
 
     encrypt = () => {
-        let promise = this.crypto.subtle.encrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
+        let promise = this.subtle.encrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
             this.keyPair.publicKey, this.convertStringToArrayBufferView(this.data));
 
         promise.then(
@@ -141,7 +154,7 @@ export class Encryption {
     }
 
     decrypt = () => {
-        let promise = this.crypto.subtle.decrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
+        let promise = this.subtle.decrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
             this.keyPair.privateKey, this.encrypted_data);
 
         promise.then(

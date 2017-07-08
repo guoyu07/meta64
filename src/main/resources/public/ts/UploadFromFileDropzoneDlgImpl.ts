@@ -53,7 +53,6 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     }
 
     upload = (): void => {
-        debugger;
         this.dropzone.processQueue();
     }
 

@@ -15,6 +15,7 @@ import { Comp } from "./widget/base/Comp";
 import { Menu } from "./widget/Menu";
 import { MenuItem } from "./widget/MenuItem";
 import { user } from "./User";
+import { Encryption } from "./Encryption";
 
 export default class MenuPanel extends Comp {
 
@@ -37,6 +38,7 @@ export default class MenuPanel extends Comp {
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
                 new MenuItem("RSS Feeds", nav.openRssFeedsNode),
+                /* currently this Sample Content is the book 'War and Peace' */
                 new MenuItem("Sample Content", nav.browseSampleContent)
             ]),
             new Menu("Edit", [
@@ -122,7 +124,8 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Insert Book: War and Peace", edit.insertBookWarAndPeace,
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }
-                )
+                ),
+                new MenuItem("JS Encryption Tests", () => {new Encryption().test()}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             new Menu("Help/Docs", [
                 new MenuItem("Main Menu Help", nav.openMainMenuHelp)

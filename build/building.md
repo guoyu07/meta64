@@ -1,6 +1,6 @@
 # Batch File Notes
 
-#Note from the Meta64 developer:
+#Note from the developer:
 
 I have included this little set of shell scripts mainly just to make it more clear exactly how I build the meta64 app. This is just standard maven stuff, but it may be helpful to see exactly how I'm calling Tidy, Bower, Typescript compiler, etc.
 

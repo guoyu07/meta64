@@ -45,9 +45,6 @@ import com.meta64.mobile.service.TypeService;
 import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.JcrUtil;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoTimeoutException;
 
 /**
  * Instance of a JCR Repository (both RDB and MongoDB are supported).
@@ -90,7 +87,9 @@ public class OakRepository {
 	private Repository repository;
 	private ConfigurationParameters securityParams;
 	private SecurityProvider securityProvider;
-	private DB mongoDb;
+	
+	//Disabling Mongo for now
+	//private DB mongoDb;
 
 	// TODO: move this string to properties file.
 	public static final String TABLEPREFIX = "jcr_";
@@ -275,10 +274,12 @@ public class OakRepository {
 				log.debug("Repository fully initialized.");
 				fullInit = true;
 			}
-			catch (MongoTimeoutException e) {
-				log.error("********** Is the MongoDb or RDBMS Server reachable ? **********", e);
-				throw e;
-			}
+			//todo-0: Put a note somewhere in the docs about Mongo, that this code could be re-enabled if you bring
+			//back the mongo dependency in the pom.xml file.
+//			catch (MongoTimeoutException e) {
+//				log.error("********** Is the MongoDb or RDBMS Server reachable ? **********", e);
+//				throw e;
+//			}
 			catch (Exception e) {
 				throw ExUtil.newEx(e);
 			}
@@ -348,13 +349,14 @@ public class OakRepository {
 					repository = null;
 				}
 
-				if (mongoDb != null) {
-					log.info("Closing mongo.");
-					if (mongoDb.getMongo() != null) {
-						mongoDb.getMongo().close();
-					}
-					mongoDb = null;
-				}
+				//disabling mongo for now.
+//				if (mongoDb != null) {
+//					log.info("Closing mongo.");
+//					if (mongoDb.getMongo() != null) {
+//						mongoDb.getMongo().close();
+//					}
+//					mongoDb = null;
+//				}
 
 				if (dataSource != null && appProp.getRdbShutdown() != null) {
 					log.info("Closing RDBMS.");

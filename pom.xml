@@ -121,11 +121,13 @@
     		<artifactId>tomcat-jdbc</artifactId>
 		</dependency>
 
+		<!--
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 		</dependency>
-
+		-->
+		
 		<!-- Use Log4J for logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

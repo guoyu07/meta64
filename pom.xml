@@ -68,43 +68,25 @@
 			<version>1.3.1</version>
 		</dependency>
 
-		<!-- The JCR API -->
 		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>2.0</version>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
-
+		
+		<!--
 		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>oak-core</artifactId>
-			<version>${oakVersion}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>oak-jcr</artifactId>
-			<version>${oakVersion}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>oak-commons</artifactId>
-			<version>${oakVersion}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>oak-lucene</artifactId>
-			<version>${oakVersion}</version>
-		</dependency>
-
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+		-->
+		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.0</version>
 		</dependency>
 
+<!--
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -120,13 +102,7 @@
     		<groupId>org.apache.tomcat</groupId>
     		<artifactId>tomcat-jdbc</artifactId>
 		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-		</dependency>
-		-->
+-->
 		
 		<!-- Use Log4J for logging -->
 		<dependency>
@@ -155,7 +131,18 @@
 			<artifactId>rome</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-				
+		
+		<!-- 
+		I decided to go with a PURE HTML file option first, before supporting any PDF export option, so for now no pdf
+		export is available, and this it the way images are embedded in the HMTL
+		https://en.wikipedia.org/wiki/Data_URI_scheme
+		<dependency>
+    		<groupId>org.apache.pdfbox</groupId>
+    		<artifactId>pdfbox-app</artifactId>
+    		<version>2.0.7</version>
+		</dependency>
+		-->
+		
 	</dependencies>
 
 	<build>

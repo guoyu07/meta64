@@ -16,12 +16,15 @@ import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";
 import { RadioButton } from "./widget/RadioButton";
 import { RadioButtonGroup } from "./widget/RadioButtonGroup";
+import { Anchor } from "./widget/Anchor";
+import { VerticalLayout } from "./widget/VerticalLayout";
 
 export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
-    exportToFileNameTextField: TextField;
     zipRadioButton: RadioButton;
     xmlRadioButton: RadioButton;
+    mdRadioButton: RadioButton;
+    pdfRadioButton: RadioButton;
 
     constructor() {
         super();
@@ -31,10 +34,11 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
     buildGUI = (): void => {
         this.setChildren([
             new Header("Export Node"),
-            this.exportToFileNameTextField = new TextField("Export to File Name"),
             new RadioButtonGroup([
-                this.xmlRadioButton = new RadioButton("Output to XML", true),
-                this.zipRadioButton = new RadioButton("Output to ZIP", false),
+                this.xmlRadioButton = new RadioButton("XML", true),
+                this.zipRadioButton = new RadioButton("ZIP", false),
+                this.mdRadioButton = new RadioButton("MD (Markdown)", false),
+                this.pdfRadioButton = new RadioButton("PDF", false),
             ]),
             new ButtonBar([
                 new Button("Export", this.exportNodes, null, true, this),
@@ -45,29 +49,47 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     exportNodes = (): void => {
         var highlightNode = meta64.getHighlightedNode();
-        var targetFileName = this.exportToFileNameTextField.getValue();
-
-        if (util.emptyString(targetFileName)) {
-            Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
-                dlg.open();
-            }, { "message": "Please enter a name for the export file." });
-            return;
-        }
-
         if (highlightNode) {
             util.ajax<I.ExportRequest, I.ExportResponse>("export", {
                 "nodeId": highlightNode.id,
-                "targetFileName": targetFileName,
-                "exportExt": this.xmlRadioButton.getChecked() ? "xml" : "zip"
-            }, this.exportResponse);
+                "exportExt": this.getSelectedFormat()
+            }, (res: I.ExportResponse) => {
+                this.exportResponse(res);
+            });
         }
     }
 
+    getSelectedFormat = (): string => {
+        let ret = "";
+        if (this.xmlRadioButton.getChecked()) {
+            ret = "xml";
+        }
+        else if (this.zipRadioButton.getChecked()) {
+            ret = "zip";
+        }
+        else if (this.mdRadioButton.getChecked()) {
+            ret = "md";
+        }
+        else if (this.pdfRadioButton.getChecked()) {
+            ret = "pdf";
+        }
+        return ret;
+    }
+
     exportResponse = (res: I.ExportResponse): void => {
+        let hostAndPort: string = util.getHostAndPort();
         if (util.checkSuccess("Export", res)) {
             Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
                 dlg.open();
-            }, { "message": "Export successful." });
+            },
+                {
+                    "message": "Export successful.",
+                    "customWidget": new VerticalLayout([
+                        new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=inline", "Raw View", { "target": "_blank" }),
+                        new Anchor(hostAndPort + "/view/" + res.fileName, "Formatted View", { "target": "_blank" }),
+                        new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null),
+                    ])
+                });
             meta64.selectTab("mainTabName");
             view.scrollToSelectedNode();
         }

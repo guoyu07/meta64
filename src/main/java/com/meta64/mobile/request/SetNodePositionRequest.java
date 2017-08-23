@@ -2,13 +2,12 @@ package com.meta64.mobile.request;
 
 import com.meta64.mobile.request.base.OakRequestBase;
 
-/* 
- * Moves a nodeId to be before siblingId. Setting siblingId null or empty moves nodeId to end of list 
- */
 public class SetNodePositionRequest extends OakRequestBase {
-	private String parentNodeId;
+	//node to be moved (id or path)
 	private String nodeId;
-	private String siblingId;
+	
+	//targetName can be: up, down, top, bottom
+	private String targetName;
 
 	public String getNodeId() {
 		return nodeId;
@@ -18,19 +17,11 @@ public class SetNodePositionRequest extends OakRequestBase {
 		this.nodeId = nodeId;
 	}
 
-	public String getSiblingId() {
-		return siblingId;
+	public String getTargetName() {
+		return targetName;
 	}
 
-	public void setSiblingId(String siblingId) {
-		this.siblingId = siblingId;
-	}
-
-	public String getParentNodeId() {
-		return parentNodeId;
-	}
-
-	public void setParentNodeId(String parentNodeId) {
-		this.parentNodeId = parentNodeId;
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
 	}
 }

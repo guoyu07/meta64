@@ -513,7 +513,7 @@ class Meta64 {
         meta64.state.nextPageExists = !nav.endReached;
         meta64.state.selNodeCount = util.getPropertyCount(meta64.selectedNodes);
         meta64.state.highlightNode = meta64.getHighlightedNode();
-        meta64.state.selNodeIsMine = meta64.state.highlightNode != null && (meta64.state.highlightNode.createdBy === meta64.userName || "admin" === meta64.userName);
+        meta64.state.selNodeIsMine = meta64.state.highlightNode != null && (meta64.state.highlightNode.owner === meta64.userName || "admin" === meta64.userName);
 
         meta64.state.homeNodeSelected = meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id;
         meta64.state.importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;
@@ -644,14 +644,6 @@ class Meta64 {
         node.uid = updateMaps ? util.getUidForId(meta64.identToUidMap, node.id) : meta64.identToUidMap[node.id];
         node.properties = props.getPropertiesInEditingOrder(node, node.properties);
 
-        /*
-         * For these two properties that are accessed frequently we go ahead and lookup the properties in the
-         * property array, and assign them directly as node object properties so to improve performance, and also
-         * simplify code.
-         */
-        node.createdBy = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
-        node.lastModified = props.getNodePropertyVal(jcrCnst.LAST_MODIFIED, node);
-
         if (updateMaps) {
             meta64.uidToNodeMap[node.uid] = node;
             meta64.idToNodeMap[node.id] = node;
@@ -660,9 +652,7 @@ class Meta64 {
 
     initConstants() {
         util.addAll(meta64.simpleModePropertyBlackList, [ //
-            jcrCnst.MIXIN_TYPES, //
             jcrCnst.PRIMARY_TYPE, //
-            jcrCnst.POLICY, //
             jcrCnst.IMG_WIDTH,//
             jcrCnst.IMG_HEIGHT, //
             jcrCnst.BIN_VER, //
@@ -674,11 +664,6 @@ class Meta64 {
         util.addAll(meta64.readOnlyPropertyList, [ //
             jcrCnst.PRIMARY_TYPE, //
             jcrCnst.UUID, //
-            jcrCnst.MIXIN_TYPES, //
-            jcrCnst.CREATED, //
-            jcrCnst.CREATED_BY, //
-            jcrCnst.LAST_MODIFIED, //
-            jcrCnst.LAST_MODIFIED_BY,//
             jcrCnst.IMG_WIDTH, //
             jcrCnst.IMG_HEIGHT, //
             jcrCnst.BIN_VER, //
@@ -937,11 +922,11 @@ class Meta64 {
     }
 
     moveNodeUp(uid?: string): void {
-        edit.moveNodeUp();
+        edit.moveNodeUp(uid);
     }
 
     moveNodeDown(uid?: string): void {
-        edit.moveNodeDown();
+        edit.moveNodeDown(uid);
     }
 
     clickOnSearchResultRow(rowElm, uid) {

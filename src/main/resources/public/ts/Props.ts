@@ -75,7 +75,7 @@ class Props {
 
         let propsNew: I.PropertyInfo[] = util.arrayClone(_props);
         props.movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
-        props.movePropsToEnd([jcrCnst.CREATED, jcrCnst.CREATED_BY, jcrCnst.LAST_MODIFIED, jcrCnst.LAST_MODIFIED_BY], propsNew);
+        //props.movePropsToEnd([jcrCnst.CREATED, jcrCnst.OWNER, jcrCnst.LAST_MODIFIED], propsNew);
 
         return propsNew;
     }
@@ -171,16 +171,16 @@ class Props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedNode(node): boolean {
-        let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
+    isNonOwnedNode(node : I.NodeInfo): boolean {
+        let owner: string = node.owner;
 
         // if we don't know who owns this node assume the admin owns it.
-        if (!createdBy) {
-            createdBy = "admin";
+        if (!owner) {
+            owner = "admin";
         }
 
         /* This is OR condition because of createdBy is null we assume we do not own it */
-        return createdBy != meta64.userName;
+        return owner != meta64.userName;
     }
 
     /*

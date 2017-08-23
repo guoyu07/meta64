@@ -8,10 +8,30 @@ import java.util.StringTokenizer;
 
 import org.springframework.core.io.Resource;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 /**
  * General string utilities.
  */
 public class XString {
+
+	private static ObjectMapper jsonMapper = new ObjectMapper();
+	static {
+		jsonMapper.setSerializationInclusion(Include.NON_NULL);
+	}
+	private static ObjectWriter jsonPrettyWriter = jsonMapper.writerWithDefaultPrettyPrinter();
+
+	public static String prettyPrint(Object obj) {
+		try {
+			return jsonPrettyWriter.writeValueAsString(obj);
+		}
+		catch (JsonProcessingException e) {
+			return "";
+		}
+	}
 
 	public static List<String> tokenize(String val, String delimiter, boolean trim) {
 		List<String> list = null;
@@ -53,7 +73,7 @@ public class XString {
 	}
 
 	/* Truncates after delimiter including truncating the delimiter */
-	public final static String truncateAfter(String text, String delim) {
+	public final static String truncateAfterFirst(String text, String delim) {
 		if (text == null) return null;
 
 		int idx = text.indexOf(delim);
@@ -61,6 +81,17 @@ public class XString {
 			text = text.substring(0, idx);
 		}
 		return text;
+	}
+
+	public static String stripIfEndsWith(String val, String suffix) {
+		if (val.endsWith(suffix)) {
+			val = val.substring(0, val.length() - suffix.length());
+		}
+		return val;
+	}
+
+	public static String removeLastChar(String str) {
+		return str.substring(0, str.length() - 1);
 	}
 
 	public final static String truncateAfterLast(String text, String delim) {

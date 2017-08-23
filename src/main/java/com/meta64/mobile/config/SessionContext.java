@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.repo.OakRepository;
 import com.meta64.mobile.repo.RepositoryUtil;
 import com.meta64.mobile.util.DateUtil;
 
@@ -63,9 +62,6 @@ public class SessionContext {
 	private String urlCmd;
 
 	public int counter;
-
-	@Autowired
-	private OakRepository oak;
 
 	private HttpSession httpSessionToInvalidate;
 

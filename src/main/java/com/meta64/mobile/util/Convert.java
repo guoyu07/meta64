@@ -1,21 +1,14 @@
 package com.meta64.mobile.util;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.security.AccessControlEntry;
-import javax.jcr.security.Privilege;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,26 +17,30 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.image.ImageSize;
-import com.meta64.mobile.image.ImageUtil;
-import com.meta64.mobile.model.AccessControlEntryInfo;
 import com.meta64.mobile.model.NodeInfo;
-import com.meta64.mobile.model.PrivilegeInfo;
 import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.model.UserPreferences;
+import com.meta64.mobile.mongo.MongoApi;
+import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.model.SubNode;
+import com.meta64.mobile.mongo.model.SubNodeProperty;
+import com.meta64.mobile.mongo.model.SubNodePropertyMap;
 
 /**
  * Converting objects from one type to another, and formatting.
  */
 @Component
 public class Convert {
-
-	/*
-	 * We have to use full annotation here because we already have a different Value class in the
-	 * imports section
-	 */
-	@org.springframework.beans.factory.annotation.Value("${donateButton}")
-	private String donateButton;
-
+	@Autowired
+	private MongoApi api;
+	//
+	// /*
+	// * We have to use full annotation here because we already have a different Value class in the
+	// * imports section
+	// */
+	// @org.springframework.beans.factory.annotation.Value("${donateButton}")
+	// private String donateButton;
+	//
 	public static final PropertyInfoComparator propertyInfoComparator = new PropertyInfoComparator();
 
 	private static final Logger log = LoggerFactory.getLogger(Convert.class);
@@ -64,136 +61,83 @@ public class Convert {
 		}
 	}
 
-	public static List<AccessControlEntryInfo> convertToAclListInfo(AccessControlEntry[] aclEntries) {
-		List<AccessControlEntryInfo> aclEntriesInfo = new LinkedList<AccessControlEntryInfo>();
-
-		if (aclEntries != null) {
-			for (AccessControlEntry ace : aclEntries) {
-				AccessControlEntryInfo aceInfo = new AccessControlEntryInfo();
-				aceInfo.setPrincipalName(ace.getPrincipal().getName());
-
-				List<PrivilegeInfo> privInfoList = new LinkedList<PrivilegeInfo>();
-				for (Privilege privilege : ace.getPrivileges()) {
-
-					PrivilegeInfo privInfo = new PrivilegeInfo();
-					privInfo.setPrivilegeName(privilege.getName());
-					privInfoList.add(privInfo);
-				}
-
-				aceInfo.setPrivileges(privInfoList);
-				aclEntriesInfo.add(aceInfo);
-			}
-		}
-
-		return aclEntriesInfo;
-	}
-
-	/*
-	 * WARNING: skips the check for ordered children and just assigns false for performance reasons
-	 */
-	public NodeInfo convertToNodeInfo(SessionContext sessionContext, Session session, Node node, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
+	public NodeInfo convertToNodeInfo(SessionContext sessionContext, MongoSession session, SubNode node, boolean htmlOnly, boolean allowAbbreviated,
+			boolean initNodeEdit) {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;
 
-		long binVer = getBinaryVersion(node);
+		long binVer = node.getIntProp(JcrProp.BIN_VER);
 		if (binVer > 0) {
-			/* if we didn't get an exception, we know we have a binary */
 			hasBinary = true;
-			binaryIsImage = isImageAttached(node);
+			binaryIsImage = api.isImageAttached(node);
 
 			if (binaryIsImage) {
-				imageSize = getImageSize(node);
+				imageSize = api.getImageSize(node);
 			}
 		}
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
-		boolean hasNodes = JcrUtil.hasDisplayableNodes(advancedMode, node);
+		boolean hasNodes = (api.getChildCount(node) > 0);
 		// log.trace("hasNodes=" + hasNodes + " path=" + node.getPath());
 
 		List<PropertyInfo> propList = buildPropertyInfoList(sessionContext, node, htmlOnly, allowAbbreviated, initNodeEdit);
 
-		NodeType nodeType = JcrUtil.safeGetPrimaryNodeType(node);
-		String primaryTypeName = nodeType == null ? "n/a" : nodeType.getName();
 		/*
 		 * log.debug("convertNodeInfo: " + node.getPath() + node.getName() + " type: " +
 		 * primaryTypeName + " hasBinary=" + hasBinary);
 		 */
 
-		try {
-			NodeInfo nodeInfo = new NodeInfo(node.getIdentifier(), node.getPath(), node.getName(), propList, hasNodes, false, hasBinary, binaryIsImage, binVer, //
-					imageSize != null ? imageSize.getWidth() : 0, //
-					imageSize != null ? imageSize.getHeight() : 0, //
-					primaryTypeName);
-			return nodeInfo;
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
+		// todo-0: this is a spot that can be optimized. We should be able to send just the
+		// userNodeId back to client, and the client
+		// should be able to deal with that (i think). depends on how much ownership info we need to
+		// show user.
+		SubNode userNode = api.getNode(session, node.getOwner());
+		String owner = userNode.getStringProp(JcrProp.USER);
+
+		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
+				node.getModifyTime(), propList, hasNodes, hasBinary, binaryIsImage, binVer, //
+				imageSize != null ? imageSize.getWidth() : 0, //
+				imageSize != null ? imageSize.getHeight() : 0, //
+				node.getType());
+		return nodeInfo;
 	}
 
-	public static long getBinaryVersion(Node node) {
-		try {
-			Property versionProperty = node.getProperty(JcrProp.BIN_VER);
-			if (versionProperty != null) {
-				return versionProperty.getValue().getLong();
-			}
+	public static ImageSize getImageSize(SubNode node) {
+
+		ImageSize imageSize = new ImageSize();
+
+		Long width = node.getIntProp(JcrProp.IMG_WIDTH);
+		if (width != null) {
+			imageSize.setWidth(width.intValue());
 		}
-		catch (Exception e) {
-			// if we catch this exception here it's perfectly normal and just means this node has no
-			// binary attachment.
+
+		Long height = node.getIntProp(JcrProp.IMG_HEIGHT);
+		if (height != null) {
+			imageSize.setHeight(height.intValue());
 		}
-		return 0;
+
+		return imageSize;
 	}
 
-	public static ImageSize getImageSize(Node node) {
-		try {
-			ImageSize imageSize = new ImageSize();
-
-			Property widthProperty = node.getProperty(JcrProp.IMG_WIDTH);
-			if (widthProperty != null) {
-				imageSize.setWidth((int) widthProperty.getValue().getLong());
-			}
-
-			Property heightProperty = node.getProperty(JcrProp.IMG_HEIGHT);
-			if (heightProperty != null) {
-				imageSize.setHeight((int) heightProperty.getValue().getLong());
-			}
-			return imageSize;
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
-	}
-
-	public static boolean isImageAttached(Node node) {
-		try {
-			Property mimeTypeProp = node.getProperty(JcrProp.BIN_MIME);
-			return (mimeTypeProp != null && //
-					mimeTypeProp.getValue() != null && //
-					ImageUtil.isImageMime(mimeTypeProp.getValue().getString()));
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
-	}
-
-	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, Node node, //
+	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, SubNode node, //
 			boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
 		try {
 			List<PropertyInfo> props = null;
-			PropertyIterator propsIter = node.getProperties();
+			SubNodePropertyMap propMap = node.getProperties();
 			PropertyInfo contentPropInfo = null;
 
-			while (propsIter.hasNext()) {
+			for (Map.Entry<String, SubNodeProperty> entry : propMap.entrySet()) {
+				String propName = entry.getKey();
+				SubNodeProperty p = entry.getValue();
+
 				/* lazy create props */
 				if (props == null) {
 					props = new LinkedList<PropertyInfo>();
 				}
-				Property p = propsIter.nextProperty();
 
-				PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, p, htmlOnly, allowAbbreviated, initNodeEdit);
+				PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, propName, p, htmlOnly, allowAbbreviated, initNodeEdit);
 				// log.debug(" PROP Name: " + p.getName());
 
 				/*
@@ -201,7 +145,7 @@ public class Convert {
 				 * will be sorting the list and THEN putting the content at the top of that sorted
 				 * list.
 				 */
-				if (p.getName().equals(JcrProp.CONTENT)) {
+				if (propName.equals(JcrProp.CONTENT)) {
 					contentPropInfo = propInfo;
 				}
 				else {
@@ -224,58 +168,108 @@ public class Convert {
 		}
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
+	//
+	// public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property
+	// prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
+	// try {
+	// String value = null;
+	// boolean abbreviated = false;
+	// List<String> values = null;
+	//
+	// /* multivalue */
+	// if (prop.isMultiple()) {
+	// // log.trace(String.format("prop[%s] isMultiple", prop.getName()));
+	// values = new LinkedList<String>();
+	//
+	// // int valIdx = 0;
+	// for (Value v : prop.getValues()) {
+	// String strVal = formatValue(sessionContext, v, false, initNodeEdit);
+	// // log.trace(String.format(" val[%d]=%s", valIdx, strVal));
+	// values.add(strVal);
+	// // valIdx++;
+	// }
+	// }
+	// /* else single value */
+	// else {
+	// if (prop.getName().equals(JcrProp.BIN_DATA)) {
+	// // log.trace(String.format("prop[%s] isBinary", prop.getName()));
+	// value = "[binary data]";
+	// }
+	// else if (prop.getName().equals(JcrProp.CONTENT)) {
+	// value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
+	// /* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+	// }
+	// else {
+	// value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
+	// /* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
+	// }
+	// }
+	//
+	// PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated,
+	// values);
+	// return propInfo;
+	// }
+	// catch (Exception ex) {
+	// throw ExUtil.newEx(ex);
+	// }
+	// }
+	//
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, SubNode node, String propName, SubNodeProperty prop, boolean htmlOnly,
+			boolean allowAbbreviated, boolean initNodeEdit) {
 		try {
 			String value = null;
 			boolean abbreviated = false;
 			List<String> values = null;
 
-			/* multivalue */
-			if (prop.isMultiple()) {
-				// log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-				values = new LinkedList<String>();
-
-				// int valIdx = 0;
-				for (Value v : prop.getValues()) {
-					String strVal = formatValue(sessionContext, v, false, initNodeEdit);
-					// log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-					values.add(strVal);
-					// valIdx++;
-				}
+			/*
+			 * multivalue
+			 * 
+			 * meh, not sure i even want the mongo api to support multivalue properties. We can just
+			 * have a property value of type array ?
+			 */
+			// if (prop.isMultiple()) {
+			// // log.trace(String.format("prop[%s] isMultiple", prop.getName()));
+			// values = new LinkedList<String>();
+			//
+			// // int valIdx = 0;
+			// for (Value v : prop.getValues()) {
+			// String strVal = formatValue(sessionContext, v, false, initNodeEdit);
+			// // log.trace(String.format(" val[%d]=%s", valIdx, strVal));
+			// values.add(strVal);
+			// // valIdx++;
+			// }
+			// }
+			// /* else single value */
+			// else {
+			if (propName.equals(JcrProp.CONTENT)) {
+				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
+				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
-			/* else single value */
 			else {
-				if (prop.getName().equals(JcrProp.BIN_DATA)) {
-					// log.trace(String.format("prop[%s] isBinary", prop.getName()));
-					value = "[binary data]";
-				}
-				else if (prop.getName().equals(JcrProp.CONTENT)) {
-					value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
-					/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-				}
-				else {
-					value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
-					/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-				}
+				value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
+				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
-			PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated, values);
+			// }
+
+			PropertyInfo propInfo = new PropertyInfo(prop.getType(), propName, value, abbreviated, values);
 			return propInfo;
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
 		}
 	}
-
-	public String buildMoreLink(Node node) {
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav', function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
-			return sb.toString();
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
-	}
+	//
+	// public String buildMoreLink(Node node) {
+	// try {
+	// StringBuilder sb = new StringBuilder();
+	// sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav',
+	// function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
+	// return sb.toString();
+	// }
+	// catch (Exception ex) {
+	// throw ExUtil.newEx(ex);
+	// }
+	// }
 
 	public String basicTextFormatting(String val) {
 		val = val.replace("\n\r", "<p>");
@@ -284,13 +278,43 @@ public class Convert {
 		return val;
 	}
 
-	public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml, boolean initNodeEdit) {
+	//
+	// public String formatValue(SessionContext sessionContext, Value value, boolean convertToHtml,
+	// boolean initNodeEdit) {
+	// try {
+	// if (value.getType() == PropertyType.DATE) {
+	// return sessionContext.formatTime(value.getDate().getTime());
+	// }
+	// else {
+	// String ret = value.getString();
+	//
+	// /*
+	// * If we are doing an initNodeEdit we don't do this, because we want the text to
+	// * render to the user exactly as they had typed it and not with links converted.
+	// */
+	// if (!initNodeEdit) {
+	// ret = convertLinksToMarkdown(ret);
+	// }
+	//
+	// // may need to revisit this (todo-2)
+	// // ret = finalTagReplace(ret);
+	// // ret = basicTextFormatting(ret);
+	//
+	// return ret;
+	// }
+	// }
+	// catch (Exception e) {
+	// return "";
+	// }
+	// }
+	//
+	public String formatValue(SessionContext sessionContext, Object value, boolean convertToHtml, boolean initNodeEdit) {
 		try {
-			if (value.getType() == PropertyType.DATE) {
-				return sessionContext.formatTime(value.getDate().getTime());
+			if (value instanceof Date) {
+				return sessionContext.formatTime((Date) value);
 			}
 			else {
-				String ret = value.getString();
+				String ret = value.toString();
 
 				/*
 				 * If we are doing an initNodeEdit we don't do this, because we want the text to

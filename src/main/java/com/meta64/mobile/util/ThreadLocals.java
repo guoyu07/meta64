@@ -1,8 +1,8 @@
 package com.meta64.mobile.util;
 
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
 
+import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.response.base.OakResponseBase;
 
 /**
@@ -19,14 +19,14 @@ import com.meta64.mobile.response.base.OakResponseBase;
 public class ThreadLocals {
 	private static final ThreadLocal<HttpServletResponse> servletResponse = new ThreadLocal<HttpServletResponse>();
 	private static final ThreadLocal<Boolean> initialSessionExisted = new ThreadLocal<Boolean>();
-	private static final ThreadLocal<Session> jcrSession = new ThreadLocal<Session>();
+	private static final ThreadLocal<MongoSession> mongoSession = new ThreadLocal<MongoSession>();
 	private static final ThreadLocal<OakResponseBase> oakResponse = new ThreadLocal<OakResponseBase>();
 
 	public static void removeAll() {
 		servletResponse.remove();
 		initialSessionExisted.remove();
-		jcrSession.remove();
 		oakResponse.remove();
+		mongoSession.remove();
 	}
 
 	public static void setServletResponse(HttpServletResponse res) {
@@ -36,13 +36,13 @@ public class ThreadLocals {
 	public static HttpServletResponse getServletResponse() {
 		return servletResponse.get();
 	}
-
-	public static void setJcrSession(Session session) {
-		jcrSession.set(session);
+	
+	public static void setMongoSession(MongoSession session) {
+		mongoSession.set(session);
 	}
 
-	public static Session getJcrSession() {
-		return jcrSession.get();
+	public static MongoSession getMongoSession() {
+		return mongoSession.get();
 	}
 
 	public static void setResponse(OakResponseBase response) {
@@ -60,5 +60,4 @@ public class ThreadLocals {
 	public static Boolean getInitialSessionExisted() {
 		return initialSessionExisted.get();
 	}
-
 }

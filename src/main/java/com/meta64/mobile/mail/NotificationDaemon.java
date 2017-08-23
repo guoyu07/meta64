@@ -1,10 +1,5 @@
 package com.meta64.mobile.mail;
 
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrProp;
-import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.ExUtil;
-import com.meta64.mobile.util.JcrUtil;
 
 /**
  * Deamon for sending emails periodically.
@@ -37,8 +28,8 @@ public class NotificationDaemon {
 	@Autowired
 	private AppProp appProp;
 
-	@Autowired
-	private RunAsJcrAdmin adminRunner;
+//	@Autowired
+//	private RunAsJcrAdmin adminRunner;
 
 	@Autowired
 	private JcrOutboxMgr outboxMgr;
@@ -76,65 +67,69 @@ public class NotificationDaemon {
 			return;
 		}
 
-		try {
-			adminRunner.run((Session session) -> {
-				List<Node> mailNodes = outboxMgr.getMailNodes(session);
-				if (mailNodes != null) {
-					sendAllMail(session, mailNodes);
-				}
-			});
-		}
-		catch (Exception e) {
-			log.debug("Failed processing mail.", e);
-		}
+		//jcr-remove
+//		try {
+//			if (appProp.getJcr()) {
+//				adminRunner.run((Session session) -> {
+//					List<Node> mailNodes = outboxMgr.getMailNodes(session);
+//					if (mailNodes != null) {
+//						sendAllMail(session, mailNodes);
+//					}
+//				});
+//			}
+//		}
+//		catch (Exception e) {
+//			log.debug("Failed processing mail.", e);
+//		}
 	}
-
-	private void sendAllMail(Session session, List<Node> nodes) {
-
-		boolean sessionDirty = false;
-
-		try {
-			mailSender.init();
-
-			for (Node node : nodes) {
-				String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_RECIP);
-				String subject = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_SUBJECT);
-				String content = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_CONTENT);
-
-				if (mailSender.sendMail(email, content, subject)) {
-					try {
-						node.remove();
-					}
-					catch (Exception e) {
-						throw ExUtil.newEx(e);
-					}
-					sessionDirty = true;
-				}
-			}
-		}
-		finally {
-			try {
-				if (sessionDirty) {
-					JcrUtil.save(session);
-				}
-			}
-			catch (Exception e) {
-				log.debug("Failed persisting mail node changes.", e);
-				/*
-				 * DO NOT rethrow. Don't want to blow up the daemon thread
-				 */
-			}
-
-			try {
-				log.debug("Closing mail sender after mail cycle.");
-				mailSender.close();
-			}
-			catch (Exception e) {
-				log.debug("Failed closing mail sender object.", e);
-				/*
-				 * DO NOT rethrow. Don't want to blow up the daemon thread
-				 */
-			}
-		}
-	}
+	
+	//jcr-remove
+//	private void sendAllMail(Session session, List<Node> nodes) {
+//
+//		boolean sessionDirty = false;
+//
+//		try {
+//			mailSender.init();
+//
+//			for (Node node : nodes) {
+//				String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_RECIP);
+//				String subject = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_SUBJECT);
+//				String content = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL_CONTENT);
+//
+//				if (mailSender.sendMail(email, content, subject)) {
+//					try {
+//						node.remove();
+//					}
+//					catch (Exception e) {
+//						throw ExUtil.newEx(e);
+//					}
+//					sessionDirty = true;
+//				}
+//			}
+//		}
+//		finally {
+//			try {
+//				if (sessionDirty) {
+//					JcrUtil.save(session);
+//				}
+//			}
+//			catch (Exception e) {
+//				log.debug("Failed persisting mail node changes.", e);
+//				/*
+//				 * DO NOT rethrow. Don't want to blow up the daemon thread
+//				 */
+//			}
+//
+//			try {
+//				log.debug("Closing mail sender after mail cycle.");
+//				mailSender.close();
+//			}
+//			catch (Exception e) {
+//				log.debug("Failed closing mail sender object.", e);
+//				/*
+//				 * DO NOT rethrow. Don't want to blow up the daemon thread
+//				 */
+//			}
+//		}
+//	}
 }

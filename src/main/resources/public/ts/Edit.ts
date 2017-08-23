@@ -291,64 +291,68 @@ class Edit {
         meta64.saveUserPreferences();
     }
 
-    moveNodeUp = (): void => {
-        let selNode: I.NodeInfo = meta64.getHighlightedNode();
-        let uid = selNode.uid;
+    moveNodeUp = (uid?: string): void => {
+        if (!uid) {
+            let selNode: I.NodeInfo = meta64.getHighlightedNode();
+            uid = selNode.uid;
+        }
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
-                "parentNodeId": meta64.currentNodeId,
-                "nodeId": node.name,
-                "siblingId": "[nodeAbove]"
+                "nodeId": node.id,
+                "targetName": "up"
             }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    moveNodeDown = (): void => {
-        let selNode: I.NodeInfo = meta64.getHighlightedNode();
-        let uid = selNode.uid;
+    moveNodeDown = (uid?: string): void => {
+        if (!uid) {
+            let selNode: I.NodeInfo = meta64.getHighlightedNode();
+            uid = selNode.uid;
+        }
 
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
-                "parentNodeId": meta64.currentNodeData.node.id,
-                "nodeId": "[nodeBelow]",
-                "siblingId": node.name
+                "nodeId": node.id,
+                "targetName": "down"
             }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    moveNodeToTop = (): void => {
-        let selNode: I.NodeInfo = meta64.getHighlightedNode();
-        let uid = selNode.uid;
-
+    moveNodeToTop = (uid?: string): void => {
+      debugger;
+        if (!uid) {
+            let selNode: I.NodeInfo = meta64.getHighlightedNode();
+            uid = selNode.uid;
+        }
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
-                "parentNodeId": meta64.currentNodeId,
-                "nodeId": node.name,
-                "siblingId": "[topNode]"
+                "nodeId": node.id,
+                "targetName": "top"
             }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
     }
 
-    moveNodeToBottom = (): void => {
-        let selNode: I.NodeInfo = meta64.getHighlightedNode();
-        let uid = selNode.uid;
-
+    moveNodeToBottom = (uid?: string): void => {
+      debugger;
+        if (!uid) {
+            let selNode: I.NodeInfo = meta64.getHighlightedNode();
+            uid = selNode.uid;
+        }
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (node) {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
-                "parentNodeId": meta64.currentNodeData.node.id,
-                "nodeId": node.name,
-                "siblingId": null
+                "nodeId": node.id,
+                "targetName": "bottom"
             }, edit.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);

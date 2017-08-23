@@ -1,29 +1,22 @@
 package com.meta64.mobile.service;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrProp;
 import com.meta64.mobile.config.SessionContext;
-import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.mongo.MongoApi;
+import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
-import com.meta64.mobile.user.RunAsJcrAdmin;
-import com.meta64.mobile.util.ExUtil;
-import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.ThreadLocals;
-import com.meta64.mobile.util.ValContainer;
-import com.meta64.mobile.util.VarUtil;
 
 /**
  * Service for controlling the positions (ordinals) of nodes relative to their parents and/or moving
@@ -37,281 +30,230 @@ public class NodeMoveService {
 	private static final Logger log = LoggerFactory.getLogger(NodeMoveService.class);
 
 	@Autowired
-	private OakRepository oak;
+	private MongoApi api;
 
 	@Autowired
 	private SessionContext sessionContext;
 
 	@Autowired
-	private RunAsJcrAdmin adminRunner;
-
-	/*
-	 * Ensures this node is the first child under its parent, moving it and does nothing if this
-	 * node already IS the first child.
-	 */
-	public void moveNodeToTop(Session session, Node node, boolean immediateSave, boolean isSessionThread, boolean allowPrivelegeEscalation) {
-		try {
-			if (session == null) {
-				session = ThreadLocals.getJcrSession();
-			}
-
-			Node parentNode = node.getParent();
-			Node firstChild = JcrUtil.getFirstChild(session, parentNode, false);
-			if (firstChild.getIdentifier().equals(node.getIdentifier())) {
-				log.debug("already was first child, no need to move to top.");
-				return;
-			}
-			log.debug("setting node position, to move node top");
-			setNodePosition(session, parentNode, node.getName(), firstChild.getName(), immediateSave, isSessionThread, allowPrivelegeEscalation);
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
-	}
+	private RunAsMongoAdmin adminRunner;
 
 	/*
 	 * Moves the the node to a new ordinal/position location (relative to parent)
-	 * 
+	 *
 	 * We allow the special case of req.siblingId="[topNode]" and that indicates move the node to be
 	 * the first node under its parent.
 	 */
-	public void setNodePosition(Session session, SetNodePositionRequest req, SetNodePositionResponse res) {
+	public void setNodePosition(MongoSession session, SetNodePositionRequest req, SetNodePositionResponse res) {
 		if (session == null) {
-			session = ThreadLocals.getJcrSession();
+			session = ThreadLocals.getMongoSession();
 		}
-		String parentNodeId = req.getParentNodeId();
+
 		String nodeId = req.getNodeId();
-		String siblingId = req.getSiblingId();
 
-		Node parentNode = JcrUtil.findNode(session, parentNodeId);
+		SubNode node = api.getNode(session, nodeId);
+		if (node == null) {
+			throw new RuntimeException("Node not found: " + nodeId);
+		}
 
-		nodeId = translateNodeName(session, parentNode, siblingId, nodeId);
-		siblingId = translateNodeName(session, parentNode, nodeId, siblingId);
-
-		setNodePosition(session, parentNode, nodeId, siblingId, true, true, true);
+		if ("up".equals(req.getTargetName())) {
+			moveNodeUp(session, node);
+		}
+		else if ("down".equals(req.getTargetName())) {
+			moveNodeDown(session, node);
+		}
+		else if ("top".equals(req.getTargetName())) {
+			moveNodeToTop(session, node);
+		}
+		else if ("bottom".equals(req.getTargetName())) {
+			moveNodeToBottom(session, node);
+		}
+		else {
+			throw new RuntimeException("Invalid target type: " + req.getTargetName());
+		}
 
 		res.setSuccess(true);
 	}
 
-	public String translateNodeName(Session session, Node parentNode, String nodeId, String translateName) {
-		try {
-			if (translateName == null) return null;
-			if (translateName.equalsIgnoreCase("[nodeBelow]")) {
-				Node nodeBelow = JcrUtil.getNodeBelow(session, parentNode, null, nodeId);
-				if (nodeBelow == null) {
-					throw ExUtil.newEx("no next sibling found.");
-				}
-				translateName = nodeBelow.getName();
-			}
-			else if (translateName.equalsIgnoreCase("[nodeAbove]")) {
-				Node nodeAbove = JcrUtil.getNodeAbove(session, parentNode, null, nodeId);
-				if (nodeAbove == null) {
-					throw ExUtil.newEx("no previous sibling found.");
-				}
-				translateName = nodeAbove.getName();
-			}
-			else if (translateName.equalsIgnoreCase("[topNode]")) {
-				Node topNode = JcrUtil.getFirstChild(session, parentNode, false);
-				if (topNode == null) {
-					throw ExUtil.newEx("no first child found under parent node.");
-				}
-				translateName = topNode.getName();
-			}
-			return translateName;
+	public void moveNodeUp(MongoSession session, SubNode node) {
+		SubNode nodeAbove = api.getSiblingAbove(session, node);
+		if (nodeAbove != null) {
+			Long saveOrdinal = nodeAbove.getOrdinal();
+			nodeAbove.setOrdinal(node.getOrdinal());
+			node.setOrdinal(saveOrdinal);
 		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
+		api.saveSession(session);
 	}
 
-	private void setNodePosition(Session session, Node parentNode, String nodePath, String siblingPath, boolean immediateSave, boolean isSessionThread,
-			boolean allowPrivalegeEscalation) {
-		try {
-			// String parentPath = parentNode.getPath() + "/";
-
-			/*
-			 * if we are moving nodes around on the root, the root belongs to admin and needs
-			 * special access (adminRunner)
-			 */
-			// todo-0: I'm slightly hastily removing the parentPath.equals check becuase this needs
-			// to cover the case where a user is simply
-			// creating a node under a node they don't own, and in that case also we need to
-			// escalate priv.
-			if (allowPrivalegeEscalation
-					&& isSessionThread /*
-										 * && parentPath.equals("/" + JcrName.ROOT + "/" +
-										 * sessionContext.getUserName() + "/")
-										 */) {
-				/*
-				 * Since we need to get access to this node on a different session we need to do a
-				 * 'save()' on the 'session'. This is similar to a commit on a RDBMS also where
-				 * other sessions won't see data until committed.
-				 */
-				JcrUtil.save(session);
-
-				adminRunner.run((Session adminSession) -> {
-					try {
-						Node parentNode2 = JcrUtil.findNode(adminSession, parentNode.getIdentifier());
-						JcrUtil.checkWriteAuthorized(parentNode2, adminSession.getUserID());
-						parentNode2.orderBefore(nodePath, siblingPath);
-						if (immediateSave) {
-							JcrUtil.save(adminSession);
-						}
-					}
-					catch (Exception ex) {
-						throw ExUtil.newEx(ex);
-					}
-				});
-			}
-			else {
-				JcrUtil.checkWriteAuthorized(parentNode, session.getUserID());
-				parentNode.orderBefore(nodePath, siblingPath);
-				if (immediateSave) {
-					JcrUtil.save(session);
-				}
-			}
+	public void moveNodeDown(MongoSession session, SubNode node) {
+		SubNode nodeBelow = api.getSiblingBelow(session, node);
+		if (nodeBelow != null) {
+			Long saveOrdinal = nodeBelow.getOrdinal();
+			nodeBelow.setOrdinal(node.getOrdinal());
+			node.setOrdinal(saveOrdinal);
 		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
+		api.saveSession(session);
+	}
+
+	public void moveNodeToTop(MongoSession session, SubNode node) {
+		SubNode parentNode = api.getParent(session, node);
+		if (parentNode == null) {
+			return;
 		}
+		api.insertOrdinal(session, parentNode, 0L);
+
+		// todo-0: there is a slight ineffieiency here in that 'node' does end up getting saved
+		// both as part of the insertOrdinal, and also then with the setting of it to zero. Will be
+		// easy
+		// to fix when I get to it, but is low priority for now.
+		api.saveSession(session);
+
+		node.setOrdinal(0L);
+		api.saveSession(session);
+	}
+
+	public void moveNodeToBottom(MongoSession session, SubNode node) {
+		SubNode parentNode = api.getParent(session, node);
+		if (parentNode == null) {
+			return;
+		}
+		long ordinal = api.getMaxChildOrdinal(session, parentNode) + 1L;
+		node.setOrdinal(ordinal);
+		parentNode.setMaxChildOrdinal(ordinal);
+		api.saveSession(session);
 	}
 
 	/*
 	 * Deletes the set of nodes specified in the request
 	 */
-	public void deleteNodes(Session session, DeleteNodesRequest req, DeleteNodesResponse res) {
+	public void deleteNodes(MongoSession session, DeleteNodesRequest req, DeleteNodesResponse res) {
 		if (session == null) {
-			session = ThreadLocals.getJcrSession();
+			session = ThreadLocals.getMongoSession();
 		}
-		ValContainer<Boolean> switchedToAdminSession = new ValContainer<Boolean>();
 
 		for (String nodeId : req.getNodeIds()) {
-			deleteNode(session, nodeId, switchedToAdminSession);
-
-			/* did we switch to admin session ? */
-			if (VarUtil.safeBooleanVal(switchedToAdminSession.getVal())) {
-				break;
-			}
+			deleteNode(session, nodeId);
 		}
 
-		/*
-		 * This is kinda ugly but the logic is that if 'deleteNode' conducted the delete as the
-		 * admin session then we expect it to also have done a save, so this 'session' in this local
-		 * scope is now logged out and unuable actually.
-		 */
-		if (!VarUtil.safeBooleanVal(switchedToAdminSession.getVal())) {
-			JcrUtil.save(session);
-		}
+		// no need to save session after deletes.
+		// api.saveSession(session);
 		res.setSuccess(true);
 	}
 
 	/*
 	 * Deletes a single node by nodeId
 	 */
-	private void deleteNode(Session session, String nodeId, ValContainer<Boolean> switchedToAdminSession) {
-		try {
-			Node node = JcrUtil.findNode(session, nodeId);
-			String commentBy = JcrUtil.safeGetStringProp(node, JcrProp.COMMENT_BY);
+	private void deleteNode(MongoSession session, String nodeId) {
+		SubNode node = api.getNode(session, nodeId);
+		// String commentBy = node.getStringProp(JcrProp.COMMENT_BY);
 
-			/*
-			 * Detect if this node is a comment we "own" (although true security rules make it
-			 * belong to admin user) then we should be able to delete it, so we execute the delete
-			 * under an 'AdminSession'. Also now that we have switched sessions, we set that in the
-			 * return value, so the caller can always, stop processing after this happens. Meaning
-			 * essentialy only *one* comment node can be deleted at a time unless you are admin
-			 * user.
-			 */
-			if (session.getUserID().equals(commentBy)) {
-				session.logout();
-				session = oak.newAdminSession();
-				node = JcrUtil.findNode(session, nodeId);
-
-				/* notify caller what just happened */
-				if (switchedToAdminSession != null) {
-					switchedToAdminSession.setVal(true);
-				}
-				node.remove();
-				JcrUtil.save(session);
-			}
-			else {
-				JcrUtil.checkWriteAuthorized(node, session.getUserID());
-				node.remove();
-			}
-		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
+		/*
+		 * Detect if this node is a comment we "own" (although true security rules make it belong to
+		 * admin user) then we should be able to delete it, so we execute the delete under an
+		 * 'AdminSession'. Also now that we have switched sessions, we set that in the return value,
+		 * so the caller can always, stop processing after this happens. Meaning essentialy only
+		 * *one* comment node can be deleted at a time unless you are admin user.
+		 */
+		// mongo not yet supporting comment-by stuff
+		// if (session.getUserID().equals(commentBy)) {
+		// session.logout();
+		// session = oak.newAdminSession();
+		// node = JcrUtil.findNode(session, nodeId);
+		//
+		// /* notify caller what just happened */
+		// if (switchedToAdminSession != null) {
+		// switchedToAdminSession.setVal(true);
+		// }
+		// node.remove();
+		// JcrUtil.save(session);
+		// }
+		// else {
+		api.delete(session, node);
+		// }
 	}
 
 	/*
 	 * Moves a set of nodes to a new location, underneath (i.e. children of) the target node
 	 * specified.
 	 */
-	public void moveNodes(Session session, MoveNodesRequest req, MoveNodesResponse res) {
-		try {
-			if (session == null) {
-				session = ThreadLocals.getJcrSession();
-			}
-
-			String targetId = req.getTargetNodeId();
-			Node targetNode = JcrUtil.findNode(session, targetId);
-			String targetPath = targetNode.getPath() + "/";
-
-			/*
-			 * If the user is moving nodes to his root note, that root node will be owned by admin
-			 * so we must run the processing using adminRunner session
-			 */
-			if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
-				adminRunner.run((Session adminSession) -> {
-					moveNodesInternal(adminSession, req, res);
-				});
-			}
-			/*
-			 * Otherwise this user is just moving a node somewhere other than their root and we can
-			 * use their own actual session
-			 */
-			else {
-				moveNodesInternal(session, req, res);
-			}
+	public void moveNodes(MongoSession session, MoveNodesRequest req, MoveNodesResponse res) {
+		if (session == null) {
+			session = ThreadLocals.getMongoSession();
 		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
-		}
+
+		String targetId = req.getTargetNodeId();
+		SubNode targetNode = api.getNode(session, targetId);
+		String targetPath = targetNode.getPath() + "/";
+
+		// not worrying about this for mongo just yet.
+		// /*
+		// * If the user is moving nodes to his root note, that root node will be owned by admin so
+		// we
+		// * must run the processing using adminRunner session
+		// */
+		// if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
+		// adminRunner.run((MongoSession adminSession) -> {
+		// moveNodesInternal(adminSession, req, res);
+		// });
+		// }
+		// /*
+		// * Otherwise this user is just moving a node somewhere other than their root and we can
+		// use
+		// * their own actual session
+		// */
+		// else {
+		moveNodesInternal(session, req, res);
+		// }
 	}
 
-	/* Uses session passed unmodified */
-	private void moveNodesInternal(Session session, MoveNodesRequest req, MoveNodesResponse res) {
-		try {
+	/* Uses session passed unmodified 
+	 * 
+	 * todo-0: this feature is not working yet, but i'm going to implement rename node first, before continuing so that it's easier to debug this.
+	 */
+	private void moveNodesInternal(MongoSession session, MoveNodesRequest req, MoveNodesResponse res) {
+		String targetId = req.getTargetNodeId();
+		log.debug("moveNodesInternal: targetId="+targetId);
+		SubNode targetNode = api.getNode(session, targetId);
+		String targetPath = targetNode.getPath();
+		log.debug("targetPath: "+targetPath);
+		Long curTargetOrdinal = targetNode.getMaxChildOrdinal() == null ? 0 : targetNode.getMaxChildOrdinal();
 
-			String targetId = req.getTargetNodeId();
-			Node targetNode = JcrUtil.findNode(session, targetId);
-			String targetPath = targetNode.getPath() + "/";
+		for (String nodeId : req.getNodeIds()) {
+			log.debug("Moving ID: " + nodeId);
+			try {
+				SubNode node = api.getNode(session, nodeId);
 
-			for (String nodeId : req.getNodeIds()) {
-				// log.debug("Moving ID: " + nodeId);
-				try {
-					Node node = JcrUtil.findNode(session, nodeId);
-					JcrUtil.checkWriteAuthorized(node, session.getUserID());
-					/*
-					 * This code moves the copied nodes to the bottom of child list underneath the
-					 * target node (i.e. targetNode being the parent) for the new node locations.
-					 */
-
-					String srcPath = node.getPath();
-					String dstPath = targetPath + node.getName();
-					// log.debug("MOVE: srcPath[" + srcPath + "] targetPath[" +
-					// dstPath + "]");
-					session.move(srcPath, dstPath);
-				}
-				catch (Exception e) {
-					// silently ignore if node cannot be found.
-				}
+				changePathOfSubGraph(session, node, targetPath);
+				
+				node.setPath(targetPath + "/" + node.getName());
+				node.setOrdinal(curTargetOrdinal);
+				node.setDisableParentCheck(true);
+				
+				curTargetOrdinal++;
 			}
-			JcrUtil.save(session);
-			res.setSuccess(true);
+			catch (Exception e) {
+				// silently ignore if node cannot be found.
+			}
 		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
+		api.saveSession(session);
+		res.setSuccess(true);
+	}
+
+	private void changePathOfSubGraph(MongoSession session, SubNode graphRoot, String newPathPrefix) {
+		String originalPath = graphRoot.getPath();
+		log.debug("originalPath (graphRoot.path): "+originalPath);
+		int originalParentPathLen = graphRoot.getParentPath().length();
+
+		for (SubNode node : api.getSubGraph(session, graphRoot)) {
+			if (!node.getPath().startsWith(originalPath)) {
+				throw new RuntimeException("Algorighm failure: path "+node.getPath()+" should have started with "+originalPath);
+			}
+			log.debug("PROCESSING MOVE: oldPath: "+node.getPath());
+			
+			String newPath = newPathPrefix + "/" + node.getPath().substring(originalParentPathLen+1);
+			log.debug("    newPath: "+newPath);
+			node.setPath(newPath);
+			node.setDisableParentCheck(true);
 		}
 	}
 }

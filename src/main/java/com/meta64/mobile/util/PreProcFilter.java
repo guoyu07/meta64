@@ -2,7 +2,7 @@ package com.meta64.mobile.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import javax.servlet.Filter;
@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -36,8 +37,13 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
  * times simpler than templates. This topic "TypeScript Widgets" is something i plan to publish a
  * paper on very soon. It's a massive topic, and massive technological advancement, if I can say so
  * even as it's inventor.
+ * <p>
+ * There is admittedly an inconsistency in my architecture because i DO have some places i use
+ * Thymeleaf (like view.html), so probably it migh be better to just go with Thymeleaf and eliminate
+ * this class.
+ * 
  */
-@WebFilter(urlPatterns = { "/", "/elements/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
+@WebFilter(urlPatterns = { "/*", "/elements/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
 public class PreProcFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(PreProcFilter.class);
 	private Properties props;
@@ -86,18 +92,18 @@ public class PreProcFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
 
-		// HttpServletRequest request = (HttpServletRequest) req;
-		// HttpServletResponse response = (HttpServletResponse) res;
-		// String uri = request.getRequestURI();
-		// log.debug("***************** PreProcFilter: uri: " + uri);
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		String uri = request.getRequestURI();
+		log.debug("PreProcFilter: uri: " + uri);
 
-		// String ver = request.getParameter("ver");
-		// String warning = "";
-		// if (ver == null) {
-		// ver = "";
-		// warning = "WARNING: NO VERSION!!!";
-		// }
-		// log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
+//		String ver = request.getParameter("ver");
+//		String warning = "";
+//		if (ver == null) {
+//			ver = "";
+//			warning = "WARNING: NO VERSION!!!";
+//		}
+//		log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
 		transform(req, res, chain);
 	}
@@ -135,7 +141,7 @@ public class PreProcFilter implements Filter {
 			}
 		}
 		else {
-			res.getOutputStream().write(content.getBytes(Charset.forName("UTF-8")));
+			res.getOutputStream().write(content.getBytes(StandardCharsets.UTF_8));
 		}
 	}
 

@@ -183,6 +183,10 @@ class Util {
         }
     }
 
+    getHostAndPort(): string {
+        return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    }
+
     ajax<RequestType, ResponseType>(postName: string, postData: RequestType, //
         callback?: (response: ResponseType) => void) {
 
@@ -204,7 +208,6 @@ class Util {
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
 
             ironAjax = util.polyElmNode("ironAjax");
-
             ironAjax.url = postTargetUrl + postName;
             ironAjax.verbose = true;
             ironAjax.body = JSON.stringify(postData);
@@ -217,11 +220,8 @@ class Util {
             ironAjax.handleAs = "json"; // handle-as (is prop)
 
             /* This not a required property */
-            // ironAjax.onResponse = "util.ironAjaxResponse"; // on-response
-            // (is
-            // prop)
-            ironAjax.debounceDuration = "300"; // debounce-duration (is
-            // prop)
+            // ironAjax.onResponse = "util.ironAjaxResponse";
+            ironAjax.debounceDuration = "300"; // debounce-duration
 
             util._ajaxCounter++;
             ironRequest = ironAjax.generateRequest();
@@ -265,7 +265,6 @@ class Util {
                 } catch (ex) {
                     util.logAndReThrow("Failed handling result of: " + postName, ex);
                 }
-
             },
             // Handle Fail
             () => {
@@ -464,8 +463,8 @@ class Util {
 
         let e: HTMLElement = document.getElementById(id);
         //if (!e) {
-            //todo-1: periorically uncomment to see if anything is showing up here
-            //console.log("domElm Error. Required element id not found: " + id);
+        //todo-1: periorically uncomment to see if anything is showing up here
+        //console.log("domElm Error. Required element id not found: " + id);
         //}
         return e;
     }
@@ -607,6 +606,7 @@ class Util {
 
     /* Equivalent of ES6 Object.assign(). Takes all properties from src and merges them onto dst */
     mergeProps(dst: Object, src: Object): void {
+        if (!src) return;
         util.forEachProp(src, (k, v): boolean => {
             dst[k] = v;
             return true;
@@ -733,7 +733,7 @@ class Util {
         return "";
     }
 
-    changeOrAddClassToElm(elm : HTMLElement, oldClass: string, newClass: string) {
+    changeOrAddClassToElm(elm: HTMLElement, oldClass: string, newClass: string) {
         util.removeClassFromElmById((<any>elm.attributes).id, oldClass);
         util.addClassToElmById((<any>elm.attributes).id, newClass);
     }

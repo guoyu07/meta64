@@ -66,7 +66,7 @@ export class Search {
 
     searchNodesResponse(res: I.NodeSearchResponse) {
         srch.searchResults = res;
-        
+
         if (this.numSearchResults() == 0) {
             Factory.createDefault("MessageDlgImpl",(dlg: MessageDlg) => {
                 dlg.open();
@@ -114,7 +114,8 @@ export class Search {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
-            "sortField": jcrCnst.LAST_MODIFIED,
+            //todo-0: need something other than hardcoding 'mtm' here
+            "sortField": "mtm",
             "searchProp": null
         }, srch.timelineResponse);
     }
@@ -129,8 +130,9 @@ export class Search {
         util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
+            //todo-0: need something other than hardcoding 'ctm' here
             "sortDir": "DESC",
-            "sortField": jcrCnst.CREATED,
+            "sortField" : "ctm",
             "searchProp": null
         }, srch.timelineResponse);
     }

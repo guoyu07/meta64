@@ -50,10 +50,10 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Delete", edit.deleteSelNodes, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine })
             ]),
             new Menu("Move", [
-                new MenuItem("Up", edit.moveNodeUp, () => { return meta64.state.canMoveUp; }), //
-                new MenuItem("Down", edit.moveNodeDown, () => { return meta64.state.canMoveDown; }, () => { return true; }, true), //
-                new MenuItem("to Top", edit.moveNodeToTop, () => { return meta64.state.canMoveUp; }), //
-                new MenuItem("to Bottom", edit.moveNodeToBottom, () => { return meta64.state.canMoveDown; })//
+                new MenuItem("Up", () => {edit.moveNodeUp();}, () => { return meta64.state.canMoveUp; }), //
+                new MenuItem("Down", () => {edit.moveNodeDown();}, () => { return meta64.state.canMoveDown; }, () => { return true; }, true), //
+                new MenuItem("to Top", () => {edit.moveNodeToTop();}, () => { return meta64.state.canMoveUp; }), //
+                new MenuItem("to Bottom", () => {edit.moveNodeToBottom();}, () => { return meta64.state.canMoveDown; })//
             ]),
             new Menu("Attach", [
                 new MenuItem("Upload from File", attachment.openUploadFromFileDlg, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null && meta64.state.selNodeIsMine }), //

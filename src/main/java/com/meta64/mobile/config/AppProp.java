@@ -86,11 +86,23 @@ public class AppProp /* implements EnvironmentAware */ {
 	public String getJcrAdminUserName() {
 		return env.getProperty("jcrAdminUserName");
 	}
+	
+	public String getMongoAdminUserName() {
+		return env.getProperty("mongoAdminUserName");
+	}
+	
+	public boolean getMongoTest() {
+		return "true".equals(env.getProperty("mongoTest"));
+	}
 
 	public String getJcrAdminPassword() {
 		return env.getProperty("jcrAdminPassword");
 	}
 
+	public String getMongoAdminPassword() {
+		return env.getProperty("mongoAdminPassword");
+	}	
+	
 	public String getUserLandingPageNode() {
 		return env.getProperty("anonUserLandingPageNode");
 	}

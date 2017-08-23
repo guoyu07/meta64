@@ -1,5 +1,6 @@
 package com.meta64.mobile.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -58,7 +59,7 @@ public class Encryptor {
 				throw ExUtil.newEx("bad aes key configured");
 			}
 			if (aesKey == null) {
-				aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(), "AES");
+				aesKey = new SecretKeySpec(appProp.getAesKey().getBytes(StandardCharsets.UTF_8), "AES");
 
 				/*
 				 * Per conversations on StackOverflow, and research, I think "AES/ECB/PKCS5Padding"
@@ -76,7 +77,7 @@ public class Encryptor {
 		try {
 			init();
 			cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-			return DatatypeConverter.printBase64Binary(cipher.doFinal(text.getBytes()));
+			return DatatypeConverter.printBase64Binary(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);

@@ -7,7 +7,7 @@ import com.meta64.mobile.request.base.OakRequestBase;
  */
 public class InsertNodeRequest extends OakRequestBase {
 	private String parentId;
-	private String targetName;
+	private Long targetOrdinal;
 	private String newNodeName;
 	private String typeName;
 
@@ -17,14 +17,6 @@ public class InsertNodeRequest extends OakRequestBase {
 
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
-	}
-
-	public String getTargetName() {
-		return targetName;
-	}
-
-	public void setTargetName(String targetName) {
-		this.targetName = targetName;
 	}
 
 	public String getNewNodeName() {
@@ -41,5 +33,13 @@ public class InsertNodeRequest extends OakRequestBase {
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public Long getTargetOrdinal() {
+		return targetOrdinal;
+	}
+
+	public void setTargetOrdinal(Long targetOrdinal) {
+		this.targetOrdinal = targetOrdinal;
 	}
 }

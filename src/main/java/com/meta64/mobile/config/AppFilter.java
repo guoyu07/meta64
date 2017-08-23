@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.mongo.MongoThreadLocal;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -70,6 +71,7 @@ public class AppFilter implements Filter {
 		finally {
 			/* Set thread back to clean slate, for it's next cycle time in threadpool */
 			ThreadLocals.removeAll();
+			MongoThreadLocal.removeAll();
 		}
 	}
 

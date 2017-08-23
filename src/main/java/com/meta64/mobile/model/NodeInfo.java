@@ -15,6 +15,7 @@ public class NodeInfo {
 
 	private String id;
 	private String path;
+	private Long ordinal;
 	private String name;
 	private String primaryTypeName;
 	private List<PropertyInfo> properties;
@@ -25,15 +26,11 @@ public class NodeInfo {
 	private int width;
 	private int height;
 
-	/* true if parent is "orderable" node */
-	private boolean childrenOrdered;
-
 	/*
-	 * These next four are set on Client Side only but I need to probably set them on server side
-	 * instead or else completely generate dynamically if based on properties.
+	 * These next four WERE (in jcr design) set on Client Side only but I need to probably set them
+	 * on server side instead or else completely generate dynamically if based on properties.
 	 */
 	private String uid;
-	private String createdBy;
 	private Date lastModified;
 	private String imgId;
 	private String owner;
@@ -41,28 +38,22 @@ public class NodeInfo {
 	public NodeInfo() {
 	}
 
-	public NodeInfo(String id, String path, String name, List<PropertyInfo> properties, boolean hasChildren, boolean childrenOrdered, boolean hasBinary,
+	public NodeInfo(String id, String path, String name, String owner, Long ordinal, Date lastModified, List<PropertyInfo> properties, boolean hasChildren, boolean hasBinary,
 			boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
 		this.id = id;
 		this.path = path;
 		this.name = name;
+		this.owner = owner;
+		this.ordinal = ordinal;
+		this.lastModified = lastModified;
 		this.properties = properties;
 		this.hasChildren = hasChildren;
-		this.childrenOrdered = childrenOrdered;
 		this.hasBinary = hasBinary;
 		this.binaryIsImage = binaryIsImage;
 		this.binVer = binVer;
 		this.width = width;
 		this.height = height;
 		this.primaryTypeName = primaryTypeName;
-	}
-
-	public boolean isChildrenOrdered() {
-		return childrenOrdered;
-	}
-
-	public void setChildrenOrdered(boolean childrenOrdered) {
-		this.childrenOrdered = childrenOrdered;
 	}
 
 	public String getId() {
@@ -161,14 +152,6 @@ public class NodeInfo {
 		this.uid = uid;
 	}
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
 	public Date getLastModified() {
 		return lastModified;
 	}
@@ -191,5 +174,13 @@ public class NodeInfo {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	public Long getOrdinal() {
+		return ordinal;
+	}
+
+	public void setOrdinal(Long ordinal) {
+		this.ordinal = ordinal;
 	}
 }

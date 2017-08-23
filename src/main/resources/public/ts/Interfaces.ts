@@ -47,6 +47,8 @@ export interface AccessControlEntryInfo {
 export interface NodeInfo {
     id: string;
     path: string;
+    ordinal: number;
+    owner: string;
     name: string;
     primaryTypeName: string;
     properties: PropertyInfo[];
@@ -56,12 +58,9 @@ export interface NodeInfo {
     binVer: number;
     width: number;
     height: number;
-    childrenOrdered: boolean;
     uid: string;
-    createdBy: string;
     lastModified: string;
     imgId: string;
-    owner: string;
 }
 
 export interface PrivilegeInfo {
@@ -70,6 +69,7 @@ export interface PrivilegeInfo {
 
 export interface PropertyInfo {
     type?: number;
+    typeStr?: string;
     name: string;
     value?: string;
     values?: string[];
@@ -148,7 +148,6 @@ export interface ExpandAbbreviatedNodeRequest {
 
 export interface ExportRequest {
     nodeId: string;
-    targetFileName: string;
     exportExt: string;
 }
 
@@ -192,7 +191,7 @@ export interface InsertBookRequest {
 
 export interface InsertNodeRequest {
     parentId: string;
-    targetName: string;
+    targetOrdinal: number;
     newNodeName: string;
     typeName: string;
 }
@@ -273,9 +272,8 @@ export interface OpenSystemFileRequest {
 }
 
 export interface SetNodePositionRequest {
-    parentNodeId: string;
     nodeId: string;
-    siblingId: string;
+    targetName: string;
 }
 
 export interface SignupRequest {
@@ -343,6 +341,8 @@ export interface ExpandAbbreviatedNodeResponse extends OakResponseBase {
 }
 
 export interface ExportResponse extends OakResponseBase {
+    /* the generated output for the user to now view after exporting */
+    fileName: string;
 }
 
 export interface GetNodePrivilegesResponse extends OakResponseBase {

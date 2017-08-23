@@ -31,38 +31,30 @@ export let cnst: Constants = new Constants();
 
 class JCRConstants {
 
-    COMMENT_BY: string = "commentBy";
-    PUBLIC_APPEND: string = "publicAppend";
-    PRIMARY_TYPE: string = "jcr:primaryType";
-    POLICY: string = "rep:policy";
+    COMMENT_BY: string = "sn:commentBy";
+    PUBLIC_APPEND: string = "sn:publicAppend";
+    PRIMARY_TYPE: string = "sn:primaryType";
 
-    MIXIN_TYPES: string = "jcr:mixinTypes";
+    EMAIL_CONTENT: string = "sn:content";
+    EMAIL_RECIP: string = "sn:recip";
+    EMAIL_SUBJECT: string = "sn:subject";
 
-    EMAIL_CONTENT: string = "jcr:content";
-    EMAIL_RECIP: string = "recip";
-    EMAIL_SUBJECT: string = "subject";
+    CONTENT: string = "sn:content";
+    TAGS: string = "sn:tags";
+    UUID: string = "sn:uuid";
+    JSON_FILE_SEARCH_RESULT: string = "sn:json";
 
-    CREATED: string = "jcr:created";
-    CREATED_BY: string = "jcr:createdBy";
-    CONTENT: string = "jcr:content";
-    TAGS: string = "tags";
-    UUID: string = "jcr:uuid";
-    LAST_MODIFIED: string = "jcr:lastModified";
-    LAST_MODIFIED_BY: string = "jcr:lastModifiedBy";
-    JSON_FILE_SEARCH_RESULT: string = "meta64:json";
+    DISABLE_INSERT: string = "sn:disableInsert";
 
-    DISABLE_INSERT: string = "disableInsert";
+    PWD: string = "sn:pwd";
+    EMAIL: string = "sn:email";
+    CODE: string = "sn:code";
 
-    USER: string = "user";
-    PWD: string = "pwd";
-    EMAIL: string = "email";
-    CODE: string = "code";
+    BIN_VER: string = "sn:binVer";
+    BIN_DATA: string = "sn:jcrData";
+    BIN_MIME: string = "sn::mimeType";
 
-    BIN_VER: string = "binVer";
-    BIN_DATA: string = "jcrData";
-    BIN_MIME: string = "jcr:mimeType";
-
-    IMG_WIDTH: string = "imgWidth";
-    IMG_HEIGHT: string = "imgHeight";
+    IMG_WIDTH: string = "sn:imgWidth";
+    IMG_HEIGHT: string = "sn:imgHeight";
 }
 export let jcrCnst: JCRConstants = new JCRConstants();

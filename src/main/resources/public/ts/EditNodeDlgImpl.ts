@@ -356,8 +356,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
          * If we didn't create the node we are inserting under, and neither did "admin", then we need to send notification
          * email upon saving this new node.
          */
-        if (meta64.userName != edit.parentOfNewNode.createdBy && //
-            edit.parentOfNewNode.createdBy != "admin") {
+        if (meta64.userName != edit.parentOfNewNode.owner && //
+            edit.parentOfNewNode.owner != "admin") {
             edit.sendNotificationPendingSave = true;
         }
 
@@ -365,7 +365,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         if (edit.nodeInsertTarget) {
             util.ajax<I.InsertNodeRequest, I.InsertNodeResponse>("insertNode", {
                 "parentId": edit.parentOfNewNode.id,
-                "targetName": edit.nodeInsertTarget.name,
+                "targetOrdinal": edit.nodeInsertTarget.ordinal,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured"
             }, edit.insertNodeResponse);

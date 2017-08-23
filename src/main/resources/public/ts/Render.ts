@@ -85,7 +85,7 @@ export class Render {
         let lastModifiedSpan: Span = null;
 
         if (cnst.SHOW_PATH_ON_ROWS) {
-            pathDiv = new Div("Path: " + render.formatPath(node), {
+            pathDiv = new Div("Path: " + render.formatPath(node) + " (" + node.ordinal + ")", {
                 "class": "path-display"
             });
         }
@@ -96,9 +96,9 @@ export class Render {
                 "class": clazz
             });
         } //
-        else if (node.createdBy) {
-            let clazz: string = (node.createdBy === meta64.userName) ? "created-by-me" : "created-by-other";
-            createdBySpan = new Span("Created By: " + node.createdBy, {
+        else if (node.owner) {
+            let clazz: string = (node.owner === meta64.userName) ? "created-by-me" : "created-by-other";
+            createdBySpan = new Span("Created By: " + node.owner, {
                 "class": clazz
             });
         }
@@ -418,7 +418,7 @@ export class Render {
 
     makeRowButtonBar(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean): ButtonBar {
 
-        let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, node);
+        let createdBy: string = node.owner;
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
         let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
 
@@ -487,7 +487,7 @@ export class Render {
                 "icon": "editor:mode-edit"
             });
 
-            if (cnst.MOVE_UPDOWN_ON_TOOLBAR && meta64.currentNode.childrenOrdered && !commentBy) {
+            if (cnst.MOVE_UPDOWN_ON_TOOLBAR && !commentBy) {
 
                 if (canMoveUp) {
                     /* Construct Create Subnode Button */
@@ -549,14 +549,11 @@ export class Render {
 
         /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
         path = util.replaceAll(path, "/", " / ");
-        let shortPath: string = path.length < 50 ? path : path.substring(0, 40) + "...";
 
-        let noRootPath: string = shortPath;
-        if (util.startsWith(noRootPath, "/root")) {
-            noRootPath = noRootPath.substring(0, 5);
-        }
+        //for now let's show full path: will eventually do this "..abcdef/..ghijkl/..mnopqrs"
+        let shortPath: string = path; //path.length < 50 ? path : path.substring(0, 40) + "...";
 
-        let ret: string = meta64.isAdminUser ? shortPath : noRootPath;
+        let ret: string = shortPath;
         ret += " [" + node.primaryTypeName + "]";
         return ret;
     }
@@ -634,7 +631,7 @@ export class Render {
                 upLevelButton = tag.button({
                     "raised": "raised",
                     "style": "background-color: #4caf50;color:white;",
-                    "icon" : "icons:change-history",
+                    "icon": "icons:change-history",
                     "onclick": () => { nav.navUpLevel(); } //
                 }, //Note: this text "Up" won't actully appear because currently we don't support icons AND text on buttons
                     "Up");
@@ -644,7 +641,7 @@ export class Render {
             // console.log("isNonOwnedCommentNode="+props.isNonOwnedCommentNode(data.node));
             // console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
-            let createdBy: string = props.getNodePropertyVal(jcrCnst.CREATED_BY, data.node);
+            let createdBy: string = data.node.owner;
             let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
             let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
 

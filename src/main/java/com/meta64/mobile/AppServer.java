@@ -37,7 +37,6 @@ public class AppServer {
 		 */
 		enableScheduling = true;
 		SpringApplication.run(AppServer.class, args);
-		hookEclipseShutdown(args);
 
 		// Note: See SpringContextUtil.java for more code that runs at startup time.
 	}
@@ -50,48 +49,6 @@ public class AppServer {
 	@EventListener
 	public void handleContextRefresh(ContextClosedEvent event) {
 		log.info("ContextClosedEvent");
-	}
-
-	/*
-	 * The 'args' search in this method is not ideal but I wanted this to be as simple as possible
-	 * and portable to share with other java developers and able to work just from calling this one
-	 * static method.
-	 */
-	private static void hookEclipseShutdown(String[] args) {
-		boolean inEclipse = false;
-		for (String arg : args) {
-			if (arg.contains("RUNNING_IN_ECLIPSE")) {
-				inEclipse = true;
-				break;
-			}
-		}
-		if (!inEclipse) return;
-
-		boolean loopz = true;
-		InputStreamReader isr = null;
-		BufferedReader br = null;
-		try {
-			isr = new InputStreamReader(System.in);
-			br = new BufferedReader(isr);
-			while (loopz) {
-				String userInput = br.readLine();
-				if (userInput.equalsIgnoreCase("q")) {
-					System.out.println("Terminating, at user request.");
-					// despite call to exit(0), this does cause a graceful shutdown, because of
-					// shutdown hook.
-					shuttingDown = true;
-					System.exit(0);
-				}
-			}
-			Thread.sleep(1000);
-		}
-		catch (Exception er) {
-			er.printStackTrace();
-			loopz = false;
-		}
-		finally {
-			StreamUtil.close(br, isr);
-		}
 	}
 
 	public static void shutdownCheck() {

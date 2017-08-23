@@ -3,8 +3,6 @@ package com.meta64.mobile.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.fileupload.util.LimitedInputStream;
-
 /**
  * Wraps a stream to a certain limited size so that it will simply throw an exception if the stream
  * it is processing ends up being too large. This is required because many times when processing a

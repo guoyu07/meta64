@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.repo.OakRepository;
+import com.meta64.mobile.mongo.MongoRepository;
 import com.meta64.mobile.service.RssService;
 
 /**
@@ -19,9 +19,9 @@ public class SpringContextUtil implements ApplicationContextAware {
 	private static final Logger log = LoggerFactory.getLogger(SpringContextUtil.class);
 
 	private static ApplicationContext context;
-
+	
 	@Autowired
-	private OakRepository oakRepository;
+	private MongoRepository mongoRepo;
 
 	@Autowired
 	private RssService rssService;
@@ -32,7 +32,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 		this.context = context;
 
 		try {
-			oakRepository.init();
+			mongoRepo.init();
 			// rssService.parseTest("https://twit.tv/node/feed");
 		}
 		catch (Exception e) {

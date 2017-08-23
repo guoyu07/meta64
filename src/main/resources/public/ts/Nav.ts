@@ -140,24 +140,6 @@ class Nav {
         }, nav.navPageNodeResponse);
     }
 
-    expandMore(nodeId: string): void {
-
-        /* I'm setting this here so that we can come up with a way to make the abbrev expand state be remembered, button
-        this is lower priority for now, so i'm not using it yet */
-        meta64.expandedAbbrevNodeIds[nodeId] = true;
-
-        util.ajax<I.ExpandAbbreviatedNodeRequest, I.ExpandAbbreviatedNodeResponse>("expandAbbreviatedNode", {
-            "nodeId": nodeId
-        }, nav.expandAbbreviatedNodeResponse);
-    }
-
-    private expandAbbreviatedNodeResponse(res: I.ExpandAbbreviatedNodeResponse): void {
-        if (util.checkSuccess("ExpandAbbreviatedNode", res)) {
-            //console.log("VAL: "+JSON.stringify(res.nodeInfo));
-            render.refreshNodeOnPage(res.nodeInfo);
-        }
-    }
-
     displayingHome(): boolean {
         if (meta64.isAnonUser) {
             return meta64.currentNodeId === meta64.anonUserLandingPageNode;

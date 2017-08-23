@@ -513,34 +513,11 @@ public class NodeRenderService {
 		res.setSuccess(true);
 	}
 
-	//
-	// public void expandAbbreviatedNode(Session session, ExpandAbbreviatedNodeRequest req,
-	// ExpandAbbreviatedNodeResponse res) {
-	//
-	// if (session == null) {
-	// session = ThreadLocals.getJcrSession();
-	// }
-	//
-	// String nodeId = req.getNodeId();
-	// Node node = JcrUtil.safeFindNode(session, nodeId);
-	//
-	// if (node == null) {
-	// res.setMessage("Node not found.");
-	// res.setSuccess(false);
-	// return;
-	// }
-	//
-	// NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, false,
-	// false);
-	// res.setNodeInfo(nodeInfo);
-	// res.setSuccess(true);
-	// }
-	//
-	// /*
-	// * There is a system defined way for admins to specify what node should be displayed in the
-	// * browser when a non-logged in user (i.e. anonymouse user) is browsing the site, and this
-	// * method retrieves that page data.
-	// */
+	 /*
+	 * There is a system defined way for admins to specify what node should be displayed in the
+	 * browser when a non-logged in user (i.e. anonymouse user) is browsing the site, and this
+	 * method retrieves that page data.
+	 */
 	public void anonPageLoad(MongoSession session, AnonPageLoadRequest req, AnonPageLoadResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getMongoSession();

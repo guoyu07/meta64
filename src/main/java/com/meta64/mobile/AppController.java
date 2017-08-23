@@ -299,21 +299,7 @@ public class AppController {
 		nodeRenderService.initNodeEdit(null, req, res);
 		return res;
 	}
-
-	//
-	// @RequestMapping(value = API_PATH + "/expandAbbreviatedNode", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ExpandAbbreviatedNodeResponse expandAbbreviatedNode(@RequestBody
-	// ExpandAbbreviatedNodeRequest req) {
-	//
-	// logRequest("expandAbbreviatedNode", req);
-	// checkJcr();
-	// ExpandAbbreviatedNodeResponse res = new ExpandAbbreviatedNodeResponse();
-	// checkHttpSession();
-	// nodeRenderService.expandAbbreviatedNode(null, req, res);
-	// return res;
-	// }
-	//
+	
 	@RequestMapping(value = API_PATH + "/getNodePrivileges", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) {

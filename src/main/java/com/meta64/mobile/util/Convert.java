@@ -258,18 +258,6 @@ public class Convert {
 			throw ExUtil.newEx(ex);
 		}
 	}
-	//
-	// public String buildMoreLink(Node node) {
-	// try {
-	// StringBuilder sb = new StringBuilder();
-	// sb.append("<a class=\"moreLinkStyle\" onclick=\"meta64.modRun('Nav',
-	// function(m){m.nav.expandMore('" + node.getIdentifier() + "');});\">[more]</a>");
-	// return sb.toString();
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
 
 	public String basicTextFormatting(String val) {
 		val = val.replace("\n\r", "<p>");

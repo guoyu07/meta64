@@ -142,10 +142,6 @@ export interface DeletePropertyRequest {
     propName: string;
 }
 
-export interface ExpandAbbreviatedNodeRequest {
-    nodeId: string;
-}
-
 export interface ExportRequest {
     nodeId: string;
     exportExt: string;
@@ -334,10 +330,6 @@ export interface DeleteNodesResponse extends OakResponseBase {
 }
 
 export interface DeletePropertyResponse extends OakResponseBase {
-}
-
-export interface ExpandAbbreviatedNodeResponse extends OakResponseBase {
-    nodeInfo: NodeInfo;
 }
 
 export interface ExportResponse extends OakResponseBase {

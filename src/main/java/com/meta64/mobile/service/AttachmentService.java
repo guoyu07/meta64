@@ -86,7 +86,7 @@ public class AttachmentService {
 			if (node == null) {
 				throw ExUtil.newEx("Node not found.");
 			}
-			boolean addAsChildren = node.getIntProp(JcrProp.BIN_VER) > 0;
+			boolean addAsChildren = false; //node.getIntProp(JcrProp.BIN_VER) > 0;
 			int maxFileSize = 20 * 1024 * 1024;
 
 			for (MultipartFile uploadFile : uploadFiles) {

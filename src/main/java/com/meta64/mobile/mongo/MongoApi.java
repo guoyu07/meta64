@@ -87,7 +87,7 @@ public class MongoApi {
 
 	public void save(MongoSession session, SubNode node, boolean updateThreadCache) {
 		authWrite(session, node);
-		log.debug("MongoApi.save: DATA: " + XString.prettyPrint(node));
+		//log.debug("MongoApi.save: DATA: " + XString.prettyPrint(node));
 		node.setWriting(true);
 		ops.save(node);
 
@@ -748,6 +748,9 @@ public class MongoApi {
 		DBObject metaData = new BasicDBObject();
 		metaData.put("nodeId", node.getId());
 		log.debug("Writing steam to GridFS");
+		
+		/* Delete any existing grid data stored under this node, before waving new attachment */
+		deleteBinary(session, node, null);
 		String id = grid.store(stream, fileName, mimeType, metaData).getId().toString();
 
 		/* Now save the node also since the property on it needs to point to GridFS id */
@@ -763,7 +766,9 @@ public class MongoApi {
 		}
 		String id = node.getStringProp(propName);
 		if (id == null) {
-			throw new RuntimeException("No property found as " + propName);
+			return;
+			//not a problem. allow a delete when there's nothing to delete.
+			//throw new RuntimeException("No property found as " + propName);
 		}
 		grid.delete(new Query(Criteria.where("_id").is(id)));
 	}

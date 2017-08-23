@@ -169,7 +169,7 @@ public class AppController {
 	@Autowired
 	private RssService rssService;
 
-	private static final boolean logRequests = true;
+	private static final boolean logRequests = false;
 
 	/*
 	 * This is the actual app page loading request, for his SPA (Single Page Application) this is
@@ -480,16 +480,6 @@ public class AppController {
 		return res;
 	}
 
-	@RequestMapping(value = API_PATH + "/deleteAttachment", method = RequestMethod.POST)
-	@OakSession
-	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req) {
-		logRequest("deleteAttachment", req);
-		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
-		checkHttpSession();
-		attachmentService.deleteAttachment(null, req, res);
-		return res;
-	}
-
 	@RequestMapping(value = API_PATH + "/deleteProperty", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody DeletePropertyResponse deleteProperty(@RequestBody DeletePropertyRequest req) {
@@ -619,6 +609,16 @@ public class AppController {
 		return attachmentService.uploadMultipleFiles(null, nodeId, uploadFiles, explodeZips.equalsIgnoreCase("true"));
 	}
 
+	@RequestMapping(value = API_PATH + "/deleteAttachment", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody DeleteAttachmentResponse deleteAttachment(@RequestBody DeleteAttachmentRequest req) {
+		logRequest("deleteAttachment", req);
+		DeleteAttachmentResponse res = new DeleteAttachmentResponse();
+		checkHttpSession();
+		attachmentService.deleteAttachment(null, req, res);
+		return res;
+	}
+	
 	// @RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
 	// @OakSession
 	// public @ResponseBody ResponseEntity<?> streamImport(//
@@ -633,10 +633,6 @@ public class AppController {
 	// return importXmlService.streamImport(null, nodeId, uploadFiles);
 	// }
 	//
-	
-//	&&& upload from file + uri is messed up. Version number isn't working. thoroughly need to test
-//	uploading both types over and over and deleting and overwriting, etc. all possible cases. soemthing's wrong at the moment
-//	related to versioning, but the stream itself IS saveing.
 	
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
 	@OakSession

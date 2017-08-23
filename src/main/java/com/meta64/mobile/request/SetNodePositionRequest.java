@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class SetNodePositionRequest extends OakRequestBase {
+public class SetNodePositionRequest extends RequestBase {
 	//node to be moved (id or path)
 	private String nodeId;
 	

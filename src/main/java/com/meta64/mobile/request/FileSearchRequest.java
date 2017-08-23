@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class FileSearchRequest extends OakRequestBase {
+public class FileSearchRequest extends RequestBase {
 
 	private String searchText;
 	private boolean reindex;

@@ -1,9 +1,9 @@
 package com.meta64.mobile.config;
 
 /**
- * JCR Node names for architecturally significant system nodes
+ * Node names for architecturally significant system nodes
  */
-public class JcrName {
+public class NodeName {
 	public static final String USER = "usr";
 	public static final String SYSTEM = "system";
 	public static final String OUTBOX = "outbox";

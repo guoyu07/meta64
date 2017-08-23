@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class FileSearchResponse extends OakResponseBase {
+public class FileSearchResponse extends ResponseBase {
 
 	private String searchResultNodeId;
 

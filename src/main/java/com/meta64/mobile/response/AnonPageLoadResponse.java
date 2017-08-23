@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class AnonPageLoadResponse extends OakResponseBase {
+public class AnonPageLoadResponse extends ResponseBase {
 	private String content;
 	private RenderNodeResponse renderNodeResponse;
 

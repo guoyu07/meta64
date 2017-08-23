@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrPrincipal;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeName;
+import com.meta64.mobile.config.NodePrincipal;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.RefInfo;
@@ -32,7 +32,7 @@ import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
 import com.meta64.mobile.util.ExUtil;
-import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
@@ -73,11 +73,11 @@ public class UserManagerService {
 	private ConstantsProvider constProvider;
 
 	@Autowired
-	private JcrUtil jcrUtil;
+	private SubNodeUtil jcrUtil;
 
 	@Autowired
 	private AccessControlUtil acu;
-	
+
 	@Autowired
 	private Encryptor encryptor;
 
@@ -192,7 +192,7 @@ public class UserManagerService {
 			 * Note: This is not an error condition, this happens whenever the page loads for the
 			 * first time and the user has no session yet,
 			 */
-			res.setUserName(JcrPrincipal.ANONYMOUS);
+			res.setUserName(NodePrincipal.ANONYMOUS);
 			res.setMessage("not logged in.");
 			res.setSuccess(false);
 		}
@@ -331,18 +331,20 @@ public class UserManagerService {
 		return ret.getVal();
 	}
 
-//	public boolean userExists(Session session, String userName, ValContainer<String> passwordContainer) {
-//		Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" + userName);
-//		if (prefsNode != null) {
-//			if (passwordContainer != null) {
-//				String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
-//				password = encryptor.decrypt(password);
-//				passwordContainer.setVal(password);
-//			}
-//			return true;
-//		}
-//		return false;
-//	}
+	// public boolean userExists(Session session, String userName, ValContainer<String>
+	// passwordContainer) {
+	// Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" +
+	// userName);
+	// if (prefsNode != null) {
+	// if (passwordContainer != null) {
+	// String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
+	// password = encryptor.decrypt(password);
+	// passwordContainer.setVal(password);
+	// }
+	// return true;
+	// }
+	// return false;
+	// }
 
 	//
 	// /*
@@ -395,7 +397,7 @@ public class UserManagerService {
 	//
 	public void signup(MongoSession session, SignupRequest req, SignupResponse res, boolean automated) {
 		final String userName = req.getUserName();
-		if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN)) {
+		if (userName.equalsIgnoreCase(NodePrincipal.ADMIN)) {
 			throw ExUtil.newEx("Sorry, you can't be the new admin.");
 		}
 
@@ -492,8 +494,8 @@ public class UserManagerService {
 	//
 
 	public void setDefaultUserPreferences(SubNode prefsNode) {
-		prefsNode.setProp(JcrProp.USER_PREF_ADV_MODE, false);
-		prefsNode.setProp(JcrProp.USER_PREF_EDIT_MODE, false);
+		prefsNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
+		prefsNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
 	}
 
 	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) {
@@ -509,13 +511,13 @@ public class UserManagerService {
 			 * Assign preferences as properties on this node,
 			 */
 			boolean advancedMode = reqUserPrefs.isAdvancedMode();
-			prefsNode.setProp(JcrProp.USER_PREF_ADV_MODE, advancedMode);
+			prefsNode.setProp(NodeProp.USER_PREF_ADV_MODE, advancedMode);
 
 			boolean editMode = reqUserPrefs.isEditMode();
-			prefsNode.setProp(JcrProp.USER_PREF_EDIT_MODE, editMode);
+			prefsNode.setProp(NodeProp.USER_PREF_EDIT_MODE, editMode);
 
 			boolean showMetaData = reqUserPrefs.isShowMetaData();
-			prefsNode.setProp(JcrProp.USER_PREF_SHOW_METADATA, showMetaData);
+			prefsNode.setProp(NodeProp.USER_PREF_SHOW_METADATA, showMetaData);
 
 			/*
 			 * Also update session-scope object, because server-side functions that need preference
@@ -544,13 +546,13 @@ public class UserManagerService {
 			SubNode prefsNode = api.getUserNodeByUserName(session, userName);
 
 			/* for polymer conversion, forcing to true here */
-			userPrefs.setAdvancedMode(prefsNode.getBooleanProp(JcrProp.USER_PREF_ADV_MODE));
-			userPrefs.setEditMode(prefsNode.getBooleanProp(JcrProp.USER_PREF_EDIT_MODE));
-			userPrefs.setShowMetaData(prefsNode.getBooleanProp(JcrProp.USER_PREF_SHOW_METADATA));
+			userPrefs.setAdvancedMode(prefsNode.getBooleanProp(NodeProp.USER_PREF_ADV_MODE));
+			userPrefs.setEditMode(prefsNode.getBooleanProp(NodeProp.USER_PREF_EDIT_MODE));
+			userPrefs.setShowMetaData(prefsNode.getBooleanProp(NodeProp.USER_PREF_SHOW_METADATA));
 
-			userPrefs.setLastNode(prefsNode.getStringProp(JcrProp.USER_PREF_LAST_NODE));
-			userPrefs.setImportAllowed(prefsNode.getBooleanProp(JcrProp.USER_PREF_IMPORT_ALLOWED));
-			userPrefs.setExportAllowed(prefsNode.getBooleanProp(JcrProp.USER_PREF_EXPORT_ALLOWED));
+			userPrefs.setLastNode(prefsNode.getStringProp(NodeProp.USER_PREF_LAST_NODE));
+			userPrefs.setImportAllowed(prefsNode.getBooleanProp(NodeProp.USER_PREF_IMPORT_ALLOWED));
+			userPrefs.setExportAllowed(prefsNode.getBooleanProp(NodeProp.USER_PREF_EXPORT_ALLOWED));
 		});
 
 		return userPrefs;
@@ -589,6 +591,8 @@ public class UserManagerService {
 	// }
 	// }
 	//
+
+	// //i started to convert this to mongo but then decided it can wait till later
 	// /*
 	// * Runs when user is doing the 'change password' or 'reset password'
 	// */
@@ -667,6 +671,7 @@ public class UserManagerService {
 	//
 	// return userName;
 	// }
+
 	//
 	// /*
 	// * Runs when user is doing the 'reset password'.

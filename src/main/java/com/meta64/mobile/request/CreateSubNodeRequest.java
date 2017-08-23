@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class CreateSubNodeRequest extends OakRequestBase {
+public class CreateSubNodeRequest extends RequestBase {
 	private String nodeId;
 	private String newNodeName;
 	private String typeName;

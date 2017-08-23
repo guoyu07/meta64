@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class GenerateNodeHashResponse extends OakResponseBase {
+public class GenerateNodeHashResponse extends ResponseBase {
 	private String hashInfo;
 
 	public String getHashInfo() {

@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class GetPlayerInfoRequest extends OakRequestBase {
+public class GetPlayerInfoRequest extends RequestBase {
 
 	/* media being played */
 	private String url;

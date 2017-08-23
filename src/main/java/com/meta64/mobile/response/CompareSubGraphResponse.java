@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class CompareSubGraphResponse extends OakResponseBase {
+public class CompareSubGraphResponse extends ResponseBase {
 	private String compareInfo;
 
 	public String getCompareInfo() {

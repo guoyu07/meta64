@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoEventListener;
 import com.meta64.mobile.mongo.MongoThreadLocal;
 import com.meta64.mobile.util.XString;

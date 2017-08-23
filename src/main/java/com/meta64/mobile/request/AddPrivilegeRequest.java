@@ -2,9 +2,9 @@ package com.meta64.mobile.request;
 
 import java.util.List;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class AddPrivilegeRequest extends OakRequestBase {
+public class AddPrivilegeRequest extends RequestBase {
 
 	private String nodeId;
 

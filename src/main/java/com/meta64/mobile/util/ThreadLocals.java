@@ -3,7 +3,7 @@ package com.meta64.mobile.util;
 import javax.servlet.http.HttpServletResponse;
 
 import com.meta64.mobile.mongo.MongoSession;
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
 /**
  * Thread Local Storage
@@ -20,7 +20,7 @@ public class ThreadLocals {
 	private static final ThreadLocal<HttpServletResponse> servletResponse = new ThreadLocal<HttpServletResponse>();
 	private static final ThreadLocal<Boolean> initialSessionExisted = new ThreadLocal<Boolean>();
 	private static final ThreadLocal<MongoSession> mongoSession = new ThreadLocal<MongoSession>();
-	private static final ThreadLocal<OakResponseBase> oakResponse = new ThreadLocal<OakResponseBase>();
+	private static final ThreadLocal<ResponseBase> oakResponse = new ThreadLocal<ResponseBase>();
 
 	public static void removeAll() {
 		servletResponse.remove();
@@ -45,11 +45,11 @@ public class ThreadLocals {
 		return mongoSession.get();
 	}
 
-	public static void setResponse(OakResponseBase response) {
+	public static void setResponse(ResponseBase response) {
 		oakResponse.set(response);
 	}
 
-	public static OakResponseBase getResponse() {
+	public static ResponseBase getResponse() {
 		return oakResponse.get();
 	}
 

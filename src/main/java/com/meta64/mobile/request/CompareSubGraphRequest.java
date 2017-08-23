@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class CompareSubGraphRequest extends OakRequestBase {
+public class CompareSubGraphRequest extends RequestBase {
 	private String nodeIdA;
 	private String nodeIdB;
 

@@ -3,7 +3,7 @@ package com.meta64.mobile.config;
 /**
  * JCR Node Property Names (constants), node names, types...
  */
-public class JcrProp {
+public class NodeProp {
 
 	// public static final String RSS_FEED_ROOT_URLS = "rssFeedRootUrls";
 

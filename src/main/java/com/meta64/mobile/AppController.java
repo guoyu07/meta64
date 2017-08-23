@@ -299,7 +299,7 @@ public class AppController {
 		nodeRenderService.initNodeEdit(null, req, res);
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/getNodePrivileges", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody GetNodePrivilegesResponse getNodePrivileges(@RequestBody GetNodePrivilegesRequest req) {
@@ -496,19 +496,16 @@ public class AppController {
 		return res;
 	}
 
-	//
-	// @RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest
-	// req) {
-	//
-	// logRequest("changePassword", req);
-	// checkJcr();
-	// ChangePasswordResponse res = new ChangePasswordResponse();
-	// checkHttpSession();
-	// userManagerService.changePassword(req, res);
-	// return res;
-	// }
+//	@RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
+//	@OakSession
+//	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) {
+//		logRequest("changePassword", req);
+//		ChangePasswordResponse res = new ChangePasswordResponse();
+//		checkHttpSession();
+//		userManagerService.changePassword(req, res);
+//		return res;
+//	}
+
 	//
 	// @RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)
 	// @OakSession
@@ -604,7 +601,7 @@ public class AppController {
 		attachmentService.deleteAttachment(null, req, res);
 		return res;
 	}
-	
+
 	// @RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
 	// @OakSession
 	// public @ResponseBody ResponseEntity<?> streamImport(//
@@ -619,7 +616,7 @@ public class AppController {
 	// return importXmlService.streamImport(null, nodeId, uploadFiles);
 	// }
 	//
-	
+
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody UploadFromUrlResponse uploadFromUrl(@RequestBody UploadFromUrlRequest req) {

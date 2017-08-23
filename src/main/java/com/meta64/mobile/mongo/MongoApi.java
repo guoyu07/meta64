@@ -22,9 +22,9 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrPrincipal;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeName;
+import com.meta64.mobile.config.NodePrincipal;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.image.ImageSize;
 import com.meta64.mobile.image.ImageUtil;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -33,7 +33,7 @@ import com.meta64.mobile.mongo.model.SubNodeTypes;
 import com.meta64.mobile.mongo.model.UserPreferencesNode;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ExUtil;
-import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.XString;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -56,10 +56,10 @@ public class MongoApi {
 	private AppProp appProp;
 
 	@Autowired
-	private JcrUtil jcrUtil;
+	private SubNodeUtil jcrUtil;
 
-	private static final MongoSession adminSession = MongoSession.createFromUser(JcrPrincipal.ADMIN);
-	private static final MongoSession anonSession = MongoSession.createFromUser(JcrPrincipal.ANONYMOUS);
+	private static final MongoSession adminSession = MongoSession.createFromUser(NodePrincipal.ADMIN);
+	private static final MongoSession anonSession = MongoSession.createFromUser(NodePrincipal.ANONYMOUS);
 
 	public MongoSession getAdminSession() {
 		return adminSession;
@@ -104,7 +104,7 @@ public class MongoApi {
 			throw new RuntimeException("Node has null owner: " + XString.prettyPrint(node));
 		}
 		SubNode userNode = getNode(session, node.getOwner());
-		return userNode.getStringProp(JcrProp.USER);
+		return userNode.getStringProp(NodeProp.USER);
 	}
 
 	public void renameNode(MongoSession session, SubNode node, String newName) {
@@ -232,7 +232,7 @@ public class MongoApi {
 		String path = (parent == null ? "" : parent.getPath()) + "/" + relPath;
 
 		ObjectId ownerId = null;
-		if (session.isAdmin() && (path.equals("/") || path.equals("/" + JcrName.USER) || path.equals("/" + JcrName.USER + "/?"))) {
+		if (session.isAdmin() && (path.equals("/") || path.equals("/" + NodeName.USER) || path.equals("/" + NodeName.USER + "/?"))) {
 			// ownerId can stay null. bootstrapping new repo.
 		}
 		else {
@@ -495,7 +495,7 @@ public class MongoApi {
 	}
 
 	public boolean isImageAttached(SubNode node) {
-		String mime = node.getStringProp(JcrProp.BIN_MIME);
+		String mime = node.getStringProp(NodeProp.BIN_MIME);
 		return ImageUtil.isImageMime(mime);
 	}
 
@@ -807,13 +807,13 @@ public class MongoApi {
 	 */
 	public SubNode createUser(MongoSession session, String user, String email, String password) {
 		requireAdmin(session);
-		SubNode userNode = createNode(session, "/" + JcrName.USER + "/?", null);
-		userNode.setProp(JcrProp.USER, user);
-		userNode.setProp(JcrProp.EMAIL, email);
-		userNode.setProp(JcrProp.PASSWORD, password);
-		userNode.setProp(JcrProp.CONTENT, "Root for User: " + user);
-		userNode.setProp(JcrProp.USER_PREF_ADV_MODE, false);
-		userNode.setProp(JcrProp.USER_PREF_EDIT_MODE, false);
+		SubNode userNode = createNode(session, "/" + NodeName.USER + "/?", null);
+		userNode.setProp(NodeProp.USER, user);
+		userNode.setProp(NodeProp.EMAIL, email);
+		userNode.setProp(NodeProp.PASSWORD, password);
+		userNode.setProp(NodeProp.CONTENT, "Root for User: " + user);
+		userNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
+		userNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
 
 		save(session, userNode);
 		// saveSession(session); <------- todo-0: this kind of call would be NICE, but is tricky
@@ -832,8 +832,8 @@ public class MongoApi {
 	public SubNode getUserNodeByUserName(MongoSession session, String user) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where(//
-				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath("/" + JcrName.USER))//
-				.and(SubNode.FIELD_PROPERTIES + "." + JcrProp.USER + ".value").is(user);
+				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath("/" + NodeName.USER))//
+				.and(SubNode.FIELD_PROPERTIES + "." + NodeProp.USER + ".value").is(user);
 		query.addCriteria(criteria);
 		SubNode ret = ops.findOne(query, SubNode.class);
 		authRead(session, ret);
@@ -841,15 +841,15 @@ public class MongoApi {
 	}
 
 	public MongoSession login(String userName, String password) {
-		MongoSession session = MongoSession.createFromUser(JcrPrincipal.ANONYMOUS);
+		MongoSession session = MongoSession.createFromUser(NodePrincipal.ANONYMOUS);
 
 		/*
 		 * If username is null or anonymous, we assume anonymous is acceptable and return anonymous
 		 * session or else we check the credentials.
 		 */
-		if (userName != null && !userName.equals(JcrPrincipal.ANONYMOUS)) {
+		if (userName != null && !userName.equals(NodePrincipal.ANONYMOUS)) {
 			SubNode userNode = getUserNodeByUserName(getAdminSession(), userName);
-			if (userNode != null && userNode.getStringProp(JcrProp.PASSWORD).equals(password)) {
+			if (userNode != null && userNode.getStringProp(NodeProp.PASSWORD).equals(password)) {
 				session.setUser(userName);
 				session.setUserNode(userNode);
 			}
@@ -867,7 +867,7 @@ public class MongoApi {
 
 		SubNode adminNode = getUserNodeByUserName(getAdminSession(), adminUser);
 		if (adminNode == null) {
-			jcrUtil.ensureNodeExists(session, "/", JcrName.USER, "Root of All Users");
+			jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
 			adminNode = createUser(session, adminUser, null, adminPwd);
 		}
 	}

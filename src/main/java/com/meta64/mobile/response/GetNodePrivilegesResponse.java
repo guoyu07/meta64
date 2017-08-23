@@ -3,9 +3,9 @@ package com.meta64.mobile.response;
 import java.util.List;
 
 import com.meta64.mobile.model.AccessControlEntryInfo;
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class GetNodePrivilegesResponse extends OakResponseBase {
+public class GetNodePrivilegesResponse extends ResponseBase {
 	private List<AccessControlEntryInfo> aclEntries;
 	private List<String> owners;
 

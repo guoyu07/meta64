@@ -1,4 +1,4 @@
-package com.meta64.mobile.repo;
+package com.meta64.mobile.mongo;
 
 import java.util.HashSet;
 import java.util.List;
@@ -9,13 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.config.NodeName;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.user.RunAsMongoAdmin;
-import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.XString;
 
 /**
@@ -36,12 +35,12 @@ public class RepositoryUtil {
 	private AppProp appProp;
 
 	@Autowired
-	private JcrUtil jcrUtil;
+	private SubNodeUtil jcrUtil;
 
 	private HashSet<String> testAccountNames = new HashSet<String>();
 
 	public void initRequiredNodes(MongoSession session) {
-		jcrUtil.ensureNodeExists(session, "/", JcrName.USER, "Root of All Users");
+		jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
 		//jcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
 		//jcrUtil.ensureNodeExists(session, "/", JcrName.SIGNUP, "Pending Signups");
 	}

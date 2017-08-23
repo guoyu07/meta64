@@ -2,11 +2,11 @@ package com.meta64.mobile.response.base;
 
 import com.meta64.mobile.util.ThreadLocals;
 
-public class OakResponseBase {
+public class ResponseBase {
 	private boolean success;
 	private String message;
 
-	public OakResponseBase() {
+	public ResponseBase() {
 		ThreadLocals.setResponse(this);
 	}
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.image.ImageSize;
 import com.meta64.mobile.model.NodeInfo;
@@ -67,7 +67,7 @@ public class Convert {
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;
 
-		long binVer = node.getIntProp(JcrProp.BIN_VER);
+		long binVer = node.getIntProp(NodeProp.BIN_VER);
 		if (binVer > 0) {
 			hasBinary = true;
 			binaryIsImage = api.isImageAttached(node);
@@ -94,7 +94,7 @@ public class Convert {
 		// should be able to deal with that (i think). depends on how much ownership info we need to
 		// show user.
 		SubNode userNode = api.getNode(session, node.getOwner());
-		String owner = userNode.getStringProp(JcrProp.USER);
+		String owner = userNode.getStringProp(NodeProp.USER);
 
 		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
 				node.getModifyTime(), propList, hasNodes, hasBinary, binaryIsImage, binVer, //
@@ -108,12 +108,12 @@ public class Convert {
 
 		ImageSize imageSize = new ImageSize();
 
-		Long width = node.getIntProp(JcrProp.IMG_WIDTH);
+		Long width = node.getIntProp(NodeProp.IMG_WIDTH);
 		if (width != null) {
 			imageSize.setWidth(width.intValue());
 		}
 
-		Long height = node.getIntProp(JcrProp.IMG_HEIGHT);
+		Long height = node.getIntProp(NodeProp.IMG_HEIGHT);
 		if (height != null) {
 			imageSize.setHeight(height.intValue());
 		}
@@ -145,7 +145,7 @@ public class Convert {
 				 * will be sorting the list and THEN putting the content at the top of that sorted
 				 * list.
 				 */
-				if (propName.equals(JcrProp.CONTENT)) {
+				if (propName.equals(NodeProp.CONTENT)) {
 					contentPropInfo = propInfo;
 				}
 				else {
@@ -241,7 +241,7 @@ public class Convert {
 			// }
 			// /* else single value */
 			// else {
-			if (propName.equals(JcrProp.CONTENT)) {
+			if (propName.equals(NodeProp.CONTENT)) {
 				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}

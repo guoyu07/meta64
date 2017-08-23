@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class NodeSearchRequest extends OakRequestBase {
+public class NodeSearchRequest extends RequestBase {
 
 	/* ascending=asc, descending=desc */
 	private String sortDir;

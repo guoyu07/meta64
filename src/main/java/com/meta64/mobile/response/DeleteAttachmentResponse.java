@@ -1,6 +1,6 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class DeleteAttachmentResponse extends OakResponseBase {
+public class DeleteAttachmentResponse extends ResponseBase {
 }

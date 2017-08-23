@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrPrincipal;
+import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.util.MongoRunnable;

@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class GetServerInfoResponse extends OakResponseBase {
+public class GetServerInfoResponse extends ResponseBase {
 	private String serverInfo;
 
 	public String getServerInfo() {

@@ -1,6 +1,6 @@
 package com.meta64.mobile.mongo;
 
-import com.meta64.mobile.config.JcrPrincipal;
+import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.mongo.model.SubNode;
 
 public class MongoSession {
@@ -23,11 +23,11 @@ public class MongoSession {
 	}
 
 	public boolean isAdmin() {
-		return JcrPrincipal.ADMIN.equals(user);
+		return NodePrincipal.ADMIN.equals(user);
 	}
 
 	public boolean isAnon() {
-		return JcrPrincipal.ANONYMOUS.equals(user);
+		return NodePrincipal.ANONYMOUS.equals(user);
 	}
 
 	public String getUser() {

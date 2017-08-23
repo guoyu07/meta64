@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.repo.RepositoryUtil;
+import com.meta64.mobile.mongo.RepositoryUtil;
 import com.meta64.mobile.util.DateUtil;
 
 /**
@@ -75,11 +75,11 @@ public class SessionContext {
 	}
 
 	public boolean isAdmin() {
-		return JcrPrincipal.ADMIN.equalsIgnoreCase(userName);
+		return NodePrincipal.ADMIN.equalsIgnoreCase(userName);
 	}
 
 	public boolean isAnonUser() {
-		return JcrPrincipal.ANONYMOUS.equalsIgnoreCase(userName);
+		return NodePrincipal.ANONYMOUS.equalsIgnoreCase(userName);
 	}
 
 	public boolean isTestAccount() {

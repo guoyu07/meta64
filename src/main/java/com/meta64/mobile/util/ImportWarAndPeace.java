@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.mongo.CreateNodeLocation;
 import com.meta64.mobile.mongo.MongoApi;
@@ -123,7 +123,7 @@ public class ImportWarAndPeace {
 			addParagraph();
 
 			curChapter = api.createNode(session, curBook, SubNodeTypes.UNSTRUCTURED, 0L, CreateNodeLocation.LAST);
-			curChapter.setProp(JcrProp.CONTENT, "C" + String.valueOf(globalChapter) + ". " + line);
+			curChapter.setProp(NodeProp.CONTENT, "C" + String.valueOf(globalChapter) + ". " + line);
 			api.save(session, curChapter);
 			return true;
 		}
@@ -147,7 +147,7 @@ public class ImportWarAndPeace {
 		// line = XString.injectForQuotations(line);
 
 		SubNode paraNode = api.createNode(session, curChapter, SubNodeTypes.UNSTRUCTURED, 0L, CreateNodeLocation.LAST);
-		paraNode.setProp(JcrProp.CONTENT, "VS" + globalVerse + ". " + line);
+		paraNode.setProp(NodeProp.CONTENT, "VS" + globalVerse + ". " + line);
 		api.save(session,  paraNode);
 		paragraph.setLength(0);
 		return true;
@@ -167,7 +167,7 @@ public class ImportWarAndPeace {
 			addParagraph();
 
 			curBook = api.createNode(session, root, SubNodeTypes.UNSTRUCTURED, 0L, CreateNodeLocation.LAST);
-			curBook.setProp(JcrProp.CONTENT, "B" + String.valueOf(globalBook) + ". " + line);
+			curBook.setProp(NodeProp.CONTENT, "B" + String.valueOf(globalBook) + ". " + line);
 			api.save(session, curBook);
 			return true;
 		}

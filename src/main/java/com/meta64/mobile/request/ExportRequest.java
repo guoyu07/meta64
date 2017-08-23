@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class ExportRequest extends OakRequestBase {
+public class ExportRequest extends RequestBase {
 	private String nodeId;
 
 	// must be file extension, and selects which type of file to export

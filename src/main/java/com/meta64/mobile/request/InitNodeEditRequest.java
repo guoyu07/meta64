@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class InitNodeEditRequest extends OakRequestBase {
+public class InitNodeEditRequest extends RequestBase {
 	private String nodeId;
 
 	public String getNodeId() {

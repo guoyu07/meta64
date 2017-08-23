@@ -2,9 +2,9 @@ package com.meta64.mobile.request;
 
 import java.util.List;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class MoveNodesRequest extends OakRequestBase {
+public class MoveNodesRequest extends RequestBase {
 	/* parent under which the nodes will be moved */
 	private String targetNodeId;
 

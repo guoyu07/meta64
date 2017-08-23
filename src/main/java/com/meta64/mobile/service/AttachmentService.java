@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.image.ImageUtil;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
@@ -201,7 +201,7 @@ public class AttachmentService {
 
 	public void saveBinaryStreamToNode(MongoSession session, LimitedInputStreamEx inputStream, String mimeType, String fileName, long size, int width, int height, SubNode node) {
 
-		long version = node.getIntProp(JcrProp.BIN_VER);
+		long version = node.getIntProp(NodeProp.BIN_VER);
 		if (version == 0L) {
 			version = 1L;
 		}
@@ -227,20 +227,20 @@ public class AttachmentService {
 		// node.setProperty(JcrProp.IMG_HEIGHT, String.valueOf(height));
 		// }
 
-		node.setProp(JcrProp.BIN_MIME, mimeType);
+		node.setProp(NodeProp.BIN_MIME, mimeType);
 		if (fileName != null) {
-			node.setProp(JcrProp.BIN_FILENAME, fileName);
+			node.setProp(NodeProp.BIN_FILENAME, fileName);
 		}
 
 		if (size > 0) {
-			node.setProp(JcrProp.BIN_SIZE, size);
+			node.setProp(NodeProp.BIN_SIZE, size);
 		}
-		node.setProp(JcrProp.BIN_VER, version + 1);
+		node.setProp(NodeProp.BIN_VER, version + 1);
 
 		api.writeStream(session, node, inputStream, null, mimeType, null);
 		
 		if (size <= 0) {
-			node.setProp(JcrProp.BIN_SIZE, inputStream.getCount());
+			node.setProp(NodeProp.BIN_SIZE, inputStream.getCount());
 		}
 		
 		api.save(session, node);
@@ -265,12 +265,12 @@ public class AttachmentService {
 	 * Deletes all the binary-related properties from a node
 	 */
 	private void deleteAllBinaryProperties(SubNode node) {
-		node.deleteProp(JcrProp.IMG_WIDTH);
-		node.deleteProp(JcrProp.IMG_HEIGHT);
-		node.deleteProp(JcrProp.BIN_MIME);
-		node.deleteProp(JcrProp.BIN_VER);
-		node.deleteProp(JcrProp.BIN_FILENAME);
-		node.deleteProp(JcrProp.BIN_SIZE);
+		node.deleteProp(NodeProp.IMG_WIDTH);
+		node.deleteProp(NodeProp.IMG_HEIGHT);
+		node.deleteProp(NodeProp.BIN_MIME);
+		node.deleteProp(NodeProp.BIN_VER);
+		node.deleteProp(NodeProp.BIN_FILENAME);
+		node.deleteProp(NodeProp.BIN_SIZE);
 	}
 
 	/*
@@ -285,7 +285,7 @@ public class AttachmentService {
 			}
 			SubNode node = api.getNode(session, nodeId);
 
-			String mimeTypeProp = node.getStringProp(JcrProp.BIN_MIME);
+			String mimeTypeProp = node.getStringProp(NodeProp.BIN_MIME);
 			if (mimeTypeProp == null) {
 				throw ExUtil.newEx("unable to find mimeType property");
 			}
@@ -300,13 +300,13 @@ public class AttachmentService {
 			// Binary binary = dataProp.getBinary();
 			// log.debug("Retrieving binary bytes: " + binary.getSize());
 
-			String fileName = node.getStringProp(JcrProp.BIN_FILENAME);
+			String fileName = node.getStringProp(NodeProp.BIN_FILENAME);
 			if (fileName == null) {
 				fileName = "filename";
 			}
 
 			InputStream inStream = api.getStream(session, node, null);
-			long size = node.getIntProp(JcrProp.BIN_SIZE);
+			long size = node.getIntProp(NodeProp.BIN_SIZE);
 
 			return ResponseEntity.ok().contentLength(size)//
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")//

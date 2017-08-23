@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.MongoPrincipal;
@@ -123,7 +123,7 @@ public class AccessControlUtil {
 				//should be able to deal with that (i think). depends on how much ownership info we need to show user.
 				//ownerSet.add(p.getUserNodeId()); 
 				SubNode userNode = api.getNode(session, p.getUserNodeId());
-				String userName = userNode.getStringProp(JcrProp.USER);
+				String userName = userNode.getStringProp(NodeProp.USER);
 				ownerSet.add(userName);
 			}
 

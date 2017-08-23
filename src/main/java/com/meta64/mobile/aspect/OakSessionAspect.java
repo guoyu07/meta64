@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrPrincipal;
+import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.model.UserPreferences;
@@ -22,7 +22,7 @@ import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.LoginResponse;
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
@@ -53,9 +53,6 @@ public class OakSessionAspect {
 
 	@Autowired
 	private MongoApi api;
-
-	// @Autowired
-	// private OakRepository oak;
 
 	@Autowired
 	private AppProp appProp;
@@ -97,8 +94,8 @@ public class OakSessionAspect {
 			 */
 			ret = ThreadLocals.getResponse();
 
-			if (ret instanceof OakResponseBase) {
-				OakResponseBase orb = (OakResponseBase) ret;
+			if (ret instanceof ResponseBase) {
+				ResponseBase orb = (ResponseBase) ret;
 				if (orb != null) {
 					orb.setSuccess(false);
 
@@ -110,13 +107,7 @@ public class OakSessionAspect {
 			}
 		}
 		finally {
-//			if (session != null) {
-//				session.logout();
-//				session = null;
-//			}
-
 			/* cleanup this thread, servers reuse threads */
-//			ThreadLocals.setJcrSession(null);
 			ThreadLocals.setMongoSession(null);
 			ThreadLocals.setResponse(null);
 
@@ -203,8 +194,8 @@ public class OakSessionAspect {
 	/* Creates a logged in session for any method call for this join point */
 	private MongoSession loginFromJoinPoint_mongo(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) {
 		Object[] args = joinPoint.getArgs();
-		String userName = JcrPrincipal.ANONYMOUS;
-		String password = JcrPrincipal.ANONYMOUS;
+		String userName = NodePrincipal.ANONYMOUS;
+		String password = NodePrincipal.ANONYMOUS;
 
 		Object req = (args != null && args.length > 0) ? args[0] : null;
 
@@ -245,10 +236,10 @@ public class OakSessionAspect {
 			password = sessionContext.getPassword();
 
 			if (userName == null) {
-				userName = JcrPrincipal.ANONYMOUS;
+				userName = NodePrincipal.ANONYMOUS;
 			}
 			if (password == null) {
-				password = JcrPrincipal.ANONYMOUS;
+				password = NodePrincipal.ANONYMOUS;
 			}
 		}
 

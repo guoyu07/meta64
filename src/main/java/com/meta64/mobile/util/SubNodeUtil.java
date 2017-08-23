@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.mongo.CreateNodeLocation;
 import com.meta64.mobile.mongo.MongoApi;
@@ -25,8 +25,8 @@ import com.meta64.mobile.mongo.model.SubNodeTypes;
  * scope bean and non-static methods.
  */
 @Component
-public class JcrUtil {
-	private static final Logger log = LoggerFactory.getLogger(JcrUtil.class);
+public class SubNodeUtil {
+	private static final Logger log = LoggerFactory.getLogger(SubNodeUtil.class);
 
 	@Autowired
 	private AppProp appProp;
@@ -41,19 +41,19 @@ public class JcrUtil {
 	private static HashSet<String> nonSavableProperties = new HashSet<String>();
 
 	static {
-		nonSavableProperties.add(JcrProp.UUID);
-		nonSavableProperties.add(JcrProp.PRIMARY_TYPE);
+		nonSavableProperties.add(NodeProp.UUID);
+		nonSavableProperties.add(NodeProp.PRIMARY_TYPE);
 
-		nonSavableProperties.add(JcrProp.COMMENT_BY);
-		nonSavableProperties.add(JcrProp.PUBLIC_APPEND);
+		nonSavableProperties.add(NodeProp.COMMENT_BY);
+		nonSavableProperties.add(NodeProp.PUBLIC_APPEND);
 
-		nonSavableProperties.add(JcrProp.CREATED);
-		nonSavableProperties.add(JcrProp.LAST_MODIFIED);
+		nonSavableProperties.add(NodeProp.CREATED);
+		nonSavableProperties.add(NodeProp.LAST_MODIFIED);
 
-		nonSavableProperties.add(JcrProp.BIN_VER);
-		nonSavableProperties.add(JcrProp.BIN_MIME);
-		nonSavableProperties.add(JcrProp.IMG_HEIGHT);
-		nonSavableProperties.add(JcrProp.IMG_WIDTH);
+		nonSavableProperties.add(NodeProp.BIN_VER);
+		nonSavableProperties.add(NodeProp.BIN_MIME);
+		nonSavableProperties.add(NodeProp.IMG_HEIGHT);
+		nonSavableProperties.add(NodeProp.IMG_WIDTH);
 	}
 
 	//
@@ -529,14 +529,14 @@ public class JcrUtil {
 				}
 				nodesCreated = true;
 
-				parent.setProp(JcrProp.CONTENT, "");
+				parent.setProp(NodeProp.CONTENT, "");
 				api.save(session, parent);
 			}
 			parentPath += nameToken + "/";
 		}
 
 		if (defaultContent != null) {
-			parent.setProp(JcrProp.CONTENT, defaultContent);
+			parent.setProp(NodeProp.CONTENT, defaultContent);
 		}
 
 		if (saveImmediate && nodesCreated) {

@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class GetNodePrivilegesRequest extends OakRequestBase {
+public class GetNodePrivilegesRequest extends RequestBase {
 	private String nodeId;
 	private boolean includeAcl;
 	private boolean includeOwners;

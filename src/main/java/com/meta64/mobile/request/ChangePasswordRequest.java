@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class ChangePasswordRequest extends OakRequestBase {
+public class ChangePasswordRequest extends RequestBase {
 	private String newPassword;
 
 	/* passCode is only used during a Password Reset (not used during normal Change Password) */

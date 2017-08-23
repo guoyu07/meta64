@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class SavePropertyRequest extends OakRequestBase {
+public class SavePropertyRequest extends RequestBase {
 	private String nodeId;
 	private String propertyName;
 	private String propertyValue;

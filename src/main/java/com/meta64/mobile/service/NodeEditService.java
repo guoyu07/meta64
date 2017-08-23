@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.JcrName;
-import com.meta64.mobile.config.JcrProp;
+import com.meta64.mobile.config.NodeName;
+import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.NodeInfo;
@@ -31,7 +31,7 @@ import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.util.Convert;
-import com.meta64.mobile.util.JcrUtil;
+import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -78,7 +78,7 @@ public class NodeEditService {
 		 * if we are moving nodes around on the root, the root belongs to admin and needs special
 		 * access (adminRunner)
 		 */
-		if (parentPath.equals("/" + JcrName.USER + "/" + sessionContext.getUserName() + "/")) {
+		if (parentPath.equals("/" + NodeName.USER + "/" + sessionContext.getUserName() + "/")) {
 			createUnderRoot = true;
 		}
 
@@ -118,7 +118,7 @@ public class NodeEditService {
 		// }
 		// else {
 		newNode = api.createNode(session, node, null, SubNodeTypes.UNSTRUCTURED, 0L, createLoc);
-		newNode.setProp(JcrProp.CONTENT, "");
+		newNode.setProp(NodeProp.CONTENT, "");
 		// }
 
 		// if (publicAppend) {
@@ -157,7 +157,7 @@ public class NodeEditService {
 		// }
 		// else {
 		newNode = api.createNode(session, parentNode, null, SubNodeTypes.UNSTRUCTURED, req.getTargetOrdinal(), CreateNodeLocation.ORDINAL);
-		newNode.setProp(JcrProp.CONTENT, "");
+		newNode.setProp(NodeProp.CONTENT, "");
 		// }
 
 		// if (!StringUtils.isEmpty(req.getTargetName())) {
@@ -239,11 +239,11 @@ public class NodeEditService {
 				 * shouldn't be trying to save stuff that is illegal to save, but we have to assume
 				 * the worst behavior from client code, for security and robustness.
 				 */
-				if (JcrUtil.isSavableProperty(property.getName())) {
+				if (SubNodeUtil.isSavableProperty(property.getName())) {
 					// log.debug("Property to save: " + property.getName() + "="
 					// +
 					// property.getValue());
-					JcrUtil.savePropertyToNode(node, property);
+					SubNodeUtil.savePropertyToNode(node, property);
 				}
 				else {
 					/**
@@ -256,7 +256,7 @@ public class NodeEditService {
 			}
 
 			Calendar lastModified = Calendar.getInstance();
-			node.setProp(JcrProp.LAST_MODIFIED, lastModified.getTime());
+			node.setProp(NodeProp.LAST_MODIFIED, lastModified.getTime());
 
 			if (req.isSendNotification()) {
 				// if (commentBy != null) {

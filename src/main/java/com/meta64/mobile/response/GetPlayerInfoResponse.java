@@ -1,8 +1,8 @@
 package com.meta64.mobile.response;
 
-import com.meta64.mobile.response.base.OakResponseBase;
+import com.meta64.mobile.response.base.ResponseBase;
 
-public class GetPlayerInfoResponse extends OakResponseBase {
+public class GetPlayerInfoResponse extends ResponseBase {
 	private Integer timeOffset;
 
 	public Integer getTimeOffset() {

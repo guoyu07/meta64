@@ -1,8 +1,8 @@
 package com.meta64.mobile.request;
 
-import com.meta64.mobile.request.base.OakRequestBase;
+import com.meta64.mobile.request.base.RequestBase;
 
-public class AnonPageLoadRequest extends OakRequestBase {
+public class AnonPageLoadRequest extends RequestBase {
 	private boolean ignoreUrl;
 
 	public boolean isIgnoreUrl() {

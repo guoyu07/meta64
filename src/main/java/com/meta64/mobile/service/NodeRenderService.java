@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.JcrName;
+import com.meta64.mobile.config.NodeName;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.NodeInfo;
 import com.meta64.mobile.model.UserPreferences;
@@ -304,7 +304,7 @@ public class NodeRenderService {
 		 * shortening the path just for user convenience.
 		 */
 		if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
-			targetId = "/" + JcrName.USER + targetId;
+			targetId = "/" + NodeName.USER + targetId;
 			node = api.getNode(session, targetId);
 		}
 

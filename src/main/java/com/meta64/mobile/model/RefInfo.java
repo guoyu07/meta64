@@ -3,8 +3,9 @@ package com.meta64.mobile.model;
 /**
  * Models a Referenceable node.
  * 
- * NOTE: It was a coincidence that the JCR interpretation of this is the SAME as the Mongo one: That is, we have an ID
- * that is distinct from the path in both situations, so this class works for both.
+ * NOTE: It was a coincidence that the JCR interpretation of this is the SAME as the Mongo one: That
+ * is, we have an ID that is distinct from the path in both situations, so this class works for
+ * both.
  *
  */
 public class RefInfo {

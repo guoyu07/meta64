@@ -1,7 +1,6 @@
 package com.meta64.mobile.util;
 
 import java.util.HashSet;
-
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -83,26 +82,26 @@ public class SubNodeUtil {
 	// return null;
 	// }
 	// }
-	
-//	public ImageSize getImageSizeFromBinary(Binary binary) {
-//		try {
-//			InputStream is = null;
-//			try {
-//				is = binary.getStream();
-//				BufferedImage image = ImageIO.read(is);
-//				ImageSize ret = new ImageSize();
-//				ret.width = image.getWidth();
-//				ret.height = image.getHeight();
-//				return ret;
-//			}
-//			finally {
-//				StreamUtil.close(is);
-//			}
-//		}
-//		catch (Exception ex) {
-//			throw ExUtil.newEx(ex);
-//		}
-//	}
+
+	// public ImageSize getImageSizeFromBinary(Binary binary) {
+	// try {
+	// InputStream is = null;
+	// try {
+	// is = binary.getStream();
+	// BufferedImage image = ImageIO.read(is);
+	// ImageSize ret = new ImageSize();
+	// ret.width = image.getWidth();
+	// ret.height = image.getHeight();
+	// return ret;
+	// }
+	// finally {
+	// StreamUtil.close(is);
+	// }
+	// }
+	// catch (Exception ex) {
+	// throw ExUtil.newEx(ex);
+	// }
+	// }
 
 	//
 	// public static boolean isPublicAppend(Node node) {

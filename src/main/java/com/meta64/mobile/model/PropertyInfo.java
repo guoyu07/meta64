@@ -6,10 +6,10 @@ import java.util.List;
  * Holds the value of a single JCR property (i.e. a 'value' on a JCR Node)
  */
 public class PropertyInfo {
-	//todo-0: remove the ugly hack of having to support INT and STRINGs here.
-	private int type; //jcr-specific
-	private String typeStr; //mongo-specific
-	
+	// todo-0: remove the ugly hack of having to support INT and STRINGs here.
+	private int type; // jcr-specific
+	private String typeStr; // mongo-specific
+
 	private String name;
 
 	/*
@@ -34,7 +34,6 @@ public class PropertyInfo {
 		this.abbreviated = abbreviated;
 	}
 
-	
 	public PropertyInfo(int type, String name, String value, boolean abbreviated, List<String> values) {
 		this.type = type;
 		this.name = name;

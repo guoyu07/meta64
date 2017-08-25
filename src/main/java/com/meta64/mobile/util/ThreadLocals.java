@@ -36,7 +36,7 @@ public class ThreadLocals {
 	public static HttpServletResponse getServletResponse() {
 		return servletResponse.get();
 	}
-	
+
 	public static void setMongoSession(MongoSession session) {
 		mongoSession.set(session);
 	}

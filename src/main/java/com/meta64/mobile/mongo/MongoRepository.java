@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.test.MongoTest;
 import com.meta64.mobile.user.UserManagerUtil;
@@ -100,14 +99,14 @@ public class MongoRepository {
 				mongoTest.wipeDb(adminSession);
 			}
 
-			//todo-0: need to make the drop-and-rebuild indexes an Admin Feature available on gui.
-			//api.dropAllIndexes(adminSession);
+			// todo-0: need to make the drop-and-rebuild indexes an Admin Feature available on gui.
+			// api.dropAllIndexes(adminSession);
 			api.createUniqueIndex(adminSession, SubNode.class, SubNode.FIELD_PATH);
 			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_ORDINAL);
 			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_MODIFY_TIME, Direction.DESC);
 			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_CREATE_TIME, Direction.DESC);
 			api.createTextIndex(adminSession, SubNode.class);
-			
+
 			api.createAdminUser(adminSession);
 			repoUtil.initRequiredNodes(adminSession);
 			repoUtil.createTestAccounts();

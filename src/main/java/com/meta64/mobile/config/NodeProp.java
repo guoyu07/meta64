@@ -62,6 +62,7 @@ public class NodeProp {
 	public static final String USER_PREF_IMPORT_ALLOWED = "sn:importAllowed";
 	public static final String USER_PREF_EXPORT_ALLOWED = "sn:exportAllowed";
 	public static final String USER_PREF_PASSWORD_RESET_AUTHCODE = "sn:pwdResetAuth";
+	public static final String SIGNUP_PENDING = "sn:signupPending";
 
 	/*
 	 * Goes on node: Paths defined by: JcrUtil.getSystemOutbox(session) + GUID (guid is unique per
@@ -71,10 +72,11 @@ public class NodeProp {
 	public static final String EMAIL_RECIP = "sn:recip";
 	public static final String EMAIL_SUBJECT = "sn:subject";
 
-	//WARNING: Only the User Account Root nodes have this property of the actual user name. All other nodes reference
-	//their OWNER as an OwnerId that points to these nodes.
+	// WARNING: Only the User Account Root nodes have this property of the actual user name. All
+	// other nodes reference
+	// their OWNER as an OwnerId that points to these nodes.
 	public static final String USER = "sn:user";
-	
+
 	public static final String CREATED = "sn:created";
 	public static final String CONTENT = "sn:content";
 	public static final String UUID = "sn:uuid";

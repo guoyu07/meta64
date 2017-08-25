@@ -38,9 +38,9 @@ public class MongoAppConfig extends AbstractMongoConfiguration {
 
 	@Bean
 	public MongoEventListener userCascadingMongoEventListener() {
-	    return new MongoEventListener();
+		return new MongoEventListener();
 	}
-	
+
 	private MongoClient getMongoClient() {
 		// Mongo Client
 		if (mongoClient == null) {
@@ -83,9 +83,9 @@ public class MongoAppConfig extends AbstractMongoConfiguration {
 	protected String getMappingBasePackage() {
 		return "com.meta64.mobile.mongo";
 	}
-	
+
 	@Bean
 	public GridFsTemplate gridFsTemplate() throws Exception {
-	    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
+		return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
 	}
 }

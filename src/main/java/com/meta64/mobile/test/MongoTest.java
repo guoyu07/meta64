@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -116,7 +115,7 @@ public class MongoTest {
 		log.debug("updated first node.");
 
 		String stuffGuyName = "stuffguy";
-		SubNode stuffOwnerNode = api.createUser(adminSession, stuffGuyName, "", "passy");
+		SubNode stuffOwnerNode = api.createUser(adminSession, stuffGuyName, "", "passy", true);
 		MongoSession stuffSession = MongoSession.createFromNode(stuffOwnerNode);
 		expectedCount++;
 
@@ -231,7 +230,7 @@ public class MongoTest {
 		log.debug("child count query successful.");
 
 		/* check that we can get all the children */
-		Iterable<SubNode> childrenIter = api.getChildren(session, node);
+		Iterable<SubNode> childrenIter = api.getChildren(session, node, true, null);
 		count = api.dump("Dumping ordered children", childrenIter);
 
 		// ----------Read all ordinals. We don't assume they are all perfectly numbered here. (might
@@ -281,7 +280,7 @@ public class MongoTest {
 			api.save(session, node);
 			api.writeStream(session, node, new FileInputStream("/home/clay/test-image.png"), null, "image/png", null);
 			api.save(session, node);
-			
+
 			log.debug("inserted root for binary testing.", null, "image/png", null);
 
 			InputStream inStream = api.getStream(session, node, null);

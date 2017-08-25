@@ -38,8 +38,8 @@ public class NodeInfo {
 	public NodeInfo() {
 	}
 
-	public NodeInfo(String id, String path, String name, String owner, Long ordinal, Date lastModified, List<PropertyInfo> properties, boolean hasChildren, boolean hasBinary,
-			boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
+	public NodeInfo(String id, String path, String name, String owner, Long ordinal, Date lastModified, List<PropertyInfo> properties, boolean hasChildren,
+			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
 		this.id = id;
 		this.path = path;
 		this.name = name;

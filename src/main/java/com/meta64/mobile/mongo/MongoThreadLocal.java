@@ -50,12 +50,13 @@ public class MongoThreadLocal {
 	}
 
 	public static void autoCleanup(MongoSession session) {
-		if (getDirtyNodes()==null || getDirtyNodes().values()==null) return;
-		
+		if (getDirtyNodes() == null || getDirtyNodes().values() == null) return;
+
 		List<SubNode> nodesToClean = null;
-		
-		/* to avoid ConcurrentModification we scan and build up all the nodes that need to be cleaned out 
-		 * and hold them in nodesToClean
+
+		/*
+		 * to avoid ConcurrentModification we scan and build up all the nodes that need to be
+		 * cleaned out and hold them in nodesToClean
 		 */
 		for (SubNode node : MongoThreadLocal.getDirtyNodes().values()) {
 			if (node.isWriting() || node.isDeleted()) {

@@ -97,13 +97,13 @@ public class PreProcFilter implements Filter {
 		String uri = request.getRequestURI();
 		log.debug("PreProcFilter: uri: " + uri);
 
-//		String ver = request.getParameter("ver");
-//		String warning = "";
-//		if (ver == null) {
-//			ver = "";
-//			warning = "WARNING: NO VERSION!!!";
-//		}
-//		log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
+		// String ver = request.getParameter("ver");
+		// String warning = "";
+		// if (ver == null) {
+		// ver = "";
+		// warning = "WARNING: NO VERSION!!!";
+		// }
+		// log.debug(warning + " FILTER: " + uri + "[ver=" + ver + "]");
 
 		transform(req, res, chain);
 	}

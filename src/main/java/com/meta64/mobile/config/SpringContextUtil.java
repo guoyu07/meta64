@@ -19,7 +19,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 	private static final Logger log = LoggerFactory.getLogger(SpringContextUtil.class);
 
 	private static ApplicationContext context;
-	
+
 	@Autowired
 	private MongoRepository mongoRepo;
 

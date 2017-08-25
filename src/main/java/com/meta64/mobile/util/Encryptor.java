@@ -25,7 +25,8 @@ import com.meta64.mobile.config.AppProp;
  * For password checking, it would be a bit better to use a one-way hash like this:
  * https://stackoverflow.com/questions/22580853/reliable-implementation-of-pbkdf2-hmac-sha256-for-java
  * 
- * Two examples from that page of possible hash implementations (neither of which i have yet tested):
+ * Two examples from that page of possible hash implementations (neither of which i have yet
+ * tested):
  * 
  * Snippet #1 (bouncy castle)
  * 

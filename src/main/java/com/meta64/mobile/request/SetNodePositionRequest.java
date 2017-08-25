@@ -3,10 +3,10 @@ package com.meta64.mobile.request;
 import com.meta64.mobile.request.base.RequestBase;
 
 public class SetNodePositionRequest extends RequestBase {
-	//node to be moved (id or path)
+	// node to be moved (id or path)
 	private String nodeId;
-	
-	//targetName can be: up, down, top, bottom
+
+	// targetName can be: up, down, top, bottom
 	private String targetName;
 
 	public String getNodeId() {

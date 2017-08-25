@@ -2,6 +2,8 @@ package com.meta64.mobile.mongo;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,7 +89,7 @@ public class MongoApi {
 
 	public void save(MongoSession session, SubNode node, boolean updateThreadCache) {
 		authWrite(session, node);
-		//log.debug("MongoApi.save: DATA: " + XString.prettyPrint(node));
+		// log.debug("MongoApi.save: DATA: " + XString.prettyPrint(node));
 		node.setWriting(true);
 		ops.save(node);
 
@@ -281,7 +283,7 @@ public class MongoApi {
 	public void insertOrdinal(MongoSession session, SubNode node, long ordinal) {
 		long maxOrdinal = 0;
 
-		for (SubNode child : getChildren(session, node)) {
+		for (SubNode child : getChildren(session, node, true, null)) {
 			Long childOrdinal = child.getOrdinal();
 			long childOrdinalInt = childOrdinal == null ? 0L : childOrdinal.longValue();
 
@@ -503,18 +505,21 @@ public class MongoApi {
 		return Convert.getImageSize(node);
 	}
 
-	/**
-	 * Gets children, that are by default ordered
-	 */
-	public Iterable<SubNode> getChildren(MongoSession session, SubNode node) {
-		return getChildren(session, node, true);
+	public List<SubNode> getChildrenAsList(MongoSession session, SubNode node, boolean ordered, Integer limit) {
+		Iterable<SubNode> iter = getChildren(session, node, ordered, limit);
+		List<SubNode> list = new LinkedList<SubNode>();
+		iter.forEach(list::add);
+		return list;
 	}
 
-	public Iterable<SubNode> getChildren(MongoSession session, SubNode node, boolean ordered) {
+	public Iterable<SubNode> getChildren(MongoSession session, SubNode node, boolean ordered, Integer limit) {
 		authRead(session, node);
 		log.debug("MongoApi.getChildren: ordered=" + ordered);
 
 		Query query = new Query();
+		if (limit != null) {
+			query.limit(limit.intValue());
+		}
 		/*
 		 * This regex finds all that START WITH "path/" and then end with some other string that
 		 * does NOT contain "/", so that we know it's not at a deeper level of the tree, but is
@@ -673,7 +678,7 @@ public class MongoApi {
 		}
 
 		if (!StringUtils.isEmpty(sortField)) {
-			query.with(new Sort(Sort.Direction.DESC, sortField)); 
+			query.with(new Sort(Sort.Direction.DESC, sortField));
 		}
 
 		return ops.find(query, SubNode.class);
@@ -748,14 +753,14 @@ public class MongoApi {
 		DBObject metaData = new BasicDBObject();
 		metaData.put("nodeId", node.getId());
 		log.debug("Writing steam to GridFS");
-		
+
 		/* Delete any existing grid data stored under this node, before waving new attachment */
 		deleteBinary(session, node, null);
 		String id = grid.store(stream, fileName, mimeType, metaData).getId().toString();
 
 		/* Now save the node also since the property on it needs to point to GridFS id */
 		node.setProp(propName, new SubNodeProperty(id));
-		//save(session, node);
+		// save(session, node);
 		log.debug("Wrote GridFS file id: " + id);
 	}
 
@@ -767,8 +772,8 @@ public class MongoApi {
 		String id = node.getStringProp(propName);
 		if (id == null) {
 			return;
-			//not a problem. allow a delete when there's nothing to delete.
-			//throw new RuntimeException("No property found as " + propName);
+			// not a problem. allow a delete when there's nothing to delete.
+			// throw new RuntimeException("No property found as " + propName);
 		}
 		grid.delete(new Query(Criteria.where("_id").is(id)));
 	}
@@ -805,7 +810,7 @@ public class MongoApi {
 	 * 
 	 * todo-0: not yet checking if the user exists. Need to throw error if user exists.
 	 */
-	public SubNode createUser(MongoSession session, String user, String email, String password) {
+	public SubNode createUser(MongoSession session, String user, String email, String password, boolean automated) {
 		requireAdmin(session);
 		SubNode userNode = createNode(session, "/" + NodeName.USER + "/?", null);
 		userNode.setProp(NodeProp.USER, user);
@@ -815,9 +820,11 @@ public class MongoApi {
 		userNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
 		userNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
 
+		if (!automated) {
+			userNode.setProp(NodeProp.SIGNUP_PENDING, true);
+		}
+
 		save(session, userNode);
-		// saveSession(session); <------- todo-0: this kind of call would be NICE, but is tricky
-		// with NO ID yet to key on.
 
 		/*
 		 * The user root nodes are the owners of themselves. todo-0: fix the uglyness of having to
@@ -868,7 +875,7 @@ public class MongoApi {
 		SubNode adminNode = getUserNodeByUserName(getAdminSession(), adminUser);
 		if (adminNode == null) {
 			jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
-			adminNode = createUser(session, adminUser, null, adminPwd);
+			adminNode = createUser(session, adminUser, null, adminPwd, true);
 		}
 	}
 

@@ -18,8 +18,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.meta64.mobile.config.NodeProp;
-import com.meta64.mobile.mongo.MongoEventListener;
 import com.meta64.mobile.mongo.MongoThreadLocal;
 import com.meta64.mobile.util.XString;
 
@@ -57,7 +55,7 @@ public class SubNode {
 	public static final String FIELD_ID = "_id";
 
 	private static final Logger log = LoggerFactory.getLogger(SubNode.class);
-	
+
 	@Id
 	@Field(FIELD_ID)
 	private ObjectId id;
@@ -97,7 +95,7 @@ public class SubNode {
 	private boolean disableParentCheck;
 	private boolean writing;
 	private boolean deleted;
-	//private boolean adminOwned;
+	// private boolean adminOwned;
 
 	@PersistenceConstructor
 	public SubNode() {
@@ -270,7 +268,6 @@ public class SubNode {
 		properties().remove(key);
 	}
 
-	
 	@JsonIgnore
 	public String getStringProp(String key) {
 		SubNodeProperty v = properties().get(key);
@@ -360,43 +357,44 @@ public class SubNode {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	
-//	@Transient
-//	@JsonIgnore
-//	public boolean isAdminOwned() {
-//		return adminOwned;
-//	}
-//
-//	@Transient
-//	@JsonIgnore
-//	public void setAdminOwned(boolean adminOwned) {
-//		this.adminOwned = adminOwned;
-//	}
 
-	//I'm getting "ConcurrentModificationException" whenever I enable any kind of implementation of hashCode+equals, 
-	//and I haven't figured out why yet.
-//	/*
-//	 * todo-0: I have not independently tested these hashCode+equals functions but found them on
-//	 * StackOverflow with 1293 upvotes	
-//	 */
-//	@Override
-//	public int hashCode() {
-//		if (id == null) return 0;
-//		
-//		int hashCode = id.hashCode();
-//		log.debug("hashCode="+hashCode);
-//		return hashCode;
-//	}
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof SubNode)) return false;
-//		if (obj == this) return true;
-//		if (((SubNode)obj).getId() == null && id == null) return true;
-//		if (id==null && ((SubNode)obj).getId()!=null) return false;
-//		if (((SubNode)obj).getId()==null && id!=null) return false;
-//		boolean val = ((SubNode)obj).getId().equals(id);
-//		log.debug("hashEquals="+val);
-//		return val;
-//	}
+	// @Transient
+	// @JsonIgnore
+	// public boolean isAdminOwned() {
+	// return adminOwned;
+	// }
+	//
+	// @Transient
+	// @JsonIgnore
+	// public void setAdminOwned(boolean adminOwned) {
+	// this.adminOwned = adminOwned;
+	// }
+
+	// I'm getting "ConcurrentModificationException" whenever I enable any kind of implementation of
+	// hashCode+equals,
+	// and I haven't figured out why yet.
+	// /*
+	// * todo-0: I have not independently tested these hashCode+equals functions but found them on
+	// * StackOverflow with 1293 upvotes
+	// */
+	// @Override
+	// public int hashCode() {
+	// if (id == null) return 0;
+	//
+	// int hashCode = id.hashCode();
+	// log.debug("hashCode="+hashCode);
+	// return hashCode;
+	// }
+	//
+	// @Override
+	// public boolean equals(Object obj) {
+	// if (!(obj instanceof SubNode)) return false;
+	// if (obj == this) return true;
+	// if (((SubNode)obj).getId() == null && id == null) return true;
+	// if (id==null && ((SubNode)obj).getId()!=null) return false;
+	// if (((SubNode)obj).getId()==null && id!=null) return false;
+	// boolean val = ((SubNode)obj).getId().equals(id);
+	// log.debug("hashEquals="+val);
+	// return val;
+	// }
 }

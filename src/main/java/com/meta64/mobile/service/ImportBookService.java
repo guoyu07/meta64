@@ -14,7 +14,6 @@ import com.meta64.mobile.request.InsertBookRequest;
 import com.meta64.mobile.response.InsertBookResponse;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ImportWarAndPeace;
-import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 import com.meta64.mobile.util.XString;
@@ -30,7 +29,7 @@ public class ImportBookService {
 
 	@Autowired
 	private MongoApi api;
-	
+
 	@Autowired
 	private SessionContext sessionContext;
 
@@ -44,7 +43,7 @@ public class ImportBookService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-		log.debug("Insert Root: "+XString.prettyPrint(node));
+		log.debug("Insert Root: " + XString.prettyPrint(node));
 
 		/*
 		 * for now we don't check book name. Only one book exists: War and Peace

@@ -40,7 +40,7 @@ public class ExUtil {
 			logger.debug("cause:", e);
 		}
 	}
-	
+
 	public static void error(Logger logger, String msg, Throwable e) {
 		logger.error(msg, e);
 

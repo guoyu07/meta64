@@ -17,54 +17,54 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JsonToJcrService {
-//	private static final Logger log = LoggerFactory.getLogger(JsonToJcrService.class);
-//
-//	private static final ObjectMapper jsonMapper = new ObjectMapper();
-//
-//	public Node importJsonFile(String json, Node parentNode) {
-//		try {
-//			HashMap map = jsonMapper.readValue(json, HashMap.class);
-//			// JcrTypedObjBase obj = jsonMapper.convertValue(map, JcrTypedObjBase.class);
-//			return loadJcrNodeFromMap(map, parentNode);
-//		}
-//		catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-//
-//	/* There will be a better map-lookup implementation for this eventually */
-//	public Node loadJcrNodeFromMap(HashMap map, Node parentNode) {
-//		String jcrType = (String) map.get("jcrType");
-//		log.debug("JcrType detected: " + jcrType);
-//
-//		Node newNode = null;
-//		if ("meta64:rssfeed".equalsIgnoreCase(jcrType)) {
-//			try {
-//				newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:rssfeed");
-//			}
-//			catch (Exception ex) {
-//				throw ExUtil.newEx(ex);
-//			}
-//			loadJcrRssFeedNode(map, newNode);
-//		}
-//		else {
-//			throw ExUtil.newEx("no JCROM class known for type: " + jcrType);
-//		}
-//		return newNode;
-//	}
-//
-//	public void loadJcrRssFeedNode(HashMap map, Node node) {
-//		setMapPropOnNode(map, node, "meta64:rssFeedSrc");
-//	}
-//
-//	public void setMapPropOnNode(HashMap map, Node node, String propName) {
-//		try {
-//			node.setProperty(propName, (String) map.get(propName));
-//		}
-//		catch (Exception ex) {
-//			throw ExUtil.newEx(ex);
-//		}
-//	}
+	// private static final Logger log = LoggerFactory.getLogger(JsonToJcrService.class);
+	//
+	// private static final ObjectMapper jsonMapper = new ObjectMapper();
+	//
+	// public Node importJsonFile(String json, Node parentNode) {
+	// try {
+	// HashMap map = jsonMapper.readValue(json, HashMap.class);
+	// // JcrTypedObjBase obj = jsonMapper.convertValue(map, JcrTypedObjBase.class);
+	// return loadJcrNodeFromMap(map, parentNode);
+	// }
+	// catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
+	//
+	// /* There will be a better map-lookup implementation for this eventually */
+	// public Node loadJcrNodeFromMap(HashMap map, Node parentNode) {
+	// String jcrType = (String) map.get("jcrType");
+	// log.debug("JcrType detected: " + jcrType);
+	//
+	// Node newNode = null;
+	// if ("meta64:rssfeed".equalsIgnoreCase(jcrType)) {
+	// try {
+	// newNode = parentNode.addNode(JcrUtil.getGUID(), "meta64:rssfeed");
+	// }
+	// catch (Exception ex) {
+	// throw ExUtil.newEx(ex);
+	// }
+	// loadJcrRssFeedNode(map, newNode);
+	// }
+	// else {
+	// throw ExUtil.newEx("no JCROM class known for type: " + jcrType);
+	// }
+	// return newNode;
+	// }
+	//
+	// public void loadJcrRssFeedNode(HashMap map, Node node) {
+	// setMapPropOnNode(map, node, "meta64:rssFeedSrc");
+	// }
+	//
+	// public void setMapPropOnNode(HashMap map, Node node, String propName) {
+	// try {
+	// node.setProperty(propName, (String) map.get(propName));
+	// }
+	// catch (Exception ex) {
+	// throw ExUtil.newEx(ex);
+	// }
+	// }
 }

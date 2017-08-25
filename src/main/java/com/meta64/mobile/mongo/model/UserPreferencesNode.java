@@ -6,7 +6,7 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("usrPref")
 public class UserPreferencesNode extends SubNode {
 	private String userPrefString;
-	
+
 	public UserPreferencesNode(ObjectId owner, String path, String type) {
 		super(owner, path, type, null);
 	}

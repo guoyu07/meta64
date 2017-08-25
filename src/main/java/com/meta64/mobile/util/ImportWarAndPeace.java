@@ -148,7 +148,7 @@ public class ImportWarAndPeace {
 
 		SubNode paraNode = api.createNode(session, curChapter, SubNodeTypes.UNSTRUCTURED, 0L, CreateNodeLocation.LAST);
 		paraNode.setProp(NodeProp.CONTENT, "VS" + globalVerse + ". " + line);
-		api.save(session,  paraNode);
+		api.save(session, paraNode);
 		paragraph.setLength(0);
 		return true;
 	}

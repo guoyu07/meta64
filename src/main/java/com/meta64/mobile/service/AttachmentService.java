@@ -86,7 +86,7 @@ public class AttachmentService {
 			if (node == null) {
 				throw ExUtil.newEx("Node not found.");
 			}
-			boolean addAsChildren = false; //node.getIntProp(JcrProp.BIN_VER) > 0;
+			boolean addAsChildren = false; // node.getIntProp(JcrProp.BIN_VER) > 0;
 			int maxFileSize = 20 * 1024 * 1024;
 
 			for (MultipartFile uploadFile : uploadFiles) {
@@ -199,7 +199,8 @@ public class AttachmentService {
 		// stream.close();
 	}
 
-	public void saveBinaryStreamToNode(MongoSession session, LimitedInputStreamEx inputStream, String mimeType, String fileName, long size, int width, int height, SubNode node) {
+	public void saveBinaryStreamToNode(MongoSession session, LimitedInputStreamEx inputStream, String mimeType, String fileName, long size, int width, int height,
+			SubNode node) {
 
 		long version = node.getIntProp(NodeProp.BIN_VER);
 		if (version == 0L) {
@@ -238,11 +239,11 @@ public class AttachmentService {
 		node.setProp(NodeProp.BIN_VER, version + 1);
 
 		api.writeStream(session, node, inputStream, null, mimeType, null);
-		
+
 		if (size <= 0) {
 			node.setProp(NodeProp.BIN_SIZE, inputStream.getCount());
 		}
-		
+
 		api.save(session, node);
 	}
 

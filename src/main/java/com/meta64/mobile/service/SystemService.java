@@ -58,10 +58,10 @@ public class SystemService {
 		long freeMem = runtime.freeMemory() / ONE_MB;
 		sb.append(String.format("Free Memory %dMB<br>", freeMem));
 		sb.append(String.format("Session Count: %d<br>", AppSessionListener.getSessionCounter()));
-		//jcr
-//		sb.append("<hr>");
-//		sb.append(rssService.getStatusText());
-//		sb.append("<hr>");
+		// jcr
+		// sb.append("<hr>");
+		// sb.append(rssService.getStatusText());
+		// sb.append("<hr>");
 		sb.append(getIpReport());
 		return sb.toString();
 	}

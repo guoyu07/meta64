@@ -206,16 +206,18 @@ public class NodeMoveService {
 		// }
 	}
 
-	/* Uses session passed unmodified 
+	/*
+	 * Uses session passed unmodified
 	 * 
-	 * todo-0: this feature is not working yet, but i'm going to implement rename node first, before continuing so that it's easier to debug this.
+	 * todo-0: this feature is not working yet, but i'm going to implement rename node first, before
+	 * continuing so that it's easier to debug this.
 	 */
 	private void moveNodesInternal(MongoSession session, MoveNodesRequest req, MoveNodesResponse res) {
 		String targetId = req.getTargetNodeId();
-		log.debug("moveNodesInternal: targetId="+targetId);
+		log.debug("moveNodesInternal: targetId=" + targetId);
 		SubNode targetNode = api.getNode(session, targetId);
 		String targetPath = targetNode.getPath();
-		log.debug("targetPath: "+targetPath);
+		log.debug("targetPath: " + targetPath);
 		Long curTargetOrdinal = targetNode.getMaxChildOrdinal() == null ? 0 : targetNode.getMaxChildOrdinal();
 
 		for (String nodeId : req.getNodeIds()) {
@@ -224,11 +226,11 @@ public class NodeMoveService {
 				SubNode node = api.getNode(session, nodeId);
 
 				changePathOfSubGraph(session, node, targetPath);
-				
+
 				node.setPath(targetPath + "/" + node.getName());
 				node.setOrdinal(curTargetOrdinal);
 				node.setDisableParentCheck(true);
-				
+
 				curTargetOrdinal++;
 			}
 			catch (Exception e) {
@@ -241,17 +243,17 @@ public class NodeMoveService {
 
 	private void changePathOfSubGraph(MongoSession session, SubNode graphRoot, String newPathPrefix) {
 		String originalPath = graphRoot.getPath();
-		log.debug("originalPath (graphRoot.path): "+originalPath);
+		log.debug("originalPath (graphRoot.path): " + originalPath);
 		int originalParentPathLen = graphRoot.getParentPath().length();
 
 		for (SubNode node : api.getSubGraph(session, graphRoot)) {
 			if (!node.getPath().startsWith(originalPath)) {
-				throw new RuntimeException("Algorighm failure: path "+node.getPath()+" should have started with "+originalPath);
+				throw new RuntimeException("Algorighm failure: path " + node.getPath() + " should have started with " + originalPath);
 			}
-			log.debug("PROCESSING MOVE: oldPath: "+node.getPath());
-			
-			String newPath = newPathPrefix + "/" + node.getPath().substring(originalParentPathLen+1);
-			log.debug("    newPath: "+newPath);
+			log.debug("PROCESSING MOVE: oldPath: " + node.getPath());
+
+			String newPath = newPathPrefix + "/" + node.getPath().substring(originalParentPathLen + 1);
+			log.debug("    newPath: " + newPath);
 			node.setPath(newPath);
 			node.setDisableParentCheck(true);
 		}

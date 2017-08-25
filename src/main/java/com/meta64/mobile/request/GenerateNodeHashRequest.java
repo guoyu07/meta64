@@ -4,7 +4,7 @@ import com.meta64.mobile.request.base.RequestBase;
 
 public class GenerateNodeHashRequest extends RequestBase {
 	private String nodeId;
-	
+
 	/* If this is true we ONLY do a verify, and do not actually write out any merkle properties */
 	private boolean verify;
 

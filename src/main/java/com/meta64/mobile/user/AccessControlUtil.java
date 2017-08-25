@@ -118,10 +118,12 @@ public class AccessControlUtil {
 		while (++sanityCheck < 100) {
 			List<MongoPrincipal> principals = getNodePrincipals(session, node);
 			for (MongoPrincipal p : principals) {
-				
-				//todo-0: this is a spot that can be optimized. We should be able to send just the userNodeId back to client, and the client
-				//should be able to deal with that (i think). depends on how much ownership info we need to show user.
-				//ownerSet.add(p.getUserNodeId()); 
+
+				// todo-0: this is a spot that can be optimized. We should be able to send just the
+				// userNodeId back to client, and the client
+				// should be able to deal with that (i think). depends on how much ownership info we
+				// need to show user.
+				// ownerSet.add(p.getUserNodeId());
 				SubNode userNode = api.getNode(session, p.getUserNodeId());
 				String userName = userNode.getStringProp(NodeProp.USER);
 				ownerSet.add(userName);

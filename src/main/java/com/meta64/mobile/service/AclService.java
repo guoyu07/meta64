@@ -7,14 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.model.AccessControlEntryInfo;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
-import com.meta64.mobile.user.AccessControlUtil;
-import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
@@ -29,7 +26,7 @@ public class AclService {
 
 	@Autowired
 	private MongoApi api;
-	
+
 	@Autowired
 	private UserManagerService userManagerService;
 
@@ -48,12 +45,13 @@ public class AclService {
 			throw ExUtil.newEx("no specific information requested for getNodePrivileges");
 		}
 
-//		if (req.isIncludeAcl()) {
-//			AccessControlEntry[] aclEntries = AccessControlUtil.getAccessControlEntries(session, node);
-//			List<AccessControlEntryInfo> aclEntriesInfo = Convert.convertToAclListInfo(aclEntries);
-//			res.setAclEntries(aclEntriesInfo);
-//			log.info("ACL Count: " + aclEntriesInfo.size());
-//		}
+		// if (req.isIncludeAcl()) {
+		// AccessControlEntry[] aclEntries = AccessControlUtil.getAccessControlEntries(session,
+		// node);
+		// List<AccessControlEntryInfo> aclEntriesInfo = Convert.convertToAclListInfo(aclEntries);
+		// res.setAclEntries(aclEntriesInfo);
+		// log.info("ACL Count: " + aclEntriesInfo.size());
+		// }
 
 		if (req.isIncludeOwners()) {
 			List<String> owners = userManagerService.getOwnerNames(node);

@@ -3,14 +3,15 @@ package com.meta64.mobile.service;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.ConstantsProvider;
-import com.meta64.mobile.config.NodeName;
 import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
@@ -252,46 +253,44 @@ public class UserManagerService {
 	// }
 	// });
 	// }
-	//
-	// /*
-	// * Processes last step of signup, which is validation of registration code. This means user
-	// has
-	// * clicked the link they were sent during the signup email verification, and they are sending
-	// in
-	// * a signupCode that will turn on their account and actually create their account.
-	// */
-	// public void processSignupCode(final String signupCode, final Model model) {
-	// log.debug("User is trying signupCode: " + signupCode);
-	// adminRunner.run(session -> {
-	// try {
-	// Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.SIGNUP, //
-	// JcrProp.CODE, signupCode);
-	//
-	// if (node != null) {
-	// String userName = JcrUtil.getRequiredStringProp(node, JcrProp.USER);
-	// String password = JcrUtil.getRequiredStringProp(node, JcrProp.PWD);
-	// password = encryptor.decrypt(password);
-	// String email = JcrUtil.getRequiredStringProp(node, JcrProp.EMAIL);
-	//
-	// initNewUser(session, userName, password, email, false);
-	//
-	// /*
-	// * allow JavaScript to detect all it needs to detect which is to display a
-	// * message to user saying the signup is complete.
-	// */
-	// model.addAttribute("signupCode", "ok");
-	// node.remove();
-	// JcrUtil.save(session);
-	// }
-	// else {
-	// throw ExUtil.newEx("Signup Code is invalid.");
-	// }
-	// }
-	// catch (Exception e) {
-	// // need to message back to user signup failed.
-	// }
-	// });
-	// }
+
+	/*
+	 * Processes last step of signup, which is validation of registration code. This means user has
+	 * clicked the link they were sent during the signup email verification, and they are sending in
+	 * a signupCode that will turn on their account and actually create their account.
+	 */
+	public void processSignupCode(final String signupCode, final Model model) {
+		log.debug("User is trying signupCode: " + signupCode);
+		adminRunner.run(session -> {
+			SubNode node = api.getNode(session, signupCode);
+
+			if (node != null) {
+				if (!node.getBooleanProp(NodeProp.SIGNUP_PENDING)) {
+					throw ExUtil.newEx("Signup was already completed.");
+				}
+
+				String userName = node.getStringProp(NodeProp.USER);
+				String password = node.getStringProp(NodeProp.PASSWORD);
+				password = encryptor.decrypt(password);
+				String email = node.getStringProp(NodeProp.EMAIL);
+
+				initNewUser(session, userName, password, email, false);
+
+				/*
+				 * allow JavaScript to detect all it needs to detect which is to display a message
+				 * to user saying the signup is complete.
+				 */
+				model.addAttribute("signupCode", "ok");
+
+				node.deleteProp(NodeProp.SIGNUP_PENDING);
+				api.save(session, node);
+			}
+			else {
+				throw ExUtil.newEx("Signup Code is invalid.");
+			}
+		});
+	}
+
 	//
 	// public void initNewUser(Session session, String userName, String password, String email,
 	// boolean automated) {
@@ -317,7 +316,7 @@ public class UserManagerService {
 	// }
 	//
 	public void initNewUser(MongoSession session, String userName, String password, String email, boolean automated) {
-		SubNode userNode = api.createUser(session, userName, email, password);
+		SubNode userNode = api.createUser(session, userName, email, password, automated);
 		if (userNode != null) {
 			log.debug("Successful signup complete.");
 		}
@@ -346,58 +345,14 @@ public class UserManagerService {
 	// return false;
 	// }
 
-	//
-	// /*
-	// * Processes a signup request from a user. The user doesn't immediately get an account, but an
-	// * email goes out to them that when they click on the link in the email the signupCode comes
-	// * back and actually creates their account at that time.
-	// */
-	// public void signup(Session session, SignupRequest req, SignupResponse res, boolean automated)
-	// {
-	//
-	// final String userName = req.getUserName();
-	// if (userName.equalsIgnoreCase(JcrPrincipal.ADMIN) ||
-	// userName.equalsIgnoreCase("administrator")) {
-	// throw ExUtil.newEx("Sorry, you can't be the new admin.");
-	// }
-	//
-	// if (userName.equalsIgnoreCase(EveryonePrincipal.NAME)) {
-	// throw ExUtil.newEx("Sorry, you can't be everyone.");
-	// }
-	//
-	// final String password = req.getPassword();
-	// final String email = req.getEmail();
-	// final String captcha = req.getCaptcha() == null ? "" : req.getCaptcha();
-	//
-	// log.trace("Signup: userName=" + userName + " email=" + email + " captcha=" + captcha);
-	//
-	// /* throw exceptions of the username or password are not valid */
-	// Validator.checkUserName(userName);
-	// Validator.checkPassword(password);
-	// Validator.checkEmail(email);
-	//
-	// if (!automated) {
-	// /*
-	// * test cases will simply pass null, for captcha, and we let that pass
-	// */
-	// if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
-	// log.debug("Captcha match!");
-	// throw ExUtil.newEx("Wrong captcha text.");
-	// }
-	//
-	// initiateSignup(userName, password, email);
-	// }
-	// else {
-	// initNewUser(session, userName, password, email, automated);
-	// }
-	//
-	// res.setMessage("success: " + String.valueOf(++sessionContext.counter));
-	// res.setSuccess(true);
-	// }
-	//
+	/*
+	 * Processes a signup request from a user. We create the user root node in a pending state, and
+	 * like all other user accounts all information specific to that user that we currently know is
+	 * held in that node (i.e. preferences)
+	 */
 	public void signup(MongoSession session, SignupRequest req, SignupResponse res, boolean automated) {
 		final String userName = req.getUserName();
-		if (userName.equalsIgnoreCase(NodePrincipal.ADMIN)) {
+		if (userName.trim().equalsIgnoreCase(NodePrincipal.ADMIN)) {
 			throw ExUtil.newEx("Sorry, you can't be the new admin.");
 		}
 
@@ -412,86 +367,52 @@ public class UserManagerService {
 		Validator.checkPassword(password);
 		Validator.checkEmail(email);
 
-		// if (!automated) {
-		// /*
-		// * test cases will simply pass null, for captcha, and we let that pass
-		// */
-		// if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
-		// log.debug("Captcha match!");
-		// throw ExUtil.newEx("Wrong captcha text.");
-		// }
-		//
-		// initiateSignup(userName, password, email);
-		// }
-		// else {
-		initNewUser(session, userName, password, email, automated);
-		// }
+		if (!automated) {
+			/*
+			 * test cases will simply pass null, for captcha, and we let that pass
+			 */
+			if (captcha != null && !captcha.equals(sessionContext.getCaptcha())) {
+				log.debug("Captcha match!");
+				throw ExUtil.newEx("Wrong captcha text.");
+			}
+
+			initiateSignup(session, userName, password, email);
+		}
+		else {
+			initNewUser(session, userName, password, email, automated);
+		}
 
 		res.setMessage("success: " + String.valueOf(++sessionContext.counter));
 		res.setSuccess(true);
 	}
 
-	//
-	// /*
-	// * Adds user to the JCR list of pending accounts and they will stay in pending status until
-	// * their signupCode has been used to validate their email address.
-	// */
-	// public void initiateSignup(String userName, String password, String email) {
-	//
-	// String signupCode = JcrUtil.getGUID();
-	// String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
-	// String content = null;
-	//
-	// /*
-	// * We print this out so we can use it in DEV mode when no email support may be configured
-	// */
-	// log.debug("Signup URL: " + signupLink);
-	//
-	// content = "Confirmation for new meta64 account: " + userName + //
-	// "<p>\nGo to this page to complete signup: <br>\n" + signupLink;
-	//
-	// addPendingSignupNode(userName, password, email, signupCode);
-	//
-	// if (!StringUtils.isEmpty(appProp.getMailHost())) {
-	// outboxMgr.queueEmail(email, "Meta64 Account Signup Confirmation", content);
-	// }
-	// }
-	//
-	// /*
-	// * Creates the node on the tree that holds the user info pending email validation.
-	// */
-	// public void addPendingSignupNode(final String userName, final String password, final String
-	// email, final String signupCode) {
-	//
-	// adminRunner.run(session -> {
-	// try {
-	// try {
-	// session.getNode("/" + JcrName.SIGNUP + "/" + userName);
-	// throw ExUtil.newEx("User name is already pending signup.");
-	// }
-	// catch (Exception e) {
-	// // normal flow. Not an error here.
-	// }
-	//
-	// Node signupNode = session.getNode("/" + JcrName.SIGNUP);
-	// if (signupNode == null) {
-	// throw ExUtil.newEx("Signup node not found.");
-	// }
-	//
-	// Node newNode = signupNode.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-	// newNode.setProperty(JcrProp.USER, userName);
-	// newNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-	// newNode.setProperty(JcrProp.EMAIL, email);
-	// newNode.setProperty(JcrProp.CODE, signupCode);
-	// JcrUtil.timestampNewNode(session, newNode);
-	// JcrUtil.save(session);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// });
-	// }
-	//
+	/*
+	 * Adds user to the JCR list of pending accounts and they will stay in pending status until
+	 * their signupCode has been used to validate their email address.
+	 */
+	public void initiateSignup(MongoSession session, String userName, String password, String email) {
+		SubNode newUserNode = api.createUser(session, userName, email, password, false);
+
+		/*
+		 * It's easiest to use the actua new UserNode ID as the 'signup code' to send to the user,
+		 * because it's random and tied to this user by definition
+		 */
+		String signupCode = newUserNode.getId().toHexString();
+		String signupLink = constProvider.getHostAndPort() + "?signupCode=" + signupCode;
+		String content = null;
+
+		/*
+		 * We print this out so we can use it in DEV mode when no email support may be configured
+		 */
+		log.debug("Signup URL: " + signupLink);
+
+		content = "Confirmation for new meta64 account: " + userName + //
+				"<p>\nGo to this page to complete signup: <br>\n" + signupLink;
+
+		if (!StringUtils.isEmpty(appProp.getMailHost())) {
+			outboxMgr.queueEmail(email, "Meta64 Account Signup Confirmation", content);
+		}
+	}
 
 	public void setDefaultUserPreferences(SubNode prefsNode) {
 		prefsNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
@@ -499,7 +420,6 @@ public class UserManagerService {
 	}
 
 	public void saveUserPreferences(final SaveUserPreferencesRequest req, final SaveUserPreferencesResponse res) {
-
 		final String userName = sessionContext.getUserName();
 
 		adminRunner.run(session -> {
@@ -557,40 +477,6 @@ public class UserManagerService {
 
 		return userPrefs;
 	}
-
-	// /*
-	// * Each user has a node on the tree that holds all their user preferences. This method
-	// retrieves
-	// * that node for the user logged into the current HTTP Session (Session Scope Bean)
-	// */
-	// public Node getUserPrefsNode(Session session) {
-	// try {
-	// String userName = sessionContext.getUserName();
-	// Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT);
-	// if (allUsersRoot == null) {
-	// throw ExUtil.newEx("/root not found!");
-	// }
-	//
-	// log.debug("Creating root node, which didn't exist.");
-	//
-	// Node newNode = allUsersRoot.addNode(userName, JcrConstants.NT_UNSTRUCTURED);
-	// JcrUtil.timestampNewNode(session, newNode);
-	// if (newNode == null) {
-	// throw ExUtil.newEx("unable to create root");
-	// }
-	//
-	// if (AccessControlUtil.grantFullAccess(session, newNode, userName)) {
-	// newNode.setProperty(JcrProp.CONTENT, "Root for User: " + userName);
-	// JcrUtil.save(session);
-	// }
-	//
-	// return allUsersRoot;
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
 
 	// //i started to convert this to mongo but then decided it can wait till later
 	// /*

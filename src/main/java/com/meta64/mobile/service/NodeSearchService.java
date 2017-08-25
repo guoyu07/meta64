@@ -44,7 +44,7 @@ public class NodeSearchService {
 
 	@Autowired
 	private SessionContext sessionContext;
-	
+
 	public void search(MongoSession session, NodeSearchRequest req, NodeSearchResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getMongoSession();

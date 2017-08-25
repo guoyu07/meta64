@@ -27,7 +27,7 @@ public class RepositoryUtil {
 
 	@Autowired
 	private UserManagerService userManagerService;
-	
+
 	@Autowired
 	private RunAsMongoAdmin mongoAdminRunner;
 
@@ -41,69 +41,70 @@ public class RepositoryUtil {
 
 	public void initRequiredNodes(MongoSession session) {
 		jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
-		//jcrUtil.ensureNodeExists(session, "/", JcrName.OUTBOX, "System Email Outbox");
-		//jcrUtil.ensureNodeExists(session, "/", JcrName.SIGNUP, "Pending Signups");
+		jcrUtil.ensureNodeExists(session, "/", NodeName.OUTBOX, "System Email Outbox");
 	}
 
-	//jcr
-//	private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
-//		try {
-//			Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);
-//			String content = XString.loadResourceIntoString(resource);
-//			node.setProperty(JcrProp.CONTENT, content);
-//			AccessControlUtil.makeNodePublic(session, node);
-//			node.setProperty(JcrProp.DISABLE_INSERT, "y");
-//			JcrUtil.save(session);
-//		}
-//		catch (Exception e) {
-//			// IMPORTANT: don't rethrow from here, or this could blow up app
-//			// initialization.
-//			e.printStackTrace();
-//		}
-//	}
+	// jcr
+	// private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
+	// try {
+	// Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);
+	// String content = XString.loadResourceIntoString(resource);
+	// node.setProperty(JcrProp.CONTENT, content);
+	// AccessControlUtil.makeNodePublic(session, node);
+	// node.setProperty(JcrProp.DISABLE_INSERT, "y");
+	// JcrUtil.save(session);
+	// }
+	// catch (Exception e) {
+	// // IMPORTANT: don't rethrow from here, or this could blow up app
+	// // initialization.
+	// e.printStackTrace();
+	// }
+	// }
 
-//	/*
-//	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
-//	 * nodes from user to user, etc) without first having to manually register users.
-//	 */
-//	public void createTestAccounts() {
-//		/*
-//		 * The testUserAccounts is a comma delimited list of user accounts where each user account
-//		 * is a colon-delimited list like username:password:email.
-//		 * 
-//		 * todo-1: could change the format of this info to JSON.
-//		 */
-//		final List<String> testUserAccountsList = XString.tokenize(appProp.getTestUserAccounts(), ",", true);
-//		if (testUserAccountsList == null) {
-//			return;
-//		}
-//
-//		adminRunner.run((Session session) -> {
-//			for (String accountInfo : testUserAccountsList) {
-//				final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
-//				if (accountInfoList == null || accountInfoList.size() != 3) {
-//					log.debug("Invalid User Info substring: " + accountInfo);
-//					continue;
-//				}
-//
-//				String userName = accountInfoList.get(0);
-//
-//				SignupRequest signupReq = new SignupRequest();
-//				signupReq.setUserName(userName);
-//				signupReq.setPassword(accountInfoList.get(1));
-//				signupReq.setEmail(accountInfoList.get(2));
-//
-//				SignupResponse res = new SignupResponse();
-//				userManagerService.signup(session, signupReq, res, true);
-//
-//				/*
-//				 * keep track of these names, because some API methods need to know if a given
-//				 * account is a test account
-//				 */
-//				testAccountNames.add(userName);
-//			}
-//		});
-//	}
+	// /*
+	// * We create these users just so there's an easy way to start doing multi-user testing
+	// (sharing
+	// * nodes from user to user, etc) without first having to manually register users.
+	// */
+	// public void createTestAccounts() {
+	// /*
+	// * The testUserAccounts is a comma delimited list of user accounts where each user account
+	// * is a colon-delimited list like username:password:email.
+	// *
+	// * todo-1: could change the format of this info to JSON.
+	// */
+	// final List<String> testUserAccountsList = XString.tokenize(appProp.getTestUserAccounts(),
+	// ",", true);
+	// if (testUserAccountsList == null) {
+	// return;
+	// }
+	//
+	// adminRunner.run((Session session) -> {
+	// for (String accountInfo : testUserAccountsList) {
+	// final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
+	// if (accountInfoList == null || accountInfoList.size() != 3) {
+	// log.debug("Invalid User Info substring: " + accountInfo);
+	// continue;
+	// }
+	//
+	// String userName = accountInfoList.get(0);
+	//
+	// SignupRequest signupReq = new SignupRequest();
+	// signupReq.setUserName(userName);
+	// signupReq.setPassword(accountInfoList.get(1));
+	// signupReq.setEmail(accountInfoList.get(2));
+	//
+	// SignupResponse res = new SignupResponse();
+	// userManagerService.signup(session, signupReq, res, true);
+	//
+	// /*
+	// * keep track of these names, because some API methods need to know if a given
+	// * account is a test account
+	// */
+	// testAccountNames.add(userName);
+	// }
+	// });
+	// }
 
 	/*
 	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
@@ -147,7 +148,7 @@ public class RepositoryUtil {
 			}
 		});
 	}
-	
+
 	public boolean isTestAccountName(String userName) {
 		return testAccountNames.contains(userName);
 	}

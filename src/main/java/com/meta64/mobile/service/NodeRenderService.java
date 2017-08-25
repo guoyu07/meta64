@@ -26,7 +26,6 @@ import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
-import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -357,7 +356,7 @@ public class NodeRenderService {
 		}
 
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
-		
+
 		res.setNode(nodeInfo);
 
 		/*
@@ -367,7 +366,7 @@ public class NodeRenderService {
 		int offset = scanToNode ? 0 : req.getOffset();
 
 		// NodeIterator nodeIter = JcrUtil.getNodes(node);
-		Iterable<SubNode> nodeIter = api.getChildren(session, node);
+		Iterable<SubNode> nodeIter = api.getChildren(session, node, true, ROWS_PER_PAGE);
 		Iterator<SubNode> iterator = nodeIter.iterator();
 
 		int idx = 0, count = 0, idxOfNodeFound = -1;
@@ -513,7 +512,7 @@ public class NodeRenderService {
 		res.setSuccess(true);
 	}
 
-	 /*
+	/*
 	 * There is a system defined way for admins to specify what node should be displayed in the
 	 * browser when a non-logged in user (i.e. anonymouse user) is browsing the site, and this
 	 * method retrieves that page data.

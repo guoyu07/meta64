@@ -43,6 +43,7 @@ import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
+import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.AnonPageLoadResponse;
 import com.meta64.mobile.response.CreateSubNodeResponse;
@@ -64,6 +65,7 @@ import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
+import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
@@ -188,10 +190,9 @@ public class AppController {
 			Model model) {
 		logRequest("mobile", null);
 
-		// jcr
-		// if (signupCode != null) {
-		// userManagerService.processSignupCode(signupCode, model);
-		// }
+		if (signupCode != null) {
+			userManagerService.processSignupCode(signupCode, model);
+		}
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 
@@ -216,16 +217,14 @@ public class AppController {
 		return CaptchaMaker.makeCaptcha(captcha);
 	}
 
-	// @RequestMapping(value = API_PATH + "/signup", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) {
-	//
-	// logRequest("signup", req);
-	// checkJcr();
-	// SignupResponse res = new SignupResponse();
-	// userManagerService.signup(null, req, res, false);
-	// return res;
-	// }
+	@RequestMapping(value = API_PATH + "/signup", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) {
+		logRequest("signup", req);
+		SignupResponse res = new SignupResponse();
+		userManagerService.signup(null, req, res, false);
+		return res;
+	}
 
 	@RequestMapping(value = API_PATH + "/login", method = RequestMethod.POST)
 	@OakSession
@@ -496,15 +495,16 @@ public class AppController {
 		return res;
 	}
 
-//	@RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
-//	@OakSession
-//	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) {
-//		logRequest("changePassword", req);
-//		ChangePasswordResponse res = new ChangePasswordResponse();
-//		checkHttpSession();
-//		userManagerService.changePassword(req, res);
-//		return res;
-//	}
+	// @RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
+	// @OakSession
+	// public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest
+	// req) {
+	// logRequest("changePassword", req);
+	// ChangePasswordResponse res = new ChangePasswordResponse();
+	// checkHttpSession();
+	// userManagerService.changePassword(req, res);
+	// return res;
+	// }
 
 	//
 	// @RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)

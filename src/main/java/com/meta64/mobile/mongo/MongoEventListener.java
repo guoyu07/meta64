@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
-import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 
@@ -35,7 +34,7 @@ public class MongoEventListener extends AbstractMongoEventListener<SubNode> {
 		node.setWriting(true);
 
 		if (node.getOwner() == null) {
-			//remove hard-coded path names from here (todo-0)
+			// remove hard-coded path names from here (todo-0)
 			if (!node.getPath().equals("/usr") && !node.getPath().equals("/usr/?")) {
 				throw new RuntimeException("Attempted to create node with no owner: " + XString.prettyPrint(node));
 			}
@@ -73,16 +72,16 @@ public class MongoEventListener extends AbstractMongoEventListener<SubNode> {
 		dbObj.put(SubNode.FIELD_MODIFY_TIME, now);
 		node.setModifyTime(now);
 	}
-	
+
 	@Override
 	public void onAfterSave(AfterSaveEvent<SubNode> event) {
 		SubNode node = event.getSource();
 		node.setWriting(false);
 	}
-	
-//	@Override
-//	public void onAfterDelete(AfterDeleteEvent<SubNode> event) {
-//		SubNode node = event.getSource();
-//		node.setWriting(false);
-//	}
+
+	// @Override
+	// public void onAfterDelete(AfterDeleteEvent<SubNode> event) {
+	// SubNode node = event.getSource();
+	// node.setWriting(false);
+	// }
 }

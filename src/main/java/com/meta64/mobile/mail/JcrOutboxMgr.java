@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.NodeName;
+import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
@@ -108,6 +109,6 @@ public class JcrOutboxMgr {
 	 * Get node that contains all preferences for this user, as properties on it.
 	 */
 	public SubNode getSystemOutbox(MongoSession session) {
-		return jcrUtil.ensureNodeExists(session, "/" + NodeName.OUTBOX + "/", NodeName.SYSTEM, "System Messages");
+		return jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.OUTBOX + "/", NodeName.SYSTEM, "System Messages");
 	}
 }

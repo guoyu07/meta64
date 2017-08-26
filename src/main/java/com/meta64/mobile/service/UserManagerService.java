@@ -163,7 +163,6 @@ public class UserManagerService {
 	 * successful login. If login fails the getJcrSession() call below will return null also.
 	 */
 	public void login(MongoSession session, LoginRequest req, LoginResponse res) {
-
 		if (session == null) {
 			session = ThreadLocals.getMongoSession();
 		}
@@ -202,7 +201,8 @@ public class UserManagerService {
 			if (userNode == null) {
 				throw new RuntimeException("User not found: " + userName);
 			}
-			RefInfo rootRefInfo = new RefInfo(userNode.getId().toHexString(), userNode.getPath());
+			
+			RefInfo rootRefInfo =  new RefInfo(userNode.getId().toHexString(), userNode.getPath());			
 			sessionContext.setRootRefInfo(rootRefInfo);
 			res.setRootNode(rootRefInfo);
 			res.setUserName(userName);
@@ -271,7 +271,11 @@ public class UserManagerService {
 
 				String userName = node.getStringProp(NodeProp.USER);
 				String password = node.getStringProp(NodeProp.PASSWORD);
-				password = encryptor.decrypt(password);
+				
+				//&&& password encryption was disabled when removing JCR so that's now not working, so this will fail right now.
+				//password = encryptor.decrypt(password);
+				
+				
 				String email = node.getStringProp(NodeProp.EMAIL);
 
 				initNewUser(session, userName, password, email, false);
@@ -350,7 +354,9 @@ public class UserManagerService {
 	 * like all other user accounts all information specific to that user that we currently know is
 	 * held in that node (i.e. preferences)
 	 */
-	public void signup(MongoSession session, SignupRequest req, SignupResponse res, boolean automated) {
+	public void signup(SignupRequest req, SignupResponse res, boolean automated) {
+		MongoSession session = api.getAdminSession();
+		
 		final String userName = req.getUserName();
 		if (userName.trim().equalsIgnoreCase(NodePrincipal.ADMIN)) {
 			throw ExUtil.newEx("Sorry, you can't be the new admin.");

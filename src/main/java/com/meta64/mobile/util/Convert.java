@@ -94,7 +94,7 @@ public class Convert {
 		// should be able to deal with that (i think). depends on how much ownership info we need to
 		// show user.
 		SubNode userNode = api.getNode(session, node.getOwner());
-		String owner = userNode.getStringProp(NodeProp.USER);
+		String owner = userNode==null ? "?" : userNode.getStringProp(NodeProp.USER);
 
 		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
 				node.getModifyTime(), propList, hasNodes, hasBinary, binaryIsImage, binVer, //

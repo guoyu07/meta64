@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 
+import com.meta64.mobile.config.NodeName;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.util.XString;
 import com.mongodb.DBObject;
@@ -33,13 +34,6 @@ public class MongoEventListener extends AbstractMongoEventListener<SubNode> {
 		SubNode node = event.getSource();
 		node.setWriting(true);
 
-		if (node.getOwner() == null) {
-			// remove hard-coded path names from here (todo-0)
-			if (!node.getPath().equals("/usr") && !node.getPath().equals("/usr/?")) {
-				throw new RuntimeException("Attempted to create node with no owner: " + XString.prettyPrint(node));
-			}
-		}
-
 		DBObject dbObj = event.getDBObject();
 		ObjectId id = node.getId();
 		dbObj.put(SubNode.FIELD_ID, id);
@@ -49,6 +43,20 @@ public class MongoEventListener extends AbstractMongoEventListener<SubNode> {
 			dbObj.put(SubNode.FIELD_ID, id);
 			node.setId(id);
 			log.debug("New Node ID generated: " + id);
+		}
+
+		/* if no owner is assigned... */
+		if (node.getOwner() == null) {
+
+			/* if we are saving the root node, we make it be the owner of itself */
+			if (node.getPath().equals("/" + NodeName.ROOT)) {
+				dbObj.put(SubNode.FIELD_OWNER, id);
+				node.setOwner(id);
+			}
+			/* otherwise we have a problem, because we reuire an owner always */
+			else {
+				throw new RuntimeException("Attempted to save node with no owner: " + XString.prettyPrint(node));
+			}
 		}
 
 		api.checkParentExists(node);

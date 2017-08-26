@@ -67,14 +67,6 @@ public class MongoTest {
 	@Autowired
 	private MongoApi api;
 
-	// @BeforeClass
-	// public static void beforeClass() {
-	// }
-	//
-	// @AfterClass
-	// public static void afterClass() {
-	// }
-
 	public void wipeDb(MongoSession session) {
 		api.dropAllIndexes(session);
 		api.dropCollection(session, SubNode.class);

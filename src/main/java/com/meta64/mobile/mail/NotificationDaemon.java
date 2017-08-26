@@ -97,9 +97,9 @@ public class NotificationDaemon {
 				String content = node.getStringProp(NodeProp.EMAIL_CONTENT);
 
 				log.debug("Found mail to send to: " + email);
-				// if (mailSender.sendMail(email, content, subject)) {
-				// api.delete(session, node);
-				// }
+				if (mailSender.sendMail(email, content, subject)) {
+					api.delete(session, node);
+				}
 			}
 		}
 		finally {

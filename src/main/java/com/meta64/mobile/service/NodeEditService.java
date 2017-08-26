@@ -70,17 +70,15 @@ public class NodeEditService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-		String curUser = session.getUser();
-
-		String parentPath = node.getPath() + "/";
-		boolean createUnderRoot = false;
+		
+		//boolean createUnderRoot = false;
 		/*
 		 * if we are moving nodes around on the root, the root belongs to admin and needs special
 		 * access (adminRunner)
 		 */
-		if (parentPath.equals("/" + NodeName.USER + "/" + sessionContext.getUserName() + "/")) {
-			createUnderRoot = true;
-		}
+//		if (parentPath.equals("/" + NodeName.ROOT + "/" + NodeName.USER + "/" + sessionContext.getUserName() + "/")) {
+//			createUnderRoot = true;
+//		}
 
 		/*
 		 * If this is a publicly appendable node, then we always use admin to append a comment type

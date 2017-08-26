@@ -4,6 +4,7 @@ package com.meta64.mobile.config;
  * Node names for architecturally significant system nodes
  */
 public class NodeName {
+	public static final String ROOT = "r";
 	public static final String USER = "usr";
 	public static final String SYSTEM = "sys";
 	public static final String OUTBOX = "outbox";

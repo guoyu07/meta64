@@ -222,7 +222,7 @@ public class AppController {
 	public @ResponseBody SignupResponse signup(@RequestBody SignupRequest req) {
 		logRequest("signup", req);
 		SignupResponse res = new SignupResponse();
-		userManagerService.signup(null, req, res, false);
+		userManagerService.signup(req, res, false);
 		return res;
 	}
 

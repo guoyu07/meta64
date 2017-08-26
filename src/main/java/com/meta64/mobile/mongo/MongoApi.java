@@ -233,13 +233,7 @@ public class MongoApi {
 
 		String path = (parent == null ? "" : parent.getPath()) + "/" + relPath;
 
-		ObjectId ownerId = null;
-		if (session.isAdmin() && (path.equals("/") || path.equals("/" + NodeName.USER) || path.equals("/" + NodeName.USER + "/?"))) {
-			// ownerId can stay null. bootstrapping new repo.
-		}
-		else {
-			ownerId = getOwnerNodeIdFromSession(session);
-		}
+		ObjectId ownerId = getOwnerNodeIdFromSession(session);
 
 		// for now not worried about ordinals for root nodes.
 		if (parent == null) {
@@ -337,7 +331,7 @@ public class MongoApi {
 	}
 
 	public long getChildCount(SubNode node) {
-		log.debug("MongoApi.getChildCount");
+		//log.debug("MongoApi.getChildCount");
 
 		Query query = new Query();
 		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()));
@@ -351,8 +345,6 @@ public class MongoApi {
 	 * required? Strange oversight on their part.
 	 */
 	public long getNodeCount() {
-		log.debug("MongoApi.getCount");
-
 		Query query = new Query();
 		// Criteria criteria =
 		// Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()));
@@ -362,8 +354,6 @@ public class MongoApi {
 	}
 
 	public SubNode getChildAt(MongoSession session, SubNode node, long idx) {
-		log.debug("MongoApi.getChildCountAt");
-
 		Query query = new Query();
 		Criteria criteria = Criteria.where(//
 				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()))//
@@ -377,7 +367,6 @@ public class MongoApi {
 
 	public void checkParentExists(SubNode node) {
 		boolean isRootPath = isRootPath(node.getPath());
-		log.debug("IsRoot[" + node.getPath() + "]=" + isRootPath);
 		if (node.isDisableParentCheck() || isRootPath) return;
 
 		String parentPath = getParentPath(node);
@@ -406,7 +395,6 @@ public class MongoApi {
 	 */
 	public void delete(MongoSession session, SubNode node) {
 		authWrite(session, node);
-		log.debug("MongoApi.remove: id=" + node.getId());
 
 		/*
 		 * First delete all the children of the node by using the path, knowing all their paths
@@ -436,7 +424,6 @@ public class MongoApi {
 	/* Warning: This won't scale */
 	public Iterable<SubNode> findAllNodes(MongoSession session) {
 		requireAdmin(session);
-		log.debug("MongoApi.findAllNodes");
 		return ops.findAll(SubNode.class);
 	}
 
@@ -512,9 +499,12 @@ public class MongoApi {
 		return list;
 	}
 
+	/*
+	 * If node is null it's path is considered empty string, and it represents the 'root' of the
+	 * tree. There is no actual NODE that is root node
+	 */
 	public Iterable<SubNode> getChildren(MongoSession session, SubNode node, boolean ordered, Integer limit) {
 		authRead(session, node);
-		log.debug("MongoApi.getChildren: ordered=" + ordered);
 
 		Query query = new Query();
 		if (limit != null) {
@@ -531,7 +521,7 @@ public class MongoApi {
 		 * ^\/aa\/bb\/([^\/])*$ (Note that in the java string the \ becomes \\ below...)
 		 * 
 		 */
-		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()));
+		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node == null ? "" : node.getPath()));
 		if (ordered) {
 			query.with(new Sort(Sort.Direction.ASC, SubNode.FIELD_ORDINAL));
 		}
@@ -562,7 +552,6 @@ public class MongoApi {
 		// AggregationResults<SubNode> results = ops.aggregate(agg, "order", SubNode.class);
 		// List<SubNode> orderCount = results.getMappedResults();
 		authRead(session, node);
-		log.debug("MongoApi.getMaxChildOrdinal");
 
 		// todo-0: research if there's a way to query for just one, rather than simply calling
 		// findOne at the end? What's best practice here?
@@ -580,7 +569,6 @@ public class MongoApi {
 
 	public SubNode getSiblingAbove(MongoSession session, SubNode node) {
 		authRead(session, node);
-		log.debug("MongoApi.getChildAbove");
 
 		if (node.getOrdinal() == null) {
 			throw new RuntimeException("can't get node above node with null ordinal.");
@@ -603,8 +591,6 @@ public class MongoApi {
 
 	public SubNode getSiblingBelow(MongoSession session, SubNode node) {
 		authRead(session, node);
-		log.debug("MongoApi.getChildAbove");
-
 		if (node.getOrdinal() == null) {
 			throw new RuntimeException("can't get node above node with null ordinal.");
 		}
@@ -644,7 +630,6 @@ public class MongoApi {
 	 */
 	public Iterable<SubNode> getSubGraph(MongoSession session, SubNode node) {
 		authRead(session, node);
-		log.debug("MongoApi.getSubGraph");
 
 		Query query = new Query();
 		/*
@@ -660,7 +645,6 @@ public class MongoApi {
 
 	public Iterable<SubNode> searchSubGraph(MongoSession session, SubNode node, String text, String sortField, int limit) {
 		authRead(session, node);
-		log.debug("MongoApi.searchSubGraph");
 
 		Query query = new Query();
 		query.limit(limit);
@@ -685,7 +669,6 @@ public class MongoApi {
 	}
 
 	public int dump(String message, Iterable<SubNode> iter) {
-		log.debug("MongoApi.dump");
 		int count = 0;
 		log.debug("    " + message);
 		for (SubNode node : iter) {
@@ -698,31 +681,26 @@ public class MongoApi {
 
 	public void dropAllIndexes(MongoSession session) {
 		requireAdmin(session);
-		log.debug("MongoApi.dropAllIndexes");
 		ops.indexOps(SubNode.class).dropAllIndexes();
 	}
 
 	public void createUniqueIndex(MongoSession session, Class<?> clazz, String property) {
 		requireAdmin(session);
-		log.debug("MongoApi.createUniqueIndex");
 		ops.indexOps(clazz).ensureIndex(new Index().on(property, Direction.ASC).unique());
 	}
 
 	public void createIndex(MongoSession session, Class<?> clazz, String property) {
 		requireAdmin(session);
-		log.debug("MongoApi.createIndex");
 		ops.indexOps(clazz).ensureIndex(new Index().on(property, Direction.ASC));
 	}
 
 	public void createIndex(MongoSession session, Class<?> clazz, String property, Direction dir) {
 		requireAdmin(session);
-		log.debug("MongoApi.createIndex");
 		ops.indexOps(clazz).ensureIndex(new Index().on(property, dir));
 	}
 
 	public void createTextIndex(MongoSession session, Class<?> clazz) {
 		requireAdmin(session);
-		log.debug("MongoApi.createTextIndex");
 
 		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder().onAllFields()
 				// .onField(property)
@@ -736,7 +714,6 @@ public class MongoApi {
 
 	public void dropCollection(MongoSession session, Class<?> clazz) {
 		requireAdmin(session);
-		log.debug("MongoApi.dropCollection");
 		ops.dropCollection(clazz);
 	}
 
@@ -752,7 +729,6 @@ public class MongoApi {
 
 		DBObject metaData = new BasicDBObject();
 		metaData.put("nodeId", node.getId());
-		log.debug("Writing steam to GridFS");
 
 		/* Delete any existing grid data stored under this node, before waving new attachment */
 		deleteBinary(session, node, null);
@@ -760,8 +736,6 @@ public class MongoApi {
 
 		/* Now save the node also since the property on it needs to point to GridFS id */
 		node.setProp(propName, new SubNodeProperty(id));
-		// save(session, node);
-		log.debug("Wrote GridFS file id: " + id);
 	}
 
 	public void deleteBinary(MongoSession session, SubNode node, String propName) {
@@ -797,8 +771,7 @@ public class MongoApi {
 	// todo-0:
 	// I think now that I'm including the trailing slash after path in this regex that I can remove
 	// the (.+) piece?
-	// I think i need to write some test cases just to text my regex functions! String in and string
-	// out black box.
+	// I think i need to write some test cases just to text my regex functions!
 	public String regexRecursiveChildrenOfPath(String path) {
 		path = XString.stripIfEndsWith(path, "/");
 		return "^" + Pattern.quote(path) + "\\/(.+)$";
@@ -812,7 +785,7 @@ public class MongoApi {
 	 */
 	public SubNode createUser(MongoSession session, String user, String email, String password, boolean automated) {
 		requireAdmin(session);
-		SubNode userNode = createNode(session, "/" + NodeName.USER + "/?", null);
+		SubNode userNode = createNode(session, "/" + NodeName.ROOT + "/" + NodeName.USER + "/?", null);
 		userNode.setProp(NodeProp.USER, user);
 		userNode.setProp(NodeProp.EMAIL, email);
 		userNode.setProp(NodeProp.PASSWORD, password);
@@ -837,9 +810,13 @@ public class MongoApi {
 	}
 
 	public SubNode getUserNodeByUserName(MongoSession session, String user) {
+		if (NodePrincipal.ADMIN.equalsIgnoreCase(user)) {
+			return getNode(session, "/" + NodeName.ROOT);
+		}
+
 		Query query = new Query();
 		Criteria criteria = Criteria.where(//
-				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath("/" + NodeName.USER))//
+				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath("/" + NodeName.ROOT + "/" + NodeName.USER))//
 				.and(SubNode.FIELD_PROPERTIES + "." + NodeProp.USER + ".value").is(user);
 		query.addCriteria(criteria);
 		SubNode ret = ops.findOne(query, SubNode.class);
@@ -867,43 +844,27 @@ public class MongoApi {
 	/*
 	 * Initialize admin user account credentials into repository if not yet done. This should only
 	 * get triggered the first time the repository is created, the first time the app is started.
+	 * 
+	 * The admin node is also the repository root node, so it owns all other nodes, by the
+	 * definition of they way security is inheritive.
 	 */
 	public void createAdminUser(MongoSession session) {
+		//todo-0: major inconsistency: is admin name defined in properties file or in NodePrincipal.ADMIN const ? Need to decide.
 		String adminUser = appProp.getMongoAdminUserName();
 		String adminPwd = appProp.getMongoAdminPassword();
 
 		SubNode adminNode = getUserNodeByUserName(getAdminSession(), adminUser);
 		if (adminNode == null) {
-			jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
-			adminNode = createUser(session, adminUser, null, adminPwd, true);
+			adminNode = jcrUtil.ensureNodeExists(session, "/", NodeName.ROOT, "Repository Root");
+			
+			adminNode.setProp(NodeProp.USER, NodePrincipal.ADMIN);
+			adminNode.setProp(NodeProp.PASSWORD, adminPwd);
+			adminNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
+			adminNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
+			save(session, adminNode);
+			
+			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.USER, "Root of All Users");
+			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.OUTBOX, "System Email Outbox");
 		}
 	}
-
-	/**
-	 * GridFS Notes:
-	 * 
-	 * <pre>
-	 * String id = "5602de6e5d8bba0d6f2e45e4";
-	 * GridFSDBFile gridFsdbFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
-	 * 
-	 * List<GridFSDBFile> gridFsdbFiles = gridFsTemplate.find(new Query(Criteria.where("metadata.nodeId").is("xxxxxx")));
-	 * 
-	 * String id = "5702deyu6d8bba0d6f2e45e4";
-	 * gridFsTemplate.delete(new Query(Criteria.where("_id").is(id)));
-	 *
-	 * This searches based on filename pattern, i think which makes me wonder if i should just use the full node path
-	 * as this filename ? but that would rule out ever having multiple binaries per node.
-	 * 
-	 * GridFsResource[] gridFsResource = gridFsTemplate.getResources("test*");
-	 * 
-	 * The GridFSDBFile API is quite simple as well:
-	getInputStream – returns an InputStream from which data can be read
-	getFilename – gets the filename of the file
-	getMetaData – gets the metadata for the given file
-	containsField – determines if the document contains a field with the given name
-	get – gets a field from the object by name
-	getId – gets the file’s object ID
-	keySet – gets the object’s field names
-	 * </pre>
-	 */
 }

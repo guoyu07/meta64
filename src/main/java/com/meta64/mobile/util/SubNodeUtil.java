@@ -544,16 +544,6 @@ public class SubNodeUtil {
 		return parent;
 	}
 
-	//
-	// public static void save(Session session) {
-	// try {
-	// session.save();
-	// }
-	// catch (Exception e) {
-	// throw ExUtil.newEx(e);
-	// }
-	// }
-	//
 	public static String fixPath(String path) {
 		return path.replace("//", "/");
 	}

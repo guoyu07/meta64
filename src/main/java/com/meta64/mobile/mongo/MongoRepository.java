@@ -108,7 +108,6 @@ public class MongoRepository {
 			api.createTextIndex(adminSession, SubNode.class);
 
 			api.createAdminUser(adminSession);
-			repoUtil.initRequiredNodes(adminSession);
 			repoUtil.createTestAccounts();
 
 			if (appProp.getMongoTest()) {

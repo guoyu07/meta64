@@ -295,6 +295,7 @@ public class NodeRenderService {
 		String targetId = req.getNodeId();
 
 		log.trace("renderNode targetId:" + targetId);
+
 		SubNode node = api.getNode(session, targetId);
 
 		/*
@@ -303,7 +304,7 @@ public class NodeRenderService {
 		 * shortening the path just for user convenience.
 		 */
 		if (node == null && targetId.startsWith("/") && allowRootAutoPrefix) {
-			targetId = "/" + NodeName.USER + targetId;
+			targetId = "/" + NodeName.ROOT + "/" + NodeName.USER + targetId;
 			node = api.getNode(session, targetId);
 		}
 
@@ -312,7 +313,6 @@ public class NodeRenderService {
 			res.setSuccess(false);
 			return;
 		}
-		log.trace("found node:" + targetId);
 
 		/*
 		 * If user is trying to continue reading, we want to go to the next logical node after
@@ -340,6 +340,8 @@ public class NodeRenderService {
 		 */
 		boolean scanToNode = false;
 
+		// this is good logic i need to bring back...when rendering a 'left' looks rediculous
+		// (todo-0)
 		// if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
 		// res.setDisplayedParent(true);
 		// req.setUpLevel(1);
@@ -356,7 +358,6 @@ public class NodeRenderService {
 		}
 
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
-
 		res.setNode(nodeInfo);
 
 		/*
@@ -365,7 +366,6 @@ public class NodeRenderService {
 		 */
 		int offset = scanToNode ? 0 : req.getOffset();
 
-		// NodeIterator nodeIter = JcrUtil.getNodes(node);
 		Iterable<SubNode> nodeIter = api.getChildren(session, node, true, ROWS_PER_PAGE);
 		Iterator<SubNode> iterator = nodeIter.iterator();
 

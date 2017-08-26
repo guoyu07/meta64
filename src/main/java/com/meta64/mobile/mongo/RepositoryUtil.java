@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.NodeName;
+import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.service.UserManagerService;
@@ -26,6 +26,9 @@ public class RepositoryUtil {
 	private static final Logger log = LoggerFactory.getLogger(RepositoryUtil.class);
 
 	@Autowired
+	private MongoApi api;
+	
+	@Autowired
 	private UserManagerService userManagerService;
 
 	@Autowired
@@ -38,11 +41,6 @@ public class RepositoryUtil {
 	private SubNodeUtil jcrUtil;
 
 	private HashSet<String> testAccountNames = new HashSet<String>();
-
-	public void initRequiredNodes(MongoSession session) {
-		jcrUtil.ensureNodeExists(session, "/", NodeName.USER, "Root of All Users");
-		jcrUtil.ensureNodeExists(session, "/", NodeName.OUTBOX, "System Email Outbox");
-	}
 
 	// jcr
 	// private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
@@ -132,13 +130,17 @@ public class RepositoryUtil {
 
 				String userName = accountInfoList.get(0);
 
-				SignupRequest signupReq = new SignupRequest();
-				signupReq.setUserName(userName);
-				signupReq.setPassword(accountInfoList.get(1));
-				signupReq.setEmail(accountInfoList.get(2));
+				SubNode ownerNode = api.getUserNodeByUserName(session, userName);
+				if (ownerNode == null) {
 
-				SignupResponse res = new SignupResponse();
-				userManagerService.signup(session, signupReq, res, true);
+					SignupRequest signupReq = new SignupRequest();
+					signupReq.setUserName(userName);
+					signupReq.setPassword(accountInfoList.get(1));
+					signupReq.setEmail(accountInfoList.get(2));
+
+					SignupResponse res = new SignupResponse();
+					userManagerService.signup(signupReq, res, true);
+				}
 
 				/*
 				 * keep track of these names, because some API methods need to know if a given

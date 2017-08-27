@@ -27,7 +27,7 @@ export class EditPrivsTableRow extends Comp {
 
         util.forEachArrElm(aclEntry.privileges, (privilege, index) => {
             let removeButton = new Button("Remove", () => {
-                this.sharingDlg.removePrivilege(aclEntry.principalName, privilege.privilegeName);
+                this.sharingDlg.removePrivilege(aclEntry.principalNodeId, privilege.privilegeName);
             })
             div.addChild(removeButton);
             div.addChild(new TextContent("<b>" + aclEntry.principalName + "</b> has privilege <b>" + privilege.privilegeName + "</b> on this node.",

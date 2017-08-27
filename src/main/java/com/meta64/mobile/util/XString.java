@@ -2,6 +2,7 @@ package com.meta64.mobile.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -39,6 +40,18 @@ public class XString {
 		while (t.hasMoreTokens()) {
 			if (list == null) {
 				list = new LinkedList<String>();
+			}
+			list.add(trim ? t.nextToken().trim() : t.nextToken());
+		}
+		return list;
+	}
+
+	public static HashSet<String> tokenizeToSet(String val, String delimiter, boolean trim) {
+		HashSet<String> list = null;
+		StringTokenizer t = new StringTokenizer(val, delimiter, false);
+		while (t.hasMoreTokens()) {
+			if (list == null) {
+				list = new HashSet<String>();
 			}
 			list.add(trim ? t.nextToken().trim() : t.nextToken());
 		}

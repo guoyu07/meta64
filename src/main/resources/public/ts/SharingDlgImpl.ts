@@ -85,11 +85,11 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         });
     }
 
-    removePrivilege = (principal: string, privilege: string): void => {
+    removePrivilege = (principalNodeId: string, privilege: string): void => {
         meta64.treeDirty = true;
         util.ajax<I.RemovePrivilegeRequest, I.RemovePrivilegeResponse>("removePrivilege", {
             "nodeId": share.sharingNode.id,
-            "principal": principal,
+            "principalNodeId": principalNodeId,
             "privilege": privilege
         }, this.removePrivilegeResponse);
     }

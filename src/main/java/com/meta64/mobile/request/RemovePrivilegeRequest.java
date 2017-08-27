@@ -5,8 +5,7 @@ import com.meta64.mobile.request.base.RequestBase;
 public class RemovePrivilegeRequest extends RequestBase {
 
 	private String nodeId;
-
-	private String principal;
+	private String principalNodeId;
 
 	/* for now only 'public' is the only option we support */
 	private String privilege;
@@ -19,12 +18,12 @@ public class RemovePrivilegeRequest extends RequestBase {
 		this.nodeId = nodeId;
 	}
 
-	public String getPrincipal() {
-		return principal;
+	public String getPrincipalNodeId() {
+		return principalNodeId;
 	}
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
+	public void setPrincipalNodeId(String principalNodeId) {
+		this.principalNodeId = principalNodeId;
 	}
 
 	public String getPrivilege() {

@@ -37,7 +37,10 @@ export default class MenuPanel extends Comp {
             new Menu("Bookmarks", [
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
-                new MenuItem("RSS Feeds", nav.openRssFeedsNode),
+
+                //todo-0: disabled during mongo conversion
+                //new MenuItem("RSS Feeds", nav.openRssFeedsNode),
+
                 /* currently this Sample Content is the book 'War and Peace' */
                 new MenuItem("Sample Content", nav.browseSampleContent)
             ]),
@@ -68,10 +71,12 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Find Shared Subnodes", share.findSharedNodes, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })
             ]),
             new Menu("Search", [
-                new MenuItem("Content", nav.search, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
-                new MenuItem("Tags", nav.searchTags, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
-                new MenuItem("Files", nav.searchFiles, () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch },
-                    () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch })
+                new MenuItem("Content", nav.search, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })//, //
+
+                //todo-0: disaled during mongo conversion
+                //new MenuItem("Tags", nav.searchTags, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
+                //new MenuItem("Files", nav.searchFiles, () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch },
+                //    () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch })
             ]),
             new Menu("Timeline", [
                 new MenuItem("Created", srch.timelineByCreateTime, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
@@ -92,14 +97,16 @@ export default class MenuPanel extends Comp {
                     () => { return meta64.state.exportFeatureEnabled },
                     true//
                 ), //
-                new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, () => { return meta64.isAdminUser }), //
-                new MenuItem("Compare as B (to A)", view.compareAsBtoA, //
-                    () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, //
-                    () => { return meta64.isAdminUser }, //
-                    true
-                ), //
-                new MenuItem("Generate Hashes", () => { view.processNodeHashes(false); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
-                new MenuItem("Verify Hashes", () => { view.processNodeHashes(true); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+
+                //todo-0: disabled during mongo conversion
+                //new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, () => { return meta64.isAdminUser }), //
+                //new MenuItem("Compare as B (to A)", view.compareAsBtoA, //
+                //    () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, //
+                //    () => { return meta64.isAdminUser }, //
+                //    true
+                //), //
+                //new MenuItem("Generate Hashes", () => { view.processNodeHashes(false); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+                //new MenuItem("Verify Hashes", () => { view.processNodeHashes(true); }, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             // WORK IN PROGRESS ( do not delete)
             // let fileSystemMenuItems = //

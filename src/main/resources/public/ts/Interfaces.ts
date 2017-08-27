@@ -41,6 +41,7 @@ export class SubProp {
 
 export interface AccessControlEntryInfo {
     principalName: string;
+    principalNodeId: string;
     privileges: PrivilegeInfo[];
 }
 
@@ -224,7 +225,7 @@ export interface FileSearchRequest {
 
 export interface RemovePrivilegeRequest {
     nodeId: string;
-    principal: string;
+    principalNodeId: string;
     privilege: string;
 }
 

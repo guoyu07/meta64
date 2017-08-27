@@ -1,5 +1,6 @@
 package com.meta64.mobile.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -7,8 +8,16 @@ import java.util.List;
  */
 public class AccessControlEntryInfo {
 	private String principalName;
-
+	private String principalNodeId;
 	private List<PrivilegeInfo> privileges;
+	
+	public AccessControlEntryInfo() {
+	}
+
+	public AccessControlEntryInfo(String principalName, String principalNodeId) {
+		this.principalName = principalName;
+		this.principalNodeId = principalNodeId;
+	}
 
 	public String getPrincipalName() {
 		return principalName;
@@ -24,5 +33,20 @@ public class AccessControlEntryInfo {
 
 	public void setPrivileges(List<PrivilegeInfo> privileges) {
 		this.privileges = privileges;
+	}
+
+	public void addPrivilege(PrivilegeInfo priv) {
+		if (privileges == null) {
+			privileges = new LinkedList<PrivilegeInfo>();
+		}
+		privileges.add(priv);
+	}
+
+	public String getPrincipalNodeId() {
+		return principalNodeId;
+	}
+
+	public void setPrincipalNodeId(String principalNodeId) {
+		this.principalNodeId = principalNodeId;
 	}
 }

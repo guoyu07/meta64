@@ -24,6 +24,7 @@ import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
+import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.CloseAccountRequest;
@@ -40,6 +41,7 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.LogoutRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
+import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
 import com.meta64.mobile.request.ResetPasswordRequest;
@@ -49,6 +51,7 @@ import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
+import com.meta64.mobile.response.AddPrivilegeResponse;
 import com.meta64.mobile.response.AnonPageLoadResponse;
 import com.meta64.mobile.response.ChangePasswordResponse;
 import com.meta64.mobile.response.CloseAccountResponse;
@@ -65,6 +68,7 @@ import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.LogoutResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
+import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.response.ResetPasswordResponse;
@@ -193,7 +197,6 @@ public class AppController {
 	public String mobile(@RequestParam(value = "id", required = false) String id, //
 			@RequestParam(value = "cmd", required = false) String cmd, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
-			// @RequestParam(value = "passCode", required = false) String passCode, //
 			Model model) {
 		logRequest("mobile", null);
 
@@ -312,32 +315,26 @@ public class AppController {
 		return res;
 	}
 
-	//
-	// @RequestMapping(value = API_PATH + "/addPrivilege", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody AddPrivilegeResponse addPrivilege(@RequestBody AddPrivilegeRequest req)
-	// {
-	//
-	// logRequest("addPrivilege", req);
-	// checkJcr();
-	// AddPrivilegeResponse res = new AddPrivilegeResponse();
-	// checkHttpSession();
-	// aclService.addPrivilege(null, req, res);
-	// return res;
-	// }
-	//
-	// @RequestMapping(value = API_PATH + "/removePrivilege", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody
-	// RemovePrivilegeRequest req) {
-	//
-	// logRequest("removePrivilege", req);
-	// checkJcr();
-	// RemovePrivilegeResponse res = new RemovePrivilegeResponse();
-	// checkHttpSession();
-	// aclService.removePrivilege(null, req, res);
-	// return res;
-	// }
+	@RequestMapping(value = API_PATH + "/addPrivilege", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody AddPrivilegeResponse addPrivilege(@RequestBody AddPrivilegeRequest req) {
+		logRequest("addPrivilege", req);
+		AddPrivilegeResponse res = new AddPrivilegeResponse();
+		checkHttpSession();
+		aclService.addPrivilege(null, req, res);
+		return res;
+	}
+
+	@RequestMapping(value = API_PATH + "/removePrivilege", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody RemovePrivilegeResponse removePrivilege(@RequestBody RemovePrivilegeRequest req) {
+		logRequest("removePrivilege", req);
+		RemovePrivilegeResponse res = new RemovePrivilegeResponse();
+		checkHttpSession();
+		aclService.removePrivilege(null, req, res);
+		return res;
+	}
+
 	//
 	// @RequestMapping(value = API_PATH + "/export", method = RequestMethod.POST)
 	// @OakSession

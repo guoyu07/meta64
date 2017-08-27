@@ -1,6 +1,7 @@
 package com.meta64.mobile.mongo;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,8 @@ import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.image.ImageSize;
 import com.meta64.mobile.image.ImageUtil;
+import com.meta64.mobile.model.AccessControlEntryInfo;
+import com.meta64.mobile.model.PrivilegeInfo;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeProperty;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
@@ -331,7 +334,7 @@ public class MongoApi {
 	}
 
 	public long getChildCount(SubNode node) {
-		//log.debug("MongoApi.getChildCount");
+		// log.debug("MongoApi.getChildCount");
 
 		Query query = new Query();
 		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()));
@@ -441,6 +444,34 @@ public class MongoApi {
 	/* todo-0: add auth check */
 	public UserPreferencesNode getUserPreference(MongoSession session, ObjectId objId) {
 		return ops.findById(objId, UserPreferencesNode.class);
+	}
+
+	public List<AccessControlEntryInfo> getAclEntries(MongoSession session, SubNode node) {
+		HashMap<String,String> aclMap = node.getAcl();
+		if (aclMap == null) {
+			return null;
+		}
+		final List<AccessControlEntryInfo> ret = new LinkedList<AccessControlEntryInfo>();
+
+		aclMap.forEach((k, v) -> {
+			AccessControlEntryInfo acei = createAccessControlEntryInfo(session, k, v);
+			if (acei != null) {
+				ret.add(acei);
+			}
+		});
+
+		return ret.size() == 0 ? null : ret;
+	}
+
+	public AccessControlEntryInfo createAccessControlEntryInfo(MongoSession session, String principalId, String authType) {
+		SubNode principalNode = getNode(session, principalId);
+		if (principalNode == null) {
+			return null;
+		}
+		String principalName = principalNode.getStringProp(NodeProp.USER);
+		AccessControlEntryInfo info = new AccessControlEntryInfo(principalName, principalId);
+		info.addPrivilege(new PrivilegeInfo(authType));
+		return info;
 	}
 
 	public SubNode getNode(MongoSession session, String path) {
@@ -849,20 +880,21 @@ public class MongoApi {
 	 * definition of they way security is inheritive.
 	 */
 	public void createAdminUser(MongoSession session) {
-		//todo-0: major inconsistency: is admin name defined in properties file or in NodePrincipal.ADMIN const ? Need to decide.
+		// todo-0: major inconsistency: is admin name defined in properties file or in
+		// NodePrincipal.ADMIN const ? Need to decide.
 		String adminUser = appProp.getMongoAdminUserName();
 		String adminPwd = appProp.getMongoAdminPassword();
 
 		SubNode adminNode = getUserNodeByUserName(getAdminSession(), adminUser);
 		if (adminNode == null) {
 			adminNode = jcrUtil.ensureNodeExists(session, "/", NodeName.ROOT, "Repository Root");
-			
+
 			adminNode.setProp(NodeProp.USER, NodePrincipal.ADMIN);
 			adminNode.setProp(NodeProp.PASSWORD, adminPwd);
 			adminNode.setProp(NodeProp.USER_PREF_ADV_MODE, false);
 			adminNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
 			save(session, adminNode);
-			
+
 			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.USER, "Root of All Users");
 			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.OUTBOX, "System Email Outbox");
 		}

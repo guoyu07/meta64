@@ -1,6 +1,7 @@
 package com.meta64.mobile.mongo.model;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -91,6 +92,12 @@ public class SubNode {
 	public static final String FIELD_PROPERTIES = "prp";
 	@Field(FIELD_PROPERTIES)
 	private SubNodePropertyMap properties;
+	
+	//ACL=Access Control List
+	//Keys are userNodeIds, and values is a comma delimited list of any of PrivilegeType.java values.
+	public static final String FIELD_ACL = "acl";
+	@Field(FIELD_ACL)
+	private HashMap<String,String> acl;
 
 	private boolean disableParentCheck;
 	private boolean writing;
@@ -215,6 +222,17 @@ public class SubNode {
 		this.modifyTime = modifyTime;
 	}
 
+	@JsonProperty(FIELD_ACL)
+	public HashMap<String,String> getAcl() {
+		return acl;
+	}
+
+	@JsonProperty(FIELD_ACL)
+	public void setAcl(HashMap<String,String> acl) {
+		MongoThreadLocal.dirty(this);
+		this.acl = acl;
+	}
+	
 	@JsonProperty(FIELD_PROPERTIES)
 	public SubNodePropertyMap getProperties() {
 		return properties;

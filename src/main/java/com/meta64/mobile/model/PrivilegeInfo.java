@@ -7,6 +7,13 @@ package com.meta64.mobile.model;
 public class PrivilegeInfo {
 	private String privilegeName;
 
+	public PrivilegeInfo() {
+	}
+	
+	public PrivilegeInfo(String privilegeName) {
+		this.privilegeName = privilegeName;
+	}
+	
 	public String getPrivilegeName() {
 		return privilegeName;
 	}

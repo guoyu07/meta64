@@ -494,7 +494,7 @@ public class UserManagerService {
 			String codePart = XString.parseAfterLast(passCode, "-");
 
 			String nodeCodePart = userNode.getStringProp(NodeProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
-			if (codePart.equals(nodeCodePart)) {
+			if (!codePart.equals(nodeCodePart)) {
 				throw ExUtil.newEx("Invald password reset code.");
 			}			
 		}
@@ -519,9 +519,6 @@ public class UserManagerService {
 		res.setSuccess(true);
 	}
 
-	/*
-	 * Runs when user is doing the 'reset password'.
-	 */
 	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) {
 		adminRunner.run(session -> {
 

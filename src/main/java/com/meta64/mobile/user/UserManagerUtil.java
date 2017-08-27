@@ -1,6 +1,13 @@
 package com.meta64.mobile.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.meta64.mobile.config.AppProp;
+import com.meta64.mobile.config.NodePrincipal;
+import com.meta64.mobile.mongo.MongoApi;
 
 /**
  * Utilities related to user management. Creating and removing users, etc.
@@ -11,18 +18,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserManagerUtil {
-	// private static final Logger log = LoggerFactory.getLogger(UserManagerUtil.class);
-	//
-	// @Autowired
-	// private MongoApi api;
-	//
-	// @Autowired
-	// private AppProp appProp;
-	//
-	// public static boolean isNormalUserName(String userName) {
-	// userName = userName.trim();
-	// return !userName.equalsIgnoreCase("admin") && !userName.equalsIgnoreCase("everyone");
-	// }
+	private static final Logger log = LoggerFactory.getLogger(UserManagerUtil.class);
+
+	@Autowired
+	private MongoApi api;
+
+	@Autowired
+	private AppProp appProp;
+
+	public static boolean isNormalUserName(String userName) {
+		userName = userName.trim();
+		return !userName.equalsIgnoreCase(NodePrincipal.ADMIN) && !userName.equalsIgnoreCase(NodePrincipal.ANONYMOUS);
+	}
+	
 	//
 	// public static Authorizable getUser(Session session, String userName) {
 	// try {
@@ -131,17 +139,6 @@ public class UserManagerUtil {
 	// }
 	//
 	// return true;
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
-	// public void changePassword(Session session, String userId, String newPassword) {
-	// try {
-	// UserManager userManager = ((JackrabbitSession) session).getUserManager();
-	// Authorizable authorizable = userManager.getAuthorizable(userId);
-	// ((User) authorizable).changePassword(newPassword);
 	// }
 	// catch (Exception ex) {
 	// throw ExUtil.newEx(ex);

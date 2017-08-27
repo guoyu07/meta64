@@ -22,8 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.meta64.mobile.aspect.OakSession;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
 import com.meta64.mobile.request.AnonPageLoadRequest;
+import com.meta64.mobile.request.ChangePasswordRequest;
+import com.meta64.mobile.request.CloseAccountRequest;
 import com.meta64.mobile.request.CreateSubNodeRequest;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.DeleteNodesRequest;
@@ -39,6 +42,7 @@ import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
+import com.meta64.mobile.request.ResetPasswordRequest;
 import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
@@ -46,6 +50,8 @@ import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.AnonPageLoadResponse;
+import com.meta64.mobile.response.ChangePasswordResponse;
+import com.meta64.mobile.response.CloseAccountResponse;
 import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.DeleteNodesResponse;
@@ -61,6 +67,7 @@ import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
+import com.meta64.mobile.response.ResetPasswordResponse;
 import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
@@ -236,23 +243,19 @@ public class AppController {
 		return res;
 	}
 
-	// @RequestMapping(value = API_PATH + "/closeAccount", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req,
-	// HttpSession session) {
-	//
-	// logRequest("closeAccount", req);
-	// checkJcr();
-	// CloseAccountResponse res = new CloseAccountResponse();
-	// checkHttpSession();
-	// userManagerService.closeAccount(req, res);
-	// SessionContext sessionContext = (SessionContext)
-	// SpringContextUtil.getBean(SessionContext.class);
-	// if (sessionContext != null) {
-	// sessionContext.setHttpSessionToInvalidate(session);
-	// }
-	// return res;
-	// }
+	@RequestMapping(value = API_PATH + "/closeAccount", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody CloseAccountResponse closeAccount(@RequestBody CloseAccountRequest req, HttpSession session) {
+		logRequest("closeAccount", req);
+		CloseAccountResponse res = new CloseAccountResponse();
+		checkHttpSession();
+		userManagerService.closeAccount(req, res);
+		SessionContext sessionContext = (SessionContext) SpringContextUtil.getBean(SessionContext.class);
+		if (sessionContext != null) {
+			sessionContext.setHttpSessionToInvalidate(session);
+		}
+		return res;
+	}
 
 	@RequestMapping(value = API_PATH + "/logout", method = RequestMethod.POST)
 	// @OakSession // commenting since we currently don't touch the DB during a
@@ -495,30 +498,26 @@ public class AppController {
 		return res;
 	}
 
-	// @RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest
-	// req) {
-	// logRequest("changePassword", req);
-	// ChangePasswordResponse res = new ChangePasswordResponse();
-	// checkHttpSession();
-	// userManagerService.changePassword(req, res);
-	// return res;
-	// }
+	@RequestMapping(value = API_PATH + "/changePassword", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ChangePasswordResponse changePassword(@RequestBody ChangePasswordRequest req) {
+		logRequest("changePassword", req);
+		ChangePasswordResponse res = new ChangePasswordResponse();
+		checkHttpSession();
+		userManagerService.changePassword(null, req, res);
+		return res;
+	}
 
-	//
-	// @RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest
-	// req) {
-	//
-	// logRequest("resetPassword", req);
-	// checkJcr();
-	// ResetPasswordResponse res = new ResetPasswordResponse();
-	// checkHttpSession();
-	// userManagerService.resetPassword(req, res);
-	// return res;
-	// }
+	@RequestMapping(value = API_PATH + "/resetPassword", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ResetPasswordResponse resetPassword(@RequestBody ResetPasswordRequest req) {
+		logRequest("resetPassword", req);
+		ResetPasswordResponse res = new ResetPasswordResponse();
+		checkHttpSession();
+		userManagerService.resetPassword(req, res);
+		return res;
+	}
+
 	//
 	/*
 	 * We could persist the real filename when uploaded, and then make the links actually reference

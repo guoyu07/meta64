@@ -1,5 +1,6 @@
 package com.meta64.mobile.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -21,10 +22,16 @@ import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
+import com.meta64.mobile.request.ChangePasswordRequest;
+import com.meta64.mobile.request.CloseAccountRequest;
 import com.meta64.mobile.request.LoginRequest;
+import com.meta64.mobile.request.ResetPasswordRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SignupRequest;
+import com.meta64.mobile.response.ChangePasswordResponse;
+import com.meta64.mobile.response.CloseAccountResponse;
 import com.meta64.mobile.response.LoginResponse;
+import com.meta64.mobile.response.ResetPasswordResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.user.AccessControlUtil;
@@ -37,6 +44,7 @@ import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.Validator;
+import com.meta64.mobile.util.XString;
 
 /**
  * Service methods for processing user management functions. Login, logout, signup, user
@@ -201,8 +209,8 @@ public class UserManagerService {
 			if (userNode == null) {
 				throw new RuntimeException("User not found: " + userName);
 			}
-			
-			RefInfo rootRefInfo =  new RefInfo(userNode.getId().toHexString(), userNode.getPath());			
+
+			RefInfo rootRefInfo = new RefInfo(userNode.getId().toHexString(), userNode.getPath());
 			sessionContext.setRootRefInfo(rootRefInfo);
 			res.setRootNode(rootRefInfo);
 			res.setUserName(userName);
@@ -223,36 +231,17 @@ public class UserManagerService {
 		}
 	}
 
-	//
-	// public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) {
-	// log.debug("Closing Account: " + sessionContext.getUserName());
-	// adminRunner.run(session -> {
-	// try {
-	// String userName = sessionContext.getUserName();
-	//
-	// /* Remove user from JCR user manager */
-	// UserManagerUtil.removeUser(session, userName);
-	//
-	// /*
-	// * And remove the two nodes on the tree that we have for this user (root and
-	// * preferences)
-	// */
-	// Node allUsersRoot = JcrUtil.getNodeByPath(session, "/" + JcrName.ROOT + "/" + userName);
-	// if (allUsersRoot != null) {
-	// allUsersRoot.remove();
-	// }
-	//
-	// Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-	// if (prefsNode != null) {
-	// prefsNode.remove();
-	// }
-	// JcrUtil.save(session);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// });
-	// }
+	public void closeAccount(CloseAccountRequest req, CloseAccountResponse res) {
+		log.debug("Closing Account: " + sessionContext.getUserName());
+		adminRunner.run(session -> {
+			String userName = sessionContext.getUserName();
+
+			SubNode ownerNode = api.getUserNodeByUserName(session, userName);
+			if (ownerNode != null) {
+				api.delete(session, ownerNode);
+			}
+		});
+	}
 
 	/*
 	 * Processes last step of signup, which is validation of registration code. This means user has
@@ -271,11 +260,11 @@ public class UserManagerService {
 
 				String userName = node.getStringProp(NodeProp.USER);
 				String password = node.getStringProp(NodeProp.PASSWORD);
-				
-				//&&& password encryption was disabled when removing JCR so that's now not working, so this will fail right now.
-				//password = encryptor.decrypt(password);
-				
-				
+
+				// &&& password encryption was disabled when removing JCR so that's now not working,
+				// so this will fail right now.
+				// password = encryptor.decrypt(password);
+
 				String email = node.getStringProp(NodeProp.EMAIL);
 
 				initNewUser(session, userName, password, email, false);
@@ -356,7 +345,7 @@ public class UserManagerService {
 	 */
 	public void signup(SignupRequest req, SignupResponse res, boolean automated) {
 		MongoSession session = api.getAdminSession();
-		
+
 		final String userName = req.getUserName();
 		if (userName.trim().equalsIgnoreCase(NodePrincipal.ADMIN)) {
 			throw ExUtil.newEx("Sorry, you can't be the new admin.");
@@ -484,168 +473,118 @@ public class UserManagerService {
 		return userPrefs;
 	}
 
-	// //i started to convert this to mongo but then decided it can wait till later
-	// /*
-	// * Runs when user is doing the 'change password' or 'reset password'
-	// */
-	// public void changePassword(final ChangePasswordRequest req, ChangePasswordResponse res) {
-	//
-	// adminRunner.run(session -> {
-	// try {
-	// String userForPassCode = null;
-	// String passCode = req.getPassCode();
-	// if (passCode != null) {
-	// userForPassCode = getUserFromPassCode(session, passCode);
-	// if (userForPassCode == null) {
-	// throw ExUtil.newEx("Invalid password reset code.");
-	// }
-	// }
-	// /*
-	// * Warning: Always get userName from sessionContext, and not from anything coming
-	// * from the browser, or else this would be a wide open security hole. We should
-	// * probably be even safer here and require the EXISTING password to be retyped again
-	// * by the user, even though we think they are logged in right now.
-	// */
-	// final String userName = userForPassCode != null ? userForPassCode :
-	// sessionContext.getUserName();
-	//
-	// String password = req.getNewPassword();
-	// userManagerUtil.changePassword(session, userName, password);
-	//
-	// Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-	// prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-	//
-	// if (passCode != null) {
-	// JcrUtil.safeDeleteProperty(prefsNode, JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
-	// }
-	//
-	// res.setUser(userName);
-	// JcrUtil.save(session);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// });
-	//
-	// sessionContext.setPassword(req.getNewPassword());
-	// res.setSuccess(true);
-	// }
-	//
-	// public String getUserFromPassCode(Session session, final String passCode) {
-	// String userName = null;
-	//
-	// try {
-	// long passCodeTime = Long.valueOf(passCode);
-	// if (new Date().getTime() > passCodeTime) {
-	// throw ExUtil.newEx("Password Reset auth code has expired.");
-	// }
-	//
-	// /* search for the node with passCode property */
-	// Node node = nodeSearchService.findNodeByProperty(session, "/" + JcrName.USER_PREFERENCES, //
-	// JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE, passCode);
-	//
-	// if (node != null) {
-	// /*
-	// * it's a bit ugly that the JCR content is the property that holds the user, but
-	// * originally this node was not one where I realized I would be looking up names
-	// * from. But it works. Just not quite that intuitive to have name in content
-	// * property.
-	// */
-	// userName = JcrUtil.getRequiredStringProp(node, JcrProp.CONTENT);
-	// }
-	// else {
-	// throw ExUtil.newEx("Signup Code is invalid.");
-	// }
-	// }
-	// catch (Exception e) {
-	// // need to message back to user signup failed.
-	// }
-	//
-	// return userName;
-	// }
+	/*
+	 * Runs when user is doing the 'change password' or 'reset password'
+	 */
+	public void changePassword(MongoSession session, final ChangePasswordRequest req, ChangePasswordResponse res) {
+		if (session == null) {
+			session = ThreadLocals.getMongoSession();
+		}
 
-	//
-	// /*
-	// * Runs when user is doing the 'reset password'.
-	// */
-	// public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) {
-	//
-	// adminRunner.run(session -> {
-	// try {
-	// String user = req.getUser();
-	// String email = req.getEmail();
-	//
-	// /* make sure username itself is acceptalbe */
-	// if (!UserManagerUtil.isNormalUserName(user)) {
-	// res.setMessage("User name is illegal.");
-	// res.setSuccess(false);
-	// return;
-	// }
-	//
-	// /* make sure the user name does exist */
-	// Authorizable auth = UserManagerUtil.getUser(session, user);
-	// if (auth == null) {
-	// res.setMessage("User does not exist.");
-	// res.setSuccess(false);
-	// return;
-	// }
-	//
-	// /* lookup preferences node for this user */
-	// Node userPrefsNode = JcrUtil.safeFindNode(session, "/" + JcrName.USER_PREFERENCES + "/" +
-	// user);
-	// if (userPrefsNode == null) {
-	// res.setMessage("User info is missing.");
-	// res.setSuccess(false);
-	// return;
-	// }
-	//
-	// /*
-	// * IMPORTANT!
-	// *
-	// * verify that the email address provides IS A MATCH to the email address for this
-	// * user! Important step here because without this check anyone would be able to
-	// * completely hijack anyone else's account simply by issuing a password change to
-	// * that account!
-	// */
-	// String nodeEmail = userPrefsNode.getProperty("email").getString();
-	// if (nodeEmail == null || !nodeEmail.equals(email)) {
-	// res.setMessage("Wrong user name and/or email.");
-	// res.setSuccess(false);
-	// return;
-	// }
-	//
-	// /*
-	// * if we make it to here the user and email are both correct, and we can initiate
-	// * the password reset. We pick some random time between 1 and 2 days from now into
-	// * the future to serve as the unguessable auth code AND the expire time for it.
-	// * Later we can create a deamon processor that cleans up expired authCodes, but for
-	// * now we just need to HAVE the auth code.
-	// *
-	// * User will be emailed this code and we will perform reset when we see it, and the
-	// * user has entered new password we can use.
-	// */
-	// int oneDayMillis = 60 * 60 * 1000;
-	// long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
-	//
-	// userPrefsNode.setProperty(JcrProp.USER_PREF_PASSWORD_RESET_AUTHCODE,
-	// String.valueOf(authCode));
-	// JcrUtil.save(session);
-	//
-	// String link = constProvider.getHostAndPort() + "?passCode=" + String.valueOf(authCode);
-	// String content = "Password reset was requested on SubNode account: " + user + //
-	// "<p>\nGo to this link to reset your password: <br>\n" + link;
-	//
-	// outboxMgr.queueEmail(email, "SubNode Password Reset", content);
-	//
-	// res.setMessage("A password reset link has been sent to your email. Check your inbox in a
-	// minute or so.");
-	// res.setSuccess(true);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// });
-	// }
+		SubNode userNode = null;
+		String passCode = req.getPassCode();
+		if (passCode != null) {
+			String userNodeId = XString.truncateAfterFirst(passCode, "-");
+			userNode = api.getNode(session, userNodeId);
+			
+			if (userNode == null) {
+				throw ExUtil.newEx("Invald password reset code.");
+			}
+			
+			String codePart = XString.parseAfterLast(passCode, "-");
+
+			String nodeCodePart = userNode.getStringProp(NodeProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
+			if (codePart.equals(nodeCodePart)) {
+				throw ExUtil.newEx("Invald password reset code.");
+			}			
+		}
+		else {
+			userNode = api.getUserNodeByUserName(session, session.getUser());
+			
+			if (userNode == null) {
+				throw ExUtil.newEx("changePassword cannot find user.");
+			}
+		}
+
+		String password = req.getNewPassword();
+		String userName = userNode.getStringProp(NodeProp.USER);
+
+		userNode.setProp(NodeProp.PASSWORD, password); // encryptor.encrypt(password));
+		userNode.deleteProp(NodeProp.USER_PREF_PASSWORD_RESET_AUTHCODE);
+
+		res.setUser(userName);
+		api.save(session, userNode);
+
+		sessionContext.setPassword(req.getNewPassword());
+		res.setSuccess(true);
+	}
+
+	/*
+	 * Runs when user is doing the 'reset password'.
+	 */
+	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) {
+		adminRunner.run(session -> {
+
+			String user = req.getUser();
+			String email = req.getEmail();
+
+			/* make sure username itself is acceptalbe */
+			if (!UserManagerUtil.isNormalUserName(user)) {
+				res.setMessage("User name is illegal.");
+				res.setSuccess(false);
+				return;
+			}
+
+			SubNode ownerNode = api.getUserNodeByUserName(session, user);
+			if (ownerNode == null) {
+				res.setMessage("User does not exist.");
+				res.setSuccess(false);
+				return;
+			}
+
+			/*
+			 * IMPORTANT!
+			 *
+			 * verify that the email address provides IS A MATCH to the email address for this user!
+			 * Important step here because without this check anyone would be able to completely
+			 * hijack anyone else's account simply by issuing a password change to that account!
+			 */
+			String nodeEmail = ownerNode.getStringProp(NodeProp.EMAIL);
+			if (nodeEmail == null || !nodeEmail.equals(email)) {
+				res.setMessage("Wrong user name and/or email.");
+				res.setSuccess(false);
+				return;
+			}
+
+			/*
+			 * if we make it to here the user and email are both correct, and we can initiate the
+			 * password reset. We pick some random time between 1 and 2 days from now into the
+			 * future to serve as the unguessable auth code AND the expire time for it. Later we can
+			 * create a deamon processor that cleans up expired authCodes, but for now we just need
+			 * to HAVE the auth code.
+			 *
+			 * User will be emailed this code and we will perform reset when we see it, and the user
+			 * has entered new password we can use.
+			 */
+			int oneDayMillis = 60 * 60 * 1000;
+			long authCode = new Date().getTime() + oneDayMillis + rand.nextInt(oneDayMillis);
+
+			ownerNode.setProp(NodeProp.USER_PREF_PASSWORD_RESET_AUTHCODE, String.valueOf(authCode));
+			api.save(session, ownerNode);
+
+			String passCode = ownerNode.getId().toHexString() + "-" + String.valueOf(authCode);
+
+			String link = constProvider.getHostAndPort() + "?passCode=" + passCode;
+			String content = "Password reset was requested on SubNode account: " + user + //
+			"<p>\nGo to this link to reset your password: <br>\n" + link;
+
+			outboxMgr.queueEmail(email, "SubNode Password Reset", content);
+
+			res.setMessage("A password reset link has been sent to your email. Check your inbox in a minute or so.");
+			res.setSuccess(true);
+		});
+	}
+
 	//
 	// /*
 	// * Warning: not yet tested. Ended up not needing this yet.

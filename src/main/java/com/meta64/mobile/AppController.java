@@ -78,7 +78,7 @@ import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
 import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
-import com.meta64.mobile.service.ImportXmlService;
+import com.meta64.mobile.service.ImportService;
 import com.meta64.mobile.service.ImportZipService;
 import com.meta64.mobile.service.LuceneService;
 import com.meta64.mobile.service.NodeEditService;
@@ -143,7 +143,7 @@ public class AppController {
 	private NodeSearchService nodeSearchService;
 
 	@Autowired
-	private ImportXmlService importXmlService;
+	private ImportService importXmlService;
 
 	@Autowired
 	private ImportZipService importZipService;
@@ -518,7 +518,6 @@ public class AppController {
 		return res;
 	}
 
-	//
 	/*
 	 * We could persist the real filename when uploaded, and then make the links actually reference
 	 * that filename on this type of path. Will have to add to binary info property sent to client
@@ -601,20 +600,17 @@ public class AppController {
 		return res;
 	}
 
-	// @RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ResponseEntity<?> streamImport(//
-	// @RequestParam(value = "nodeId", required = true) String nodeId, //
-	// @RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
-	//
-	// logRequest("upload", null);
-	// checkJcr();
-	// if (nodeId == null) {
-	// throw ExUtil.newEx("target nodeId not provided");
-	// }
-	// return importXmlService.streamImport(null, nodeId, uploadFiles);
-	// }
-	//
+	@RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ResponseEntity<?> streamImport(//
+			@RequestParam(value = "nodeId", required = true) String nodeId, //
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
+		logRequest("upload", null);
+		if (nodeId == null) {
+			throw ExUtil.newEx("target nodeId not provided");
+		}
+		return importXmlService.streamImport(null, nodeId, uploadFiles);
+	}
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)
 	@OakSession
@@ -702,7 +698,7 @@ public class AppController {
 	// nodeSearchService.getSharedNodes(null, req, res);
 	// return res;
 	// }
-	//
+
 	@RequestMapping(value = API_PATH + "/saveUserPreferences", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SaveUserPreferencesResponse saveUserPreferences(@RequestBody SaveUserPreferencesRequest req) {

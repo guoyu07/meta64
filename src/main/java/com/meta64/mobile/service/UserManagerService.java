@@ -90,80 +90,6 @@ public class UserManagerService {
 	@Autowired
 	private Encryptor encryptor;
 
-	//
-	// /*
-	// * Login mechanism is a bit tricky because the OakSession ASPECT (AOP) actually detects the
-	// * LoginRequest and performs authentication BEFORE this 'login' method even gets called, so by
-	// * the time we are in this method we can safely assume the userName and password resulted in a
-	// * successful login. If login fails the getJcrSession() call below will return null also.
-	// */
-	// public void login(Session session, LoginRequest req, LoginResponse res) {
-	//
-	// if (session == null) {
-	// session = ThreadLocals.getJcrSession();
-	// }
-	//
-	// String userName = req.getUserName();
-	// String password = req.getPassword();
-	// log.trace("login: user=" + userName);
-	//
-	// /*
-	// * We have to get timezone information from the user's browser, so that all times on all
-	// * nodes always show up in their precise local time!
-	// */
-	// sessionContext.setTimezone(DateUtil.getTimezoneFromOffset(req.getTzOffset()));
-	// sessionContext.setTimeZoneAbbrev(DateUtil.getUSTimezone(-req.getTzOffset() / 60,
-	// req.isDst()));
-	//
-	// if (userName.equals("")) {
-	// userName = sessionContext.getUserName();
-	// }
-	// else {
-	// sessionContext.setUserName(userName);
-	// sessionContext.setPassword(password);
-	// }
-	//
-	// if (session == null) {
-	// log.trace(" session==null, using anonymous user");
-	// /*
-	// * Note: This is not an error condition, this happens whenever the page loads for the
-	// * first time and the user has no session yet,
-	// */
-	// res.setUserName(JcrPrincipal.ANONYMOUS);
-	// res.setMessage("not logged in.");
-	// res.setSuccess(false);
-	// }
-	// else {
-	// RefInfo rootRefInfo = UserManagerUtil.getRootNodeRefInfoForUser(session, userName);
-	// sessionContext.setRootRefInfo(rootRefInfo);
-	// res.setRootNode(rootRefInfo);
-	// res.setUserName(userName);
-	// res.setAllowFileSystemSearch(appProp.isAllowFileSystemSearch());
-	//
-	// try {
-	// UserPreferences userPreferences = getUserPreferences();
-	// sessionContext.setUserPreferences(userPreferences);
-	// res.setUserPreferences(userPreferences);
-	// }
-	// catch (Exception e) {
-	// /*
-	// * If something goes wrong loading preferences just log and continue. Should never
-	// * happen but we might as well be resilient here.
-	// */
-	// // log.error("Failed loading preferences: ", e);
-	// }
-	// res.setSuccess(true);
-	// }
-	// res.setAnonUserLandingPageNode(appProp.getUserLandingPageNode());
-	// log.debug("Processing Login: urlId=" + (sessionContext.getUrlId() != null ?
-	// sessionContext.getUrlId() : "null"));
-	// res.setHomeNodeOverride(sessionContext.getUrlId());
-	//
-	// if (res.getUserPreferences() == null) {
-	// res.setUserPreferences(getDefaultUserPreferences());
-	// }
-	// }
-	//
 	/*
 	 * Login mechanism is a bit tricky because the OakSession ASPECT (AOP) actually detects the
 	 * LoginRequest and performs authentication BEFORE this 'login' method even gets called, so by
@@ -284,30 +210,6 @@ public class UserManagerService {
 		});
 	}
 
-	//
-	// public void initNewUser(Session session, String userName, String password, String email,
-	// boolean automated) {
-	// try {
-	// if (UserManagerUtil.createUser(session, userName, password, automated)) {
-	// UserManagerUtil.createUserRootNode(session, userName);
-	//
-	// Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-	// if (email != null) {
-	// prefsNode.setProperty(JcrProp.EMAIL, email);
-	// }
-	//
-	// prefsNode.setProperty(JcrProp.PWD, encryptor.encrypt(password));
-	//
-	// setDefaultUserPreferences(prefsNode);
-	// JcrUtil.save(session);
-	// log.debug("Successful signup complete.");
-	// }
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
 	public void initNewUser(MongoSession session, String userName, String password, String email, boolean automated) {
 		SubNode userNode = api.createUser(session, userName, email, password, automated);
 		if (userNode != null) {
@@ -322,21 +224,6 @@ public class UserManagerService {
 		});
 		return ret.getVal();
 	}
-
-	// public boolean userExists(Session session, String userName, ValContainer<String>
-	// passwordContainer) {
-	// Node prefsNode = JcrUtil.getNodeByPath(session, "/" + JcrName.USER_PREFERENCES + "/" +
-	// userName);
-	// if (prefsNode != null) {
-	// if (passwordContainer != null) {
-	// String password = JcrUtil.safeGetStringProp(prefsNode, JcrProp.PWD);
-	// password = encryptor.decrypt(password);
-	// passwordContainer.setVal(password);
-	// }
-	// return true;
-	// }
-	// return false;
-	// }
 
 	/*
 	 * Processes a signup request from a user. We create the user root node in a pending state, and
@@ -581,18 +468,4 @@ public class UserManagerService {
 			res.setSuccess(true);
 		});
 	}
-
-	//
-	// /*
-	// * Warning: not yet tested. Ended up not needing this yet.
-	// */
-	// public String getPasswordOfUser(final String userName) {
-	// final ValContainer<String> password = new ValContainer<String>();
-	// adminRunner.run(session -> {
-	// Node prefsNode = getPrefsNodeForSessionUser(session, userName);
-	// String encPwd = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.PWD);
-	// password.setVal(encryptor.decrypt(encPwd));
-	// });
-	// return password.getVal();
-	// }
 }

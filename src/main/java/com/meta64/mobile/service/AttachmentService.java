@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.NodeProp;
+import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.ImageUtil;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
@@ -179,12 +180,9 @@ public class AttachmentService {
 		}
 
 		if (explodeZips && "application/zip".equalsIgnoreCase(mimeType)) {
-			/* This is a prototype bean, with state for processing one import at a time */
-
-			throw new RuntimeException("Not enabled yet in mongo architecture.");
-			// ImportZipService importZipStreamService = (ImportZipService)
-			// SpringContextUtil.getBean(ImportZipService.class);
-			// importZipStreamService.inputZipFileFromStream(session, is, node);
+			/* This is a prototype-scope bean, with state for processing one import at a time */
+			ImportZipService importZipStreamService = (ImportZipService)SpringContextUtil.getBean(ImportZipService.class);
+			importZipStreamService.inputZipFileFromStream(session, is, node);
 		}
 		else {
 			saveBinaryStreamToNode(session, is, mimeType, fileName, size, width, height, node);

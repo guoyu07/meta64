@@ -1,7 +1,25 @@
 package com.meta64.mobile.service;
 
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.meta64.mobile.config.NodeProp;
+import com.meta64.mobile.mongo.MongoApi;
+import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.model.SubNode;
+import com.meta64.mobile.util.ExUtil;
+import com.meta64.mobile.util.MimeUtil;
+import com.meta64.mobile.util.SubNodeUtil;
+import com.meta64.mobile.util.XString;
 
 /**
  * Import from ZIP files.
@@ -9,173 +27,134 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class ImportZipService {
-	// private static final Logger log = LoggerFactory.getLogger(ImportZipService.class);
-	//
-	// @Autowired
-	// private AppProp appProp;
-	//
-	// @Autowired
-	// private MimeUtil mimeUtil;
-	//
-	// @Autowired
-	// private AttachmentService attachmentService;
-	//
-	// @Autowired
-	// private JsonToJcrService jsonToJcrService;
-	//
-	// @Autowired
-	// private SessionContext sessionContext;
-	//
-	// private String targetPath;
-	//
-	// private ZipInputStream zis = null;
-	// private Session session;
-	//
-	// /*
-	// * for performance we create a map of folders (relative names, directly from the zip file, as
-	// * the key)
-	// */
-	// private HashMap<String, Node> folderMap = new HashMap<String, Node>();
-	//
-	// public void inputZipFileFromStream(Session session, InputStream is, Node node) {
-	//
-	// try {
-	// targetPath = node.getPath();
-	// this.session = session;
-	//
-	// zis = new ZipInputStream(is);
-	// ZipEntry entry;
-	// while ((entry = zis.getNextEntry()) != null) {
-	// if (entry.isDirectory()) {
-	// processDirectory(entry);
-	// }
-	// else {
-	// processFile(entry);
-	// }
-	// zis.closeEntry();
-	// }
-	// zis.close();
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
-	// private void processDirectory(ZipEntry entry) {
-	// String name = entry.getName();
-	// String nameNoSlash = XString.truncateAfterLast(name, "/");
-	// String lastPart = XString.parseAfterLast(nameNoSlash, "/");
-	// log.info("DIR: " + name);
-	//
-	// Node node = JcrUtil.ensureNodeExists(session, targetPath, name, null, "meta64:folder",
-	// false);
-	// if (node == null) throw ExUtil.newEx("Failed to create directory node");
-	//
-	// try {
-	// node.setProperty(JcrProp.NAME, lastPart);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// JcrUtil.timestampNewNode(session, node);
-	//
-	// /* Note: these entries end with "/" because they are all folders */
-	// folderMap.put(entry.getName(), node);
-	// }
-	//
-	// private void processFile(ZipEntry entry) {
-	// String name = entry.getName();
-	// log.info("FILE: " + entry.getName());
-	// String fileName = name.substring(name.lastIndexOf("/") + 1);
-	// String folderNoSlash = XString.truncateAfterLast(name, "/");
-	// Node folderNode = folderMap.get(folderNoSlash + "/");
-	// if (folderNode == null) throw ExUtil.newEx("unable to find folder node: " + folderNoSlash +
-	// "/");
-	//
-	// Node newNode = null;
-	//
-	// try {
-	// if (mimeUtil.isJsonFileType(fileName)) {
-	// String json = IOUtils.toString(zis, "UTF-8");
-	// newNode = jsonToJcrService.importJsonFile(json, folderNode);
-	// }
-	// else if (mimeUtil.isTextTypeFileName(fileName)) {
-	// newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-	// String text = IOUtils.toString(zis, "UTF-8");
-	// newNode.setProperty(JcrProp.CONTENT, fileName + "\n\n" + text);
-	// }
-	// else {
-	// newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-	// newNode.setProperty(JcrProp.CONTENT, fileName);
-	//
-	// String mimeType = URLConnection.guessContentTypeFromName(fileName);
-	//
-	// /*
-	// * the JCR api force closes the stream so for now we just pass a stream that it's ok
-	// * to close. Better solution is probably to create an InputStream wrapper that has
-	// * an overridden close() method that does nothing, because we cannot close the zip
-	// * stream we are reading from!
-	// */
-	// byte[] bytes = IOUtils.toByteArray(zis);
-	// ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-	//
-	// /* Note: bais stream IS closed inside this method, so we don't close it here */
-	// attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1, -1, newNode);
-	// }
-	//
-	// newNode.setProperty(JcrProp.FILENAME, fileName);
-	// JcrUtil.timestampNewNode(session, newNode);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
-	// public void importFromLocalZipFile(Session session, ImportRequest req, ImportResponse res) {
-	// try {
-	// if (session == null) {
-	// session = ThreadLocals.getJcrSession();
-	// }
-	//
-	// UserPreferences userPreferences = sessionContext.getUserPreferences();
-	// boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
-	//
-	// if (!importAllowed && !sessionContext.isAdmin()) {
-	// throw ExUtil.newEx("import is an admin-only feature.");
-	// }
-	//
-	// String nodeId = req.getNodeId();
-	// Node importNode = JcrUtil.findNode(session, nodeId);
-	// log.debug("Import to Node: " + importNode.getPath());
-	//
-	// if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-	// throw ExUtil.newEx("adminDataFolder does not exist");
-	// }
-	//
-	// String fileName = req.getSourceFileName();
-	// fileName = fileName.replace(".", "_");
-	// fileName = fileName.replace(File.separator, "_");
-	// String fullFileName = appProp.getAdminDataFolder() + File.separator +
-	// req.getSourceFileName();
-	//
-	// if (!FileTools.fileExists(fullFileName)) {
-	// throw ExUtil.newEx("Import file not found.");
-	// }
-	//
-	// BufferedInputStream bis = null;
-	// try {
-	// bis = new BufferedInputStream(new FileInputStream(fullFileName));
-	// inputZipFileFromStream(session, bis, importNode);
-	// }
-	// finally {
-	// StreamUtil.close(zis);
-	// }
-	//
-	// res.setSuccess(true);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
+	private static final Logger log = LoggerFactory.getLogger(ImportZipService.class);
 
+	@Autowired
+	private MongoApi api;
+
+	@Autowired
+	private MimeUtil mimeUtil;
+
+	@Autowired
+	private SubNodeUtil jcrUtil;
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private JsonToJcrService jsonToJcrService;
+
+	private String targetPath;
+
+	private ZipInputStream zis = null;
+	private MongoSession session;
+
+	/*
+	 * for performance we create a map of folders (relative names, directly from the zip file, as
+	 * the key), and only the PARTIAL path (paths from Zip) rather than full path which would
+	 * include targetPath prefix.
+	 */
+	private HashMap<String, SubNode> folderMap = new HashMap<String, SubNode>();
+
+	public void inputZipFileFromStream(MongoSession session, InputStream is, SubNode node) {
+		// todo-0: re-enable authorization for imports
+		// UserPreferences userPreferences = sessionContext.getUserPreferences();
+		// boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() :
+		// false;
+		//
+		// if (!importAllowed && !sessionContext.isAdmin()) {
+		// throw ExUtil.newEx("import is an admin-only feature.");
+		// }
+
+		try {
+			targetPath = node.getPath();
+			this.session = session;
+
+			zis = new ZipInputStream(is);
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (entry.isDirectory()) {
+					processDirectory(entry);
+				}
+				else {
+					processFile(entry);
+				}
+				zis.closeEntry();
+			}
+			zis.close();
+		}
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
+		}
+	}
+
+	/*
+	 * Since we construct directories on demand, we don't need to process any actual directory
+	 * entries. The file entries have full paths that we use.
+	 */
+	private void processDirectory(ZipEntry entry) {
+		String name = entry.getName();
+		log.info("DIR: " + name);
+	}
+
+	private SubNode ensureNodeExists(String path) {
+		SubNode folderNode = folderMap.get(path);
+		if (folderNode == null) {
+			folderNode = jcrUtil.ensureNodeExists(session, targetPath, path, "path: " + path);
+		}
+
+		if (folderNode == null) {
+			throw ExUtil.newEx("Unable to create node: " + path);
+		}
+
+		log.debug("Path Node created: " + path);
+		folderMap.put(path, folderNode);
+		return folderNode;
+	}
+
+	private void processFile(ZipEntry entry) {
+		String name = entry.getName();
+		log.info("FILE: " + entry.getName());
+		String fileName = name.substring(name.lastIndexOf("/") + 1);
+		String folderNoSlash = XString.truncateAfterLast(name, "/");
+		SubNode node = ensureNodeExists(folderNoSlash);
+
+		try {
+			if (mimeUtil.isJsonFileType(fileName)) {
+				//todo-0: bring back ability to import the JSON also
+				// String json = null;
+				// json = IOUtils.toString(zis, "UTF-8");
+				// jsonToJcrService.importJsonContent(json, node);
+			}
+			else if (mimeUtil.isTextTypeFileName(fileName)) {
+				String text = IOUtils.toString(zis, "UTF-8");
+				node.setProp(NodeProp.CONTENT, text);
+				api.save(session, node);
+			}
+			else {
+//				 newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
+//				 newNode.setProperty(JcrProp.CONTENT, fileName);
+//				
+//				 String mimeType = URLConnection.guessContentTypeFromName(fileName);
+//				
+//				 /*
+//				 * the JCR api force closes the stream so for now we just pass a stream that it's
+//				 ok
+//				 * to close. Better solution is probably to create an InputStream wrapper that has
+//				 * an overridden close() method that does nothing, because we cannot close the zip
+//				 * stream we are reading from!
+//				 */
+//				 byte[] bytes = IOUtils.toByteArray(zis);
+//				 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+//				
+//				 /* Note: bais stream IS closed inside this method, so we don't close it here */
+//				 attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1,
+//				 -1,
+//				 newNode);
+			}
+		}
+		catch (Exception e) {
+			log.error("Failed importing node", e);
+		}
+	}
 }

@@ -388,7 +388,7 @@ public class AppController {
 	// }
 	// return res;
 	// }
-	//
+	
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) {
@@ -526,7 +526,7 @@ public class AppController {
 		logRequest("bin", null);
 		return attachmentService.getBinary(null, nodeId);
 	}
-	//
+	
 	// /*
 	// * todo-1: we should return proper HTTP codes when file not found, etc.
 	// *

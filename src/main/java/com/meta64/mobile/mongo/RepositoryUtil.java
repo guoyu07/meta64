@@ -59,51 +59,6 @@ public class RepositoryUtil {
 	// }
 	// }
 
-	// /*
-	// * We create these users just so there's an easy way to start doing multi-user testing
-	// (sharing
-	// * nodes from user to user, etc) without first having to manually register users.
-	// */
-	// public void createTestAccounts() {
-	// /*
-	// * The testUserAccounts is a comma delimited list of user accounts where each user account
-	// * is a colon-delimited list like username:password:email.
-	// *
-	// * todo-1: could change the format of this info to JSON.
-	// */
-	// final List<String> testUserAccountsList = XString.tokenize(appProp.getTestUserAccounts(),
-	// ",", true);
-	// if (testUserAccountsList == null) {
-	// return;
-	// }
-	//
-	// adminRunner.run((Session session) -> {
-	// for (String accountInfo : testUserAccountsList) {
-	// final List<String> accountInfoList = XString.tokenize(accountInfo, ":", true);
-	// if (accountInfoList == null || accountInfoList.size() != 3) {
-	// log.debug("Invalid User Info substring: " + accountInfo);
-	// continue;
-	// }
-	//
-	// String userName = accountInfoList.get(0);
-	//
-	// SignupRequest signupReq = new SignupRequest();
-	// signupReq.setUserName(userName);
-	// signupReq.setPassword(accountInfoList.get(1));
-	// signupReq.setEmail(accountInfoList.get(2));
-	//
-	// SignupResponse res = new SignupResponse();
-	// userManagerService.signup(session, signupReq, res, true);
-	//
-	// /*
-	// * keep track of these names, because some API methods need to know if a given
-	// * account is a test account
-	// */
-	// testAccountNames.add(userName);
-	// }
-	// });
-	// }
-
 	/*
 	 * We create these users just so there's an easy way to start doing multi-user testing (sharing
 	 * nodes from user to user, etc) without first having to manually register users.

@@ -93,7 +93,7 @@ public class Convert {
 		// userNodeId back to client, and the client
 		// should be able to deal with that (i think). depends on how much ownership info we need to
 		// show user.
-		SubNode userNode = api.getNode(session, node.getOwner());
+		SubNode userNode = api.getNode(session, node.getOwner(), false);
 		String owner = userNode==null ? "?" : userNode.getStringProp(NodeProp.USER);
 
 		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
@@ -168,52 +168,6 @@ public class Convert {
 		}
 	}
 
-	//
-	// public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, Node node, Property
-	// prop, boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
-	// try {
-	// String value = null;
-	// boolean abbreviated = false;
-	// List<String> values = null;
-	//
-	// /* multivalue */
-	// if (prop.isMultiple()) {
-	// // log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-	// values = new LinkedList<String>();
-	//
-	// // int valIdx = 0;
-	// for (Value v : prop.getValues()) {
-	// String strVal = formatValue(sessionContext, v, false, initNodeEdit);
-	// // log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-	// values.add(strVal);
-	// // valIdx++;
-	// }
-	// }
-	// /* else single value */
-	// else {
-	// if (prop.getName().equals(JcrProp.BIN_DATA)) {
-	// // log.trace(String.format("prop[%s] isBinary", prop.getName()));
-	// value = "[binary data]";
-	// }
-	// else if (prop.getName().equals(JcrProp.CONTENT)) {
-	// value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
-	// /* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-	// }
-	// else {
-	// value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
-	// /* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-	// }
-	// }
-	//
-	// PropertyInfo propInfo = new PropertyInfo(prop.getType(), prop.getName(), value, abbreviated,
-	// values);
-	// return propInfo;
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
 	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, SubNode node, String propName, SubNodeProperty prop, boolean htmlOnly,
 			boolean allowAbbreviated, boolean initNodeEdit) {
 		try {

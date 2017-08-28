@@ -2,9 +2,11 @@ package com.meta64.mobile.mongo;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,7 @@ import com.meta64.mobile.image.ImageSize;
 import com.meta64.mobile.image.ImageUtil;
 import com.meta64.mobile.model.AccessControlEntryInfo;
 import com.meta64.mobile.model.PrivilegeInfo;
+import com.meta64.mobile.mongo.model.PrivilegeType;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeProperty;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
@@ -79,11 +82,72 @@ public class MongoApi {
 	}
 
 	public void authRead(MongoSession session, SubNode node) {
-		// todo-0; implement. Throw Exception if user cannot write
+		if (!auth(session, node, PrivilegeType.READ)) {
+			throw new RuntimeException("Read Auth Failed.");
+		}
 	}
 
 	public void authWrite(MongoSession session, SubNode node) {
-		// todo-0; implement. Throw Exception if user cannot write
+		if (!auth(session, node, PrivilegeType.WRITE)) {
+			throw new RuntimeException("Write Auth Failed.");
+		}
+	}
+
+	/* Returns true if this user on this session has privType access to 'node' */
+	public boolean auth(MongoSession session, SubNode node, String privType) {
+		// admin can read all nodes
+		if (node == null || session.isAdmin()) return true;
+
+		if (session.getUserNode() == null) {
+			throw new RuntimeException("session had no userNode");
+		}
+
+		if (node.getOwner() == null) {
+			throw new RuntimeException("node had no owner: " + node.getPath());
+		}
+
+		// if this session user is the owner of this node
+		if (session.getUserNode().getId().equals(node.getOwner())) return true;
+
+		// Find any ancestor that has privType shared to this user
+		if (hasAncestorShareToMe(session, node, privType)) return true;
+
+		return false;
+	}
+
+	public boolean hasAncestorShareToMe(MongoSession session, SubNode node, String privType) {
+		String sessionUserNodeId = session.getUserNode().getId().toHexString();
+		String path = node.getPath();
+		StringBuilder fullPath = new StringBuilder();
+		StringTokenizer t = new StringTokenizer(path, "/", false);
+		while (t.hasMoreTokens()) {
+			String pathPart = t.nextToken().trim();
+			fullPath.append("/");
+			fullPath.append(pathPart);
+
+			// todo-0: remove concats and let NodeName have static finals for these full paths.
+			if (pathPart.equals("/" + NodeName.ROOT)) continue;
+			if (pathPart.equals("/" + NodeName.ROOT + "/" + NodeName.USER)) continue;
+
+			SubNode tryNode = getNode(session, fullPath.toString(), false);
+			if (tryNode == null) {
+				throw new RuntimeException("Tree corrupt! path not found: " + fullPath.toString());
+			}
+			if (hasShareToMe(tryNode, sessionUserNodeId, privType)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasShareToMe(SubNode node, String sessionUserNodeId, String privType) {
+		HashMap<String, String> acl = node.getAcl();
+		if (acl == null) return false;
+		String privsForUserId = acl.get(sessionUserNodeId);
+		if (privsForUserId != null && privsForUserId.indexOf(privType) != -1) {
+			return true;
+		}
+		return false;
 	}
 
 	public void save(MongoSession session, SubNode node) {
@@ -447,7 +511,7 @@ public class MongoApi {
 	}
 
 	public List<AccessControlEntryInfo> getAclEntries(MongoSession session, SubNode node) {
-		HashMap<String,String> aclMap = node.getAcl();
+		HashMap<String, String> aclMap = node.getAcl();
 		if (aclMap == null) {
 			return null;
 		}
@@ -475,6 +539,10 @@ public class MongoApi {
 	}
 
 	public SubNode getNode(MongoSession session, String path) {
+		return getNode(session, path, true);
+	}
+
+	public SubNode getNode(MongoSession session, String path, boolean allowAuth) {
 		if (path.equals("/")) {
 			throw new RuntimeException("SubNode doesn't implement the root node. Root is implicit and never needs an actual node to represent it.");
 		}
@@ -490,14 +558,22 @@ public class MongoApi {
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).is(path));
 		ret = ops.findOne(query, SubNode.class);
 
-		authRead(session, ret);
+		if (allowAuth) {
+			authRead(session, ret);
+		}
 		return ret;
 	}
 
 	public SubNode getNode(MongoSession session, ObjectId objId) {
+		return getNode(session, objId, true);
+	}
+
+	public SubNode getNode(MongoSession session, ObjectId objId, boolean allowAuth) {
 		SubNode ret = null;
 		ret = ops.findById(objId, SubNode.class);
-		authRead(session, ret);
+		if (allowAuth) {
+			authRead(session, ret);
+		}
 		return ret;
 	}
 

@@ -19,6 +19,8 @@ public class PropertyInfo {
 	 * content nodes.
 	 */
 	private String value;
+	
+	//todo-0: remove this jcr-specific multivalue thing.
 	private List<String> values;
 
 	private boolean abbreviated;

@@ -32,6 +32,7 @@ import com.meta64.mobile.request.CreateSubNodeRequest;
 import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
+import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
@@ -59,6 +60,7 @@ import com.meta64.mobile.response.CreateSubNodeResponse;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
+import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
@@ -80,6 +82,7 @@ import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
 import com.meta64.mobile.service.ImportService;
@@ -335,33 +338,45 @@ public class AppController {
 		return res;
 	}
 
-	//
-	// @RequestMapping(value = API_PATH + "/export", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) {
-	//
-	// logRequest("exportToXml", req);
-	// checkJcr();
-	// ExportResponse res = new ExportResponse();
-	// checkHttpSession();
-	// if ("xml".equalsIgnoreCase(req.getExportExt())) {
-	// ExportXmlService svc = (ExportXmlService) SpringContextUtil.getBean(ExportXmlService.class);
-	// svc.export(null, req, res);
-	// }
-	// else if ("md".equalsIgnoreCase(req.getExportExt())) {
-	// ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
-	// svc.export(null, req, res);
-	// }
-	// else if ("zip".equalsIgnoreCase(req.getExportExt())) {
-	// ExportZipService svc = (ExportZipService) SpringContextUtil.getBean(ExportZipService.class);
-	// svc.export(null, req, res);
-	// }
-	// else {
-	// throw ExUtil.newEx("Unsupported file extension: " + req.getExportExt());
-	// }
-	// return res;
-	// }
-	//
+	@RequestMapping(value = API_PATH + "/export", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ExportResponse exportToXml(@RequestBody ExportRequest req) {
+		logRequest("export", req);
+		ExportResponse res = new ExportResponse();
+		checkHttpSession();
+		
+//		if ("xml".equalsIgnoreCase(req.getExportExt())) {
+//			ExportXmlService svc = (ExportXmlService) SpringContextUtil.getBean(ExportXmlService.class);
+//			svc.export(null, req, res);
+//		}
+//		else if ("md".equalsIgnoreCase(req.getExportExt())) {
+//			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
+//			svc.export(null, req, res);
+//		}
+//		else 
+			
+		if ("zip".equalsIgnoreCase(req.getExportExt())) {
+			ExportZipService svc = (ExportZipService) SpringContextUtil.getBean(ExportZipService.class);
+			svc.export(null, req, res);
+		}
+		else {
+			throw ExUtil.newEx("Unsupported file extension: " + req.getExportExt());
+		}
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody ResponseEntity<?> streamImport(//
+			@RequestParam(value = "nodeId", required = true) String nodeId, //
+			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
+		logRequest("upload", null);
+		if (nodeId == null) {
+			throw ExUtil.newEx("target nodeId not provided");
+		}
+		return importXmlService.streamImport(null, nodeId, uploadFiles);
+	}
+	
 	// @RequestMapping(value = API_PATH + "/import", method = RequestMethod.POST)
 	// @OakSession
 	// public @ResponseBody ImportResponse importFromFile(@RequestBody ImportRequest req) {
@@ -388,7 +403,7 @@ public class AppController {
 	// }
 	// return res;
 	// }
-	
+
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) {
@@ -526,38 +541,31 @@ public class AppController {
 		logRequest("bin", null);
 		return attachmentService.getBinary(null, nodeId);
 	}
-	
-	// /*
-	// * todo-1: we should return proper HTTP codes when file not found, etc.
-	// *
-	// * The ":.+" is there because that is required to stop it from truncating file extension.
-	// * https://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-
-	// * truncated
-	// */
-	//
-	// // &&& next work: add url param for 'formatted', which will make the browser send bach HTML
-	// that
-	// // embeds the entire
-	// // content of teh Markdown into a markdown formatting block, and then add add option on the
-	// // EXPORT to embed images or not.
-	//
-	// @RequestMapping(value = "/file/{fileName:.+}", method = RequestMethod.GET)
-	// @OakSession
-	// public @ResponseBody ResponseEntity<InputStreamResource> getFile(//
-	// @PathVariable("fileName") String fileName, //
-	// @RequestParam(name = "disp", required = false) String disposition, //
-	// @RequestParam(name = "format", required = false) String formatted) {
-	//
-	// logRequest("file", null);
-	// checkJcr();
-	// boolean bFormatted = false;
-	// if (formatted != null) {
-	// String formattedLc = formatted.toLowerCase();
-	// bFormatted = formattedLc.startsWith("t") || formattedLc.startsWith("y");
-	// }
-	// return attachmentService.getFile(null, fileName, disposition, bFormatted);
-	// }
-	//
+
+	/*
+	 * todo-1: we should return proper HTTP codes when file not found, etc.
+	 *
+	 * The ":.+" is there because that is required to stop it from truncating file extension.
+	 * https://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-
+	 * truncated
+	 */
+
+	@RequestMapping(value = "/file/{fileName:.+}", method = RequestMethod.GET)
+	@OakSession
+	public @ResponseBody ResponseEntity<InputStreamResource> getFile(//
+			@PathVariable("fileName") String fileName, //
+			@RequestParam(name = "disp", required = false) String disposition, //
+			@RequestParam(name = "format", required = false) String formatted) {
+
+		logRequest("file", null);
+		boolean bFormatted = false;
+		if (formatted != null) {
+			String formattedLc = formatted.toLowerCase();
+			bFormatted = formattedLc.startsWith("t") || formattedLc.startsWith("y");
+		}
+		return attachmentService.getFile(null, fileName, disposition, bFormatted);
+	}
+
 	// /* Used for displaying a file specified by a file url parameter (tbd) */
 	// @RequestMapping(value = "/view/{fileName:.+}", method = RequestMethod.GET)
 	// @OakSession
@@ -595,18 +603,6 @@ public class AppController {
 		checkHttpSession();
 		attachmentService.deleteAttachment(null, req, res);
 		return res;
-	}
-
-	@RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
-	@OakSession
-	public @ResponseBody ResponseEntity<?> streamImport(//
-			@RequestParam(value = "nodeId", required = true) String nodeId, //
-			@RequestParam(value = "files", required = true) MultipartFile[] uploadFiles) {
-		logRequest("upload", null);
-		if (nodeId == null) {
-			throw ExUtil.newEx("target nodeId not provided");
-		}
-		return importXmlService.streamImport(null, nodeId, uploadFiles);
 	}
 
 	@RequestMapping(value = API_PATH + "/uploadFromUrl", method = RequestMethod.POST)

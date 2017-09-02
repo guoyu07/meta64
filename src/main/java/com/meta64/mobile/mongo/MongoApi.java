@@ -1,5 +1,6 @@
 package com.meta64.mobile.mongo;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -868,6 +870,10 @@ public class MongoApi {
 		GridFSDBFile gridFile = grid.findOne(new Query(Criteria.where("metadata.nodeId").is(node.getId())));
 		if (gridFile == null) return null;
 		return gridFile.getInputStream();
+	}
+
+	public AutoCloseInputStream getAutoClosingStream(MongoSession session, SubNode node, String propName) {
+		return new AutoCloseInputStream(new BufferedInputStream(getStream(session, node, propName)));
 	}
 
 	public String regexDirectChildrenOfPath(String path) {

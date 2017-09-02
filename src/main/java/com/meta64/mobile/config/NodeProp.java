@@ -1,15 +1,11 @@
 package com.meta64.mobile.config;
 
 /**
- * JCR Node Property Names (constants), node names, types...
+ * Node Property Names (constants), node names, types...
  */
 public class NodeProp {
 
 	// public static final String RSS_FEED_ROOT_URLS = "rssFeedRootUrls";
-
-	// ---------------------------------------------
-	// BEGIN jcr-types.txt file
-	// ---------------------------------------------
 
 	public static final String META6_TYPE_FOLDER = "sn:folder";
 
@@ -37,10 +33,6 @@ public class NodeProp {
 	public static final String RSS_ITEM_ENC_URL = "sn:rssItemEncUrl";
 	// public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
 
-	// ---------------------------------------------
-	// END jcr-types.txt file
-	// ---------------------------------------------
-
 	public static final String MERKLE_HASH = "sn:merkle";
 
 	/*
@@ -64,10 +56,6 @@ public class NodeProp {
 	public static final String USER_PREF_PASSWORD_RESET_AUTHCODE = "sn:pwdResetAuth";
 	public static final String SIGNUP_PENDING = "sn:signupPending";
 
-	/*
-	 * Goes on node: Paths defined by: JcrUtil.getSystemOutbox(session) + GUID (guid is unique per
-	 * outbound email)
-	 */
 	public static final String EMAIL_CONTENT = "sn:content";
 	public static final String EMAIL_RECIP = "sn:recip";
 	public static final String EMAIL_SUBJECT = "sn:subject";
@@ -93,11 +81,6 @@ public class NodeProp {
 	 */
 	public static final String MIME_EXT = "sn:ext";
 
-	/*
-	 * Sub Properties of Signup node
-	 * 
-	 * Example Node: /[JcrName.SIGNUP]/[userName]
-	 */
 	public static final String PASSWORD = "sn:pwd";
 	public static final String EMAIL = "sn:email";
 	public static final String CODE = "sn:code";
@@ -109,15 +92,8 @@ public class NodeProp {
 	 */
 	public static final String BIN_VER = "sn:binVer";
 
-	/*
-	 * I want to use jcr namespace for these since they exist and are known
-	 * 
-	 * I stopped using jcr:data, when I read docs online saying JCR does try to index content in
-	 * binaries, and until I can be sure it's not trying to index images I will just turn off
-	 * jcr:data, and use a proprietary property not recognized by jcr
-	 */
 	public static final String BIN_MIME = "sn:mimeType";
-	public static final String BIN_FILENAME = "sn:jcrFileName";
+	public static final String BIN_FILENAME = "sn:fileName";
 	public static final String BIN_SIZE = "sn:size";
 
 	public static final String IMG_WIDTH = "sn:imgWidth";

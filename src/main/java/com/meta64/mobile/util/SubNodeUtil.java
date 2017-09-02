@@ -2,6 +2,7 @@ package com.meta64.mobile.util;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -547,6 +548,7 @@ public class SubNodeUtil {
 	public static String fixPath(String path) {
 		return path.replace("//", "/");
 	}
+
 	//
 	// public static Node getNodeByPath(Session session, String path) {
 	// try {
@@ -692,29 +694,29 @@ public class SubNodeUtil {
 	// which
 	// * is kind of long
 	// */
-	// public static String getGUID() {
-	// String uid = UUID.randomUUID().toString();
-	// StringBuilder sb = new StringBuilder();
-	// int len = uid.length();
-	//
-	// /* chop length in half by using every other character */
-	// for (int i = 0; i < len; i += 2) {
-	// char c = uid.charAt(i);
-	// if (c == '-') {
-	// i--;// account for the fact we jump by tow, and start just after
-	// // dash.
-	// }
-	// else {
-	// sb.append(c);
-	// }
-	// }
-	//
-	// return sb.toString();
-	// // here's another way to generate a random 64bit number...
-	// // if (prng == null) {
-	// // prng = SecureRandom.getInstance("SHA1PRNG");
-	// // }
-	// //
-	// // return String.valueOf(prng.nextLong());
-	// }
+	public String getGUID() {
+		String uid = UUID.randomUUID().toString();
+		StringBuilder sb = new StringBuilder();
+		int len = uid.length();
+
+		/* chop length in half by using every other character */
+		for (int i = 0; i < len; i += 2) {
+			char c = uid.charAt(i);
+			if (c == '-') {
+				i--;// account for the fact we jump by tow, and start just after
+				// dash.
+			}
+			else {
+				sb.append(c);
+			}
+		}
+
+		return sb.toString();
+		// here's another way to generate a random 64bit number...
+		// if (prng == null) {
+		// prng = SecureRandom.getInstance("SHA1PRNG");
+		// }
+		//
+		// return String.valueOf(prng.nextLong());
+	}
 }

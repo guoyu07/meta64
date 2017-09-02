@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -42,6 +44,7 @@ import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.util.ExUtil;
+import com.meta64.mobile.util.FileUtils;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.ThreadLocals;
@@ -181,7 +184,7 @@ public class AttachmentService {
 
 		if (explodeZips && "application/zip".equalsIgnoreCase(mimeType)) {
 			/* This is a prototype-scope bean, with state for processing one import at a time */
-			ImportZipService importZipStreamService = (ImportZipService)SpringContextUtil.getBean(ImportZipService.class);
+			ImportZipService importZipStreamService = (ImportZipService) SpringContextUtil.getBean(ImportZipService.class);
 			importZipStreamService.inputZipFileFromStream(session, is, node);
 		}
 		else {
@@ -304,13 +307,13 @@ public class AttachmentService {
 				fileName = "filename";
 			}
 
-			InputStream inStream = api.getStream(session, node, null);
+			AutoCloseInputStream inStream = api.getAutoClosingStream(session, node, null);
 			long size = node.getIntProp(NodeProp.BIN_SIZE);
 
 			return ResponseEntity.ok().contentLength(size)//
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")//
 					.contentType(MediaType.parseMediaType(mimeTypeProp))//
-					.body(new InputStreamResource(new AutoCloseInputStream(new BufferedInputStream(inStream))));
+					.body(new InputStreamResource(inStream));
 		}
 		catch (Exception e) {
 			log.error(e.getMessage());
@@ -337,43 +340,44 @@ public class AttachmentService {
 	// }
 	// }
 
-	// /* formatted==true indicates we will be sending back actually an HTML response that does the
-	// bare minimum to load the
-	// * markdown into the google marked component and render it.
-	// */
-	// public ResponseEntity<InputStreamResource> getFile(Session session, String fileName, String
-	// disposition, boolean formatted) {
-	// if (fileName.contains("..")) throw ExUtil.newEx("bad request.");
-	//
-	// try {
-	// String fullFileName = appProp.getAdminDataFolder() + File.separator + fileName;
-	// File file = new File(fullFileName);
-	// String checkPath = file.getCanonicalPath();
-	// // todo-0: for better security make a REAL '/file/' folder under admin folder and assert
-	// // that the file is in there directly
-	// if (!checkPath.startsWith(appProp.getAdminDataFolder())) throw ExUtil.newEx("bad request.");
-	//
-	// if (!file.isFile()) throw ExUtil.newEx("file not found.");
-	//
-	// /*
-	// * Alternative is: return new FileSystemResource(...)
-	// */
-	// BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fullFileName));
-	// String mimeType = FileUtils.getMimeType(file);
-	// if (disposition == null) {
-	// disposition = "inline";
-	// }
-	//
-	// return ResponseEntity.ok().contentLength(file.length())//
-	// .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + fileName + "\"")//
-	// .contentType(MediaType.parseMediaType(mimeType))//
-	// .body(new InputStreamResource(new AutoCloseInputStream(bis)));
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
+	/*
+	 * formatted==true indicates we will be sending back actually an HTML response that does the
+	 * bare minimum to load the markdown into the google marked component and render it.
+	 * 
+	 * Downloads a file by name that is expected to be in the Admin Data Folder
+	 */
+	public ResponseEntity<InputStreamResource> getFile(MongoSession session, String fileName, String disposition, boolean formatted) {
+		if (fileName.contains("..")) throw ExUtil.newEx("bad request.");
+
+		try {
+			String fullFileName = appProp.getAdminDataFolder() + File.separator + fileName;
+			File file = new File(fullFileName);
+			String checkPath = file.getCanonicalPath();
+			// todo-0: for better security make a REAL '/file/' folder under admin folder and assert
+			// that the file is in there directly
+			if (!checkPath.startsWith(appProp.getAdminDataFolder())) throw ExUtil.newEx("bad request.");
+
+			if (!file.isFile()) throw ExUtil.newEx("file not found.");
+
+			/*
+			 * Alternative is: return new FileSystemResource(...)
+			 */
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fullFileName));
+			String mimeType = FileUtils.getMimeType(file);
+			if (disposition == null) {
+				disposition = "inline";
+			}
+
+			return ResponseEntity.ok().contentLength(file.length())//
+					.header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + fileName + "\"")//
+					.contentType(MediaType.parseMediaType(mimeType))//
+					.body(new InputStreamResource(new AutoCloseInputStream(bis)));
+		}
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
+		}
+	}
+
 	/*
 	 * Uploads an image attachment not from the user's machine but from some arbitrary internet URL
 	 * they have provided, that could be pointing to an image or any other kind of content actually.

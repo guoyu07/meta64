@@ -259,16 +259,6 @@ public class NodeRenderService {
 		res.setEndReached(endReached);
 	}
 
-	//
-	// /*
-	// * Returns the next node the user would want to read after the 'node' if they are simply
-	// trying
-	// * to "continue reading"
-	// */
-	// public Node getContinuationNodeFromStartingNode(Session session, Node node) {
-	// throw ExUtil.newEx("feature is not yet enabled. Not yet coded.");
-	// }
-	//
 	public void initNodeEdit(MongoSession session, InitNodeEditRequest req, InitNodeEditResponse res) {
 		if (session == null) {
 			session = ThreadLocals.getMongoSession();

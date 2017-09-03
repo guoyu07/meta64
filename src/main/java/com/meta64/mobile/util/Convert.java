@@ -95,9 +95,10 @@ public class Convert {
 		// show user.
 		SubNode userNode = api.getNode(session, node.getOwner(), false);
 		String owner = userNode==null ? "?" : userNode.getStringProp(NodeProp.USER);
-
+		String lastModStr = sessionContext.formatTime(node.getModifyTime());
+		
 		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
-				node.getModifyTime(), propList, hasNodes, hasBinary, binaryIsImage, binVer, //
+				lastModStr, propList, hasNodes, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
 				node.getType());
@@ -173,27 +174,7 @@ public class Convert {
 		try {
 			String value = null;
 			boolean abbreviated = false;
-
-			/*
-			 * multivalue
-			 * 
-			 * meh, not sure i even want the mongo api to support multivalue properties. We can just
-			 * have a property value of type array ?
-			 */
-			// if (prop.isMultiple()) {
-			// // log.trace(String.format("prop[%s] isMultiple", prop.getName()));
-			// values = new LinkedList<String>();
-			//
-			// // int valIdx = 0;
-			// for (Value v : prop.getValues()) {
-			// String strVal = formatValue(sessionContext, v, false, initNodeEdit);
-			// // log.trace(String.format(" val[%d]=%s", valIdx, strVal));
-			// values.add(strVal);
-			// // valIdx++;
-			// }
-			// }
-			// /* else single value */
-			// else {
+			
 			if (propName.equals(NodeProp.CONTENT)) {
 				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
@@ -202,7 +183,6 @@ public class Convert {
 				value = formatValue(sessionContext, prop.getValue(), false, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
 			}
-			// }
 
 			PropertyInfo propInfo = new PropertyInfo(prop.getType(), propName, value, abbreviated);
 			return propInfo;

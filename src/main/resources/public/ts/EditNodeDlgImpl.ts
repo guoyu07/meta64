@@ -133,7 +133,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
                 let isBinaryProp = render.isBinaryProperty(prop.name);
-                let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop /*, isMulti*/, isReadOnlyProp, isBinaryProp, null);
+                let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop, isReadOnlyProp, isBinaryProp, null);
 
                 this.propEntries.push(propEntry);
 
@@ -388,7 +388,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             if (prop.readOnly || prop.binary)
                 return;
 
-            
+
                 console.log("Saving non-multi property field: " + JSON.stringify(prop));
 
                 let propVal: string;

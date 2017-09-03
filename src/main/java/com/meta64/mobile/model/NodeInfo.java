@@ -31,14 +31,14 @@ public class NodeInfo {
 	 * on server side instead or else completely generate dynamically if based on properties.
 	 */
 	private String uid;
-	private Date lastModified;
+	private String lastModified;
 	private String imgId;
 	private String owner;
 
 	public NodeInfo() {
 	}
 
-	public NodeInfo(String id, String path, String name, String owner, Long ordinal, Date lastModified, List<PropertyInfo> properties, boolean hasChildren,
+	public NodeInfo(String id, String path, String name, String owner, Long ordinal, String lastModified, List<PropertyInfo> properties, boolean hasChildren,
 			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
 		this.id = id;
 		this.path = path;
@@ -152,11 +152,11 @@ public class NodeInfo {
 		this.uid = uid;
 	}
 
-	public Date getLastModified() {
+	public String getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(String lastModified) {
 		this.lastModified = lastModified;
 	}
 

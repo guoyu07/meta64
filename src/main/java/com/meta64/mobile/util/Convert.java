@@ -173,7 +173,6 @@ public class Convert {
 		try {
 			String value = null;
 			boolean abbreviated = false;
-			List<String> values = null;
 
 			/*
 			 * multivalue
@@ -205,7 +204,7 @@ public class Convert {
 			}
 			// }
 
-			PropertyInfo propInfo = new PropertyInfo(prop.getType(), propName, value, abbreviated, values);
+			PropertyInfo propInfo = new PropertyInfo(prop.getType(), propName, value, abbreviated);
 			return propInfo;
 		}
 		catch (Exception ex) {

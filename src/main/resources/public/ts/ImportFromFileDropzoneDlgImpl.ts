@@ -39,7 +39,7 @@ export default class ImportFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     buildGUI = (): void => {
         this.setChildren([
             new Header("Import File"),
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(edit.importTargetNode), "path-display-in-editor") : null,
+            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + edit.importTargetNode.path, "path-display-in-editor") : null,
             this.form = new Form({
                 "action": postTargetUrl + "upload",
                 "autoProcessQueue": false,

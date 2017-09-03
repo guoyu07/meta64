@@ -183,7 +183,7 @@ class View {
             util.setInnerHTML(e, "");
             util.setElmDisplay(e, false);
         } else {
-            var pathDisplay = "Path: " + render.formatPath(node);
+            var pathDisplay = "Path: " + node.path;
 
             // todo-2: Do we really need ID in addition to Path here?
             // pathDisplay += "<br>ID: " + node.id;

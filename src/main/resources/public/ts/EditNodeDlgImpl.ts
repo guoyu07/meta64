@@ -131,10 +131,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 console.log("Creating edit field for property " + prop.name);
 
-                let isMulti = prop.values && prop.values.length > 0;
                 let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
                 let isBinaryProp = render.isBinaryProperty(prop.name);
-                let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop, isMulti, isReadOnlyProp, isBinaryProp, null);
+                let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop /*, isMulti*/, isReadOnlyProp, isBinaryProp, null);
 
                 this.propEntries.push(propEntry);
 
@@ -144,11 +143,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                     // "style" : "display: "+ (!rdOnly || meta64.showReadOnlyProperties ? "inline" : "none")
                 });
 
-                if (isMulti) {
-                    this.makeMultiPropEditor(tableRow, propEntry);
-                } else {
-                    this.makeSinglePropEditor(tableRow, propEntry, null /* aceFields */);
-                }
+                this.makeSinglePropEditor(tableRow, propEntry, null /* aceFields */);
 
                 editPropsTable.addChild(tableRow);
             });
@@ -393,7 +388,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             if (prop.readOnly || prop.binary)
                 return;
 
-            if (!prop.multi) {
+            
                 console.log("Saving non-multi property field: " + JSON.stringify(prop));
 
                 let propVal: string;
@@ -417,36 +412,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 } else {
                     console.log("Prop didn't change: " + prop.id);
                 }
-            }
-            /* Else this is a MULTI property */
-            else {
-                console.log("Saving multi property field: " + JSON.stringify(prop));
-                let propVals: string[] = [];
-
-                util.forEachArrElm(prop.subProps, (subProp: I.SubProp, index) => {
-                    console.log("subProp[" + index + "]: " + JSON.stringify(subProp));
-
-                    let propVal: string;
-                    if (cnst.USE_ACE_EDITOR) {
-                        throw "ace is outta commission.";
-                        // let editor = meta64.aceEditorsById[subProp.id];
-                        // if (!editor)
-                        //     throw "Unable to find Ace Editor for subProp ID: " + subProp.id;
-                        // propVal = editor.getValue();
-                        // alert("Setting[" + propVal + "]");
-                    } else {
-                        propVal = util.getTextAreaValById(subProp.id);
-                    }
-
-                    console.log("    subProp[" + index + "] of " + prop.property.name + " val=" + propVal);
-                    propVals.push(propVal);
-                });
-
-                saveList.push({
-                    "name": prop.property.name,
-                    "values": propVals
-                });
-            }
         });// end iterator
 
         /* if anything changed, save to server */
@@ -466,54 +431,6 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         } else {
             console.log("nothing changed. Nothing to save.");
         }
-    }
-
-    makeMultiPropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry): void => {
-        console.log("Making Multi Editor: Property multi-type: name=" + propEntry.property.name + " count="
-            + propEntry.property.values.length);
-
-        let tableCell = new EditPropsTableCell();
-
-        propEntry.subProps = [];
-
-        let propList = propEntry.property.values;
-        if (!propList || propList.length == 0) {
-            propList = [];
-            propList.push("");
-        }
-
-        for (let i = 0; i < propList.length; i++) {
-            console.log("prop multi-val[" + i + "]=" + propList[i]);
-
-            let propVal = propEntry.binary ? "[binary]" : propList[i];
-            let propValStr = propVal || '';
-            propValStr = util.escapeForAttrib(propVal);
-            let label = (i == 0 ? propEntry.property.name : "*") + "." + i;
-
-            let textarea: EditPropTextarea = null;
-            let subProp: I.SubProp = new I.SubProp(null, propVal);
-
-            if (propEntry.binary || propEntry.readOnly) {
-                textarea = new EditPropTextarea(propEntry, subProp, {
-                    "readonly": "readonly",
-                    "disabled": "disabled",
-                    "label": label,
-                    "value": propValStr
-                });
-
-                tableCell.addChild(textarea);
-            } else {
-                textarea = new EditPropTextarea(propEntry, subProp, {
-                    "label": label,
-                    "value": propValStr
-                });
-                tableCell.addChild(textarea);
-            }
-
-            propEntry.subProps.push(subProp);
-        }
-
-        return tableRow.addChild(tableCell);
     }
 
     makeSinglePropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry, aceFields: any): void => {

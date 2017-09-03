@@ -38,7 +38,7 @@ export default class UploadFromFileDropzoneDlgImpl extends DialogBaseImpl implem
     buildGUI = (): void => {
         this.setChildren([
             new Header("Upload File"),
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + render.formatPath(attachment.uploadNode), "path-display-in-editor") : null,
+            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
             this.form = new Form({
                 "action": postTargetUrl + "upload",
                 "autoProcessQueue": false,

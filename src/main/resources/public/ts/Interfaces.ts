@@ -23,7 +23,6 @@ export class PropEntry {
     constructor(public id: string, //
         public checkboxId: string, //
         public property: PropertyInfo, //
-        public multi: boolean, //
         public readOnly: boolean, //
         public binary: boolean, //
         public subProps: SubProp[]) {
@@ -69,11 +68,9 @@ export interface PrivilegeInfo {
 }
 
 export interface PropertyInfo {
-    type?: number;
-    typeStr?: string;
+    type?: string;
     name: string;
     value?: string;
-    values?: string[];
     abbreviated?: boolean;
 }
 

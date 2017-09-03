@@ -33,22 +33,22 @@ export class Render {
      * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
      * want to give them some instructions and the ability to add content.
      */
-    private getEmptyPagePrompt(): string {
+    private getEmptyPagePrompt = (): string => {
         return "<p>There are no subnodes under this node. <br><br>Click 'EDIT MODE' and then use the 'ADD' button to create content.</p>";
     }
 
-    private renderBinary(node: I.NodeInfo): Comp {
+    private renderBinary = (node: I.NodeInfo): Comp => {
         /*
          * If this is an image render the image directly onto the page as a visible image
          */
         if (node.binaryIsImage) {
-            return render.makeImageTag(node);
+            return this.makeImageTag(node);
         }
         /*
          * If not an image we render a link to the attachment, so that it can be downloaded.
          */
         else {
-            let anchor = new Anchor(render.getUrlForNodeAttachment(node), "[Download Attachment]");
+            let anchor = new Anchor(this.getUrlForNodeAttachment(node), "[Download Attachment]");
             return new Div("", {
                 "class": "binary-link"
             }, [anchor]);
@@ -62,7 +62,7 @@ export class Render {
      *
      * If 'data' is provided, this is the instance data for the dialog
      */
-    buidPage(pg, data): void {
+    buidPage = (pg, data): void => {
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -75,7 +75,7 @@ export class Render {
         }
     }
 
-    buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div {
+    buildRowHeader = (node: I.NodeInfo, showPath: boolean, showName: boolean): Div => {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
 
         let pathDiv: Div = null;
@@ -85,7 +85,8 @@ export class Render {
         let lastModifiedSpan: Span = null;
 
         if (cnst.SHOW_PATH_ON_ROWS) {
-            pathDiv = new Div("Path: " + render.formatPath(node) + " (" + node.ordinal + ")", {
+            //not showing ordinal for now.
+            pathDiv = new Div("Path: " + node.path /* + " [" + node.ordinal + "]" */, {
                 "class": "path-display"
             });
         }
@@ -132,13 +133,13 @@ export class Render {
         }, [pathDiv, allSpansDiv, nodeNameSpan]);
     }
 
-    injectSubstitutions(content: string): string {
+    injectSubstitutions = (content: string): string => {
         return util.replaceAll(content, "{{locationOrigin}}", window.location.origin);
     }
 
     /* after a property, or node is updated (saved) we can now call this method instead of refreshing the entire page
     which is what's done in most of the app, which is much less efficient and snappy visually */
-    refreshNodeOnPage(node: I.NodeInfo): void {
+    refreshNodeOnPage = (node: I.NodeInfo): void => {
         //need to lookup uid from NodeInfo.id then set the content of this div.
         //"id": uid + "_content"
         //to the value from renderNodeContent(node, true, true, true, true, true)));
@@ -146,7 +147,7 @@ export class Render {
         if (!uid) throw `Unable to find nodeId ${node.id} in uid map`;
         meta64.initNode(node, false);
         if (uid != node.uid) throw "uid changed unexpectly after initNode";
-        let rowContent: string = render.renderNodeContent(node, true, true, true, true, true);
+        let rowContent: string = this.renderNodeContent(node, true, true, true, true, true);
         util.setInnerHTMLById(uid + "_content", rowContent);
     }
 
@@ -158,15 +159,15 @@ export class Render {
      * of nodes, need a more pluggable design, where rendering of different things is delegated to some
      * appropriate object/service
      */
-    renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string {
+    renderNodeContent = (node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string => {
         //todo-1; bring back top right image support. disabling for nw to ease refactoring
-        let topRightImgTag = null; //render.getTopRightImageTag(node);
+        let topRightImgTag = null; //this.getTopRightImageTag(node);
 
         let ret: string = topRightImgTag ? topRightImgTag.render() : "";
 
         /* todo-2: enable headerText when appropriate here */
         if (meta64.showMetaData) {
-            ret += showHeader ? render.buildRowHeader(node, showPath, showName).render() : "";
+            ret += showHeader ? this.buildRowHeader(node, showPath, showName).render() : "";
         }
 
         if (meta64.showProperties) {
@@ -234,7 +235,7 @@ export class Render {
         }
 
         if (renderBin && node.hasBinary) {
-            let binary = render.renderBinary(node);
+            let binary = this.renderBinary(node);
 
             /*
              * We append the binary image or resource link either at the end of the text or at the location where
@@ -260,7 +261,7 @@ export class Render {
         return ret;
     }
 
-    renderJsonFileSearchResultProperty(jsonContent: string): string {
+    renderJsonFileSearchResultProperty = (jsonContent: string): string => {
         let content: string = "";
         try {
             console.log("json: " + jsonContent);
@@ -304,7 +305,7 @@ export class Render {
      *
      * node is a NodeInfo.java JSON
      */
-    renderNodeAsListItem(node: I.NodeInfo, index: number, count: number, rowCount: number): string {
+    renderNodeAsListItem = (node: I.NodeInfo, index: number, count: number, rowCount: number): string => {
 
         let uid: string = node.uid;
         let prevPageExists: boolean = nav.mainOffset > 0;
@@ -333,9 +334,9 @@ export class Render {
         let focusNode: I.NodeInfo = meta64.getHighlightedNode();
         let selected: boolean = (focusNode && focusNode.uid === uid);
 
-        let buttonBar: ButtonBar = render.makeRowButtonBar(node, canMoveUp, canMoveDown, editingAllowed);
+        let buttonBar: ButtonBar = this.makeRowButtonBar(node, canMoveUp, canMoveDown, editingAllowed);
         let buttonBarHtmlRet: string = buttonBar.render();
-        let bkgStyle: string = render.getNodeBkgImageStyle(node);
+        let bkgStyle: string = this.getNodeBkgImageStyle(node);
 
         let cssId: string = "row_" + uid;
         return tag.div({
@@ -346,10 +347,10 @@ export class Render {
         },//
             buttonBarHtmlRet + tag.div({
                 "id": uid + "_content"
-            }, render.renderNodeContent(node, true, true, true, true, true)));
+            }, this.renderNodeContent(node, true, true, true, true, true)));
     }
 
-    showNodeUrl() {
+    showNodeUrl = () => {
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("You must first click on a node.");
@@ -369,7 +370,7 @@ export class Render {
         util.showMessage(message);
     }
 
-    getTopRightImageTag(node: I.NodeInfo): Img {
+    getTopRightImageTag = (node: I.NodeInfo): Img => {
         let topRightImg: string = props.getNodePropertyVal("img.top.right", node);
         let topRightImgTag: Img;
         if (topRightImg) {
@@ -381,7 +382,7 @@ export class Render {
         return topRightImgTag;
     }
 
-    getNodeBkgImageStyle(node: I.NodeInfo): string {
+    getNodeBkgImageStyle = (node: I.NodeInfo): string => {
         let bkgImg: string = props.getNodePropertyVal('img.node.bkg', node);
         let bkgImgStyle: string = "";
         if (bkgImg) {
@@ -390,7 +391,7 @@ export class Render {
         return bkgImgStyle;
     }
 
-    centeredButtonBar(buttons?: string, classes?: string): string {
+    centeredButtonBar = (buttons?: string, classes?: string): string => {
         classes = classes || "";
 
         return tag.div({
@@ -398,7 +399,7 @@ export class Render {
         }, buttons);
     }
 
-    centerContent(content: string, width: number): string {
+    centerContent = (content: string, width: number): string => {
         let div: string = tag.div({ "style": `width:${width}px;` }, content);
 
         let attrs = {
@@ -408,7 +409,7 @@ export class Render {
         return tag.div(attrs, div);
     }
 
-    buttonBar(buttons: string, classes: string): string {
+    buttonBar = (buttons: string, classes: string): string => {
         classes = classes || "";
 
         return tag.div({
@@ -416,7 +417,7 @@ export class Render {
         }, buttons);
     }
 
-    makeRowButtonBar(node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean): ButtonBar {
+    makeRowButtonBar = (node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean): ButtonBar => {
 
         let createdBy: string = node.owner;
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
@@ -440,7 +441,7 @@ export class Render {
         }
 
         /* Construct Open Button */
-        if (render.nodeHasChildren(node.uid)) {
+        if (this.nodeHasChildren(node.uid)) {
             /* For some unknown reason the ability to style this with a class broke isn't working, so i used a 'style' attibute
                  as a last resort */
             openButton = new Button("Open", () => { meta64.openNode(node.uid) }, {
@@ -509,7 +510,7 @@ export class Render {
             "left-justified");
     }
 
-    makeHorizontalFieldSet(content?: string, extraClasses?: string): string {
+    makeHorizontalFieldSet = (content?: string, extraClasses?: string): string => {
 
         /* Now build entire control bar */
         return tag.div( //
@@ -518,13 +519,13 @@ export class Render {
             }, content);
     }
 
-    makeHorzControlGroup(content: string): string {
+    makeHorzControlGroup = (content: string): string => {
         return tag.div({
             "class": "horizontal layout"
         }, content);
     }
 
-    makeRadioButton(label: string, id: string): string {
+    makeRadioButton = (label: string, id: string): string => {
         return tag.radioButton({
             "id": id,
             "name": id
@@ -534,7 +535,7 @@ export class Render {
     /*
      * Returns true if the nodeId (see makeNodeId()) NodeInfo object has 'hasChildren' true
      */
-    nodeHasChildren(uid: string): boolean {
+    nodeHasChildren = (uid: string): boolean => {
         var node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
             console.log("Unknown nodeId in nodeHasChildren: " + uid);
@@ -544,27 +545,13 @@ export class Render {
         }
     }
 
-    formatPath(node: I.NodeInfo): string {
-        let path: string = node.path;
-
-        /* we inject space in here so this string can wrap and not affect window sizes adversely, or need scrolling */
-        path = util.replaceAll(path, "/", " / ");
-
-        //for now let's show full path: will eventually do this "..abcdef/..ghijkl/..mnopqrs"
-        let shortPath: string = path; //path.length < 50 ? path : path.substring(0, 40) + "...";
-
-        let ret: string = shortPath;
-        ret += " [" + node.primaryTypeName + "]";
-        return ret;
-    }
-
     /*
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
-    renderPageFromData(data?: I.RenderNodeResponse, scrollToTop?: boolean): string {
+    renderPageFromData = (data?: I.RenderNodeResponse, scrollToTop?: boolean): string => {
         meta64.codeFormatDirty = false;
         debugger;
-        console.log("render.renderPageFromData()");
+        console.log("renderPageFromData()");
 
         let newData: boolean = false;
         if (!data) {
@@ -603,18 +590,18 @@ export class Render {
 
         let propCount: number = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
 
-        if (render.debug) {
+        if (this.debug) {
             console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
         }
 
         let output: string = "";
-        let bkgStyle: string = render.getNodeBkgImageStyle(data.node);
+        let bkgStyle: string = this.getNodeBkgImageStyle(data.node);
 
         /*
          * NOTE: mainNodeContent is the parent node of the page content, and is always the node displayed at the to
          * of the page above all the other nodes which are its child nodes.
          */
-        let mainNodeContent: string = render.renderNodeContent(data.node, true, true, true, false, true);
+        let mainNodeContent: string = this.renderNodeContent(data.node, true, true, true, false, true);
 
         //console.log("mainNodeContent: "+mainNodeContent);
 
@@ -685,7 +672,7 @@ export class Render {
             // var rowHeader = buildRowHeader(data.node, true, true);
 
             if (upLevelButton || createSubNodeButton || editNodeButton || replyButton) {
-                buttonBar = render.makeHorizontalFieldSet(upLevelButton + createSubNodeButton + editNodeButton + replyButton);
+                buttonBar = this.makeHorizontalFieldSet(upLevelButton + createSubNodeButton + editNodeButton + replyButton);
             }
 
             let content: string = tag.div({
@@ -705,9 +692,9 @@ export class Render {
         view.updateStatusBar();
 
         if (nav.mainOffset > 0) {
-            let firstButton: string = render.makeButton("First Page", "firstPageButton", render.firstPage);
-            let prevButton: string = render.makeButton("Prev Page", "prevPageButton", render.prevPage);
-            output += render.centeredButtonBar(firstButton + prevButton, "paging-button-bar");
+            let firstButton: string = this.makeButton("First Page", "firstPageButton", this.firstPage);
+            let prevButton: string = this.makeButton("Prev Page", "prevPageButton", this.prevPage);
+            output += this.centeredButtonBar(firstButton + prevButton, "paging-button-bar");
         }
 
         let rowCount: number = 0;
@@ -721,7 +708,7 @@ export class Render {
             for (let i = 0; i < data.children.length; i++) {
                 let node: I.NodeInfo = data.children[i];
                 if (!edit.nodesToMoveSet[node.id]) {
-                    let row: string = render.generateRow(i, node, newData, childCount, rowCount);
+                    let row: string = this.generateRow(i, node, newData, childCount, rowCount);
                     if (row.length != 0) {
                         output += row;
                         rowCount++;
@@ -732,18 +719,18 @@ export class Render {
 
         if (edit.isInsertAllowed(data.node)) {
             if (rowCount == 0 && !meta64.isAnonUser) {
-                output = render.getEmptyPagePrompt();
+                output = this.getEmptyPagePrompt();
             }
         }
 
         if (!data.endReached) {
-            let nextButton = render.makeButton("Next Page", "nextPageButton", render.nextPage);
-            let lastButton = render.makeButton("Last Page", "lastPageButton", render.lastPage);
-            output += render.centeredButtonBar(nextButton + lastButton, "paging-button-bar");
+            let nextButton = this.makeButton("Next Page", "nextPageButton", this.nextPage);
+            let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
+            output += this.centeredButtonBar(nextButton + lastButton, "paging-button-bar");
         }
         else {
-            //let continueReadingButton = render.makeButton("Continue Reading...", "continueReadingButton", nav.continueReading);
-            //output += render.centeredButtonBar(continueReadingButton, "paging-button-bar");
+            //let continueReadingButton = this.makeButton("Continue Reading...", "continueReadingButton", nav.continueReading);
+            //output += this.centeredButtonBar(continueReadingButton, "paging-button-bar");
         }
 
         util.setHtml("listView", output);
@@ -770,27 +757,27 @@ export class Render {
         }
     }
 
-    firstPage(): void {
+    firstPage = (): void => {
         console.log("First page button click.");
         view.firstPage();
     }
 
-    prevPage(): void {
+    prevPage = (): void => {
         console.log("Prev page button click.");
         view.prevPage();
     }
 
-    nextPage(): void {
+    nextPage = (): void => {
         console.log("Next page button click.");
         view.nextPage();
     }
 
-    lastPage(): void {
+    lastPage = (): void => {
         console.log("Last page button click.");
         view.lastPage();
     }
 
-    generateRow(i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string {
+    generateRow = (i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string => {
 
         if (meta64.isNodeBlackListed(node))
             return "";
@@ -798,23 +785,23 @@ export class Render {
         if (newData) {
             meta64.initNode(node, true);
 
-            if (render.debug) {
+            if (this.debug) {
                 console.log(" RENDER ROW[" + i + "]: node.id=" + node.id);
             }
         }
 
         rowCount++; // warning: this is the local variable/parameter
-        let row = render.renderNodeAsListItem(node, i, childCount, rowCount);
+        let row = this.renderNodeAsListItem(node, i, childCount, rowCount);
         // console.log("row[" + rowCount + "]=" + row);
         return row;
     }
 
-    getUrlForNodeAttachment(node: I.NodeInfo): string {
+    getUrlForNodeAttachment = (node: I.NodeInfo): string => {
         return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
     }
 
     /* see also: makeImageTag() */
-    adjustImageSize(node: I.NodeInfo): void {
+    adjustImageSize = (node: I.NodeInfo): void => {
 
         let elm: HTMLElement = util.domElm(node.imgId);
         if (elm) {
@@ -863,12 +850,11 @@ export class Render {
     }
 
     /* see also: adjustImageSize() */
-    makeImageTag(node: I.NodeInfo): Img {
+    makeImageTag = (node: I.NodeInfo): Img => {
         let img: Img;
-        let src: string = render.getUrlForNodeAttachment(node);
+        let src: string = this.getUrlForNodeAttachment(node);
 
         if (node.width && node.height) {
-
             /*
              * if image won't fit on screen we want to size it down to fit
              *
@@ -915,8 +901,8 @@ export class Render {
         return img;
     }
 
-    makeImageTag_original(node: I.NodeInfo) {
-        let src: string = render.getUrlForNodeAttachment(node);
+    makeImageTag_original = (node: I.NodeInfo) => {
+        let src: string = this.getUrlForNodeAttachment(node);
         node.imgId = "imgUid_" + node.uid;
 
         if (node.width && node.height) {
@@ -970,7 +956,7 @@ export class Render {
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
      * content is non-null
      */
-    tag(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string {
+    tag = (tag: string, attributes?: Object, content?: string, closeTag?: boolean): string => {
 
         /* default parameter values */
         if (typeof (closeTag) === 'undefined')
@@ -1099,7 +1085,7 @@ export class Render {
         return ret;
     }
 
-    makeTextArea(fieldName: string, fieldId: string): string {
+    makeTextArea = (fieldName: string, fieldId: string): string => {
         return tag.textarea({
             "name": fieldId,
             "label": fieldName,
@@ -1125,7 +1111,7 @@ export class Render {
     //     });
     // }
     //
-    makeButton(text: string, id: string, callback: Function): string {
+    makeButton = (text: string, id: string, callback: Function): string => {
         let attribs = {
             "raised": "raised",
             "id": id,
@@ -1142,21 +1128,21 @@ export class Render {
         return tag.button(attribs, text);
     }
 
-    allowPropertyToDisplay(propName: string): boolean {
+    allowPropertyToDisplay = (propName: string): boolean => {
         if (!meta64.inSimpleMode())
             return true;
         return meta64.simpleModePropertyBlackList[propName] == null;
     }
 
-    isReadOnlyProperty(propName: string): boolean {
+    isReadOnlyProperty = (propName: string): boolean => {
         return meta64.readOnlyPropertyList[propName];
     }
 
-    isBinaryProperty(propName: string): boolean {
+    isBinaryProperty = (propName: string): boolean => {
         return meta64.binaryPropertyList[propName];
     }
 
-    sanitizePropertyName(propName: string): string {
+    sanitizePropertyName = (propName: string): string => {
         if (meta64.editModeOption === "simple") {
             return propName === jcrCnst.CONTENT ? "Content" : propName;
         } else {

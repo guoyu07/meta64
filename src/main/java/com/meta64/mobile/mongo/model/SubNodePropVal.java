@@ -2,34 +2,34 @@ package com.meta64.mobile.mongo.model;
 
 import java.util.Date;
 
-public class SubNodeProperty {
+public class SubNodePropVal {
 	private String type;
 	private Object value;
 
-	public SubNodeProperty() {
+	public SubNodePropVal() {
 	}
 
-	public SubNodeProperty(Long val) {
+	public SubNodePropVal(Long val) {
 		value = val;
 		type = NodePropertyTypes.INTEGER;
 	}
 
-	public SubNodeProperty(String val) {
+	public SubNodePropVal(String val) {
 		value = val;
 		type = NodePropertyTypes.STRING;
 	}
 
-	public SubNodeProperty(Date val) {
+	public SubNodePropVal(Date val) {
 		value = val;
 		type = NodePropertyTypes.DATE;
 	}
 
-	public SubNodeProperty(Boolean val) {
+	public SubNodePropVal(Boolean val) {
 		value = val;
 		type = NodePropertyTypes.BOOLEAN;
 	}
 
-	public SubNodeProperty(Double val) {
+	public SubNodePropVal(Double val) {
 		value = val;
 		type = NodePropertyTypes.FLOAT;
 	}

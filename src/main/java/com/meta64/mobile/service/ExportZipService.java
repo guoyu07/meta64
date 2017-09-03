@@ -27,11 +27,9 @@ import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.ExportNodeInfo;
 import com.meta64.mobile.model.ExportPropertyInfo;
-import com.meta64.mobile.model.PropertyInfo;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.mongo.model.SubNodeProperty;
 import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.ExUtil;
@@ -162,17 +160,38 @@ public class ExportZipService {
 			 */
 			List<ExportPropertyInfo> allProps = new LinkedList<ExportPropertyInfo>();
 			ValContainer<String> contentText = new ValContainer<String>();
-
 			ValContainer<String> binVerProp = new ValContainer<String>();
-			ValContainer<String> binFileName = new ValContainer<String>();
+			ValContainer<String> binFileNameProp = new ValContainer<String>();
 
 			// todo-1: isn't there some CollectionUtils method to iterate that supports built in
 			// "null collection" capability?
 			if (node.getProperties() != null) {
-				node.getProperties().forEach((k, v) -> {
-					processProperty(k, v, allProps, contentText, binVerProp, binFileName);
-				});
+				node.getProperties().forEach((propName, propVal) -> {
 
+					// log.debug(" PROP: "+propName);
+
+					if (propName.equals(NodeProp.BIN_FILENAME)) {
+						binFileNameProp.setVal(propVal.getValue().toString());
+					}
+
+					if (propName.equals(NodeProp.CONTENT)) {
+						contentText.setVal(propVal.getValue().toString());
+					}
+					else if (propName.equals(NodeProp.BIN_VER)) {
+						binVerProp.setVal(propVal.getValue().toString());
+					}
+					else {
+						ExportPropertyInfo propInfo = new ExportPropertyInfo();
+						propInfo.setName(propName);
+						propInfo.setVal(propVal.getValue());
+
+						// I decided we should just infer the type from the property name and not
+						// store it in the file.
+						// propInfo.setType(NodePropertyTypes.getTypeOfObject(propVal.getValue()));
+
+						allProps.add(propInfo);
+					}
+				});
 			}
 
 			ExportNodeInfo expInfo = new ExportNodeInfo();
@@ -186,13 +205,7 @@ public class ExportZipService {
 
 			/* If content property was found write it into separate file */
 			if (contentText.getVal() != null) {
-				/*
-				 * In situations where the fileName happens to equal the contentText we do not even
-				 * write the content text file because it would be redundant.
-				 */
-				if (!fileName.trim().equals(contentText.getVal().trim())) {
-					addFileEntry(parentFolder + "/" + fileName + "/content.txt", contentText.getVal().getBytes(StandardCharsets.UTF_8));
-				}
+				addFileEntry(parentFolder + "/" + fileName + "/content.md", contentText.getVal().getBytes(StandardCharsets.UTF_8));
 			}
 
 			/*
@@ -200,7 +213,7 @@ public class ExportZipService {
 			 * file
 			 */
 			if (binVerProp.getVal() != null) {
-				String binFileNameStr = binFileName.getVal() == null ? "binary" : binFileName.getVal();
+				String binFileNameStr = binFileNameProp.getVal() != null ? binFileNameProp.getVal() : "binary";
 				AutoCloseInputStream is = null;
 
 				is = api.getAutoClosingStream(session, node, null);
@@ -283,37 +296,5 @@ public class ExportZipService {
 		// fileName=["+fileName+"]");
 		fileName = XString.trimToMaxLen(fileName, 120);
 		return fileName;
-	}
-
-	/*
-	 * Adds prop to allProps, unless it's sent back in contentText because content property will be
-	 * written to a separate file.
-	 * 
-	 * todo-0: consider letting SubNodeProperty class have property name internally inside it.
-	 */
-	private void processProperty(String propName, SubNodeProperty prop, List<ExportPropertyInfo> allProps, ValContainer<String> contentText,
-			ValContainer<String> binVerProp, ValContainer<String> binFileName) {
-
-		ExportPropertyInfo propInfo = new ExportPropertyInfo();
-		propInfo.setName(propName);
-
-		if (propName.equals(NodeProp.CONTENT)) {
-			contentText.setVal(prop.getValue().toString());
-		}
-		else if (propName.equals(NodeProp.BIN_VER)) {
-			// log.trace(String.format("prop[%s] isBinary", prop.getName()));
-			binVerProp.setVal(prop.getValue().toString());
-		}
-		else if (propName.equals(NodeProp.BIN_FILENAME)) {
-			binFileName.setVal(prop.getValue().toString());
-		}
-		else {
-			propInfo.setVal(prop.getValue().toString());
-			/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */
-		}
-
-		if (!propInfo.isEmpty()) {
-			allProps.add(propInfo);
-		}
 	}
 }

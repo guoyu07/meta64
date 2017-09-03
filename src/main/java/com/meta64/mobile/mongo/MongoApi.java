@@ -38,7 +38,7 @@ import com.meta64.mobile.model.AccessControlEntryInfo;
 import com.meta64.mobile.model.PrivilegeInfo;
 import com.meta64.mobile.mongo.model.PrivilegeType;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.mongo.model.SubNodeProperty;
+import com.meta64.mobile.mongo.model.SubNodePropVal;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
 import com.meta64.mobile.mongo.model.UserPreferencesNode;
 import com.meta64.mobile.util.Convert;
@@ -844,7 +844,7 @@ public class MongoApi {
 		String id = grid.store(stream, fileName, mimeType, metaData).getId().toString();
 
 		/* Now save the node also since the property on it needs to point to GridFS id */
-		node.setProp(propName, new SubNodeProperty(id));
+		node.setProp(propName, new SubNodePropVal(id));
 	}
 
 	public void deleteBinary(MongoSession session, SubNode node, String propName) {

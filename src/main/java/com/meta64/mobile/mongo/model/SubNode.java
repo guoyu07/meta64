@@ -245,7 +245,7 @@ public class SubNode {
 	}
 
 	@JsonIgnore
-	public void setProp(String key, SubNodeProperty val) {
+	public void setProp(String key, SubNodePropVal val) {
 		MongoThreadLocal.dirty(this);
 		properties().put(key, val);
 	}
@@ -253,31 +253,31 @@ public class SubNode {
 	@JsonIgnore
 	public void setProp(String key, String val) {
 		MongoThreadLocal.dirty(this);
-		properties().put(key, new SubNodeProperty(val));
+		properties().put(key, new SubNodePropVal(val));
 	}
 
 	@JsonIgnore
 	public void setProp(String key, Date val) {
 		MongoThreadLocal.dirty(this);
-		properties().put(key, new SubNodeProperty(val));
+		properties().put(key, new SubNodePropVal(val));
 	}
 
 	@JsonIgnore
 	public void setProp(String key, Double val) {
 		MongoThreadLocal.dirty(this);
-		properties().put(key, new SubNodeProperty(val));
+		properties().put(key, new SubNodePropVal(val));
 	}
 
 	@JsonIgnore
 	public void setProp(String key, Boolean val) {
 		MongoThreadLocal.dirty(this);
-		properties().put(key, new SubNodeProperty(val));
+		properties().put(key, new SubNodePropVal(val));
 	}
 
 	@JsonIgnore
 	public void setProp(String key, Long val) {
 		MongoThreadLocal.dirty(this);
-		properties().put(key, new SubNodeProperty(val));
+		properties().put(key, new SubNodePropVal(val));
 	}
 
 	@JsonIgnore
@@ -288,35 +288,35 @@ public class SubNode {
 
 	@JsonIgnore
 	public String getStringProp(String key) {
-		SubNodeProperty v = properties().get(key);
+		SubNodePropVal v = properties().get(key);
 		if (v == null) return null;
 		return (String) v.getValue();
 	}
 
 	@JsonIgnore
 	public Long getIntProp(String key) {
-		SubNodeProperty v = properties().get(key);
+		SubNodePropVal v = properties().get(key);
 		if (v == null) return 0L;
 		return (Long) v.getValue();
 	}
 
 	@JsonIgnore
 	public Date getDateProp(String key) {
-		SubNodeProperty v = properties().get(key);
+		SubNodePropVal v = properties().get(key);
 		if (v == null) return null;
 		return (Date) v.getValue();
 	}
 
 	@JsonIgnore
 	public Double getFloatProp(String key) {
-		SubNodeProperty v = properties().get(key);
+		SubNodePropVal v = properties().get(key);
 		if (v == null) return 0.0;
 		return (Double) v.getValue();
 	}
 
 	@JsonIgnore
 	public Boolean getBooleanProp(String key) {
-		SubNodeProperty v = properties().get(key);
+		SubNodePropVal v = properties().get(key);
 		if (v == null) return false;
 		return (Boolean) v.getValue();
 	}

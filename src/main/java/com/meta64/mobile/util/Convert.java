@@ -23,7 +23,7 @@ import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.mongo.model.SubNodeProperty;
+import com.meta64.mobile.mongo.model.SubNodePropVal;
 import com.meta64.mobile.mongo.model.SubNodePropertyMap;
 
 /**
@@ -128,9 +128,9 @@ public class Convert {
 			SubNodePropertyMap propMap = node.getProperties();
 			PropertyInfo contentPropInfo = null;
 
-			for (Map.Entry<String, SubNodeProperty> entry : propMap.entrySet()) {
+			for (Map.Entry<String, SubNodePropVal> entry : propMap.entrySet()) {
 				String propName = entry.getKey();
-				SubNodeProperty p = entry.getValue();
+				SubNodePropVal p = entry.getValue();
 
 				/* lazy create props */
 				if (props == null) {
@@ -168,7 +168,7 @@ public class Convert {
 		}
 	}
 
-	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, SubNode node, String propName, SubNodeProperty prop, boolean htmlOnly,
+	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, SubNode node, String propName, SubNodePropVal prop, boolean htmlOnly,
 			boolean allowAbbreviated, boolean initNodeEdit) {
 		try {
 			String value = null;

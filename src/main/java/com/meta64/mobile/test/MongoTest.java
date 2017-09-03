@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.mongo.model.SubNodeProperty;
+import com.meta64.mobile.mongo.model.SubNodePropVal;
 import com.meta64.mobile.mongo.model.UserPreferencesNode;
 import com.meta64.mobile.util.XString;
 
@@ -87,7 +87,7 @@ public class MongoTest {
 
 		// ----------Insert a test node
 		SubNode node = api.createNode(adminSession, "/usrx");
-		node.setProp("testKey", new SubNodeProperty("testVal"));
+		node.setProp("testKey", new SubNodePropVal("testVal"));
 		api.save(adminSession, node);
 		expectedCount++;
 		log.debug("inserted first node.");
@@ -102,7 +102,7 @@ public class MongoTest {
 			throw new RuntimeException("Unable to find node by id: " + node.getId().toHexString());
 		}
 
-		node.setProp("testKeyA", new SubNodeProperty("tesetValA"));
+		node.setProp("testKeyA", new SubNodePropVal("tesetValA"));
 		api.save(adminSession, node);
 		log.debug("updated first node.");
 

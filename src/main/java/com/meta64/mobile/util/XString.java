@@ -34,6 +34,21 @@ public class XString {
 		}
 	}
 
+	public static String repeatingTrimFromFront(String val, String prefix) {
+		if (val == null) return null;
+		int loopSafe = 0;
+		while (++loopSafe < 1000) {
+			int len = val.length();
+			val = stripIfStartsWith(val.trim(), prefix);
+			
+			/* if string remained same length we're done */
+			if (len == val.length()) {
+				break;
+			}
+		}
+		return val;
+	}
+
 	public static List<String> tokenize(String val, String delimiter, boolean trim) {
 		List<String> list = null;
 		StringTokenizer t = new StringTokenizer(val, delimiter, false);
@@ -99,6 +114,13 @@ public class XString {
 	public static String stripIfEndsWith(String val, String suffix) {
 		if (val.endsWith(suffix)) {
 			val = val.substring(0, val.length() - suffix.length());
+		}
+		return val;
+	}
+
+	public static String stripIfStartsWith(String val, String prefix) {
+		if (val.startsWith(prefix)) {
+			val = val.substring(prefix.length());
 		}
 		return val;
 	}

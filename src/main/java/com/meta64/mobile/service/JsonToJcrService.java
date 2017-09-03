@@ -1,17 +1,13 @@
 package com.meta64.mobile.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.util.ExUtil;
 
 /**
  * Utility to read JSON and store into JCR automatically.

@@ -75,71 +75,12 @@ public class ImportService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	// public void importFromXml(MongoSession session, ImportRequest req, ImportResponse res) {
-	// if (session == null) {
-	// session = ThreadLocals.getMongoSession();
-	// }
-	//
-	// UserPreferences userPreferences = sessionContext.getUserPreferences();
-	// boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
-	//
-	// if (!importAllowed && !sessionContext.isAdmin()) {
-	// throw ExUtil.newEx("import is an admin-only feature.");
-	// }
-	//
-	// String nodeId = req.getNodeId();
-	//
-	// if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
-	// throw ExUtil.newEx("adminDataFolder does not exist");
-	// }
-	//
-	// String sourceFileName = req.getSourceFileName();
-	//
-	// if (nodeId.equals("/") && sourceFileName.startsWith("full-backup-")) {
-	//
-	// /* See notes above about backing up root not being doable */
-	// throw ExUtil.newEx("root restore not supported.");
-	// }
-	// else {
-	// Node targetNode = JcrUtil.findNode(session, nodeId);
-	//// String createdBy = JcrUtil.safeGetStringProp(targetNode, JcrProp.CREATED_BY);
-	////
-	//// /*
-	//// * Detect if this node is a comment we "own" (although true security rules make it
-	//// * belong to admin user) then we should be able to delete it, so we execute the delete
-	//// * under an 'AdminSession'. Also now that we have switched sessions, we set that in the
-	//// * return value, so the caller can always, stop processing after this happens. Meaning
-	//// * essentialy only *one* comment node can be deleted at a time unless you are admin
-	//// * user.
-	//// */
-	//// if (!session.getUserID().equals(createdBy) &&
-	// !JcrPrincipal.ADMIN.equalsIgnoreCase(session.getUserID())) {
-	//// throw ExUtil.newEx("You cannot import onto a node you do not own. Including your root.");
-	//// }
-	//
-	// importFromFileToNode(session, sourceFileName, targetNode);
-	// }
-	//
-	// res.setSuccess(true);
-	// }
-
 	private void importFromStreamToNode(MongoSession session, InputStream inputStream, SubNode targetNode) {
 		BufferedInputStream in = null;
 		try {
 			log.debug("Import to Node: " + targetNode.getPath());
 			in = new BufferedInputStream(new AutoCloseInputStream(inputStream));
-
-			importZipService.inputZipFileFromStream(session, inputStream, targetNode);
-			
-			/*
-			 * TIP: Search this codebase for "SecurityProvider" and "PARAM_IMPORT_BEHAVIOR" if you
-			 * are troubleshooting why this import may fail with errors related to security and user
-			 * authorizations.
-			 */
-//			session.getWorkspace().importXML(targetNode.getPath(), in, //
-//					// ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW//
-//					ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW //
-//			);
+			importZipService.inputZipFileFromStream(session, inputStream, targetNode);			
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);

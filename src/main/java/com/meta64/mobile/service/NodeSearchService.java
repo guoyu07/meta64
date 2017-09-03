@@ -25,9 +25,6 @@ import com.meta64.mobile.util.ThreadLocals;
  * first 100 results. Despite it being basic right now, it is however EXTREMELY high performance and
  * leverages the full and best search performance that can be gotten out of Lucene, which beats any
  * other technology in the world in it's power.
- * 
- * http://labs.6dglobal.com/blog/2014-10-07/9-jcr-sql-2-queries-every-aem-dev- should-know/
- * http://docs.jboss.org/modeshape/0.7/manuals/reference/html/jcr-query-and-search.html
  */
 @Component
 public class NodeSearchService {

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meta64.mobile.mongo.model.SubNode;
 
 /**
- * Utility to read JSON and store into JCR automatically.
+ * Utility to read JSON and store into SubNode automatically.
  * <p>
  * Work in progress. Developing a way to import structured content out of JSON files stored in the
  * uploaded zips so that the JSON files in zips result in importing properties onto the node. The
@@ -20,8 +20,8 @@ import com.meta64.mobile.mongo.model.SubNode;
  * accomplish.
  */
 @Component
-public class JsonToJcrService {
-	private static final Logger log = LoggerFactory.getLogger(JsonToJcrService.class);
+public class JsonToSubNodeService {
+	private static final Logger log = LoggerFactory.getLogger(JsonToSubNodeService.class);
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 

@@ -102,7 +102,6 @@ public class SubNode {
 	private boolean disableParentCheck;
 	private boolean writing;
 	private boolean deleted;
-	// private boolean adminOwned;
 
 	@PersistenceConstructor
 	public SubNode() {
@@ -375,18 +374,6 @@ public class SubNode {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-
-	// @Transient
-	// @JsonIgnore
-	// public boolean isAdminOwned() {
-	// return adminOwned;
-	// }
-	//
-	// @Transient
-	// @JsonIgnore
-	// public void setAdminOwned(boolean adminOwned) {
-	// this.adminOwned = adminOwned;
-	// }
 
 	// I'm getting "ConcurrentModificationException" whenever I enable any kind of implementation of
 	// hashCode+equals,

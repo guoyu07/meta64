@@ -87,7 +87,9 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 this.saveNodeButton = new Button("Save", this.saveNode, null, true, this),
                 this.addPropertyButton = new Button("Add Property", this.addProperty),
                 this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
-                this.splitContentButton = new Button("Split", this.splitContent),
+
+                //todo-0: temporarily disabling this until we have it working in mongodb
+                //this.splitContentButton = new Button("Split", this.splitContent),
                 this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
                 this.cancelButton = new Button("Cancel", this.cancelEdit)
             ])

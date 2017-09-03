@@ -106,12 +106,12 @@ import com.meta64.mobile.util.XString;
  * Primary Spring MVC controller. All application logic from the browser connects directly to this
  * controller which is the only controller. Importantly the main SPA page is retrieved thru this
  * controller, and the binary attachments are also served up thru this interface.
- * 
  * <p>
+ * 
  * Note, it's critical to understand the OakSession AOP code or else this class will be confusing
  * regarding how the OAK transactions are managed and how logging in is done.
- *
  * <p>
+ * 
  * This class has no documentation on the methods because it's a wrapper around the service methods
  * which is where the documentation can be found for each operation in here. It's a better
  * architecture to have all the AOP for any given aspect be in one particular layer, because of how
@@ -377,33 +377,6 @@ public class AppController {
 		return importXmlService.streamImport(null, nodeId, uploadFiles);
 	}
 	
-	// @RequestMapping(value = API_PATH + "/import", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody ImportResponse importFromFile(@RequestBody ImportRequest req) {
-	//
-	// logRequest("import", req);
-	// checkJcr();
-	// ImportResponse res = new ImportResponse();
-	// checkHttpSession();
-	//
-	// String fileName = req.getSourceFileName();
-	// if (fileName.toLowerCase().endsWith(".xml") || req.getNodeId().equals("/")) {
-	// importXmlService.importFromXml(null, req, res);
-	// /*
-	// * It is not a mistake that there is no session.save() here. The import is using the
-	// * workspace object which specifically documents that the saving on the session is not
-	// * needed.
-	// */
-	// }
-	// else if (fileName.toLowerCase().endsWith(".zip")) {
-	// importZipService.importFromLocalZipFile(null, req, res);
-	// }
-	// else {
-	// throw ExUtil.newEx("Unable to import from file with unknown extension: " + fileName);
-	// }
-	// return res;
-	// }
-
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) {
@@ -549,7 +522,6 @@ public class AppController {
 	 * https://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-
 	 * truncated
 	 */
-
 	@RequestMapping(value = "/file/{fileName:.+}", method = RequestMethod.GET)
 	@OakSession
 	public @ResponseBody ResponseEntity<InputStreamResource> getFile(//
@@ -678,7 +650,8 @@ public class AppController {
 	// */
 	// return res;
 	// }
-	//
+	
+	/* currently disabled from the GUI menu, until we add back in this capability on the new mongo design */
 	// @RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
 	// @OakSession
 	// public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest

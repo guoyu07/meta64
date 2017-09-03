@@ -12,7 +12,6 @@ import com.meta64.mobile.AppServer;
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.test.MongoTest;
-import com.meta64.mobile.user.UserManagerUtil;
 
 @Component
 public class MongoRepository {
@@ -23,9 +22,6 @@ public class MongoRepository {
 
 	@Autowired
 	private AppProp appProp;
-
-	@Autowired
-	private UserManagerUtil userManagerUtil;
 
 	@Autowired
 	private RepositoryUtil repoUtil;
@@ -125,6 +121,7 @@ public class MongoRepository {
 
 		synchronized (lock) {
 			try {
+				//code here evaporated. but i'll leave this slot for it anyway.
 			}
 			finally {
 				instance = null;

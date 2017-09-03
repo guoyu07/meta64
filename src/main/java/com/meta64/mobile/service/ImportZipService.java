@@ -42,7 +42,7 @@ public class ImportZipService {
 	private AttachmentService attachmentService;
 
 	@Autowired
-	private JsonToJcrService jsonToJcrService;
+	private JsonToSubNodeService jsonToJcrService;
 
 	private String targetPath;
 

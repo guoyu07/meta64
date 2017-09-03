@@ -363,29 +363,4 @@ public class NodeEditService {
 	// throw ExUtil.newEx(ex);
 	// }
 	// }
-	//
-	// /* Sets the property value of propName to propVal on 'node' and ALL subnodes recursively */
-	// public void recursiveSetPropertyOnAllNodes(Session session, Node node, String propName,
-	// String val /* Value val */) {
-	// try {
-	// QueryManager qm = session.getWorkspace().getQueryManager();
-	//
-	// StringBuilder queryStr = new StringBuilder();
-	// queryStr.append("SELECT * from [nt:base] AS t WHERE ISDESCENDANTNODE([");
-	// queryStr.append(node.getPath());
-	// queryStr.append("])");
-	//
-	// Query q = qm.createQuery(queryStr.toString(), Query.JCR_SQL2);
-	// QueryResult r = q.execute();
-	// NodeIterator nodes = r.getNodes();
-	// while (nodes.hasNext()) {
-	// Node iterNode = nodes.nextNode();
-	// iterNode.setProperty(propName, val);
-	// }
-	// JcrUtil.save(session);
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
 }

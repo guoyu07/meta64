@@ -36,7 +36,6 @@ import com.meta64.mobile.response.SaveUserPreferencesResponse;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.user.AccessControlUtil;
 import com.meta64.mobile.user.RunAsMongoAdmin;
-import com.meta64.mobile.user.UserManagerUtil;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.Encryptor;
 import com.meta64.mobile.util.ExUtil;
@@ -62,9 +61,6 @@ public class UserManagerService {
 
 	@Autowired
 	private AppProp appProp;
-
-	@Autowired
-	private UserManagerUtil userManagerUtil;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -406,6 +402,11 @@ public class UserManagerService {
 		res.setSuccess(true);
 	}
 
+	public boolean isNormalUserName(String userName) {
+		userName = userName.trim();
+		return !userName.equalsIgnoreCase(NodePrincipal.ADMIN) && !userName.equalsIgnoreCase(NodePrincipal.ANONYMOUS);
+	}	
+	
 	public void resetPassword(final ResetPasswordRequest req, ResetPasswordResponse res) {
 		adminRunner.run(session -> {
 
@@ -413,7 +414,7 @@ public class UserManagerService {
 			String email = req.getEmail();
 
 			/* make sure username itself is acceptalbe */
-			if (!UserManagerUtil.isNormalUserName(user)) {
+			if (!isNormalUserName(user)) {
 				res.setMessage("User name is illegal.");
 				res.setSuccess(false);
 				return;

@@ -203,9 +203,9 @@ public class AttachmentService {
 	public void saveBinaryStreamToNode(MongoSession session, LimitedInputStreamEx inputStream, String mimeType, String fileName, long size, int width, int height,
 			SubNode node) {
 
-		long version = node.getIntProp(NodeProp.BIN_VER);
-		if (version == 0L) {
-			version = 1L;
+		Long version = node.getIntProp(NodeProp.BIN_VER);
+		if (version == null) {
+			version = 0L;
 		}
 
 		/*
@@ -237,6 +237,8 @@ public class AttachmentService {
 		if (size > 0) {
 			node.setProp(NodeProp.BIN_SIZE, size);
 		}
+		
+		log.debug("Uploading new BIN_VER: "+String.valueOf(version+1));
 		node.setProp(NodeProp.BIN_VER, version + 1);
 
 		api.writeStream(session, node, inputStream, null, mimeType, null);

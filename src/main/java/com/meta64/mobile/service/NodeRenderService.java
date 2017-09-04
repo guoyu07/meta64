@@ -26,6 +26,7 @@ import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
+import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**
@@ -38,6 +39,9 @@ import com.meta64.mobile.util.ThreadLocals;
 public class NodeRenderService {
 	private static final Logger log = LoggerFactory.getLogger(NodeRenderService.class);
 
+	@Autowired
+	private SubNodeUtil subNodeUtil;
+	
 	@Autowired
 	private MongoApi api;
 
@@ -116,12 +120,10 @@ public class NodeRenderService {
 		 */
 		boolean scanToNode = false;
 
-		// this is good logic i need to bring back...when rendering a 'left' looks rediculous
-		// (todo-00)
-		// if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
-		// res.setDisplayedParent(true);
-		// req.setUpLevel(1);
-		// }
+		if (req.isRenderParentIfLeaf() && !subNodeUtil.hasDisplayableNodes(advancedMode, node)) {
+			res.setDisplayedParent(true);
+			req.setUpLevel(1);
+		}
 
 		int levelsUpRemaining = req.getUpLevel();
 		if (levelsUpRemaining > 0) {

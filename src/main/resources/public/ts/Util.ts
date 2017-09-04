@@ -22,19 +22,19 @@ class Util {
     waitCounter: number = 0;
     pgrsDlg: any = null;
 
-    escapeRegExp(_) {
-        return _.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    escapeRegExp = (s: string) : string => {
+        return s.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
-    escapeForAttrib(_) {
-        return util.replaceAll(_, "\"", "&quot;");
+    escapeForAttrib = (s : string) : string => {
+        return util.replaceAll(s, "\"", "&quot;");
     }
 
-    unencodeHtml(_) {
-        if (!util.contains(_, "&"))
-            return _;
+    unencodeHtml = (s : string) : string => {
+        if (!util.contains(s, "&"))
+            return s;
 
-        let ret = _;
+        let ret = s;
         ret = util.replaceAll(ret, '&amp;', '&');
         ret = util.replaceAll(ret, '&gt;', '>');
         ret = util.replaceAll(ret, '&lt;', '<');
@@ -44,23 +44,26 @@ class Util {
         return ret;
     }
 
-    replaceAll(_, find, replace) {
-        return _.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
+    replaceAll = (s : string, find: string, replace: string) : string => {
+        if (!s) return s;
+        return s.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
     }
 
-    contains(_, str) {
-        return _.indexOf(str) != -1;
+    contains = (s : string, str: string) : boolean => {
+        if (!s) return false;
+        return s.indexOf(str) != -1;
     }
 
-    startsWith(_, str) {
-        return _.indexOf(str) === 0;
+    startsWith = (s : string, str: string) : boolean => {
+        if (!s) return false;
+        return s.indexOf(str) === 0;
     }
 
-    endsWith(_, str) {
-        return _.indexOf(str, _.length - str.length) !== -1;
+    endsWith = (s: string, str: string) : boolean => {
+        return s.indexOf(str, s.length - str.length) !== -1;
     }
 
-    chopAtLastChar(str: string, char: string) {
+    chopAtLastChar = (str: string, char: string) : string => {
         let idx = str.lastIndexOf(char);
         if (idx != -1) {
             return str.substring(0, idx);
@@ -70,29 +73,29 @@ class Util {
         }
     }
 
-    stripIfStartsWith(_, str) {
-        if (_.startsWith(str)) {
-            return _.substring(str.length);
+    stripIfStartsWith = (s : string, str: string) : string => {
+        if (this.startsWith(s, str)) {
+            return s.substring(str.length);
         }
-        return _;
+        return s;
     }
 
-    arrayClone(_: any[]) {
-        return _.slice(0);
+    arrayClone(a: any[]) : any[] {
+        return a.slice(0);
     };
 
-    arrayIndexOfItemByProp(_: any[], propName, propVal) {
-        let len = _.length;
+    arrayIndexOfItemByProp = (a: any[], propName: string, propVal: string) : number => {
+        let len = a.length;
         for (let i = 0; i < len; i++) {
-            if (_[i][propName] === propVal) {
+            if (a[i][propName] === propVal) {
                 return i;
             }
         }
         return -1;
     };
 
-    arrayMoveItem(_: any[], fromIndex, toIndex) {
-        _.splice(toIndex, 0, _.splice(fromIndex, 1)[0]);
+    arrayMoveItem = (a: any[], fromIndex: number, toIndex: number) => {
+        a.splice(toIndex, 0, a.splice(fromIndex, 1)[0]);
     };
 
     static stdTimezoneOffset(_: Date) {
@@ -362,7 +365,7 @@ class Util {
     }
 
     /* set focus to element by id (id must be actual jquery selector) */
-    delayedFocus(id): void {
+    delayedFocus(id: string): void {
         /* so user sees the focus fast we try at .5 seconds */
         setTimeout(() => {
             util.focusElmById(id);
@@ -809,5 +812,7 @@ class Util {
     }
 }
 
+//need to do the "capture this" pattern on each method (i.e. =>) and then replace all instances in this
+//class of 'util.' with 'this.'
 export let util: Util = new Util();
 export default util;

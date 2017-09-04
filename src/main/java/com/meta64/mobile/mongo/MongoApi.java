@@ -2,8 +2,8 @@ package com.meta64.mobile.mongo;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,22 +83,18 @@ public class MongoApi {
 		if (!session.isAdmin()) throw new RuntimeException("auth fail");
 	}
 
-	public void authRead(MongoSession session, SubNode node) {
-		if (!auth(session, node, PrivilegeType.READ)) {
-			throw new RuntimeException("Read Auth Failed.");
-		}
-	}
-
-	public void authWrite(MongoSession session, SubNode node) {
-		if (!auth(session, node, PrivilegeType.WRITE)) {
-			throw new RuntimeException("Write Auth Failed.");
-		}
+	public void auth(MongoSession session, SubNode node, PrivilegeType... privs) {
+		auth(session, node, Arrays.asList(privs));
 	}
 
 	/* Returns true if this user on this session has privType access to 'node' */
-	public boolean auth(MongoSession session, SubNode node, String privType) {
-		// admin can read all nodes
-		if (node == null || session.isAdmin()) return true;
+	public void auth(MongoSession session, SubNode node, List<PrivilegeType> priv) {
+		if (priv == null || priv.size() == 0) {
+			throw new RuntimeException("privileges not specified.");
+		}
+
+		// admin has full power over all nodes
+		if (node == null || session.isAdmin()) return;
 
 		if (session.getUserNode() == null) {
 			throw new RuntimeException("session had no userNode");
@@ -108,45 +104,64 @@ public class MongoApi {
 			throw new RuntimeException("node had no owner: " + node.getPath());
 		}
 
-		// if this session user is the owner of this node
-		if (session.getUserNode().getId().equals(node.getOwner())) return true;
+		// if this session user is the owner of this node, then they have full power
+		if (session.getUserNode().getId().equals(node.getOwner())) return;
 
-		// Find any ancestor that has privType shared to this user
-		if (hasAncestorShareToMe(session, node, privType)) return true;
+		// Find any ancestor that has priv shared to this user.
+		if (ancestorAuth(session, node, priv)) return;
 
-		return false;
+		throw new RuntimeException("Unauthorized");
 	}
 
-	public boolean hasAncestorShareToMe(MongoSession session, SubNode node, String privType) {
+	/* NOTE: this should ONLY ever be called from 'auth()' method of this class */
+	private boolean ancestorAuth(MongoSession session, SubNode node, List<PrivilegeType> privs) {
 		String sessionUserNodeId = session.getUserNode().getId().toHexString();
 		String path = node.getPath();
 		StringBuilder fullPath = new StringBuilder();
 		StringTokenizer t = new StringTokenizer(path, "/", false);
+		boolean ret = false;
 		while (t.hasMoreTokens()) {
 			String pathPart = t.nextToken().trim();
 			fullPath.append("/");
 			fullPath.append(pathPart);
 
-			// todo-0: remove concats and let NodeName have static finals for these full paths.
+			// todo-1: remove concats and let NodeName have static finals for these full paths.
 			if (pathPart.equals("/" + NodeName.ROOT)) continue;
 			if (pathPart.equals("/" + NodeName.ROOT + "/" + NodeName.USER)) continue;
 
+			//I'm putting the caching of ACL results on hold, because this is only a performance enhancement and can wait.
+			//Boolean knownAuthResult = MongoThreadLocal.aclResults().get(buildAclThreadLocalKey(sessionUserNodeId, fullPath, privs));
+			
 			SubNode tryNode = getNode(session, fullPath.toString(), false);
 			if (tryNode == null) {
 				throw new RuntimeException("Tree corrupt! path not found: " + fullPath.toString());
 			}
-			if (hasShareToMe(tryNode, sessionUserNodeId, privType)) {
-				return true;
+
+			if (nodeAuth(tryNode, sessionUserNodeId, privs)) {
+				ret = true;
+				break;
 			}
 		}
-		return false;
+		
+		return ret;
 	}
+	
+//	private String buildAclThreadLocalKey(String userNodeId, String path, List<PrivilegeType> privs) {
+//		//work in progress.
+//	}
 
-	public boolean hasShareToMe(SubNode node, String sessionUserNodeId, String privType) {
+	public boolean nodeAuth(SubNode node, String sessionUserNodeId, List<PrivilegeType> privs) {
 		HashMap<String, String> acl = node.getAcl();
 		if (acl == null) return false;
 		String privsForUserId = acl.get(sessionUserNodeId);
-		if (privsForUserId != null && privsForUserId.indexOf(privType) != -1) {
+		if (privsForUserId != null) {
+			for (PrivilegeType priv : privs) {
+				if (privsForUserId.indexOf(priv.name) == -1) {
+					/* if any priv is missing we fail the auth */
+					return false;
+				}
+			}
+			/* if we looped thru all privs ok, auth is successful */
 			return true;
 		}
 		return false;
@@ -157,7 +172,7 @@ public class MongoApi {
 	}
 
 	public void save(MongoSession session, SubNode node, boolean updateThreadCache) {
-		authWrite(session, node);
+		auth(session, node, PrivilegeType.WRITE);
 		// log.debug("MongoApi.save: DATA: " + XString.prettyPrint(node));
 		node.setWriting(true);
 		ops.save(node);
@@ -179,12 +194,14 @@ public class MongoApi {
 	}
 
 	public void renameNode(MongoSession session, SubNode node, String newName) {
+		auth(session, node, PrivilegeType.WRITE);
+		
 		newName = newName.trim();
 		if (newName.length() == 0) {
 			throw ExUtil.newEx("No node name provided.");
 		}
 
-		// todo-0: need a dedicated name validator utility function.
+		// todo-1: need a dedicated name validator utility function.
 		if (newName.contains("/")) {
 			throw ExUtil.newEx("Invalid node name characters.");
 		}
@@ -212,7 +229,7 @@ public class MongoApi {
 	}
 
 	/*
-	 * todo-0: We could theoretically achieve a level of transactionality here if we were to setup a
+	 * todo-1: We could theoretically achieve a level of transactionality here if we were to setup a
 	 * try/catch/finally block here and detect if any 'save' call fails, and if so, proceed to
 	 * attempt to set all the nodes BACK to their original values. But before i start getting that
 	 * 'creative' i need to research what the rest of the mongodb community thinks about this kind
@@ -237,7 +254,7 @@ public class MongoApi {
 			 * efficient 'transactionally'
 			 */
 			for (SubNode node : MongoThreadLocal.getDirtyNodes().values()) {
-				authWrite(session, node);
+				auth(session, node, PrivilegeType.WRITE);
 			}
 
 			for (SubNode node : MongoThreadLocal.getDirtyNodes().values()) {
@@ -423,6 +440,7 @@ public class MongoApi {
 	}
 
 	public SubNode getChildAt(MongoSession session, SubNode node, long idx) {
+		auth(session, node, PrivilegeType.READ);
 		Query query = new Query();
 		Criteria criteria = Criteria.where(//
 				SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()))//
@@ -430,7 +448,6 @@ public class MongoApi {
 		query.addCriteria(criteria);
 
 		SubNode ret = ops.findOne(query, SubNode.class);
-		authRead(session, node);
 		return ret;
 	}
 
@@ -456,14 +473,13 @@ public class MongoApi {
 	}
 
 	/**
-	 * todo-0: cleaning up GridFS will be done as an async thread. For now we can just let GridFS
-	 * binary data get orphaned... BUT I think it might end up being super efficient if we have the
-	 * 'path' stored in the GridFS metadata so we can use a 'regex' query to delete all the binaries
-	 * which is exacly like the one below for deleting the nodes themselves.
-	 * 
+	 * todo-1: cleaning up GridFS will be done as an async thread. For now we can just let GridFS
+	 * binaries data get orphaned... BUT I think it might end up being super efficient if we have
+	 * the 'path' stored in the GridFS metadata so we can use a 'regex' query to delete all the
+	 * binaries which is exacly like the one below for deleting the nodes themselves.
 	 */
 	public void delete(MongoSession session, SubNode node) {
-		authWrite(session, node);
+		auth(session, node, PrivilegeType.WRITE);
 
 		/*
 		 * First delete all the children of the node by using the path, knowing all their paths
@@ -473,7 +489,6 @@ public class MongoApi {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).regex(regexRecursiveChildrenOfPath(node.getPath())));
 
-		// todo-0: is this the FASTEST/BEST way to delete all matches to a query?
 		ops.remove(query, SubNode.class);
 
 		/*
@@ -530,7 +545,7 @@ public class MongoApi {
 	}
 
 	public AccessControlEntryInfo createAccessControlEntryInfo(MongoSession session, String principalId, String authType) {
-		SubNode principalNode = getNode(session, principalId);
+		SubNode principalNode = getNode(session, principalId, false);
 		if (principalNode == null) {
 			return null;
 		}
@@ -550,7 +565,7 @@ public class MongoApi {
 		}
 
 		if (!path.startsWith("/")) {
-			return getNode(session, new ObjectId(path));
+			return getNode(session, new ObjectId(path), allowAuth);
 		}
 
 		path = XString.stripIfEndsWith(path, "/");
@@ -561,7 +576,7 @@ public class MongoApi {
 		ret = ops.findOne(query, SubNode.class);
 
 		if (allowAuth) {
-			authRead(session, ret);
+			auth(session, ret, PrivilegeType.READ);
 		}
 		return ret;
 	}
@@ -574,7 +589,7 @@ public class MongoApi {
 		SubNode ret = null;
 		ret = ops.findById(objId, SubNode.class);
 		if (allowAuth) {
-			authRead(session, ret);
+			auth(session, ret, PrivilegeType.READ);
 		}
 		return ret;
 	}
@@ -588,7 +603,7 @@ public class MongoApi {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).is(parentPath));
 		SubNode ret = ops.findOne(query, SubNode.class);
-		authRead(session, ret);
+		auth(session, ret, PrivilegeType.READ);
 		return ret;
 	}
 
@@ -613,7 +628,7 @@ public class MongoApi {
 	 * tree. There is no actual NODE that is root node
 	 */
 	public Iterable<SubNode> getChildren(MongoSession session, SubNode node, boolean ordered, Integer limit) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 
 		Query query = new Query();
 		if (limit != null) {
@@ -660,9 +675,9 @@ public class MongoApi {
 		//
 		// AggregationResults<SubNode> results = ops.aggregate(agg, "order", SubNode.class);
 		// List<SubNode> orderCount = results.getMappedResults();
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 
-		// todo-0: research if there's a way to query for just one, rather than simply calling
+		// todo-1: research if there's a way to query for just one, rather than simply calling
 		// findOne at the end? What's best practice here?
 		Query query = new Query();
 		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getPath()));
@@ -677,13 +692,13 @@ public class MongoApi {
 	}
 
 	public SubNode getSiblingAbove(MongoSession session, SubNode node) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 
 		if (node.getOrdinal() == null) {
 			throw new RuntimeException("can't get node above node with null ordinal.");
 		}
 
-		// todo-0: research if there's a way to query for just one, rather than simply calling
+		// todo-1: research if there's a way to query for just one, rather than simply calling
 		// findOne at the end? What's best practice here?
 		Query query = new Query();
 		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getParentPath()));
@@ -699,12 +714,12 @@ public class MongoApi {
 	}
 
 	public SubNode getSiblingBelow(MongoSession session, SubNode node) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 		if (node.getOrdinal() == null) {
 			throw new RuntimeException("can't get node above node with null ordinal.");
 		}
 
-		// todo-0: research if there's a way to query for just one, rather than simply calling
+		// todo-1: research if there's a way to query for just one, rather than simply calling
 		// findOne at the end? What's best practice here?
 		Query query = new Query();
 		Criteria criteria = Criteria.where(SubNode.FIELD_PATH).regex(regexDirectChildrenOfPath(node.getParentPath()));
@@ -738,7 +753,7 @@ public class MongoApi {
 	 * todo-0: Haven't written a test case for this yet.
 	 */
 	public Iterable<SubNode> getSubGraph(MongoSession session, SubNode node) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 
 		Query query = new Query();
 		/*
@@ -753,7 +768,7 @@ public class MongoApi {
 	}
 
 	public Iterable<SubNode> searchSubGraph(MongoSession session, SubNode node, String text, String sortField, int limit) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 
 		Query query = new Query();
 		query.limit(limit);
@@ -827,7 +842,7 @@ public class MongoApi {
 	}
 
 	public void writeStream(MongoSession session, SubNode node, InputStream stream, String fileName, String mimeType, String propName) {
-		authWrite(session, node);
+		auth(session, node, PrivilegeType.WRITE);
 		if (propName == null) {
 			propName = "bin";
 		}
@@ -848,7 +863,7 @@ public class MongoApi {
 	}
 
 	public void deleteBinary(MongoSession session, SubNode node, String propName) {
-		authWrite(session, node);
+		auth(session, node, PrivilegeType.WRITE);
 		if (propName == null) {
 			propName = "bin";
 		}
@@ -862,7 +877,7 @@ public class MongoApi {
 	}
 
 	public InputStream getStream(MongoSession session, SubNode node, String propName) {
-		authRead(session, node);
+		auth(session, node, PrivilegeType.READ);
 		if (propName == null) {
 			propName = "bin";
 		}
@@ -881,7 +896,7 @@ public class MongoApi {
 		return "^" + Pattern.quote(path) + "\\/([^\\/])*$";
 	}
 
-	// todo-0:
+	// todo-1:
 	// I think now that I'm including the trailing slash after path in this regex that I can remove
 	// the (.+) piece?
 	// I think i need to write some test cases just to text my regex functions!
@@ -891,7 +906,7 @@ public class MongoApi {
 	}
 
 	/*
-	 * For proof-of-concept i'm storing actual password, instead of hash of it, which is what would
+	 * For proof-of-concept i'm storing actual password, instead of a hash of it, which is what will
 	 * be done in final production code.
 	 * 
 	 * todo-0: not yet checking if the user exists. Need to throw error if user exists.
@@ -913,8 +928,9 @@ public class MongoApi {
 		save(session, userNode);
 
 		/*
-		 * The user root nodes are the owners of themselves. todo-0: fix the uglyness of having to
-		 * do TWO saves when adding a user.
+		 * The user root nodes are the owners of themselves.
+		 * 
+		 * todo-0: fix the uglyness of having to do TWO saves when adding a user.
 		 */
 		userNode.setOwner(userNode.getId());
 		save(session, userNode);
@@ -933,7 +949,7 @@ public class MongoApi {
 				.and(SubNode.FIELD_PROPERTIES + "." + NodeProp.USER + ".value").is(user);
 		query.addCriteria(criteria);
 		SubNode ret = ops.findOne(query, SubNode.class);
-		authRead(session, ret);
+		auth(session, ret, PrivilegeType.READ);
 		return ret;
 	}
 

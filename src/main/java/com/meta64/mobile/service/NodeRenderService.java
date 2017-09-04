@@ -117,7 +117,7 @@ public class NodeRenderService {
 		boolean scanToNode = false;
 
 		// this is good logic i need to bring back...when rendering a 'left' looks rediculous
-		// (todo-0)
+		// (todo-00)
 		// if (req.isRenderParentIfLeaf() && !JcrUtil.hasDisplayableNodes(advancedMode, node)) {
 		// res.setDisplayedParent(true);
 		// req.setUpLevel(1);

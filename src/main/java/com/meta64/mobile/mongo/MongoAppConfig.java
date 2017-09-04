@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import com.mongodb.MongoClient;
 
 /* 
- * todo-0: thgere are two places i'm specifying basePackages here. Are both required ?
+ * todo-0: there are two places i'm specifying basePackages here. Are both required ?
  */
 
 @Configuration
@@ -44,7 +44,6 @@ public class MongoAppConfig extends AbstractMongoConfiguration {
 	private MongoClient getMongoClient() {
 		// Mongo Client
 		if (mongoClient == null) {
-
 			// todo-0: to make credentials work we need to CREATE the user, after first checking to
 			// see if it exists already. skipping for now.
 

@@ -322,7 +322,7 @@ public class SubNodeUtil {
 		return !nonSavableProperties.contains(propertyName);
 	}
 
-	//
+	//todo-00: remove this method completely.
 	public static void savePropertyToNode(SubNode node, PropertyInfo property) {
 		/* if multi-valued */
 		// if (property.getValues() != null) {
@@ -357,25 +357,6 @@ public class SubNodeUtil {
 		node.setProp(property.getName(), property.getValue());
 		// }
 	}
-
-	//
-	// public static void timestampNewNode(Session session, Node node) {
-	// try {
-	// // mix:created -> jcr:created + jcr:createdBy
-	// if (!node.hasProperty(JcrProp.CREATED)) {
-	// node.addMixin("mix:created");
-	// }
-	//
-	// // mix:lastModified -> jcr:lastModified + jcr:lastModifiedBy
-	// if (!node.hasProperty(JcrProp.LAST_MODIFIED)) {
-	// node.addMixin("mix:lastModified");
-	// }
-	// }
-	// catch (Exception ex) {
-	// throw ExUtil.newEx(ex);
-	// }
-	// }
-	//
 
 	public SubNode ensureNodeExists(MongoSession session, String parentPath, String name, String defaultContent) {
 		return ensureNodeExists(session, parentPath, name, defaultContent, SubNodeTypes.UNSTRUCTURED, true);

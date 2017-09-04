@@ -38,11 +38,11 @@ import com.meta64.mobile.util.XString;
  * 
  * Node ordering of child nodes is done via 'ordinal' which is child position index.
  * 
- * todo-0: One ehancement here would be to let all the 'setter' methods check to see if it is
+ * todo-1: One enhancement here would be to let all the 'setter' methods check to see if it is
  * genuinely CHANGING the value as opposed to keeping same value, and in that case avoid the call to
  * MongoSession.dirty(this);
  * 
- * todo-0: Also similar to above node, a 'dirty' flag right inside this object would be good, to set
+ * todo-1: Also similar to above node, a 'dirty' flag right inside this object would be good, to set
  * so that even direct calls to api.save(node) would bypass any actual saving if the object is known
  * to not be dirty. (Don't forget to default to 'dirty==true' for all new objects created, but not
  * ones loaded from DB. Be carful with this! This would be a very LATE STAGE optimization.)
@@ -138,7 +138,6 @@ public class SubNode {
 		return path;
 	}
 
-	/* todo-0: need to add true naming of nodes */
 	@Transient
 	@JsonIgnore
 	public String getParentPath() {
@@ -146,7 +145,6 @@ public class SubNode {
 		return XString.truncateAfterLast(getPath(), "/");
 	}
 
-	/* todo-0: need to add true naming of nodes */
 	@Transient
 	@JsonIgnore
 	public String getName() {
@@ -374,32 +372,4 @@ public class SubNode {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-
-	// I'm getting "ConcurrentModificationException" whenever I enable any kind of implementation of
-	// hashCode+equals,
-	// and I haven't figured out why yet.
-	// /*
-	// * todo-0: I have not independently tested these hashCode+equals functions but found them on
-	// * StackOverflow with 1293 upvotes
-	// */
-	// @Override
-	// public int hashCode() {
-	// if (id == null) return 0;
-	//
-	// int hashCode = id.hashCode();
-	// log.debug("hashCode="+hashCode);
-	// return hashCode;
-	// }
-	//
-	// @Override
-	// public boolean equals(Object obj) {
-	// if (!(obj instanceof SubNode)) return false;
-	// if (obj == this) return true;
-	// if (((SubNode)obj).getId() == null && id == null) return true;
-	// if (id==null && ((SubNode)obj).getId()!=null) return false;
-	// if (((SubNode)obj).getId()==null && id!=null) return false;
-	// boolean val = ((SubNode)obj).getId().equals(id);
-	// log.debug("hashEquals="+val);
-	// return val;
-	// }
 }

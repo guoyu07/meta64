@@ -17,8 +17,17 @@ public class MongoThreadLocal {
 	 */
 	private static final ThreadLocal<HashMap<String, SubNode>> dirtyNodes = new ThreadLocal<HashMap<String, SubNode>>();
 
+	/*
+	 * Because ACL checking is an expensive operation, we cache the results of any ACL computations,
+	 * during the course of any single HTTP Request (i.e. per thread) Note: We do not use
+	 * "Request Scope" Spring bean because we want this to work on ANY thread, including just
+	 * running test cases.
+	 */
+	private static final ThreadLocal<HashMap<String, Boolean>> aclResults = new ThreadLocal<HashMap<String, Boolean>>();
+
 	public static void removeAll() {
 		dirtyNodes.remove();
+		aclResults.remove();
 	}
 
 	public static void setDirtyNodes(HashMap<String, SubNode> res) {
@@ -28,7 +37,7 @@ public class MongoThreadLocal {
 	public static HashMap<String, SubNode> getDirtyNodes() {
 		return dirtyNodes.get();
 	}
-
+	
 	public static HashMap<String, SubNode> dirtyNodes() {
 		if (dirtyNodes.get() == null) {
 			dirtyNodes.set(new HashMap<String, SubNode>());
@@ -72,8 +81,24 @@ public class MongoThreadLocal {
 			MongoThreadLocal.getDirtyNodes().remove(node.getId().toHexString());
 		}
 	}
-
+	
 	public static void cleanAll() {
 		dirtyNodes().clear();
 	}
+	
+	public static void setAclResults(HashMap<String, Boolean> res) {
+		aclResults.set(res);
+	}
+
+	public static HashMap<String, Boolean> getAclResults() {
+		return aclResults.get();
+	}
+	
+	public static HashMap<String, Boolean> aclResults() {
+		if (aclResults.get() == null) {
+			aclResults.set(new HashMap<String, Boolean>());
+		}
+		return aclResults.get();
+	}
+
 }

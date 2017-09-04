@@ -206,12 +206,6 @@ public class NodeMoveService {
 		// }
 	}
 
-	/*
-	 * Uses session passed unmodified
-	 * 
-	 * todo-0: this feature is not working yet, but i'm going to implement rename node first, before
-	 * continuing so that it's easier to debug this.
-	 */
 	private void moveNodesInternal(MongoSession session, MoveNodesRequest req, MoveNodesResponse res) {
 		String targetId = req.getTargetNodeId();
 		log.debug("moveNodesInternal: targetId=" + targetId);

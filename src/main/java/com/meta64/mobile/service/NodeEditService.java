@@ -88,10 +88,6 @@ public class NodeEditService {
 		// boolean publicAppend = JcrUtil.isPublicAppend(node);
 		// boolean asAdminNow = false;
 		// if (publicAppend) {
-		// // todo-0: everywhere that I'm doing this pattern of logout of active session, and
-		// // switch to more powerful admin session,
-		// // I should try using the session.impersonate() which i think was designed for this
-		// // very purpose I need.
 		// log.debug("Switch to admin user.");
 		// session.logout();
 		// session = oak.newAdminSession();
@@ -100,7 +96,7 @@ public class NodeEditService {
 		// node = JcrUtil.findNode(session, nodeId);
 		// }
 
-		// todo-0: do we need to support user passing node namd during create?
+		// todo-0: do we need to support user passing node name during create?
 		// String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() :
 		// req.getNewNodeName();
 

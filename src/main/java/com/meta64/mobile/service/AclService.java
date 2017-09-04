@@ -79,12 +79,11 @@ public class AclService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-		// JcrUtil.checkWriteAuthorized(node, session.getUserID());
 
 		boolean success = false;
 		String principal = req.getPrincipal();
 		if (principal != null) {
-			SubNode principleNode = api.getUserNodeByUserName(session, principal);
+			SubNode principleNode = api.getUserNodeByUserName(api.getAdminSession(), principal);
 			if (principleNode == null) {
 				res.setMessage("Unknown user name: " + principal);
 				res.setSuccess(false);
@@ -199,7 +198,6 @@ public class AclService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-		// JcrUtil.checkWriteAuthorized(node, session.getUserID());
 
 		String principalNodeId = req.getPrincipalNodeId();
 		String privilege = req.getPrivilege();

@@ -3,13 +3,12 @@ package com.meta64.mobile.mongo.model;
 /* 
  * *************** WARNING: right now the these strings are also hardcoded into some TypeScript.
  */
-
 public enum PrivilegeType {	
 	/* Can read the node and entire subgraph of nodes it contains */
-	READ(1, "r"), //
+	READ(1, "rd"), //
 	
 	/* Can read and write this node. Write to subnodes is not granted by this */
-	WRITE(2, "w"), //
+	WRITE(2, "wr"), //
 	
 	/* Can read and create children under this node and any nodes in the subgraph */
 	ADD_CHILDREN(3, "ac"),//

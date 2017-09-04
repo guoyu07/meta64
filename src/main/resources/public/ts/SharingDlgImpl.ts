@@ -119,8 +119,8 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
          */
         util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
-            "principal": "everyone",
-            "privileges": ["read"],
+            "principal": "public",
+            "privileges": ["rd"],
             "publicAppend": false
         }, this.reload);
     }

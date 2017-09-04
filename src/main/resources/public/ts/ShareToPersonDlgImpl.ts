@@ -50,7 +50,7 @@ export default class ShareToPersonDlgImpl extends DialogBaseImpl implements Shar
         util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
             "nodeId": share.sharingNode.id,
             "principal": targetUser,
-            "privileges": ["r", "w"],
+            "privileges": ["rd", "wr"],
             "publicAppend": false
         }, this.reloadFromShareWithPerson);
     }

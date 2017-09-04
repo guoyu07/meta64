@@ -79,6 +79,18 @@ public class MongoApi {
 		return anonSession;
 	}
 
+	public boolean isAllowedUserName(String userName) {
+		return !userName.equalsIgnoreCase(NodePrincipal.ADMIN) && //
+				!userName.equalsIgnoreCase(NodePrincipal.PUBLIC) && //
+				!userName.equalsIgnoreCase(NodePrincipal.ANONYMOUS);
+	}
+
+	public void authRequireOwnerOfNode(MongoSession session, SubNode node) {
+		if (!session.getUserNode().getId().equals(node.getOwner())) {
+			throw new RuntimeException("Auth Failed. Node ownership required.");
+		}
+	}
+
 	public void requireAdmin(MongoSession session) {
 		if (!session.isAdmin()) throw new RuntimeException("auth fail");
 	}
@@ -96,16 +108,14 @@ public class MongoApi {
 		// admin has full power over all nodes
 		if (node == null || session.isAdmin()) return;
 
-		if (session.getUserNode() == null) {
-			throw new RuntimeException("session had no userNode");
-		}
-
 		if (node.getOwner() == null) {
 			throw new RuntimeException("node had no owner: " + node.getPath());
 		}
 
-		// if this session user is the owner of this node, then they have full power
-		if (session.getUserNode().getId().equals(node.getOwner())) return;
+		if (!session.isAnon()) {
+			// if this session user is the owner of this node, then they have full power
+			if (session.getUserNode().getId().equals(node.getOwner())) return;
+		}
 
 		// Find any ancestor that has priv shared to this user.
 		if (ancestorAuth(session, node, priv)) return;
@@ -115,7 +125,10 @@ public class MongoApi {
 
 	/* NOTE: this should ONLY ever be called from 'auth()' method of this class */
 	private boolean ancestorAuth(MongoSession session, SubNode node, List<PrivilegeType> privs) {
-		String sessionUserNodeId = session.getUserNode().getId().toHexString();
+
+		/* get the non-null sessionUserNodeId if not anonymous user */
+		String sessionUserNodeId = session.isAnon() ? null : session.getUserNode().getId().toHexString();
+
 		String path = node.getPath();
 		StringBuilder fullPath = new StringBuilder();
 		StringTokenizer t = new StringTokenizer(path, "/", false);
@@ -129,9 +142,12 @@ public class MongoApi {
 			if (pathPart.equals("/" + NodeName.ROOT)) continue;
 			if (pathPart.equals("/" + NodeName.ROOT + "/" + NodeName.USER)) continue;
 
-			//I'm putting the caching of ACL results on hold, because this is only a performance enhancement and can wait.
-			//Boolean knownAuthResult = MongoThreadLocal.aclResults().get(buildAclThreadLocalKey(sessionUserNodeId, fullPath, privs));
-			
+			// I'm putting the caching of ACL results on hold, because this is only a performance
+			// enhancement and can wait.
+			// Boolean knownAuthResult =
+			// MongoThreadLocal.aclResults().get(buildAclThreadLocalKey(sessionUserNodeId, fullPath,
+			// privs));
+
 			SubNode tryNode = getNode(session, fullPath.toString(), false);
 			if (tryNode == null) {
 				throw new RuntimeException("Tree corrupt! path not found: " + fullPath.toString());
@@ -142,21 +158,42 @@ public class MongoApi {
 				break;
 			}
 		}
-		
+
 		return ret;
 	}
-	
-//	private String buildAclThreadLocalKey(String userNodeId, String path, List<PrivilegeType> privs) {
-//		//work in progress.
-//	}
 
+	// private String buildAclThreadLocalKey(String userNodeId, String path, List<PrivilegeType>
+	// privs) {
+	// //work in progress.
+	// }
+
+	/*
+	 * NOTE: It is the normal flow that we expect sessionUserNodeId to be null for any anonymous
+	 * requests and this is fine because we are basically going to only be pulling 'public' acl to
+	 * check, and this is by design.
+	 */
 	public boolean nodeAuth(SubNode node, String sessionUserNodeId, List<PrivilegeType> privs) {
 		HashMap<String, String> acl = node.getAcl();
 		if (acl == null) return false;
-		String privsForUserId = acl.get(sessionUserNodeId);
+		String allPrivs = "";
+
+		String privsForUserId = (sessionUserNodeId == null ? null : acl.get(sessionUserNodeId));
 		if (privsForUserId != null) {
+			allPrivs += privsForUserId;
+		}
+
+		/*
+		 * We always add on any privileges assigned to the PUBLIC when checking privs for this user,
+		 * becasue the auth equivalent is really the union of this set.
+		 */
+		String privsForPublic = acl.get(NodePrincipal.PUBLIC);
+		if (privsForPublic != null) {
+			allPrivs += "," + privsForPublic;
+		}
+
+		if (allPrivs.length() > 0) {
 			for (PrivilegeType priv : privs) {
-				if (privsForUserId.indexOf(priv.name) == -1) {
+				if (allPrivs.indexOf(priv.name) == -1) {
 					/* if any priv is missing we fail the auth */
 					return false;
 				}
@@ -195,7 +232,7 @@ public class MongoApi {
 
 	public void renameNode(MongoSession session, SubNode node, String newName) {
 		auth(session, node, PrivilegeType.WRITE);
-		
+
 		newName = newName.trim();
 		if (newName.length() == 0) {
 			throw ExUtil.newEx("No node name provided.");
@@ -479,7 +516,7 @@ public class MongoApi {
 	 * binaries which is exacly like the one below for deleting the nodes themselves.
 	 */
 	public void delete(MongoSession session, SubNode node) {
-		auth(session, node, PrivilegeType.WRITE);
+		authRequireOwnerOfNode(session, node);
 
 		/*
 		 * First delete all the children of the node by using the path, knowing all their paths
@@ -545,11 +582,21 @@ public class MongoApi {
 	}
 
 	public AccessControlEntryInfo createAccessControlEntryInfo(MongoSession session, String principalId, String authType) {
-		SubNode principalNode = getNode(session, principalId, false);
-		if (principalNode == null) {
-			return null;
+		String principalName = null;
+
+		/* If this is a share to public we don't need to looup a user name */
+		if (principalId.equalsIgnoreCase(NodePrincipal.PUBLIC)) {
+			principalName = NodePrincipal.PUBLIC;
 		}
-		String principalName = principalNode.getStringProp(NodeProp.USER);
+		/* else we need the user name */
+		else {
+			SubNode principalNode = getNode(session, principalId, false);
+			if (principalNode == null) {
+				return null;
+			}
+			principalName = principalNode.getStringProp(NodeProp.USER);
+		}
+
 		AccessControlEntryInfo info = new AccessControlEntryInfo(principalName, principalId);
 		info.addPrivilege(new PrivilegeInfo(authType));
 		return info;

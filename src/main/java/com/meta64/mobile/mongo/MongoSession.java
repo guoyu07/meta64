@@ -1,9 +1,14 @@
 package com.meta64.mobile.mongo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.mongo.model.SubNode;
 
 public class MongoSession {
+	private static final Logger log = LoggerFactory.getLogger(SubNode.class);
+	
 	private String user;
 	private SubNode userNode;
 
@@ -39,6 +44,9 @@ public class MongoSession {
 	}
 
 	public SubNode getUserNode() {
+		if (isAnon()) {
+			log.debug("Attempted to get UserNode on anonymous session. This is almost always a bug/unintentional");
+		}
 		return userNode;
 	}
 

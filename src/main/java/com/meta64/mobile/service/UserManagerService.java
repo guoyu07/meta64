@@ -85,6 +85,9 @@ public class UserManagerService {
 
 	@Autowired
 	private Encryptor encryptor;
+	
+	@Autowired
+	private Validator validator;
 
 	/*
 	 * Login mechanism is a bit tricky because the OakSession ASPECT (AOP) actually detects the
@@ -98,6 +101,7 @@ public class UserManagerService {
 		}
 
 		String userName = req.getUserName();
+		validator.checkUserName(userName);
 		String password = req.getPassword();
 		log.trace("login: user=" + userName);
 
@@ -229,11 +233,7 @@ public class UserManagerService {
 	public void signup(SignupRequest req, SignupResponse res, boolean automated) {
 		MongoSession session = api.getAdminSession();
 
-		final String userName = req.getUserName();
-		if (userName.trim().equalsIgnoreCase(NodePrincipal.ADMIN)) {
-			throw ExUtil.newEx("Sorry, you can't be the new admin.");
-		}
-
+		final String userName = req.getUserName().trim();
 		final String password = req.getPassword();
 		final String email = req.getEmail();
 		final String captcha = req.getCaptcha() == null ? "" : req.getCaptcha();
@@ -241,9 +241,9 @@ public class UserManagerService {
 		log.trace("Signup: userName=" + userName + " email=" + email + " captcha=" + captcha);
 
 		/* throw exceptions of the username or password are not valid */
-		Validator.checkUserName(userName);
-		Validator.checkPassword(password);
-		Validator.checkEmail(email);
+		validator.checkUserName(userName);
+		validator.checkPassword(password);
+		validator.checkEmail(email);
 
 		if (!automated) {
 			/*

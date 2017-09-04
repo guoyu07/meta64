@@ -94,7 +94,8 @@ public class SubNode {
 	private SubNodePropertyMap properties;
 	
 	//ACL=Access Control List
-	//Keys are userNodeIds, and values is a comma delimited list of any of PrivilegeType.java values.
+	//Keys are userNodeIds, and values is a comma delimited list of any of PrivilegeType.java values. However in addition to userNodeIds identifying 
+	//users the additional key of "public" is allowed as a key which indicates privileges granted to everyone (the entire public)
 	public static final String FIELD_ACL = "acl";
 	@Field(FIELD_ACL)
 	private HashMap<String,String> acl;

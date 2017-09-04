@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -79,23 +80,33 @@ public class AclService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
+		api.authRequireOwnerOfNode(session, node);
 
 		boolean success = false;
 		String principal = req.getPrincipal();
 		if (principal != null) {
-			SubNode principleNode = api.getUserNodeByUserName(api.getAdminSession(), principal);
-			if (principleNode == null) {
-				res.setMessage("Unknown user name: " + principal);
-				res.setSuccess(false);
-				return;
+			String mapKey = null;
+
+			/* If we are sharing to public, then that's the map key */
+			if (principal.equalsIgnoreCase(NodePrincipal.PUBLIC)) {
+				mapKey = NodePrincipal.PUBLIC;
 			}
-			String ownerNodeId = principleNode.getId().toHexString();
+			/* otherwise sharing to a person so their userNodeId is the map key in this case */
+			else {
+				SubNode principleNode = api.getUserNodeByUserName(api.getAdminSession(), principal);
+				if (principleNode == null) {
+					res.setMessage("Unknown user name: " + principal);
+					res.setSuccess(false);
+					return;
+				}
+				mapKey = principleNode.getId().toHexString();
+			}
 
 			HashMap<String, String> acl = node.getAcl();
 			if (acl == null) {
 				acl = new HashMap<String, String>();
 			}
-			String authForPrinciple = acl.get(ownerNodeId);
+			String authForPrinciple = acl.get(mapKey);
 			if (authForPrinciple == null) {
 				authForPrinciple = "";
 			}
@@ -113,7 +124,7 @@ public class AclService {
 			}
 
 			if (authAdded) {
-				acl.put(ownerNodeId, authForPrinciple);
+				acl.put(mapKey, authForPrinciple);
 				node.setAcl(acl);
 				api.save(session, node);
 			}
@@ -198,6 +209,7 @@ public class AclService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
+		api.authRequireOwnerOfNode(session, node);
 
 		String principalNodeId = req.getPrincipalNodeId();
 		String privilege = req.getPrivilege();

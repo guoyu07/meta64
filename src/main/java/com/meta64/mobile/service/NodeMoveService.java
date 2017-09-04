@@ -140,36 +140,9 @@ public class NodeMoveService {
 		res.setSuccess(true);
 	}
 
-	/*
-	 * Deletes a single node by nodeId
-	 */
 	private void deleteNode(MongoSession session, String nodeId) {
 		SubNode node = api.getNode(session, nodeId);
-		// String commentBy = node.getStringProp(JcrProp.COMMENT_BY);
-
-		/*
-		 * Detect if this node is a comment we "own" (although true security rules make it belong to
-		 * admin user) then we should be able to delete it, so we execute the delete under an
-		 * 'AdminSession'. Also now that we have switched sessions, we set that in the return value,
-		 * so the caller can always, stop processing after this happens. Meaning essentialy only
-		 * *one* comment node can be deleted at a time unless you are admin user.
-		 */
-		// mongo not yet supporting comment-by stuff
-		// if (session.getUserID().equals(commentBy)) {
-		// session.logout();
-		// session = oak.newAdminSession();
-		// node = JcrUtil.findNode(session, nodeId);
-		//
-		// /* notify caller what just happened */
-		// if (switchedToAdminSession != null) {
-		// switchedToAdminSession.setVal(true);
-		// }
-		// node.remove();
-		// JcrUtil.save(session);
-		// }
-		// else {
 		api.delete(session, node);
-		// }
 	}
 
 	/*
@@ -181,35 +154,14 @@ public class NodeMoveService {
 			session = ThreadLocals.getMongoSession();
 		}
 
-		String targetId = req.getTargetNodeId();
-		SubNode targetNode = api.getNode(session, targetId);
-		String targetPath = targetNode.getPath() + "/";
-
-		// not worrying about this for mongo just yet.
-		// /*
-		// * If the user is moving nodes to his root note, that root node will be owned by admin so
-		// we
-		// * must run the processing using adminRunner session
-		// */
-		// if (targetPath.equals("/" + JcrName.ROOT + "/" + sessionContext.getUserName() + "/")) {
-		// adminRunner.run((MongoSession adminSession) -> {
-		// moveNodesInternal(adminSession, req, res);
-		// });
-		// }
-		// /*
-		// * Otherwise this user is just moving a node somewhere other than their root and we can
-		// use
-		// * their own actual session
-		// */
-		// else {
 		moveNodesInternal(session, req, res);
-		// }
 	}
 
 	private void moveNodesInternal(MongoSession session, MoveNodesRequest req, MoveNodesResponse res) {
 		String targetId = req.getTargetNodeId();
 		log.debug("moveNodesInternal: targetId=" + targetId);
 		SubNode targetNode = api.getNode(session, targetId);
+		api.authRequireOwnerOfNode(session, targetNode);
 		String targetPath = targetNode.getPath();
 		log.debug("targetPath: " + targetPath);
 		Long curTargetOrdinal = targetNode.getMaxChildOrdinal() == null ? 0 : targetNode.getMaxChildOrdinal();
@@ -218,7 +170,7 @@ public class NodeMoveService {
 			log.debug("Moving ID: " + nodeId);
 			try {
 				SubNode node = api.getNode(session, nodeId);
-
+				api.authRequireOwnerOfNode(session, node);
 				changePathOfSubGraph(session, node, targetPath);
 
 				node.setPath(targetPath + "/" + node.getName());

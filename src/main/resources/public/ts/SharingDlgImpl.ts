@@ -21,7 +21,7 @@ import { EditPrivsTableRow } from "./widget/EditPrivsTableRow";
 export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg {
 
     privsTable: Div;
-    publicCommentingCheckbox: Checkbox;
+    //publicCommentingCheckbox: Checkbox;
 
     constructor() {
         super();
@@ -32,7 +32,8 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
         this.setChildren([
             new Header("Node Sharing"),
             this.privsTable = new EditPrivsTable(),
-            this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),
+            //todo-1: disabling this for now
+            //this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),
             new ButtonBar([
                 new Button("Share with Person", this.shareToPersonDlg),
                 new Button("Share to Public", this.shareNodeToPublic),
@@ -71,7 +72,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
 
         this.privsTable.renderChildrenToDom();
 
-        this.publicCommentingCheckbox.setChecked(res.publicAppend);
+        //this.publicCommentingCheckbox.setChecked(res.publicAppend);
     }
 
     /* Note: this really only saves the checkbox value because the other list modifications are made as soon as user does them */
@@ -81,7 +82,7 @@ export default class SharingDlgImpl extends DialogBaseImpl implements SharingDlg
             "nodeId": share.sharingNode.id,
             "privileges": null,
             "principal": null,
-            "publicAppend": this.publicCommentingCheckbox.getChecked()
+            "publicAppend": false //this.publicCommentingCheckbox.getChecked()
         });
     }
 

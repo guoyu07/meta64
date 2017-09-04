@@ -101,7 +101,6 @@ public class UserManagerService {
 		}
 
 		String userName = req.getUserName();
-		validator.checkUserName(userName);
 		String password = req.getPassword();
 		log.trace("login: user=" + userName);
 

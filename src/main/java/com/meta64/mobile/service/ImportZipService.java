@@ -145,11 +145,9 @@ public class ImportZipService {
 
 	private void processFile(ZipEntry entry) {
 		String name = entry.getName();
-		log.info("FILE: " + entry.getName());
 		int lastSlashIdx = name.lastIndexOf("/");
 		String fileName = name.substring(lastSlashIdx + 1);
 		String path = name.substring(0, lastSlashIdx);
-		log.info("PATH: " + path);
 		path = hashizePath(path);
 
 		if (curPath == null || !curPath.equals(path)) {

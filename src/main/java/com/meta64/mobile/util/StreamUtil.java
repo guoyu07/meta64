@@ -36,7 +36,9 @@ public class StreamUtil {
 				}
 			}
 			else {
-				throw new RuntimeException("Object to close was of unsupported type: " + obj.getClass().getName());
+				if (obj != null) {
+					log.warn("Object to close was of unsupported type: " + obj.getClass().getName());
+				}
 			}
 		}
 	}

@@ -1,4 +1,0 @@
-{
-  	"jcrType" : "meta64:rssfeed",
-	"meta64:rssFeedSrc" : "http://feeds.twit.tv/twit.xml"
-}

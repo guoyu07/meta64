@@ -1,4 +1,0 @@
-{
-  	"jcrType" : "meta64:rssfeed",
-	"meta64:rssFeedSrc" : "http://wakingup.libsyn.com/rss"
-}

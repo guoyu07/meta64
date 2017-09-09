@@ -86,14 +86,17 @@ public class SessionContext {
 	public boolean isTestAccount() {
 		return repoUtil.isTestAccountName(userName);
 	}
-	
+
 	public String formatTime(Date date) {
+		if (date == null) return null;
 
 		/* If we have a short timezone abbreviation display timezone with it */
 		if (getTimeZoneAbbrev() != null) {
 			if (dateFormat == null) {
 				dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
-				dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+				if (getTimezone() != null) {
+					dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+				}
 			}
 			return dateFormat.format(date) + " " + getTimeZoneAbbrev();
 		}
@@ -101,14 +104,16 @@ public class SessionContext {
 		else {
 			if (dateFormat == null) {
 				dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT_WITH_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
-				dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+				if (getTimezone() != null) {
+					dateFormat.setTimeZone(TimeZone.getTimeZone(getTimezone()));
+				}
 			}
 			return dateFormat.format(date);
 		}
 	}
 
 	/*
-	 * This can create nasty bugs. I should bet always getting user name from the actual session
+	 * This can create nasty bugs. I should be always getting user name from the actual session
 	 * object itself in all the logic... in most every case except maybe login process.
 	 */
 	public String getUserName() {

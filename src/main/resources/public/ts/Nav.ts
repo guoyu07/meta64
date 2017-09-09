@@ -110,7 +110,7 @@ class Nav {
     openMainMenuHelp(): void {
         nav.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/meta64/public/help",
+            "nodeId": "/r/public/help",
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": nav.mainOffset,
@@ -132,7 +132,7 @@ class Nav {
     browseSampleContent(): void {
         nav.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/meta64/war-and-peace",
+            "nodeId": "/r/public/war-and-peace",
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": nav.mainOffset,

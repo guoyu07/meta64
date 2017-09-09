@@ -516,8 +516,11 @@ class Meta64 {
         meta64.state.selNodeIsMine = meta64.state.highlightNode != null && (meta64.state.highlightNode.owner === meta64.userName || "admin" === meta64.userName);
 
         meta64.state.homeNodeSelected = meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id;
-        meta64.state.importFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.importAllowed;
-        meta64.state.exportFeatureEnabled = meta64.isAdminUser || meta64.userPreferences.exportAllowed;
+
+        //for now, allowing all users to import+export (todo-2)
+        meta64.state.importFeatureEnabled = true; //meta64.isAdminUser || meta64.userPreferences.importAllowed;
+        meta64.state.exportFeatureEnabled = true; //meta64.isAdminUser || meta64.userPreferences.exportAllowed;
+
         meta64.state.highlightOrdinal = meta64.getOrdinalOfNode(meta64.state.highlightNode);
         meta64.state.numChildNodes = meta64.getNumChildNodes();
         meta64.state.canMoveUp = (meta64.state.highlightOrdinal > 0 && meta64.state.numChildNodes > 1) || meta64.state.prevPageExists;

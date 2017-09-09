@@ -66,11 +66,6 @@ public class ImportService {
 		}
 
 		api.saveSession(session);
-		// }
-		// catch (Exception e) {
-		// log.error(e.getMessage());
-		// return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		// }
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

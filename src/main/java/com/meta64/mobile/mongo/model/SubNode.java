@@ -51,9 +51,10 @@ import com.meta64.mobile.util.XString;
 @TypeAlias("n1")
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({ SubNode.FIELD_PATH, SubNode.FIELD_TYPE, SubNode.FIELD_ID, SubNode.FIELD_MAX_CHILD_ORDINAL, SubNode.FIELD_ORDINAL, SubNode.FIELD_OWNER,
-		SubNode.FIELD_CREATE_TIME, SubNode.FIELD_MODIFY_TIME, SubNode.FIELD_PROPERTIES })
+		SubNode.FIELD_CREATE_TIME, SubNode.FIELD_MODIFY_TIME, SubNode.FIELD_ACL, SubNode.FIELD_PROPERTIES })
 public class SubNode {
 	public static final String FIELD_ID = "_id";
+	private boolean updateModTimeOnSave = true;
 
 	private static final Logger log = LoggerFactory.getLogger(SubNode.class);
 
@@ -372,5 +373,15 @@ public class SubNode {
 	@JsonIgnore
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@JsonIgnore
+	public boolean isUpdateModTimeOnSave() {
+		return updateModTimeOnSave;
+	}
+
+	@JsonIgnore
+	public void setUpdateModTimeOnSave(boolean updateModTimeOnSave) {
+		this.updateModTimeOnSave = updateModTimeOnSave;
 	}
 }

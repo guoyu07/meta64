@@ -150,7 +150,7 @@ public class AppController {
 	private NodeSearchService nodeSearchService;
 
 	@Autowired
-	private ImportService importXmlService;
+	private ImportService importService;
 
 	@Autowired
 	private ImportZipService importZipService;
@@ -374,7 +374,7 @@ public class AppController {
 		if (nodeId == null) {
 			throw ExUtil.newEx("target nodeId not provided");
 		}
-		return importXmlService.streamImport(null, nodeId, uploadFiles);
+		return importService.streamImport(null, nodeId, uploadFiles);
 	}
 	
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)

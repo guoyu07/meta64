@@ -114,6 +114,7 @@ public class ExportZipService {
 			zos = new ZipOutputStream(new FileOutputStream(fullFileName));
 
 			SubNode node = api.getNode(session, nodeId);
+			api.authRequireOwnerOfNode(session, node);
 			recurseNode("", node, 0);
 			res.setFileName(shortFileName);
 			success = true;

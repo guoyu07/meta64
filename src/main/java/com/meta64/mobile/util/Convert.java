@@ -94,9 +94,9 @@ public class Convert {
 		// should be able to deal with that (i think). depends on how much ownership info we need to
 		// show user.
 		SubNode userNode = api.getNode(session, node.getOwner(), false);
-		String owner = userNode==null ? "?" : userNode.getStringProp(NodeProp.USER);
+		String owner = userNode == null ? "?" : userNode.getStringProp(NodeProp.USER);
 		String lastModStr = sessionContext.formatTime(node.getModifyTime());
-		
+
 		NodeInfo nodeInfo = new NodeInfo(node.jsonId(), node.getPath(), node.getName(), owner, node.getOrdinal(), //
 				lastModStr, propList, hasNodes, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
@@ -124,49 +124,45 @@ public class Convert {
 
 	public List<PropertyInfo> buildPropertyInfoList(SessionContext sessionContext, SubNode node, //
 			boolean htmlOnly, boolean allowAbbreviated, boolean initNodeEdit) {
-		try {
-			List<PropertyInfo> props = null;
-			SubNodePropertyMap propMap = node.getProperties();
-			PropertyInfo contentPropInfo = null;
+		//log.debug("buildPropertyInfoList");
 
-			for (Map.Entry<String, SubNodePropVal> entry : propMap.entrySet()) {
-				String propName = entry.getKey();
-				SubNodePropVal p = entry.getValue();
+		List<PropertyInfo> props = null;
+		SubNodePropertyMap propMap = node.getProperties();
+		PropertyInfo contentPropInfo = null;
 
-				/* lazy create props */
-				if (props == null) {
-					props = new LinkedList<PropertyInfo>();
-				}
+		for (Map.Entry<String, SubNodePropVal> entry : propMap.entrySet()) {
+			String propName = entry.getKey();
+			SubNodePropVal p = entry.getValue();
 
-				PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, propName, p, htmlOnly, allowAbbreviated, initNodeEdit);
-				// log.debug(" PROP Name: " + p.getName());
-
-				/*
-				 * grab the content property, and don't put it in the return list YET, because we
-				 * will be sorting the list and THEN putting the content at the top of that sorted
-				 * list.
-				 */
-				if (propName.equals(NodeProp.CONTENT)) {
-					contentPropInfo = propInfo;
-				}
-				else {
-					props.add(propInfo);
-				}
+			/* lazy create props */
+			if (props == null) {
+				props = new LinkedList<PropertyInfo>();
 			}
 
-			if (props != null) {
-				Collections.sort(props, propertyInfoComparator);
+			PropertyInfo propInfo = convertToPropertyInfo(sessionContext, node, propName, p, htmlOnly, allowAbbreviated, initNodeEdit);
+			//log.debug("    PROP Name: " + propName + " val=" + p.getValue().toString());
 
-				/* put content prop always at top of list */
-				if (contentPropInfo != null) {
-					props.add(0, contentPropInfo);
-				}
+			/*
+			 * grab the content property, and don't put it in the return list YET, because we will
+			 * be sorting the list and THEN putting the content at the top of that sorted list.
+			 */
+			if (propName.equals(NodeProp.CONTENT)) {
+				contentPropInfo = propInfo;
 			}
-			return props;
+			else {
+				props.add(propInfo);
+			}
 		}
-		catch (Exception ex) {
-			throw ExUtil.newEx(ex);
+
+		if (props != null) {
+			Collections.sort(props, propertyInfoComparator);
+
+			/* put content prop always at top of list */
+			if (contentPropInfo != null) {
+				props.add(0, contentPropInfo);
+			}
 		}
+		return props;
 	}
 
 	public PropertyInfo convertToPropertyInfo(SessionContext sessionContext, SubNode node, String propName, SubNodePropVal prop, boolean htmlOnly,
@@ -174,7 +170,7 @@ public class Convert {
 		try {
 			String value = null;
 			boolean abbreviated = false;
-			
+
 			if (propName.equals(NodeProp.CONTENT)) {
 				value = formatValue(sessionContext, prop.getValue(), htmlOnly, initNodeEdit);
 				/* log.trace(String.format("prop[%s]=%s", prop.getName(), value)); */

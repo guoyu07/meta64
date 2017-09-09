@@ -1,7 +1,11 @@
 package com.meta64.mobile.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Date-related functions
@@ -16,10 +20,15 @@ public class DateUtil {
 	// 'GMT'Z";
 	public static final String DATE_FORMAT_WITH_TIMEZONE = "yyyy/MM/dd hh:mm:ss a z";
 	public static final String DATE_FORMAT_NO_TIMEZONE = "yyyy/MM/dd hh:mm:ss a";
-
+	public static final String DATE_FORMAT_NO_TIME = "yyyy/MM/dd";
+	
 	/** Used to format date values */
 	public static final Locale DATE_FORMAT_LOCALE = Locale.US;
 
+	/* Note: this object is Session-specific to the timezone will be per user */
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_NO_TIMEZONE, DateUtil.DATE_FORMAT_LOCALE);
+	private static final SimpleDateFormat dateFormatNoTime = new SimpleDateFormat(DATE_FORMAT_NO_TIME, DateUtil.DATE_FORMAT_LOCALE);
+	
 	private static final HashMap<String, String> zoneMap = new HashMap<String, String>();
 
 	/*
@@ -91,5 +100,25 @@ public class DateUtil {
 		// log.debug("ZoneString: " + zoneString);
 
 		return gmtZoneStr;
+	}
+	
+	public static Date parse(String time) {
+		try {
+			time = time.replace("-", "/");
+			return dateFormat.parse(time);
+		}
+		catch (ParseException e) {
+			/* if date parse fails, try without the time */
+			if (time.length() > 10) {
+				time = time.substring(0, 10);
+				try {
+					return dateFormatNoTime.parse(time);
+				}
+				catch (ParseException e1) {
+					throw new RuntimeException(e);
+				}
+			}
+			throw new RuntimeException(e);
+		}
 	}
 }

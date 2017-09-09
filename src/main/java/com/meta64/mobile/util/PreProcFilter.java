@@ -95,7 +95,7 @@ public class PreProcFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		String uri = request.getRequestURI();
-		log.debug("PreProcFilter: uri: " + uri);
+		//log.debug("PreProcFilter: uri: " + uri);
 
 		// String ver = request.getParameter("ver");
 		// String warning = "";

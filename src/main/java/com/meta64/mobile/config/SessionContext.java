@@ -1,5 +1,6 @@
 package com.meta64.mobile.config;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -85,7 +86,7 @@ public class SessionContext {
 	public boolean isTestAccount() {
 		return repoUtil.isTestAccountName(userName);
 	}
-
+	
 	public String formatTime(Date date) {
 
 		/* If we have a short timezone abbreviation display timezone with it */

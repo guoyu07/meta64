@@ -28,6 +28,7 @@ import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
+import com.meta64.mobile.util.XString;
 
 /**
  * Service for rendering the content of a page. The actual page is not rendered on the server side.
@@ -190,6 +191,8 @@ public class NodeRenderService {
 			}
 			SubNode n = iterator.next();
 
+			//log.debug("renderNode DUMP: " + XString.prettyPrint(node));
+			
 			idx++;
 			if (idx > offset) {
 

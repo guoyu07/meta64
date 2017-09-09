@@ -19,7 +19,6 @@ public class FileTools {
 
 		return new File(fileName).isFile();
 	}
-
 	public static boolean dirExists(String fileName) {
 		if (fileName == null || fileName.equals("")) return false;
 

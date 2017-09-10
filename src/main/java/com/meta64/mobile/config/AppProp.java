@@ -43,48 +43,12 @@ public class AppProp /* implements EnvironmentAware */ {
 		return env.getProperty("mongodb.name");
 	}
 
-	public String getDbStoreType() {
-		return env.getProperty("db.store.type");
-	}
-
-	public String getRdbDriver() {
-		return env.getProperty("rdb.driver");
-	}
-
-	public String getRdbUser() {
-		return env.getProperty("rdb.user");
-	}
-
-	public String getRdbPassword() {
-		return env.getProperty("rdb.password");
-	}
-
 	public String getAdminDataFolder() {
 		return getPathProperty("adminDataFolder");
 	}
 
-	public String getRdbUrl() {
-		return getPathProperty("rdb.url");
-	}
-
-	public String getRdbShutdown() {
-		return getPathProperty("rdb.shutdown");
-	}
-
-	public boolean isForceIndexRebuild() {
-		return getBooleanProp("forceIndexRebuild");
-	}
-
-	public boolean isIndexingEnabled() {
-		return getBooleanProp("indexingEnabled");
-	}
-
 	public String getTestUserAccounts() {
 		return env.getProperty("testUserAccounts");
-	}
-
-	public String getJcrAdminUserName() {
-		return env.getProperty("jcrAdminUserName");
 	}
 
 	public String getMongoAdminUserName() {
@@ -93,10 +57,6 @@ public class AppProp /* implements EnvironmentAware */ {
 
 	public boolean getMongoTest() {
 		return "true".equals(env.getProperty("mongoTest"));
-	}
-
-	public String getJcrAdminPassword() {
-		return env.getProperty("jcrAdminPassword");
 	}
 
 	public String getMongoAdminPassword() {
@@ -121,10 +81,6 @@ public class AppProp /* implements EnvironmentAware */ {
 
 	public String getSolrSearchHost() {
 		return env.getProperty("solr.search.host");
-	}
-
-	public String getLuceneDir() {
-		return env.getProperty("lucene.index.dir");
 	}
 
 	public String getMailHost() {

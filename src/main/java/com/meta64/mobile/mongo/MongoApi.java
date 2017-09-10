@@ -86,7 +86,7 @@ public class MongoApi {
 	}
 
 	public void authRequireOwnerOfNode(MongoSession session, SubNode node) {
-		if (!session.getUserNode().getId().equals(node.getOwner())) {
+		if (!session.isAdmin() && !session.getUserNode().getId().equals(node.getOwner())) {
 			throw new RuntimeException("Auth Failed. Node ownership required.");
 		}
 	}

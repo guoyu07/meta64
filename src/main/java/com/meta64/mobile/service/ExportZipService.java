@@ -151,7 +151,7 @@ public class ExportZipService {
 	 */
 	private String processNodeExport(String parentFolder, SubNode node) {
 		try {
-			log.debug("Processing Node: " + node.getPath());
+			//log.debug("Processing Node: " + node.getPath());
 
 			String fileName = generateFileNameFromNode(node);
 
@@ -259,7 +259,7 @@ public class ExportZipService {
 
 		fileNameSet.add(fileName);
 
-		log.debug("ZIPENTRY: " + fileName);
+		//log.debug("ZIPENTRY: " + fileName);
 		ZipEntry zi = new ZipEntry(fileName);
 		try {
 			zos.putNextEntry(zi);

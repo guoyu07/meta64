@@ -268,6 +268,12 @@ public class UserManagerService {
 	 * their signupCode has been used to validate their email address.
 	 */
 	public void initiateSignup(MongoSession session, String userName, String password, String email) {
+		
+		SubNode ownerNode = api.getUserNodeByUserName(session, userName);
+		if (ownerNode != null) {
+			throw new RuntimeException("User already exists.");
+		}
+		
 		SubNode newUserNode = api.createUser(session, userName, email, password, false);
 
 		/*

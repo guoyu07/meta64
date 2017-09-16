@@ -56,6 +56,9 @@ import com.mongodb.gridfs.GridFSDBFile;
 public class MongoApi {
 	private static final Logger log = LoggerFactory.getLogger(MongoApi.class);
 
+	/* use for turning on debugging messages for authorization logic */
+	private static final boolean traceAuth = true;
+
 	@Autowired
 	private MongoTemplate ops;
 
@@ -112,10 +115,8 @@ public class MongoApi {
 			throw new RuntimeException("node had no owner: " + node.getPath());
 		}
 
-		if (!session.isAnon()) {
-			// if this session user is the owner of this node, then they have full power
-			if (session.getUserNode().getId().equals(node.getOwner())) return;
-		}
+		// if this session user is the owner of this node, then they have full power
+		if (!session.isAnon() && session.getUserNode().getId().equals(node.getOwner())) return;
 
 		// Find any ancestor that has priv shared to this user.
 		if (ancestorAuth(session, node, priv)) return;
@@ -148,12 +149,27 @@ public class MongoApi {
 			// MongoThreadLocal.aclResults().get(buildAclThreadLocalKey(sessionUserNodeId, fullPath,
 			// privs));
 
+			if (traceAuth) {
+				log.debug("Checking Auth of: " + fullPath.toString());
+			}
 			SubNode tryNode = getNode(session, fullPath.toString(), false);
 			if (tryNode == null) {
 				throw new RuntimeException("Tree corrupt! path not found: " + fullPath.toString());
 			}
 
+			// if this session user is the owner of this node, then they have full power
+			if (!session.isAnon() && session.getUserNode().getId().equals(tryNode.getOwner())) {
+				if (traceAuth) {
+					log.debug("Auth successful. Found node user OWNS.");
+				}
+				ret = true;
+				break;
+			}
+
 			if (nodeAuth(tryNode, sessionUserNodeId, privs)) {
+				if (traceAuth) {
+					log.debug("Auth successful.");
+				}
 				ret = true;
 				break;
 			}

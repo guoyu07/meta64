@@ -44,39 +44,38 @@ public class JcrOutboxMgr {
 	@Autowired
 	private SubNodeUtil jcrUtil;
 
-	// /*
-	// * node=Node that was created. userName = username of person who just created node.
-	// */
-	// public void sendNotificationForChildNodeCreate(final Node node, final String userName, final
-	// String parentProp) {
-	// /*
-	// * put in a catch block, because nothing going wrong in here should be allowed to blow up
-	// * the save operation
-	// */
-	// adminRunner.run(session -> {
-	// try {
-	// Node parentNode = node.getParent();
-	// if (parentNode != null) {
-	// String parentCreator = JcrUtil.getRequiredStringProp(parentNode, parentProp);
-	// if (!parentCreator.equals(userName)) {
-	// Node prefsNode = UserManagerService.getPrefsNodeForSessionUser(session, parentCreator);
-	// String email = JcrUtil.getRequiredStringProp(prefsNode, JcrProp.EMAIL);
-	// log.debug("sending email to: " + email + " because his node was appended under.");
-	//
-	// String content = String.format("User '%s' has created a new subnode under one of your
-	// nodes.<br>\n\n" + //
-	// "Here is a link to the new node: %s?id=%s", //
-	// userName, constProvider.getHostAndPort(), node.getPath());
-	//
-	// queueMailUsingAdminSession(session, email, "Meta64 New Content Notification", content);
-	// }
-	// }
-	// }
-	// catch (Exception e) {
-	// log.debug("failed sending notification", e);
-	// }
-	// });
-	// }
+	/*
+	 * node=Node that was created. userName = username of person who just created node.
+	 */
+	public void sendNotificationForChildNodeCreate(final SubNode node, final String userName) {
+		/*
+		 * put in a catch block, because nothing going wrong in here should be allowed to blow up
+		 * the save operation
+		 */
+		adminRunner.run(session -> {
+			try {
+				SubNode parentNode = api.getParent(session, node);
+
+				/*
+				 * Check first that we are not creating a node under one WE OWN, becasue we don't
+				 * need to send a notification to ourselves.
+				 */
+				if (parentNode != null && !parentNode.getOwner().equals(node.getOwner())) {
+					SubNode userNode = api.getNode(session, parentNode.getOwner());
+					String email = userNode.getStringProp(NodeProp.EMAIL);
+					log.debug("sending email to: " + email + " because his node was appended under.");
+
+					String content = String.format("User '%s' has created a new subnode under one of your nodes.<p>\n\n" + //
+					"%s?id=%s", userName, constProvider.getHostAndPort(), node.getId().toHexString());
+
+					queueMailUsingAdminSession(session, email, "New SubNode Notification", content);
+				}
+			}
+			catch (Exception e) {
+				log.debug("failed sending notification", e);
+			}
+		});
+	}
 
 	public void queueEmail(final String recipients, final String subject, final String content) {
 		adminRunner.run(session -> {

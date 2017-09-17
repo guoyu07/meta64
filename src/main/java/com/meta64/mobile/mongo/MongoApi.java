@@ -57,7 +57,7 @@ public class MongoApi {
 	private static final Logger log = LoggerFactory.getLogger(MongoApi.class);
 
 	/* use for turning on debugging messages for authorization logic */
-	private static final boolean traceAuth = true;
+	private static final boolean traceAuth = false;
 
 	@Autowired
 	private MongoTemplate ops;

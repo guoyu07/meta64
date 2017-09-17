@@ -69,15 +69,16 @@ public class NodeEditService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-		
-		//boolean createUnderRoot = false;
+
+		// boolean createUnderRoot = false;
 		/*
 		 * if we are moving nodes around on the root, the root belongs to admin and needs special
 		 * access (adminRunner)
 		 */
-//		if (parentPath.equals("/" + NodeName.ROOT + "/" + NodeName.USER + "/" + sessionContext.getUserName() + "/")) {
-//			createUnderRoot = true;
-//		}
+		// if (parentPath.equals("/" + NodeName.ROOT + "/" + NodeName.USER + "/" +
+		// sessionContext.getUserName() + "/")) {
+		// createUnderRoot = true;
+		// }
 
 		/*
 		 * If this is a publicly appendable node, then we always use admin to append a comment type
@@ -211,6 +212,7 @@ public class NodeEditService {
 		// log.debug("saveNode. nodeId=" + nodeId);
 		SubNode node = api.getNode(session, nodeId);
 
+		String commentBy = null;
 		// String commentBy = JcrUtil.safeGetStringProp(node, JcrProp.COMMENT_BY);
 		// if (commentBy != null) {
 		// if (!commentBy.equals(session.getUserID())) {
@@ -252,14 +254,12 @@ public class NodeEditService {
 			node.setProp(NodeProp.LAST_MODIFIED, lastModified.getTime());
 
 			if (req.isSendNotification()) {
-				// if (commentBy != null) {
-				// outboxMgr.sendNotificationForChildNodeCreate(node, commentBy,
-				// JcrProp.COMMENT_BY);
-				// }
-				// else {
-				// outboxMgr.sendNotificationForChildNodeCreate(node, sessionContext.getUserName(),
-				// JcrProp.CREATED_BY);
-				// }
+				if (commentBy != null) {
+					//outboxMgr.sendNotificationForChildNodeCreate(node, commentBy, JcrProp.COMMENT_BY);
+				}
+				else {
+					outboxMgr.sendNotificationForChildNodeCreate(node, sessionContext.getUserName());
+				}
 			}
 
 			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);

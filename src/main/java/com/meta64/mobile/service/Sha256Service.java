@@ -183,7 +183,7 @@ public class Sha256Service {
 	// * We check hash map return value from 'put' to make sure this ID is unique. JCR
 	// * should never allow non-unique but we still check.
 	// *
-	// * todo-0: For mix:referencable nodes this getIdentifier is still a GUID right? Even
+	// * For mix:referencable nodes this getIdentifier is still a GUID right? Even
 	// * with the jcr:uuid value being a standard property value ? I'm 95% sure this is
 	// * correct, but I need to run tests to verify.
 	// */

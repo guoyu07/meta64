@@ -42,7 +42,7 @@ public class NodeRenderService {
 
 	@Autowired
 	private SubNodeUtil subNodeUtil;
-	
+
 	@Autowired
 	private MongoApi api;
 
@@ -58,7 +58,7 @@ public class NodeRenderService {
 	@Autowired
 	private SessionContext sessionContext;
 
-	/* Note: this should match nav.ROWS_PER_PAGE variable in TypeScript */
+	/* Note: this MUST match nav.ROWS_PER_PAGE variable in TypeScript */
 	private static int ROWS_PER_PAGE = 25;
 
 	/*
@@ -136,7 +136,7 @@ public class NodeRenderService {
 			}
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false, -1);
 		res.setNode(nodeInfo);
 
 		/*
@@ -145,13 +145,27 @@ public class NodeRenderService {
 		 */
 		int offset = scanToNode ? 0 : req.getOffset();
 
-		Iterable<SubNode> nodeIter = api.getChildren(session, node, true, ROWS_PER_PAGE);
+		/*
+		 * load a LARGE number (toto-0: what should this large number be, 1000?) if we are scanning
+		 * for a specific node and we don't know what it's actual offset is
+		 * 
+		 * todo-0: actually in the new architecture, i think i can look up that target node, and
+		 * then simply use it's index information to help out here.
+		 */
+		int queryLimit = scanToNode ? 1000 : offset + ROWS_PER_PAGE + 1;
+
+		/*
+		 * we request ROWS_PER_PAGE+1, because that is enough to trigger 'endReached' logic to be
+		 * set correctly
+		 */
+		Iterable<SubNode> nodeIter = api.getChildren(session, node, true, queryLimit);
 		Iterator<SubNode> iterator = nodeIter.iterator();
 
 		int idx = 0, count = 0, idxOfNodeFound = -1;
 		boolean endReached = false;
 
 		if (req.isGoToLastPage()) {
+			// todo-0: fix
 			throw new RuntimeException("No ability to go to last page yet in new mongo api.");
 			// offset = (int) nodeIter.getSize() - ROWS_PER_PAGE;
 			// if (offset < 0) {
@@ -191,8 +205,6 @@ public class NodeRenderService {
 			}
 			SubNode n = iterator.next();
 
-			//log.debug("renderNode DUMP: " + XString.prettyPrint(node));
-			
 			idx++;
 			if (idx > offset) {
 
@@ -216,7 +228,9 @@ public class NodeRenderService {
 							/* loop over all our precached nodes */
 							for (SubNode sn : slidingWindow) {
 								count++;
-								children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true, false));
+								//log.debug("renderNode DUMP[count=" + count + " idx=" + String.valueOf(idx) + " logicalOrdinal=" + String.valueOf(offset + count) + "]: "
+								//		+ XString.prettyPrint(node));
+								children.add(convert.convertToNodeInfo(sessionContext, session, sn, true, true, false, offset + count));
 							}
 						}
 						else {
@@ -238,7 +252,9 @@ public class NodeRenderService {
 				}
 
 				count++;
-				children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true, false));
+				//log.debug("renderNode DUMP[count=" + count + " idx=" + String.valueOf(idx) + " logicalOrdinal=" + String.valueOf(offset + count) + "]: "
+				//		+ XString.prettyPrint(node));
+				children.add(convert.convertToNodeInfo(sessionContext, session, n, true, true, false, offset + count));
 
 				if (count >= ROWS_PER_PAGE) {
 					if (!iterator.hasNext()) {
@@ -278,7 +294,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false, false, true);
+		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, false, false, true, -1);
 		res.setNodeInfo(nodeInfo);
 		res.setSuccess(true);
 	}

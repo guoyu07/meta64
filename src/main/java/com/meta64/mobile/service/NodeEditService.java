@@ -84,7 +84,7 @@ public class NodeEditService {
 		 * If this is a publicly appendable node, then we always use admin to append a comment type
 		 * node under it. No other type of child node creation is allowed.
 		 * 
-		 * todo-0: redesign public append logic for mongo
+		 * todo-1: redesign public append logic for mongo
 		 */
 		// boolean publicAppend = JcrUtil.isPublicAppend(node);
 		// boolean asAdminNow = false;
@@ -97,7 +97,7 @@ public class NodeEditService {
 		// node = JcrUtil.findNode(session, nodeId);
 		// }
 
-		// todo-0: do we need to support user passing node name during create?
+		// todo-1: do we need to support user passing node name during create?
 		// String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() :
 		// req.getNewNodeName();
 
@@ -105,15 +105,8 @@ public class NodeEditService {
 
 		CreateNodeLocation createLoc = req.isCreateAtTop() ? CreateNodeLocation.FIRST : CreateNodeLocation.LAST;
 
-		// todo-0: bring back node types for mongo
-		// if (req.getTypeName() != null &&
-		// !SubNodeTypes.UNSTRUCTURED.equalsIgnoreCase(req.getTypeName())) {
-		// newNode = node.addNode(name, req.getTypeName());
-		// }
-		// else {
 		newNode = api.createNode(session, node, null, SubNodeTypes.UNSTRUCTURED, 0L, createLoc);
 		newNode.setProp(NodeProp.CONTENT, "");
-		// }
 
 		// if (publicAppend) {
 		// newNode.setProperty(JcrProp.COMMENT_BY, curUser);
@@ -122,7 +115,7 @@ public class NodeEditService {
 
 		api.save(session, newNode);
 
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false, -1));
 		res.setSuccess(true);
 	}
 
@@ -159,7 +152,7 @@ public class NodeEditService {
 		// }
 
 		api.save(session, newNode);
-		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false));
+		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false, -1));
 		res.setSuccess(true);
 	}
 
@@ -238,7 +231,7 @@ public class NodeEditService {
 					// log.debug("Property to save: " + property.getName() + "="
 					// +
 					// property.getValue());
-					SubNodeUtil.savePropertyToNode(node, property);
+					node.setProp(property.getName(), property.getValue());
 				}
 				else {
 					/**
@@ -262,7 +255,7 @@ public class NodeEditService {
 				}
 			}
 
-			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false);
+			NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false, -1);
 			res.setNode(nodeInfo);
 			api.saveSession(session);
 		}

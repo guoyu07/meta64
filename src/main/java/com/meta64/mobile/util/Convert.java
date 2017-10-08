@@ -62,7 +62,7 @@ public class Convert {
 	}
 
 	public NodeInfo convertToNodeInfo(SessionContext sessionContext, MongoSession session, SubNode node, boolean htmlOnly, boolean allowAbbreviated,
-			boolean initNodeEdit) {
+			boolean initNodeEdit, long logicalOrdinal) {
 		boolean hasBinary = false;
 		boolean binaryIsImage = false;
 		ImageSize imageSize = null;
@@ -101,7 +101,7 @@ public class Convert {
 				lastModStr, propList, hasNodes, hasBinary, binaryIsImage, binVer, //
 				imageSize != null ? imageSize.getWidth() : 0, //
 				imageSize != null ? imageSize.getHeight() : 0, //
-				node.getType());
+				node.getType(), logicalOrdinal);
 		return nodeInfo;
 	}
 

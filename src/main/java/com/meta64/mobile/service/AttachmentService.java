@@ -330,7 +330,7 @@ public class AttachmentService {
 	// String fullFileName = appProp.getAdminDataFolder() + File.separator + fileName;
 	// File file = new File(fullFileName);
 	// String checkPath = file.getCanonicalPath();
-	// // todo-0: for better security make a REAL '/file/' folder under admin folder and assert
+	// // todo-1: for better security make a REAL '/file/' folder under admin folder and assert
 	// // that the file is in there directly
 	// if (!checkPath.startsWith(appProp.getAdminDataFolder())) throw ExUtil.newEx("bad request.");
 	//
@@ -355,7 +355,7 @@ public class AttachmentService {
 			String fullFileName = appProp.getAdminDataFolder() + File.separator + fileName;
 			File file = new File(fullFileName);
 			String checkPath = file.getCanonicalPath();
-			// todo-0: for better security make a REAL '/file/' folder under admin folder and assert
+			// todo-1: for better security make a REAL '/file/' folder under admin folder and assert
 			// that the file is in there directly
 			if (!checkPath.startsWith(appProp.getAdminDataFolder())) throw ExUtil.newEx("bad request.");
 

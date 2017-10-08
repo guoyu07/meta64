@@ -85,42 +85,6 @@ public class SubNodeUtil {
 		return !nonSavableProperties.contains(propertyName);
 	}
 
-	// todo-00: remove this method completely.
-	public static void savePropertyToNode(SubNode node, PropertyInfo property) {
-		/* if multi-valued */
-		// if (property.getValues() != null) {
-		// String[] values = new String[property.getValues().size()];
-		// int idx = 0;
-		// for (String val : property.getValues()) {
-		// values[idx++] = val;
-		// }
-		//
-		// /*
-		// * Because jackrabbit s if you try to set a single-valued property to multi-valued
-		// * property without nulling it out first, we have to do that check.
-		// */
-		// Property prop = JcrUtil.getProperty(node, property.getName());
-		// if (prop != null && !prop.isMultiple()) {
-		// node.setProperty(property.getName(), (String) null);
-		// }
-		// node.setProperty(property.getName(), values);
-		// }
-		// /* else is single valued */
-		// else {
-		/*
-		 * Because jackrabbit s if you try to set a multi-valued property to single-valued property
-		 * without nulling it out first, we have to do that check.
-		 */
-		// Property prop = JcrUtil.getProperty(node, property.getName());
-		// if (prop != null && prop.isMultiple()) {
-		// node.setProperty(property.getName(), (String) null);
-		// }
-
-		// todo-0: for now we can only set string properties, right here.
-		node.setProp(property.getName(), property.getValue());
-		// }
-	}
-
 	public SubNode ensureNodeExists(MongoSession session, String parentPath, String name, String defaultContent) {
 		return ensureNodeExists(session, parentPath, name, defaultContent, SubNodeTypes.UNSTRUCTURED, true);
 	}

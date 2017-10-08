@@ -2,6 +2,7 @@ package com.meta64.mobile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -10,6 +11,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.util.ExUtil;
 
 /**
@@ -21,6 +23,9 @@ import com.meta64.mobile.util.ExUtil;
 @ServletComponentScan
 public class AppServer {
 	private static final Logger log = LoggerFactory.getLogger(AppServer.class);
+
+	@Autowired
+	private ConstantsProvider constProvider;
 
 	private static boolean shuttingDown;
 	private static boolean enableScheduling;
@@ -40,6 +45,7 @@ public class AppServer {
 	@EventListener
 	public void handleContextRefresh(ContextRefreshedEvent event) {
 		log.info("ContextRefreshedEvent.");
+		log.debug("PROFILE: "+constProvider.getProfileName());
 	}
 
 	@EventListener

@@ -47,6 +47,7 @@ export interface AccessControlEntryInfo {
 export interface NodeInfo {
     id: string;
     path: string;
+    logicalOrdinal: number;
     ordinal: number;
     owner: string;
     name: string;

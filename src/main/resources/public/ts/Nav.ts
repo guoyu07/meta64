@@ -22,7 +22,8 @@ class Nav {
     mainOffset: number = 0;
     endReached: boolean = true;
 
-    /* todo-1: need to have this value passed from server rather than coded in TypeScript */
+    /* todo-1: need to have this value passed from server rather than coded in TypeScript, however for now 
+    this MUST match nav.ROWS_PER_PAGE variable in TypeScript */ 
     ROWS_PER_PAGE: number = 25;
 
     continueReadingResponse(res: I.RenderNodeResponse, id): void {

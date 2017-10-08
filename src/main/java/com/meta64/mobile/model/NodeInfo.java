@@ -1,6 +1,5 @@
 package com.meta64.mobile.model;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ public class NodeInfo {
 
 	private String id;
 	private String path;
+	private Long logicalOrdinal;
 	private Long ordinal;
 	private String name;
 	private String primaryTypeName;
@@ -39,7 +39,7 @@ public class NodeInfo {
 	}
 
 	public NodeInfo(String id, String path, String name, String owner, Long ordinal, String lastModified, List<PropertyInfo> properties, boolean hasChildren,
-			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName) {
+			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName, long logicalOrdinal) {
 		this.id = id;
 		this.path = path;
 		this.name = name;
@@ -54,6 +54,7 @@ public class NodeInfo {
 		this.width = width;
 		this.height = height;
 		this.primaryTypeName = primaryTypeName;
+		this.logicalOrdinal = logicalOrdinal;
 	}
 
 	public String getId() {
@@ -182,5 +183,13 @@ public class NodeInfo {
 
 	public void setOrdinal(Long ordinal) {
 		this.ordinal = ordinal;
+	}
+
+	public Long getLogicalOrdinal() {
+		return logicalOrdinal;
+	}
+
+	public void setLogicalOrdinal(Long logicalOrdinal) {
+		this.logicalOrdinal = logicalOrdinal;
 	}
 }

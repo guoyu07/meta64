@@ -86,7 +86,7 @@ export class Render {
 
         if (cnst.SHOW_PATH_ON_ROWS) {
             //not showing ordinal for now.
-            pathDiv = new Div("Path: " + node.path /* + " [" + node.ordinal + "]" */, {
+            pathDiv = new Div("Path: " + node.path  + " [" + node.logicalOrdinal + "]", {
                 "class": "path-display"
             });
         }
@@ -725,8 +725,10 @@ export class Render {
 
         if (!data.endReached) {
             let nextButton = this.makeButton("Next Page", "nextPageButton", this.nextPage);
-            let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
-            output += this.centeredButtonBar(nextButton + lastButton, "paging-button-bar");
+
+            //todo-0: last page button disabled pending refactoring
+            //let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
+            output += this.centeredButtonBar(nextButton /* + lastButton */, "paging-button-bar");
         }
         else {
             //let continueReadingButton = this.makeButton("Continue Reading...", "continueReadingButton", nav.continueReading);

@@ -57,7 +57,7 @@ public class MongoApi {
 	private static final Logger log = LoggerFactory.getLogger(MongoApi.class);
 
 	/* use for turning on debugging messages for authorization logic */
-	private static final boolean traceAuth = false;
+	private static final boolean traceAuth = true;
 
 	@Autowired
 	private MongoTemplate ops;
@@ -812,8 +812,6 @@ public class MongoApi {
 	/*
 	 * Gets (recursively) all nodes under 'node', by using all paths starting with the path of that
 	 * node
-	 * 
-	 * todo-0: Haven't written a test case for this yet.
 	 */
 	public Iterable<SubNode> getSubGraph(MongoSession session, SubNode node) {
 		auth(session, node, PrivilegeType.READ);
@@ -971,8 +969,6 @@ public class MongoApi {
 	/*
 	 * For proof-of-concept i'm storing actual password, instead of a hash of it, which is what will
 	 * be done in final production code.
-	 * 
-	 * todo-0: not yet checking if the user exists. Need to throw error if user exists.
 	 */
 	public SubNode createUser(MongoSession session, String user, String email, String password, boolean automated) {
 		requireAdmin(session);

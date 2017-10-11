@@ -26,6 +26,7 @@ import { Comp } from "./widget/base/Comp";
 import { EditPropsTable } from "./widget/EditPropsTable";
 import { EditPropsTableRow } from "./widget/EditPropsTableRow";
 import { EditPropsTableCell } from "./widget/EditPropsTableCell";
+import { encryption } from "./Encryption";
 
 declare var ace;
 
@@ -381,6 +382,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         /* holds list of properties to send to server. Each one having name+value properties */
         let saveList: I.PropertyInfo[] = [];
+        let valPromises: Promise<string>[] = [];
 
         util.forEachArrElm(this.propEntries, (prop: I.PropEntry, index: number) => {
 
@@ -389,59 +391,80 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 return;
 
 
-                console.log("Saving non-multi property field: " + JSON.stringify(prop));
+            console.log("Saving non-multi property field: " + JSON.stringify(prop));
 
-                let propVal: string;
+            let propVal: string;
 
-                if (cnst.USE_ACE_EDITOR) {
-                    throw "ace refactoring now yet done";
-                    // let editor = meta64.aceEditorsById[prop.id];
-                    // if (!editor)
-                    //     throw "Unable to find Ace Editor for ID: " + prop.id;
-                    // propVal = editor.getValue();
-                } else {
-                    propVal = util.getTextAreaValById(prop.id);
-                }
+            if (cnst.USE_ACE_EDITOR) {
+                throw "ace refactoring now yet done";
+                // let editor = meta64.aceEditorsById[prop.id];
+                // if (!editor)
+                //     throw "Unable to find Ace Editor for ID: " + prop.id;
+                // propVal = editor.getValue();
+            } else {
+                propVal = util.getTextAreaValById(prop.id);
+            }
 
-                if (propVal !== prop.property.value) {
-                    console.log("Prop changed: propName=" + prop.property.name + " propVal=" + propVal);
+            if (propVal !== prop.property.value) {
+                console.log("Prop changed: propName=" + prop.property.name + " propVal=" + propVal);
+
+                //Note: If this is not a password it returns an already-resolved promise to the val.
+                let valPromise = this.encryptIfPassword(prop, propVal);
+                valPromise.then((propVal) => {
                     saveList.push({
                         "name": prop.property.name,
                         "value": propVal
                     });
-                } else {
-                    console.log("Prop didn't change: " + prop.id);
-                }
+                });
+
+                valPromises.push(valPromise);
+            } else {
+                console.log("Prop didn't change: " + prop.id);
+            }
         });// end iterator
 
-        /* if anything changed, save to server */
-        if (saveList.length > 0) {
-            let postData = {
-                nodeId: edit.editNode.id,
-                properties: saveList,
-                sendNotification: edit.sendNotificationPendingSave
-            };
-            console.log("calling saveNode(). PostData=" + util.toJson(postData));
-            util.ajax<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, (res) => {
-                edit.saveNodeResponse(res, {
-                    savedId: edit.editNode.id
+        Promise.all(valPromises).then(() => {
+            /* if anything changed, save to server */
+            if (saveList.length > 0) {
+                let postData = {
+                    nodeId: edit.editNode.id,
+                    properties: saveList,
+                    sendNotification: edit.sendNotificationPendingSave
+                };
+                console.log("calling saveNode(). PostData=" + util.toJson(postData));
+                util.ajax<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, (res) => {
+                    edit.saveNodeResponse(res, {
+                        savedId: edit.editNode.id
+                    });
                 });
-            });
-            edit.sendNotificationPendingSave = false;
-        } else {
-            console.log("nothing changed. Nothing to save.");
+                edit.sendNotificationPendingSave = false;
+            } else {
+                console.log("nothing changed. Nothing to save.");
+            }
+        });
+    }
+
+    encryptIfPassword = (prop: I.PropEntry, val: string): Promise<string> => {
+        debugger;
+        if (prop.property.name == "password") {
+            return encryption.passwordEncryptString(val, "testpass");
         }
+        /* the pipe char is how we determine the data is encrypted. For the simple password manager this is fine */
+        return Promise.resolve(val);
     }
 
     makeSinglePropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry, aceFields: any): void => {
         console.log("Property single-type: " + propEntry.property.name);
 
-        let checkboxTableCell = new EditPropsTableCell({"class": "edit-prop-checkbox-col"});
-        let textareaTableCell = new EditPropsTableCell({"class" : "edit-prop-textfield-col"});
+        let checkboxTableCell = new EditPropsTableCell({ "class": "edit-prop-checkbox-col" });
+        let textareaTableCell = new EditPropsTableCell({ "class": "edit-prop-textfield-col" });
 
         let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
+
+        let isPassword = propEntry.property.name == "password";
         let label = render.sanitizePropertyName(propEntry.property.name);
         let propValStr = propVal ? propVal : "";
+        let isEncrypted = isPassword && util.startsWith(propValStr, "|");
         propValStr = util.escapeForAttrib(propValStr);
         console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
             + "] fieldId=" + propEntry.id);
@@ -452,7 +475,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 "disabled": "disabled",
                 "label": label,
                 "value": propValStr
-            })
+            });
 
             textareaTableCell.addChild(textarea);
         } else {
@@ -461,10 +484,26 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             checkboxTableCell.addChild(checkbox);
 
             if (!cnst.USE_ACE_EDITOR) {
+                //todo-0: when this is a password, disable it until value is asynchronously set.
+
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,
-                    "value": propValStr
-                })
+                    "value": isEncrypted ? "" : propValStr
+                });
+
+                if (isEncrypted) {
+                    let decryptedValPromise = encryption.passwordDecryptString(propValStr, "testpass");
+                    decryptedValPromise.then((decryptedVal) => {
+                        textarea.setValue(decryptedVal);
+                    },
+                        //if this fails to decrypt it's ok, it may not have been encrypted yet so we just display it 
+                        //as is which will be the raw unencrypted data, or worst case scenario the hex value that couldn't be decrypted
+                        (err) => {
+                            textarea.setValue(propValStr);
+                        }
+                    );
+                }
+
                 textareaTableCell.addChild(textarea);
 
                 if (propEntry.property.name == jcrCnst.CONTENT) {

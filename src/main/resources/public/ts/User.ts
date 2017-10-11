@@ -184,7 +184,6 @@ class User {
             }
 
             user.setStateVarsUsingLoginResponse(res);
-            debugger;
 
             if (res.userPreferences.lastNode) {
                 console.log("lastNode: " + res.userPreferences.lastNode);

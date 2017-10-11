@@ -22,15 +22,42 @@ class Util {
     waitCounter: number = 0;
     pgrsDlg: any = null;
 
-    escapeRegExp = (s: string) : string => {
+    buf2hex = (arr: Uint8Array) : string => { 
+        //return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+
+        //Diferent Algorithm:
+        var hexStr = '';
+        for (var i = 0; i < arr.length; i++) {
+            var hex = (arr[i] & 0xff).toString(16);
+            hex = (hex.length === 1) ? '0' + hex : hex;
+            hexStr += hex;
+        }
+        return hexStr;
+    }
+
+    hex2buf = (str): Uint8Array => {
+        if (!str) {
+            return new Uint8Array([]);
+        }
+
+        var a = [];
+        for (var i = 0, len = str.length; i < len; i += 2) {
+            a.push(parseInt(str.substr(i, 2), 16));
+        }
+
+        return new Uint8Array(a);
+    }
+
+
+    escapeRegExp = (s: string): string => {
         return s.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
-    escapeForAttrib = (s : string) : string => {
+    escapeForAttrib = (s: string): string => {
         return util.replaceAll(s, "\"", "&quot;");
     }
 
-    unencodeHtml = (s : string) : string => {
+    unencodeHtml = (s: string): string => {
         if (!util.contains(s, "&"))
             return s;
 
@@ -44,26 +71,26 @@ class Util {
         return ret;
     }
 
-    replaceAll = (s : string, find: string, replace: string) : string => {
+    replaceAll = (s: string, find: string, replace: string): string => {
         if (!s) return s;
         return s.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
     }
 
-    contains = (s : string, str: string) : boolean => {
+    contains = (s: string, str: string): boolean => {
         if (!s) return false;
         return s.indexOf(str) != -1;
     }
 
-    startsWith = (s : string, str: string) : boolean => {
+    startsWith = (s: string, str: string): boolean => {
         if (!s) return false;
         return s.indexOf(str) === 0;
     }
 
-    endsWith = (s: string, str: string) : boolean => {
+    endsWith = (s: string, str: string): boolean => {
         return s.indexOf(str, s.length - str.length) !== -1;
     }
 
-    chopAtLastChar = (str: string, char: string) : string => {
+    chopAtLastChar = (str: string, char: string): string => {
         let idx = str.lastIndexOf(char);
         if (idx != -1) {
             return str.substring(0, idx);
@@ -73,18 +100,18 @@ class Util {
         }
     }
 
-    stripIfStartsWith = (s : string, str: string) : string => {
+    stripIfStartsWith = (s: string, str: string): string => {
         if (this.startsWith(s, str)) {
             return s.substring(str.length);
         }
         return s;
     }
 
-    arrayClone(a: any[]) : any[] {
+    arrayClone(a: any[]): any[] {
         return a.slice(0);
     };
 
-    arrayIndexOfItemByProp = (a: any[], propName: string, propVal: string) : number => {
+    arrayIndexOfItemByProp = (a: any[], propName: string, propVal: string): number => {
         let len = a.length;
         for (let i = 0; i < len; i++) {
             if (a[i][propName] === propVal) {

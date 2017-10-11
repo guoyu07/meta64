@@ -19,7 +19,7 @@ At no point in time does the users Private Key ever leave their own machine. Is 
 not even any encrypted copy is ever sent down the wire either for the best-practices that are available for
 Secure Messaging, short of special-purpose hardware key-storage
 */
-export class Encryption {
+class Encryption {
 
     /* jwk = JSON Format */
     static KEY_SAVE_FORMAT = "jwk";
@@ -33,7 +33,7 @@ export class Encryption {
 
     crypto = window.crypto || (<any>window).msCrypto;
     subtle = null;
-    vector = null;
+    vector: Uint8Array = null;
     keyPair = new EncryptionKeyPair(null, null);
 
     publicKeyJson: string = null;
@@ -42,6 +42,10 @@ export class Encryption {
     data = "space aliens have landed. we are not alone.";
     encrypted_data = null;
     decrypted_data = null;
+
+    /* Object/Map where properties are passwords, and values are the Symmetric key for the password, which is basically
+    a cache of keys to avoid calling crypto library redundantly for work already done. */
+    passwordKeys = {};
 
     constructor() {
         if (!this.crypto) {
@@ -53,7 +57,12 @@ export class Encryption {
             throw "WebCryptoAPI Subtle not available";
         }
 
-        this.vector = this.crypto.getRandomValues(new Uint8Array(16));
+        /* Note: This is not a mistake to have this vector publicly visible. It's not a security risk. This vector is merely required
+        to be large enough and random enough, but is not required to be secret. 16 randomly chosen prime numbers. 
+        
+        WARNING: If you change this you will NEVER be able to recover any data encrypted with it in effect, even with the correct password
+        */
+        this.vector = new Uint8Array([71, 73, 79, 83, 89, 37, 41, 47, 53, 67, 97, 103, 107, 109, 127, 131]);
     }
 
     test = () => {
@@ -87,6 +96,12 @@ export class Encryption {
             console.log(e.message);
         }
     }
+
+    /* 
+   ====================================================
+   BEGIN: Asymmetric Public Key Encrypion
+   ====================================================
+   */
 
     /*
      Verifies that both keys can be exported to text (JSON), and then successfully reimported back from that text to usable form
@@ -168,6 +183,111 @@ export class Encryption {
         );
     }
 
+    /* 
+    ====================================================
+    BEGIN: Symmetric Password-based Encrypion
+    ====================================================
+    */
+    public passwordDecryptString = (input: string, password: string): Promise<string> => {
+        return new Promise<string>((resolve, reject) => {
+            if (!util.startsWith(input, "|")) {
+                reject("data didn't start with '|' character and is assumed to not be encrypted.");
+                return;
+            }
+            /* strip the pipe char off the front */
+            let decryptPart = input.substring(1);
+
+            let keyPromise = this.getSymmetricKey(password);
+            keyPromise.then((key) => {
+                let buf = util.hex2buf(decryptPart);
+                let decryptedDataPromise = this.subtle.decrypt({ name: "AES-CBC", iv: this.vector }, key, buf);
+                decryptedDataPromise.then(
+                    (decryptedData) => {
+                        let decryptedDataArr = new Uint8Array(decryptedData);
+                        let decryptedStr = this.convertArrayBufferViewtoString(decryptedDataArr);
+                        resolve(decryptedStr);
+                    },
+                    (err) => {
+                        console.log(err);
+                        reject(err);
+                    }
+                );
+            });
+        });
+    }
+
+    public getSymmetricKey = (password: string): Promise<CryptoKey> => {
+
+        /* if we already generated they key for this password return it, without calling crypto api */
+        if (this.passwordKeys[password]) {
+            return Promise.resolve(this.passwordKeys[password]);
+        }
+
+        return new Promise<CryptoKey>((resolve, reject) => {
+            let hashPromise = this.subtle.digest({ name: "SHA-256" }, this.convertStringToArrayBufferView(password));
+            debugger;
+            hashPromise.then((hash) => {
+                let keyPromise = this.subtle.importKey("raw", hash, { name: "AES-CBC" }, false, ["encrypt", "decrypt"]);
+                debugger;
+                keyPromise.then((key) => {
+                    /* cache this key for later use */
+                    this.passwordKeys[password] = key;
+                    resolve(key);
+                },
+                    (err) => {
+                        console.log(err);
+                        reject(err);
+                    });
+            },
+                (err) => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+    }
+
+    /* Returns a Promise of the encrypted string */
+    public passwordEncryptString = (input: string, password: string): Promise<string> => {
+        return new Promise<string>((resolve, reject) => {
+            let keyPromise = this.getSymmetricKey(password);
+            debugger;
+            keyPromise.then((key) => {
+                let hexPromise = this.passwordEncryptWithKey(input, key);
+                hexPromise.then((encHex) => {
+                    debugger;
+                    resolve("|" + encHex);
+                },
+                    (err) => {
+                        console.log(err);
+                        reject(err);
+                    });
+            },
+                (err) => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+    }
+
+    /* Returns a promise to the encrypted string whose encrypted bytes are represented as hex string */
+    private passwordEncryptWithKey = (data: string, key: any): Promise<string> => {
+        return new Promise<string>((resolve, reject) => {
+            let encryptedDataPromise = this.subtle.encrypt({ name: "AES-CBC", iv: this.vector }, key, this.convertStringToArrayBufferView(data));
+            encryptedDataPromise.then(
+                (encryptedData) => {
+                    debugger;
+                    let arr = new Uint8Array(encryptedData);
+                    let encHex = util.buf2hex(arr);
+                    resolve(encHex);
+                },
+                (err) => {
+                    console.log(err.message);
+                    reject(err);
+                }
+            );
+        });
+    }
+
     convertStringToArrayBufferView = (str) => {
         var bytes = new Uint8Array(str.length);
         for (var i = 0; i < str.length; i++) {
@@ -184,3 +304,5 @@ export class Encryption {
         return str;
     }
 }
+export let encryption: Encryption = new Encryption();
+export default encryption;

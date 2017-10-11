@@ -15,7 +15,7 @@ import { Comp } from "./widget/base/Comp";
 import { Menu } from "./widget/Menu";
 import { MenuItem } from "./widget/MenuItem";
 import { user } from "./User";
-import { Encryption } from "./Encryption";
+import { encryption } from "./Encryption";
 
 export default class MenuPanel extends Comp {
 
@@ -134,7 +134,7 @@ export default class MenuPanel extends Comp {
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }
                 ),
-                new MenuItem("JS Encryption Tests", () => {new Encryption().test()}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
+                //new MenuItem("JS Encryption Tests", () => {new Encryption().test()}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             new Menu("Help/Docs", [
                 new MenuItem("Main Menu Help", nav.openMainMenuHelp)

@@ -207,7 +207,6 @@ class View {
     }
 
     compareAsBtoA() {
-        debugger;
         let nodeB = meta64.getHighlightedNode();
         if (nodeB) {
             if (view.compareNodeA.id && nodeB.id) {

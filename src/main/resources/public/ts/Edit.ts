@@ -112,6 +112,8 @@ class Edit {
     private initNodeEditResponse = (res: I.InitNodeEditResponse): void => {
         if (util.checkSuccess("Editing node", res)) {
             let node: I.NodeInfo = res.nodeInfo;
+
+            //todo-0: with JCR removed, we don't have "rep:" any longer do we?
             let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
                 util.contains(node.path, "/rep:");
 
@@ -326,7 +328,6 @@ class Edit {
     }
 
     moveNodeToTop = (uid?: string): void => {
-      debugger;
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;
@@ -343,7 +344,6 @@ class Edit {
     }
 
     moveNodeToBottom = (uid?: string): void => {
-      debugger;
         if (!uid) {
             let selNode: I.NodeInfo = meta64.getHighlightedNode();
             uid = selNode.uid;

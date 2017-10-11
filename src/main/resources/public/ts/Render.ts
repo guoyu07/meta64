@@ -550,7 +550,6 @@ export class Render {
      */
     renderPageFromData = (data?: I.RenderNodeResponse, scrollToTop?: boolean): string => {
         meta64.codeFormatDirty = false;
-        debugger;
         console.log("renderPageFromData()");
 
         let newData: boolean = false;

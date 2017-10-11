@@ -5,26 +5,37 @@ import { EncryptionKeyPair } from "./EncryptionKeyPair";
 import { LocalDB } from "./LocalDB";
 
 /*
+Currently there are both 1) PublicKey Encryption as well as 2) Symmetric password-based encryption in this 
+class but i'll probably be splitting it into two classes:
+
+PUBLIC KEY ENCRYPTION
+--------------------
 This class is for proof-of-concept work related to doing Public Key Encryption on the client using the
 WebCryptoAPI, for a "Secure Messaging" feature of SubNode. Currently the way this test is run is simply via
-a call to 'new Encryption().test()' from an admin option
+a call to 'encryption.test()' from an admin option
 
 We will be using LocalDB.ts implementation to store the keys in the browser, but we will also support
 allowing the user to cut-n-paste they Key JSON, so that of something goes wrong with the
 browser storage they user will not loose their keys (and therefore data) because they wil be able
-to reimport teh JSON key text back in at any time in the future, and even onto another machine or
+to reimport the JSON key text back in at any time in the future, and even onto another machine or
 browser installation.
 
 At no point in time does the users Private Key ever leave their own machine. Is never sent down the wire, and
 not even any encrypted copy is ever sent down the wire either for the best-practices that are available for
 Secure Messaging, short of special-purpose hardware key-storage
+
+SYMMETRIC ENCRYPTION
+--------------------
+Code complete except for we have a hardcoded password instead of prompting user for the password. This feature
+will be complete once we prompt user for password.
+
 */
 class Encryption {
 
     /* jwk = JSON Format */
     static KEY_SAVE_FORMAT = "jwk";
 
-    static ENC_ALGO = "RSA-OAEP";
+    static PK_ENC_ALGO = "RSA-OAEP";
     static HASH_ALGO = "SHA-256";
 
     static ALGO_OPERATIONS = ["encrypt", "decrypt"];
@@ -76,14 +87,14 @@ class Encryption {
         // });
 
         /* NOTE: These parameters are all production-quality */
-        let promise = this.subtle.generateKey({ //
-            name: Encryption.ENC_ALGO, //
+        let keyPromise = this.subtle.generateKey({ //
+            name: Encryption.PK_ENC_ALGO, //
             modulusLength: 2048, //
             publicExponent: new Uint8Array([0x01, 0x00, 0x01]), //
             hash: { name: Encryption.HASH_ALGO }
         }, true, Encryption.ALGO_OPERATIONS);
 
-        promise.then(
+        keyPromise.then(
             (key) => {
                 this.keyPair.privateKey = key.privateKey;
                 this.keyPair.publicKey = key.publicKey;
@@ -92,7 +103,7 @@ class Encryption {
                 this.encrypt();
             });
 
-        promise.catch = (e) => {
+        keyPromise.catch = (e) => {
             console.log(e.message);
         }
     }
@@ -139,7 +150,7 @@ class Encryption {
             Encryption.KEY_SAVE_FORMAT,
             JSON.parse(key),
             {
-                name: Encryption.ENC_ALGO,
+                name: Encryption.PK_ENC_ALGO,
                 hash: { name: Encryption.HASH_ALGO },
             },
             true, algoOp
@@ -153,10 +164,10 @@ class Encryption {
     }
 
     encrypt = () => {
-        let promise = this.subtle.encrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
+        let encryptedDataPromise = this.subtle.encrypt({ name: Encryption.PK_ENC_ALGO, iv: this.vector }, //
             this.keyPair.publicKey, this.convertStringToArrayBufferView(this.data));
 
-        promise.then(
+        encryptedDataPromise.then(
             (result) => {
                 this.encrypted_data = new Uint8Array(result);
                 console.log("Encrpted data: " + this.convertArrayBufferViewtoString(this.encrypted_data));
@@ -169,10 +180,10 @@ class Encryption {
     }
 
     decrypt = () => {
-        let promise = this.subtle.decrypt({ name: Encryption.ENC_ALGO, iv: this.vector }, //
+        let decryptedDataPromise = this.subtle.decrypt({ name: Encryption.PK_ENC_ALGO, iv: this.vector }, //
             this.keyPair.privateKey, this.encrypted_data);
 
-        promise.then(
+        decryptedDataPromise.then(
             (result) => {
                 this.decrypted_data = new Uint8Array(result);
                 console.log("Decrypted data: " + this.convertArrayBufferViewtoString(this.decrypted_data));
@@ -225,10 +236,10 @@ class Encryption {
 
         return new Promise<CryptoKey>((resolve, reject) => {
             let hashPromise = this.subtle.digest({ name: "SHA-256" }, this.convertStringToArrayBufferView(password));
-            debugger;
+    
             hashPromise.then((hash) => {
                 let keyPromise = this.subtle.importKey("raw", hash, { name: "AES-CBC" }, false, ["encrypt", "decrypt"]);
-                debugger;
+                
                 keyPromise.then((key) => {
                     /* cache this key for later use */
                     this.passwordKeys[password] = key;
@@ -250,11 +261,10 @@ class Encryption {
     public passwordEncryptString = (input: string, password: string): Promise<string> => {
         return new Promise<string>((resolve, reject) => {
             let keyPromise = this.getSymmetricKey(password);
-            debugger;
+            
             keyPromise.then((key) => {
                 let hexPromise = this.passwordEncryptWithKey(input, key);
                 hexPromise.then((encHex) => {
-                    debugger;
                     resolve("|" + encHex);
                 },
                     (err) => {
@@ -275,7 +285,6 @@ class Encryption {
             let encryptedDataPromise = this.subtle.encrypt({ name: "AES-CBC", iv: this.vector }, key, this.convertStringToArrayBufferView(data));
             encryptedDataPromise.then(
                 (encryptedData) => {
-                    debugger;
                     let arr = new Uint8Array(encryptedData);
                     let encHex = util.buf2hex(arr);
                     resolve(encHex);

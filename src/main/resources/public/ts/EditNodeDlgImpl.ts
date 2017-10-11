@@ -445,8 +445,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     encryptIfPassword = (prop: I.PropEntry, val: string): Promise<string> => {
-        debugger;
         if (prop.property.name == "password") {
+            //No, hackers you didn't find a password in the code, this is only a test and is not in any production servers (todo-0)
             return encryption.passwordEncryptString(val, "testpass");
         }
         /* the pipe char is how we determine the data is encrypted. For the simple password manager this is fine */
@@ -492,6 +492,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 });
 
                 if (isEncrypted) {
+                     //No, hackers you didn't find a password in the code, this is only a test and is not in any production servers (todo-0)
                     let decryptedValPromise = encryption.passwordDecryptString(propValStr, "testpass");
                     decryptedValPromise.then((decryptedVal) => {
                         textarea.setValue(decryptedVal);

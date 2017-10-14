@@ -101,7 +101,6 @@ class Nav {
         user.openSignupPg();
     }
 
-
     preferences(): void {
         Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
             dlg.open();

@@ -280,7 +280,6 @@ class Meta64 {
         // }
     }
 
-
     /*
      * If data (if provided) must be the instance data for the current instance of the dialog, and all the dialog
      * methods are of course singletons that accept this data parameter for any opterations. (oldschool way of doing
@@ -607,11 +606,8 @@ class Meta64 {
     anonPageLoadResponse(res: I.AnonPageLoadResponse): void {
 
         if (res.renderNodeResponse) {
-
             util.setElmDisplayById("mainNodeContent", true);
-
             render.renderPageFromData(res.renderNodeResponse);
-
             meta64.refreshAllGuiEnablement();
         } else {
             util.setElmDisplayById("mainNodeContent", false);
@@ -940,7 +936,6 @@ class Meta64 {
         srch.clickSearchNode(uid);
     }
 
-    //webpack
     // editSystemFile(fileName: string) {
     //     new EditSystemFileDlg(fileName).open();
     // }

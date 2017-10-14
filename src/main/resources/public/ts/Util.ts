@@ -9,8 +9,10 @@ declare var prettyPrint;
 import { meta64 } from "./Meta64";
 import { MessageDlg } from "./MessageDlg";
 import { ProgressDlg } from "./ProgressDlg";
+import { PasswordDlg } from "./PasswordDlg";
 import { Factory } from "./Factory";
 import { domBind } from "./DomBind";
+import { encryption } from "./Encryption";
 import * as I from "./Interfaces";
 
 class Util {
@@ -835,6 +837,24 @@ class Util {
             else {
                 el.className = clazz;
             }
+        }
+    }
+
+    /* Returns password promise by depending on a dialog to prompt the user if not yet prompted */
+    getPassword = (): Promise<string> => {
+        if (encryption.masterPassword != null) {
+            return Promise.resolve(encryption.masterPassword);
+        }
+        else {
+            return new Promise<string>((resolve, reject) => {
+                Factory.createDefaultAsPromise("PasswordDlgImpl", (dlg: PasswordDlg) => {
+                    let completedDialogPromise = dlg.open();
+                    completedDialogPromise.then((dlg2) => {
+                        encryption.masterPassword = (dlg2 as any).getPasswordVal();
+                        resolve(encryption.masterPassword);
+                    });
+                });
+            });
         }
     }
 }

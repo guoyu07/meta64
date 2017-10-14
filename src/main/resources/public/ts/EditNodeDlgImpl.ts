@@ -27,6 +27,7 @@ import { EditPropsTable } from "./widget/EditPropsTable";
 import { EditPropsTableRow } from "./widget/EditPropsTableRow";
 import { EditPropsTableCell } from "./widget/EditPropsTableCell";
 import { encryption } from "./Encryption";
+import { PasswordDlg } from "./PasswordDlg";
 
 declare var ace;
 
@@ -247,13 +248,13 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
         util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse);
     }
 
-    addTagsPropertyResponse = (res: I.SavePropertyResponse): void => {
+    addTagsPropertyResponse(res: I.SavePropertyResponse): void {
         if (util.checkSuccess("Add Tags Property", res)) {
             this.savePropertyResponse(res);
         }
     }
 
-    savePropertyResponse = (res: any): void => {
+    savePropertyResponse(res: any): void {
         util.checkSuccess("Save properties", res);
 
         edit.editNode.properties.push(res.propertySaved);
@@ -289,7 +290,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     /*
      * Deletes the property of the specified name on the node being edited, but first gets confirmation from user
      */
-    deleteProperty = (propName: string) => {
+    deleteProperty(propName: string) {
         console.log("Asking to confirm delete property.");
         Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
             dlg.open();
@@ -446,10 +447,8 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
     encryptIfPassword = (prop: I.PropEntry, val: string): Promise<string> => {
         if (prop.property.name == "password") {
-            //No, hackers you didn't find a password in the code, this is only a test and is not in any production servers (todo-0)
-            return encryption.passwordEncryptString(val, "testpass");
+            return encryption.passwordEncryptString(val, util.getPassword());
         }
-        /* the pipe char is how we determine the data is encrypted. For the simple password manager this is fine */
         return Promise.resolve(val);
     }
 
@@ -492,8 +491,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 });
 
                 if (isEncrypted) {
-                     //No, hackers you didn't find a password in the code, this is only a test and is not in any production servers (todo-0)
-                    let decryptedValPromise = encryption.passwordDecryptString(propValStr, "testpass");
+                    let decryptedValPromise = encryption.passwordDecryptString(propValStr, util.getPassword());
                     decryptedValPromise.then((decryptedVal) => {
                         textarea.setValue(decryptedVal);
                     },

@@ -58,6 +58,8 @@ class Encryption {
     a cache of keys to avoid calling crypto library redundantly for work already done. */
     passwordKeys = {};
 
+    public masterPassword: string;
+
     constructor() {
         if (!this.crypto) {
             throw "WebCryptoAPI not available";
@@ -199,30 +201,34 @@ class Encryption {
     BEGIN: Symmetric Password-based Encrypion
     ====================================================
     */
-    public passwordDecryptString = (input: string, password: string): Promise<string> => {
-        return new Promise<string>((resolve, reject) => {
-            if (!util.startsWith(input, "|")) {
-                reject("data didn't start with '|' character and is assumed to not be encrypted.");
-                return;
-            }
-            /* strip the pipe char off the front */
-            let decryptPart = input.substring(1);
 
-            let keyPromise = this.getSymmetricKey(password);
-            keyPromise.then((key) => {
-                let buf = util.hex2buf(decryptPart);
-                let decryptedDataPromise = this.subtle.decrypt({ name: "AES-CBC", iv: this.vector }, key, buf);
-                decryptedDataPromise.then(
-                    (decryptedData) => {
-                        let decryptedDataArr = new Uint8Array(decryptedData);
-                        let decryptedStr = this.convertArrayBufferViewtoString(decryptedDataArr);
-                        resolve(decryptedStr);
-                    },
-                    (err) => {
-                        console.log(err);
-                        reject(err);
-                    }
-                );
+    /* Takes a promise to a password */
+    public passwordDecryptString = (input: string, passwordPromise: Promise<string>): Promise<string> => {
+        return new Promise<string>((resolve, reject) => {
+            passwordPromise.then((password) => {
+                if (!util.startsWith(input, "|")) {
+                    reject("data didn't start with '|' character and is assumed to not be encrypted.");
+                    return;
+                }
+                /* strip the pipe char off the front */
+                let decryptPart = input.substring(1);
+
+                let keyPromise = this.getSymmetricKey(password);
+                keyPromise.then((key) => {
+                    let buf = util.hex2buf(decryptPart);
+                    let decryptedDataPromise = this.subtle.decrypt({ name: "AES-CBC", iv: this.vector }, key, buf);
+                    decryptedDataPromise.then(
+                        (decryptedData) => {
+                            let decryptedDataArr = new Uint8Array(decryptedData);
+                            let decryptedStr = this.convertArrayBufferViewtoString(decryptedDataArr);
+                            resolve(decryptedStr);
+                        },
+                        (err) => {
+                            console.log(err);
+                            reject(err);
+                        }
+                    );
+                });
             });
         });
     }
@@ -236,10 +242,10 @@ class Encryption {
 
         return new Promise<CryptoKey>((resolve, reject) => {
             let hashPromise = this.subtle.digest({ name: "SHA-256" }, this.convertStringToArrayBufferView(password));
-    
+
             hashPromise.then((hash) => {
                 let keyPromise = this.subtle.importKey("raw", hash, { name: "AES-CBC" }, false, ["encrypt", "decrypt"]);
-                
+
                 keyPromise.then((key) => {
                     /* cache this key for later use */
                     this.passwordKeys[password] = key;
@@ -258,24 +264,26 @@ class Encryption {
     }
 
     /* Returns a Promise of the encrypted string */
-    public passwordEncryptString = (input: string, password: string): Promise<string> => {
+    public passwordEncryptString = (input: string, passwordPromise: Promise<string>): Promise<string> => {
         return new Promise<string>((resolve, reject) => {
-            let keyPromise = this.getSymmetricKey(password);
-            
-            keyPromise.then((key) => {
-                let hexPromise = this.passwordEncryptWithKey(input, key);
-                hexPromise.then((encHex) => {
-                    resolve("|" + encHex);
+            passwordPromise.then((password) => {
+                let keyPromise = this.getSymmetricKey(password);
+
+                keyPromise.then((key) => {
+                    let hexPromise = this.passwordEncryptWithKey(input, key);
+                    hexPromise.then((encHex) => {
+                        resolve("|" + encHex);
+                    },
+                        (err) => {
+                            console.log(err);
+                            reject(err);
+                        });
                 },
                     (err) => {
                         console.log(err);
                         reject(err);
                     });
-            },
-                (err) => {
-                    console.log(err);
-                    reject(err);
-                });
+            });
         });
     }
 

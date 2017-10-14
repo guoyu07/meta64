@@ -1,10 +1,10 @@
 console.log("DialogBase.ts");
 
+import { Dialog } from "./widget/Dialog";
+
 export interface DialogBase {
     init(): void;
     closeEvent(): void;
-    //render(): string;
-    open(): void;
+    open(): Promise<Dialog>;
     cancel(): void;
-    //id(id): string;
 }

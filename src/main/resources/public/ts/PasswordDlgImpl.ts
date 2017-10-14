@@ -2,8 +2,6 @@ console.log("LoginDlg.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { PasswordDlg } from "./PasswordDlg";
-import { ConfirmDlg } from "./ConfirmDlg";
-import { ResetPasswordDlg } from "./ResetPasswordDlg";
 import { user } from "./User";
 import { cnst } from "./Constants";
 import { util } from "./Util";
@@ -18,7 +16,6 @@ export default class PasswordDlgImpl extends DialogBaseImpl implements PasswordD
 
     passwordPromise: Promise<string>;
     passwordTextField: PasswordTextField;
-
     password: string;
 
     constructor(paramsTest: Object) {
@@ -40,13 +37,11 @@ export default class PasswordDlgImpl extends DialogBaseImpl implements PasswordD
     }
 
     okButton = (): void => {
-        debugger;
-        console.log(this);
         this.password = this.passwordTextField.getValue();
         alert("pwd=" + this.password);
     }
 
-    getPasswordVal(): string {
+    getPasswordVal = (): string => {
         return this.password;
     }
 }

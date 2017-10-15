@@ -2,11 +2,12 @@ console.log("EditPropertyDlgImpl.ts");
 
 import { DialogBaseImpl } from "./DialogBaseImpl";
 import { EditPropertyDlg } from "./EditPropertyDlg";
-import { cnst } from "./Constants";
+import { cnst, jcrCnst } from "./Constants";
 import { view } from "./View";
 import { util } from "./Util";
 import { edit } from "./Edit";
 import { meta64 } from "./Meta64";
+import { encryption } from "./Encryption";
 import * as I from "./Interfaces";
 import { EditNodeDlg } from "./EditNodeDlg";
 import { Header } from "./widget/Header";
@@ -62,16 +63,25 @@ export default class EditPropertyDlgImpl extends DialogBaseImpl implements EditP
     }
 
     saveProperty = (): void => {
-        //todo-1: need validation
-        var propertyNameData = this.propertyNameTextarea.getValue();
-        var propertyValueData = this.propertyValTextarea.getValue();
+        let propertyNameData = this.propertyNameTextarea.getValue();
+        let propertyValueData = this.propertyValTextarea.getValue();
 
-        var postData = {
-            nodeId: edit.editNode.id,
-            propertyName: propertyNameData,
-            propertyValue: propertyValueData
-        };
-        util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
+        let valPromise: Promise<string> = null;
+        if (propertyNameData == jcrCnst.PASSWORD) {
+            valPromise = encryption.passwordEncryptString(propertyValueData, util.getPassword());
+        }
+        else {
+            valPromise = Promise.resolve(propertyValueData);
+        }
+
+        valPromise.then((saveVal) => {
+            var postData = {
+                nodeId: edit.editNode.id,
+                propertyName: propertyNameData,
+                propertyValue: saveVal
+            };
+            util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
+        });
     }
 
     savePropertyResponse = (res: I.SavePropertyResponse): void => {

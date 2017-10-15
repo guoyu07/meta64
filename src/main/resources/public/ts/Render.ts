@@ -21,6 +21,7 @@ import { Span } from "./widget/Span";
 import { Img } from "./widget/Img";
 import { Anchor } from "./widget/Anchor";
 import { Heading } from "./widget/Heading";
+import { VerticalDivs } from "./widget/VerticalDivs";
 
 declare var postTargetUrl;
 declare var prettyPrint;
@@ -61,8 +62,11 @@ export class Render {
      * time the component gets displayed with new information.
      *
      * If 'data' is provided, this is the instance data for the dialog
+     * 
+     * todo-0: wtf, there's a typo in this method name. how the hell is this working?
      */
     buidPage = (pg, data): void => {
+        debugger;
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -86,7 +90,7 @@ export class Render {
 
         if (cnst.SHOW_PATH_ON_ROWS) {
             //not showing ordinal for now.
-            pathDiv = new Div("Path: " + node.path  + " [" + node.logicalOrdinal + "]", {
+            pathDiv = new Div("Path: " + node.path + " [" + node.logicalOrdinal + "]", {
                 "class": "path-display"
             });
         }
@@ -218,6 +222,18 @@ export class Render {
                         ret += tag.div({
                             "class": "jcr-root-content"
                         }, markedContent);
+                    }
+
+                    let passwordProp: I.PropertyInfo = props.getNodeProperty(jcrCnst.PASSWORD, node);
+                    if (passwordProp) {
+                        let decryptButton: Button = null;
+                        let comps = new VerticalDivs([
+                            new Div("Encrypted Password:"),
+                            decryptButton = new Button("Decrypt", () => {
+                                props.decryptToClipboard(passwordProp.value, decryptButton);
+                            })
+                        ]);
+                        ret += comps.render();
                     }
                 }
             }
@@ -1093,25 +1109,7 @@ export class Render {
             "id": fieldId
         });
     }
-    //
-    // makeEditField(fieldName: string, fieldId: string): string {
-    //     return tag.input({
-    //         "name": fieldId,
-    //         "label": fieldName,
-    //         "id": fieldId
-    //     });
-    // }
-    //
-    // makePasswordField(fieldName: string, fieldId: string): string {
-    //     return tag.input({
-    //         "type": "password",
-    //         "name": fieldId,
-    //         "label": fieldName,
-    //         "id": fieldId,
-    //         "class": "meta64-input"
-    //     });
-    // }
-    //
+   
     makeButton = (text: string, id: string, callback: Function): string => {
         let attribs = {
             "raised": "raised",

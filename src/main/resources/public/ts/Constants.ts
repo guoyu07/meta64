@@ -39,6 +39,7 @@ class JCRConstants {
     EMAIL_RECIP: string = "sn:recip";
     EMAIL_SUBJECT: string = "sn:subject";
 
+    PASSWORD: string = "sn:password";
     CONTENT: string = "sn:content";
     TAGS: string = "sn:tags";
     UUID: string = "sn:uuid";

@@ -80,9 +80,6 @@ public class ExportZipService {
 	@Autowired
 	private AppProp appProp;
 
-	@Autowired
-	private SessionContext sessionContext;
-
 	private MongoSession session;
 
 	public void export(MongoSession session, ExportRequest req, ExportResponse res) {

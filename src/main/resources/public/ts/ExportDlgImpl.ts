@@ -22,9 +22,8 @@ import { VerticalLayout } from "./widget/VerticalLayout";
 export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     zipRadioButton: RadioButton;
-    xmlRadioButton: RadioButton;
     mdRadioButton: RadioButton;
-    pdfRadioButton: RadioButton;
+    //pdfRadioButton: RadioButton;
 
     constructor() {
         super();
@@ -35,10 +34,9 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
         this.setChildren([
             new Header("Export Node"),
             new RadioButtonGroup([
-                this.xmlRadioButton = new RadioButton("XML", true),
                 this.zipRadioButton = new RadioButton("ZIP", false),
                 this.mdRadioButton = new RadioButton("MD (Markdown)", false),
-                this.pdfRadioButton = new RadioButton("PDF", false),
+                //this.pdfRadioButton = new RadioButton("PDF", false),
             ]),
             new ButtonBar([
                 new Button("Export", this.exportNodes, null, true, this),
@@ -61,18 +59,15 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     getSelectedFormat = (): string => {
         let ret = "";
-        if (this.xmlRadioButton.getChecked()) {
-            ret = "xml";
-        }
-        else if (this.zipRadioButton.getChecked()) {
+        if (this.zipRadioButton.getChecked()) {
             ret = "zip";
         }
         else if (this.mdRadioButton.getChecked()) {
             ret = "md";
         }
-        else if (this.pdfRadioButton.getChecked()) {
-            ret = "pdf";
-        }
+        // else if (this.pdfRadioButton.getChecked()) {
+        //     ret = "pdf";
+        // }
         return ret;
     }
 
@@ -86,7 +81,7 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
                     "message": "Export successful.",
                     "customWidget": new VerticalLayout([
                         new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=inline", "Raw View", { "target": "_blank" }),
-                        new Anchor(hostAndPort + "/view/" + res.fileName, "Formatted View", { "target": "_blank" }),
+                        //new Anchor(hostAndPort + "/view/" + res.fileName, "Formatted View", { "target": "_blank" }),
                         new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null)
                     ])
                 });

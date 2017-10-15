@@ -224,6 +224,8 @@ class Encryption {
                             resolve(decryptedStr);
                         },
                         (err) => {
+                            alert("Password failed.");
+                            this.masterPassword = null;
                             console.log(err);
                             reject(err);
                         }

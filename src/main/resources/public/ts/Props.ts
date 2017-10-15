@@ -12,7 +12,7 @@ import { PropTable } from "./widget/PropTable";
 import { PropTableRow } from "./widget/PropTableRow";
 import { PropTableCell } from "./widget/PropTableCell";
 import { Button } from "./widget/Button";
-import { VerticalLayout } from "./widget/VerticalLayout";
+import { VerticalDivs } from "./widget/VerticalDivs";
 import { Div } from "./widget/Div";
 import { Span } from "./widget/Span";
 import { encryption } from "./Encryption";
@@ -92,6 +92,7 @@ class Props {
             }
         }
     }
+    
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
     private movePropsToEnd(propsList: string[], props: I.PropertyInfo[]) {
         for (let prop of propsList) {
@@ -101,6 +102,7 @@ class Props {
             }
         }
     }
+
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
@@ -113,7 +115,7 @@ class Props {
             });
 
             util.forEachArrElm(properties, (property, i) => {
-                console.log("Render Prop: "+property.name);
+                //console.log("Render Prop: "+property.name);
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
@@ -129,9 +131,9 @@ class Props {
                     if (isBinaryProp) {
                         propValCell = new PropTableCell("[binary]", valCellAttrs);
                     }
-                    else if (property.name == "password") {
+                    else if (property.name == jcrCnst.PASSWORD) {
                         let decryptButton : Button = null;
-                        let comps = new VerticalLayout([
+                        let comps = new VerticalDivs([
                             new Div(property.value),
                             decryptButton = new Button("Decrypt", () => {
                                 this.decryptToClipboard(property.value, decryptButton);
@@ -177,7 +179,7 @@ class Props {
                 decryptButton.setInnerHTML("Copied!");
                 setTimeout(() => {
                     decryptButton.setInnerHTML("To Clipboard");
-                }, 1500);
+                }, 2000);
             });
         });
     }

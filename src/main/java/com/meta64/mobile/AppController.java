@@ -82,6 +82,7 @@ import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.ExportTxtService;
 import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
 import com.meta64.mobile.service.ImportBookService;
@@ -345,17 +346,12 @@ public class AppController {
 		ExportResponse res = new ExportResponse();
 		checkHttpSession();
 		
-//		if ("xml".equalsIgnoreCase(req.getExportExt())) {
-//			ExportXmlService svc = (ExportXmlService) SpringContextUtil.getBean(ExportXmlService.class);
-//			svc.export(null, req, res);
-//		}
-//		else if ("md".equalsIgnoreCase(req.getExportExt())) {
-//			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
-//			svc.export(null, req, res);
-//		}
-//		else 
-			
-		if ("zip".equalsIgnoreCase(req.getExportExt())) {
+
+		if ("md".equalsIgnoreCase(req.getExportExt())) {
+			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
+			svc.export(null, req, res);
+		}
+		else if ("zip".equalsIgnoreCase(req.getExportExt())) {
 			ExportZipService svc = (ExportZipService) SpringContextUtil.getBean(ExportZipService.class);
 			svc.export(null, req, res);
 		}

@@ -446,7 +446,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
     }
 
     encryptIfPassword = (prop: I.PropEntry, val: string): Promise<string> => {
-        if (prop.property.name == "password") {
+        if (prop.property.name == jcrCnst.PASSWORD) {
             return encryption.passwordEncryptString(val, util.getPassword());
         }
         return Promise.resolve(val);
@@ -460,7 +460,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
         let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
 
-        let isPassword = propEntry.property.name == "password";
+        let isPassword = propEntry.property.name == jcrCnst.PASSWORD;
         let label = render.sanitizePropertyName(propEntry.property.name);
         let propValStr = propVal ? propVal : "";
         let isEncrypted = isPassword && util.startsWith(propValStr, "|");

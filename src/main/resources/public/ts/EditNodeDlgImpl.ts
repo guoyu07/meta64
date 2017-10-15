@@ -498,7 +498,12 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                         //if this fails to decrypt it's ok, it may not have been encrypted yet so we just display it 
                         //as is which will be the raw unencrypted data, or worst case scenario the hex value that couldn't be decrypted
                         (err) => {
-                            textarea.setValue(propValStr);
+                            //i think this line is not needed, because we already will have this value set.
+                            textarea.setValue(propValStr); 
+
+                            //if we failed with this password set back to null so that we end up prompting user again rather
+                            //than using this one again and failing again.
+                            encryption.masterPassword = null;
                         }
                     );
                 }

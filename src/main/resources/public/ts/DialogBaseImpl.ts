@@ -129,7 +129,6 @@ export abstract class DialogBaseImpl extends Dialog implements DialogBase {
 
             //let dialog = document.getElementById('loginDialog');
             node.addEventListener('iron-overlay-closed', (customEvent) => {
-                debugger;
                 //let id = (<any>customEvent.currentTarget).id;
                 console.log("****************** Dialog: " + this.getId() + " is closed!");
                 this.closeEvent();

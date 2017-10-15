@@ -55,6 +55,17 @@ export abstract class Comp {
         });
     }
 
+    setDomAttr = (attrName : string, attrVal : string) => {
+        this.whenElm((elm) => {
+            elm.setAttribute(attrName, attrVal);
+            this.attribs[attrName] = attrVal;
+        });
+    }
+
+    bindOnClick = (callback : Function) => {
+        domBind.addOnClick(this.getId(), callback);
+    }
+
     setIsEnabledFunc(isEnabledFunc: Function) {
         this.isEnabledFunc = isEnabledFunc;
     }

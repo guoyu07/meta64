@@ -13,8 +13,6 @@ import { Button } from "./widget/Button";
 import { TextField } from "./widget/TextField";
 
 export default class PasswordDlgImpl extends DialogBaseImpl implements PasswordDlg {
-
-    passwordPromise: Promise<string>;
     passwordTextField: PasswordTextField;
     password: string;
 
@@ -38,7 +36,6 @@ export default class PasswordDlgImpl extends DialogBaseImpl implements PasswordD
 
     okButton = (): void => {
         this.password = this.passwordTextField.getValue();
-        alert("pwd=" + this.password);
     }
 
     getPasswordVal = (): string => {

@@ -487,7 +487,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
 
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,
-                    "value": isEncrypted ? "" : propValStr
+                    "value": propValStr
                 });
 
                 if (isEncrypted) {

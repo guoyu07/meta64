@@ -87,7 +87,7 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
                     "customWidget": new VerticalLayout([
                         new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=inline", "Raw View", { "target": "_blank" }),
                         new Anchor(hostAndPort + "/view/" + res.fileName, "Formatted View", { "target": "_blank" }),
-                        new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null),
+                        new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null)
                     ])
                 });
             meta64.selectTab("mainTabName");

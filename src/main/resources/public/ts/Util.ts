@@ -24,7 +24,7 @@ class Util {
     waitCounter: number = 0;
     pgrsDlg: any = null;
 
-    buf2hex = (arr: Uint8Array) : string => { 
+    buf2hex = (arr: Uint8Array): string => {
         //return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 
         //Diferent Algorithm:
@@ -856,6 +856,20 @@ class Util {
                 });
             });
         }
+    }
+
+    /* Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript */
+    copyToClipboard(text) {
+        var copyText : HTMLInputElement = document.createElement("input");
+        copyText.type = "text";
+        document.body.appendChild(copyText);
+        copyText.style.display = "inline";
+        copyText.style.width = "1px";
+        copyText.value = text;
+        copyText.focus();
+        document.execCommand("SelectAll");
+        document.execCommand("Copy");
+        copyText.remove();
     }
 }
 

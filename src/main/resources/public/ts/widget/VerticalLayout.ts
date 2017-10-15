@@ -6,10 +6,10 @@ import { DialogBase } from "../DialogBase";
 
 export class VerticalLayout extends Comp {
 
-    constructor(initialButtons: Comp[] = null, justify: string = "left-justified") {
+    constructor(initialComps: Comp[] = null, justify: string = "left-justified") {
         super(null);
         (<any>this.attribs).class = "vertical " + justify + " layout vertical-layout-row";
-        this.setChildren(initialButtons);
+        this.setChildren(initialComps);
     }
 
     render = (): string => {

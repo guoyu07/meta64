@@ -39,7 +39,7 @@ export abstract class DialogBaseImpl extends Dialog implements DialogBase {
     }
 
     /* To open any dialog all we do is construct the object and call open(). Returns a promise that resolves when the dialog is 
-    closed */
+    closed. */
     open = (): Promise<Dialog> => {
         return new Promise<Dialog>((resolve, reject) => {
             /*

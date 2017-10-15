@@ -11,8 +11,11 @@ import { tag } from "./Tag";
 import { PropTable } from "./widget/PropTable";
 import { PropTableRow } from "./widget/PropTableRow";
 import { PropTableCell } from "./widget/PropTableCell";
+import { Button } from "./widget/Button";
+import { VerticalLayout } from "./widget/VerticalLayout";
 import { Div } from "./widget/Div";
 import { Span } from "./widget/Span";
+import { encryption } from "./Encryption";
 
 class Props {
 
@@ -101,7 +104,7 @@ class Props {
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
-    renderProperties(properties): PropTable {
+    renderProperties = (properties): PropTable => {
         if (properties) {
             let propTable = new PropTable({
                 "border": "1",
@@ -110,6 +113,7 @@ class Props {
             });
 
             util.forEachArrElm(properties, (property, i) => {
+                console.log("Render Prop: "+property.name);
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
 
@@ -124,9 +128,21 @@ class Props {
 
                     if (isBinaryProp) {
                         propValCell = new PropTableCell("[binary]", valCellAttrs);
-                    } else if (!property.values) {
+                    }
+                    else if (property.name == "password") {
+                        let decryptButton : Button = null;
+                        let comps = new VerticalLayout([
+                            new Div(property.value),
+                            decryptButton = new Button("Decrypt", () => {
+                                this.decryptToClipboard(property.value, decryptButton);
+                            })
+                        ]);
+                        propValCell = new PropTableCell(comps.render(), valCellAttrs);
+                    }
+                    else if (!property.values) {
                         propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);
-                    } else {
+                    }
+                    else {
                         propValCell = new PropTableCell(props.renderPropertyValues(property.values), valCellAttrs);
                     }
 
@@ -143,6 +159,27 @@ class Props {
         } else {
             return null;
         }
+    }
+
+    decryptToClipboard = (val: string, decryptButton : Button): void => {
+        let decryptedValPromise = encryption.passwordDecryptString(val, util.getPassword());
+        decryptedValPromise.then((decryptedVal) => {
+            /*
+            Instead of being able to just immediately copy the decrypted password to the clipboard we cannot because of the
+            browser limitation that clipboard access can only happen as a synchronous response to user input (like in an onClick method),
+            but since the entire CryptoAPI is async all we can do once we get the clipboard is set things up so the user can
+            just make one more mouse click to be able to ACTUALLY put the password in the cliboard, and so that is what these
+            next two lines are doing. Changing button to say appropriate thing and setting up command to load clipboard when clicked.
+             */
+            decryptButton.setInnerHTML("To Clipboard");
+            decryptButton.bindOnClick(() => {
+                util.copyToClipboard(decryptedVal);
+                decryptButton.setInnerHTML("Copied!");
+                setTimeout(() => {
+                    decryptButton.setInnerHTML("To Clipboard");
+                }, 1500);
+            });
+        });
     }
 
     /*
@@ -171,7 +208,7 @@ class Props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedNode(node : I.NodeInfo): boolean {
+    isNonOwnedNode(node: I.NodeInfo): boolean {
         let owner: string = node.owner;
 
         // if we don't know who owns this node assume the admin owns it.

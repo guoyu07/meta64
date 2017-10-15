@@ -24,25 +24,16 @@ tsc -p tsconfig-dev.json --watch false
 if [ $? -eq 0 ]
 then
   echo "TypeScript generating successful."
+  exit 0
 else
   echo "********** FAIL. TypeScript compiler reported ERRORS. **********"
   sleep 7s
+  exit 1
 fi
 
 #commented, because we don't do minification in development.
 #cd $META64/build
 #java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
 
-
-# abandoning webpack (too many problems. too finicky, lacks any sensible error reporting)
-# cd $META64/src/main/resources/public/ts
-# webpack 
-# if [ $? -eq 0 ]
-# then
-#   echo "Webpack generating successful."
-# else
-#   echo "********** FAIL. Webpack compiler reported ERRORS. **********"
-#   sleep 7s
-# fi
-
-
+#fyi for Windows BAT: 
+# exit /b %ERRORLEVEL%

@@ -169,13 +169,13 @@
 				
 				<!-- 
 				WARNING: It appears that only ONE exec-maven-plugin runs. Having two of these plugins won't work, because it ends up 
-				only running one of them. Don't know why. So just put ALL scripting stuff in this one file (run-webpack.sh)
+				only running one of them. Don't know why. So just put ALL scripting stuff in this one file
 				-->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
 					<configuration>
-						<executable>./build/run-eclipse-pom-exec.sh</executable>
+						<executable>./build/run-pom-exec.sh</executable>
 						<workingDirectory>./build</workingDirectory>
 					</configuration>
 				</plugin>

@@ -511,7 +511,7 @@ public class MongoApi {
 		String parentPath = getParentPath(node);
 		if (parentPath == null || parentPath.equals("") || parentPath.equals("/")) return;
 
-		log.debug("Verifying parent path exists: " + parentPath);
+		//log.debug("Verifying parent path exists: " + parentPath);
 		Query query = new Query();
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).is(parentPath));
 
@@ -572,12 +572,16 @@ public class MongoApi {
 
 		Query query = new Query();
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).is(path));
-		return ops.findOne(query, UserPreferencesNode.class);
+		UserPreferencesNode ret = ops.findOne(query, UserPreferencesNode.class);
+		auth(session, ret, PrivilegeType.READ);
+		return ret;
 	}
 
 	/* todo-0: add auth check */
 	public UserPreferencesNode getUserPreference(MongoSession session, ObjectId objId) {
-		return ops.findById(objId, UserPreferencesNode.class);
+		UserPreferencesNode ret = ops.findById(objId, UserPreferencesNode.class);
+		auth(session, ret, PrivilegeType.READ);
+		return ret;
 	}
 
 	public List<AccessControlEntryInfo> getAclEntries(MongoSession session, SubNode node) {

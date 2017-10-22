@@ -45,7 +45,7 @@ class Nav {
 
         if (!nav.parentVisibleToUser()) {
             // Already at root. Can't go up.
-            //todo-0: need to display a message to user here.
+            //1: need to display a message to user here.
             return;
         }
 
@@ -277,7 +277,7 @@ class Nav {
     }
 
     toggleNodeSel(selected: boolean, uid: string): void {
-        if (selected) { //todo-0: is this method still needed ? --> util.getCheckBoxStateById(uid + "_sel")) {
+        if (selected) { 
             meta64.selectedNodes[uid] = true;
         } else {
             delete meta64.selectedNodes[uid];

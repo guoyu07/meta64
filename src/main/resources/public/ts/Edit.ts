@@ -113,16 +113,12 @@ class Edit {
         if (util.checkSuccess("Editing node", res)) {
             let node: I.NodeInfo = res.nodeInfo;
 
-            //todo-0: with JCR removed, we don't have "rep:" any longer do we?
-            let isRep: boolean = util.startsWith(node.name, "rep:") || /* meta64.currentNodeData. bug? */
-                util.contains(node.path, "/rep:");
-
             /* if this is a comment node and we are the commenter */
             let editingAllowed: boolean = props.isOwnedCommentNode(node);
 
             if (!editingAllowed) {
-                editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
-                    && !props.isNonOwnedNode(node);
+                editingAllowed = meta64.isAdminUser || (!props.isNonOwnedCommentNode(node)
+                    && !props.isNonOwnedNode(node));
             }
 
             if (editingAllowed) {

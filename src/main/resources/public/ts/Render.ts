@@ -81,7 +81,6 @@ export class Render {
 
     buildRowHeader = (node: I.NodeInfo, showPath: boolean, showName: boolean): Div => {
         let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-
         let pathDiv: Div = null;
         let commentSpan: Span = null;
         let createdBySpan: Span = null;

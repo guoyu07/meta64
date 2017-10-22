@@ -346,7 +346,6 @@ public class AppController {
 		ExportResponse res = new ExportResponse();
 		checkHttpSession();
 		
-
 		if ("md".equalsIgnoreCase(req.getExportExt())) {
 			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
 			svc.export(null, req, res);

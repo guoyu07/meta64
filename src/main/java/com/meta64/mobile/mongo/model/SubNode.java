@@ -278,6 +278,12 @@ public class SubNode {
 		MongoThreadLocal.dirty(this);
 		properties().put(key, new SubNodePropVal(val));
 	}
+	
+	@JsonIgnore
+	public void setProp(String key, Integer val) {
+		MongoThreadLocal.dirty(this);
+		properties().put(key, new SubNodePropVal(val));
+	}
 
 	@JsonIgnore
 	public void deleteProp(String key) {

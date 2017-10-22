@@ -747,8 +747,8 @@ class Meta64 {
          * $ (window).on("orientationchange", _.orientationHandler);
          */
 
-         //todo-0: actually this is a nuisance unless user is actually EDITING a node right now
-         //so until i make it able to detect if user is editing i'm removing this.
+        //todo-1: actually this is a nuisance unless user is actually EDITING a node right now
+        //so until i make it able to detect if user is editing i'm removing this.
         // window.onbeforeunload = () => {
         //     return "Leave Meta64 ?";
         // };

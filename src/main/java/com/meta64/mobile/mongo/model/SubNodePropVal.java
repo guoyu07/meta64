@@ -13,6 +13,11 @@ public class SubNodePropVal {
 		value = val;
 		type = NodePropertyTypes.INTEGER;
 	}
+	
+	public SubNodePropVal(Integer val) {
+		value = val;
+		type = NodePropertyTypes.INTEGER;
+	}
 
 	public SubNodePropVal(String val) {
 		value = val;

@@ -483,7 +483,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             checkboxTableCell.addChild(checkbox);
 
             if (!cnst.USE_ACE_EDITOR) {
-                //todo-0: when this is a password, disable it until value is asynchronously set.
+                //todo-0: when this is a password, disable it until value it asynchronously set.
 
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,

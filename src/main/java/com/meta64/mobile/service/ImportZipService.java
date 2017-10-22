@@ -23,7 +23,10 @@ import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.XString;
 
 /**
- * Import from ZIP files.
+ * Import from ZIP files. Imports zip files that have the same type of directory structure and
+ * content as the files zip files that are exported from SubNode. The zip file doesn't of course
+ * have to have been actually exported from SubNode in order to import it, but merely have the
+ * proper layout/content.
  */
 @Component
 @Scope("prototype")
@@ -40,9 +43,6 @@ public class ImportZipService {
 	private SubNodeUtil jcrUtil;
 
 	@Autowired
-	private AttachmentService attachmentService;
-
-	@Autowired
 	private JsonToSubNodeService jsonToJcrService;
 
 	private String targetPath;
@@ -57,6 +57,7 @@ public class ImportZipService {
 	 * there was no content file or else it has already been written out.
 	 */
 	private String curContent = null;
+	private String curFileName = null;
 	private SubNode curNode = null;
 
 	/*
@@ -104,6 +105,8 @@ public class ImportZipService {
 				}
 				zis.closeEntry();
 			}
+			// save last node (required, it won't get saved without this)
+			saveIfPending();
 			zis.close();
 		}
 		catch (Exception ex) {
@@ -118,10 +121,10 @@ public class ImportZipService {
 	private void processDirectory(ZipEntry entry) {
 	}
 
-	private SubNode ensureNodeExists(String path, String curContent) {
+	private SubNode ensureNodeExists(String path) {
 		SubNode folderNode = folderMap.get(path);
 		if (folderNode == null) {
-			folderNode = jcrUtil.ensureNodeExists(session, targetPath, path, curContent != null ? curContent : "path: " + path);
+			folderNode = jcrUtil.ensureNodeExists(session, targetPath, path, null);
 		}
 
 		if (folderNode == null) {
@@ -139,7 +142,7 @@ public class ImportZipService {
 		for (String pathPart : pathItems) {
 			sb.append("/" + String.valueOf(Math.abs(pathPart.hashCode())));
 		}
-		log.info("HASHED PATH: " + sb.toString());
+		//log.info("HASHED PATH: " + sb.toString());
 		return sb.toString();
 	}
 
@@ -150,35 +153,27 @@ public class ImportZipService {
 		String path = name.substring(0, lastSlashIdx);
 		path = hashizePath(path);
 
+		/*
+		 * If the path is changing, that means we're on a new node and need to reset state variables
+		 */
 		if (curPath == null || !curPath.equals(path)) {
+			saveIfPending();
 			curNode = null;
 			curContent = null;
+			curFileName = null;
 		}
 
 		curPath = path;
 
 		try {
 			if (mimeUtil.isJsonFileType(fileName)) {
+				curFileName = fileName;
 				String json = IOUtils.toString(zis, "UTF-8");
-				curNode = ensureNodeExists(path, curContent);
+				curNode = ensureNodeExists(path);
 				jsonToJcrService.importJsonContent(json, curNode);
-				curContent = null;
 			}
 			else if (mimeUtil.isTextTypeFileName(fileName)) {
-				String text = IOUtils.toString(zis, "UTF-8");
-
-				/*
-				 * depending of if we already saw the JSON file or not we may or may not have the
-				 * node ready, so we either write content onto the node or hold it in curContent
-				 * variable
-				 */
-				if (curNode != null) {
-					curNode.setProp(NodeProp.CONTENT, text);
-					api.save(session, curNode);
-				}
-				else {
-					curContent = text;
-				}
+				curContent = IOUtils.toString(zis, "UTF-8");
 			}
 			else {
 				// newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
@@ -202,8 +197,25 @@ public class ImportZipService {
 				// newNode);
 			}
 		}
-		catch (Exception e) {
-			log.error("Failed importing node", e);
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
 		}
+	}
+
+	/* Saves the current node along with whatver curContent we currently have */
+	private void saveIfPending() {
+		/*
+		 * If we never encountered a metadata content file in the folder, then default to using the
+		 * filename we encoutered as the content
+		 */
+		if (curContent == null && curFileName != null) {
+			curContent = curFileName;
+		}
+
+		if (curNode != null) {
+			curNode.setProp(NodeProp.CONTENT, curContent);
+			api.save(session, curNode);
+		}
+		curNode = null;
 	}
 }

@@ -62,7 +62,6 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
 		/*
 		 * This is how we enable the JS files to be edited and tested without doing a rebuild and
 		 * restart of server code. We can just run TSC compile to generate the new JS files, and
@@ -74,6 +73,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 			registry.addResourceHandler("/js/**").addResourceLocations(appProp.getJsBaseFolder());
 		}
 
+		//todo-1: according to one post i saw online this line wasn't needed. Is this line necessary in current Spring version ?
 		super.addResourceHandlers(registry);
 	}
 

@@ -237,6 +237,12 @@ class Meta64 {
         meta64.goToMainPage(true, true);
     }
 
+    rebuildIndexes() : void {
+        util.ajax<I.RebuildIndexesRequest, I.RebuildIndexesResponse>("rebuildIndexes", {}, function(res: I.RebuildIndexesResponse) {
+            util.showMessage("Index rebuild complete.");
+        });
+    }
+
     goToMainPage(rerender?: boolean, forceServerRefresh?: boolean): void {
 
         if (forceServerRefresh) {

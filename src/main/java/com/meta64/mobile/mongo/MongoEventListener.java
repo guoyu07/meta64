@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 
 import com.meta64.mobile.config.NodeName;
 import com.meta64.mobile.mongo.model.SubNode;
+import com.meta64.mobile.service.Sha256Service;
 import com.meta64.mobile.util.XString;
 import com.mongodb.DBObject;
 

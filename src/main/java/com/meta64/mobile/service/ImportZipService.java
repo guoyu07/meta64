@@ -1,6 +1,8 @@
 package com.meta64.mobile.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -18,7 +20,9 @@ import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.util.ExUtil;
+import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.meta64.mobile.util.MimeUtil;
+import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.XString;
 
@@ -35,6 +39,9 @@ public class ImportZipService {
 
 	@Autowired
 	private MongoApi api;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@Autowired
 	private MimeUtil mimeUtil;
@@ -142,7 +149,7 @@ public class ImportZipService {
 		for (String pathPart : pathItems) {
 			sb.append("/" + String.valueOf(Math.abs(pathPart.hashCode())));
 		}
-		//log.info("HASHED PATH: " + sb.toString());
+		// log.info("HASHED PATH: " + sb.toString());
 		return sb.toString();
 	}
 
@@ -165,6 +172,15 @@ public class ImportZipService {
 
 		curPath = path;
 
+		ByteArrayInputStream bais = null;
+		
+		/*
+		 * todo-0: This value exists in properties file, and also in TypeScript variable. Need to
+		 * have better way to define this ONLY in properties file.
+		 */
+		int maxFileSize = 20 * 1024 * 1024;
+		LimitedInputStreamEx bais2 = null;
+		
 		try {
 			if (mimeUtil.isJsonFileType(fileName)) {
 				curFileName = fileName;
@@ -176,29 +192,34 @@ public class ImportZipService {
 				curContent = IOUtils.toString(zis, "UTF-8");
 			}
 			else {
-				// newNode = folderNode.addNode(JcrUtil.getGUID(), JcrConstants.NT_UNSTRUCTURED);
-				// newNode.setProperty(JcrProp.CONTENT, fileName);
-				//
-				// String mimeType = URLConnection.guessContentTypeFromName(fileName);
-				//
-				// /*
-				// * the JCR api force closes the stream so for now we just pass a stream that it's
-				// ok
-				// * to close. Better solution is probably to create an InputStream wrapper that has
-				// * an overridden close() method that does nothing, because we cannot close the zip
-				// * stream we are reading from!
-				// */
-				// byte[] bytes = IOUtils.toByteArray(zis);
-				// ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-				//
-				// /* Note: bais stream IS closed inside this method, so we don't close it here */
-				// attachmentService.saveBinaryStreamToNode(session, bais, mimeType, fileName, -1,
-				// -1,
-				// newNode);
+				curNode = ensureNodeExists(path);
+				if (curContent == null) {
+					curContent = fileName;
+				}
+
+				String mimeType = URLConnection.guessContentTypeFromName(fileName);
+
+				/*
+				 * the JCR api force closes the stream so for now we just pass a stream that it's ok
+				 * to close. Better solution is probably to create an InputStream wrapper that has
+				 * an overridden close() method that does nothing, because we cannot close the zip
+				 * stream we are reading from!
+				 */
+				byte[] bytes = IOUtils.toByteArray(zis);
+				bais = new ByteArrayInputStream(bytes);
+				
+				bais2 = new LimitedInputStreamEx(new ByteArrayInputStream(bytes), maxFileSize);
+
+				/* Note: bais stream IS closed inside this method, so we don't close it here */
+				attachmentService.attachBinaryFromStream(session, curNode, null, fileName, bytes.length, bais2, mimeType,
+						-1, -1, false, false);
 			}
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
+		}
+		finally {
+			StreamUtil.close(bais, bais2);
 		}
 	}
 

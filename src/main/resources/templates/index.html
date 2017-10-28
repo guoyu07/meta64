@@ -38,6 +38,7 @@
         <meta
             name="apple-mobile-web-app-title"
             content="SubNode" />
+        <meta name="google-signin-client_id" content="696773594351-fflqhlt9enqlcvoacqhgj5jasgq2eqb0.apps.googleusercontent.com"/>
         <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
         <script
             type="text/javascript"
@@ -54,8 +55,20 @@
         <link
             rel="stylesheet"
             href="/css/meta64.css?ver={{cacheVersion}}" />
+      
+        <script src="https://apis.google.com/js/platform.js" async="async" defer="defer"></script>    
         <script type="text/javascript">
-            /*<![CDATA[*/            
+            /*<![CDATA[*/    
+            
+                //google signon is a work in progress, not functional yet.
+                function onSignIn(googleUser) {
+                    var profile = googleUser.getBasicProfile();
+                    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                    console.log('Name: ' + profile.getName());
+                    console.log('Image URL: ' + profile.getImageUrl());
+                    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+                }
+                    
                 //These values are injected by a servlet filter. PreProcFilter.java
             	var cacheVersion = "{{cacheVersion}}";
             	var profileName = "{{profileName}}";

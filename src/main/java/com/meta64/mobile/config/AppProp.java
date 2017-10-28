@@ -55,6 +55,14 @@ public class AppProp /* implements EnvironmentAware */ {
 		return env.getProperty("mongoAdminUserName");
 	}
 
+	public boolean getForceIndexRebuild() {
+		return "true".equals(env.getProperty("forceIndexRebuild"));
+	}
+	
+	public boolean getReSaveAll() {
+		return "true".equals(env.getProperty("getReSaveAll"));
+	}
+	
 	public boolean getMongoTest() {
 		return "true".equals(env.getProperty("mongoTest"));
 	}

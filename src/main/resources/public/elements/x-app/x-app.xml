@@ -212,6 +212,10 @@
                         style="display:none;"
                         icon="icons:account-box"
                         id="openLoginDlgButton">Login</paper-icon-button>
+                    <!-- 
+                    still experimenting, not ready to enable yet.
+                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                    -->
                     <paper-tooltip for="openLoginDlgButton">Login</paper-tooltip>
                     <paper-icon-button
                         style="display:none;"

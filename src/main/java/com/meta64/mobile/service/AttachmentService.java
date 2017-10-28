@@ -131,11 +131,12 @@ public class AttachmentService {
 	// return count;
 	// }
 	//
+	
 	/*
 	 * Gets the binary attachment from a supplied stream and loads it into the repository on the
 	 * node specified in 'nodeId'
 	 */
-	private void attachBinaryFromStream(MongoSession session, SubNode node, String nodeId, String fileName, long size, LimitedInputStreamEx is, String mimeType,
+	public void attachBinaryFromStream(MongoSession session, SubNode node, String nodeId, String fileName, long size, LimitedInputStreamEx is, String mimeType,
 			int width, int height, boolean addAsChild, boolean explodeZips) {
 
 		/* If caller already has 'node' it can pass node, and avoid looking up node again */

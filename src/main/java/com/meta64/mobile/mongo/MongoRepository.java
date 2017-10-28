@@ -95,13 +95,15 @@ public class MongoRepository {
 				mongoTest.wipeDb(adminSession);
 			}
 
-			// todo-0: need to make the drop-and-rebuild indexes an Admin Feature available on gui.
-			// api.dropAllIndexes(adminSession);
-			api.createUniqueIndex(adminSession, SubNode.class, SubNode.FIELD_PATH);
-			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_ORDINAL);
-			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_MODIFY_TIME, Direction.DESC);
-			api.createIndex(adminSession, SubNode.class, SubNode.FIELD_CREATE_TIME, Direction.DESC);
-			api.createTextIndex(adminSession, SubNode.class);
+			if (appProp.getForceIndexRebuild()) {
+				api.dropAllIndexes(adminSession);
+			}
+			
+			if (appProp.getReSaveAll()) {
+				api.reSaveAll(adminSession);
+			}
+			
+			api.createAllIndexes(adminSession);
 
 			api.createAdminUser(adminSession);
 			repoUtil.createTestAccounts();
@@ -121,7 +123,7 @@ public class MongoRepository {
 
 		synchronized (lock) {
 			try {
-				//code here evaporated. but i'll leave this slot for it anyway.
+				// code here evaporated. but i'll leave this slot for it anyway.
 			}
 			finally {
 				instance = null;

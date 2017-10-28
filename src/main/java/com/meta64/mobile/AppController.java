@@ -24,6 +24,7 @@ import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
+import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
@@ -42,6 +43,7 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.LogoutRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
+import com.meta64.mobile.request.RebuildIndexesRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
 import com.meta64.mobile.request.RenderNodeRequest;
@@ -70,6 +72,7 @@ import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.LogoutResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
+import com.meta64.mobile.response.RebuildIndexesResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
@@ -97,6 +100,7 @@ import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.service.SolrSearchService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
+import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
@@ -136,7 +140,13 @@ public class AppController {
 	public static final String API_PATH = "/mobile/api";
 
 	@Autowired
+	private RunAsMongoAdmin adminRunner;
+
+	@Autowired
 	private AppProp appProp;
+
+	@Autowired
+	private MongoApi api;
 
 	@Autowired
 	private SessionContext sessionContext;
@@ -345,7 +355,7 @@ public class AppController {
 		logRequest("export", req);
 		ExportResponse res = new ExportResponse();
 		checkHttpSession();
-		
+
 		if ("md".equalsIgnoreCase(req.getExportExt())) {
 			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
 			svc.export(null, req, res);
@@ -359,7 +369,7 @@ public class AppController {
 		}
 		return res;
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/streamImport", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody ResponseEntity<?> streamImport(//
@@ -371,7 +381,7 @@ public class AppController {
 		}
 		return importService.streamImport(null, nodeId, uploadFiles);
 	}
-	
+
 	@RequestMapping(value = API_PATH + "/setNodePosition", method = RequestMethod.POST)
 	@OakSession
 	public @ResponseBody SetNodePositionResponse setNodePosition(@RequestBody SetNodePositionRequest req) {
@@ -645,8 +655,11 @@ public class AppController {
 	// */
 	// return res;
 	// }
-	
-	/* currently disabled from the GUI menu, until we add back in this capability on the new mongo design */
+
+	/*
+	 * currently disabled from the GUI menu, until we add back in this capability on the new mongo
+	 * design
+	 */
 	// @RequestMapping(value = API_PATH + "/getSharedNodes", method = RequestMethod.POST)
 	// @OakSession
 	// public @ResponseBody GetSharedNodesResponse getSharedNodes(@RequestBody GetSharedNodesRequest
@@ -681,6 +694,24 @@ public class AppController {
 			throw ExUtil.newEx("admin only function.");
 		}
 		res.setServerInfo(systemService.getSystemInfo());
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+
+	@RequestMapping(value = API_PATH + "/rebuildIndexes", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody RebuildIndexesResponse rebuildIndexes(@RequestBody RebuildIndexesRequest req) {
+		logRequest("rebuildIndexes", req);
+		RebuildIndexesResponse res = new RebuildIndexesResponse();
+		if (!sessionContext.isAdmin()) {
+			throw ExUtil.newEx("admin only function.");
+		}
+
+		adminRunner.run(session -> {
+			api.rebuildIndexes(session);
+		});
+
 		res.setSuccess(true);
 		checkHttpSession();
 		return res;

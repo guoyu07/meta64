@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.annotation.Transient;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.meta64.mobile.mongo.MongoThreadLocal;
+import com.meta64.mobile.service.Sha256Service;
 import com.meta64.mobile.util.XString;
 
 /**
@@ -50,8 +52,8 @@ import com.meta64.mobile.util.XString;
 @Document(collection = "nodes")
 @TypeAlias("n1")
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({ SubNode.FIELD_PATH, SubNode.FIELD_TYPE, SubNode.FIELD_ID, SubNode.FIELD_MAX_CHILD_ORDINAL, SubNode.FIELD_ORDINAL, SubNode.FIELD_OWNER,
-		SubNode.FIELD_CREATE_TIME, SubNode.FIELD_MODIFY_TIME, SubNode.FIELD_ACL, SubNode.FIELD_PROPERTIES })
+@JsonPropertyOrder({ SubNode.FIELD_PATH, SubNode.FIELD_PATH_HASH, SubNode.FIELD_TYPE, SubNode.FIELD_ID, SubNode.FIELD_MAX_CHILD_ORDINAL, SubNode.FIELD_ORDINAL,
+		SubNode.FIELD_OWNER, SubNode.FIELD_CREATE_TIME, SubNode.FIELD_MODIFY_TIME, SubNode.FIELD_ACL, SubNode.FIELD_PROPERTIES })
 public class SubNode {
 	public static final String FIELD_ID = "_id";
 	private boolean updateModTimeOnSave = true;
@@ -74,6 +76,10 @@ public class SubNode {
 	@Field(FIELD_PATH)
 	private String path;
 
+	public static final String FIELD_PATH_HASH = "phash";
+	@Field(FIELD_PATH_HASH)
+	private String pathHash;
+
 	public static final String FIELD_TYPE = "typ";
 	@Field(FIELD_TYPE)
 	private String type;
@@ -93,13 +99,15 @@ public class SubNode {
 	public static final String FIELD_PROPERTIES = "prp";
 	@Field(FIELD_PROPERTIES)
 	private SubNodePropertyMap properties;
-	
-	//ACL=Access Control List
-	//Keys are userNodeIds, and values is a comma delimited list of any of PrivilegeType.java values. However in addition to userNodeIds identifying 
-	//users the additional key of "public" is allowed as a key which indicates privileges granted to everyone (the entire public)
+
+	// ACL=Access Control List
+	// Keys are userNodeIds, and values is a comma delimited list of any of PrivilegeType.java
+	// values. However in addition to userNodeIds identifying
+	// users the additional key of "public" is allowed as a key which indicates privileges granted
+	// to everyone (the entire public)
 	public static final String FIELD_ACL = "acl";
 	@Field(FIELD_ACL)
-	private HashMap<String,String> acl;
+	private HashMap<String, String> acl;
 
 	private boolean disableParentCheck;
 	private boolean writing;
@@ -113,9 +121,11 @@ public class SubNode {
 	public SubNode(ObjectId owner, String path, String type, Long ordinal) {
 		MongoThreadLocal.dirty(this);
 		this.owner = owner;
-		this.path = path;
 		this.type = type;
 		this.ordinal = ordinal;
+
+		// always user setter, because we are taking a hash of this
+		setPath(path);
 	}
 
 	// we don't annotate this because we have a custom getter.
@@ -140,6 +150,11 @@ public class SubNode {
 		return path;
 	}
 
+	@JsonProperty(FIELD_PATH_HASH)
+	public String getPathHash() {
+		return pathHash;
+	}
+
 	@Transient
 	@JsonIgnore
 	public String getParentPath() {
@@ -157,7 +172,25 @@ public class SubNode {
 	@JsonProperty(FIELD_PATH)
 	public void setPath(String path) {
 		MongoThreadLocal.dirty(this);
+		if (path == null) {
+			pathHash = null;
+		}
+		else if (this.path == null || pathHash==null || !this.path.equals(path)) {
+			pathHash = Sha256Service.getHashOfString(path);
+			log.debug("Generated PathHash: "+pathHash);
+		}
 		this.path = path;
+	}
+
+	public void forcePathHashUpdate() {
+		pathHash = Sha256Service.getHashOfString(path);
+		MongoThreadLocal.dirty(this);
+	}
+	
+	@JsonProperty(FIELD_PATH_HASH)
+	public void setPathHash(String pathHash) {
+		MongoThreadLocal.dirty(this);
+		this.pathHash = pathHash;
 	}
 
 	@JsonProperty(FIELD_ORDINAL)
@@ -222,16 +255,16 @@ public class SubNode {
 	}
 
 	@JsonProperty(FIELD_ACL)
-	public HashMap<String,String> getAcl() {
+	public HashMap<String, String> getAcl() {
 		return acl;
 	}
 
 	@JsonProperty(FIELD_ACL)
-	public void setAcl(HashMap<String,String> acl) {
+	public void setAcl(HashMap<String, String> acl) {
 		MongoThreadLocal.dirty(this);
 		this.acl = acl;
 	}
-	
+
 	@JsonProperty(FIELD_PROPERTIES)
 	public SubNodePropertyMap getProperties() {
 		return properties;
@@ -278,7 +311,7 @@ public class SubNode {
 		MongoThreadLocal.dirty(this);
 		properties().put(key, new SubNodePropVal(val));
 	}
-	
+
 	@JsonIgnore
 	public void setProp(String key, Integer val) {
 		MongoThreadLocal.dirty(this);

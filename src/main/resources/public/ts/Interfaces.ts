@@ -155,6 +155,9 @@ export interface GetNodePrivilegesRequest {
 export interface GetServerInfoRequest {
 }
 
+export interface RebuildIndexesRequest {
+}
+
 export interface GenerateNodeHashRequest {
     nodeId: string;
     verify: boolean;
@@ -344,6 +347,9 @@ export interface GetNodePrivilegesResponse extends OakResponseBase {
 
 export interface GetServerInfoResponse extends OakResponseBase {
     serverInfo: string;
+}
+
+export interface RebuildIndexesResponse extends OakResponseBase {
 }
 
 export interface GenerateNodeHashResponse extends OakResponseBase {

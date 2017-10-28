@@ -1,7 +1,14 @@
 package com.meta64.mobile.service;
 
+import java.security.MessageDigest;
+
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.meta64.mobile.util.ExUtil;
 
 /**
  * Generates SHA256 Hash of the given node, recursively including all subnodes. Note: As a prototype
@@ -22,8 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class Sha256Service {
-	// private static final Logger log = LoggerFactory.getLogger(Sha256Service.class);
-	// private static final String SHA_ALGO = "SHA-256";
+	private static final Logger log = LoggerFactory.getLogger(Sha256Service.class);
+	private static final String SHA_ALGO = "SHA-256";
 	//
 	// /*
 	// * If 'verify' is true we don't actually WRITE any merkle properties but just perform a
@@ -34,7 +41,7 @@ public class Sha256Service {
 	// @Autowired
 	// private RunAsJcrAdmin adminRunner;
 	//
-	// private final boolean trace = false;
+	private final boolean trace = false;
 	// private final StringBuilder traceReport = new StringBuilder();
 	//
 	// private long nodeCount = 0;
@@ -57,6 +64,31 @@ public class Sha256Service {
 	// */
 	// // private MessageDigest globalDigester;
 	//
+
+	public static String getHashOfString(String val) {
+		if (val == null) {
+			return null;
+		}
+
+		try {
+			// todo-1: theoretically i could attach a MessageDigest to each thread (threadlocal) if
+			// the overhead
+			// of them is much. Haven't checked into that yet. That would mean we only create as
+			// many of them as
+			// we have threads in the threadpool and would be zero perofrmance head to ever get
+			// these during processing
+			// any given request.
+			MessageDigest globalDigester = MessageDigest.getInstance(SHA_ALGO);
+			globalDigester.update(val.getBytes());
+			byte[] hashBytes = globalDigester.digest();
+			String hash = Hex.encodeHexString(hashBytes);
+			return hash;
+		}
+		catch (Exception ex) {
+			throw ExUtil.newEx(ex);
+		}
+	}
+
 	// public void generateNodeHash(Session session, GenerateNodeHashRequest req,
 	// GenerateNodeHashResponse res) {
 	// if (session == null) {

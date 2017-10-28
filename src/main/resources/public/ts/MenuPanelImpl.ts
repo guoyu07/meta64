@@ -134,6 +134,7 @@ export default class MenuPanel extends Comp {
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) },
                     () => { return meta64.isAdminUser || (user.isTestUserAccount() && meta64.state.selNodeIsMine) }
                 ),
+                new MenuItem("Rebuild Indexes", meta64.rebuildIndexes, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }) //
                 //new MenuItem("JS Encryption Tests", () => {new Encryption().test()}, () => { return meta64.isAdminUser }, () => { return meta64.isAdminUser }), //
             ]),
             new Menu("Help/Docs", [

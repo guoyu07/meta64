@@ -44,6 +44,7 @@ import com.meta64.mobile.mongo.model.UserPreferencesNode;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.SubNodeUtil;
+import com.meta64.mobile.util.ValContainer;
 import com.meta64.mobile.util.XString;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -511,7 +512,7 @@ public class MongoApi {
 		String parentPath = getParentPath(node);
 		if (parentPath == null || parentPath.equals("") || parentPath.equals("/")) return;
 
-		//log.debug("Verifying parent path exists: " + parentPath);
+		// log.debug("Verifying parent path exists: " + parentPath);
 		Query query = new Query();
 		query.addCriteria(Criteria.where(SubNode.FIELD_PATH).is(parentPath));
 
@@ -562,6 +563,46 @@ public class MongoApi {
 	public Iterable<SubNode> findAllNodes(MongoSession session) {
 		requireAdmin(session);
 		return ops.findAll(SubNode.class);
+	}
+
+	/*
+	 * Whenever we do something like reindex in a new way, we might need to reprocess every object,
+	 * to generate any kind of auto-generated fields that need to be there before indexes build we
+	 * call this. For example when the path hash was introduced (i.e. SubNode.FIELD_PATH_HASH) we
+	 * ran this to create all the path hashes so that a unique index could be built, because the uniqueness
+	 * test would fail until we generated all the proper data, which required a modification on every
+	 * node in the entire DB.
+	 */
+	public void reSaveAll(MongoSession session) {
+		//HashMap<String, SubNode> hashCheck = new HashMap<String, SubNode>();
+		while (true) {
+			final ValContainer<Integer> numProcessed = new ValContainer<Integer>(0);
+
+			Query query = new Query();
+			query.limit(100);
+			Criteria criteria = Criteria.where(SubNode.FIELD_PATH_HASH).is(null);
+			query.addCriteria(criteria);
+
+			Iterable<SubNode> iter = ops.find(query, SubNode.class);
+
+			iter.forEach((node) -> {
+				numProcessed.setVal(numProcessed.getVal()+1);
+				log.debug("Pocessing node: " + node.getId().toHexString());
+				node.forcePathHashUpdate();
+
+//				String hash = node.getPathHash() == null ? "null" : node.getPathHash();
+//				if (hashCheck.get(hash) != null) {
+//					log.debug("oops path duplicated? \nOriginal:" + XString.prettyPrint(hashCheck.get(hash))+"\nDuplicate:"+XString.prettyPrint(node));
+//				}
+//				hashCheck.put(hash, node);
+				save(session, node);
+			});
+
+			if (numProcessed.getVal() == 0) {
+				log.debug("Done processing all nodes.");
+				break;
+			}
+		}
 	}
 
 	/* todo-0: add auth check */
@@ -868,6 +909,19 @@ public class MongoApi {
 		return count;
 	}
 
+	public void rebuildIndexes(MongoSession session) {
+		dropAllIndexes(session);
+		createAllIndexes(session);
+	}
+
+	public void createAllIndexes(MongoSession session) {
+		createUniqueIndex(session, SubNode.class, SubNode.FIELD_PATH_HASH);
+		createIndex(session, SubNode.class, SubNode.FIELD_ORDINAL);
+		createIndex(session, SubNode.class, SubNode.FIELD_MODIFY_TIME, Direction.DESC);
+		createIndex(session, SubNode.class, SubNode.FIELD_CREATE_TIME, Direction.DESC);
+		createTextIndexes(session, SubNode.class);
+	}
+
 	public void dropAllIndexes(MongoSession session) {
 		requireAdmin(session);
 		ops.indexOps(SubNode.class).dropAllIndexes();
@@ -888,14 +942,36 @@ public class MongoApi {
 		ops.indexOps(clazz).ensureIndex(new Index().on(property, dir));
 	}
 
-	public void createTextIndex(MongoSession session, Class<?> clazz) {
+	// DO NOT DELETE.
+	//
+	// I tried to create just ONE full text index, and i get exceptions, and even if i try to build
+	// a text index
+	// on a specific property I also get exceptions, to currently i am having to resort to using
+	// only the
+	// createTextIndexes() below which does the 'onAllFields' option which DOES work for some readon
+	// public void createUniqueTextIndex(MongoSession session, Class<?> clazz, String property) {
+	// requireAdmin(session);
+	//
+	// TextIndexDefinition textIndex = new TextIndexDefinitionBuilder().onField(property).build();
+	//
+	// /* If mongo will not allow dupliate checks of a text index, i can simply take a HASH of the
+	// content text, and enforce that's unique
+	// * and while i'm at it secondarily use it as a corruption check.
+	// */
+	// /* todo-0: haven't yet run my test case that verifies duplicate tree paths are indeed
+	// rejected */
+	// DBObject dbo = textIndex.getIndexOptions();
+	// dbo.put("unique", true);
+	// dbo.put("dropDups", true);
+	//
+	// ops.indexOps(clazz).ensureIndex(textIndex);
+	// }
+
+	public void createTextIndexes(MongoSession session, Class<?> clazz) {
 		requireAdmin(session);
 
 		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder().onAllFields()
-				// .onField(property)
-				// .onField("middleName")
-				// .onField("lastName")
-				// .onField("emailId")
+				// .onField(SubNode.FIELD_PROPERTIES+"."+NodeProp.CONTENT)
 				.build();
 
 		ops.indexOps(clazz).ensureIndex(textIndex);

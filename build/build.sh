@@ -86,8 +86,6 @@ else
   read -p "FAIL. LESS compiler reported ERRORS."
 fi
 
-cd $META64/build
-
 #go back to folder with this script in it. sort of 'home' for this script
 cd $META64/build
 

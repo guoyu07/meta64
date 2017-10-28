@@ -61,13 +61,16 @@ class Encryption {
     public masterPassword: string;
 
     constructor() {
+        debugger;
         if (!this.crypto) {
-            throw "WebCryptoAPI not available";
+            console.log("WebCryptoAPI not available");
+            return;
         }
 
         this.subtle = this.crypto.subtle;
         if (!this.subtle) {
-            throw "WebCryptoAPI Subtle not available";
+            console.log("WebCryptoAPI Subtle not available");
+            return;
         }
 
         /* Note: This is not a mistake to have this vector publicly visible. It's not a security risk. This vector is merely required

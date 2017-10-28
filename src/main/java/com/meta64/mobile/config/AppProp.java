@@ -60,7 +60,7 @@ public class AppProp /* implements EnvironmentAware */ {
 	}
 	
 	public boolean getReSaveAll() {
-		return "true".equals(env.getProperty("getReSaveAll"));
+		return "true".equals(env.getProperty("reSaveAll"));
 	}
 	
 	public boolean getMongoTest() {

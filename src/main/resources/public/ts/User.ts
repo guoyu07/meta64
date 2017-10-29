@@ -185,12 +185,6 @@ class User {
 
             user.setStateVarsUsingLoginResponse(res);
 
-            if (res.userPreferences.lastNode) {
-                console.log("lastNode: " + res.userPreferences.lastNode);
-            } else {
-                console.log("lastNode is null.");
-            }
-
             /* set ID to be the page we want to show user right after login */
             let id: string = null;
 
@@ -199,9 +193,11 @@ class User {
                 id = res.homeNodeOverride;
                 meta64.homeNodeOverride = id;
             } else {
-                if (res.userPreferences.lastNode) {
-                    console.log("loading lastNode=" + res.userPreferences.lastNode);
-                    id = res.userPreferences.lastNode;
+                let lastNode = localStorage.getItem("lastNode");
+                debugger;
+                if (lastNode) {
+                    console.log("loading lastNode=" + lastNode);
+                    id = lastNode;
                 } else {
                     console.log("loading homeNodeId=" + meta64.homeNodeId);
                     id = meta64.homeNodeId;

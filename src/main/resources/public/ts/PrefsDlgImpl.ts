@@ -57,7 +57,6 @@ export default class PrefsDlgImpl extends DialogBaseImpl implements PrefsDlg {
                 "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
                 "editMode": meta64.userPreferences.editMode,
                 /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
-                "lastNode": null,
                 "importAllowed": false,
                 "exportAllowed": false,
                 "showMetaData": meta64.showMetaData

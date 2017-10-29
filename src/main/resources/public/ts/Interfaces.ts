@@ -83,7 +83,6 @@ export interface RefInfo {
 export interface UserPreferences {
     editMode: boolean;
     advancedMode: boolean;
-    lastNode: string;
     importAllowed: boolean;
     exportAllowed: boolean;
     showMetaData: boolean;

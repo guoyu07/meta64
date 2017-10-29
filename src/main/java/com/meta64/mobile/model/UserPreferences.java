@@ -8,7 +8,6 @@ public class UserPreferences {
 	private boolean editMode;
 	private boolean showMetaData;
 	private boolean advancedMode;
-	private String lastNode;
 	private boolean importAllowed;
 	private boolean exportAllowed;
 
@@ -18,14 +17,6 @@ public class UserPreferences {
 
 	public void setAdvancedMode(boolean advancedMode) {
 		this.advancedMode = advancedMode;
-	}
-
-	public String getLastNode() {
-		return lastNode;
-	}
-
-	public void setLastNode(String lastNode) {
-		this.lastNode = lastNode;
 	}
 
 	public boolean isEditMode() {

@@ -47,7 +47,6 @@ public class NodeProp {
 	 */
 	public static final String COMMENT_BY = "sn:commentBy";
 
-	public static final String USER_PREF_LAST_NODE = "sn:lastNode";
 	public static final String USER_PREF_ADV_MODE = "sn:advMode";
 	public static final String USER_PREF_EDIT_MODE = "sn:editMode";
 	public static final String USER_PREF_SHOW_METADATA = "sn:showMetaData";

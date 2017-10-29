@@ -61,7 +61,10 @@ class Encryption {
     public masterPassword: string;
 
     constructor() {
-        debugger;
+        
+        /* WARNING: Crypto (or at least subtle) will not be available except on Secure Origin, which means a SSL (https) 
+        web address plus also localhost */
+
         if (!this.crypto) {
             console.log("WebCryptoAPI not available");
             return;

@@ -567,6 +567,10 @@ export class Render {
         meta64.codeFormatDirty = false;
         console.log("renderPageFromData()");
 
+        debugger;
+        console.log("Setting lastNode="+data.node.id);
+        localStorage.setItem("lastNode", data.node.id);
+
         let newData: boolean = false;
         if (!data) {
             data = meta64.currentNodeData;

@@ -184,7 +184,6 @@ class Meta64 {
     userPreferences: I.UserPreferences = {
         "editMode": false,
         "advancedMode": false,
-        "lastNode": "",
         "importAllowed": false,
         "exportAllowed": false,
         "showMetaData": false

@@ -321,12 +321,12 @@ public class UserManagerService {
 
 			boolean showMetaData = reqUserPrefs.isShowMetaData();
 			prefsNode.setProp(NodeProp.USER_PREF_SHOW_METADATA, showMetaData);
-
+			
 			/*
 			 * Also update session-scope object, because server-side functions that need preference
 			 * information will get it from there instead of loading it from repository. The only
 			 * time we load user preferences from repository is during login when we can't get it
-			 * form anywhere else at that time.
+			 * from anywhere else at that time.
 			 */
 			UserPreferences userPreferences = sessionContext.getUserPreferences();
 			userPreferences.setAdvancedMode(advancedMode);
@@ -348,12 +348,9 @@ public class UserManagerService {
 		adminRunner.run(session -> {
 			SubNode prefsNode = api.getUserNodeByUserName(session, userName);
 
-			/* for polymer conversion, forcing to true here */
 			userPrefs.setAdvancedMode(prefsNode.getBooleanProp(NodeProp.USER_PREF_ADV_MODE));
 			userPrefs.setEditMode(prefsNode.getBooleanProp(NodeProp.USER_PREF_EDIT_MODE));
 			userPrefs.setShowMetaData(prefsNode.getBooleanProp(NodeProp.USER_PREF_SHOW_METADATA));
-
-			userPrefs.setLastNode(prefsNode.getStringProp(NodeProp.USER_PREF_LAST_NODE));
 			userPrefs.setImportAllowed(prefsNode.getBooleanProp(NodeProp.USER_PREF_IMPORT_ALLOWED));
 			userPrefs.setExportAllowed(prefsNode.getBooleanProp(NodeProp.USER_PREF_EXPORT_ALLOWED));
 		});

@@ -24,11 +24,9 @@ import com.meta64.mobile.request.RenderNodeRequest;
 import com.meta64.mobile.response.AnonPageLoadResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.RenderNodeResponse;
-import com.meta64.mobile.user.UserSettingsDaemon;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
-import com.meta64.mobile.util.XString;
 
 /**
  * Service for rendering the content of a page. The actual page is not rendered on the server side.
@@ -51,9 +49,6 @@ public class NodeRenderService {
 
 	@Autowired
 	private Convert convert;
-
-	@Autowired
-	private UserSettingsDaemon userSettingsDaemon;
 
 	@Autowired
 	private SessionContext sessionContext;

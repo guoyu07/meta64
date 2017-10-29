@@ -744,7 +744,7 @@ export class Render {
         if (!data.endReached) {
             let nextButton = this.makeButton("Next Page", "nextPageButton", this.nextPage);
 
-            //todo-0: last page button disabled pending refactoring
+            //todo-1: last page button disabled pending refactoring
             //let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
             output += this.centeredButtonBar(nextButton /* + lastButton */, "paging-button-bar");
         }

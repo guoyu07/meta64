@@ -605,7 +605,6 @@ public class MongoApi {
 		}
 	}
 
-	/* todo-0: add auth check */
 	public UserPreferencesNode getUserPreference(MongoSession session, String path) {
 		if (path.equals("/")) {
 			throw new RuntimeException("SubNode doesn't implement the root node. Root is implicit and never needs an actual node to represent it.");
@@ -618,7 +617,6 @@ public class MongoApi {
 		return ret;
 	}
 
-	/* todo-0: add auth check */
 	public UserPreferencesNode getUserPreference(MongoSession session, ObjectId objId) {
 		UserPreferencesNode ret = ops.findById(objId, UserPreferencesNode.class);
 		auth(session, ret, PrivilegeType.READ);
@@ -958,7 +956,7 @@ public class MongoApi {
 	// content text, and enforce that's unique
 	// * and while i'm at it secondarily use it as a corruption check.
 	// */
-	// /* todo-0: haven't yet run my test case that verifies duplicate tree paths are indeed
+	// /* todo-2: haven't yet run my test case that verifies duplicate tree paths are indeed
 	// rejected */
 	// DBObject dbo = textIndex.getIndexOptions();
 	// dbo.put("unique", true);
@@ -1069,7 +1067,7 @@ public class MongoApi {
 		/*
 		 * The user root nodes are the owners of themselves.
 		 * 
-		 * todo-0: fix the uglyness of having to do TWO saves when adding a user.
+		 * todo-1: fix the uglyness of having to do TWO saves when adding a user.
 		 */
 		userNode.setOwner(userNode.getId());
 		save(session, userNode);
@@ -1117,7 +1115,7 @@ public class MongoApi {
 	 * definition of they way security is inheritive.
 	 */
 	public void createAdminUser(MongoSession session) {
-		// todo-0: major inconsistency: is admin name defined in properties file or in
+		// todo-1: major inconsistency: is admin name defined in properties file or in
 		// NodePrincipal.ADMIN const ? Need to decide.
 		String adminUser = appProp.getMongoAdminUserName();
 		String adminPwd = appProp.getMongoAdminPassword();

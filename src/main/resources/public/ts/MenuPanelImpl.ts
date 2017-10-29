@@ -38,7 +38,7 @@ export default class MenuPanel extends Comp {
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
 
-                //todo-0: disabled during mongo conversion
+                //todo-1: disabled during mongo conversion
                 //new MenuItem("RSS Feeds", nav.openRssFeedsNode),
 
                 /* currently this Sample Content is the book 'War and Peace' */
@@ -75,7 +75,7 @@ export default class MenuPanel extends Comp {
             new Menu("Search", [
                 new MenuItem("Content", nav.search, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })//, //
 
-                //todo-0: disaled during mongo conversion
+                //todo-1: disaled during mongo conversion
                 //new MenuItem("Tags", nav.searchTags, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
                 //new MenuItem("Files", nav.searchFiles, () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch },
                 //    () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch })
@@ -100,7 +100,7 @@ export default class MenuPanel extends Comp {
                     true//
                 ), //
 
-                //todo-0: disabled during mongo conversion
+                //todo-1: disabled during mongo conversion
                 //new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, () => { return meta64.isAdminUser }), //
                 //new MenuItem("Compare as B (to A)", view.compareAsBtoA, //
                 //    () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, //

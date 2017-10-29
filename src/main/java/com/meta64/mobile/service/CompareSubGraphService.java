@@ -141,7 +141,7 @@ public class CompareSubGraphService {
 	// }
 	//
 	// /*
-	// * Check primary node types identical. todo-0: we can add mix-ins, to be more strict
+	// * Check primary node types identical. todo-1: we can add mix-ins, to be more strict
 	// * about the definition of truely identical types
 	// */
 	// String typeA = nodeA.getPrimaryNodeType().getName();

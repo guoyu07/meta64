@@ -37,7 +37,7 @@ export class Tag {
         return render.tag("h" + level, null, content, true);
     }
 
-    //todo-0: remove this and use heading() always instead
+    //todo-1: remove this and use heading() always instead
     h2(attr?: Object, content?: string): string {
         return render.tag("h2", attr, content, true);
     }
@@ -61,7 +61,7 @@ export class Tag {
     /* We encapsulate/decouple here smartly so that if there's an 'icon' property, we automatically use an paper-icon-button instead of
     a plain paper-button,
 
-    todo-0: actually this is bad. What we need is the ability to also show a 'paper-button' that has an icon next to the text! Is this possible in polymer?
+    todo-1: actually this is bad. What we need is the ability to also show a 'paper-button' that has an icon next to the text! Is this possible in polymer?
     */
     button(attr?: Object, text?: string): string {
         let tagName = (<any>attr).icon ? "paper-icon-button" : "paper-button";

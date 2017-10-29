@@ -70,7 +70,7 @@ public class JsonToSubNodeService {
 		else if (propVal instanceof Long) {
 			node.setProp(propName, (Long)propVal);
 		}
-		// todo-0: put in rest of types.
+		// todo-1: put in rest of types.
 		else {
 			throw new RuntimeException("Type not yet handled: " + propVal.getClass().getName() + " propName: " + propName);
 		}

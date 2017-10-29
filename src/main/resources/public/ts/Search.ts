@@ -114,7 +114,7 @@ export class Search {
             "nodeId": node.id,
             "searchText": "",
             "sortDir": "DESC",
-            //todo-0: need something other than hardcoding 'mtm' here
+            //todo-1: need something other than hardcoding 'mtm' here
             "sortField": "mtm",
             "searchProp": null
         }, srch.timelineResponse);
@@ -130,7 +130,7 @@ export class Search {
         util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": "",
-            //todo-0: need something other than hardcoding 'ctm' here
+            //todo-1: need something other than hardcoding 'ctm' here
             "sortDir": "DESC",
             "sortField" : "ctm",
             "searchProp": null

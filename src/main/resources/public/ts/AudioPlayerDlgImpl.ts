@@ -91,7 +91,7 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
     //bind(this) everywhere we need to call this 'cancel()'.
     cancel(): void {
         console.log("AudioPlayerDialog cancel()");
-        //todo-0: need to check over, and document flow of this functiuon as it relates to calling "podcast.destroyPlayer(this);"
+        //todo-1: need to check over, and document flow of this functiuon as it relates to calling "podcast.destroyPlayer(this);"
         super.cancel();
         let player = this.audioPlayer.getAudioElement();
         if (player) {

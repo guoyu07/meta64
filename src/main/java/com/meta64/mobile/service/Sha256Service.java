@@ -395,7 +395,7 @@ public class Sha256Service {
 	// */
 	// if (verify) return;
 	//
-	// // todo-0: Once a bit more testing is done, i can boost this batch size to a more reasonable
+	// // todo-1: Once a bit more testing is done, i can boost this batch size to a more reasonable
 	// // number like 100 or several hundered (1000s?).
 	// int maxBatchSize = 10;
 	//

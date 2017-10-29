@@ -43,7 +43,7 @@ public class AccessControlUtil {
 			List<MongoPrincipal> principals = getNodePrincipals(session, node);
 			for (MongoPrincipal p : principals) {
 
-				// todo-0: this is a spot that can be optimized. We should be able to send just the
+				// todo-1: this is a spot that can be optimized. We should be able to send just the
 				// userNodeId back to client, and the client
 				// should be able to deal with that (i think). depends on how much ownership info we
 				// need to show user.
@@ -70,7 +70,7 @@ public class AccessControlUtil {
 	public static List<MongoPrincipal> getNodePrincipals(MongoSession session, SubNode node) {
 		List<MongoPrincipal> principals = new LinkedList<MongoPrincipal>();
 
-		// todo-0: for now we just support the owner privileges:
+		// todo-1: for now we just support the owner privileges:
 		MongoPrincipal principal = new MongoPrincipal();
 		principal.setUserNodeId(node.getId());
 		principal.setAccessLevel("w");

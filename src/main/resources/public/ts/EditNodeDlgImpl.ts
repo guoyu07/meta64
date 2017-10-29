@@ -90,7 +90,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
                 this.addPropertyButton = new Button("Add Property", this.addProperty),
                 this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
 
-                //todo-0: temporarily disabling this until we have it working in mongodb
+                //todo-1: temporarily disabling this until we have it working in mongodb
                 //this.splitContentButton = new Button("Split", this.splitContent),
                 this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
                 this.cancelButton = new Button("Cancel", this.cancelEdit)
@@ -483,7 +483,7 @@ export default class EditNodeDlgImpl extends DialogBaseImpl implements EditNodeD
             checkboxTableCell.addChild(checkbox);
 
             if (!cnst.USE_ACE_EDITOR) {
-                //todo-0: when this is a password, disable it until value it asynchronously set.
+                //todo-1: when this is a password, disable it until value it asynchronously set.
 
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,

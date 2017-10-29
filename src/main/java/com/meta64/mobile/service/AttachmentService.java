@@ -394,7 +394,7 @@ public class AttachmentService {
 		String FAKE_USER_AGENT = "Mozilla/5.0";
 
 		/*
-		 * todo-0: This value exists in properties file, and also in TypeScript variable. Need to
+		 * todo-1: This value exists in properties file, and also in TypeScript variable. Need to
 		 * have better way to define this ONLY in properties file.
 		 */
 		int maxFileSize = 20 * 1024 * 1024;

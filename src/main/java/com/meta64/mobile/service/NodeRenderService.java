@@ -143,9 +143,6 @@ public class NodeRenderService {
 		/*
 		 * load a LARGE number (toto-0: what should this large number be, 1000?) if we are scanning
 		 * for a specific node and we don't know what it's actual offset is
-		 * 
-		 * todo-0: actually in the new architecture, i think i can look up that target node, and
-		 * then simply use it's index information to help out here.
 		 */
 		int queryLimit = scanToNode ? 1000 : offset + ROWS_PER_PAGE + 1;
 
@@ -160,7 +157,7 @@ public class NodeRenderService {
 		boolean endReached = false;
 
 		if (req.isGoToLastPage()) {
-			// todo-0: fix
+			// todo-1: fix
 			throw new RuntimeException("No ability to go to last page yet in new mongo api.");
 			// offset = (int) nodeIter.getSize() - ROWS_PER_PAGE;
 			// if (offset < 0) {

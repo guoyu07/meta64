@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.meta64.mobile.aspect.CallProcessor;
 import com.meta64.mobile.aspect.OakSession;
-import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
@@ -141,6 +141,9 @@ public class AppController {
 
 	@Autowired
 	private RunAsMongoAdmin adminRunner;
+
+	@Autowired
+	private CallProcessor callProcessor;
 
 	@Autowired
 	private MongoApi api;
@@ -296,15 +299,14 @@ public class AppController {
 	}
 
 	@RequestMapping(value = API_PATH + "/renderNode", method = RequestMethod.POST)
-	@OakSession
+	// @OakSession
 	public @ResponseBody RenderNodeResponse renderNode(@RequestBody RenderNodeRequest req, //
 			HttpServletRequest httpReq) {
-		logRequest("renderNode", req);
-		RenderNodeResponse res = new RenderNodeResponse();
-		checkHttpSession();
-		nodeRenderService.renderNode(null, req, res, true);
-		logResponse(res);
-		return res;
+		return (RenderNodeResponse) callProcessor.run("renderNode", req, session -> {
+			RenderNodeResponse res = new RenderNodeResponse();
+			nodeRenderService.renderNode(null, req, res, true);
+			return res;
+		});
 	}
 
 	@RequestMapping(value = API_PATH + "/initNodeEdit", method = RequestMethod.POST)

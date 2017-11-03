@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.AppServer;
-import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
@@ -21,6 +20,7 @@ import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
+import com.meta64.mobile.request.base.RequestBase;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.base.ResponseBase;
 import com.meta64.mobile.util.ExUtil;
@@ -70,7 +70,8 @@ public class OakSessionAspect {
 			}
 
 			Object[] args = joinPoint.getArgs();
-			mongoSession = login(args, sessionContext);
+			RequestBase req = (args != null && args.length > 0) ? (RequestBase)args[0] : null;
+			mongoSession = login(req, sessionContext);
 			ThreadLocals.setMongoSession(mongoSession);
 
 			ret = joinPoint.proceed();
@@ -122,12 +123,12 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private MongoSession login(final Object[] args, SessionContext sessionContext) {
+	private MongoSession login(RequestBase req /* final Object[] args*/, SessionContext sessionContext) {
 		
 		String userName = NodePrincipal.ANONYMOUS;
 		String password = NodePrincipal.ANONYMOUS;
 
-		Object req = (args != null && args.length > 0) ? args[0] : null;
+		//Object req = (args != null && args.length > 0) ? args[0] : null;
 
 		LoginResponse res = null;
 		if (req instanceof LoginRequest) {
@@ -135,7 +136,7 @@ public class OakSessionAspect {
 			res.setUserPreferences(new UserPreferences());
 			ThreadLocals.setResponse(res);
 
-			LoginRequest loginRequest = (LoginRequest) args[0];
+			LoginRequest loginRequest = (LoginRequest) req;
 			userName = loginRequest.getUserName();
 			password = loginRequest.getPassword();
 

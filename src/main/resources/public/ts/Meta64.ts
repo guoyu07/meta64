@@ -236,8 +236,8 @@ class Meta64 {
         meta64.goToMainPage(true, true);
     }
 
-    rebuildIndexes() : void {
-        util.ajax<I.RebuildIndexesRequest, I.RebuildIndexesResponse>("rebuildIndexes", {}, function(res: I.RebuildIndexesResponse) {
+    rebuildIndexes(): void {
+        util.ajax<I.RebuildIndexesRequest, I.RebuildIndexesResponse>("rebuildIndexes", {}, function (res: I.RebuildIndexesResponse) {
             util.showMessage("Index rebuild complete.");
         });
     }
@@ -478,6 +478,9 @@ class Meta64 {
             return;
         }
 
+        //console.log("Setting lastNode (in highlight)="+node.id);
+        localStorage.setItem("lastNode", node.id);
+
         let doneHighlighting: boolean = false;
 
         /* Unhighlight currently highlighted node if any */
@@ -498,7 +501,6 @@ class Meta64 {
             meta64.parentUidToFocusNodeMap[meta64.currentNodeUid] = node;
 
             let rowElmId: string = "row_" + node.uid;
-            //console.log("highlighting(2): to row: "+rowElmId);
             util.changeOrAddClass(rowElmId, "inactive-row", "active-row");
         }
 

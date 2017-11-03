@@ -54,9 +54,6 @@ public class OakSessionAspect {
 	@Autowired
 	private MongoApi api;
 
-	@Autowired
-	private AppProp appProp;
-
 	@Around("@annotation(com.meta64.mobile.aspect.OakSession)")
 	public Object call(final ProceedingJoinPoint joinPoint) throws Throwable {
 		if (AppServer.isShuttingDown()) {
@@ -72,9 +69,8 @@ public class OakSessionAspect {
 				sessionContext.getLock().lock();
 			}
 
-			// session = loginFromJoinPoint(joinPoint, sessionContext);
-			// ThreadLocals.setJcrSession(session);
-			mongoSession = loginFromJoinPoint_mongo(joinPoint, sessionContext);
+			Object[] args = joinPoint.getArgs();
+			mongoSession = login(args, sessionContext);
 			ThreadLocals.setMongoSession(mongoSession);
 
 			ret = joinPoint.proceed();
@@ -126,77 +122,8 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	// private Session loginFromJoinPoint(final ProceedingJoinPoint joinPoint, SessionContext
-	// sessionContext) {
-	// Object[] args = joinPoint.getArgs();
-	// String userName = JcrPrincipal.ANONYMOUS;
-	// String password = JcrPrincipal.ANONYMOUS;
-	//
-	// Object req = (args != null && args.length > 0) ? args[0] : null;
-	//
-	// LoginResponse res = null;
-	// if (req instanceof LoginRequest) {
-	// res = new LoginResponse();
-	// res.setUserPreferences(new UserPreferences());
-	// ThreadLocals.setResponse(res);
-	//
-	// LoginRequest loginRequest = (LoginRequest) args[0];
-	// userName = loginRequest.getUserName();
-	// password = loginRequest.getPassword();
-	//
-	// if (userName.equals("")) {
-	// userName = sessionContext.getUserName();
-	// password = sessionContext.getPassword();
-	// }
-	//
-	// /* not logged in and page load is checking for logged in session */
-	// if (userName == null) {
-	// return null;
-	// }
-	// }
-	// else if (req instanceof ChangePasswordRequest && ((ChangePasswordRequest) req).getPassCode()
-	// != null) {
-	// /*
-	// * we will have no session for user here, return null;
-	// */
-	// return null;
-	// }
-	// else if (req instanceof SignupRequest) {
-	// /*
-	// * we will have no session for user for signup request, so return null
-	// */
-	// return null;
-	// }
-	// else {
-	// userName = sessionContext.getUserName();
-	// password = sessionContext.getPassword();
-	//
-	// if (userName == null) {
-	// userName = JcrPrincipal.ANONYMOUS;
-	// }
-	// if (password == null) {
-	// password = JcrPrincipal.ANONYMOUS;
-	// }
-	// }
-	//
-	// try {
-	// Credentials cred = userName.equals(JcrPrincipal.ANONYMOUS) ? new GuestCredentials() : new
-	// SimpleCredentials(userName, password.toCharArray());
-	// Session session = oak.getRepository().login(cred);
-	// return session;
-	// }
-	// catch (Exception e) {
-	// if (res != null) {
-	// res.setSuccess(false);
-	// res.setMessage("Wrong username/password.");
-	// }
-	// throw ExUtil.newEx(e);
-	// }
-	// }
-
-	/* Creates a logged in session for any method call for this join point */
-	private MongoSession loginFromJoinPoint_mongo(final ProceedingJoinPoint joinPoint, SessionContext sessionContext) {
-		Object[] args = joinPoint.getArgs();
+	private MongoSession login(final Object[] args, SessionContext sessionContext) {
+		
 		String userName = NodePrincipal.ANONYMOUS;
 		String password = NodePrincipal.ANONYMOUS;
 

@@ -22,11 +22,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.meta64.mobile.config.AppProp;
-import com.meta64.mobile.config.ConstantsProvider;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.ExportNodeInfo;
 import com.meta64.mobile.model.ExportPropertyInfo;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -56,9 +56,6 @@ public class ExportZipService {
 	@Autowired
 	private SubNodeUtil util;
 
-	@Autowired
-	private ConstantsProvider constProvider;
-
 	private ZipOutputStream zos;
 
 	private String shortFileName;
@@ -79,6 +76,9 @@ public class ExportZipService {
 
 	@Autowired
 	private AppProp appProp;
+	
+	@Autowired
+	private SessionContext sessionContext;
 
 	private MongoSession session;
 
@@ -88,14 +88,11 @@ public class ExportZipService {
 		}
 		this.session = session;
 
-		// todo-0: bring back this auth check.
-		// UserPreferences userPreferences = sessionContext.getUserPreferences();
-		// boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() :
-		// false;
-		// if (!exportAllowed && !sessionContext.isAdmin()) {
-		// throw ExUtil.newEx("export is an admin-only feature.");
-		// }
-		//
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
+		if (!exportAllowed && !sessionContext.isAdmin()) {
+			throw ExUtil.newEx("You are not authorized to export.");
+		}
 
 		if (!FileTools.dirExists(appProp.getAdminDataFolder())) {
 			throw ExUtil.newEx("adminDataFolder does not exist: " + appProp.getAdminDataFolder());
@@ -148,7 +145,7 @@ public class ExportZipService {
 	 */
 	private String processNodeExport(String parentFolder, SubNode node) {
 		try {
-			//log.debug("Processing Node: " + node.getPath());
+			// log.debug("Processing Node: " + node.getPath());
 
 			String fileName = generateFileNameFromNode(node);
 
@@ -256,7 +253,7 @@ public class ExportZipService {
 
 		fileNameSet.add(fileName);
 
-		//log.debug("ZIPENTRY: " + fileName);
+		// log.debug("ZIPENTRY: " + fileName);
 		ZipEntry zi = new ZipEntry(fileName);
 		try {
 			zos.putNextEntry(zi);

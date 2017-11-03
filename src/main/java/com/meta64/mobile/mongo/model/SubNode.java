@@ -173,17 +173,24 @@ public class SubNode {
 	public void setPath(String path) {
 		MongoThreadLocal.dirty(this);
 		if (path == null) {
-			pathHash = null;
+			pathHash = "";
 		}
-		else if (this.path == null || pathHash==null || !this.path.equals(path)) {
+		/* todo-0: need to add smarts to have this not update the pathHash if it's already going to match, but not sure how to ensiure that. */
+		else { //if (this.path == null || pathHash==null || !this.path.equals(path)) {
 			pathHash = Sha256Service.getHashOfString(path);
-			log.debug("Generated PathHash: "+pathHash);
 		}
+		log.debug("Generated PathHash: "+pathHash);
 		this.path = path;
 	}
 
 	public void forcePathHashUpdate() {
-		pathHash = Sha256Service.getHashOfString(path);
+		if (path == null) {
+			pathHash = "";
+		}
+		else { //if (this.path == null || pathHash==null || !this.path.equals(path)) {
+			pathHash = Sha256Service.getHashOfString(path);
+		}
+		log.debug("force Generated PathHash: "+pathHash);
 		MongoThreadLocal.dirty(this);
 	}
 	

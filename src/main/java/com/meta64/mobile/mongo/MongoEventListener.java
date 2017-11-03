@@ -71,6 +71,9 @@ public class MongoEventListener extends AbstractMongoEventListener<SubNode> {
 			dbObj.put(SubNode.FIELD_PATH, path);
 			node.setPath(path);
 		}
+		
+		node.forcePathHashUpdate();
+		dbObj.put(SubNode.FIELD_PATH_HASH, node.getPathHash());
 
 		Date now = new Date();
 		if (node.getCreateTime() == null) {

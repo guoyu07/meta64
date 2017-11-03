@@ -130,8 +130,8 @@ import com.meta64.mobile.util.XString;
  * in certain layers (abstraction related and for loose-coupling).
  * 
  * <p>
- * TODO: need to get all "program logic" out of this layer (there is a tiny bit of it in here),
- * because it doesn't belong here. Should all be contained in service layer.
+ * TODO: need to get all "business logic" out of this layer (there is a tiny bit of it in here),
+ * because it doesn't belong here. Should all be contained in service layer, utilities classes, etc.
  */
 @Controller
 public class AppController {
@@ -141,9 +141,6 @@ public class AppController {
 
 	@Autowired
 	private RunAsMongoAdmin adminRunner;
-
-	@Autowired
-	private AppProp appProp;
 
 	@Autowired
 	private MongoApi api;
@@ -208,7 +205,8 @@ public class AppController {
 	 * passCode is an auth code for a password reset
 	 */
 	@RequestMapping("/")
-	public String mobile(@RequestParam(value = "id", required = false) String id, //
+	public String mobile(//
+			@RequestParam(value = "id", required = false) String id, //
 			@RequestParam(value = "cmd", required = false) String cmd, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
 			Model model) {

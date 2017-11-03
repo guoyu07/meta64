@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.NodeProp;
+import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.model.ExportPropertyInfo;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -49,6 +51,9 @@ public class ExportTxtService {
 
 	@Autowired
 	private AppProp appProp;
+	
+	@Autowired
+	private SessionContext sessionContext;
 
 	private MongoSession session;
 
@@ -70,6 +75,12 @@ public class ExportTxtService {
 		}
 		this.res = res;
 		this.session = session;
+		
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean exportAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
+		if (!exportAllowed && !sessionContext.isAdmin()) {
+			throw ExUtil.newEx("You are not authorized to export.");
+		}
 
 		String nodeId = req.getNodeId();
 

@@ -568,8 +568,10 @@ export class Render {
         console.log("renderPageFromData()");
 
         debugger;
-        console.log("Setting lastNode="+data.node.id);
-        localStorage.setItem("lastNode", data.node.id);
+        //console.log("Setting lastNode="+data.node.id);
+        if (data && data.node) {
+            localStorage.setItem("lastNode", data.node.id);
+        }
 
         let newData: boolean = false;
         if (!data) {
@@ -1112,7 +1114,7 @@ export class Render {
             "id": fieldId
         });
     }
-   
+
     makeButton = (text: string, id: string, callback: Function): string => {
         let attribs = {
             "raised": "raised",

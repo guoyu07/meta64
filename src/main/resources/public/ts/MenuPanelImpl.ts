@@ -69,7 +69,7 @@ export default class MenuPanel extends Comp {
             new Menu("Share", [
                 new MenuItem("Edit Node Sharing", share.editNodeSharing, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null && meta64.state.selNodeIsMine }), //
 
-                //todo-0: temporarily disabling this during mongo conversion
+                //todo-1: temporarily disabling this during mongo conversion
                 //new MenuItem("Find Shared Subnodes", share.findSharedNodes, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })
             ]),
             new Menu("Search", [

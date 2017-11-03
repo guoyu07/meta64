@@ -320,7 +320,7 @@ public class Sha256Service {
 	//
 	// /*
 	// * For now we use a simple 'getString' but in the future we need to get exact binary data so
-	// * that even floating point values are seen, not as strings, but arrays of bytes. (todo-0,
+	// * that even floating point values are seen, not as strings, but arrays of bytes. (todo-1,
 	// fix)
 	// */
 	// private byte[] valueToBytes(Value value) {

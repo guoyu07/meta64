@@ -2,7 +2,6 @@ package com.meta64.mobile.model;
 
 /**
  * Models UserPreferences
- *
  */
 public class UserPreferences {
 	private boolean editMode;

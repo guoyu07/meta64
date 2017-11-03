@@ -8,8 +8,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Meta64 Mobile</name>
-	<description>meta64 - Social Engine for the Web</description>
+	<name>SubNode</name>
+	<description>SubNode - Social Engine for the Web</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -114,9 +114,6 @@
 		</dependency>
 		
 		<!-- 
-		I decided to go with a PURE HTML file option first, before supporting any PDF export option, so for now no pdf
-		export is available, and this it the way images are embedded in the HMTL
-		https://en.wikipedia.org/wiki/Data_URI_scheme
 		<dependency>
     		<groupId>org.apache.pdfbox</groupId>
     		<artifactId>pdfbox-app</artifactId>

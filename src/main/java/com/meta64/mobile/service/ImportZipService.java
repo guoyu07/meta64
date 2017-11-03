@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.NodeProp;
+import com.meta64.mobile.config.SessionContext;
+import com.meta64.mobile.model.UserPreferences;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
@@ -51,6 +53,9 @@ public class ImportZipService {
 
 	@Autowired
 	private JsonToSubNodeService jsonToJcrService;
+	
+	@Autowired
+	private SessionContext sessionContext;
 
 	private String targetPath;
 
@@ -82,15 +87,13 @@ public class ImportZipService {
 	private HashMap<String, SubNode> folderMap = new HashMap<String, SubNode>();
 
 	public void inputZipFileFromStream(MongoSession session, InputStream is, SubNode node) {
-		// todo-0: re-enable authorization for imports
-		// UserPreferences userPreferences = sessionContext.getUserPreferences();
-		// boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() :
-		// false;
-		//
-		// if (!importAllowed && !sessionContext.isAdmin()) {
-		// throw ExUtil.newEx("import is an admin-only feature.");
-		// }
 
+		UserPreferences userPreferences = sessionContext.getUserPreferences();
+		boolean importAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
+		if (!importAllowed && !sessionContext.isAdmin()) {
+			throw ExUtil.newEx("You are not authorized to import.");
+		}
+		
 		try {
 			targetPath = node.getPath();
 			this.session = session;

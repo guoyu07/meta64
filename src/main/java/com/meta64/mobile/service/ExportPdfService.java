@@ -2,9 +2,13 @@ package com.meta64.mobile.service;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +27,17 @@ import com.meta64.mobile.request.ExportRequest;
 import com.meta64.mobile.response.ExportResponse;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.FileTools;
-import com.meta64.mobile.util.StreamUtil;
 import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
 
-/**
- * Export to Text file
- * 
- * todo-1: add options user can select like whether or not to include property names (divider line),
- * etc. For now we hardcode to include properties.
- * 
- * todo-1: there should be some ORDERING of properties, like 'content' maybe always at the top etc.
- * 
- * todo-1: need to add better mechanism for deleting files after a certain amount of time.
- * 
+/* This file was taken from ExportTxtService (copied) and was about to be converted to PDF exporter
+ * but i discovered the PDF api error shown below in which PDFBOX api freezes/hangs the thread whenver
+ * any font is attempted to be created.
  */
 @Component
 @Scope("prototype")
-public class ExportTxtService {
-	private static final Logger log = LoggerFactory.getLogger(ExportTxtService.class);
+public class ExportPdfService {
+	private static final Logger log = LoggerFactory.getLogger(ExportPdfService.class);
 
 	@Autowired
 	private MongoApi api;
@@ -111,15 +107,58 @@ public class ExportTxtService {
 		SubNode exportNode = api.getNode(session, nodeId, true);
 		try {
 			log.debug("Export Node: " + exportNode.getPath() + " to file " + fullFileName);
-			output = new BufferedOutputStream(new FileOutputStream(fullFileName));
-			recurseNode(exportNode, 0);
-			output.flush();
+			//output = new BufferedOutputStream(new FileOutputStream(fullFileName));
+			
+			///////////////////////
+			// Create a document and add a page to it
+			PDDocument document = new PDDocument();
+			PDPage page = new PDPage();
+			document.addPage(page);
+
+			// Create a new font object selecting one of the PDF base fonts
+			//********************************************************************************
+			//********************************************************************************
+			//********************************************************************************
+			//********************************************************************************			
+			//
+			// This line of code FREEZES in ALL versions of PdfBox, so pdf box is completely unusable
+			// at this point. I it may be my OS, or Java version, or whatever, but for now I cannot
+			// do any development around PDFBox because of this, and am putting all PDF work on hold
+			// pending new information.
+			//
+			PDFont font = PDType1Font.HELVETICA; 
+			//********************************************************************************
+			//********************************************************************************
+			//********************************************************************************
+			//********************************************************************************
+
+			// Start a new content stream which will "hold" the to be created content
+			PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+			// Define a text content stream using the selected font, moving the cursor and drawing
+			// the text "Hello World"
+			contentStream.beginText();
+			contentStream.setFont(font, 12);
+			contentStream.newLineAtOffset(100, 700);
+			contentStream.showText("Hello World. Clay's new PDF is awesome.");
+			contentStream.endText();
+
+			// Make sure that the content stream is closed:
+			contentStream.close();
+
+			// Save the results and ensure that the document is properly closed:
+			document.save(fullFileName);
+			document.close();
+			///////////////////////
+
+			// recurseNode(exportNode, 0);
+			// output.flush();
 		}
 		catch (Exception ex) {
 			throw ExUtil.newEx(ex);
 		}
 		finally {
-			StreamUtil.close(output);
+			//StreamUtil.close(output);
 			(new File(fullFileName)).deleteOnExit();
 		}
 	}

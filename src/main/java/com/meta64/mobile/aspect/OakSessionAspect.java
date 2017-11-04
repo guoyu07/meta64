@@ -20,7 +20,6 @@ import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.request.ChangePasswordRequest;
 import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.SignupRequest;
-import com.meta64.mobile.request.base.RequestBase;
 import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.base.ResponseBase;
 import com.meta64.mobile.util.ExUtil;
@@ -70,7 +69,7 @@ public class OakSessionAspect {
 			}
 
 			Object[] args = joinPoint.getArgs();
-			RequestBase req = (args != null && args.length > 0) ? (RequestBase)args[0] : null;
+			Object req = (args != null && args.length > 0) ? args[0] : null;
 			mongoSession = login(req, sessionContext);
 			ThreadLocals.setMongoSession(mongoSession);
 
@@ -123,7 +122,7 @@ public class OakSessionAspect {
 	}
 
 	/* Creates a logged in session for any method call for this join point */
-	private MongoSession login(RequestBase req /* final Object[] args*/, SessionContext sessionContext) {
+	private MongoSession login(Object req /* final Object[] args*/, SessionContext sessionContext) {
 		
 		String userName = NodePrincipal.ANONYMOUS;
 		String password = NodePrincipal.ANONYMOUS;

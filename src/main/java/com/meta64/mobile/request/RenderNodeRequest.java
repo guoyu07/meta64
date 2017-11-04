@@ -24,13 +24,6 @@ public class RenderNodeRequest extends RequestBase {
 
 	private boolean goToLastPage;
 
-	/*
-	 * Flag indicates the user clicked the 'Continue Reading' button, and we just want to
-	 * intelligently navigate them to whatever the next logical thing to read should be based on
-	 * their current location.
-	 */
-	private boolean continueReadingMode;
-
 	public String getNodeId() {
 		return nodeId;
 	}
@@ -70,14 +63,5 @@ public class RenderNodeRequest extends RequestBase {
 
 	public void setGoToLastPage(boolean goToLastPage) {
 		this.goToLastPage = goToLastPage;
-	}
-
-	@JsonProperty(required = false)
-	public boolean isContinueReadingMode() {
-		return continueReadingMode;
-	}
-
-	public void setContinueReadingMode(boolean continueReadingMode) {
-		this.continueReadingMode = continueReadingMode;
 	}
 }

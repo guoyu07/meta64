@@ -750,11 +750,7 @@ export class Render {
             //let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
             output += this.centeredButtonBar(nextButton /* + lastButton */, "paging-button-bar");
         }
-        else {
-            //let continueReadingButton = this.makeButton("Continue Reading...", "continueReadingButton", nav.continueReading);
-            //output += this.centeredButtonBar(continueReadingButton, "paging-button-bar");
-        }
-
+       
         util.setHtml("listView", output);
 
         if (meta64.codeFormatDirty) {

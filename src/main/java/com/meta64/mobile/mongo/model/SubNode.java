@@ -179,7 +179,7 @@ public class SubNode {
 		else { //if (this.path == null || pathHash==null || !this.path.equals(path)) {
 			pathHash = Sha256Service.getHashOfString(path);
 		}
-		log.debug("Generated PathHash: "+pathHash);
+		//log.debug("Generated PathHash: "+pathHash);
 		this.path = path;
 	}
 
@@ -190,7 +190,7 @@ public class SubNode {
 		else { //if (this.path == null || pathHash==null || !this.path.equals(path)) {
 			pathHash = Sha256Service.getHashOfString(path);
 		}
-		log.debug("force Generated PathHash: "+pathHash);
+		//log.debug("force Generated PathHash: "+pathHash);
 		MongoThreadLocal.dirty(this);
 	}
 	

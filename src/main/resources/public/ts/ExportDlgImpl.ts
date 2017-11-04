@@ -23,7 +23,7 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
 
     zipRadioButton: RadioButton;
     mdRadioButton: RadioButton;
-    //pdfRadioButton: RadioButton;
+    pdfRadioButton: RadioButton;
 
     constructor() {
         super();
@@ -36,6 +36,8 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
             new RadioButtonGroup([
                 this.zipRadioButton = new RadioButton("ZIP", false),
                 this.mdRadioButton = new RadioButton("MD (Markdown)", false),
+                //had to disable PDF, because PDFBox hangs in Java, and until they fix that bug
+                //there's nothing i can do other than ditch PDF box completely, which i'm not ready to do yet.
                 //this.pdfRadioButton = new RadioButton("PDF", false),
             ]),
             new ButtonBar([
@@ -65,9 +67,9 @@ export default class ExportDlgImpl extends DialogBaseImpl implements ExportDlg {
         else if (this.mdRadioButton.getChecked()) {
             ret = "md";
         }
-        // else if (this.pdfRadioButton.getChecked()) {
-        //     ret = "pdf";
-        // }
+        else if (this.pdfRadioButton.getChecked()) {
+             ret = "pdf";
+        }
         return ret;
     }
 

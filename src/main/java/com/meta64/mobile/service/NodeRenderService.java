@@ -90,19 +90,7 @@ public class NodeRenderService {
 			return;
 		}
 
-		/*
-		 * If user is trying to continue reading, we want to go to the next logical node after
-		 * targetId node to continue reading, based off of what the parent is of all the nodes on
-		 * the page.
-		 */
-		// if (req.isContinueReadingMode()) {
-		// node = getContinuationNodeFromStartingNode(node);
-		// }
-
 		String path = node.getPath();
-		// jrc
-		// userSettingsDaemon.setSettingVal(sessionContext.getUserName(),
-		// JcrProp.USER_PREF_LAST_NODE, path);
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
 		boolean advancedMode = userPreferences != null ? userPreferences.isAdvancedMode() : false;
@@ -111,7 +99,7 @@ public class NodeRenderService {
 		/*
 		 * If this is true it means we need to keep scanning child nodes until we find the targetId,
 		 * so we can make that one be the first of the search results to display, and set that
-		 * offset upon return. During the scan once the node is found, we do set this scanToNode var
+		 * offset upon return. During the scan once the node is found, we set this scanToNode var
 		 * back to false, so it represents always if we're still scanning or not.
 		 */
 		boolean scanToNode = false;
@@ -141,7 +129,7 @@ public class NodeRenderService {
 		int offset = scanToNode ? 0 : req.getOffset();
 
 		/*
-		 * load a LARGE number (toto-0: what should this large number be, 1000?) if we are scanning
+		 * load a LARGE number (todo-0: what should this large number be, 1000?) if we are scanning
 		 * for a specific node and we don't know what it's actual offset is
 		 */
 		int queryLimit = scanToNode ? 1000 : offset + ROWS_PER_PAGE + 1;
@@ -190,6 +178,7 @@ public class NodeRenderService {
 			slidingWindow = new LinkedList<SubNode>();
 		}
 
+		/* Main loop to keep reading nodes from the database until we have enough to render the page */
 		while (true) {
 			if (!iterator.hasNext()) {
 				endReached = true;

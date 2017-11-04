@@ -85,6 +85,7 @@ import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
+import com.meta64.mobile.service.ExportPdfService;
 import com.meta64.mobile.service.ExportTxtService;
 import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
@@ -299,14 +300,23 @@ public class AppController {
 	}
 
 	@RequestMapping(value = API_PATH + "/renderNode", method = RequestMethod.POST)
-	// @OakSession
+	@OakSession
 	public @ResponseBody RenderNodeResponse renderNode(@RequestBody RenderNodeRequest req, //
 			HttpServletRequest httpReq) {
-		return (RenderNodeResponse) callProcessor.run("renderNode", req, session -> {
-			RenderNodeResponse res = new RenderNodeResponse();
-			nodeRenderService.renderNode(null, req, res, true);
-			return res;
-		});
+		// NOTE: Using this callProcessor and removing the @OakSession also works, but i'm not
+		// sure i truly want to get rid of AOP and with callProcessor. :( For now
+		// CallProcessor was a success, but i'm not using it.
+		// return (RenderNodeResponse) callProcessor.run("renderNode", req, session -> {
+		// RenderNodeResponse res = new RenderNodeResponse();
+		// nodeRenderService.renderNode(null, req, res, true);
+		// return res;
+		// });
+		logRequest("renderNode", req);
+		RenderNodeResponse res = new RenderNodeResponse();
+		checkHttpSession();
+		nodeRenderService.renderNode(null, req, res, true);
+		logResponse(res);
+		return res;
 	}
 
 	@RequestMapping(value = API_PATH + "/initNodeEdit", method = RequestMethod.POST)
@@ -360,6 +370,10 @@ public class AppController {
 			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
 			svc.export(null, req, res);
 		}
+//		else if ("pdf".equalsIgnoreCase(req.getExportExt())) {
+//			ExportPdfService svc = (ExportPdfService) SpringContextUtil.getBean(ExportPdfService.class);
+//			svc.export(null, req, res);
+//		}
 		else if ("zip".equalsIgnoreCase(req.getExportExt())) {
 			ExportZipService svc = (ExportZipService) SpringContextUtil.getBean(ExportZipService.class);
 			svc.export(null, req, res);

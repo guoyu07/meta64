@@ -27,12 +27,11 @@ import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.VarUtil;
 import com.meta64.mobile.util.XString;
 
-/* This is the new replacement for OakSessionAspect, because i am moving away from Aspects (AOP) and using
- * Java Lambdas, becasue they can accomplish the same cross-cutting concern in a cleaner way. This CallProcessor
- * is only being used in one place so far to prove it works (it did) and so next i'll be putting it everywher
+/* This is the new replacement for OakSessionAspect (maybe, still undecided), because i am moving away from Aspects (AOP) and using
+ * Java Lambdas, because they can accomplish the same cross-cutting concern in a cleaner way. This CallProcessor
+ * is only being used in one place so far to prove it works (it did) and so next i'll be putting it everywhere
  * and deleting OakSessionAspect completely, soon.
  */
-
 @Component
 public class CallProcessor {
 	private static final Logger log = LoggerFactory.getLogger(CallProcessor.class);
@@ -41,17 +40,15 @@ public class CallProcessor {
 	private MongoApi api;
 
 	private static final boolean logRequests = false;
-	
-	public Object run(String command, RequestBase req, MongoRunnableEx runner) {
 
+	public Object run(String command, RequestBase req, MongoRunnableEx runner) {
 		logRequest(command, req);
-		
+
 		if (AppServer.isShuttingDown()) {
 			throw ExUtil.newEx("Server is shutting down.");
 		}
 
 		Object ret = null;
-		// Session session = null;
 		MongoSession mongoSession = null;
 		SessionContext sessionContext = (SessionContext) SpringContextUtil.getBean(SessionContext.class);
 		try {
@@ -59,12 +56,8 @@ public class CallProcessor {
 				sessionContext.getLock().lock();
 			}
 
-			// Object[] args = joinPoint.getArgs();
-			// RequestBase req = (args != null && args.length > 0) ? (RequestBase)args[0] : null;
 			mongoSession = login(req, sessionContext);
 			ThreadLocals.setMongoSession(mongoSession);
-
-			// ret = joinPoint.proceed();
 			checkHttpSession();
 			ret = runner.run(mongoSession);
 		}
@@ -126,8 +119,6 @@ public class CallProcessor {
 		String userName = NodePrincipal.ANONYMOUS;
 		String password = NodePrincipal.ANONYMOUS;
 
-		// Object req = (args != null && args.length > 0) ? args[0] : null;
-
 		LoginResponse res = null;
 		if (req instanceof LoginRequest) {
 			res = new LoginResponse();
@@ -184,7 +175,7 @@ public class CallProcessor {
 			throw ExUtil.newEx(e);
 		}
 	}
-	
+
 	private static void logRequest(String url, Object req) {
 		if (logRequests) {
 			log.trace("REQ=" + url + " " + (req == null ? "none" : XString.prettyPrint(req)));

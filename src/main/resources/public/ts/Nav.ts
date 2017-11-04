@@ -26,44 +26,6 @@ class Nav {
     this MUST match nav.ROWS_PER_PAGE variable in TypeScript */ 
     ROWS_PER_PAGE: number = 25;
 
-    continueReadingResponse(res: I.RenderNodeResponse, id): void {
-        if (!res || !res.node) {
-            util.showMessage("No data is visible to you above this node.");
-        } else {
-            render.renderPageFromData(res);
-            meta64.highlightRowById(id, true);
-            meta64.refreshAllGuiEnablement();
-        }
-    }
-
-    /*
-    When user is simply trying to read thru all the content in order under a subgraph, the continue reading automates all the tree
-    traversal for the user. For example, the 'War and Peace' book is a multi-level tree (graph), but could nonetheless be read in order
-    sentence by sentence using the 'continue reading' button
-    */
-    continueReading(): void {
-
-        if (!nav.parentVisibleToUser()) {
-            // Already at root. Can't go up.
-            //1: need to display a message to user here.
-            return;
-        }
-
-        /* todo-1: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
-        remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
-        drilled down from */
-        nav.mainOffset = 0;
-        var ironRes = util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": meta64.currentNodeId,
-            "upLevel": 1,
-            "renderParentIfLeaf": false,
-            "offset": nav.mainOffset,
-            "goToLastPage": false
-        }, (res: I.RenderNodeResponse) => {
-            nav.continueReadingResponse(ironRes.response, meta64.currentNodeId);
-        });
-    }
-
     search(): void {
         Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
             dlg.open();

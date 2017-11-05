@@ -51,10 +51,11 @@ export default class AudioPlayerDlgImpl extends DialogBaseImpl implements AudioP
     }
 
     buildGUI = (): void => {
-        let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", this.node);
+        let rssTitle: I.PropertyInfo = props.getNodeProperty("sn:rssItemTitle", this.node);
 
         this.setChildren([
-            new Header("Audio Player"),
+            //space is at a premium for mobile, so let's just not even show the header.
+            //new Header("Audio Player"),
             new TextContent(rssTitle.value),
             this.audioPlayer = new AudioPlayer({
                 "src": this.sourceUrl,

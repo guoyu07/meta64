@@ -34,7 +34,9 @@ import com.meta64.mobile.request.DeleteAttachmentRequest;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.DeletePropertyRequest;
 import com.meta64.mobile.request.ExportRequest;
+import com.meta64.mobile.request.GenerateRSSRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
+import com.meta64.mobile.request.GetPlayerInfoRequest;
 import com.meta64.mobile.request.GetServerInfoRequest;
 import com.meta64.mobile.request.InitNodeEditRequest;
 import com.meta64.mobile.request.InsertBookRequest;
@@ -52,6 +54,7 @@ import com.meta64.mobile.request.SaveNodeRequest;
 import com.meta64.mobile.request.SavePropertyRequest;
 import com.meta64.mobile.request.SaveUserPreferencesRequest;
 import com.meta64.mobile.request.SetNodePositionRequest;
+import com.meta64.mobile.request.SetPlayerInfoRequest;
 import com.meta64.mobile.request.SignupRequest;
 import com.meta64.mobile.request.UploadFromUrlRequest;
 import com.meta64.mobile.response.AddPrivilegeResponse;
@@ -63,7 +66,9 @@ import com.meta64.mobile.response.DeleteAttachmentResponse;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.DeletePropertyResponse;
 import com.meta64.mobile.response.ExportResponse;
+import com.meta64.mobile.response.GenerateRSSResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
+import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.response.GetServerInfoResponse;
 import com.meta64.mobile.response.InitNodeEditResponse;
 import com.meta64.mobile.response.InsertBookResponse;
@@ -81,11 +86,11 @@ import com.meta64.mobile.response.SaveNodeResponse;
 import com.meta64.mobile.response.SavePropertyResponse;
 import com.meta64.mobile.response.SaveUserPreferencesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
+import com.meta64.mobile.response.SetPlayerInfoResponse;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
 import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
-import com.meta64.mobile.service.ExportPdfService;
 import com.meta64.mobile.service.ExportTxtService;
 import com.meta64.mobile.service.ExportZipService;
 import com.meta64.mobile.service.FileSystemService;
@@ -370,10 +375,11 @@ public class AppController {
 			ExportTxtService svc = (ExportTxtService) SpringContextUtil.getBean(ExportTxtService.class);
 			svc.export(null, req, res);
 		}
-//		else if ("pdf".equalsIgnoreCase(req.getExportExt())) {
-//			ExportPdfService svc = (ExportPdfService) SpringContextUtil.getBean(ExportPdfService.class);
-//			svc.export(null, req, res);
-//		}
+		// else if ("pdf".equalsIgnoreCase(req.getExportExt())) {
+		// ExportPdfService svc = (ExportPdfService)
+		// SpringContextUtil.getBean(ExportPdfService.class);
+		// svc.export(null, req, res);
+		// }
 		else if ("zip".equalsIgnoreCase(req.getExportExt())) {
 			ExportZipService svc = (ExportZipService) SpringContextUtil.getBean(ExportZipService.class);
 			svc.export(null, req, res);
@@ -767,55 +773,52 @@ public class AppController {
 	// return res;
 	// }
 	//
-	// @RequestMapping(value = API_PATH + "/generateRSS", method = RequestMethod.POST)
+	@RequestMapping(value = API_PATH + "/generateRSS", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) {
+		logRequest("generateRSS", req);
+		GenerateRSSResponse res = new GenerateRSSResponse();
+		if (!sessionContext.isAdmin()) {
+			throw ExUtil.newEx("admin only function.");
+		}
+		rssService.readFeedsNow();
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
+
+	/* Currently only used to update TIME offset of the video player 
+	 * 
+	 * NOTE: I will be moving this 'user-specific' information into the browser 'localStorage', instead of 
+	 * saving it on the server. There's no reason for this to be on the server except for I guess the fact that
+	 * users could resume on different devices (phone v.s. desktop) but that's ok.
+	 */
+	@RequestMapping(value = API_PATH + "/setPlayerInfo", method = RequestMethod.POST)
+	/*
+	 * We don't want @OakSession here, because this is called at regular interval and also because
+	 * it should respond fast (being a background operation of the browser)
+	 *
+	 */
 	// @OakSession
-	// public @ResponseBody GenerateRSSResponse generateRSS(@RequestBody GenerateRSSRequest req) {
-	//
-	// logRequest("generateRSS", req);
-	// checkJcr();
-	// GenerateRSSResponse res = new GenerateRSSResponse();
-	// if (!sessionContext.isAdmin()) {
-	// throw ExUtil.newEx("admin only function.");
-	// }
-	// rssService.readFeedsNow();
-	// res.setSuccess(true);
-	// checkHttpSession();
-	// return res;
-	// }
-	//
-	// /* Currently only used to update TIME offset of the video player */
-	// @RequestMapping(value = API_PATH + "/setPlayerInfo", method = RequestMethod.POST)
-	// /*
-	// * We don't want @OakSession here, because this is called at regular interval and also because
-	// * it should respond fast (being a background operation of the browser)
-	// *
-	// */
-	// // @OakSession
-	// public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest
-	// req) {
-	//
-	// logRequest("setPlayerInfo", req);
-	// checkJcr();
-	// SetPlayerInfoResponse res = new SetPlayerInfoResponse();
-	// rssService.setPlayerInfo(req);
-	// res.setSuccess(true);
-	// // checkHttpSession();
-	// return res;
-	// }
-	//
-	// @RequestMapping(value = API_PATH + "/getPlayerInfo", method = RequestMethod.POST)
-	// @OakSession
-	// public @ResponseBody GetPlayerInfoResponse getPlayerInfo(@RequestBody GetPlayerInfoRequest
-	// req) {
-	//
-	// logRequest("getPlayerInfo", req);
-	// checkJcr();
-	// GetPlayerInfoResponse res = new GetPlayerInfoResponse();
-	// rssService.getPlayerInfo(req, res);
-	// res.setSuccess(true);
-	// checkHttpSession();
-	// return res;
-	// }
+	public @ResponseBody SetPlayerInfoResponse playerUpdate(@RequestBody SetPlayerInfoRequest req) {
+		logRequest("setPlayerInfo", req);
+		SetPlayerInfoResponse res = new SetPlayerInfoResponse();
+		rssService.setPlayerInfo(req);
+		res.setSuccess(true);
+		// checkHttpSession();
+		return res;
+	}
+
+	@RequestMapping(value = API_PATH + "/getPlayerInfo", method = RequestMethod.POST)
+	@OakSession
+	public @ResponseBody GetPlayerInfoResponse getPlayerInfo(@RequestBody GetPlayerInfoRequest req) {
+		logRequest("getPlayerInfo", req);
+		GetPlayerInfoResponse res = new GetPlayerInfoResponse();
+		rssService.getPlayerInfo(req, res);
+		res.setSuccess(true);
+		checkHttpSession();
+		return res;
+	}
 	//
 	// @RequestMapping(value = API_PATH + "/splitNode", method = RequestMethod.POST)
 	// @OakSession

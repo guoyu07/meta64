@@ -71,7 +71,7 @@ class Props {
      * node and puts it on the top, and then does same for 'jctCnst.TAGS'
      */
     getPropertiesInEditingOrder(node: I.NodeInfo, _props: I.PropertyInfo[]): I.PropertyInfo[] {
-        let func: Function = meta64.propOrderingFunctionsByJcrType[node.primaryTypeName];
+        let func: Function = meta64.propOrderingFunctionsByJcrType[node.type];
         if (func) {
             return func(node, _props);
         }

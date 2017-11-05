@@ -33,19 +33,19 @@ class Podcast {
 
 
     getMediaPlayerUrlFromNode(node: I.NodeInfo): string {
-        let link: I.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
+        let link: I.PropertyInfo = props.getNodeProperty("sn:rssItemLink", node);
         if (link && link.value && util.contains(link.value.toLowerCase(), ".mp3")) {
             return link.value;
         }
 
-        let uri: I.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+        let uri: I.PropertyInfo = props.getNodeProperty("sn:rssItemUri", node);
         if (uri && uri.value && util.contains(uri.value.toLowerCase(), ".mp3")) {
             return uri.value;
         }
 
-        let encUrl: I.PropertyInfo = props.getNodeProperty("meta64:rssItemEncUrl", node);
+        let encUrl: I.PropertyInfo = props.getNodeProperty("sn:rssItemEncUrl", node);
         if (encUrl && encUrl.value) {
-            let encType: I.PropertyInfo = props.getNodeProperty("meta64:rssItemEncType", node);
+            let encType: I.PropertyInfo = props.getNodeProperty("sn:rssItemEncType", node);
             if (encType && encType.value && util.startsWith(encType.value, "audio/")) {
                 return encUrl.value;
             }

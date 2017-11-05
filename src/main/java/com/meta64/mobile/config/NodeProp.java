@@ -9,7 +9,6 @@ public class NodeProp {
 
 	public static final String META6_TYPE_FOLDER = "sn:folder";
 
-	public static final String TYPE_RSS_FEED = "sn:rssfeed";
 	public static final String RSS_FEED_TITLE = "sn:rssFeedTitle";
 	public static final String RSS_FEED_DESC = "sn:rssFeedDesc";
 	public static final String RSS_FEED_URI = "sn:rssFeedUri";
@@ -22,7 +21,6 @@ public class NodeProp {
 	 */
 	public static final String RSS_FEED_SRC = "sn:rssFeedSrc";
 
-	public static final String TYPE_RSS_ITEM = "sn:rssitem";
 	public static final String RSS_ITEM_TITLE = "sn:rssItemTitle";
 	public static final String RSS_ITEM_DESC = "sn:rssItemDesc";
 	public static final String RSS_ITEM_URI = "sn:rssItemUri";

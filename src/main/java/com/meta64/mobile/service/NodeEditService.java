@@ -69,49 +69,11 @@ public class NodeEditService {
 
 		String nodeId = req.getNodeId();
 		SubNode node = api.getNode(session, nodeId);
-
-		// boolean createUnderRoot = false;
-		/*
-		 * if we are moving nodes around on the root, the root belongs to admin and needs special
-		 * access (adminRunner)
-		 */
-		// if (parentPath.equals("/" + NodeName.ROOT + "/" + NodeName.USER + "/" +
-		// sessionContext.getUserName() + "/")) {
-		// createUnderRoot = true;
-		// }
-
-		/*
-		 * If this is a publicly appendable node, then we always use admin to append a comment type
-		 * node under it. No other type of child node creation is allowed.
-		 * 
-		 * todo-1: redesign public append logic for mongo
-		 */
-		// boolean publicAppend = JcrUtil.isPublicAppend(node);
-		// boolean asAdminNow = false;
-		// if (publicAppend) {
-		// log.debug("Switch to admin user.");
-		// session.logout();
-		// session = oak.newAdminSession();
-		// asAdminNow = true;
-		// // jcrUtil.impersonateAdminCredentials(session);
-		// node = JcrUtil.findNode(session, nodeId);
-		// }
-
-		// todo-1: do we need to support user passing node name during create?
-		// String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() :
-		// req.getNewNodeName();
-
-		SubNode newNode = null;
-
+		
 		CreateNodeLocation createLoc = req.isCreateAtTop() ? CreateNodeLocation.FIRST : CreateNodeLocation.LAST;
 
-		newNode = api.createNode(session, node, null, SubNodeTypes.UNSTRUCTURED, 0L, createLoc);
+		SubNode newNode = api.createNode(session, node, null, req.getTypeName(), 0L, createLoc);
 		newNode.setProp(NodeProp.CONTENT, "");
-
-		// if (publicAppend) {
-		// newNode.setProperty(JcrProp.COMMENT_BY, curUser);
-		// newNode.setProperty(JcrProp.PUBLIC_APPEND, true);
-		// }
 
 		api.save(session, newNode);
 
@@ -131,25 +93,8 @@ public class NodeEditService {
 		log.debug("Inserting under parent: " + parentNodeId);
 		SubNode parentNode = api.getNode(session, parentNodeId);
 
-		// IMPORTANT: Only editing actual content requires a "createdBy"
-		// checking by JcrUtil.checkNodeCreatedBy
-
-		// String name = StringUtils.isEmpty(req.getNewNodeName()) ? JcrUtil.getGUID() :
-		// req.getNewNodeName();
-		//
-		SubNode newNode = null;
-		// if (req.getTypeName() != null &&
-		// !JcrConstants.NT_UNSTRUCTURED.equalsIgnoreCase(req.getTypeName())) {
-		// newNode = parentNode.addNode(name, req.getTypeName());
-		// }
-		// else {
-		newNode = api.createNode(session, parentNode, null, SubNodeTypes.UNSTRUCTURED, req.getTargetOrdinal(), CreateNodeLocation.ORDINAL);
+		SubNode newNode = api.createNode(session, parentNode, null, req.getTypeName(), req.getTargetOrdinal(), CreateNodeLocation.ORDINAL);
 		newNode.setProp(NodeProp.CONTENT, "");
-		// }
-
-		// if (!StringUtils.isEmpty(req.getTargetName())) {
-		// parentNode.orderBefore(newNode.getName(), req.getTargetName());
-		// }
 
 		api.save(session, newNode);
 		res.setNewNode(convert.convertToNodeInfo(sessionContext, session, newNode, true, true, false, -1));

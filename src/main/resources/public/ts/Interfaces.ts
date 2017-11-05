@@ -51,7 +51,7 @@ export interface NodeInfo {
     ordinal: number;
     owner: string;
     name: string;
-    primaryTypeName: string;
+    type: string;
     properties: PropertyInfo[];
     hasChildren: boolean;
     hasBinary: boolean;

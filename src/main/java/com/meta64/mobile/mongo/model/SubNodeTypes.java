@@ -4,4 +4,6 @@ package com.meta64.mobile.mongo.model;
 //support for these kind of types yet anyway.
 public class SubNodeTypes {
 	public static final String UNSTRUCTURED = "u";
+	public static final String TYPE_RSS_FEED = "sn:rssfeed";
+	public static final String TYPE_RSS_ITEM = "sn:rssitem";
 }

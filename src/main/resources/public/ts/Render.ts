@@ -87,9 +87,11 @@ export class Render {
         let ownerDisplaySpan: Span = null;
         let lastModifiedSpan: Span = null;
 
+        let typeName = node.type == "u" ? "" : node.type;
+
         if (cnst.SHOW_PATH_ON_ROWS) {
-            //not showing ordinal for now.
-            pathDiv = new Div("Path: " + node.path + " [" + node.logicalOrdinal + "]", {
+            let ordinalStr = node.logicalOrdinal != -1 ? " [" + node.logicalOrdinal + "] " : "";
+            pathDiv = new Div("Path: " + node.path + ordinalStr + typeName, {
                 "class": "path-display"
             });
         }
@@ -185,7 +187,7 @@ export class Render {
              * Special Rendering for Nodes that have a plugin-renderer
              */
             if (!renderComplete) {
-                let func: Function = meta64.renderFunctionsByJcrType[node.primaryTypeName];
+                let func: Function = meta64.renderFunctionsByJcrType[node.type];
                 if (func) {
                     renderComplete = true;
                     ret += func(node, rowStyling)
@@ -750,7 +752,7 @@ export class Render {
             //let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
             output += this.centeredButtonBar(nextButton /* + lastButton */, "paging-button-bar");
         }
-       
+
         util.setHtml("listView", output);
 
         if (meta64.codeFormatDirty) {

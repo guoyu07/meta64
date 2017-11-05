@@ -27,6 +27,7 @@ import com.meta64.mobile.response.RenderNodeResponse;
 import com.meta64.mobile.util.Convert;
 import com.meta64.mobile.util.SubNodeUtil;
 import com.meta64.mobile.util.ThreadLocals;
+import com.meta64.mobile.util.XString;
 
 /**
  * Service for rendering the content of a page. The actual page is not rendered on the server side.
@@ -73,6 +74,8 @@ public class NodeRenderService {
 		log.trace("renderNode targetId:" + targetId);
 
 		SubNode node = api.getNode(session, targetId);
+		
+		//log.debug("RENDER: "+XString.prettyPrint(node));
 
 		/*
 		 * if the node was a path type and was not found then try with the "/root" prefix before
@@ -185,6 +188,8 @@ public class NodeRenderService {
 				break;
 			}
 			SubNode n = iterator.next();
+			
+			//log.debug("RENDER["+idx+"]: "+XString.prettyPrint(n));
 
 			idx++;
 			if (idx > offset) {

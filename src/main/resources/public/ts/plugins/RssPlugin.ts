@@ -11,15 +11,15 @@ import { podcast } from "../Podcast";
 class RssPlugin {
 
     init = () => {
-        meta64.addTypeHandlers("meta64:rssfeed", rssPlugin.renderFeedNode, rssPlugin.propOrderingFeedNode);
-        meta64.addTypeHandlers("meta64:rssitem", rssPlugin.renderItemNode, rssPlugin.propOrderingItemNode);
+        meta64.addTypeHandlers("sn:rssfeed", rssPlugin.renderFeedNode, rssPlugin.propOrderingFeedNode);
+        meta64.addTypeHandlers("sn:rssitem", rssPlugin.renderItemNode, rssPlugin.propOrderingItemNode);
     }
 
     renderFeedNode = (node: I.NodeInfo, rowStyling: boolean): string => {
         let ret: string = "";
-        let title: I.PropertyInfo = props.getNodeProperty("meta64:rssFeedTitle", node);
-        let desc: I.PropertyInfo = props.getNodeProperty("meta64:rssFeedDesc", node);
-        let imgUrl: I.PropertyInfo = props.getNodeProperty("meta64:rssFeedImageUrl", node);
+        let title: I.PropertyInfo = props.getNodeProperty("sn:rssFeedTitle", node);
+        let desc: I.PropertyInfo = props.getNodeProperty("sn:rssFeedDesc", node);
+        let imgUrl: I.PropertyInfo = props.getNodeProperty("sn:rssFeedImageUrl", node);
 
         let feed: string = "";
         if (title) {
@@ -54,11 +54,11 @@ class RssPlugin {
 
     renderItemNode = (node: I.NodeInfo, rowStyling: boolean): string => {
         let ret: string = "";
-        let rssTitle: I.PropertyInfo = props.getNodeProperty("meta64:rssItemTitle", node);
-        let rssDesc: I.PropertyInfo = props.getNodeProperty("meta64:rssItemDesc", node);
-        let rssAuthor: I.PropertyInfo = props.getNodeProperty("meta64:rssItemAuthor", node);
-        let rssLink: I.PropertyInfo = props.getNodeProperty("meta64:rssItemLink", node);
-        let rssUri: I.PropertyInfo = props.getNodeProperty("meta64:rssItemUri", node);
+        let rssTitle: I.PropertyInfo = props.getNodeProperty("sn:rssItemTitle", node);
+        let rssDesc: I.PropertyInfo = props.getNodeProperty("sn:rssItemDesc", node);
+        let rssAuthor: I.PropertyInfo = props.getNodeProperty("sn:rssItemAuthor", node);
+        let rssLink: I.PropertyInfo = props.getNodeProperty("sn:rssItemLink", node);
+        let rssUri: I.PropertyInfo = props.getNodeProperty("sn:rssItemUri", node);
 
         let entry: string = "";
 
@@ -104,23 +104,23 @@ class RssPlugin {
 
     propOrderingFeedNode = (node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] => {
         let propOrder: string[] = [//
-            "meta64:rssFeedTitle",
-            "meta64:rssFeedDesc",
-            "meta64:rssFeedLink",
-            "meta64:rssFeedUri",
-            "meta64:rssFeedSrc",
-            "meta64:rssFeedImageUrl"];
+            "sn:rssFeedTitle",
+            "sn:rssFeedDesc",
+            "sn:rssFeedLink",
+            "sn:rssFeedUri",
+            "sn:rssFeedSrc",
+            "sn:rssFeedImageUrl"];
 
         return props.orderProps(propOrder, properties);
     }
 
     propOrderingItemNode = (node: I.NodeInfo, properties: I.PropertyInfo[]): I.PropertyInfo[] => {
         let propOrder: string[] = [//
-            "meta64:rssItemTitle",
-            "meta64:rssItemDesc",
-            "meta64:rssItemLink",
-            "meta64:rssItemUri",
-            "meta64:rssItemAuthor"];
+            "sn:rssItemTitle",
+            "sn:rssItemDesc",
+            "sn:rssItemLink",
+            "sn:rssItemUri",
+            "sn:rssItemAuthor"];
 
         return props.orderProps(propOrder, properties);
     }

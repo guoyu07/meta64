@@ -17,7 +17,7 @@ public class NodeInfo {
 	private Long logicalOrdinal;
 	private Long ordinal;
 	private String name;
-	private String primaryTypeName;
+	private String type;
 	private List<PropertyInfo> properties;
 	private boolean hasChildren;
 	private boolean hasBinary;
@@ -39,7 +39,7 @@ public class NodeInfo {
 	}
 
 	public NodeInfo(String id, String path, String name, String owner, Long ordinal, String lastModified, List<PropertyInfo> properties, boolean hasChildren,
-			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String primaryTypeName, long logicalOrdinal) {
+			boolean hasBinary, boolean binaryIsImage, long binVer, int width, int height, String type, long logicalOrdinal) {
 		this.id = id;
 		this.path = path;
 		this.name = name;
@@ -53,7 +53,7 @@ public class NodeInfo {
 		this.binVer = binVer;
 		this.width = width;
 		this.height = height;
-		this.primaryTypeName = primaryTypeName;
+		this.type = type;
 		this.logicalOrdinal = logicalOrdinal;
 	}
 
@@ -137,12 +137,12 @@ public class NodeInfo {
 		this.height = height;
 	}
 
-	public String getPrimaryTypeName() {
-		return primaryTypeName;
+	public String getType() {
+		return type;
 	}
 
-	public void setPrimaryTypeName(String primaryTypeName) {
-		this.primaryTypeName = primaryTypeName;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getUid() {

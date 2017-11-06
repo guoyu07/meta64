@@ -19,7 +19,7 @@ import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mail.JcrOutboxMgr;
 import com.meta64.mobile.model.RefInfo;
 import com.meta64.mobile.model.UserPreferences;
-import com.meta64.mobile.mongo.AccessControlUtil;
+import com.meta64.mobile.mongo.AclService;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.RunAsMongoAdmin;
@@ -81,7 +81,7 @@ public class UserManagerService {
 	private SubNodeUtil jcrUtil;
 
 	@Autowired
-	private AccessControlUtil acu;
+	private AclService acu;
 
 	@Autowired
 	private Encryptor encryptor;

@@ -772,7 +772,7 @@ public class MongoApi {
 		// MatchOperation match = new MatchOperation(Criteria.where("quantity").gt(quantity));
 		// GroupOperation group = Aggregation.group("giftCard").sum("giftCard").as("count");
 		// Aggregation aggregate = Aggregation.newAggregation(match, group);
-		// Order is drprecated
+		// Order is deprecated
 		// AggregationResults<Order> orderAggregate = ops.aggregate(aggregate, "order",
 		// Order.class);
 		// Aggregation agg = Aggregation.newAggregation(//

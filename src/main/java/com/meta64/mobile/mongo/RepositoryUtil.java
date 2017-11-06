@@ -41,7 +41,6 @@ public class RepositoryUtil {
 
 	private HashSet<String> testAccountNames = new HashSet<String>();
 
-	// jcr
 	// private void initPageNodeFromClasspath(Session session, Node node, String classpath) {
 	// try {
 	// Resource resource = SpringContextUtil.getApplicationContext().getResource(classpath);

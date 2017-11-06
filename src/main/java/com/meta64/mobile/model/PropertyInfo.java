@@ -1,7 +1,7 @@
 package com.meta64.mobile.model;
 
 /**
- * Holds the value of a single JCR property (i.e. a 'value' on a JCR Node)
+ * Holds the value of a single property (i.e. a 'value' on a Node)
  */
 public class PropertyInfo {
 	private String type;

@@ -23,6 +23,7 @@ import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoRepository;
 import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.RunAsMongoAdmin;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
 import com.meta64.mobile.request.GetPlayerInfoRequest;
@@ -31,7 +32,6 @@ import com.meta64.mobile.response.GetPlayerInfoResponse;
 import com.meta64.mobile.rss.RssReader;
 import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.rss.model.PlayerInfo;
-import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.DateUtil;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.SubNodeUtil;
@@ -188,7 +188,7 @@ public class RssService {
 	}
 
 	private void init(MongoSession session) {
-		feedsRootNode = jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.RSS + "/", NodeName.RSS_FEEDS, "# RSS Feeds");
+		feedsRootNode = jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.PUBLIC + "/", NodeName.FEEDS, "# RSS Feeds");
 		
 		//todo-0: will come back to this....
 		//AccessControlUtil.makeNodePublic(session, feedsRootNode);

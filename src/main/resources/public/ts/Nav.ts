@@ -83,7 +83,7 @@ class Nav {
     openRssFeedsNode(): void {
         nav.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/rss/feeds",
+            "nodeId": "/r/public/feeds",
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": nav.mainOffset,

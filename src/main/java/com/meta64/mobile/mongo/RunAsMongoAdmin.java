@@ -1,12 +1,10 @@
-package com.meta64.mobile.user;
+package com.meta64.mobile.mongo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.meta64.mobile.mongo.MongoApi;
-import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.util.MongoRunnable;
 
 /**

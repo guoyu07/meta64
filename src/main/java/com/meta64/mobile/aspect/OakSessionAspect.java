@@ -30,7 +30,7 @@ import com.meta64.mobile.util.ThreadLocals;
  * This is the core (and maybe only) chunk of AOP that we use in this app, that wraps the processing
  * of a JSON call and handles all the boilerplate for performing a JSON call on the server which
  * comes from the JQuery ajax calls from the client. Primarily we use the cross cutting concerns of
- * user login, and JCR session lifecycle.
+ * user login, and mongo session lifecycle.
  * <p>
  * Remember, Spring AOP is a bit awkward because of the use of Proxies. Problems WILL occur if you
  * have a method in a bean that's not annotated calling a method in a bean that IS annotated,
@@ -60,7 +60,6 @@ public class OakSessionAspect {
 		}
 
 		Object ret = null;
-		// Session session = null;
 		MongoSession mongoSession = null;
 		SessionContext sessionContext = (SessionContext) SpringContextUtil.getBean(SessionContext.class);
 		try {
@@ -123,11 +122,8 @@ public class OakSessionAspect {
 
 	/* Creates a logged in session for any method call for this join point */
 	private MongoSession login(Object req /* final Object[] args*/, SessionContext sessionContext) {
-		
 		String userName = NodePrincipal.ANONYMOUS;
 		String password = NodePrincipal.ANONYMOUS;
-
-		//Object req = (args != null && args.length > 0) ? args[0] : null;
 
 		LoginResponse res = null;
 		if (req instanceof LoginRequest) {

@@ -29,7 +29,6 @@ public class NodeProp {
 	public static final String RSS_ITEM_ENC_TYPE = "sn:rssItemEncType";
 	public static final String RSS_ITEM_ENC_LENGTH = "sn:rssItemEncLength";
 	public static final String RSS_ITEM_ENC_URL = "sn:rssItemEncUrl";
-	// public static final String RSS_ENTRY_IMAGE_URL = "rssEntryImageUrl";
 
 	public static final String MERKLE_HASH = "sn:merkle";
 

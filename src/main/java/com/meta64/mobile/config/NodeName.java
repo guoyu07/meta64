@@ -9,7 +9,8 @@ public class NodeName {
 	public static final String SYSTEM = "sys";
 	public static final String OUTBOX = "outbox";
 
+	public static final String PUBLIC = "public";	
 	public static final String FILE_SEARCH_RESULTS = "fileSearchResults";
-	public static final String RSS = "rss";
-	public static final String RSS_FEEDS = "feeds";
+	//public static final String RSS = "rss";
+	public static final String FEEDS = "feeds";
 }

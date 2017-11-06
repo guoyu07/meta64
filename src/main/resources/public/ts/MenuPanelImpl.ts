@@ -39,7 +39,7 @@ export default class MenuPanel extends Comp {
                 new MenuItem("Your Home", nav.navHome),
 
                 //todo-1: disabled during mongo conversion
-                //new MenuItem("RSS Feeds", nav.openRssFeedsNode),
+                new MenuItem("RSS Feeds", nav.openRssFeedsNode),
 
                 /* currently this Sample Content is the book 'War and Peace' */
                 new MenuItem("Sample Content", nav.browseSampleContent)

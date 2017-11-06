@@ -38,13 +38,13 @@ public class JsonToSubNodeService {
 		/* Translate old format properties before saving */
 		if (propName.equalsIgnoreCase("jcr:created")) {
 			propName = SubNode.FIELD_CREATE_TIME;
-			Date date = parseJankDate((String) propVal);
+			Date date = DateUtil.parse((String) propVal);
 			node.setCreateTime(date);
 			return;
 		}
 		else if (propName.equalsIgnoreCase("jcr:lastModified")) {
 			propName = SubNode.FIELD_MODIFY_TIME;
-			Date date = parseJankDate((String) propVal);
+			Date date = DateUtil.parse((String) propVal);
 			node.setModifyTime(date);
 			/*
 			 * set this flag so we don't overwrite the mod time we are trying to import when the
@@ -74,15 +74,6 @@ public class JsonToSubNodeService {
 		else {
 			throw new RuntimeException("Type not yet handled: " + propVal.getClass().getName() + " propName: " + propName);
 		}
-	}
-
-	private Date parseJankDate(String dateStr) {
-		/* due to bug in older code we fix a formatting error where there was a missing space */
-		dateStr = dateStr.replace("PMCDT", "PM");
-		dateStr = dateStr.replace("PMCST", "PM");
-		dateStr = dateStr.replace("AMCDT", "AM");
-		dateStr = dateStr.replace("AMCST", "AM");
-		return DateUtil.parse(dateStr);
 	}
 
 	/* There will be a better map-lookup implementation for this eventually */

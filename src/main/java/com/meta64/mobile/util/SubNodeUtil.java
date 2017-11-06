@@ -19,7 +19,7 @@ import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
 
 /**
- * Assorted general utility functions related to JCR nodes.
+ * Assorted general utility functions related to SubNodes.
  * <p>
  * todo-1: there's a lot of code calling these static methods, but need to transition to singleton
  * scope bean and non-static methods.
@@ -27,9 +27,6 @@ import com.meta64.mobile.mongo.model.SubNodeTypes;
 @Component
 public class SubNodeUtil {
 	private static final Logger log = LoggerFactory.getLogger(SubNodeUtil.class);
-
-	@Autowired
-	private AppProp appProp;
 
 	@Autowired
 	private MongoApi api;

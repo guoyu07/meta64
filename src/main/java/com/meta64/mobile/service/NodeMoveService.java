@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.RunAsMongoAdmin;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.request.DeleteNodesRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
@@ -15,7 +16,6 @@ import com.meta64.mobile.request.SetNodePositionRequest;
 import com.meta64.mobile.response.DeleteNodesResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.SetNodePositionResponse;
-import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.ThreadLocals;
 
 /**

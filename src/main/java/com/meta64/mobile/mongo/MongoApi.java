@@ -70,7 +70,7 @@ public class MongoApi {
 	private AppProp appProp;
 
 	@Autowired
-	private SubNodeUtil jcrUtil;
+	private SubNodeUtil apiUtil;
 
 	private static final MongoSession adminSession = MongoSession.createFromUser(NodePrincipal.ADMIN);
 	private static final MongoSession anonSession = MongoSession.createFromUser(NodePrincipal.ANONYMOUS);
@@ -1122,7 +1122,7 @@ public class MongoApi {
 
 		SubNode adminNode = getUserNodeByUserName(getAdminSession(), adminUser);
 		if (adminNode == null) {
-			adminNode = jcrUtil.ensureNodeExists(session, "/", NodeName.ROOT, "Repository Root");
+			adminNode = apiUtil.ensureNodeExists(session, "/", NodeName.ROOT, "Repository Root");
 
 			adminNode.setProp(NodeProp.USER, NodePrincipal.ADMIN);
 			adminNode.setProp(NodeProp.PASSWORD, adminPwd);
@@ -1130,8 +1130,8 @@ public class MongoApi {
 			adminNode.setProp(NodeProp.USER_PREF_EDIT_MODE, false);
 			save(session, adminNode);
 
-			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.USER, "Root of All Users");
-			jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.OUTBOX, "System Email Outbox");
+			apiUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.USER, "Root of All Users");
+			apiUtil.ensureNodeExists(session, "/" + NodeName.ROOT, NodeName.OUTBOX, "System Email Outbox");
 		}
 	}
 }

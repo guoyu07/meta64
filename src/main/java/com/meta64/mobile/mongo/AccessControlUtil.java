@@ -1,4 +1,4 @@
-package com.meta64.mobile.user;
+package com.meta64.mobile.mongo;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.NodeProp;
-import com.meta64.mobile.mongo.MongoApi;
-import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.MongoPrincipal;
 import com.meta64.mobile.mongo.model.SubNode;
 

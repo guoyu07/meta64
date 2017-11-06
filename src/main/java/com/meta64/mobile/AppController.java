@@ -24,7 +24,9 @@ import com.meta64.mobile.aspect.OakSession;
 import com.meta64.mobile.config.SessionContext;
 import com.meta64.mobile.config.SpringContextUtil;
 import com.meta64.mobile.image.CaptchaMaker;
+import com.meta64.mobile.mongo.AclService;
 import com.meta64.mobile.mongo.MongoApi;
+import com.meta64.mobile.mongo.RunAsMongoAdmin;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.AnonPageLoadRequest;
 import com.meta64.mobile.request.ChangePasswordRequest;
@@ -89,7 +91,6 @@ import com.meta64.mobile.response.SetNodePositionResponse;
 import com.meta64.mobile.response.SetPlayerInfoResponse;
 import com.meta64.mobile.response.SignupResponse;
 import com.meta64.mobile.response.UploadFromUrlResponse;
-import com.meta64.mobile.service.AclService;
 import com.meta64.mobile.service.AttachmentService;
 import com.meta64.mobile.service.ExportTxtService;
 import com.meta64.mobile.service.ExportZipService;
@@ -106,7 +107,6 @@ import com.meta64.mobile.service.RssService;
 import com.meta64.mobile.service.SolrSearchService;
 import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.service.UserManagerService;
-import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.NotLoggedInException;
 import com.meta64.mobile.util.ThreadLocals;
@@ -226,7 +226,6 @@ public class AppController {
 		}
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
-
 		sessionContext.setUrlId(id);
 
 		/*

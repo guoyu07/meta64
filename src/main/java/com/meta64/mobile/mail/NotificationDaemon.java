@@ -15,8 +15,8 @@ import com.meta64.mobile.config.AppProp;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.RunAsMongoAdmin;
 import com.meta64.mobile.mongo.model.SubNode;
-import com.meta64.mobile.user.RunAsMongoAdmin;
 
 /**
  * Deamon for sending emails periodically.

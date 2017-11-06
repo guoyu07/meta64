@@ -1,4 +1,4 @@
-package com.meta64.mobile.service;
+package com.meta64.mobile.mongo;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.meta64.mobile.config.NodePrincipal;
-import com.meta64.mobile.mongo.MongoApi;
-import com.meta64.mobile.mongo.MongoSession;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.request.AddPrivilegeRequest;
 import com.meta64.mobile.request.GetNodePrivilegesRequest;
@@ -20,6 +18,7 @@ import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.response.AddPrivilegeResponse;
 import com.meta64.mobile.response.GetNodePrivilegesResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
+import com.meta64.mobile.service.UserManagerService;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.ThreadLocals;
 import com.meta64.mobile.util.XString;

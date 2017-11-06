@@ -1,7 +1,7 @@
 package com.meta64.mobile.config;
 
 /**
- * Constants defined for pre-defined JCR user names.
+ * Constants defined for pre-defined user names.
  *
  * WARNING: These principles are hardcoded into some TypeScript, to be careful if renaming any, but that should never be required.
  *

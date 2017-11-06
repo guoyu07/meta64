@@ -13,9 +13,9 @@ import com.meta64.mobile.config.NodePrincipal;
 import com.meta64.mobile.config.NodeProp;
 import com.meta64.mobile.mongo.MongoApi;
 import com.meta64.mobile.mongo.MongoSession;
+import com.meta64.mobile.mongo.RunAsMongoAdmin;
 import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
-import com.meta64.mobile.user.RunAsMongoAdmin;
 import com.meta64.mobile.util.SubNodeUtil;
 
 /**
@@ -42,7 +42,7 @@ public class JcrOutboxMgr {
 	private String mailBatchSize = "10";
 
 	@Autowired
-	private SubNodeUtil jcrUtil;
+	private SubNodeUtil apiUtil;
 
 	/*
 	 * node=Node that was created. userName = username of person who just created node.
@@ -108,6 +108,6 @@ public class JcrOutboxMgr {
 	 * Get node that contains all preferences for this user, as properties on it.
 	 */
 	public SubNode getSystemOutbox(MongoSession session) {
-		return jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.OUTBOX + "/", NodeName.SYSTEM, "System Messages");
+		return apiUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.OUTBOX + "/", NodeName.SYSTEM, "System Messages");
 	}
 }

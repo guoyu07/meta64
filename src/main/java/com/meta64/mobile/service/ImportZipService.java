@@ -49,10 +49,10 @@ public class ImportZipService {
 	private MimeUtil mimeUtil;
 
 	@Autowired
-	private SubNodeUtil jcrUtil;
+	private SubNodeUtil apiUtil;
 
 	@Autowired
-	private JsonToSubNodeService jsonToJcrService;
+	private JsonToSubNodeService jsonToNodeService;
 	
 	@Autowired
 	private SessionContext sessionContext;
@@ -134,7 +134,7 @@ public class ImportZipService {
 	private SubNode ensureNodeExists(String path) {
 		SubNode folderNode = folderMap.get(path);
 		if (folderNode == null) {
-			folderNode = jcrUtil.ensureNodeExists(session, targetPath, path, null);
+			folderNode = apiUtil.ensureNodeExists(session, targetPath, path, null);
 		}
 
 		if (folderNode == null) {
@@ -189,7 +189,7 @@ public class ImportZipService {
 				curFileName = fileName;
 				String json = IOUtils.toString(zis, "UTF-8");
 				curNode = ensureNodeExists(path);
-				jsonToJcrService.importJsonContent(json, curNode);
+				jsonToNodeService.importJsonContent(json, curNode);
 			}
 			else if (mimeUtil.isTextTypeFileName(fileName)) {
 				curContent = IOUtils.toString(zis, "UTF-8");

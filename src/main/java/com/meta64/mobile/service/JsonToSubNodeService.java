@@ -35,29 +35,6 @@ public class JsonToSubNodeService {
 	public void setProp(SubNode node, String propName, Object propVal) {
 		if (propName == null || propVal == null) return;
 
-		/* Translate old format properties before saving */
-		if (propName.equalsIgnoreCase("jcr:created")) {
-			propName = SubNode.FIELD_CREATE_TIME;
-			Date date = DateUtil.parse((String) propVal);
-			node.setCreateTime(date);
-			return;
-		}
-		else if (propName.equalsIgnoreCase("jcr:lastModified")) {
-			propName = SubNode.FIELD_MODIFY_TIME;
-			Date date = DateUtil.parse((String) propVal);
-			node.setModifyTime(date);
-			/*
-			 * set this flag so we don't overwrite the mod time we are trying to import when the
-			 * mongo event listener handles this object for a save.
-			 */
-			node.setUpdateModTimeOnSave(false);
-			return;
-		}
-
-		if (propName.startsWith("jcr:") || propName.startsWith("meta64:")) {
-			return;
-		}
-		
 		if (propVal instanceof String) {
 			node.setProp(propName, (String) propVal);
 		}
@@ -65,10 +42,10 @@ public class JsonToSubNodeService {
 			node.setProp(propName, (Date) propVal);
 		}
 		else if (propVal instanceof Integer) {
-			node.setProp(propName, (Integer)propVal);
+			node.setProp(propName, (Integer) propVal);
 		}
 		else if (propVal instanceof Long) {
-			node.setProp(propName, (Long)propVal);
+			node.setProp(propName, (Long) propVal);
 		}
 		// todo-1: put in rest of types.
 		else {
@@ -78,7 +55,13 @@ public class JsonToSubNodeService {
 
 	/* There will be a better map-lookup implementation for this eventually */
 	public void setPropsFromMap(HashMap<String, ?> map, SubNode node) {
-		//log.debug("_____");
+		// log.debug("_____");
+
+		String type = (String) map.get("type");
+		if (type != null) {
+			node.setType(type);
+		}
+
 		Object props = map.get("props");
 		if (props instanceof ArrayList<?>) {
 			for (Object elm : (ArrayList<?>) props) {

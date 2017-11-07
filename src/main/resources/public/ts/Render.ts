@@ -90,7 +90,7 @@ export class Render {
         let typeName = node.type == "u" ? "" : node.type;
 
         if (cnst.SHOW_PATH_ON_ROWS) {
-            let ordinalStr = node.logicalOrdinal != -1 ? " [" + node.logicalOrdinal + "] " : "";
+            let ordinalStr = node.logicalOrdinal != -1 ? " [" + node.logicalOrdinal + "] " : " ";
             pathDiv = new Div("Path: " + node.path + ordinalStr + typeName, {
                 "class": "path-display"
             });

@@ -192,7 +192,7 @@ public class ExportZipService {
 			ExportNodeInfo expInfo = new ExportNodeInfo();
 			expInfo.setPath(node.getPath());
 			expInfo.setId(node.getId().toHexString());
-			// expInfo.setType(node.getPrimaryNodeType().getName());
+			expInfo.setType(node.getType());
 			expInfo.setProps(allProps);
 			String json = jsonWriter.writeValueAsString(expInfo);
 

@@ -50,7 +50,7 @@ public class RssReader {
 
 	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)Chrome/53.0.2785.143Safari/537.36";
 	private static final int maxFileSize = 10 * 1024 * 1024;
-	public static final int MAX_RSS_ENTRIES = 5; //todo-0: set back to 50
+	public static final int MAX_RSS_ENTRIES = 50;
 
 	@Autowired
 	private RssService rssService;

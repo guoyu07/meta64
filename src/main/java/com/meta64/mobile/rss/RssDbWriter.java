@@ -132,7 +132,7 @@ public class RssDbWriter {
 			//log.debug("Writing RSSItem: "+XString.prettyPrint(newNode));
 			
 			//todo-0: This works, with the save HERE, and i consider it a bug, because i called createNode above AND this is inside an admin runner
-			//which SHOULD be triggering the save, so the fact that I have to force a save here, while it gets things working IS a bug.
+			//which SHOULD be triggering the save, so the fact that I have to force a save here, IS a bug.
 			api.save(session,  newNode);
 		}
 		catch (Exception e) {

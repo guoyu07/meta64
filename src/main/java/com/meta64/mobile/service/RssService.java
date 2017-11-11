@@ -189,10 +189,6 @@ public class RssService {
 
 	private void init(MongoSession session) {
 		feedsRootNode = jcrUtil.ensureNodeExists(session, "/" + NodeName.ROOT + "/" + NodeName.PUBLIC + "/", NodeName.FEEDS, "# RSS Feeds");
-		
-		//todo-0: will come back to this....
-		//AccessControlUtil.makeNodePublic(session, feedsRootNode);
-		/* todo-1: not sure if I need disable_insert here or not */
 
 		try {
 			feedsRootNode.setProp(NodeProp.DISABLE_INSERT, "y");

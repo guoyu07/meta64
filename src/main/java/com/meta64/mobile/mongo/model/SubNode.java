@@ -174,7 +174,7 @@ public class SubNode {
 		if (path == null) {
 			pathHash = "";
 		}
-		/* todo-0: need to add smarts to have this not update the pathHash if it's already going to match, but not sure how to ensiure that. */
+		/* todo-0: need to add smarts to have this not update the pathHash if it's already going to match, but not sure how to ensure that. */
 		else { //if (this.path == null || pathHash==null || !this.path.equals(path)) {
 			pathHash = Sha256Service.getHashOfString(path);
 		}

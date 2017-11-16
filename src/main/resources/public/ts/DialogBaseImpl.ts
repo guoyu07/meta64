@@ -10,6 +10,7 @@ import { Comp } from "./widget/base/Comp";
 import { domBind } from "./DomBind";
 import { Dialog } from "./widget/Dialog";
 
+//todo-0: Get the NMP Typings for this!
 declare var Polymer;
 
 /*

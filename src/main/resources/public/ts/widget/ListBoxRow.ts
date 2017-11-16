@@ -41,7 +41,7 @@ export class ListBoxRow extends Comp {
         this.listBox = listBox;
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.content);
     }
 }

@@ -14,7 +14,7 @@ export class Dialog extends Comp {
         });
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.dialog(this.attribs, this.renderChildren());
     }
 }

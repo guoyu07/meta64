@@ -35,7 +35,7 @@ export class TextField extends Comp {
         util.delayedFocus(this.getId());
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.input(this.attribs);
     }
 }

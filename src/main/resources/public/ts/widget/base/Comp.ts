@@ -1,9 +1,37 @@
+/// <reference path="../../types.d.ts" />
+
 console.log("Comp.ts");
 
 import { util } from "../../Util";
 import { domBind } from "../../DomBind";
+import { tag } from "../../Tag";
+import React from "react";
+import ReactDOM from "react-dom";
 
-export abstract class Comp {
+/* 
+Right now this component base class is a hybrid which can function EITHER as my TypeScript Widget Component
+(*which works more like the JavaSwing paradigm, where you do not use ANY HTML/JSX) OR as a ReactJS.
+
+I did this as a proof of concept for testing out ReactJS and also to provide a seamless upgrade path so that 
+i can translate as much or as little of the TypeScript Widgets to ReactJS as I want.
+
+UPDATE: Actually the way my non-react components work is by concatenating text of rendered HTML together by calling
+getChildren/renderChildren resursively, and I think what i should experiment with next is how to keep the same approach
+of having a 'children' array and recursively processing them but what I can do is during rendering do the
+equivalent ReactJS call to concatenate elements, and in this way maintain precisely the same way of defining
+components that I currently have where I build up a large "Component Graph". In other words the code here
+pre-react was already a general "Component Graph", so there is no reason that we can't simply write code that
+uses React.createElement() calls manually to construct a root object, rooted at whatever place our object graph
+detects a react element, and in this way only the minimum number of  ReactDOM.render() calls will be made AND the current
+way our code looks (with my own Component Graph exactly looking as it looked pre-react, still will work). Another way 
+to say this is that the 'consumer code' that is using my "components" will not even know or care of ReactJS is 
+being used or not. This means I have completely "abstracted out" the framework itself. We could plug vue.js 
+underneath and it would still all work!!! So the truely 'novel' thing about the SubNode architecture is that 
+it is completely independent of any framework yet IS using any framework, and in a CLEAN way.
+
+And to sum it up: The SubNode Widget Architecture is an Abstraction Layer on top of the Framework Layer
+*/
+export abstract class Comp extends React.Component {
 
     private static guid: number = 0;
 
@@ -23,7 +51,8 @@ export abstract class Comp {
     isEnabledFunc: Function;
     isVisibleFunc: Function;
 
-    constructor(attribs: Object) {
+    constructor(attribs: Object, private isReact: boolean = false) {
+        super({});
         this.attribs = attribs || {};
         this.children = [];
         let id = "c" + Comp.nextGuid();
@@ -31,6 +60,17 @@ export abstract class Comp {
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup
         Comp.idToCompMap[id] = this;
+
+        /* If this is a react component, we render it onto the element once we have the element, and what is always going on 
+        here is that we render an empty div using our normal pipeline of rendering, and then the div gets
+        populated by the react render once it already exists.
+        */
+        //delaying this to be supported using 'reactiveRender()' pipeline instead.
+        // if (isReact) {
+        //     this.whenElm(() => {
+        //         ReactDOM.render(this.getJsx(), document.getElementById(this.getId()));
+        //     });
+        // }
     }
 
     /* Function refreshes all enablement and visibility based on current state of app */
@@ -45,7 +85,7 @@ export abstract class Comp {
 
         //recursively drill down and do entire tree. For efficiency I need to modify this to be 'breadth' first?
         //let visibleChildrenCount = 0;
-        util.forEachArrElm(this.children, function(child, idx) {
+        util.forEachArrElm(this.children, function (child, idx) {
             if (child) {
                 child.refreshState();
                 // if (child.visible) {
@@ -55,14 +95,14 @@ export abstract class Comp {
         });
     }
 
-    setDomAttr = (attrName : string, attrVal : string) => {
+    setDomAttr = (attrName: string, attrVal: string) => {
         this.whenElm((elm) => {
             elm.setAttribute(attrName, attrVal);
             this.attribs[attrName] = attrVal;
         });
     }
 
-    bindOnClick = (callback : Function) => {
+    bindOnClick = (callback: Function) => {
         domBind.addOnClick(this.getId(), callback);
     }
 
@@ -94,7 +134,7 @@ export abstract class Comp {
     setVisibleIfAnyChildrenVisible() {
         let thisVisible = false;
 
-        util.forEachArrElm(this.children, function(child, idx) {
+        util.forEachArrElm(this.children, function (child, idx) {
             if (child) {
                 /* if we found a visible child, we can set visible to true, and end this forEach iteration, because we don't need any
                 more info. We're done. It's gonna be visible */
@@ -165,13 +205,13 @@ export abstract class Comp {
         element exists right now, and if so we render and don't rely on domBind async */
         elm = elm || this.getElement();
         if (elm) {
-            elm.innerHTML = this.render();
+            elm.innerHTML = this.renderHtml();
             return;
         }
 
         this.renderPending = true;
         domBind.whenElm(this.getId(), (elm) => {
-            elm.innerHTML = this.render();
+            elm.innerHTML = this.renderHtml();
             this.renderPending = false;
         });
     }
@@ -213,10 +253,13 @@ export abstract class Comp {
     }
 
     renderChildren = (): string => {
+        if (this.isReact) {
+            throw "Don't call renderChildren on react component. Call reactRenderChildren instead.";
+        }
         let html = "";
-        util.forEachArrElm(this.children, function(child, idx) {
+        util.forEachArrElm(this.children, function (child : Comp, idx) {
             if (child) {
-                let childRender = child.render();
+                let childRender = child.renderHtml();
                 if (childRender) {
                     html += childRender;
                 }
@@ -225,7 +268,41 @@ export abstract class Comp {
         return html;
     }
 
-    render = (): string => {
-        return this.renderChildren();
+    reactRenderChildren = (): React.ReactNode[] => {
+        if (!this.isReact) {
+            throw "Don't call reactRenderChildren on react component. Call renderChildren instead.";
+        }
+        let ret : React.ReactNode[] = [];
+
+        //todo-1: use a mapper ('array.map(x=>{})') to perform this transformation 
+        util.forEachArrElm(this.children, function (child : Comp, idx) {
+            if (child) {
+                ret.push(child.reactRender());
+            }
+        });
+        return ret;
+    }
+
+    reactRender = (): any /* React.DetailedReactHTMLElement???? */ => {
+        return null;
+    }
+
+    //Reactive Components need to override this, to control the rendering.
+    // getJsx = (): JSX.Element => {
+    //     return null;
+    // }
+
+    renderHtml = (): string => {
+        if (this.isReact) {
+            this.whenElm(() => {
+                //ReactDOM.render(this.getJsx(), document.getElementById(this.getId()));
+                ReactDOM.render(this.reactRender(), document.getElementById(this.getId()));
+            });
+        
+            return tag.div(this.attribs, "");
+        }
+        else {
+            return this.renderChildren();
+        }
     }
 }

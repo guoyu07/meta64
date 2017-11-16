@@ -6,3 +6,12 @@ http://sbnode.com?id=/r/public/home
 
 http://www.sbnode.com/?id=/r/public/feeds
 
+## Adding ReactJS Next (Date: 11/2017)
+
+Most of the tech notes are not in this readme, but i'm putting this ReactJS note here for the few
+people following this project: I have completed a test (see ButtonBarRe.tsx, ButtonRe.tsx, and HeaderRe.tsx)
+of how ReactJS can integrate into this app without causing any significant redesign. It turns out the 
+Widget system already in place can sit on top of ReactJS very easily because it was already doing the same kind 
+of composition that ReacJS does. So i'm checking in the code now with this ReactJS test in place (in the Login Dialog 
+as the place where it was Reactified), however the next thing I'll do is put in place a more standard build process, 
+and will be trying out WebPack.

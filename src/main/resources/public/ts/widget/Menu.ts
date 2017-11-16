@@ -26,7 +26,7 @@ export class Menu extends Comp {
     }
 
     //comes from original 'makeTopLevelMenu'
-    render = (): string => {
+    renderHtml = (): string => {
         let paperItem = tag.menuItem({
             class: "menu-trigger"
         }, this.name);

@@ -18,7 +18,7 @@ export class Captcha extends Comp {
         });
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.img(this.attribs);
     }
 }

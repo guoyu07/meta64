@@ -12,7 +12,7 @@ export class Span extends Comp {
     }
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.span(this.attribs, (this.content || "") + this.renderChildren());
     }
 }

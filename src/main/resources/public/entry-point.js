@@ -40,13 +40,18 @@ addEventListener("WebComponentsReady", function() {
 	console.log("WebComponentsReady event. Init modules.");
 
 	if (bundled) {
-		// when running bundled, no special config() is equired.
+		SystemJS.config({
+			map: {
+				"react" : "/js/react/react.js", 
+				"react-dom": "/js/react/react-dom.js" 
+			}
+		});
 	} else {
 		SystemJS.config({
-			// This attempt at cache busting also failed...
-			// map: {
-			// cachebuster: '/js/systemjs/cachebuster.js'
-			// },
+			map: {
+				"react" : "/js/react/react.js", 
+				"react-dom": "/js/react/react-dom.js" 
+			},
 
 			baseURL : '/js',
 			packages : {
@@ -72,12 +77,13 @@ addEventListener("WebComponentsReady", function() {
 
 	if (bundled) {
 		console.log("Calling SystemJS.import(" + bundleFile + ")");
-
+		
 		System.import(bundleFile).then(function(module) {
 			System.import("Meta64").then(function(module) {
 				module.meta64.initApp();
 			});
 		});
+
 	} else {
 		System.import("/js/Meta64").then(function(module) {
 			module.meta64.initApp();

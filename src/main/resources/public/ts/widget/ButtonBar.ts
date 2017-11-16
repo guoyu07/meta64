@@ -12,7 +12,7 @@ export class ButtonBar extends Comp {
         this.setChildren(initialButtons);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.renderChildren());
     }
 }

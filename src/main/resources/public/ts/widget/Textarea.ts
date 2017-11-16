@@ -32,7 +32,7 @@ export class Textarea extends Comp {
         }
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.textarea(this.attribs);
     }
 }

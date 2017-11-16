@@ -3,3 +3,4 @@ src/main/resources/public/js/meta64/*.js
 src/main/resources/public/js/meta64/*.map
 src/main/resources/public/js/meta64/dlg/*.js
 src/main/resources/public/js/meta64/dlg/*.map
+/node_modules/

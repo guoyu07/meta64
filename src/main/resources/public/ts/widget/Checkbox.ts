@@ -27,7 +27,7 @@ export class Checkbox extends Comp {
         return elm && (<any>elm).checked;
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.checkbox(this.attribs);
     }
 }

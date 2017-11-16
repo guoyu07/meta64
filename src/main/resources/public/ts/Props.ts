@@ -139,7 +139,7 @@ class Props {
                                 this.decryptToClipboard(property.value, decryptButton);
                             })
                         ]);
-                        propValCell = new PropTableCell(comps.render(), valCellAttrs);
+                        propValCell = new PropTableCell(comps.renderHtml(), valCellAttrs);
                     }
                     else if (!property.values) {
                         propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);

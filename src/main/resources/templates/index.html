@@ -55,13 +55,12 @@
         <link
             rel="stylesheet"
             href="/css/meta64.css?ver={{cacheVersion}}" />
-      
+        
         <!-- 
         <script src="https://apis.google.com/js/platform.js" async="async" defer="defer"></script>    
         -->
         <script type="text/javascript">
             /*<![CDATA[*/    
-            
                 //google signon is a work in progress, not functional yet.
                 function onSignIn(googleUser) {
                     var profile = googleUser.getBasicProfile();
@@ -77,6 +76,7 @@
                 var bundleFile = "{{html.bundle}}";
         	/*]]>*/
         </script>
+        
         <script type="text/javascript" src="/js/systemjs/system.min.js"></script>   
         <script type="text/javascript" src="/entry-point.js"></script>        
             

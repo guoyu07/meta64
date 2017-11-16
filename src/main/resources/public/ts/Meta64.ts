@@ -219,7 +219,7 @@ class Meta64 {
             handle the particular type of circular reference this causes if not loaded async by Factory */
             Factory.createDefault("MenuPanelImpl", (menuPanel: MenuPanel) => {
                 this.menuPanel = menuPanel;
-                util.setHtml("mainAppMenu", menuPanel.render());
+                util.setHtml("mainAppMenu", menuPanel.renderHtml());
                 meta64.refreshAllGuiEnablement();
             });
         }

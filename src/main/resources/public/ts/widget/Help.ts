@@ -10,7 +10,7 @@ export class Help extends Comp {
         super(null);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.text);
     }
 }

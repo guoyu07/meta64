@@ -15,7 +15,7 @@ export class Progress extends Comp {
         });
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.progress(this.attribs);
     }
 }

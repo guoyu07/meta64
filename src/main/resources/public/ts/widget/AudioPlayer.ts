@@ -17,7 +17,7 @@ export class AudioPlayer extends Comp {
         return <HTMLAudioElement>this.getElement();
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.audio(this.attribs, this.renderChildren());
     }
 }

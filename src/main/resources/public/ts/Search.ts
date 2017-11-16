@@ -75,7 +75,7 @@ export class Search {
         }
 
         Factory.create("SearchResultsPanel", (panel: SearchResultsPanel) => {
-            let content = panel.render();
+            let content = panel.renderHtml();
             util.setHtml("searchResultsPanel", content);
             panel.init();
             meta64.changePage(panel);
@@ -85,7 +85,7 @@ export class Search {
     timelineResponse(res: I.NodeSearchResponse) {
         srch.timelineResults = res;
         Factory.create("TimelineResultsPanel", (panel: TimelineResultsPanel) => {
-            let content = panel.render();
+            let content = panel.renderHtml();
             util.setHtml("timelineResultsPanel", content);
             panel.init();
             meta64.changePage(panel);

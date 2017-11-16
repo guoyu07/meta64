@@ -1,25 +1,30 @@
-console.log("Button.ts");
+/// <reference path="../types.d.ts" />
+
+console.log("ButtonRe.ts");
 
 import { Comp } from "./base/Comp";
 import { tag } from "../Tag";
 import { util } from "../Util";
 import { DialogBase } from "../DialogBase";
+import React from "react";
+import ReactDOM from "react-dom";
 
-export class Button extends Comp {
+/* React version of Button class */
+export class ButtonRe extends Comp {
 
     constructor(public text: string, public callback: Function, _attribs: Object = null, public isDlgCloser: boolean = false, //
         public dlg: DialogBase = null, initiallyVisible = true, public delayCloseCallback: number = 0) {
-        super(_attribs);
+        super(_attribs, true);
         util.mergeProps(this.attribs, {
             "raised": "raised",
             "class": "standardButton"
         });
 
         if (!initiallyVisible) {
-            (<any>this.attribs).style = "display:none;"
+            (this.attribs as any).style = "display:none;"
         }
 
-        (<any>this.attribs).onclick = () => {
+        (this.attribs as any).onClick = () => {
 
             /* This timer, is so that if perhaps the 'callback' is going to result in
             another dialog being opened, we can reduce screen 'flicker' by having a delayCloseCallback of like 1500 millis
@@ -39,7 +44,9 @@ export class Button extends Comp {
         };
     }
 
-    renderHtml = (): string => {
-        return tag.button(this.attribs, this.text);
+    reactRender = () => {
+        (this.attribs as any).className = (this.attribs as any).class;
+        let tagName = (this.attribs as any).icon ? "paper-icon-button" : "paper-button";
+        return React.createElement(tagName, this.attribs, this.text);
     }
 }

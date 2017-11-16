@@ -1,6 +1,6 @@
 console.log("MenuPanel.ts");
 
 export interface MenuPanel {
-    render(): string;
+    renderHtml(): string;
     refreshState(): void;
 }

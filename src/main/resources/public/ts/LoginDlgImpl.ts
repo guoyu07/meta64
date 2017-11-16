@@ -9,9 +9,10 @@ import { cnst } from "./Constants";
 import { util } from "./Util";
 import { Factory } from "./Factory";
 import { Header } from "./widget/Header";
+import { HeaderRe } from "./widget/HeaderRe";
 import { PasswordTextField } from "./widget/PasswordTextField";
-import { ButtonBar } from "./widget/ButtonBar";
-import { Button } from "./widget/Button";
+import { ButtonBarRe } from "./widget/ButtonBarRe";
+import { ButtonRe } from "./widget/ButtonRe";
 import { TextField } from "./widget/TextField";
 
 export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
@@ -26,13 +27,13 @@ export default class LoginDlgImpl extends DialogBaseImpl implements LoginDlg {
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Login"),
+            new HeaderRe("Login"),
             this.userTextField = new TextField("User"),
             this.passwordTextField = new PasswordTextField("Password"),
-            new ButtonBar([
-                new Button("Login", this.login, null, true, this),
-                new Button("Forgot Password", this.resetPassword, null, true, this),
-                new Button("Close", null, null, true, this)
+            new ButtonBarRe([
+                new ButtonRe("Login", this.login, null, true, this),
+                new ButtonRe("Forgot Password", this.resetPassword, null, true, this),
+                new ButtonRe("Close", null, null, true, this)
             ])
         ]);
 

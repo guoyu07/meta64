@@ -12,7 +12,7 @@ export class VerticalLayout extends Comp {
         this.setChildren(initialComps);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.renderChildren());
     }
 }

@@ -15,7 +15,7 @@ export class TextContent extends Comp {
         //(<any>this.attribs).class = (centered ? "horizontal center-justified layout" : "");
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.text);
     }
 }

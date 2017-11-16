@@ -11,7 +11,7 @@ export class Anchor extends Comp {
         util.mergeProps(this.attribs, _attribs);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.a(this.attribs, this.content || this.url);
     }
 }

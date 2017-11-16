@@ -13,7 +13,7 @@ export class TimelineResultsPanel {
     constructor(args: Object) {
     }
 
-    render = () => {
+    renderHtml = () => {
         let header = tag.h2({
             "id": "timelinePageTitle",
             "class": "page-title"

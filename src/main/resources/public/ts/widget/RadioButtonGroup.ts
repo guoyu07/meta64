@@ -19,7 +19,7 @@ export class RadioButtonGroup extends Comp {
         });
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.radioGroup(this.attribs, this.renderChildren());
     }
 }

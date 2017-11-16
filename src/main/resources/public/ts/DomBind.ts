@@ -14,12 +14,42 @@ class DomBind {
     private idToFuncMap: { [key: string]: Function } = {};
 
     constructor() {
-        /* I bet there's a better way to subscribe to DOM events than this timer, but i'm using the timer for now */
         setInterval(() => {
-            if (domBind) {
-                domBind.interval();
-            }
-        }, 500);
+            this.interval();
+        }, 250);
+
+        // The MutationObserver is never getting called even though I have subtree=true on is, 
+        // which is baffeling to me, but i'll just have to rely on the setInterval timer instead which
+        // acually is not bad performance.
+        // let timer = setInterval(() => {
+        //     if (document.getElementById("x-app")) {
+        //         clearInterval(timer);
+        //         this.initMutationObserver();
+        //     }
+        // }, 500);
+    }
+
+    private initMutationObserver = (): void => {
+        // select the target node
+        let target = document.getElementById("x-app");
+
+        // create an observer instance
+        let observer = new MutationObserver((mutations) => {
+            console.log("Mutation Detected.");
+            this.interval();
+            // mutations.forEach(function (mutation) {
+            //     console.log(mutation.type);
+            // });
+        });
+
+        // configuration of the observer:
+        let config = { subtree: true, attributes: false, childList: true, characterData: false };
+
+        // pass in the target node, as well as the observer options
+        observer.observe(target, config);
+
+        // later, you can stop observing
+        //observer.disconnect();
     }
 
     private interval = (): void => {

@@ -36,7 +36,7 @@ export class ListBox extends Comp {
         this.selectedRow.setSelectedState(true);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.div(this.attribs, this.renderChildren());
     }
 }

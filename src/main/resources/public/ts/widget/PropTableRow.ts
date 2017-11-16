@@ -18,7 +18,7 @@ export class PropTableRow extends Comp {
     }
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.tr(this.attribs, this.renderChildren());
     }
 }

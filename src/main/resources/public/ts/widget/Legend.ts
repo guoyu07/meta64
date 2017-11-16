@@ -10,7 +10,7 @@ export class Legend extends Comp {
         super(null);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.legend(this.attribs, this.text);
     }
 }

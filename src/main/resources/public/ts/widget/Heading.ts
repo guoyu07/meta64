@@ -9,7 +9,7 @@ export class Heading extends Comp {
         super(null);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.heading(this.level, this.content);
     }
 }

@@ -9,7 +9,7 @@ export class Form extends Comp {
         super(attribs);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.form(this.attribs, this.renderChildren());
     }
 }

@@ -17,7 +17,7 @@ export class MenuItem extends Comp {
         (<any>this.attribs).selectable = "";
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.menuItem(this.attribs, this.name);
     }
 }

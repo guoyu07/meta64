@@ -11,7 +11,7 @@ export class PreRendered extends Comp {
         super(null);
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return this.domContent;
     }
 }

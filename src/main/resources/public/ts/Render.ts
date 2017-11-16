@@ -168,17 +168,17 @@ export class Render {
         //todo-1; bring back top right image support. disabling for nw to ease refactoring
         let topRightImgTag = null; //this.getTopRightImageTag(node);
 
-        let ret: string = topRightImgTag ? topRightImgTag.render() : "";
+        let ret: string = topRightImgTag ? topRightImgTag.renderHtml() : "";
 
         /* todo-2: enable headerText when appropriate here */
         if (meta64.showMetaData) {
-            ret += showHeader ? this.buildRowHeader(node, showPath, showName).render() : "";
+            ret += showHeader ? this.buildRowHeader(node, showPath, showName).renderHtml() : "";
         }
 
         if (meta64.showProperties) {
             let propTable = props.renderProperties(node.properties);
             if (propTable) {
-                ret += propTable.render();
+                ret += propTable.renderHtml();
             }
         } else {
             let renderComplete: boolean = false;
@@ -234,19 +234,19 @@ export class Render {
                                 props.decryptToClipboard(passwordProp.value, decryptButton);
                             })
                         ]);
-                        ret += comps.render();
+                        ret += comps.renderHtml();
                     }
                 }
             }
 
             if (!renderComplete) {
                 if (node.path.trim() == "/") {
-                    ret += new Heading(1, "Root Node").render();
+                    ret += new Heading(1, "Root Node").renderHtml();
                 }
                 /* ret += "< div>[No Content Property]</div>"; */
                 let properties = props.renderProperties(node.properties);
                 if (properties) {
-                    ret += /* "<br>" + */properties.render();
+                    ret += /* "<br>" + */properties.renderHtml();
                 }
             }
         }
@@ -264,7 +264,7 @@ export class Render {
             // if (util.contains(ret, cnst.INSERT_ATTACHMENT)) {
             //     ret = util.replaceAll(ret, cnst.INSERT_ATTACHMENT, binary.render());
             // } else {
-            ret += binary.render();
+            ret += binary.renderHtml();
             //}
         }
 
@@ -272,7 +272,7 @@ export class Render {
         if (tags) {
             ret += new Div("Tags: " + tags, {
                 "class": "tags-content"
-            }).render();
+            }).renderHtml();
         }
 
         return ret;
@@ -352,7 +352,7 @@ export class Render {
         let selected: boolean = (focusNode && focusNode.uid === uid);
 
         let buttonBar: ButtonBar = this.makeRowButtonBar(node, canMoveUp, canMoveDown, editingAllowed);
-        let buttonBarHtmlRet: string = buttonBar.render();
+        let buttonBarHtmlRet: string = buttonBar.renderHtml();
         let bkgStyle: string = this.getNodeBkgImageStyle(node);
 
         let cssId: string = "row_" + uid;

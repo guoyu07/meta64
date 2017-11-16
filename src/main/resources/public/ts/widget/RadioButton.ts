@@ -28,7 +28,7 @@ export class RadioButton extends Comp {
         return elm && (<any>elm).checked;
     }
 
-    render = (): string => {
+    renderHtml = (): string => {
         return tag.radioButton(this.attribs, this.label);
     }
 }

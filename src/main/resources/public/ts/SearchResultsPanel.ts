@@ -11,7 +11,7 @@ export class SearchResultsPanel {
     constructor(args: Object) {
     }
 
-    render = () => {
+    renderHtml = () => {
         var header = tag.h2({
             "id": "searchPageTitle",
             "class": "page-title"

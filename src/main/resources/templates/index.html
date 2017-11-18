@@ -1,97 +1,50 @@
 <!DOCTYPE html>
-<html
-    xmlns:th="http://www.thymeleaf.org"
-    lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>SubNode</title>
-        <meta
-            name="description"
-            content="{{brandingMetaContent}}" />
-        <meta
-            name="keywords"
-            content="jcr" />
-        <meta
-            http-equiv="X-UA-Compatible"
-            content="IE=edge,chrome=1" />
-        <meta
-            name="viewport"
-            content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
-        <link
-            rel="manifest"
-            href="manifest.json" />
-        <meta
-            name="mobile-web-app-capable"
-            content="yes" />
-        <meta
-            name="application-name"
-            content="sbnode.com" />
-        <link
-            rel="icon"
-            href="favicon.ico" />
-        <meta
-            name="apple-mobile-web-app-capable"
-            content="yes" />
-        <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black" />
-        <meta
-            name="apple-mobile-web-app-title"
-            content="SubNode" />
-        <meta name="google-signin-client_id" content="696773594351-fflqhlt9enqlcvoacqhgj5jasgq2eqb0.apps.googleusercontent.com"/>
-        <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
-        <script
-            type="text/javascript"
-            src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
-        <link
-            rel="import"
-            href="/polymer/paper-styles/color.html" />
-        <link
-            rel="import"
-            href="/elements/x-app/x-app.xml?ver={{cacheVersion}}" />
-        <link
-            rel="stylesheet"
-            href="/js/dropzone/dropzone.css?ver={{cacheVersion}}" />
-        <link
-            rel="stylesheet"
-            href="/css/meta64.css?ver={{cacheVersion}}" />
-        
-        <!-- 
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>SubNode</title>
+    <meta name="description" content="{{brandingMetaContent}}" />
+    <meta name="keywords" content="jcr" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="sbnode.com" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="SubNode" />
+    <meta name="google-signin-client_id" content="696773594351-fflqhlt9enqlcvoacqhgj5jasgq2eqb0.apps.googleusercontent.com" />
+    <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
+    <script src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="/polymer/paper-styles/color.html" />
+    <link rel="import" href="/elements/x-app/x-app.html?ver={{cacheVersion}}" />
+    <link rel="stylesheet" href="/js/dropzone/dropzone.css?ver={{cacheVersion}}" />
+    <link rel="stylesheet" href="/css/meta64.css?ver={{cacheVersion}}" />
+
+    <!-- 
         <script src="https://apis.google.com/js/platform.js" async="async" defer="defer"></script>    
-        -->
-        <script type="text/javascript">
-            /*<![CDATA[*/    
-                //google signon is a work in progress, not functional yet.
-                function onSignIn(googleUser) {
-                    var profile = googleUser.getBasicProfile();
-                    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-                    console.log('Name: ' + profile.getName());
-                    console.log('Image URL: ' + profile.getImageUrl());
-                    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-                }
-                    
-                //These values are injected by a servlet filter. PreProcFilter.java
-            	var cacheVersion = "{{cacheVersion}}";
-            	var profileName = "{{profileName}}";
-                var bundleFile = "{{html.bundle}}";
-        	/*]]>*/
-        </script>
-        
-        <script type="text/javascript" src="/js/systemjs/system.min.js"></script>   
-        <script type="text/javascript" src="/entry-point.js"></script>        
-            
-        <!-- The ace.js is the same as here: <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" 
-            type="text/javascript" charset="utf-8"></script> -->
-        <script
-            src="/js/ace/ace.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        
-        <script 
-            type="text/javascript"
-            src="/js/dropzone/dropzone.js?ver={{cacheVersion}}"></script>
-    </head>
-    <body unresolved="unresolved">
-        <x-app></x-app>
-    </body>
+    -->
+    <script>
+        //These values are injected by a servlet filter. PreProcFilter.java
+        var cacheVersion = "{{cacheVersion}}";
+        var profileName = "{{profileName}}";
+        var bundleFile = "{{html.bundle}}";
+    </script>
+
+    <script src="/js/systemjs/system.min.js?ver={{cacheVersion}}"></script>
+    <script src="/entry-point.js?ver={{cacheVersion}}"></script>
+
+    <!-- The ace.js is the same as here: <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" 
+            charset="utf-8"></script> -->
+    <script src="/js/ace/ace.js" charset="utf-8"></script>
+
+    <script src="/js/dropzone/dropzone.js?ver={{cacheVersion}}"></script>
+</head>
+
+<body unresolved="unresolved">
+    <x-app></x-app>
+</body>
+
 </html>

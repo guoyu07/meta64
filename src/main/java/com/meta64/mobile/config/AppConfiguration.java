@@ -72,9 +72,10 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 		if (!StringUtils.isEmpty(appProp.getJsBaseFolder())) {
 			registry.addResourceHandler("/js/**").addResourceLocations(appProp.getJsBaseFolder());
 		}
-
-		//todo-1: according to one post i saw online this line wasn't needed. Is this line necessary in current Spring version ?
-		super.addResourceHandlers(registry);
+		
+//
+//		//todo-1: according to one post i saw online this line wasn't needed. Is this line necessary in current Spring version ?
+//		super.addResourceHandlers(registry);
 	}
 
 	// @PostConstruct

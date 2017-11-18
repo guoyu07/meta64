@@ -39,11 +39,11 @@ import com.meta64.mobile.config.ConstantsProviderImpl;
  * even as it's inventor.
  * <p>
  * There is admittedly an inconsistency in my architecture because i DO have some places i use
- * Thymeleaf (like view.html), so probably it migh be better to just go with Thymeleaf and eliminate
+ * Thymeleaf (like view.html), so probably it might be better to just go with Thymeleaf and eliminate
  * this class.
  * 
  */
-@WebFilter(urlPatterns = { "/*", "/elements/*" }, filterName = "AppFilter", description = "Meta64 App Filter")
+@WebFilter(urlPatterns = { "/*", "/elements/*" }, filterName = "AppFilter", description = "SubNode App Filter")
 public class PreProcFilter implements Filter {
 	private static final Logger log = LoggerFactory.getLogger(PreProcFilter.class);
 	private Properties props;

@@ -21,9 +21,4 @@ export class HeaderRe extends Comp {
             className : className
         }, this.text);
     }
-
-    // getJsx = () : JSX.Element => {
-    //     let className = (this.centered ? "horizontal center-justified layout" : "") + " dialog-header";
-    //     return <span className={className}>{this.text}</span>;
-    // }
 }

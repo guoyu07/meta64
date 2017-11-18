@@ -216,7 +216,6 @@ public class AppController {
 	@RequestMapping("/")
 	public String mobile(//
 			@RequestParam(value = "id", required = false) String id, //
-			@RequestParam(value = "cmd", required = false) String cmd, //
 			@RequestParam(value = "signupCode", required = false) String signupCode, //
 			Model model) {
 		logRequest("mobile", null);
@@ -227,13 +226,6 @@ public class AppController {
 
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 		sessionContext.setUrlId(id);
-
-		/*
-		 * url Cmd can be things like "addNode", to trigger quick note-taking under some other node,
-		 * so the app can be used as a productivity aid, and take notes quicker than someone could
-		 * open nodepad, or whatever other text editor, and deal with where to save file to, etc
-		 */
-		sessionContext.setUrlCmd(cmd);
 
 		// tag: index.html
 		return "index";

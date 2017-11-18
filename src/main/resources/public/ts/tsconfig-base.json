@@ -4,7 +4,8 @@
         "lib" : ["es2015", "dom", "ScriptHost"],
         "module": "system",
         "moduleResolution": "node",
-        "jsx": "React",
+        //TSX files are an ugly disaster that should have neve been invented.
+        //"jsx": "React",
         "isolatedModules": false,
         "declaration": false,
         "noImplicitAny": false,
@@ -23,8 +24,9 @@
       "include": [
       "*.ts",
       "./**/*ts",
-      "*.tsx",
-      "./**/*tsx",
+      //TSX files are an ugly disaster that should have neve been invented.
+      //"*.tsx",
+      //"./**/*tsx",
       "./node_modules/@types/**/*.d.ts"
     ],
     "exclude": [

@@ -195,12 +195,4 @@ public class SessionContext {
 	public void setHttpSessionToInvalidate(HttpSession httpSessionToInvalidate) {
 		this.httpSessionToInvalidate = httpSessionToInvalidate;
 	}
-
-	public String getUrlCmd() {
-		return urlCmd;
-	}
-
-	public void setUrlCmd(String urlCmd) {
-		this.urlCmd = urlCmd;
-	}
 }

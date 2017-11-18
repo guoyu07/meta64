@@ -1,122 +1,72 @@
 <!DOCTYPE html>
-<html
-    xmlns:th="http://www.thymeleaf.org"
-    lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>SubNode</title>
-        <meta
-            name="description"
-            content="{{brandingMetaContent}}" />
-        <meta
-            name="keywords"
-            content="jcr" />
-        <meta
-            http-equiv="X-UA-Compatible"
-            content="IE=edge,chrome=1" />
-        <meta
-            name="viewport"
-            content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
-        <link
-            rel="manifest"
-            href="manifest.json" />
-        <meta
-            name="mobile-web-app-capable"
-            content="yes" />
-        <meta
-            name="application-name"
-            content="sbnode.com" />
-        <link
-            rel="icon"
-            href="favicon.ico" />
-        <meta
-            name="apple-mobile-web-app-capable"
-            content="yes" />
-        <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black" />
-        <meta
-            name="apple-mobile-web-app-title"
-            content="SubNode" />
-        <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
-        <script
-            type="text/javascript"
-            src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
-        <link
-            rel="import"
-            href="/polymer/polymer/polymer.html" />
-        <link
-            rel="import"
-            href="/polymer/paper-styles/color.html" />
-        <link
-            rel="import"
-            href="/polymer/polymer/polymer.html" />
-        <link
-            rel="import"
-            href="/polymer/paper-styles/typography.html" />
-        <link
-            rel="import"
-            href="/polymer/iron-flex-layout/classes/iron-flex-layout.html" />
-        <link
-            rel="import"
-            href="/polymer/marked-element/marked-element.html" />
-        <link
-            rel="import"
-            href="/polymer/prism-element/prism-highlighter.html" />
-        <link
-            rel="stylesheet"
-            href="/css/meta64.css?ver={{cacheVersion}}" />
-        <script type="text/javascript">
-            /*<![CDATA[*/            
-                //These values are injected by a servlet filter. PreProcFilter.java
-            	var cacheVersion = "{{cacheVersion}}";
-            	var profileName = "{{profileName}}";
-                var bundleFile = "{{html.bundle}}";
-        	/*]]>*/
-        </script>   
-        <style>
-            /*<![CDATA[*/            
-           
-                [slot="markdown-html"] pre {
-                    border: 2px solid lightGray;
-                    padding: 8px;
-                    overflow-x: auto;
-                }
-                          
-                :root {
-                    /* 
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>SubNode</title>
+    <meta name="description" content="{{brandingMetaContent}}" />
+    <meta name="keywords" content="jcr" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="sbnode.com" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="SubNode" />
+    <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
+    <script type="text/javascript" src="/polymer/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="/polymer/polymer/polymer.html" />
+    <link rel="import" href="/polymer/paper-styles/color.html" />
+    <link rel="import" href="/polymer/polymer/polymer.html" />
+    <link rel="import" href="/polymer/paper-styles/typography.html" />
+    <link rel="import" href="/polymer/iron-flex-layout/classes/iron-flex-layout.html" />
+    <link rel="import" href="/polymer/marked-element/marked-element.html" />
+    <link rel="import" href="/polymer/prism-element/prism-highlighter.html" />
+    <link rel="stylesheet" href="/css/meta64.css?ver={{cacheVersion}}" />
+    <script>
+        //These values are injected by a servlet filter. PreProcFilter.java
+        var cacheVersion = "{{cacheVersion}}";
+        var profileName = "{{profileName}}";
+        var bundleFile = "{{html.bundle}}";
+    </script>
+    <style>
+        [slot="markdown-html"] pre {
+            border: 2px solid lightGray;
+            padding: 8px;
+            overflow-x: auto;
+        }
+
+        :root {
+            /* 
                     --icon-toggle-outline-color: red; 
                     --syntax-bg: lightGray;
                     */
-                }
-           
-                :host {
-                    display: block;
-                }
-                                
-                .self-end {
-                    /* This mixin (from iron-flex-layout) aligns the tabs to the
+        }
+
+        :host {
+            display: block;
+        }
+
+        .self-end {
+            /* This mixin (from iron-flex-layout) aligns the tabs to the
                        bottom of the toolbar. */
-                    @apply(--layout-self-end);
-                }            
-                
- 
-            /*]]>*/
-        </style>         
-    </head>
-    <body unresolved="unresolved">
-        <div class="vertical-section vertical-section-container centered">
-            <prism-highlighter></prism-highlighter>
-            <section>
-                <marked-element sanitize="true">
-                    <div
-                        slot="markdown-html"
-                        class="markdown-html"></div>
-                    <script
-                        th:text="${content}"
-                        type="text/markdown"></script>
-                </marked-element>
-            </section>
-        </div>
-    </body>
+            @apply(--layout-self-end);
+        }
+    </style>
+</head>
+
+<body unresolved="unresolved">
+    <div class="vertical-section vertical-section-container centered">
+        <prism-highlighter></prism-highlighter>
+        <section>
+            <marked-element sanitize="true">
+                <div slot="markdown-html" class="markdown-html"></div>
+                <script th:text="${content}" type="text/markdown"></script>
+            </marked-element>
+        </section>
+    </div>
+</body>
+
 </html>

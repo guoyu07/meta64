@@ -1,9 +1,9 @@
 console.log("EditPropsTableRow.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import * as I from "../Interfaces";
+declare var tag;
 
 export class EditPropsTableRow extends Comp {
 

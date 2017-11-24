@@ -1,9 +1,8 @@
 console.log("PropTableCell.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-
+declare var tag;
 export class PropTableCell extends Comp {
 
     constructor(public content: string = "", attribs : Object = {}, initialChildren: Comp[] = null) {

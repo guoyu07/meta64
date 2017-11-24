@@ -1,11 +1,10 @@
 console.log("PropTableRow.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import { PropTableCell } from "./PropTableCell";
 import * as I from "../Interfaces";
-
+declare var tag;
 export class PropTableRow extends Comp {
 
     propEntry: I.PropEntry;

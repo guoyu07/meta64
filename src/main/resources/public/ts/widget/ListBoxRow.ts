@@ -1,11 +1,10 @@
-console.log("Div.ts");
+console.log("ListBoxRow.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import { ListBox } from "./ListBox";
-import { domBind } from "../DomBind";
-import { util } from "../Util";
+
+declare var tag, domBind, util;
 
 export class ListBoxRow extends Comp {
 

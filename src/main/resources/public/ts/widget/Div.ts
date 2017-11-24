@@ -1,7 +1,10 @@
 console.log("Div.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag;
 
 /* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class Div extends Comp {

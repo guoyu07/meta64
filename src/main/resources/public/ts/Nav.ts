@@ -1,21 +1,44 @@
 console.log("Nav.ts");
 
-import { meta64 } from "./Meta64"
-import { util } from "./Util";
-import { edit } from "./Edit";
-import { srch } from "./Search";
-import { user } from "./User";
-import { render } from "./Render";
-import { view } from "./View";
 import * as I from "./Interfaces";
-import { Factory } from "./Factory";
 import { LoginDlg } from "./LoginDlg";
 import { PrefsDlg } from "./PrefsDlg";
 import { SearchContentDlg } from "./SearchContentDlg";
 import { SearchTagsDlg } from "./SearchTagsDlg";
 import { SearchFilesDlg } from "./SearchFilesDlg";
 
-class Nav {
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { Render } from "./types/Render";
+import { View } from "./types/View";
+import { User } from "./types/User";
+import { Edit } from "./types/Edit";
+import { Share } from "./types/Share";
+import { Search } from "./types/Search";
+
+let meta64: Meta64;
+let util: Util;
+let render: Render;
+let user: User;
+let srch: Search;
+let view: View;
+let edit : Edit;
+
+export class Nav {
+    /* Note this: is not a singleton so we can postConstruct during actual constructor */
+    postConstruct(_f : any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        render = f.getRender();
+        user = f.getUser();
+        view = f.getView();
+        edit = f.getEdit();
+        srch = f.getSearch();
+    }
+    
     _UID_ROWID_PREFIX: string = "row_";
 
     /* todo-1: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */
@@ -23,86 +46,77 @@ class Nav {
     endReached: boolean = true;
 
     /* todo-1: need to have this value passed from server rather than coded in TypeScript, however for now 
-    this MUST match nav.ROWS_PER_PAGE variable in TypeScript */ 
+    this MUST match this.ROWS_PER_PAGE variable in TypeScript */
     ROWS_PER_PAGE: number = 25;
 
-    search(): void {
-        Factory.createDefault("SearchContentDlgImpl", (dlg: SearchContentDlg) => {
-            dlg.open();
-        });
+    search = (): void => {
+        new SearchContentDlg().open();
     }
 
-    searchTags(): void {
-        Factory.createDefault("SearchTagsDlgImpl", (dlg: SearchTagsDlg) => {
-            dlg.open();
-        });
+    searchTags = (): void => {
+        new SearchTagsDlg().open();
     }
 
-    searchFiles(): void {
-        Factory.createDefault("SearchFilesDlgImpl", (dlg: SearchFilesDlg) => {
-            dlg.open();
-        });
+    searchFiles = (): void => {
+        new SearchFilesDlg().open();
     }
 
-    editMode(): void {
+    editMode = (): void => {
         edit.editMode();
     }
 
-    login(): void {
-        Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
-            dlg.populateFromCookies();
-            dlg.open();
-        });
+    login = (): void => {
+        let dlg = new LoginDlg(null);
+        dlg.populateFromCookies();
+        dlg.open();
     }
 
-    logout(): void {
+    logout = (): void => {
         user.logout(true);
     }
 
-    signup(): void {
+    signup = (): void => {
         user.openSignupPg();
     }
 
-    preferences(): void {
-        Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
-            dlg.open();
-        });
+    preferences = (): void => {
+        new PrefsDlg().open();
     }
 
-    openMainMenuHelp(): void {
-        nav.mainOffset = 0;
+    openMainMenuHelp = (): void => {
+        this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/r/public/help",
             "upLevel": null,
             "renderParentIfLeaf": null,
-            "offset": nav.mainOffset,
+            "offset": this.mainOffset,
             "goToLastPage": false
-        }, nav.navPageNodeResponse);
+        }, this.navPageNodeResponse);
     }
 
-    openRssFeedsNode(): void {
-        nav.mainOffset = 0;
+    openRssFeedsNode = (): void => {
+        this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/r/public/feeds",
             "upLevel": null,
             "renderParentIfLeaf": null,
-            "offset": nav.mainOffset,
+            "offset": this.mainOffset,
             "goToLastPage": false
-        }, nav.navPageNodeResponse);
+        }, this.navPageNodeResponse);
     }
 
-    browseSampleContent(): void {
-        nav.mainOffset = 0;
+    browseSampleContent = (): void => {
+        this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": "/r/public/war-and-peace",
             "upLevel": null,
             "renderParentIfLeaf": null,
-            "offset": nav.mainOffset,
+            "offset": this.mainOffset,
             "goToLastPage": false
-        }, nav.navPageNodeResponse);
+        }, this.navPageNodeResponse);
     }
 
-    displayingHome(): boolean {
+    displayingHome = (): boolean => {
         if (meta64.isAnonUser) {
             return meta64.currentNodeId === meta64.anonUserLandingPageNode;
         } else {
@@ -110,11 +124,11 @@ class Nav {
         }
     }
 
-    parentVisibleToUser(): boolean {
-        return !nav.displayingHome();
+    parentVisibleToUser = (): boolean => {
+        return !this.displayingHome();
     }
 
-    upLevelResponse(res: I.RenderNodeResponse, id): void {
+    upLevelResponse = (res: I.RenderNodeResponse, id): void => {
         if (!res || !res.node) {
             util.showMessage("No data is visible to you above this node.");
         } else {
@@ -124,9 +138,9 @@ class Nav {
         }
     }
 
-    navUpLevel(): void {
+    navUpLevel = (): void => {
 
-        if (!nav.parentVisibleToUser()) {
+        if (!this.parentVisibleToUser()) {
             // Already at root. Can't go up.
             return;
         }
@@ -134,22 +148,22 @@ class Nav {
         /* todo-1: for now an uplevel will reset to zero offset, but eventually I want to have each level of the tree, be able to
         remember which offset it was at so when user drills down, and then comes back out, they page back out from the same pages they
         drilled down from */
-        nav.mainOffset = 0;
+        this.mainOffset = 0;
         var ironRes = util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": 1,
             "renderParentIfLeaf": false,
-            "offset": nav.mainOffset,
+            "offset": this.mainOffset,
             "goToLastPage": false
         }, (res: I.RenderNodeResponse) => {
-            nav.upLevelResponse(ironRes.response, meta64.currentNodeId);
+            this.upLevelResponse(ironRes.response, meta64.currentNodeId);
         });
     }
 
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedDomElement(): HTMLElement {
+    getSelectedDomElement = (): HTMLElement => {
 
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {
@@ -161,7 +175,7 @@ class Nav {
                 console.log("found highlighted node.id=" + node.id);
 
                 /* now make CSS id from node */
-                let nodeId: string = nav._UID_ROWID_PREFIX + node.uid;
+                let nodeId: string = this._UID_ROWID_PREFIX + node.uid;
                 // console.log("looking up using element id: "+nodeId);
 
                 return util.domElm(nodeId);
@@ -174,7 +188,7 @@ class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedPolyElement(): any {
+    getSelectedPolyElement = (): any => {
         try {
             let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode) {
@@ -186,7 +200,7 @@ class Nav {
                     console.log("found highlighted node.id=" + node.id);
 
                     /* now make CSS id from node */
-                    let nodeId: string = nav._UID_ROWID_PREFIX + node.uid;
+                    let nodeId: string = this._UID_ROWID_PREFIX + node.uid;
                     console.log("looking up using element id: " + nodeId);
 
                     return util.polyElm(nodeId);
@@ -200,7 +214,7 @@ class Nav {
         return null;
     }
 
-    clickOnNodeRow(uid: string): void {
+    clickOnNodeRow = (uid: string): void => {
         console.log("clickOnNodeRow: uid=" + uid);
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
@@ -226,8 +240,7 @@ class Nav {
         meta64.refreshAllGuiEnablement();
     }
 
-    openNode(uid): void {
-
+    openNode = (uid): void => {
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         meta64.highlightNode(node, true);
 
@@ -238,8 +251,8 @@ class Nav {
         }
     }
 
-    toggleNodeSel(selected: boolean, uid: string): void {
-        if (selected) { 
+    toggleNodeSel = (selected: boolean, uid: string): void => {
+        if (selected) {
             meta64.selectedNodes[uid] = true;
         } else {
             delete meta64.selectedNodes[uid];
@@ -249,33 +262,30 @@ class Nav {
         meta64.refreshAllGuiEnablement();
     }
 
-    navPageNodeResponse(res: I.RenderNodeResponse): void {
+    navPageNodeResponse = (res: I.RenderNodeResponse): void => {
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();
         meta64.refreshAllGuiEnablement();
     }
 
-    navHome(): void {
+    navHome = (): void => {
         if (meta64.isAnonUser) {
             meta64.loadAnonPageHome(true);
             // window.location.href = window.location.origin;
         } else {
-            nav.mainOffset = 0;
+            this.mainOffset = 0;
             util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
                 "nodeId": meta64.homeNodeId,
                 "upLevel": null,
                 "renderParentIfLeaf": null,
-                "offset": nav.mainOffset,
+                "offset": this.mainOffset,
                 "goToLastPage": false
-            }, nav.navPageNodeResponse);
+            }, this.navPageNodeResponse);
         }
     }
 
-    navPublicHome(): void {
+    navPublicHome = (): void => {
         meta64.loadAnonPageHome(true);
     }
 }
-
-export let nav: Nav = new Nav();
-export default nav;

@@ -1,15 +1,16 @@
 console.log("EditPropsTable.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import * as I from "../Interfaces";
 import { Div } from "./Div";
-import { util } from "../Util";
 import { SharingDlg } from "../SharingDlg";
-import { render } from "../Render";
 import { Button } from "./Button";
 import { TextContent } from "./TextContent";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag, util, render;
 
 export class EditPrivsTableRow extends Comp {
 

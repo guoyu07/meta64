@@ -1,13 +1,10 @@
-/// <reference path="../types.d.ts" />
-
 console.log("Header2.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-import React from "react";
-import ReactDOM from "react-dom";
-
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+declare var tag;
 /* HeaderRe is the React version of Header */
 export class HeaderRe extends Comp {
 

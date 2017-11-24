@@ -1,7 +1,8 @@
-console.log("Div.ts");
+console.log("Span.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
+
+declare var tag;
 
 /* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class Span extends Comp {

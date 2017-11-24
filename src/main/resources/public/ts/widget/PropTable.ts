@@ -1,8 +1,8 @@
 console.log("PropTable.ts");
-
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
+
+declare var tag;
 
 export class PropTable extends Comp {
 
@@ -17,3 +17,4 @@ export class PropTable extends Comp {
         return tag.table(this.attribs, this.renderChildren());
     }
 }
+console.log("PropTable.ts ready");

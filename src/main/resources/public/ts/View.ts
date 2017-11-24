@@ -1,19 +1,38 @@
 console.log("View.ts");
 
-import { meta64 } from "./Meta64"
-import { util } from "./Util";
-import { nav } from "./Nav";
-import { render } from "./Render";
-import { edit } from "./Edit";
 import { MessageDlg } from "./MessageDlg";
 import * as I from "./Interfaces";
 
-class View {
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { Render } from "./types/Render";
+import { Nav } from "./types/Nav";
+import { Edit } from "./types/Edit";
+
+let meta64: Meta64;
+let util: Util;
+let nav: Nav;
+let render: Render;
+let edit: Edit;
+
+export class View {
+    
+    /* Note this: is not a singleton so we can postConstruct during actual constructor */
+    postConstruct(_f: any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        nav = f.getNav();
+        render = f.getRender();
+        edit = f.getEdit();
+    }
 
     compareNodeA: I.NodeInfo;
     scrollToSelNodePending: boolean = false;
 
-    updateStatusBar(): void {
+    updateStatusBar = (): void => {
         if (!meta64.currentNodeData)
             return;
         var statusLine = "";
@@ -31,7 +50,7 @@ class View {
      * newId is optional parameter which, if supplied, should be the id we scroll to when finally done with the
      * render.
      */
-    refreshTreeResponse(res?: I.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void {
+    refreshTreeResponse = (res?: I.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void => {
         render.renderPageFromData(res, scrollToTop);
 
         if (scrollToTop) {
@@ -40,7 +59,7 @@ class View {
             if (targetId) {
                 meta64.highlightRowById(targetId, true);
             } else {
-                view.scrollToSelectedNode();
+                this.scrollToSelectedNode();
             }
         }
         meta64.refreshAllGuiEnablement();
@@ -50,7 +69,7 @@ class View {
     /*
      * newId is optional and if specified makes the page scroll to and highlight that node upon re-rendering.
      */
-    refreshTree(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void {
+    refreshTree = (nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void => {
         if (!nodeId) {
             nodeId = meta64.currentNodeId;
         }
@@ -72,11 +91,11 @@ class View {
             "renderParentIfLeaf": renderParentIfLeaf ? true : false,
             "offset": nav.mainOffset,
             "goToLastPage": false
-        }, function(res: I.RenderNodeResponse) {
+        }, (res: I.RenderNodeResponse) => {
             if (res.offsetOfNodeFound > -1) {
                 nav.mainOffset = res.offsetOfNodeFound;
             }
-            view.refreshTreeResponse(res, highlightId);
+            this.refreshTreeResponse(res, highlightId);
 
             if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
                 edit.editMode(true);
@@ -85,47 +104,47 @@ class View {
         });
     }
 
-    firstPage(): void {
+    firstPage = (): void => {
         console.log("Running firstPage Query");
         nav.mainOffset = 0;
-        view.loadPage(false);
+        this.loadPage(false);
     }
 
-    prevPage(): void {
+    prevPage = (): void => {
         console.log("Running prevPage Query");
         nav.mainOffset -= nav.ROWS_PER_PAGE;
         if (nav.mainOffset < 0) {
             nav.mainOffset = 0;
         }
-        view.loadPage(false);
+        this.loadPage(false);
     }
 
-    nextPage(): void {
+    nextPage = (): void => {
         console.log("Running nextPage Query");
         nav.mainOffset += nav.ROWS_PER_PAGE;
-        view.loadPage(false);
+        this.loadPage(false);
     }
 
-    lastPage(): void {
+    lastPage = (): void => {
         console.log("Running lastPage Query");
         //nav.mainOffset += nav.ROWS_PER_PAGE;
-        view.loadPage(true);
+        this.loadPage(true);
     }
 
-    private loadPage(goToLastPage: boolean): void {
+    private loadPage = (goToLastPage: boolean): void => {
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": meta64.currentNodeId,
             "upLevel": null,
             "renderParentIfLeaf": true,
             "offset": nav.mainOffset,
             "goToLastPage": goToLastPage
-        }, function(res: I.RenderNodeResponse) {
+        }, (res: I.RenderNodeResponse) => {
             if (goToLastPage) {
                 if (res.offsetOfNodeFound > -1) {
                     nav.mainOffset = res.offsetOfNodeFound;
                 }
             }
-            view.refreshTreeResponse(res, null, true);
+            this.refreshTreeResponse(res, null, true);
         });
     }
 
@@ -135,11 +154,11 @@ class View {
      * 'pending' boolean here is a crutch for now to help visual appeal (i.e. stop if from scrolling to one place
      * and then scrolling to a different place a fraction of a second later)
      */
-    scrollToSelectedNode() {
-        view.scrollToSelNodePending = true;
+    scrollToSelectedNode = () => {
+        this.scrollToSelNodePending = true;
 
-        setTimeout(function() {
-            view.scrollToSelNodePending = false;
+        setTimeout(() => {
+            this.scrollToSelNodePending = false;
 
             let elm: any = nav.getSelectedPolyElement();
             if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
@@ -159,21 +178,21 @@ class View {
         }, 1000);
     }
 
-    scrollToTop() {
-        if (view.scrollToSelNodePending)
+    scrollToTop = () => {
+        if (this.scrollToSelNodePending)
             return;
 
         util.domElm("#mainContainer").scrollTop = 0;
 
         //todo-1: not using mainPaperTabs any longer so shw should go here now ?
-        setTimeout(function() {
-            if (view.scrollToSelNodePending)
+        setTimeout(() => {
+            if (this.scrollToSelNodePending)
                 return;
             util.domElm("#mainContainer").scrollTop = 0;
         }, 1000);
     }
 
-    initEditPathDisplayById(domId: string) {
+    initEditPathDisplayById = (domId: string) => {
         let node: I.NodeInfo = edit.editNode;
         let e: any = util.domElm(domId);
         if (!e)
@@ -196,38 +215,38 @@ class View {
         }
     }
 
-    showServerInfo() {
-        util.ajax<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {}, function(res: I.GetServerInfoResponse) {
-            util.showMessage(res.serverInfo);
-        });
+    showServerInfo = () => {
+        util.ajax<I.GetServerInfoRequest, I.GetServerInfoResponse>("getServerInfo", {},
+            (res: I.GetServerInfoResponse) => {
+                util.showMessage(res.serverInfo);
+            });
     }
 
-    setCompareNodeA() {
-        view.compareNodeA = meta64.getHighlightedNode();
+    setCompareNodeA = () => {
+        this.compareNodeA = meta64.getHighlightedNode();
     }
 
-    compareAsBtoA() {
+    compareAsBtoA = () => {
         let nodeB = meta64.getHighlightedNode();
         if (nodeB) {
-            if (view.compareNodeA.id && nodeB.id) {
+            if (this.compareNodeA.id && nodeB.id) {
                 util.ajax<I.CompareSubGraphRequest, I.CompareSubGraphResponse>("compareSubGraphs", //
-                    { "nodeIdA": view.compareNodeA.id, "nodeIdB": nodeB.id }, //
-                    function(res: I.CompareSubGraphResponse) {
+                    { "nodeIdA": this.compareNodeA.id, "nodeIdB": nodeB.id }, //
+                    (res: I.CompareSubGraphResponse) => {
                         util.showMessage(res.compareInfo);
                     });
             }
         }
     }
 
-    processNodeHashes(verify: boolean) {
+    processNodeHashes = (verify: boolean) => {
         let node = meta64.getHighlightedNode();
         if (node) {
             let nodeId: string = node.id;
-            util.ajax<I.GenerateNodeHashRequest, I.GenerateNodeHashResponse>("generateNodeHash", { "nodeId": nodeId, "verify" : verify }, function(res: I.GenerateNodeHashResponse) {
-                util.showMessage(res.hashInfo);
-            });
+            util.ajax<I.GenerateNodeHashRequest, I.GenerateNodeHashResponse>("generateNodeHash", { "nodeId": nodeId, "verify": verify },
+                (res: I.GenerateNodeHashResponse) => {
+                    util.showMessage(res.hashInfo);
+                });
         }
     }
 }
-export let view: View = new View();
-export default view;

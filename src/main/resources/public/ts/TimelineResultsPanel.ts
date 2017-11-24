@@ -1,8 +1,8 @@
 console.log("TimelineResultsPanel.ts");
 
-import { srch } from "./Search";
-import { util } from "./Util";
-import { tag } from "./Tag";
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var srch, util, tag;
 
 export class TimelineResultsPanel {
 

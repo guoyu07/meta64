@@ -1,11 +1,10 @@
-console.log("Div.ts");
+console.log("ListBox.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import { ListBoxRow } from "./ListBoxRow";
-import { util } from "../Util";
 
+declare var tag, util;
 export class ListBox extends Comp {
     selectedRow: ListBoxRow = null;
 

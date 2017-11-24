@@ -1,9 +1,8 @@
 console.log("Header.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-
+declare var tag;
 export class TextContent extends Comp {
 
     constructor(public text: string, classes: string = null) {

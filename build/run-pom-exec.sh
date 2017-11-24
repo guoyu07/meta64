@@ -1,9 +1,9 @@
 #!/bin/bash
-#NOTE: This file is called from the POM.XML file to make a build from inside Eclipse work.
+#NOTE: This file is called from the POM.XML file to make a maven build from inside Eclipse work.
+
 source ./setenv.sh
 
-rm -f $META64/src/main/resources/public/js/*.js
-rm -f $META64/src/main/resources/public/js/*.map
+rm -f $META64/src/main/resources/public/dist/*
 
 # To install Less CSS compiler run these commands:
 #    sudo npm install -g less
@@ -17,23 +17,16 @@ else
   sleep 7s
 fi
 
-echo "Old JS file deleted."
-
-cd $META64/src/main/resources/public/ts
-tsc -p tsconfig-dev.json --watch false
+cd $META64/src/main/resources/public
+webpack
 if [ $? -eq 0 ]
 then
-  echo "TypeScript generating successful."
-  exit 0
+  echo "Webpack generating successful."
 else
-  echo "********** FAIL. TypeScript compiler reported ERRORS. **********"
+  echo "********** FAIL. Webpack reported ERRORS. **********"
   sleep 7s
   exit 1
 fi
-
-#commented, because we don't do minification in development.
-#cd $META64/build
-#java -jar google-compiler.jar --js_output_file="../src/main/resources/public/js/meta64-app.min.js" ../src/main/resources/public/js/meta64-app.js
 
 #fyi for Windows BAT: 
 # exit /b %ERRORLEVEL%

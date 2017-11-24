@@ -1,5 +1,7 @@
 package com.meta64.mobile.config;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import com.meta64.mobile.util.XString;
 
 /**
  * Standard Spring WebMvcConfigurerAdapter-derived class.
@@ -64,18 +69,21 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		/*
 		 * This is how we enable the JS files to be edited and tested without doing a rebuild and
-		 * restart of server code. We can just run TSC compile to generate the new JS files, and
-		 * then refresh the browser to reload them, and that works! This jsBaseFolder should of
+		 * restart of server code. We can just run TSC compile to generate the new JS files (or let webpack do that), and
+		 * then refresh the browser to reload them. This jsBaseFolder should of
 		 * course be empty (unused) in production environment, or any time the JAR (build) should be
 		 * used exclusively at runtime
 		 */
 		if (!StringUtils.isEmpty(appProp.getJsBaseFolder())) {
-			registry.addResourceHandler("/js/**").addResourceLocations(appProp.getJsBaseFolder());
+			ResourceHandlerRegistration reg = registry.addResourceHandler("/js/**");
+
+			List<String> folders = XString.tokenize(appProp.getJsBaseFolder(), ",", true);
+			if (folders != null) {
+				for (String folder : folders) {
+					reg.addResourceLocations(folder);
+				}
+			}
 		}
-		
-//
-//		//todo-1: according to one post i saw online this line wasn't needed. Is this line necessary in current Spring version ?
-//		super.addResourceHandlers(registry);
 	}
 
 	// @PostConstruct

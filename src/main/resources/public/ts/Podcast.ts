@@ -1,18 +1,36 @@
-import { util } from "./Util";
-import { props } from "./Props";
-import { render } from "./Render";
-import { meta64 } from "./Meta64";
 import { AudioPlayerDlg } from "./AudioPlayerDlg";
-import { Factory } from "./Factory";
 import * as I from "./Interfaces";
-import { tag } from "./Tag";
+
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { Render } from "./types/Render";
+import { Props } from "./types/Props";
+import {Tag} from "./types/Tag";
+
+let meta64: Meta64;
+let util: Util;
+let props: Props;
+let render: Render;
+let tag: Tag;
 
 /*
 NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
-class Podcast {
+export class Podcast {
+    
+    /* Note this: is not a singleton so we can postConstruct during actual constructor */
+    postConstruct(_f: any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        props = f.getProps();
+        render = f.getRender();
+    }
+
     player: HTMLAudioElement = null;
     startTimePending: number = null;
 
@@ -22,17 +40,17 @@ class Podcast {
 
     private pushTimer: any = null;
 
-    generateRSS(): void {
+    generateRSS=(): void =>{
         util.ajax<I.GenerateRSSRequest, I.GenerateRSSResponse>("generateRSS", {
-        }, podcast.generateRSSResponse);
+        }, this.generateRSSResponse);
     }
 
-    private generateRSSResponse(): void {
+    private generateRSSResponse=(): void =>{
         alert('rss complete.');
     }
 
 
-    getMediaPlayerUrlFromNode(node: I.NodeInfo): string {
+    getMediaPlayerUrlFromNode=(node: I.NodeInfo): string =>{
         let link: I.PropertyInfo = props.getNodeProperty("sn:rssItemLink", node);
         if (link && link.value && util.contains(link.value.toLowerCase(), ".mp3")) {
             return link.value;
@@ -54,38 +72,35 @@ class Podcast {
         return null;
     }
 
-    openPlayerDialog(_uid: string) {
-        podcast.uid = _uid;
-        podcast.node = meta64.uidToNodeMap[podcast.uid];
+    openPlayerDialog=(_uid: string) =>{
+        this.uid = _uid;
+        this.node = meta64.uidToNodeMap[this.uid];
 
-        if (podcast.node) {
-            let mp3Url = podcast.getMediaPlayerUrlFromNode(podcast.node);
+        if (this.node) {
+            let mp3Url = this.getMediaPlayerUrlFromNode(this.node);
             if (mp3Url) {
                 util.ajax<I.GetPlayerInfoRequest, I.GetPlayerInfoResponse>("getPlayerInfo", {
                     "url": mp3Url
                 }, (res: I.GetPlayerInfoResponse) => {
-                    podcast.parseAdSegmentUid(podcast.uid);
-
-                    Factory.createDefault("AudioPlayerDlgImpl", (dlg: AudioPlayerDlg) => {
-                        dlg.open();
-                    }, { "sourceUrl": mp3Url, "nodeUid": podcast.uid, "startTimePending": res.timeOffset });
+                    this.parseAdSegmentUid(this.uid);
+                    new AudioPlayerDlg({ "sourceUrl": mp3Url, "nodeUid": this.uid, "startTimePending": res.timeOffset }).open();
                 });
             }
         }
     }
 
-    private parseAdSegmentUid(_uid: string) {
-        if (podcast.node) {
-            let adSegs: I.PropertyInfo = props.getNodeProperty("ad-segments", podcast.node);
+    private parseAdSegmentUid=(_uid: string) =>{
+        if (this.node) {
+            let adSegs: I.PropertyInfo = props.getNodeProperty("ad-segments", this.node);
             if (adSegs) {
-                podcast.parseAdSegmentText(adSegs.value);
+                this.parseAdSegmentText(adSegs.value);
             }
         }
-        else throw "Unable to find node uid: " + podcast.uid;
+        else throw "Unable to find node uid: " + this.uid;
     }
 
-    private parseAdSegmentText(adSegs: string) {
-        podcast.adSegments = [];
+    private parseAdSegmentText=(adSegs: string)=> {
+        this.adSegments = [];
 
         let segList: string[] = adSegs.split("\n");
         for (let seg of segList) {
@@ -95,10 +110,10 @@ class Podcast {
                 continue;
             }
 
-            let beginSecs: number = podcast.convertToSeconds(segTimes[0]);
-            let endSecs: number = podcast.convertToSeconds(segTimes[1]);
+            let beginSecs: number = this.convertToSeconds(segTimes[0]);
+            let endSecs: number = this.convertToSeconds(segTimes[1]);
 
-            podcast.adSegments.push(new I.AdSegment(beginSecs, endSecs));
+            this.adSegments.push(new I.AdSegment(beginSecs, endSecs));
         }
     }
 
@@ -107,7 +122,7 @@ class Podcast {
     * todo-1: make this accept just seconds, or min:sec, or hour:min:sec, and be able to
     * parse any of them correctly.
     */
-    private convertToSeconds(timeVal: string) {
+    private convertToSeconds=(timeVal: string) =>{
         /* end time is designated with asterisk by user, and represented by -1 in variables */
         if (timeVal == '*') return -1;
         let timeParts: string[] = timeVal.split(":");
@@ -120,59 +135,59 @@ class Podcast {
         return minutes * 60 + seconds;
     }
 
-    restoreStartTime() {
+    restoreStartTime=() =>{
         /* makes player always start wherever the user last was when they clicked "pause" */
-        if (podcast.player && podcast.startTimePending) {
-            podcast.player.currentTime = podcast.startTimePending;
-            podcast.startTimePending = null;
+        if (this.player && this.startTimePending) {
+            this.player.currentTime = this.startTimePending;
+            this.startTimePending = null;
         }
     }
 
-    onCanPlay(dlg: AudioPlayerDlg): void {
-        podcast.player = dlg.getAudioElement();
-        podcast.restoreStartTime();
-        podcast.player.play();
+    onCanPlay=(dlg: AudioPlayerDlg): void => {
+        this.player = dlg.getAudioElement();
+        this.restoreStartTime();
+        this.player.play();
     }
 
-    onTimeUpdate(dlg: AudioPlayerDlg): void {
+    onTimeUpdate=(dlg: AudioPlayerDlg): void => {
         //console.log("CurrentTime=" + elm.currentTime);
-        podcast.player = dlg.getAudioElement();
+        this.player = dlg.getAudioElement();
 
-        if (!podcast.pushTimer) {
+        if (!this.pushTimer) {
             /* ping server once every five minutes */
-            podcast.pushTimer = setInterval(podcast.pushTimerFunction, 5 * 60 * 1000);
+            this.pushTimer = setInterval(this.pushTimerFunction, 5 * 60 * 1000);
         }
 
         /* todo-1: we call restoreStartTime upon loading of the component but it doesn't seem to have the effect doing anything at all
         and can't even update the slider displayed position, until playins is STARTED. Need to come back and fix this because users
         currently have the glitch of always hearing the first fraction of a second of video, which of course another way to fix
         would be by altering the volumn to zero until restoreStartTime has gone into effect */
-        podcast.restoreStartTime();
+        this.restoreStartTime();
 
-        if (!podcast.adSegments) return;
-        for (let seg of podcast.adSegments) {
+        if (!this.adSegments) return;
+        for (let seg of this.adSegments) {
             /* endTime of -1 means the rest of the media should be considered ADs */
-            if (podcast.player.currentTime >= seg.beginTime && //
-                (podcast.player.currentTime <= seg.endTime || seg.endTime < 0)) {
+            if (this.player.currentTime >= seg.beginTime && //
+                (this.player.currentTime <= seg.endTime || seg.endTime < 0)) {
 
                 /* jump to end of audio if rest is an add, with logic of -3 to ensure we don't
                 go into a loop jumping to end over and over again */
-                if (seg.endTime < 0 && podcast.player.currentTime < podcast.player.duration - 3) {
+                if (seg.endTime < 0 && this.player.currentTime < this.player.duration - 3) {
                     /* jump to last to seconds of audio, i'll do this instead of pausing, in case
                      there are is more audio automatically about to play, we don't want to halt it all */
-                    podcast.player.loop = false;
-                    podcast.player.currentTime = podcast.player.duration - 2;
+                    this.player.loop = false;
+                    this.player.currentTime = this.player.duration - 2;
                 }
                 /* or else we are in a comercial segment so jump to one second past it */
                 else {
-                    podcast.player.currentTime = seg.endTime + 1;
+                    this.player.currentTime = seg.endTime + 1;
                 }
                 return;
             }
         }
     }
 
-    pushTimerFunction(): void {
+    pushTimerFunction=(): void =>{
         //console.log("pushTimer");
         /* the purpose of this timer is to be sure the browser session doesn't timeout while user is playing
         but if the media is paused we DO allow it to timeout. Othwerwise if user is listening to audio, we
@@ -180,37 +195,37 @@ class Podcast {
 
         todo-1: would everything work if 'player' WAS the jquery object always?
         */
-        if (podcast.player && !podcast.player.paused) {
+        if (this.player && !this.player.paused) {
             /* this safety check to be sure no hidden audio can still be playing should no longer be needed
             now that I have the close litener even on the dialog, but i'll leave this here anyway. Can't hurt. */
-            if (!util.isElmVisible(podcast.player)) {
+            if (!util.isElmVisible(this.player)) {
                 console.log("closing player, because it was detected as not visible. player dialog get hidden?");
-                podcast.player.pause();
+                this.player.pause();
             }
             //console.log("Autosave player info.");
-            podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
+            this.savePlayerInfo(this.player.src, this.player.currentTime);
         }
     }
 
     //This podcast handling hack is only in this file temporarily
-    pause(): void {
-        if (podcast.player) {
-            podcast.player.pause();
-            podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
+    pause=(): void => {
+        if (this.player) {
+            this.player.pause();
+            this.savePlayerInfo(this.player.src, this.player.currentTime);
         }
     }
 
-    destroyPlayer(dlg: AudioPlayerDlg): void {
-        if (podcast.player) {
+    destroyPlayer=(dlg: AudioPlayerDlg): void =>{
+        if (this.player) {
             console.log("player.pause()");
-            podcast.player.pause();
+            this.player.pause();
 
             setTimeout(() => {
                 console.log("savePlayerInfo");
-                podcast.savePlayerInfo(podcast.player.src, podcast.player.currentTime);
+                this.savePlayerInfo(this.player.src, this.player.currentTime);
 
-                //let localPlayer = podcast.player;
-                podcast.player = null;
+                //let localPlayer = this.player;
+                this.player = null;
                 //localPlayer.remove();
 
                 if (dlg) {
@@ -220,37 +235,35 @@ class Podcast {
         }
     }
 
-    play(): void {
-        if (podcast.player) {
-            podcast.player.play();
+    play=(): void =>{
+        if (this.player) {
+            this.player.play();
         }
     }
 
-    speed(rate: number): void {
-        if (podcast.player) {
-            podcast.player.playbackRate = rate;
+    speed=(rate: number): void=> {
+        if (this.player) {
+            this.player.playbackRate = rate;
         }
     }
 
     //This podcast handling hack is only in this file temporarily
-    skip(delta: number): void {
-        if (podcast.player) {
-            podcast.player.currentTime += delta;
+    skip=(delta: number): void =>{
+        if (this.player) {
+            this.player.currentTime += delta;
         }
     }
 
-    savePlayerInfo(url: string, timeOffset: number): void {
+    savePlayerInfo=(url: string, timeOffset: number): void =>{
         if (meta64.isAnonUser) return;
 
         util.ajax<I.SetPlayerInfoRequest, I.SetPlayerInfoResponse>("setPlayerInfo", {
             "url": url,
             "timeOffset": timeOffset
-        }, podcast.setPlayerInfoResponse);
+        }, this.setPlayerInfoResponse);
     }
 
     private setPlayerInfoResponse(): void {
         //alert('save complete.');
     }
 }
-export let podcast: Podcast = new Podcast();
-export default podcast;

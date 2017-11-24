@@ -1,0 +1,33 @@
+import { EncryptionKeyPair } from "./EncryptionKeyPair";
+export declare class Encryption {
+    postConstruct(_f: any): void;
+    static KEY_SAVE_FORMAT: string;
+    static PK_ENC_ALGO: string;
+    static HASH_ALGO: string;
+    static ALGO_OPERATIONS: string[];
+    static OP_ENCRYPT: string[];
+    static OP_DECRYPT: string[];
+    crypto: any;
+    subtle: any;
+    vector: Uint8Array;
+    keyPair: EncryptionKeyPair;
+    publicKeyJson: string;
+    privateKeyJson: string;
+    data: string;
+    encrypted_data: any;
+    decrypted_data: any;
+    passwordKeys: {};
+    masterPassword: string;
+    constructor();
+    test: () => void;
+    exportKeys: (keyPair: EncryptionKeyPair) => void;
+    importKey: (algoOp: string[], keyName: string, key: string) => void;
+    encrypt: () => void;
+    decrypt: () => void;
+    passwordDecryptString: (input: string, passwordPromise: Promise<string>) => Promise<string>;
+    getSymmetricKey: (password: string) => Promise<CryptoKey>;
+    passwordEncryptString: (input: string, passwordPromise: Promise<string>) => Promise<string>;
+    private passwordEncryptWithKey;
+    convertStringToArrayBufferView: (str: any) => Uint8Array;
+    convertArrayBufferViewtoString: (buffer: any) => string;
+}

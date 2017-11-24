@@ -1,34 +1,54 @@
 console.log("Meta64.ts");
 
+import { Factory } from "./types/Factory";
 import * as I from "./Interfaces";
-import { cnst, jcrCnst } from "./Constants";
-import { util } from "./Util";
-import { attachment } from "./Attachment";
-import { edit } from "./Edit";
-import { nav } from "./Nav";
-import { prefs } from "./Prefs";
-import { props } from "./Props";
-import { render } from "./Render";
-import { srch } from "./Search";
-import { share } from "./Share";
-import { user } from "./User";
-import { view } from "./View";
 import { Span } from "./widget/Span";
 import { MenuPanel } from "./MenuPanel";
-import { podcast } from "./Podcast";
-import { systemfolder } from "./SystemFolder";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
-import { Factory } from "./Factory";
-import { domBind } from "./DomBind";
-import { rssPlugin } from "./plugins/RssPlugin";
-import { coreTypesPlugin } from "./plugins/CoreTypesPlugin";
+import { Constants as cnst } from "./Constants";
+import { DomBind } from "./types/DomBind";
+import { Render } from "./types/Render";
+import { Search } from "./types/Search";
+import { User } from "./types/User";
+import { View } from "./types/View";
+import { RssPlugin } from "./plugins/RssPlugin";
+import { Util } from "./types/Util";
+import { Edit } from "./types/Edit";
+import { Nav } from "./types/Nav";
+import { Props } from "./types/Props";
+import { CoreTypesPlugin } from "./types/plugins/CoreTypesPlugin";
 
-declare const System: any;
+let util: Util;
+let edit: Edit;
+let nav: Nav;
+let props: Props;
+let render: Render;
+let srch: Search;
+let user: User;
+let view: View;
+let domBind: DomBind;
+let rssPlugin: RssPlugin;
+let coreTypesPlugin: CoreTypesPlugin;
 
 //need to declare Polymer using *.d.ts file.
 declare var Polymer;
 
-class Meta64 {
+export class Meta64 {
+
+    postConstruct(_f: any) {
+        let f = <Factory>_f;
+        util = f.getUtil();
+        edit = f.getEdit();
+        nav = f.getNav();
+        props = f.getProps();
+        render = f.getRender();
+        srch = f.getSearch();
+        user = f.getUser();
+        view = f.getView();
+        domBind = f.getDomBind();
+        rssPlugin = f.getRssPlugin();
+        coreTypesPlugin = f.getCoreTypesPlugin();
+    }
 
     menuPanel: MenuPanel;
 
@@ -189,7 +209,7 @@ class Meta64 {
         "showMetaData": false
     };
 
-    setNodeData(uid: string, data: Object) {
+    setNodeData = (uid: string, data: Object) => {
         /* lookup object by uid */
         let foundObj = this.uidToNodeDataMap[uid];
 
@@ -204,56 +224,52 @@ class Meta64 {
     }
 
     /* gets the value associated with the given uid and property */
-    getNodeData(uid: string, prop: string): any {
+    getNodeData = (uid: string, prop: string): any => {
         let foundObj = this.uidToNodeDataMap[uid];
         return foundObj != null ? foundObj[prop] : null;
     }
 
-    updateMainMenuPanel() {
+    updateMainMenuPanel = () => {
         console.log("building main menu panel");
 
         /* create menuPanel, only upon first need for it. I think really I should be creating right in the initializer code instead here, but leaving
         in this legacy location for now */
         if (!this.menuPanel) {
-            /* We have to use Factory here even on this non-Dialog class because SystemJS (despite the claims of its developers) doesn't
-            handle the particular type of circular reference this causes if not loaded async by Factory */
-            Factory.createDefault("MenuPanelImpl", (menuPanel: MenuPanel) => {
-                this.menuPanel = menuPanel;
-                util.setHtml("mainAppMenu", menuPanel.renderHtml());
-                meta64.refreshAllGuiEnablement();
-            });
+            this.menuPanel = new MenuPanel();
+            util.setHtml("mainAppMenu", this.menuPanel.renderHtml());
+            this.refreshAllGuiEnablement();
         }
         else {
-            meta64.refreshAllGuiEnablement();
+            this.refreshAllGuiEnablement();
         }
     }
 
-    inSimpleMode(): boolean {
-        return meta64.editModeOption === meta64.MODE_SIMPLE;
+    inSimpleMode = (): boolean => {
+        return this.editModeOption === this.MODE_SIMPLE;
     }
 
-    refresh(): void {
-        meta64.goToMainPage(true, true);
+    refresh = (): void => {
+        this.goToMainPage(true, true);
     }
 
-    rebuildIndexes(): void {
+    rebuildIndexes = (): void => {
         util.ajax<I.RebuildIndexesRequest, I.RebuildIndexesResponse>("rebuildIndexes", {}, function (res: I.RebuildIndexesResponse) {
             util.showMessage("Index rebuild complete.");
         });
     }
 
-    goToMainPage(rerender?: boolean, forceServerRefresh?: boolean): void {
+    goToMainPage = (rerender?: boolean, forceServerRefresh?: boolean): void => {
 
         if (forceServerRefresh) {
-            meta64.treeDirty = true;
+            this.treeDirty = true;
         }
 
-        if (rerender || meta64.treeDirty) {
-            if (meta64.treeDirty) {
+        if (rerender || this.treeDirty) {
+            if (this.treeDirty) {
                 view.refreshTree(null, true);
             } else {
                 render.renderPageFromData();
-                meta64.refreshAllGuiEnablement();
+                this.refreshAllGuiEnablement();
             }
         }
         /*
@@ -265,7 +281,7 @@ class Meta64 {
         }
     }
 
-    selectTab(pageName): void {
+    selectTab = (pageName): void => {
         let ironPages = document.querySelector("#mainIronPages") as any;
         ironPages.select(pageName);
 
@@ -293,7 +309,7 @@ class Meta64 {
      * Note: each data instance is required to have a guid numberic property, unique to it.
      *
      */
-    changePage(pg?: any, data?: any) {
+    changePage = (pg?: any, data?: any) => {
         if (typeof pg.tabId === 'undefined') {
             console.log("oops, wrong object type passed to changePage function.");
             return null;
@@ -304,13 +320,13 @@ class Meta64 {
         paperTabs.select(pg.tabId);
     }
 
-    isNodeBlackListed(node): boolean {
-        if (!meta64.inSimpleMode())
+    isNodeBlackListed = (node): boolean => {
+        if (!this.inSimpleMode())
             return false;
 
         let ret = false;
 
-        util.forEachProp(meta64.simpleModeNodePrefixBlackList, (prop, val): boolean => {
+        util.forEachProp(this.simpleModeNodePrefixBlackList, (prop, val): boolean => {
             if (util.startsWith(node.name, prop)) {
                 ret = true;
                 //teminate iteration with false return
@@ -322,9 +338,9 @@ class Meta64 {
         return ret;
     }
 
-    getSelectedNodeUidsArray(): string[] {
+    getSelectedNodeUidsArray = (): string[] => {
         let selArray: string[] = [];
-        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
+        util.forEachProp(this.selectedNodes, (uid, val): boolean => {
             selArray.push(uid);
             return true;
         });
@@ -334,17 +350,17 @@ class Meta64 {
     /**
     Returns a newly cloned array of all the selected nodes each time it's called.
     */
-    getSelectedNodeIdsArray(): string[] {
+    getSelectedNodeIdsArray = (): string[] => {
         let selArray: string[] = [];
 
-        if (!meta64.selectedNodes) {
+        if (!this.selectedNodes) {
             console.log("no selected nodes.");
         } else {
-            console.log("selectedNode count: " + util.getPropertyCount(meta64.selectedNodes));
+            console.log("selectedNode count: " + util.getPropertyCount(this.selectedNodes));
         }
 
-        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
-            let node: I.NodeInfo = meta64.uidToNodeMap[uid];
+        util.forEachProp(this.selectedNodes, (uid, val): boolean => {
+            let node: I.NodeInfo = this.uidToNodeMap[uid];
             if (!node) {
                 console.log("unable to find uidToNodeMap for uid=" + uid);
             } else {
@@ -356,7 +372,7 @@ class Meta64 {
     }
 
     /* return an object with properties for each NodeInfo where the key is the id */
-    getSelectedNodesAsMapById(): Object {
+    getSelectedNodesAsMapById = (): Object => {
         let ret: Object = {};
         let selArray: I.NodeInfo[] = this.getSelectedNodesArray();
         if (!selArray) return ret;
@@ -367,10 +383,10 @@ class Meta64 {
     }
 
     /* Gets selected nodes as NodeInfo.java objects array */
-    getSelectedNodesArray(): I.NodeInfo[] {
+    getSelectedNodesArray = (): I.NodeInfo[] => {
         let selArray: I.NodeInfo[] = [];
-        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
-            let node = meta64.uidToNodeMap[uid];
+        util.forEachProp(this.selectedNodes, (uid, val): boolean => {
+            let node = this.uidToNodeMap[uid];
             if (node) {
                 selArray.push(node);
             }
@@ -379,11 +395,11 @@ class Meta64 {
         return selArray;
     }
 
-    clearSelectedNodes() {
-        meta64.selectedNodes = {};
+    clearSelectedNodes = () => {
+        this.selectedNodes = {};
     }
 
-    updateNodeInfoResponse(res, node) {
+    updateNodeInfoResponse = (res, node) => {
         let ownerBuf: string = "";
         let mine: boolean = false;
 
@@ -393,7 +409,7 @@ class Meta64 {
                     ownerBuf += ",";
                 }
 
-                if (owner === meta64.userName) {
+                if (owner === this.userName) {
                     mine = true;
                 }
 
@@ -413,7 +429,7 @@ class Meta64 {
             //         util.changeOrAddClass(elmId, "created-by-me", "created-by-other");
             //     }
             // }
-            let elm = <Span>meta64.getNodeData(node.uid, "ownerDisplaySpan");
+            let elm = <Span>this.getNodeData(node.uid, "ownerDisplaySpan");
             if (elm) {
                 elm.content = " (Manager: " + ownerBuf + ")";
 
@@ -430,23 +446,23 @@ class Meta64 {
         }
     }
 
-    updateNodeInfo(node: I.NodeInfo) {
+    updateNodeInfo = (node: I.NodeInfo) => {
         util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
             "nodeId": node.id,
             "includeAcl": false,
             "includeOwners": true
         }, (res: I.GetNodePrivilegesResponse) => {
-            meta64.updateNodeInfoResponse(res, node);
+            this.updateNodeInfoResponse(res, node);
         });
     }
 
     /* Returns the node with the given node.id value */
-    getNodeFromId(id: string): I.NodeInfo {
-        return meta64.idToNodeMap[id];
+    getNodeFromId = (id: string): I.NodeInfo => {
+        return this.idToNodeMap[id];
     }
 
-    getPathOfUid(uid: string): string {
-        let node: I.NodeInfo = meta64.uidToNodeMap[uid];
+    getPathOfUid = (uid: string): string => {
+        let node: I.NodeInfo = this.uidToNodeMap[uid];
         if (!node) {
             return "[path error. invalid uid: " + uid + "]";
         } else {
@@ -454,15 +470,15 @@ class Meta64 {
         }
     }
 
-    getHighlightedNode(): I.NodeInfo {
-        let ret: I.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
+    getHighlightedNode = (): I.NodeInfo => {
+        let ret: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeUid];
         return ret;
     }
 
-    highlightRowById(id, scroll): void {
-        let node: I.NodeInfo = meta64.getNodeFromId(id);
+    highlightRowById = (id, scroll): void => {
+        let node: I.NodeInfo = this.getNodeFromId(id);
         if (node) {
-            meta64.highlightNode(node, scroll);
+            this.highlightNode(node, scroll);
         } else {
             console.log("highlightRowById failed to find id: " + id);
         }
@@ -472,7 +488,7 @@ class Meta64 {
      * Important: We want this to be the only method that can set values on 'parentUidToFocusNodeMap', and always
      * setting that value should go thru this function.
      */
-    highlightNode(node: I.NodeInfo, scroll: boolean): void {
+    highlightNode = (node: I.NodeInfo, scroll: boolean): void => {
         if (!node) {
             console.log("ignoring null noode.");
             return;
@@ -484,7 +500,7 @@ class Meta64 {
         let doneHighlighting: boolean = false;
 
         /* Unhighlight currently highlighted node if any */
-        let curHighlightedNode: I.NodeInfo = meta64.parentUidToFocusNodeMap[meta64.currentNodeUid];
+        let curHighlightedNode: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeUid];
         if (curHighlightedNode) {
             //console.log("already had a highlighted node.");
             if (curHighlightedNode.uid === node.uid) {
@@ -498,7 +514,7 @@ class Meta64 {
         }
 
         if (!doneHighlighting) {
-            meta64.parentUidToFocusNodeMap[meta64.currentNodeUid] = node;
+            this.parentUidToFocusNodeMap[this.currentNodeUid] = node;
 
             let rowElmId: string = "row_" + node.uid;
             util.changeOrAddClass(rowElmId, "inactive-row", "active-row");
@@ -513,32 +529,32 @@ class Meta64 {
      * Really need to use pub/sub event to broadcast enablement, and let each component do this independently and
      * decouple
      */
-    updateState() {
+    updateState = () => {
         /* multiple select nodes */
-        meta64.state.prevPageExists = nav.mainOffset > 0;
-        meta64.state.nextPageExists = !nav.endReached;
-        meta64.state.selNodeCount = util.getPropertyCount(meta64.selectedNodes);
-        meta64.state.highlightNode = meta64.getHighlightedNode();
-        meta64.state.selNodeIsMine = meta64.state.highlightNode != null && (meta64.state.highlightNode.owner === meta64.userName || "admin" === meta64.userName);
+        this.state.prevPageExists = nav.mainOffset > 0;
+        this.state.nextPageExists = !nav.endReached;
+        this.state.selNodeCount = util.getPropertyCount(this.selectedNodes);
+        this.state.highlightNode = this.getHighlightedNode();
+        this.state.selNodeIsMine = this.state.highlightNode != null && (this.state.highlightNode.owner === this.userName || "admin" === this.userName);
 
-        meta64.state.homeNodeSelected = meta64.state.highlightNode != null && meta64.homeNodeId == meta64.state.highlightNode.id;
+        this.state.homeNodeSelected = this.state.highlightNode != null && this.homeNodeId == this.state.highlightNode.id;
 
         //for now, allowing all users to import+export (todo-2)
-        meta64.state.importFeatureEnabled = true; //meta64.isAdminUser || meta64.userPreferences.importAllowed;
-        meta64.state.exportFeatureEnabled = true; //meta64.isAdminUser || meta64.userPreferences.exportAllowed;
+        this.state.importFeatureEnabled = true; //this.isAdminUser || this.userPreferences.importAllowed;
+        this.state.exportFeatureEnabled = true; //this.isAdminUser || this.userPreferences.exportAllowed;
 
-        meta64.state.highlightOrdinal = meta64.getOrdinalOfNode(meta64.state.highlightNode);
-        meta64.state.numChildNodes = meta64.getNumChildNodes();
-        meta64.state.canMoveUp = (meta64.state.highlightOrdinal > 0 && meta64.state.numChildNodes > 1) || meta64.state.prevPageExists;
-        meta64.state.canMoveDown = (meta64.state.highlightOrdinal < meta64.state.numChildNodes - 1 && meta64.state.numChildNodes > 1) || meta64.state.nextPageExists;
+        this.state.highlightOrdinal = this.getOrdinalOfNode(this.state.highlightNode);
+        this.state.numChildNodes = this.getNumChildNodes();
+        this.state.canMoveUp = (this.state.highlightOrdinal > 0 && this.state.numChildNodes > 1) || this.state.prevPageExists;
+        this.state.canMoveDown = (this.state.highlightOrdinal < this.state.numChildNodes - 1 && this.state.numChildNodes > 1) || this.state.nextPageExists;
 
         //todo-1: need to add to this selNodeIsMine || selParentIsMine;
-        meta64.state.canCreateNode = meta64.userPreferences.editMode && (meta64.isAdminUser || (!meta64.isAnonUser /* && selNodeIsMine */));
-        meta64.state.propsToggle = meta64.currentNode && !meta64.isAnonUser;
-        meta64.state.allowEditMode = meta64.currentNode && !meta64.isAnonUser;
+        this.state.canCreateNode = this.userPreferences.editMode && (this.isAdminUser || (!this.isAnonUser /* && selNodeIsMine */));
+        this.state.propsToggle = this.currentNode && !this.isAnonUser;
+        this.state.allowEditMode = this.currentNode && !this.isAnonUser;
     }
 
-    refreshAllGuiEnablement() {
+    refreshAllGuiEnablement = () => {
         this.updateState();
 
         //for now we simply tolerate a null menuPanel here before it's initialized.
@@ -547,45 +563,45 @@ class Meta64 {
             this.menuPanel.refreshState();
         }
 
-        util.setEnablement("navLogoutButton", !meta64.isAnonUser);
-        util.setEnablement("openSignupPgButton", meta64.isAnonUser);
-        util.setEnablement("editModeButton", meta64.state.allowEditMode);
-        util.setEnablement("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setEnablement("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
-        util.setEnablement("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
-        util.setEnablement("userPreferencesMainAppButton", !meta64.isAnonUser);
+        util.setEnablement("navLogoutButton", !this.isAnonUser);
+        util.setEnablement("openSignupPgButton", this.isAnonUser);
+        util.setEnablement("editModeButton", this.state.allowEditMode);
+        util.setEnablement("upLevelButton", this.currentNode && nav.parentVisibleToUser());
+        util.setEnablement("searchMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
+        util.setEnablement("timelineMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
+        util.setEnablement("userPreferencesMainAppButton", !this.isAnonUser);
 
-        util.setElmDisplayById("editModeButton", meta64.state.allowEditMode);
-        util.setElmDisplayById("upLevelButton", meta64.currentNode && nav.parentVisibleToUser());
-        util.setElmDisplayById("openLoginDlgButton", meta64.isAnonUser);
-        util.setElmDisplayById("navLogoutButton", !meta64.isAnonUser);
-        util.setElmDisplayById("openSignupPgButton", meta64.isAnonUser);
-        util.setElmDisplayById("searchMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
-        util.setElmDisplayById("timelineMainAppButton", !meta64.isAnonUser && meta64.state.highlightNode != null);
-        util.setElmDisplayById("userPreferencesMainAppButton", !meta64.isAnonUser);
+        util.setElmDisplayById("editModeButton", this.state.allowEditMode);
+        util.setElmDisplayById("upLevelButton", this.currentNode && nav.parentVisibleToUser());
+        util.setElmDisplayById("openLoginDlgButton", this.isAnonUser);
+        util.setElmDisplayById("navLogoutButton", !this.isAnonUser);
+        util.setElmDisplayById("openSignupPgButton", this.isAnonUser);
+        util.setElmDisplayById("searchMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
+        util.setElmDisplayById("timelineMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
+        util.setElmDisplayById("userPreferencesMainAppButton", !this.isAnonUser);
 
         Polymer.dom.flush(); // <---- is this needed ? todo-3
         Polymer.updateStyles();
     }
 
     /* WARNING: This is NOT the highlighted node. This is whatever node has the CHECKBOX selection */
-    getSingleSelectedNode(): I.NodeInfo {
+    getSingleSelectedNode = (): I.NodeInfo => {
         let ret = null;
-        util.forEachProp(meta64.selectedNodes, (uid, val): boolean => {
+        util.forEachProp(this.selectedNodes, (uid, val): boolean => {
             // console.log("found a single Sel NodeID: " + nodeId);
-            ret = meta64.uidToNodeMap[uid];
+            ret = this.uidToNodeMap[uid];
             return false;
         });
         return ret;
     }
 
-    getOrdinalOfNode(node: I.NodeInfo): number {
+    getOrdinalOfNode = (node: I.NodeInfo): number => {
         let ret = -1;
 
-        if (!node || !meta64.currentNodeData || !meta64.currentNodeData.children)
+        if (!node || !this.currentNodeData || !this.currentNodeData.children)
             return ret;
 
-        util.forEachArrElm(meta64.currentNodeData.children, (iterNode, idx): boolean => {
+        util.forEachArrElm(this.currentNodeData.children, (iterNode, idx): boolean => {
             if (node.id === iterNode.id) {
                 ret = idx;
                 return false; //stop iterating.
@@ -595,27 +611,27 @@ class Meta64 {
         return ret;
     }
 
-    getNumChildNodes(): number {
-        if (!meta64.currentNodeData || !meta64.currentNodeData.children)
+    getNumChildNodes = (): number => {
+        if (!this.currentNodeData || !this.currentNodeData.children)
             return 0;
 
-        return meta64.currentNodeData.children.length;
+        return this.currentNodeData.children.length;
     }
 
-    setCurrentNodeData(data): void {
-        meta64.currentNodeData = data;
-        meta64.currentNode = data.node;
-        meta64.currentNodeUid = data.node.uid;
-        meta64.currentNodeId = data.node.id;
-        meta64.currentNodePath = data.node.path;
+    setCurrentNodeData = (data): void => {
+        this.currentNodeData = data;
+        this.currentNode = data.node;
+        this.currentNodeUid = data.node.uid;
+        this.currentNodeId = data.node.id;
+        this.currentNodePath = data.node.path;
     }
 
-    anonPageLoadResponse(res: I.AnonPageLoadResponse): void {
+    anonPageLoadResponse = (res: I.AnonPageLoadResponse): void => {
 
         if (res.renderNodeResponse) {
             util.setElmDisplayById("mainNodeContent", true);
             render.renderPageFromData(res.renderNodeResponse);
-            meta64.refreshAllGuiEnablement();
+            this.refreshAllGuiEnablement();
         } else {
             util.setElmDisplayById("mainNodeContent", false);
 
@@ -624,9 +640,9 @@ class Meta64 {
         }
     }
 
-    removeBinaryByUid(uid): void {
-        for (var i = 0; i < meta64.currentNodeData.children.length; i++) {
-            let node: I.NodeInfo = meta64.currentNodeData.children[i];
+    removeBinaryByUid = (uid): void => {
+        for (var i = 0; i < this.currentNodeData.children.length; i++) {
+            let node: I.NodeInfo = this.currentNodeData.children[i];
             if (node.uid === uid) {
                 node.hasBinary = false;
                 break;
@@ -638,7 +654,7 @@ class Meta64 {
      * updates client side maps and client-side identifier for new node, so that this node is 'recognized' by client
      * side code
      */
-    initNode(node: I.NodeInfo, updateMaps?: boolean): void {
+    initNode = (node: I.NodeInfo, updateMaps?: boolean): void => {
         if (!node) {
             console.log("initNode has null node");
             return;
@@ -647,41 +663,41 @@ class Meta64 {
          * assign a property for detecting this node type, I'll do this instead of using some kind of custom JS
          * prototype-related approach
          */
-        node.uid = updateMaps ? util.getUidForId(meta64.identToUidMap, node.id) : meta64.identToUidMap[node.id];
+        node.uid = updateMaps ? util.getUidForId(this.identToUidMap, node.id) : this.identToUidMap[node.id];
         node.properties = props.getPropertiesInEditingOrder(node, node.properties);
 
         if (updateMaps) {
-            meta64.uidToNodeMap[node.uid] = node;
-            meta64.idToNodeMap[node.id] = node;
+            this.uidToNodeMap[node.uid] = node;
+            this.idToNodeMap[node.id] = node;
         }
     }
 
-    initConstants() {
-        util.addAll(meta64.simpleModePropertyBlackList, [ //
-            jcrCnst.PRIMARY_TYPE, //
-            jcrCnst.IMG_WIDTH,//
-            jcrCnst.IMG_HEIGHT, //
-            jcrCnst.BIN_VER, //
-            jcrCnst.BIN_DATA, //
-            jcrCnst.BIN_MIME, //
-            jcrCnst.COMMENT_BY, //
-            jcrCnst.PUBLIC_APPEND]);
+    initConstants = () => {
+        util.addAll(this.simpleModePropertyBlackList, [ //
+            cnst.PRIMARY_TYPE, //
+            cnst.IMG_WIDTH,//
+            cnst.IMG_HEIGHT, //
+            cnst.BIN_VER, //
+            cnst.BIN_DATA, //
+            cnst.BIN_MIME, //
+            cnst.COMMENT_BY, //
+            cnst.PUBLIC_APPEND]);
 
-        util.addAll(meta64.readOnlyPropertyList, [ //
-            jcrCnst.PRIMARY_TYPE, //
-            jcrCnst.UUID, //
-            jcrCnst.IMG_WIDTH, //
-            jcrCnst.IMG_HEIGHT, //
-            jcrCnst.BIN_VER, //
-            jcrCnst.BIN_DATA, //
-            jcrCnst.BIN_MIME, //
-            jcrCnst.COMMENT_BY, //
-            jcrCnst.PUBLIC_APPEND]);
+        util.addAll(this.readOnlyPropertyList, [ //
+            cnst.PRIMARY_TYPE, //
+            cnst.UUID, //
+            cnst.IMG_WIDTH, //
+            cnst.IMG_HEIGHT, //
+            cnst.BIN_VER, //
+            cnst.BIN_DATA, //
+            cnst.BIN_MIME, //
+            cnst.COMMENT_BY, //
+            cnst.PUBLIC_APPEND]);
 
-        util.addAll(meta64.binaryPropertyList, [jcrCnst.BIN_DATA]);
+        util.addAll(this.binaryPropertyList, [cnst.BIN_DATA]);
     }
 
-    initApp(): void {
+    initApp = (): void => {
         console.log("initApp running.");
 
         rssPlugin.init();
@@ -690,11 +706,11 @@ class Meta64 {
         // SystemFolder and File handling stuff is disabled for now (todo-1), but will eventually be brought
         // back as a plugin similar to rssPlugin, coreTypesPlugin, etc.
         //
-        // meta64.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
-        // meta64.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
+        // this.renderFunctionsByJcrType["meta64:systemfolder"] = systemfolder.renderNode;
+        // this.propOrderingFunctionsByJcrType["meta64:systemfolder"] = systemfolder.propOrdering;
         //
-        // meta64.renderFunctionsByJcrType["meta64:filelist"] = systemfolder.renderFileListNode;
-        // meta64.propOrderingFunctionsByJcrType["meta64:filelist"] = systemfolder.fileListPropOrdering;
+        // this.renderFunctionsByJcrType["meta64:filelist"] = systemfolder.renderFileListNode;
+        // this.propOrderingFunctionsByJcrType["meta64:filelist"] = systemfolder.fileListPropOrdering;
 
         // var onresize = window.onresize;
         // window.onresize = function(event) { if (typeof onresize === 'function') onresize(); /** ... */ }
@@ -736,18 +752,18 @@ class Meta64 {
         });
         console.log("running module: cnst.js");
 
-        if (meta64.appInitialized)
+        if (this.appInitialized)
             return;
 
-        meta64.appInitialized = true;
+        this.appInitialized = true;
 
         let tabs = util.poly("mainIronPages");
         tabs.addEventListener("iron-select", () => {
-            meta64.tabChangeEvent(tabs.selected);
+            this.tabChangeEvent(tabs.selected);
         });
 
-        meta64.initConstants();
-        meta64.displaySignupMessage();
+        this.initConstants();
+        this.displaySignupMessage();
 
         /*
          * todo-3: how does orientationchange need to work for polymer? Polymer disabled
@@ -768,8 +784,8 @@ class Meta64 {
          * $ (window).on("unload", function() { user.logout(false); });
          */
 
-        meta64.deviceWidth = window.innerWidth;
-        meta64.deviceHeight = window.innerHeight;
+        this.deviceWidth = window.innerWidth;
+        this.deviceHeight = window.innerHeight;
 
         /*
          * This call checks the server to see if we have a session already, and gets back the login information from
@@ -791,26 +807,26 @@ class Meta64 {
          * _.deviceWidth = width; _.deviceHeight = $ (window).height();
          * _.screenSizeChange(); } }, 1500);
          */
-        meta64.updateMainMenuPanel();
-        meta64.refreshAllGuiEnablement();
+        this.updateMainMenuPanel();
+        this.refreshAllGuiEnablement();
         util.initProgressMonitor();
-        meta64.processUrlParams();
+        this.processUrlParams();
         this.initStaticHtmlOnClicks();
 
         console.log("initApp complete.");
     }
 
-    addTypeHandlers(typeName: string, renderFunction: Function, orderingFunction: Function): void {
+    addTypeHandlers = (typeName: string, renderFunction: Function, orderingFunction: Function): void => {
         if (renderFunction) {
-            meta64.renderFunctionsByJcrType[typeName] = renderFunction;
+            this.renderFunctionsByJcrType[typeName] = renderFunction;
         }
         if (orderingFunction) {
-            meta64.propOrderingFunctionsByJcrType[typeName] = orderingFunction;
+            this.propOrderingFunctionsByJcrType[typeName] = orderingFunction;
         }
     }
 
     /* Eventually i'll refactor to have all these domIds in a component, and the component will contain the assignment of the onclicks */
-    initStaticHtmlOnClicks(): void {
+    initStaticHtmlOnClicks = (): void => {
         domBind.addOnClick("headerAppName", nav.navPublicHome);
         domBind.addOnClick("navHomeButton", nav.navHome);
         domBind.addOnClick("upLevelButton", nav.navUpLevel);
@@ -823,26 +839,24 @@ class Meta64 {
         domBind.addOnClick("openSignupPgButton", nav.signup);
     }
 
-    processUrlParams(): void {
+    processUrlParams = (): void => {
         var passCode = util.getParameterByName("passCode");
         if (passCode) {
             setTimeout(() => {
-                Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
-                    dlg.open();
-                }, { "passCode": passCode })
+                new ChangePasswordDlg({ "passCode": passCode }).open();
             }, 100);
         }
 
-        meta64.urlCmd = util.getParameterByName("cmd");
+        this.urlCmd = util.getParameterByName("cmd");
     }
 
-    tabChangeEvent(tabName): void {
+    tabChangeEvent = (tabName): void => {
         if (tabName == "searchTabName") {
             srch.searchTabActivated();
         }
     }
 
-    displaySignupMessage(): void {
+    displaySignupMessage = (): void => {
         let signupElm = util.domElm("#signupCodeResponse");
         if (signupElm) {
             let signupResponse = signupElm.textContent;
@@ -852,14 +866,14 @@ class Meta64 {
         }
     }
 
-    screenSizeChange(): void {
-        if (meta64.currentNodeData) {
+    screenSizeChange = (): void => {
+        if (this.currentNodeData) {
 
-            if (meta64.currentNode.imgId) {
-                render.adjustImageSize(meta64.currentNode);
+            if (this.currentNode.imgId) {
+                render.adjustImageSize(this.currentNode);
             }
 
-            util.forEachArrElm(meta64.currentNodeData.children, (node, i) => {
+            util.forEachArrElm(this.currentNodeData.children, (node, i) => {
                 if (node.imgId) {
                     render.adjustImageSize(node);
                 }
@@ -878,73 +892,73 @@ class Meta64 {
     // }
     //
 
-    loadAnonPageHome(ignoreUrl): void {
+    loadAnonPageHome = (ignoreUrl): void => {
         util.ajax<I.AnonPageLoadRequest, I.AnonPageLoadResponse>("anonPageLoad", {
             "ignoreUrl": ignoreUrl
-        }, meta64.anonPageLoadResponse);
+        }, this.anonPageLoadResponse);
     }
 
-    saveUserPreferences(): void {
+    saveUserPreferences = (): void => {
         util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
-            "userPreferences": meta64.userPreferences
+            "userPreferences": this.userPreferences
         });
     }
 
-    openSystemFile(fileName: string) {
+    openSystemFile = (fileName: string) => {
         util.ajax<I.OpenSystemFileRequest, I.OpenSystemFileResponse>("openSystemFile", {
             "fileName": fileName
         });
     }
 
-    /* This is a wrapper around System.import, to make future refactoring needs easier, and also make the code a bit cleaner */
-    modRun(modName: string, callback: Function) {
-        System.import("/js/" + modName).then((mod) => {
-            callback(mod);
-        });
-    }
+    // /* This is a wrapper around System.import, to make future refactoring needs easier, and also make the code a bit cleaner */
+    // modRun(modName: string, callback: Function) {
+    //     System.import("/js/" + modName).then((mod) => {
+    //         callback(mod);
+    //     });
+    // }
 
-    clickOnNodeRow(uid): void {
+    clickOnNodeRow = (uid): void => {
         nav.clickOnNodeRow(uid);
     }
 
-    replyToComment(uid: any): void {
+    replyToComment = (uid: any): void => {
         edit.replyToComment(uid);
     }
 
-    openNode(uid): void {
+    openNode = (uid): void => {
         nav.openNode(uid);
     }
 
-    createSubNode(uid?: any, typeName?: string, createAtTop?: boolean): void {
+    createSubNode = (uid?: any, typeName?: string, createAtTop?: boolean): void => {
         edit.createSubNode(uid, typeName, createAtTop);
     }
 
-    insertNode(uid?: any, typeName?: string): void {
+    insertNode = (uid?: any, typeName?: string): void => {
         edit.insertNode(uid, typeName);
     }
 
-    runEditNode(uid: any): void {
+    runEditNode = (uid: any): void => {
         edit.runEditNode(uid);
     }
 
-    moveNodeUp(uid?: string): void {
+    moveNodeUp = (uid?: string): void => {
         edit.moveNodeUp(uid);
     }
 
-    moveNodeDown(uid?: string): void {
+    moveNodeDown = (uid?: string): void => {
         edit.moveNodeDown(uid);
     }
 
-    clickOnSearchResultRow(rowElm, uid) {
+    clickOnSearchResultRow = (rowElm, uid) => {
         srch.clickOnSearchResultRow(rowElm, uid);
     }
 
-    clickSearchNode(uid: string) {
+    clickSearchNode = (uid: string) => {
         srch.clickSearchNode(uid);
     }
 
     //google signon is a work in progress, not functional yet.
-    onSignIn(googleUser) {
+    onSignIn = (googleUser) => {
         var profile = googleUser.getBasicProfile();
         console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
         console.log('Name: ' + profile.getName());
@@ -957,5 +971,3 @@ class Meta64 {
     // }
 }
 
-export let meta64: Meta64 = new Meta64();
-(window as any).meta64 = meta64;

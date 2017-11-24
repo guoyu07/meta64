@@ -1,13 +1,6 @@
 console.log("Props.ts");
 
-import { meta64 } from "./Meta64"
-import { util } from "./Util";
-import { cnst, jcrCnst } from "./Constants";
-import { render } from "./Render";
-import { view } from "./View";
-import { edit } from "./Edit";
 import * as I from "./Interfaces";
-import { tag } from "./Tag";
 import { PropTable } from "./widget/PropTable";
 import { PropTableRow } from "./widget/PropTableRow";
 import { PropTableCell } from "./widget/PropTableCell";
@@ -15,22 +8,54 @@ import { Button } from "./widget/Button";
 import { VerticalDivs } from "./widget/VerticalDivs";
 import { Div } from "./widget/Div";
 import { Span } from "./widget/Span";
-import { encryption } from "./Encryption";
+import { Constants as cnst } from "./Constants";
 
-class Props {
 
-    orderProps(propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] {
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { Render } from "./types/Render";
+import { View } from "./types/View";
+import { User } from "./types/User";
+import { Edit } from "./types/Edit";
+import { Encryption } from "./types/Encryption";
+import { Tag } from "./types/Tag";
+
+let meta64: Meta64;
+let util: Util;
+let render: Render;
+let view: View;
+let edit: Edit;
+let encryption: Encryption;
+let tag: Tag;
+
+export class Props {
+
+    /* Note this: is not a singleton so we can postConstruct during actual constructor */
+    postConstruct(_f: any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        render = f.getRender();
+        view = f.getView();
+        edit = f.getEdit();
+        encryption = f.getEncryption();
+        tag = f.getTag();
+    }
+
+    orderProps = (propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] => {
         let propsNew: I.PropertyInfo[] = util.arrayClone(_props);
         let targetIdx: number = 0;
 
         for (let prop of propOrder) {
-            targetIdx = props.moveNodePosition(propsNew, targetIdx, prop);
+            targetIdx = this.moveNodePosition(propsNew, targetIdx, prop);
         }
 
         return propsNew;
     }
 
-    moveNodePosition(props: I.PropertyInfo[], idx: number, typeName: string): number {
+    moveNodePosition = (props: I.PropertyInfo[], idx: number, typeName: string): number => {
         let tagIdx: number = util.arrayIndexOfItemByProp(props, "name", typeName);
         if (tagIdx != -1) {
             util.arrayMoveItem(props, tagIdx, idx++);
@@ -41,7 +66,7 @@ class Props {
     /*
      * Toggles display of properties in the gui.
      */
-    propsToggle(): void {
+    propsToggle = (): void => {
         meta64.showProperties = meta64.showProperties ? false : true;
         // setDataIconUsingId("#editModeButton", editMode ? "edit" :
         // "forbidden");
@@ -56,7 +81,7 @@ class Props {
         meta64.selectTab("mainTabName");
     }
 
-    deletePropertyFromLocalData(propertyName): void {
+    deletePropertyFromLocalData = (propertyName): void => {
         for (let i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
@@ -70,21 +95,21 @@ class Props {
      * Sorts props input array into the proper order to show for editing. Simple algorithm first grabs 'jcr:content'
      * node and puts it on the top, and then does same for 'jctCnst.TAGS'
      */
-    getPropertiesInEditingOrder(node: I.NodeInfo, _props: I.PropertyInfo[]): I.PropertyInfo[] {
+    getPropertiesInEditingOrder = (node: I.NodeInfo, _props: I.PropertyInfo[]): I.PropertyInfo[] => {
         let func: Function = meta64.propOrderingFunctionsByJcrType[node.type];
         if (func) {
             return func(node, _props);
         }
 
         let propsNew: I.PropertyInfo[] = util.arrayClone(_props);
-        props.movePropsToTop([jcrCnst.CONTENT, jcrCnst.TAGS], propsNew);
-        //props.movePropsToEnd([jcrCnst.CREATED, jcrCnst.OWNER, jcrCnst.LAST_MODIFIED], propsNew);
+        this.movePropsToTop([cnst.CONTENT, cnst.TAGS], propsNew);
+        //this.movePropsToEnd([jcrCnst.CREATED, jcrCnst.OWNER, jcrCnst.LAST_MODIFIED], propsNew);
 
         return propsNew;
     }
 
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    private movePropsToTop(propsList: string[], props: I.PropertyInfo[]) {
+    private movePropsToTop = (propsList: string[], props: I.PropertyInfo[]) => {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -92,9 +117,9 @@ class Props {
             }
         }
     }
-    
+
     /* Moves all the properties listed in propList array to the end of the list of properties and keeps them in the order specified */
-    private movePropsToEnd(propsList: string[], props: I.PropertyInfo[]) {
+    private movePropsToEnd = (propsList: string[], props: I.PropertyInfo[]) => {
         for (let prop of propsList) {
             let tagIdx = util.arrayIndexOfItemByProp(props, "name", prop);
             if (tagIdx != -1) {
@@ -131,8 +156,8 @@ class Props {
                     if (isBinaryProp) {
                         propValCell = new PropTableCell("[binary]", valCellAttrs);
                     }
-                    else if (property.name == jcrCnst.PASSWORD) {
-                        let decryptButton : Button = null;
+                    else if (property.name == cnst.PASSWORD) {
+                        let decryptButton: Button = null;
                         let comps = new VerticalDivs([
                             new Div(property.value),
                             decryptButton = new Button("Decrypt", () => {
@@ -145,7 +170,7 @@ class Props {
                         propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);
                     }
                     else {
-                        propValCell = new PropTableCell(props.renderPropertyValues(property.values), valCellAttrs);
+                        propValCell = new PropTableCell(this.renderPropertyValues(property.values), valCellAttrs);
                     }
 
                     let propTableRow = new PropTableRow({
@@ -163,7 +188,7 @@ class Props {
         }
     }
 
-    decryptToClipboard = (val: string, decryptButton : Button): void => {
+    decryptToClipboard = (val: string, decryptButton: Button): void => {
         let decryptedValPromise = encryption.passwordDecryptString(val, util.getPassword());
         decryptedValPromise.then((decryptedVal) => {
             /*
@@ -188,7 +213,7 @@ class Props {
      * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
      * (PropertyInfo.java) with name matching propertyName, else null.
      */
-    getNodeProperty(propertyName, node): I.PropertyInfo {
+    getNodeProperty = (propertyName, node): I.PropertyInfo => {
         if (!node || !node.properties)
             return null;
 
@@ -201,8 +226,8 @@ class Props {
         return null;
     }
 
-    getNodePropertyVal(propertyName, node): string {
-        let prop: I.PropertyInfo = props.getNodeProperty(propertyName, node);
+    getNodePropertyVal = (propertyName, node): string => {
+        let prop: I.PropertyInfo = this.getNodeProperty(propertyName, node);
         return prop ? prop.value : null;
     }
 
@@ -210,7 +235,7 @@ class Props {
      * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedNode(node: I.NodeInfo): boolean {
+    isNonOwnedNode = (node: I.NodeInfo): boolean => {
         let owner: string = node.owner;
 
         // if we don't know who owns this node assume the admin owns it.
@@ -226,20 +251,20 @@ class Props {
      * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedCommentNode(node): boolean {
-        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+    isNonOwnedCommentNode = (node): boolean => {
+        let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
         return commentBy != null && commentBy != meta64.userName;
     }
 
-    isOwnedCommentNode(node): boolean {
-        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+    isOwnedCommentNode = (node): boolean => {
+        let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
         return commentBy != null && commentBy == meta64.userName;
     }
 
     /*
      * Returns Span representation of property value, even if multiple properties
      */
-    renderProperty(property): string {
+    renderProperty = (property): string => {
         let ret: string = null;
         /* If this is a single-value type property */
         if (!property.values) {
@@ -254,14 +279,14 @@ class Props {
         }
         /* else render multi-value property */
         else {
-            ret = props.renderPropertyValues(property.values);
+            ret = this.renderPropertyValues(property.values);
         }
 
         return ret || "";
     }
 
     //todo-1: this needs to be retested after widget refactoring.
-    renderPropertyValues(values): string {
+    renderPropertyValues = (values): string => {
         let ret = "";
 
         util.forEachArrElm(values, (value, i: number) => {
@@ -272,5 +297,3 @@ class Props {
         return ret;
     }
 }
-export let props: Props = new Props();
-export default props;

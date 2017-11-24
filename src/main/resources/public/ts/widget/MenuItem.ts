@@ -1,9 +1,9 @@
 console.log("Header.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { DialogBase } from "../DialogBase";
 
+import { DialogBase } from "../DialogBase";
+declare var tag;
 export class MenuItem extends Comp {
 
     constructor(public name: string, public clickFunc: Function, isEnabledFunc?: Function, isVisibleFunc?: Function, bottomSeparator?: boolean) {

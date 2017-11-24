@@ -1,11 +1,10 @@
-/// <reference path="../types.d.ts" />
-
 console.log("ButtonBarRe.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+declare var tag;
 
 /* React version of ButtonBar class */
 export class ButtonBarRe extends Comp {

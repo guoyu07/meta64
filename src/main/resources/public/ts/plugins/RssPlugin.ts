@@ -1,18 +1,16 @@
 console.log("RssPlugin.ts");
 
-import { meta64 } from "../Meta64";
 import * as I from "../Interfaces";
-import { util } from "../Util";
-import { props } from "../Props";
-import { render } from "../Render";
-import { tag } from "../Tag";
-import { podcast } from "../Podcast";
 
-class RssPlugin {
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var meta64, util, props, render, tag, podcast;
+
+export class RssPlugin {
 
     init = () => {
-        meta64.addTypeHandlers("sn:rssfeed", rssPlugin.renderFeedNode, rssPlugin.propOrderingFeedNode);
-        meta64.addTypeHandlers("sn:rssitem", rssPlugin.renderItemNode, rssPlugin.propOrderingItemNode);
+        meta64.addTypeHandlers("sn:rssfeed", this.renderFeedNode, this.propOrderingFeedNode);
+        meta64.addTypeHandlers("sn:rssitem", this.renderItemNode, this.propOrderingItemNode);
     }
 
     renderFeedNode = (node: I.NodeInfo, rowStyling: boolean): string => {
@@ -125,6 +123,3 @@ class RssPlugin {
         return props.orderProps(propOrder, properties);
     }
 }
-
-export let rssPlugin: RssPlugin = new RssPlugin();
-export default rssPlugin;

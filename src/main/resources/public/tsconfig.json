@@ -1,0 +1,7 @@
+//NOTE: This is the DEV version of the file, prod is 'tsconfig-prod.json'
+{
+    "extends": "./tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "./dist/"
+    }
+}

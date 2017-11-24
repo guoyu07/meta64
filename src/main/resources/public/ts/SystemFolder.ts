@@ -1,4 +1,4 @@
-class SystemFolder {
+export class SystemFolder {
     //
     // renderNode(node: NodeInfo, rowStyling: boolean): string {
     //     let ret: string = "";
@@ -109,4 +109,3 @@ class SystemFolder {
     //     return props.orderProps(propOrder, properties);
     // }
 }
-export let systemfolder: SystemFolder = new SystemFolder();

@@ -1,20 +1,64 @@
 console.log("User.ts");
 
-import { cnst } from "./Constants";
-import { meta64 } from "./Meta64";
-import { util } from "./Util";
-import { Factory } from "./Factory";
 import * as I from "./Interfaces";
 import { LoginDlg } from "./LoginDlg";
 import { MessageDlg } from "./MessageDlg";
-import { view } from "./View";
 import { SignupDlg } from "./SignupDlg";
+import { ConfirmDlg } from "./ConfirmDlg";
+import { Constants as cnst } from "./Constants";
 
-class User {
+import { Factory } from "./types/Factory";
 
-    private logoutResponse(res: I.LogoutResponse): void {
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { View } from "./types/View";
+
+let meta64: Meta64;
+let util: Util;
+let view: View;
+
+export class User {
+    
+    /* Note this: is not a singleton so we can postConstruct during actual constructor */
+    postConstruct(_f: any) {
+        let f: Factory = (<any>window).factory;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        view = f.getView();
+    }
+
+    private logoutResponse = (res: I.LogoutResponse): void => {
         /* reloads browser with the query parameters stripped off the path */
         window.location.href = window.location.origin;
+    }
+
+    closeAccountResponse = (res: I.CloseAccountResponse): void => {
+        /* Remove warning dialog to ask user about leaving the page */
+        window.onbeforeunload = null;
+
+        /* reloads browser with the query parameters stripped off the path */
+        window.location.href = window.location.origin;
+    }
+
+    closeAccount = (): void => {
+        new ConfirmDlg({
+            "title": "Oh No!",
+            "message": "Close your Account?<p> Are you sure?",
+            "buttonText": "Yes, Close Account.",
+            "yesCallback":
+                () => {
+                    new ConfirmDlg({
+                        "title": "One more Click",
+                        "message": "Your data will be deleted and can never be recovered.<p> Are you sure?",
+                        "buttonText": "Yes, Close Account.",
+                        "yesCallback":
+                            () => {
+                                this.deleteAllUserCookies();
+                                util.ajax<I.CloseAccountRequest, I.CloseAccountResponse>("closeAccount", {}, this.closeAccountResponse);
+                            }
+                    }).open();
+                }
+        }).open();
     }
 
     /*
@@ -22,14 +66,14 @@ class User {
      * into production, but on my own production these are my "testUserAccounts", so no real user will be able to
      * use these names
      */
-    isTestUserAccount(): boolean {
+    isTestUserAccount = (): boolean => {
         return meta64.userName.toLowerCase() === "adam" || //
             meta64.userName.toLowerCase() === "bob" || //
             meta64.userName.toLowerCase() === "cory" || //
             meta64.userName.toLowerCase() === "dan";
     }
 
-    setTitleUsingLoginResponse(res): void {
+    setTitleUsingLoginResponse = (res): void => {
         var title = "SubNode";
 
         /* todo-1: If users go with very long usernames this is gonna be ugly */
@@ -41,7 +85,7 @@ class User {
     }
 
     /* TODO-3: move this into meta64 module */
-    setStateVarsUsingLoginResponse(res: I.LoginResponse): void {
+    setStateVarsUsingLoginResponse = (res: I.LoginResponse): void => {
         if (res.rootNode) {
             meta64.homeNodeId = res.rootNode.id;
             meta64.homeNodePath = res.rootNode.path;
@@ -59,23 +103,20 @@ class User {
         console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
     }
 
-    openSignupPg(): void {
-        Factory.createDefault("SignupDlgImpl", (dlg: SignupDlg) => {
-            dlg.open();
-        });
+    openSignupPg = (): void => {
+        new SignupDlg().open();
     }
 
     /*
      * This method is ugly. It is the button that can be login *or* logout.
      */
-    openLoginPg(): void {
-        Factory.createDefault("LoginDlgImpl", (dlg: LoginDlg) => {
-            dlg.populateFromCookies();
-            dlg.open();
-        });
+    openLoginPg = (): void => {
+        let dlg = new LoginDlg(null);
+        dlg.populateFromCookies();
+        dlg.open();
     }
 
-    refreshLogin(): void {
+    refreshLogin = (): void => {
         console.log("refreshLogin.");
 
         let callUsr: string;
@@ -128,15 +169,15 @@ class User {
                 "dst": util.daylightSavingsTime
             }, (res: I.LoginResponse) => {
                 if (usingCookies) {
-                    user.loginResponse(res, callUsr, callPwd, usingCookies);
+                    this.loginResponse(res, callUsr, callPwd, usingCookies);
                 } else {
-                    user.refreshLoginResponse(res);
+                    this.refreshLoginResponse(res);
                 }
             });
         }
     }
 
-    logout(updateLoginStateCookie) {
+    logout = (updateLoginStateCookie) => {
         if (meta64.isAnonUser) {
             return;
         }
@@ -148,28 +189,28 @@ class User {
             util.setCookie(cnst.COOKIE_LOGIN_STATE, "0");
         }
 
-        util.ajax<I.LogoutRequest, I.LogoutResponse>("logout", {}, user.logoutResponse);
+        util.ajax<I.LogoutRequest, I.LogoutResponse>("logout", {}, this.logoutResponse);
     }
 
 
-    login(loginDlg, usr, pwd) {
+    login = (loginDlg, usr, pwd) => {
         util.ajax<I.LoginRequest, I.LoginResponse>("login", {
             "userName": usr,
             "password": pwd,
             "tzOffset": new Date().getTimezoneOffset(),
             "dst": util.daylightSavingsTime
         }, (res: I.LoginResponse) => {
-            user.loginResponse(res, usr, pwd, null, loginDlg);
+            this.loginResponse(res, usr, pwd, null, loginDlg);
         });
     }
 
-    deleteAllUserCookies() {
+    deleteAllUserCookies = () => {
         util.deleteCookie(cnst.COOKIE_LOGIN_USR);
         util.deleteCookie(cnst.COOKIE_LOGIN_PWD);
         util.deleteCookie(cnst.COOKIE_LOGIN_STATE);
     }
 
-    loginResponse(res?: I.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) {
+    loginResponse = (res?: I.LoginResponse, usr?: string, pwd?: string, usingCookies?: boolean, loginDlg?: LoginDlg) => {
         if (util.checkSuccess("Login", res)) {
             console.log("loginResponse: usr=" + usr + " homeNodeOverride: " + res.homeNodeOverride);
 
@@ -183,7 +224,7 @@ class User {
                 loginDlg.cancel();
             }
 
-            user.setStateVarsUsingLoginResponse(res);
+            this.setStateVarsUsingLoginResponse(res);
 
             /* set ID to be the page we want to show user right after login */
             let id: string = null;
@@ -194,7 +235,6 @@ class User {
                 meta64.homeNodeOverride = id;
             } else {
                 let lastNode = localStorage.getItem("lastNode");
-                debugger;
                 if (lastNode) {
                     console.log("loading lastNode=" + lastNode);
                     id = lastNode;
@@ -205,14 +245,14 @@ class User {
             }
 
             view.refreshTree(id, false, null, true);
-            user.setTitleUsingLoginResponse(res);
+            this.setTitleUsingLoginResponse(res);
         } else {
             if (usingCookies) {
                 util.showMessage("Cookie login failed.");
 
                 /*
                  * blow away failed cookie credentials and reload page, should result in brand new page load as anon
-                 * user.
+                 * this.
                  */
                 util.deleteCookie(cnst.COOKIE_LOGIN_USR);
                 util.deleteCookie(cnst.COOKIE_LOGIN_PWD);
@@ -223,16 +263,14 @@ class User {
     }
 
     // res is JSON response object from server.
-    private refreshLoginResponse(res: I.LoginResponse): void {
+    private refreshLoginResponse = (res: I.LoginResponse): void => {
         console.log("refreshLoginResponse");
 
         if (res.success) {
-            user.setStateVarsUsingLoginResponse(res);
-            user.setTitleUsingLoginResponse(res);
+            this.setStateVarsUsingLoginResponse(res);
+            this.setTitleUsingLoginResponse(res);
         }
 
         meta64.loadAnonPageHome(false);
     }
 }
-export let user: User = new User();
-export default user;

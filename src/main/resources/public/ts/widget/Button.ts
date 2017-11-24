@@ -1,9 +1,11 @@
 console.log("Button.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { util } from "../Util";
 import { DialogBase } from "../DialogBase";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag, util;
 
 export class Button extends Comp {
 

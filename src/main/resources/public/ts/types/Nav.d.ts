@@ -1,0 +1,31 @@
+import * as I from "./Interfaces";
+export declare class Nav {
+    postConstruct(_f: any): void;
+    _UID_ROWID_PREFIX: string;
+    mainOffset: number;
+    endReached: boolean;
+    ROWS_PER_PAGE: number;
+    search: () => void;
+    searchTags: () => void;
+    searchFiles: () => void;
+    editMode: () => void;
+    login: () => void;
+    logout: () => void;
+    signup: () => void;
+    preferences: () => void;
+    openMainMenuHelp: () => void;
+    openRssFeedsNode: () => void;
+    browseSampleContent: () => void;
+    displayingHome: () => boolean;
+    parentVisibleToUser: () => boolean;
+    upLevelResponse: (res: I.RenderNodeResponse, id: any) => void;
+    navUpLevel: () => void;
+    getSelectedDomElement: () => HTMLElement;
+    getSelectedPolyElement: () => any;
+    clickOnNodeRow: (uid: string) => void;
+    openNode: (uid: any) => void;
+    toggleNodeSel: (selected: boolean, uid: string) => void;
+    navPageNodeResponse: (res: I.RenderNodeResponse) => void;
+    navHome: () => void;
+    navPublicHome: () => void;
+}

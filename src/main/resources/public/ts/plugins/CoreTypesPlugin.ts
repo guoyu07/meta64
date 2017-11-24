@@ -1,16 +1,15 @@
 console.log("CoreTypesPlugin.ts");
 
-import { meta64 } from "../Meta64";
 import * as I from "../Interfaces";
-import { util } from "../Util";
-import { props } from "../Props";
-import { render } from "../Render";
-import { tag } from "../Tag";
 
-class CoreTypesPlugin {
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var meta64, props, render;
+
+export class CoreTypesPlugin {
 
     init = () => {
-        meta64.addTypeHandlers("meta64:folder", coreTypesPlugin.renderFolderNode, null);
+        meta64.addTypeHandlers("meta64:folder", this.renderFolderNode, null);
     }
 
     renderFolderNode = (node: I.NodeInfo, rowStyling: boolean): string => {
@@ -25,6 +24,3 @@ class CoreTypesPlugin {
         return ret;
     }
 }
-
-export let coreTypesPlugin: CoreTypesPlugin = new CoreTypesPlugin();
-export default coreTypesPlugin;

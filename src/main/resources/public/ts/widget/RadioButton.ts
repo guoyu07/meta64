@@ -1,12 +1,9 @@
 console.log("RadioButton.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { domBind } from "../DomBind";
-import { util } from "../Util";
 import { DialogBase } from "../DialogBase";
 import { RadioButtonGroup } from "./RadioButtonGroup";
-
+declare var tag, domBind, util;
 export class RadioButton extends Comp {
 
     constructor(public label: string, public checked: boolean) {

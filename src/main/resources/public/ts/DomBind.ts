@@ -1,19 +1,24 @@
 console.log("DomBind.ts");
 
-import { util } from "./Util";
+import {Factory} from "./types/Factory";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var util;
 
 /*
 This allows us to wire a function to a particular Element by its ID even long BEFORE the ID itself comes into existence
 on the DOM! This allows us to set things up before they get rendered! Very powerful concept for 'temporal decoupling'. In Fact
 the word I'd used to describe this innovation/technique would indeed be "Temporal Decoupling"
 */
-class DomBind {
+export class DomBind {
     private counter: number = 0;
 
     /* Binds DOM IDs to functions that should be called on "onClick" */
     private idToFuncMap: { [key: string]: Function } = {};
 
-    constructor() {
+    postConstruct(_f: any) {
+        let f = <Factory>_f;
         setInterval(() => {
             this.interval();
         }, 250);
@@ -53,6 +58,11 @@ class DomBind {
     }
 
     private interval = (): void => {
+        if (!util) {
+            console.log("util module not yet loaded.");
+            return;
+        }
+
         /* The loop below may have multiple entries targeting the same element, so just to avoid as many DOM operations
         as possible (for performance) we cache them in this map once we find them */
         let idToElmMap: { [key: string]: HTMLElement } = {};
@@ -86,27 +96,27 @@ class DomBind {
         });
     }
 
-    public addOnClick(domId: string, callback: Function) {
+    public addOnClick=(domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".onclick"] = (e) => { (<any>e).onclick = callback; };
     }
 
-    public addOnTimeUpdate(domId: string, callback: Function) {
+    public addOnTimeUpdate=(domId: string, callback: Function) =>{
         this.idToFuncMap[domId + ".ontimeupdate"] = (e) => { (<any>e).ontimeupdate = callback; };
     }
 
-    public addOnCanPlay(domId: string, callback: Function) {
+    public addOnCanPlay=(domId: string, callback: Function) =>{
         this.idToFuncMap[domId + ".oncanplay"] = (e) => { (<any>e).oncanplay = callback; };
     }
 
-    public addKeyPress(domId: string, callback: Function) {
+    public addKeyPress=(domId: string, callback: Function) =>{
         this.idToFuncMap[domId + ".keypress"] = (e) => { (<any>e).onkeypress = callback; };
     }
 
-    public addOnChange(domId: string, callback: Function) {
+    public addOnChange=(domId: string, callback: Function) =>{
         this.idToFuncMap[domId + ".onchange"] = (e) => { (<any>e).onchange = callback; };
     }
 
-    public whenElm(domId: string, callback: Function) {
+    public whenElm=(domId: string, callback: Function) =>{
 
         /* First try to find the domId immediately and if found run the function */
         let e = util.domElm(domId);
@@ -119,6 +129,3 @@ class DomBind {
         this.idToFuncMap[domId + ".whenElm" + (++this.counter)] = callback;
     }
 }
-
-export let domBind: DomBind = new DomBind();
-export default domBind;

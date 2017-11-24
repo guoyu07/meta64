@@ -1,8 +1,10 @@
 console.log("Div.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { util } from "../Util";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag, util;
 
 export class Anchor extends Comp {
 

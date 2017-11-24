@@ -1,8 +1,7 @@
-console.log("Div.ts");
+console.log("Img.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-
+declare var tag;
 export class Img extends Comp {
 
     constructor(attribs : Object = {}) {

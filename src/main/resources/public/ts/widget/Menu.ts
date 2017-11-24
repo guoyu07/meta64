@@ -1,10 +1,10 @@
-console.log("Menu`.ts");
+console.log("Menu.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
 import { MenuItem } from "./MenuItem";
-import { util } from "../Util";
+
+declare var tag, util;
 
 export class Menu extends Comp {
 

@@ -1,7 +1,8 @@
-console.log("Div.ts");
+console.log("Heading.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
+
+declare var tag;
 
 export class Heading extends Comp {
 

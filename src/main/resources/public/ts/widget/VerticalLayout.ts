@@ -1,9 +1,8 @@
 console.log("VerticalLayout.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-
+declare var tag;
 export class VerticalLayout extends Comp {
 
     constructor(initialComps: Comp[] = null, justify: string = "left-justified") {

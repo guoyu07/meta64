@@ -1,8 +1,8 @@
-console.log("PasswordTextField.ts");
+console.log("TextField.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { util } from "../Util";
+
+declare var tag, util;
 
 export class TextField extends Comp {
 

@@ -1,9 +1,11 @@
 console.log("Captcha.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-import { domBind } from "../DomBind";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag, domBind;
 
 export class Captcha extends Comp {
 

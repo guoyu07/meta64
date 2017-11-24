@@ -1,7 +1,10 @@
 console.log("Form.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag;
 
 export class Form extends Comp {
 

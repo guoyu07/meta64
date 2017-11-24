@@ -11,3 +11,4 @@ run-root
 run-bat
 *.min.js
 /derby.log
+src/main/resources/node_modules/

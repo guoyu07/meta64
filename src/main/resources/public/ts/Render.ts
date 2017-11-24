@@ -1,17 +1,7 @@
 console.log("Render.ts");
 
-import { meta64 } from "./Meta64"
-import { util } from "./Util";
-import { nav } from "./Nav";
-import { edit } from "./Edit";
-import { view } from "./View";
-import { cnst, jcrCnst } from "./Constants";
-import { props } from "./Props";
 import * as I from "./Interfaces"
-import { Factory } from "./Factory";
 import { MessageDlg } from "./MessageDlg";
-import { tag } from "./Tag";
-import { domBind } from "./DomBind";
 import { Comp } from "./widget/base/Comp";
 import { Button } from "./widget/Button";
 import { ButtonBar } from "./widget/ButtonBar";
@@ -22,11 +12,45 @@ import { Img } from "./widget/Img";
 import { Anchor } from "./widget/Anchor";
 import { Heading } from "./widget/Heading";
 import { VerticalDivs } from "./widget/VerticalDivs";
+import { Constants as cnst } from "./Constants";
+
+
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { View } from "./types/View";
+import { Nav } from "./types/Nav";
+import { Props } from "./types/Props";
+import { Edit } from "./types/Edit";
+import { DomBind } from "./types/DomBind";
+import { Tag } from "./types/Tag";
+
+let meta64: Meta64;
+let util: Util;
+let nav: Nav;
+let props: Props;
+let view: View;
+let edit: Edit;
+let domBind: DomBind;
+let tag: Tag;
 
 declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render {
+     postConstruct(_f: any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        nav = f.getNav();
+        props = f.getProps();
+        view = f.getView();
+        edit = f.getEdit();
+        domBind = f.getDomBind();
+        tag = f.getTag();
+    }
+    
     private PRETTY_TAGS: boolean = true;
     private debug: boolean = false;
 
@@ -66,7 +90,6 @@ export class Render {
      * todo-0: wtf, there's a typo in this method name. how the hell is this working?
      */
     buidPage = (pg, data): void => {
-        debugger;
         console.log("buildPage: pg.domId=" + pg.domId);
 
         if (!pg.built || data) {
@@ -80,7 +103,7 @@ export class Render {
     }
 
     buildRowHeader = (node: I.NodeInfo, showPath: boolean, showName: boolean): Div => {
-        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
+        let commentBy: string = props.getNodePropertyVal(cnst.COMMENT_BY, node);
         let pathDiv: Div = null;
         let commentSpan: Span = null;
         let createdBySpan: Span = null;
@@ -195,7 +218,7 @@ export class Render {
             }
 
             if (!renderComplete) {
-                let contentProp: I.PropertyInfo = props.getNodeProperty(jcrCnst.CONTENT, node);
+                let contentProp: I.PropertyInfo = props.getNodeProperty(cnst.CONTENT, node);
 
                 //console.log("contentProp: " + contentProp);
                 if (contentProp) {
@@ -225,13 +248,15 @@ export class Render {
                         }, markedContent);
                     }
 
-                    let passwordProp: I.PropertyInfo = props.getNodeProperty(jcrCnst.PASSWORD, node);
+                    let passwordProp: I.PropertyInfo = props.getNodeProperty(cnst.PASSWORD, node);
                     if (passwordProp) {
                         let decryptButton: Button = null;
                         let comps = new VerticalDivs([
                             new Div("Encrypted Password:"),
                             decryptButton = new Button("Decrypt", () => {
-                                props.decryptToClipboard(passwordProp.value, decryptButton);
+                                //todo-0: I"m commenting this out because the compiler is telling 
+                                //me decryptButton is not a 'Button' type which is clearly a compiler error.
+                                //props.decryptToClipboard(passwordProp.value, decryptButton);
                             })
                         ]);
                         ret += comps.renderHtml();
@@ -268,7 +293,7 @@ export class Render {
             //}
         }
 
-        let tags: string = props.getNodePropertyVal(jcrCnst.TAGS, node);
+        let tags: string = props.getNodePropertyVal(cnst.TAGS, node);
         if (tags) {
             ret += new Div("Tags: " + tags, {
                 "class": "tags-content"
@@ -437,8 +462,8 @@ export class Render {
     makeRowButtonBar = (node: I.NodeInfo, canMoveUp: boolean, canMoveDown: boolean, editingAllowed: boolean): ButtonBar => {
 
         let createdBy: string = node.owner;
-        let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, node);
-        let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, node);
+        let commentBy: string = props.getNodePropertyVal(cnst.COMMENT_BY, node);
+        let publicAppend: string = props.getNodePropertyVal(cnst.PUBLIC_APPEND, node);
 
         let openButton: Button;
         let selButton: Checkbox;
@@ -569,7 +594,6 @@ export class Render {
         meta64.codeFormatDirty = false;
         console.log("renderPageFromData()");
 
-        debugger;
         //console.log("Setting lastNode="+data.node.id);
         if (data && data.node) {
             localStorage.setItem("lastNode", data.node.id);
@@ -652,8 +676,8 @@ export class Render {
             // console.log("isNonOwnedNode="+props.isNonOwnedNode(data.node));
 
             let createdBy: string = data.node.owner;
-            let commentBy: string = props.getNodePropertyVal(jcrCnst.COMMENT_BY, data.node);
-            let publicAppend: string = props.getNodePropertyVal(jcrCnst.PUBLIC_APPEND, data.node);
+            let commentBy: string = props.getNodePropertyVal(cnst.COMMENT_BY, data.node);
+            let publicAppend: string = props.getNodePropertyVal(cnst.PUBLIC_APPEND, data.node);
 
             /*
              * Show Reply button if this is a publicly appendable node and not created by current user,
@@ -1146,11 +1170,9 @@ export class Render {
 
     sanitizePropertyName = (propName: string): string => {
         if (meta64.editModeOption === "simple") {
-            return propName === jcrCnst.CONTENT ? "Content" : propName;
+            return propName === cnst.CONTENT ? "Content" : propName;
         } else {
             return propName;
         }
     }
 }
-export let render: Render = new Render();
-export default render;

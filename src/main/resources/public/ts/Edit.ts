@@ -1,18 +1,9 @@
 console.log("Edit.ts");
 
-import { meta64 } from "./Meta64"
-import { util } from "./Util";
-import { nav } from "./Nav";
-import { render } from "./Render";
-import { view } from "./View"
-import { props } from "./Props";
-import { cnst, jcrCnst } from "./Constants";
 import * as I from "./Interfaces";
 import { EditNodeDlg } from "./EditNodeDlg";
 import { ConfirmDlg } from "./ConfirmDlg";
 import { CreateNodeDlg } from "./CreateNodeDlg";
-import { Factory } from "./Factory";
-import { user } from "./User";
 import { RenameNodeDlg } from "./RenameNodeDlg";
 import { ImportDlg } from "./ImportDlg";
 import { ExportDlg } from "./ExportDlg";
@@ -20,55 +11,72 @@ import { PrefsDlg } from "./PrefsDlg";
 import { ChangePasswordDlg } from "./ChangePasswordDlg";
 import { ManageAccountDlg } from "./ManageAccountDlg";
 import { ImportFromFileDropzoneDlg } from "./ImportFromFileDropzoneDlg";
+import { Constants as cnst } from "./Constants";
 
-class Edit {
+import { Factory } from "./types/Factory";
+import { Meta64 } from "./types/Meta64";
+import { Util } from "./types/Util";
+import { Render } from "./types/Render";
+import { View } from "./types/View";
+import { Nav } from "./types/Nav";
+import { Props } from "./types/Props";
+import { User } from "./types/User";
+
+let meta64: Meta64;
+let util: Util;
+let nav: Nav;
+let props: Props;
+let render: Render;
+let user: User;
+let view: View;
+
+export class Edit {
+
+    postConstruct(_f: any) {
+        let f = <Factory>_f;
+        util = f.getUtil();
+        meta64 = f.getMeta64();
+        nav = f.getNav();
+        props = f.getProps();
+        render = f.getRender();
+        user = f.getUser();
+        view = f.getView();
+    }
+
     /* Node being uploaded to */
     importTargetNode: any = null;
 
     createNode = (): void => {
-        Factory.createDefault("CreateNodeDlgImpl", (dlg: CreateNodeDlg) => {
-            dlg.open();
-        })
+        new CreateNodeDlg().open();
     }
 
     openChangePasswordDlg = (): void => {
-        Factory.createDefault("ChangePasswordDlgImpl", (dlg: ChangePasswordDlg) => {
-            dlg.open();
-        })
+        new ChangePasswordDlg({}).open();
     }
 
     openManageAccountDlg = (): void => {
-        Factory.createDefault("ManageAccountDlgImpl", (dlg: ManageAccountDlg) => {
-            dlg.open();
-        })
+        new ManageAccountDlg().open();
     }
 
     editPreferences = (): void => {
-        Factory.createDefault("PrefsDlgImpl", (dlg: PrefsDlg) => {
-            dlg.open();
-        })
+        new PrefsDlg().open();
     }
 
     renameNode = (): void => {
-        Factory.createDefault("RenameNodeDlgImpl", (dlg: RenameNodeDlg) => {
-            dlg.open();
-        })
+        new RenameNodeDlg(null).open();
     }
 
     openImportDlg = (): void => {
-
         let node: I.NodeInfo = meta64.getHighlightedNode();
         if (!node) {
-            edit.importTargetNode = null;
+            this.importTargetNode = null;
             util.showMessage("No node is selected.");
             return;
         }
 
-        edit.importTargetNode = node;
+        this.importTargetNode = node;
 
-        Factory.createDefault("ImportFromFileDropzoneDlgImpl", (dlg: ImportFromFileDropzoneDlg) => {
-            dlg.open();
-        })
+        new ImportFromFileDropzoneDlg().open();
 
         /* This dialog is no longer needed, now that we support uploading from a stream. This older dialog imports a file
         as specified by the admin by filename, but has the limitation of requiring that file to already exist
@@ -80,9 +88,7 @@ class Edit {
     }
 
     openExportDlg = (): void => {
-        Factory.createDefault("ExportDlgImpl", (dlg: ExportDlg) => {
-            dlg.open();
-        })
+        new ExportDlg().open();
     }
 
     private insertBookResponse = (res: I.InsertBookResponse): void => {
@@ -126,12 +132,12 @@ class Edit {
                  * Server will have sent us back the raw text content, that should be markdown instead of any HTML, so
                  * that we can display this and save.
                  */
-                edit.editNode = res.nodeInfo;
+                this.editNode = res.nodeInfo;
 
-                Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
-                    edit.editNodeDlgInst = dlg;
-                    dlg.open();
-                });
+                let dlg = new EditNodeDlg({});
+                this.editNodeDlgInst = dlg;
+                dlg.open();
+
 
             } else {
                 util.showMessage("You cannot edit nodes that you don't own.");
@@ -141,8 +147,8 @@ class Edit {
 
     private moveNodesResponse = (res: I.MoveNodesResponse): void => {
         if (util.checkSuccess("Move nodes", res)) {
-            edit.nodesToMove = null; // reset
-            edit.nodesToMoveSet = {};
+            this.nodesToMove = null; // reset
+            this.nodesToMoveSet = {};
             view.refreshTree(null, false);
         }
     }
@@ -209,16 +215,16 @@ class Edit {
 
     /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */
     isInsertAllowed = (node: any): boolean => {
-        return props.getNodePropertyVal(jcrCnst.DISABLE_INSERT, node) == null;
+        return props.getNodePropertyVal(cnst.DISABLE_INSERT, node) == null;
     }
 
     startEditingNewNode = (typeName?: string, createAtTop?: boolean): void => {
-        edit.editingUnsavedNode = false;
-        edit.editNode = null;
-        Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
-            edit.editNodeDlgInst = dlg;
-            dlg.saveNewNode("");
-        }, { "typeName": typeName, "createAtTop": createAtTop });
+        this.editingUnsavedNode = false;
+        this.editNode = null;
+        let dlg = new EditNodeDlg({ "typeName": typeName, "createAtTop": createAtTop });
+        this.editNodeDlgInst = dlg;
+        dlg.saveNewNode("");
+
     }
 
     /*
@@ -234,26 +240,25 @@ class Edit {
      * functionality and still works.
      */
     startEditingNewNodeWithName = (): void => {
-        edit.editingUnsavedNode = true;
-        edit.editNode = null;
-        Factory.createDefault("EditNodeDlgImpl", (dlg: EditNodeDlg) => {
-            edit.editNodeDlgInst = dlg;
-            dlg.saveNewNode("");
-        });
+        this.editingUnsavedNode = true;
+        this.editNode = null;
+        let dlg = new EditNodeDlg({});
+        this.editNodeDlgInst = dlg;
+        dlg.saveNewNode("");
     }
 
     insertNodeResponse = (res: I.InsertNodeResponse): void => {
         if (util.checkSuccess("Insert node", res)) {
             meta64.initNode(res.newNode, true);
             meta64.highlightNode(res.newNode, true);
-            edit.runEditNode(res.newNode.uid);
+            this.runEditNode(res.newNode.uid);
         }
     }
 
     createSubNodeResponse = (res: I.CreateSubNodeResponse): void => {
         if (util.checkSuccess("Create subnode", res)) {
             meta64.initNode(res.newNode, true);
-            edit.runEditNode(res.newNode.uid);
+            this.runEditNode(res.newNode.uid);
         }
     }
 
@@ -300,7 +305,7 @@ class Edit {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "nodeId": node.id,
                 "targetName": "up"
-            }, edit.setNodePositionResponse);
+            }, this.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
@@ -317,7 +322,7 @@ class Edit {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "nodeId": node.id,
                 "targetName": "down"
-            }, edit.setNodePositionResponse);
+            }, this.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
@@ -333,7 +338,7 @@ class Edit {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "nodeId": node.id,
                 "targetName": "top"
-            }, edit.setNodePositionResponse);
+            }, this.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
@@ -349,7 +354,7 @@ class Edit {
             util.ajax<I.SetNodePositionRequest, I.SetNodePositionResponse>("setNodePosition", {
                 "nodeId": node.id,
                 "targetName": "bottom"
-            }, edit.setNodePositionResponse);
+            }, this.setNodePositionResponse);
         } else {
             console.log("idToNodeMap does not contain " + uid);
         }
@@ -385,21 +390,21 @@ class Edit {
     runEditNode = (uid: any): void => {
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];
         if (!node) {
-            edit.editNode = null;
+            this.editNode = null;
             util.showMessage("Unknown nodeId in editNodeClick: " + uid);
             return;
         }
-        edit.editingUnsavedNode = false;
+        this.editingUnsavedNode = false;
 
         util.ajax<I.InitNodeEditRequest, I.InitNodeEditResponse>("initNodeEdit", {
             "nodeId": node.id
-        }, edit.initNodeEditResponse);
+        }, this.initNodeEditResponse);
     }
 
     insertNode = (uid?: any, typeName?: string): void => {
 
-        edit.parentOfNewNode = meta64.currentNode;
-        if (!edit.parentOfNewNode) {
+        this.parentOfNewNode = meta64.currentNode;
+        if (!this.parentOfNewNode) {
             console.log("Unknown parent");
             return;
         }
@@ -416,8 +421,8 @@ class Edit {
         }
 
         if (node) {
-            edit.nodeInsertTarget = node;
-            edit.startEditingNewNode(typeName);
+            this.nodeInsertTarget = node;
+            this.startEditingNewNode(typeName);
         }
     }
 
@@ -429,14 +434,14 @@ class Edit {
         if (!uid) {
             let highlightNode: I.NodeInfo = meta64.getHighlightedNode();
             if (highlightNode) {
-                edit.parentOfNewNode = highlightNode;
+                this.parentOfNewNode = highlightNode;
             }
             else {
-                edit.parentOfNewNode = meta64.currentNode;
+                this.parentOfNewNode = meta64.currentNode;
             }
         } else {
-            edit.parentOfNewNode = meta64.uidToNodeMap[uid];
-            if (!edit.parentOfNewNode) {
+            this.parentOfNewNode = meta64.uidToNodeMap[uid];
+            if (!this.parentOfNewNode) {
                 console.log("Unknown nodeId in createSubNode: " + uid);
                 return;
             }
@@ -445,12 +450,12 @@ class Edit {
         /*
          * this indicates we are NOT inserting inline. An inline insert would always have a target.
          */
-        edit.nodeInsertTarget = null;
-        edit.startEditingNewNode(typeName, createAtTop);
+        this.nodeInsertTarget = null;
+        this.startEditingNewNode(typeName, createAtTop);
     }
 
     replyToComment = (uid: any): void => {
-        edit.createSubNode(uid);
+        this.createSubNode(uid);
     }
 
     clearSelections = (): void => {
@@ -476,18 +481,18 @@ class Edit {
             return;
         }
 
-        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-            dlg.open();
-        }, {
-                "title": "Confirm Delete", "message": "Delete " + selNodesArray.length + " node(s) ?", "buttonText": "Yes, delete.", "yesCallback":
+        new ConfirmDlg({
+            "title": "Confirm Delete", "message": "Delete " + selNodesArray.length + " node(s) ?", "buttonText": "Yes, delete.", "yesCallback":
                 () => {
-                    let postDeleteSelNode: I.NodeInfo = edit.getBestPostDeleteSelNode();
+                    let postDeleteSelNode: I.NodeInfo = this.getBestPostDeleteSelNode();
 
                     util.ajax<I.DeleteNodesRequest, I.DeleteNodesResponse>("deleteNodes", {
                         "nodeIds": selNodesArray
-                    }, (res) => { edit.deleteNodesResponse(res, { "postDeleteSelNode": postDeleteSelNode }); });
+                    }, (res: I.DeleteNodesResponse) => {
+                        this.deleteNodesResponse(res, { "postDeleteSelNode": postDeleteSelNode });
+                    });
                 }
-            });
+        }).open();
     }
 
     /* Gets the node we want to scroll to after a delete */
@@ -525,13 +530,11 @@ class Edit {
             return;
         }
 
-        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-            dlg.open();
-        }, {
-                "title": "Confirm Cut", "message": "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?", "buttonText": "Yes", "yesCallback":
+        new ConfirmDlg({
+            "title": "Confirm Cut", "message": "Cut " + selNodesArray.length + " node(s), to paste/move to new location ?", "buttonText": "Yes", "yesCallback":
                 () => {
-                    edit.nodesToMove = selNodesArray;
-                    edit.loadNodesToMoveSet(selNodesArray);
+                    this.nodesToMove = selNodesArray;
+                    this.loadNodesToMoveSet(selNodesArray);
                     /* todo-1: need to have a way to find all selected checkboxes in the gui and reset them all to unchecked */
                     meta64.selectedNodes = {}; // clear selections.
 
@@ -539,21 +542,19 @@ class Edit {
                     render.renderPageFromData();
                     meta64.refreshAllGuiEnablement();
                 }
-            });
+        }).open();
     }
 
     private loadNodesToMoveSet = (nodeIds: string[]) => {
-        edit.nodesToMoveSet = {};
+        this.nodesToMoveSet = {};
         for (let id of nodeIds) {
-            edit.nodesToMoveSet[id] = true;
+            this.nodesToMoveSet[id] = true;
         }
     }
 
     pasteSelNodes = (): void => {
-        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-            dlg.open();
-        }, {
-                "title": "Confirm Paste", "message": "Paste " + edit.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback":
+        new ConfirmDlg({
+            "title": "Confirm Paste", "message": "Paste " + this.nodesToMove.length + " node(s) under selected parent node ?", "buttonText": "Yes, paste", "yesCallback":
                 () => {
                     let highlightNode = meta64.getHighlightedNode();
                     /*
@@ -564,18 +565,16 @@ class Edit {
                     util.ajax<I.MoveNodesRequest, I.MoveNodesResponse>("moveNodes", {
                         "targetNodeId": highlightNode.id,
                         "targetChildId": highlightNode != null ? highlightNode.id : null,
-                        "nodeIds": edit.nodesToMove
-                    }, edit.moveNodesResponse);
+                        "nodeIds": this.nodesToMove
+                    }, this.moveNodesResponse);
                 }
-            });
+        }).open();
     }
 
     insertBookWarAndPeace = (): void => {
-        Factory.createDefault("ConfirmDlgImpl", (dlg: ConfirmDlg) => {
-            dlg.open();
-        }, {
-                "title": "Confirm", "message": "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!",
-                "buttonText": "Yes, insert book.", "yesCallback":
+        new ConfirmDlg({
+            "title": "Confirm", "message": "Insert book War and Peace?<p/>Warning: You should have an EMPTY node selected now, to serve as the root node of the book!",
+            "buttonText": "Yes, insert book.", "yesCallback":
                 () => {
                     /* inserting under whatever node user has focused */
                     var node = meta64.getHighlightedNode();
@@ -587,11 +586,9 @@ class Edit {
                             "nodeId": node.id,
                             "bookName": "War and Peace",
                             "truncated": user.isTestUserAccount()
-                        }, edit.insertBookResponse);
+                        }, this.insertBookResponse);
                     }
                 }
-            });
+        }).open();
     }
 }
-export let edit: Edit = new Edit();
-export default edit;

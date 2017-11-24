@@ -1,13 +1,13 @@
-/// <reference path="../types.d.ts" />
-
 console.log("ButtonRe.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
-import { util } from "../Util";
 import { DialogBase } from "../DialogBase";
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var tag, util;
 
 /* React version of Button class */
 export class ButtonRe extends Comp {

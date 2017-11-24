@@ -1,11 +1,10 @@
 console.log("EditPropTextarea.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { Textarea } from "./Textarea";
 import { DialogBase } from "../DialogBase";
 import * as I from "../Interfaces";
-
+declare var tag;
 export class EditPropTextarea extends Textarea {
 
     /* If this is a multivalued property the SubProp is the thing being edited, otherwise when

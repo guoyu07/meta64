@@ -1,14 +1,14 @@
-/// <reference path="../../types.d.ts" />
-
 console.log("Comp.ts");
 
-import { util } from "../../Util";
-import { domBind } from "../../DomBind";
-import { tag } from "../../Tag";
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { CompImpl } from "./CompImpl";
 
-export abstract class Comp extends React.Component {
+//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//this file over to using the Factory yet
+declare var util, domBind, tag;
+
+export abstract class Comp extends React.Component implements CompImpl {
 
     private static guid: number = 0;
 
@@ -256,7 +256,7 @@ export abstract class Comp extends React.Component {
     /* This returns an empty DIV that will have ReactJS content rendered into it if 'isReact' is true. This is only 
     a clean approach, because we have a rule that our TSWidgets (non-react compoents) are allowed to contain React elements, 
     but React elements are NOT allowed to contain non-react elements. This works fine for my purposes, because I know that any 
-    React elements i have will be PURE react */ 
+    React elements i have will be PURE react */
     renderHtml = (): string => {
         if (this.isReact) {
             this.whenElm(() => {

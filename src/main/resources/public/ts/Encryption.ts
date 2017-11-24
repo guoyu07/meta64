@@ -1,8 +1,14 @@
 console.log("Encryption.ts");
 
-import { util } from "./Util";
 import { EncryptionKeyPair } from "./EncryptionKeyPair";
 import { LocalDB } from "./LocalDB";
+
+
+import { Factory } from "./types/Factory";
+
+import { Util } from "./types/Util";
+
+let util: Util;
 
 /*
 Currently there are both 1) PublicKey Encryption as well as 2) Symmetric password-based encryption in this 
@@ -30,7 +36,12 @@ Code complete except for we have a hardcoded password instead of prompting user 
 will be complete once we prompt user for password.
 
 */
-class Encryption {
+export class Encryption {
+    
+    postConstruct(_f : any) {
+        let f: Factory = _f;
+        util = f.getUtil();
+    }
 
     /* jwk = JSON Format */
     static KEY_SAVE_FORMAT = "jwk";
@@ -329,5 +340,3 @@ class Encryption {
         return str;
     }
 }
-export let encryption: Encryption = new Encryption();
-export default encryption;

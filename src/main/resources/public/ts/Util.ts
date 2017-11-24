@@ -6,16 +6,29 @@ declare var ace;
 declare var postTargetUrl;
 declare var prettyPrint;
 
-import { meta64 } from "./Meta64";
 import { MessageDlg } from "./MessageDlg";
 import { ProgressDlg } from "./ProgressDlg";
 import { PasswordDlg } from "./PasswordDlg";
-import { Factory } from "./Factory";
-import { domBind } from "./DomBind";
-import { encryption } from "./Encryption";
 import * as I from "./Interfaces";
 
-class Util {
+import { Factory } from "./types/Factory";
+
+import { Meta64 } from "./types/Meta64";
+import { DomBind } from "./types/DomBind";
+import { Encryption } from "./types/Encryption";
+
+let meta64: Meta64;
+let encryption: Encryption;
+let domBind: DomBind;
+
+export class Util {
+
+    postConstruct(_f: any) {
+        let f: Factory = _f;
+        meta64 = f.getMeta64();
+        domBind = f.getDomBind();
+        encryption = f.getEncryption();
+    }
 
     logAjax: boolean = false;
     timeoutMessageShown: boolean = false;
@@ -50,32 +63,31 @@ class Util {
         return new Uint8Array(a);
     }
 
-
     escapeRegExp = (s: string): string => {
         return s.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
     escapeForAttrib = (s: string): string => {
-        return util.replaceAll(s, "\"", "&quot;");
+        return this.replaceAll(s, "\"", "&quot;");
     }
 
     unencodeHtml = (s: string): string => {
-        if (!util.contains(s, "&"))
+        if (!this.contains(s, "&"))
             return s;
 
         let ret = s;
-        ret = util.replaceAll(ret, '&amp;', '&');
-        ret = util.replaceAll(ret, '&gt;', '>');
-        ret = util.replaceAll(ret, '&lt;', '<');
-        ret = util.replaceAll(ret, '&quot;', '"');
-        ret = util.replaceAll(ret, '&#39;', "'");
+        ret = this.replaceAll(ret, '&amp;', '&');
+        ret = this.replaceAll(ret, '&gt;', '>');
+        ret = this.replaceAll(ret, '&lt;', '<');
+        ret = this.replaceAll(ret, '&quot;', '"');
+        ret = this.replaceAll(ret, '&#39;', "'");
 
         return ret;
     }
 
     replaceAll = (s: string, find: string, replace: string): string => {
         if (!s) return s;
-        return s.replace(new RegExp(util.escapeRegExp(find), 'g'), replace);
+        return s.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
     }
 
     contains = (s: string, str: string): boolean => {
@@ -127,28 +139,28 @@ class Util {
         a.splice(toIndex, 0, a.splice(fromIndex, 1)[0]);
     };
 
-    static stdTimezoneOffset(_: Date) {
-        let jan = new Date(_.getFullYear(), 0, 1);
-        let jul = new Date(_.getFullYear(), 6, 1);
+    stdTimezoneOffset = (date: Date) => {
+        let jan = new Date(date.getFullYear(), 0, 1);
+        let jul = new Date(date.getFullYear(), 6, 1);
         return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
     }
 
-    static dst(_: Date) {
-        return _.getTimezoneOffset() < Util.stdTimezoneOffset(_);
+    dst = (date: Date) => {
+        return date.getTimezoneOffset() < this.stdTimezoneOffset(date);
     }
 
-    indexOfObject(_: any[], obj) {
-        for (let i = 0; i < _.length; i++) {
-            if (_[i] === obj) {
+    indexOfObject = (arr: any[], obj) => {
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === obj) {
                 return i;
             }
         }
         return -1;
     }
 
-    assertNotNull(varName) {
+    assertNotNull = (varName) => {
         if (typeof eval(varName) === 'undefined') {
-            util.showMessage("Variable not found: " + varName);
+            this.showMessage("Variable not found: " + varName);
         }
     }
 
@@ -158,10 +170,10 @@ class Util {
      */
     private _ajaxCounter: number = 0;
 
-    daylightSavingsTime: boolean = (Util.dst(new Date())) ? true : false;
+    daylightSavingsTime: boolean = (this.dst(new Date())) ? true : false;
 
-    getCheckBoxStateById(id: string): boolean {
-        let checkbox = util.domElm(id);
+    getCheckBoxStateById = (id: string): boolean => {
+        let checkbox = this.domElm(id);
         if (checkbox) {
             return (<any>checkbox).checked;
         }
@@ -170,7 +182,7 @@ class Util {
         }
     }
 
-    toJson(obj) {
+    toJson = (obj: Object) => {
         return JSON.stringify(obj, null, 4);
     }
 
@@ -178,7 +190,7 @@ class Util {
      * This came from here:
      * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
      */
-    getParameterByName(name?: any, url?: any): string {
+    getParameterByName = (name?: any, url?: any): string => {
         if (!url)
             url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -190,48 +202,47 @@ class Util {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    initProgressMonitor(): void {
-        setInterval(util.progressInterval, 1000);
+    initProgressMonitor = (): void => {
+        setInterval(this.progressInterval, 1000);
     }
 
-    progressInterval(): void {
-        let isWaiting = util.isAjaxWaiting();
+    progressInterval = (): void => {
+        let isWaiting = this.isAjaxWaiting();
         if (isWaiting) {
-            util.waitCounter++;
-            if (util.waitCounter >= 3) {
-                if (!util.pgrsDlg) {
-                    Factory.createDefault("ProgressDlgImpl", (dlg: ProgressDlg) => {
-                        util.pgrsDlg = dlg;
-                        util.pgrsDlg.open();
-                    })
+            this.waitCounter++;
+            if (this.waitCounter >= 3) {
+                if (!this.pgrsDlg) {
+                    let dlg = new ProgressDlg();
+                    this.pgrsDlg = dlg;
+                    this.pgrsDlg.open();
                 }
             }
         } else {
-            util.waitCounter = 0;
-            if (util.pgrsDlg) {
-                util.pgrsDlg.cancel();
-                util.pgrsDlg = null;
+            this.waitCounter = 0;
+            if (this.pgrsDlg) {
+                this.pgrsDlg.cancel();
+                this.pgrsDlg = null;
             }
         }
     }
 
-    getHostAndPort(): string {
+    getHostAndPort = (): string => {
         return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     }
 
-    ajax<RequestType, ResponseType>(postName: string, postData: RequestType, //
-        callback?: (response: ResponseType) => void) {
+    ajax = <RequestType, ResponseType>(postName: string, postData: RequestType, //
+        callback?: (response: ResponseType) => void) => {
 
         let ironAjax;
         let ironRequest;
 
         try {
-            if (util.offline) {
+            if (this.offline) {
                 console.log("offline: ignoring call for " + postName);
                 return;
             }
 
-            if (util.logAjax) {
+            if (this.logAjax) {
                 console.log("JSON-POST[gen]: [" + postName + "]" + JSON.stringify(postData));
             }
 
@@ -239,7 +250,7 @@ class Util {
             // let ironAjax = this.$$ ("#myIronAjax");
             //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
 
-            ironAjax = util.polyElmNode("ironAjax");
+            ironAjax = this.polyElmNode("ironAjax");
             ironAjax.url = postTargetUrl + postName;
             ironAjax.verbose = true;
             ironAjax.body = JSON.stringify(postData);
@@ -252,13 +263,13 @@ class Util {
             ironAjax.handleAs = "json"; // handle-as (is prop)
 
             /* This not a required property */
-            // ironAjax.onResponse = "util.ironAjaxResponse";
+            // ironAjax.onResponse = "this.ironAjaxResponse";
             ironAjax.debounceDuration = "300"; // debounce-duration
 
-            util._ajaxCounter++;
+            this._ajaxCounter++;
             ironRequest = ironAjax.generateRequest();
         } catch (ex) {
-            util.logAndReThrow("Failed starting request: " + postName, ex);
+            this.logAndReThrow("Failed starting request: " + postName, ex);
         }
 
         /**
@@ -283,10 +294,10 @@ class Util {
             // Handle Success
             () => {
                 try {
-                    util._ajaxCounter--;
-                    util.progressInterval();
+                    this._ajaxCounter--;
+                    this.progressInterval();
 
-                    if (util.logAjax) {
+                    if (this.logAjax) {
                         console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
                             + JSON.stringify(ironRequest.response));
                     }
@@ -295,23 +306,23 @@ class Util {
                         callback(<ResponseType>ironRequest.response);
                     }
                 } catch (ex) {
-                    util.logAndReThrow("Failed handling result of: " + postName, ex);
+                    this.logAndReThrow("Failed handling result of: " + postName, ex);
                 }
             },
             // Handle Fail
             () => {
                 try {
-                    util._ajaxCounter--;
-                    util.progressInterval();
-                    console.log("Error in util.json");
+                    this._ajaxCounter--;
+                    this.progressInterval();
+                    console.log("Error in this.json");
 
                     if (ironRequest.status == "403") {
-                        console.log("Not logged in detected in util.");
-                        util.offline = true;
+                        console.log("Not logged in detected in this.");
+                        this.offline = true;
 
-                        if (!util.timeoutMessageShown) {
-                            util.timeoutMessageShown = true;
-                            util.showMessage("Session timed out. Page will refresh.");
+                        if (!this.timeoutMessageShown) {
+                            this.timeoutMessageShown = true;
+                            this.showMessage("Session timed out. Page will refresh.");
                         }
 
                         window.onbeforeunload = null;
@@ -340,16 +351,15 @@ class Util {
                     // JSON.parse(xhr.responseText).exception;
                     // } catch (ex) {
                     // }
-                    util.showMessage(msg);
+                    this.showMessage(msg);
                 } catch (ex) {
-                    util.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
+                    this.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
                 }
             });
-
         return ironRequest;
     }
 
-    logAndThrow(message: string) {
+    logAndThrow = (message: string) => {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -359,7 +369,7 @@ class Util {
         throw message;
     }
 
-    logAndReThrow(message: string, exception: any) {
+    logAndReThrow = (message: string, exception: any) => {
         let stack = "[stack, not supported]";
         try {
             stack = (<any>new Error()).stack;
@@ -369,41 +379,41 @@ class Util {
         throw exception;
     }
 
-    ajaxReady(requestName): boolean {
-        if (util._ajaxCounter > 0) {
+    ajaxReady = (requestName): boolean => {
+        if (this._ajaxCounter > 0) {
             console.log("Ignoring requests: " + requestName + ". Ajax currently in progress.");
             return false;
         }
         return true;
     }
 
-    isAjaxWaiting(): boolean {
-        return util._ajaxCounter > 0;
+    isAjaxWaiting = (): boolean => {
+        return this._ajaxCounter > 0;
     }
 
-    focusElmById(id: string) {
-        let elm = util.domElm(id);
+    focusElmById = (id: string) => {
+        let elm = this.domElm(id);
         if (elm) {
             elm.focus();
         }
     }
 
     //todo-1: Haven't yet verified this is correct, but i'm not using it anywhere important yet.
-    isElmVisible(elm: HTMLElement) {
+    isElmVisible = (elm: HTMLElement) => {
         return elm && elm.offsetHeight > 0;
     }
 
     /* set focus to element by id (id must be actual jquery selector) */
-    delayedFocus(id: string): void {
+    delayedFocus = (id: string): void => {
         /* so user sees the focus fast we try at .5 seconds */
         setTimeout(() => {
-            util.focusElmById(id);
+            this.focusElmById(id);
         }, 500);
 
         /* we try again a full second later. Normally not required, but never undesirable */
         setTimeout(() => {
             //console.log("Focusing ID: "+id);
-            util.focusElmById(id);
+            this.focusElmById(id);
         }, 1300);
     }
 
@@ -414,21 +424,19 @@ class Util {
      *
      * requires: res.success res.message
      */
-    checkSuccess(opFriendlyName, res): boolean {
+    checkSuccess = (opFriendlyName, res): boolean => {
         if (!res.success) {
-            util.showMessage(opFriendlyName + " failed: " + res.message);
+            this.showMessage(opFriendlyName + " failed: " + res.message);
         }
         return res.success;
     }
 
-    showMessage(message: string): void {
-        Factory.createDefault("MessageDlgImpl", (dlg: MessageDlg) => {
-            dlg.open();
-        }, { "message": message });
+    showMessage = (message: string): void => {
+        new MessageDlg({ "message": message }).open();
     }
 
     /* adds all array objects to obj as a set */
-    addAll(obj, a): void {
+    addAll = (obj, a): void => {
         for (let i = 0; i < a.length; i++) {
             if (!a[i]) {
                 console.error("null element in addAll at idx=" + i);
@@ -438,7 +446,7 @@ class Util {
         }
     }
 
-    nullOrUndef(obj): boolean {
+    nullOrUndef = (obj): boolean => {
         return obj === null || obj === undefined;
     }
 
@@ -446,7 +454,7 @@ class Util {
      * We have to be able to map any identifier to a uid, that will be repeatable, so we have to use a local
      * 'hashset-type' implementation
      */
-    getUidForId(map: { [key: string]: string }, id): string {
+    getUidForId = (map: { [key: string]: string }, id): string => {
         /* look for uid in map */
         let uid: string = map[id];
 
@@ -458,12 +466,12 @@ class Util {
         return uid;
     }
 
-    elementExists(id): boolean {
-        if (util.startsWith(id, "#")) {
+    elementExists = (id): boolean => {
+        if (this.startsWith(id, "#")) {
             id = id.substring(1);
         }
 
-        if (util.contains(id, "#")) {
+        if (this.contains(id, "#")) {
             console.log("Invalid # in domElm");
             return null;
         }
@@ -473,22 +481,22 @@ class Util {
     }
 
     /* Takes textarea dom Id (# optional) and returns its value */
-    getTextAreaValById(id): string {
-        let de: HTMLInputElement = <HTMLInputElement>util.domElm(id);
+    getTextAreaValById = (id): string => {
+        let de: HTMLInputElement = <HTMLInputElement>this.domElm(id);
         return de.value;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    domElm(id): HTMLElement {
+    domElm = (id): HTMLElement => {
 
         /* why did i do this? I thought "#id" was valid for getDomElmementById right? */
-        if (util.startsWith(id, "#")) {
+        if (this.startsWith(id, "#")) {
             id = id.substring(1);
         }
 
-        if (util.contains(id, "#")) {
+        if (this.contains(id, "#")) {
             console.log("Invalid # in domElm");
             return null;
         }
@@ -501,31 +509,31 @@ class Util {
         return e;
     }
 
-    setInnerHTMLById(id: string, val: string): void {
-        let domElm: HTMLElement = util.domElm(id);
-        util.setInnerHTML(domElm, val);
+    setInnerHTMLById = (id: string, val: string): void => {
+        let domElm: HTMLElement = this.domElm(id);
+        this.setInnerHTML(domElm, val);
     }
 
-    setInnerHTML(elm: HTMLElement, val: string): void {
+    setInnerHTML = (elm: HTMLElement, val: string): void => {
         if (elm) {
             elm.innerHTML = val;
         }
     }
 
-    poly(id): any {
-        return util.polyElm(id).node;
+    poly = (id): any => {
+        return this.polyElm(id).node;
     }
 
     /*
      * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
      */
-    polyElm(id: string): any {
+    polyElm = (id: string): any => {
 
-        if (util.startsWith(id, "#")) {
+        if (this.startsWith(id, "#")) {
             id = id.substring(1);
         }
 
-        if (util.contains(id, "#")) {
+        if (this.contains(id, "#")) {
             console.log("Invalid # in domElm");
             return null;
         }
@@ -537,40 +545,40 @@ class Util {
         return Polymer.dom(e);
     }
 
-    polyElmNode(id: string): any {
-        let e = util.polyElm(id);
+    polyElmNode = (id: string): any => {
+        let e = this.polyElm(id);
         return e.node;
     }
 
-    isObject(obj: any): boolean {
+    isObject = (obj: any): boolean => {
         return obj && obj.length != 0;
     }
 
-    currentTimeMillis(): number {
+    currentTimeMillis = (): number => {
         return new Date().getMilliseconds();
     }
 
-    emptyString(val: string): boolean {
+    emptyString = (val: string): boolean => {
         return !val || val.length == 0;
     }
 
-    getInputVal(id: string): any {
-        return util.polyElm(id).node.value;
+    getInputVal = (id: string): any => {
+        return this.polyElm(id).node.value;
     }
 
     /* returns true if element was found, or false if element not found */
-    setInputVal(id: string, val: string): boolean {
+    setInputVal = (id: string, val: string): boolean => {
         if (val == null) {
             val = "";
         }
-        let elm = util.polyElm(id);
+        let elm = this.polyElm(id);
         if (elm) {
             elm.node.value = val;
         }
         return elm != null;
     }
 
-    bindEnterKey(id: string, func: Function) {
+    bindEnterKey = (id: string, func: Function) => {
         if (typeof func !== 'function') throw "bindEnterKey requires function";
         domBind.addKeyPress(id, (e) => {
             if (e.which == 13) { // 13==enter key code
@@ -583,20 +591,20 @@ class Util {
     /*
      * displays message (msg) of object is not of specified type
      */
-    verifyType(obj: any, type: any, msg: string) {
+    verifyType = (obj: any, type: any, msg: string) => {
         if (typeof obj !== type) {
-            util.showMessage(msg);
+            this.showMessage(msg);
             return false;
         }
         return true;
     }
 
-    setHtml(id: string, content: string): void {
+    setHtml = (id: string, content: string): void => {
         if (content == null) {
             content = "";
         }
 
-        let elm: HTMLElement = util.domElm(id);
+        let elm: HTMLElement = this.domElm(id);
         let polyElm = Polymer.dom(elm);
 
         //For Polymer 1.0.0, you need this...
@@ -608,18 +616,18 @@ class Util {
         Polymer.updateStyles();
     }
 
-    setElmDisplayById(id: string, showing: boolean) {
-        let elm: HTMLElement = util.domElm(id);
+    setElmDisplayById = (id: string, showing: boolean) => {
+        let elm: HTMLElement = this.domElm(id);
         if (elm) {
-            util.setElmDisplay(elm, showing);
+            this.setElmDisplay(elm, showing);
         }
     }
 
-    setElmDisplay(elm: any, showing: boolean) {
+    setElmDisplay = (elm: any, showing: boolean) => {
         elm.style.display = showing ? "" : "none";
     }
 
-    getPropertyCount(obj: Object): number {
+    getPropertyCount = (obj: Object): number => {
         let count = 0;
         let prop;
 
@@ -631,22 +639,22 @@ class Util {
         return count;
     }
 
-    forEachElmBySel(sel: string, callback: Function): void {
+    forEachElmBySel = (sel: string, callback: Function): void => {
         let elements = document.querySelectorAll(sel);
         Array.prototype.forEach.call(elements, callback);
     }
 
     /* Equivalent of ES6 Object.assign(). Takes all properties from src and merges them onto dst */
-    mergeProps(dst: Object, src: Object): void {
+    mergeProps = (dst: Object, src: Object): void => {
         if (!src) return;
-        util.forEachProp(src, (k, v): boolean => {
+        this.forEachProp(src, (k, v): boolean => {
             dst[k] = v;
             return true;
         });
     }
 
     /* Iterates by callling callback with property key/value pairs for each property in the object */
-    forEachProp(obj: Object, callback: I.PropertyIterator): void {
+    forEachProp = (obj: Object, callback: I.PropertyIterator): void => {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 /* we use the unusual '== false' here so that returning a value is optional, but if you return false it terminates looping */
@@ -655,7 +663,7 @@ class Util {
         }
     }
 
-    forEachArrElm(elements: any[], callback: Function): void {
+    forEachArrElm = (elements: any[], callback: Function): void => {
         if (!elements) return;
         Array.prototype.forEach.call(elements, callback);
     }
@@ -663,7 +671,7 @@ class Util {
     /*
      * iterates over an object creating a string containing it's keys and values
      */
-    printObject(obj: Object): string {
+    printObject = (obj: Object): string => {
         if (!obj) {
             return "null";
         }
@@ -671,13 +679,13 @@ class Util {
         let val: string = ""
         try {
             let count: number = 0;
-            util.forEachProp(obj, (prop, v): boolean => {
+            this.forEachProp(obj, (prop, v): boolean => {
                 console.log("Property[" + count + "]");
                 count++;
                 return true;
             });
 
-            util.forEachProp(obj, (k, v): boolean => {
+            this.forEachProp(obj, (k, v): boolean => {
                 val += k + " , " + v + "\n";
                 return true;
             });
@@ -688,12 +696,12 @@ class Util {
     }
 
     /* iterates over an object creating a string containing it's keys */
-    printKeys(obj: Object): string {
+    printKeys = (obj: Object): string => {
         if (!obj)
             return "null";
 
         let val: string = "";
-        util.forEachProp(obj, (k, v): boolean => {
+        this.forEachProp(obj, (k, v): boolean => {
             if (!k) {
                 k = "null";
             }
@@ -712,11 +720,11 @@ class Util {
      *
      * eleId can be a DOM element or the ID of a dom element, with or without leading #
      */
-    setEnablement(elmId: string, enable: boolean): void {
+    setEnablement = (elmId: string, enable: boolean): void => {
 
         let elm: HTMLElement = null;
         if (typeof elmId == "string") {
-            elm = util.domElm(elmId);
+            elm = this.domElm(elmId);
         } else {
             elm = elmId;
         }
@@ -730,27 +738,27 @@ class Util {
     }
 
     /* Programatically creates objects by name, similar to what Java reflection does
-
+    
     * ex: let example = InstanceLoader.getInstance<NamedThing>(window, 'ExampleClass', args...);
     */
-    getInstance<T>(context: Object, name: string, ...args: any[]): T {
+    getInstance = <T>(context: Object, name: string, ...args: any[]): T => {
         let instance = Object.create(context[name].prototype);
         instance.constructor.apply(instance, args);
         return <T>instance;
     }
 
-    setCookie(name: string, val: string): void {
+    setCookie = (name: string, val: string): void => {
         let d = new Date();
         d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
         let expires = "expires=" + d.toUTCString();
         document.cookie = name + "=" + val + ";" + expires + ";path=/";
     }
 
-    deleteCookie(name: string): void {
+    deleteCookie = (name: string): void => {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
     }
 
-    getCookie(name: string): string {
+    getCookie = (name: string): string => {
         name += "=";
         let ca = document.cookie.split(';');
         for (let i = 0; i < ca.length; i++) {
@@ -765,9 +773,9 @@ class Util {
         return "";
     }
 
-    changeOrAddClassToElm(elm: HTMLElement, oldClass: string, newClass: string) {
-        util.removeClassFromElmById((<any>elm.attributes).id, oldClass);
-        util.addClassToElmById((<any>elm.attributes).id, newClass);
+    changeOrAddClassToElm = (elm: HTMLElement, oldClass: string, newClass: string) => {
+        this.removeClassFromElmById((<any>elm.attributes).id, oldClass);
+        this.addClassToElmById((<any>elm.attributes).id, newClass);
     }
 
     /*
@@ -775,18 +783,18 @@ class Util {
      * newClass. If old class existed, in the list of classes, then the new class will now be at that position. If
      * old class didn't exist, then new Class is added at end of class list.
      */
-    changeOrAddClass(id: string, oldClass: string, newClass: string) {
-        util.removeClassFromElmById(id, oldClass);
-        util.addClassToElmById(id, newClass);
+    changeOrAddClass = (id: string, oldClass: string, newClass: string) => {
+        this.removeClassFromElmById(id, oldClass);
+        this.addClassToElmById(id, newClass);
     }
 
-    removeClassFromElmById(id: string, clazz: string) {
+    removeClassFromElmById = (id: string, clazz: string) => {
         domBind.whenElm(id, (elm) => {
-            util.removeClassFromElm(elm, clazz);
+            this.removeClassFromElm(elm, clazz);
         });
     }
 
-    removeClassFromElm(el: any, clazz: string): void {
+    removeClassFromElm = (el: any, clazz: string): void => {
         if (el.classList)
             el.classList.remove(clazz);
         else if (el.className) {
@@ -794,15 +802,15 @@ class Util {
         }
     }
 
-    addClassToElmById(id: any, clazz: string): void {
+    addClassToElmById = (id: any, clazz: string): void => {
         //console.log("Adding class "+clazz+" to dom id "+id);
         domBind.whenElm(id, (elm) => {
             //console.log("found dom id, adding class now.");
-            util.addClassToElm(elm, clazz);
+            this.addClassToElm(elm, clazz);
         });
     }
 
-    addClassToElm(el: any, clazz: string): void {
+    addClassToElm = (el: any, clazz: string): void => {
         if (el.classList) {
             //console.log("add to classList " + clazz);
             el.classList.add(clazz);
@@ -819,7 +827,7 @@ class Util {
         }
     }
 
-    toggleClassFromElm(el: any, clazz: string): void {
+    toggleClassFromElm = (el: any, clazz: string): void => {
         if (el.classList) {
             el.classList.toggle(clazz);
         } else {
@@ -847,20 +855,19 @@ class Util {
         }
         else {
             return new Promise<string>((resolve, reject) => {
-                Factory.createDefaultAsPromise("PasswordDlgImpl", (dlg: PasswordDlg) => {
-                    let completedDialogPromise = dlg.open();
-                    completedDialogPromise.then((dlg2) => {
-                        encryption.masterPassword = (dlg2 as any).getPasswordVal();
-                        resolve(encryption.masterPassword);
-                    });
+                let dlg = new PasswordDlg(null);
+                let completedDialogPromise = dlg.open();
+                completedDialogPromise.then((dlg2) => {
+                    encryption.masterPassword = (dlg2 as any).getPasswordVal();
+                    resolve(encryption.masterPassword);
                 });
             });
         }
     }
 
     /* Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript */
-    copyToClipboard(text) {
-        var copyText : HTMLInputElement = document.createElement("input");
+    copyToClipboard = (text) => {
+        var copyText: HTMLInputElement = document.createElement("input");
         copyText.type = "text";
         document.body.appendChild(copyText);
         copyText.style.display = "inline";
@@ -872,8 +879,3 @@ class Util {
         copyText.remove();
     }
 }
-
-//need to do the "capture this" pattern on each method (i.e. =>) and then replace all instances in this
-//class of 'util.' with 'this.'
-export let util: Util = new Util();
-export default util;

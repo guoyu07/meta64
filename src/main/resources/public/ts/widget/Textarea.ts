@@ -1,9 +1,8 @@
 console.log("Textarea.ts");
 
 import { Comp } from "./base/Comp";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-
+declare var tag;
 export class Textarea extends Comp {
 
     constructor(public attribs: Object) {

@@ -37,7 +37,6 @@ export class SubProp {
     }
 }
 
-
 export interface AccessControlEntryInfo {
     principalName: string;
     principalNodeId: string;

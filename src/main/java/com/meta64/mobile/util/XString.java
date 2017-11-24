@@ -50,6 +50,7 @@ public class XString {
 	}
 
 	public static List<String> tokenize(String val, String delimiter, boolean trim) {
+		if (val==null) return null;
 		List<String> list = null;
 		StringTokenizer t = new StringTokenizer(val, delimiter, false);
 		while (t.hasMoreTokens()) {

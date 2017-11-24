@@ -1,9 +1,9 @@
 console.log("PasswordTextField.ts");
 
 import { TextField } from "./TextField";
-import { tag } from "../Tag";
 import { DialogBase } from "../DialogBase";
-import {util} from "../Util";
+
+declare var tag, util;
 
 export class PasswordTextField extends TextField {
 

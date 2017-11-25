@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# NOTE: This is just a file that i use to record what scripts i've run mainly for setting up
+# NPM stuff, or parts of my build process that I only need to run once (i.e. not part of a build)
+
 # Install NodeJS
 # --------------
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
@@ -32,7 +35,9 @@
 
 # sudo npm install circular-dependency-plugin
 
-sudo npm install webpack-shell-plugin
+# sudo npm install webpack-shell-plugin
+
+# sudo npm install --save @types/polymer
 
 read -p "All done."
 

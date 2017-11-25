@@ -1,16 +1,17 @@
 console.log("DialogBase.ts");
 
+/// <reference types="polymer" />
+
 import { Div } from "./widget/Div";
 import { Comp } from "./widget/base/Comp";
 import { Dialog } from "./widget/Dialog";
 import { DialogBaseImpl} from "./DialogBaseImpl";
 
+declare var Polymer: polymer.PolymerStatic;
+
 //todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var meta64, util, render, tag, domBind;  
-
-//todo-0: Get the NMP Typings for this!
-declare var Polymer;
 
 /*
  * Base class for all dialog boxes.
@@ -70,7 +71,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
             this.renderToDom(node);
 
             Polymer.dom.flush(); // <---- is this needed ? todo-3
-            Polymer.updateStyles();
+            Polymer.Base.updateStyles();
 
             // let left = tag.div( {
             //     "display": "table-column",

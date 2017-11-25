@@ -1,6 +1,9 @@
 console.log("Util.ts");
 
-declare var Polymer;
+/// <reference types="polymer" />
+
+declare var Polymer: polymer.PolymerStatic;
+
 declare var Dropzone;
 declare var ace;
 declare var postTargetUrl;
@@ -613,7 +616,7 @@ export class Util {
         polyElm.innerHTML = content;
 
         Polymer.dom.flush();
-        Polymer.updateStyles();
+        Polymer.Base.updateStyles();
     }
 
     setElmDisplayById = (id: string, showing: boolean) => {

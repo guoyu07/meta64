@@ -21,7 +21,7 @@ export declare class Nav {
     upLevelResponse: (res: I.RenderNodeResponse, id: any) => void;
     navUpLevel: () => void;
     getSelectedDomElement: () => HTMLElement;
-    getSelectedPolyElement: () => any;
+    getSelectedPolyElement: () => HTMLElement;
     clickOnNodeRow: (uid: string) => void;
     openNode: (uid: any) => void;
     toggleNodeSel: (selected: boolean, uid: string) => void;

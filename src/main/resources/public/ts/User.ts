@@ -168,6 +168,7 @@ export class User {
                 "tzOffset": new Date().getTimezoneOffset(),
                 "dst": util.daylightSavingsTime
             }, (res: I.LoginResponse) => {
+                debugger;
                 if (usingCookies) {
                     this.loginResponse(res, callUsr, callPwd, usingCookies);
                 } else {

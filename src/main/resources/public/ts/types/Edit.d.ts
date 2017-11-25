@@ -36,8 +36,8 @@ export declare class Edit {
     moveNodeDown: (uid?: string) => void;
     moveNodeToTop: (uid?: string) => void;
     moveNodeToBottom: (uid?: string) => void;
-    getNodeAbove: (node: any) => any;
-    getNodeBelow: (node: any) => I.NodeInfo;
+    getNodeAbove: (node: I.NodeInfo) => any;
+    getNodeBelow: (node: I.NodeInfo) => I.NodeInfo;
     getFirstChildNode: () => any;
     runEditNode: (uid: any) => void;
     insertNode: (uid?: any, typeName?: string) => void;

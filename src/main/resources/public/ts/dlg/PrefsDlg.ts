@@ -1,17 +1,17 @@
-import { DialogBase } from "./DialogBase";
-import * as I from "./Interfaces";
-import { Header } from "./widget/Header";
-import { ButtonBar } from "./widget/ButtonBar";
-import { Button } from "./widget/Button";
-import { TextField } from "./widget/TextField";
-import { RadioButton } from "./widget/RadioButton";
-import { RadioButtonGroup } from "./widget/RadioButtonGroup";
-import { Checkbox } from "./widget/Checkbox";
-import { Legend } from "./widget/Legend";
-import { Div } from "./widget/Div";
-import { Util } from "./types/Util";
-import { PubSub } from "./PubSub";
-import { Constants } from "./Constants";
+import { DialogBase } from "../DialogBase";
+import * as I from "../Interfaces";
+import { Header } from "../widget/Header";
+import { ButtonBar } from "../widget/ButtonBar";
+import { Button } from "../widget/Button";
+import { TextField } from "../widget/TextField";
+import { RadioButton } from "../widget/RadioButton";
+import { RadioButtonGroup } from "../widget/RadioButtonGroup";
+import { Checkbox } from "../widget/Checkbox";
+import { Legend } from "../widget/Legend";
+import { Div } from "../widget/Div";
+import { Util } from "../types/Util";
+import { PubSub } from "../PubSub";
+import { Constants } from "../Constants";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: any) => {

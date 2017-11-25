@@ -545,7 +545,8 @@ export class Util {
             console.log("domElm Error. Required element id not found: " + id);
         }
 
-        return Polymer.dom(e);
+        let elm = Polymer.dom(e);
+        return elm;
     }
 
     polyElmNode = (id: string): any => {
@@ -611,6 +612,8 @@ export class Util {
         let polyElm = Polymer.dom(elm);
         polyElm.innerHTML = content;
 
+        /* the 'flush' call is actually only needed before interrogating the DOM
+        for things like height of components, etc */
         Polymer.dom.flush();
         Polymer.Base.updateStyles();
     }

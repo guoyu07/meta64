@@ -588,6 +588,7 @@ export class Render {
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
     renderPageFromData = (data?: I.RenderNodeResponse, scrollToTop?: boolean): string => {
+        debugger;
         meta64.codeFormatDirty = false;
         console.log("renderPageFromData()");
 
@@ -631,7 +632,7 @@ export class Render {
             meta64.setCurrentNodeData(data);
         }
 
-        let propCount: number = meta64.currentNode.properties ? meta64.currentNode.properties.length : 0;
+        let propCount: number = meta64.currentNodeData.node.properties ? meta64.currentNodeData.node.properties.length : 0;
 
         if (this.debug) {
             console.log("RENDER NODE: " + data.node.id + " propCount=" + propCount);
@@ -658,7 +659,7 @@ export class Render {
             let replyButton: string = "";
             let upLevelButton: string = "";
 
-            if (meta64.currentNode && nav.parentVisibleToUser()) {
+            if (meta64.currentNodeData.node && nav.parentVisibleToUser()) {
                 upLevelButton = tag.button({
                     "raised": "raised",
                     "style": "background-color: #4caf50;color:white;",

@@ -1,10 +1,9 @@
 console.log("DomBind.ts");
 
 import {Factory} from "./types/Factory";
+import {Util} from "./types/Util";
 
-//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var util;
+let util : Util;
 
 /*
 This allows us to wire a function to a particular Element by its ID even long BEFORE the ID itself comes into existence
@@ -19,6 +18,7 @@ export class DomBind {
 
     postConstruct(_f: any) {
         let f = <Factory>_f;
+        util = f.getUtil();
         setInterval(() => {
             this.interval();
         }, 250);

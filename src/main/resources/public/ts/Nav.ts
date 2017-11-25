@@ -2,13 +2,12 @@ console.log("Nav.ts");
 
 import * as I from "./Interfaces";
 import { LoginDlg } from "./dlg/LoginDlg";
-import { PrefsDlg } from "./PrefsDlg";
+import { PrefsDlg } from "./dlg/PrefsDlg";
 import { SearchContentDlg } from "./dlg/SearchContentDlg";
 import { SearchTagsDlg } from "./dlg/SearchTagsDlg";
 import { SearchFilesDlg } from "./dlg/SearchFilesDlg";
 
 import { Factory } from "./types/Factory";
-
 import { Meta64 } from "./types/Meta64";
 import { Util } from "./types/Util";
 import { Render } from "./types/Render";
@@ -117,10 +116,11 @@ export class Nav {
     }
 
     displayingHome = (): boolean => {
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node) return false;
         if (meta64.isAnonUser) {
-            return meta64.currentNodeId === meta64.anonUserLandingPageNode;
+            return meta64.currentNodeData.node.id === meta64.anonUserLandingPageNode;
         } else {
-            return meta64.currentNodeId === meta64.homeNodeId;
+            return meta64.currentNodeData.node.id === meta64.homeNodeId;
         }
     }
 
@@ -140,6 +140,7 @@ export class Nav {
 
     navUpLevel = (): void => {
 
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node) return null;
         if (!this.parentVisibleToUser()) {
             // Already at root. Can't go up.
             return;
@@ -150,13 +151,13 @@ export class Nav {
         drilled down from */
         this.mainOffset = 0;
         var ironRes = util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": meta64.currentNodeId,
+            "nodeId": meta64.currentNodeData.node.id,
             "upLevel": 1,
             "renderParentIfLeaf": false,
             "offset": this.mainOffset,
             "goToLastPage": false
         }, (res: I.RenderNodeResponse) => {
-            this.upLevelResponse(ironRes.response, meta64.currentNodeId);
+            this.upLevelResponse(ironRes.response, meta64.currentNodeData.node.id);
         });
     }
 
@@ -188,7 +189,7 @@ export class Nav {
     /*
      * turn of row selection DOM element of whatever row is currently selected
      */
-    getSelectedPolyElement = (): any => {
+    getSelectedPolyElement = (): HTMLElement => {
         try {
             let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode) {
@@ -263,6 +264,7 @@ export class Nav {
     }
 
     navPageNodeResponse = (res: I.RenderNodeResponse): void => {
+        debugger;
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();

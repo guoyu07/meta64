@@ -18,7 +18,7 @@ let render: Render;
 let edit: Edit;
 
 export class View {
-    
+
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
     postConstruct(_f: any) {
         let f: Factory = _f;
@@ -38,7 +38,9 @@ export class View {
         var statusLine = "";
 
         if (meta64.editModeOption === meta64.MODE_ADVANCED) {
-            statusLine += "count: " + meta64.currentNodeData.children.length;
+            if (meta64.currentNodeData && meta64.currentNodeData.children) {
+                statusLine += "count: " + meta64.currentNodeData.children.length;
+            }
         }
 
         if (meta64.userPreferences.editMode) {
@@ -71,7 +73,9 @@ export class View {
      */
     refreshTree = (nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void => {
         if (!nodeId) {
-            nodeId = meta64.currentNodeId;
+            if (meta64.currentNodeData && meta64.currentNodeData.node) {
+                nodeId = meta64.currentNodeData.node.id;
+            }
         }
 
         console.log("Refreshing tree: nodeId=" + nodeId);
@@ -99,7 +103,7 @@ export class View {
 
             if (isInitialRender && meta64.urlCmd == "addNode" && meta64.homeNodeOverride) {
                 edit.editMode(true);
-                edit.createSubNode(meta64.currentNode.uid);
+                edit.createSubNode(meta64.currentNodeData.node.uid);
             }
         });
     }
@@ -133,7 +137,7 @@ export class View {
 
     private loadPage = (goToLastPage: boolean): void => {
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": meta64.currentNodeId,
+            "nodeId": meta64.currentNodeData.node.id,
             "upLevel": null,
             "renderParentIfLeaf": true,
             "offset": nav.mainOffset,
@@ -161,6 +165,7 @@ export class View {
             this.scrollToSelNodePending = false;
 
             let elm: any = nav.getSelectedPolyElement();
+
             if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                 elm.node.scrollIntoView();
             }

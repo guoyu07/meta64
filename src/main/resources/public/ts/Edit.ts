@@ -7,7 +7,7 @@ import { CreateNodeDlg } from "./dlg/CreateNodeDlg";
 import { RenameNodeDlg } from "./dlg/RenameNodeDlg";
 import { ImportDlg } from "./dlg/ImportDlg";
 import { ExportDlg } from "./dlg/ExportDlg";
-import { PrefsDlg } from "./PrefsDlg";
+import { PrefsDlg } from "./dlg/PrefsDlg";
 import { ChangePasswordDlg } from "./dlg/ChangePasswordDlg";
 import { ManageAccountDlg } from "./dlg/ManageAccountDlg";
 import { ImportFromFileDropzoneDlg } from "./dlg/ImportFromFileDropzoneDlg";
@@ -363,7 +363,8 @@ export class Edit {
     /*
      * Returns the node above the specified node or null if node is itself the top node
      */
-    getNodeAbove = (node): any => {
+    getNodeAbove = (node : I.NodeInfo): any => {
+        if (!meta64.currentNodeData) return null;
         let ordinal: number = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)
             return null;
@@ -373,7 +374,8 @@ export class Edit {
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
-    getNodeBelow = (node: any): I.NodeInfo => {
+    getNodeBelow = (node: I.NodeInfo): I.NodeInfo => {
+        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
         let ordinal: number = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
         if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
@@ -402,8 +404,8 @@ export class Edit {
     }
 
     insertNode = (uid?: any, typeName?: string): void => {
-
-        this.parentOfNewNode = meta64.currentNode;
+        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return;
+        this.parentOfNewNode = meta64.currentNodeData.node;
         if (!this.parentOfNewNode) {
             console.log("Unknown parent");
             return;
@@ -437,7 +439,8 @@ export class Edit {
                 this.parentOfNewNode = highlightNode;
             }
             else {
-                this.parentOfNewNode = meta64.currentNode;
+                if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
+                this.parentOfNewNode = meta64.currentNodeData.node;
             }
         } else {
             this.parentOfNewNode = meta64.uidToNodeMap[uid];
@@ -501,6 +504,8 @@ export class Edit {
         let nodesMap: Object = meta64.getSelectedNodesAsMapById();
         let bestNode: I.NodeInfo = null;
         let takeNextNode: boolean = false;
+
+        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
 
         /* now we scan the children, and the last child we encounterd up until we find the rist onen in nodesMap will be the
         node we will want to select and scroll the user to AFTER the deleting is done */

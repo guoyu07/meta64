@@ -13,7 +13,6 @@ import { Constants } from "../Constants";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: any) => {
-    debugger;
     util = ctx.util;
 });
 

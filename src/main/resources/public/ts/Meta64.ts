@@ -189,15 +189,7 @@ export class Meta64 {
     expandedAbbrevNodeIds: any = {};
 
     /* RenderNodeResponse.java object */
-    currentNodeData: any = null;
-
-    /*
-     * all variables derivable from currentNodeData, but stored directly for simpler code/access
-     */
-    currentNode: I.NodeInfo = null;
-    currentNodeUid: any = null;
-    currentNodeId: any = null;
-    currentNodePath: any = null;
+    currentNodeData: I.RenderNodeResponse = null;
 
     renderFunctionsByJcrType: { [key: string]: Function } = {};
     propOrderingFunctionsByJcrType: { [key: string]: Function } = {};
@@ -472,7 +464,8 @@ export class Meta64 {
     }
 
     getHighlightedNode = (): I.NodeInfo => {
-        let ret: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeUid];
+        if (!this.currentNodeData || !this.currentNodeData.node) return null;
+        let ret: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeData.node.uid];
         return ret;
     }
 
@@ -501,7 +494,7 @@ export class Meta64 {
         let doneHighlighting: boolean = false;
 
         /* Unhighlight currently highlighted node if any */
-        let curHighlightedNode: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeUid];
+        let curHighlightedNode: I.NodeInfo = this.parentUidToFocusNodeMap[this.currentNodeData.node.uid];
         if (curHighlightedNode) {
             //console.log("already had a highlighted node.");
             if (curHighlightedNode.uid === node.uid) {
@@ -515,7 +508,7 @@ export class Meta64 {
         }
 
         if (!doneHighlighting) {
-            this.parentUidToFocusNodeMap[this.currentNodeUid] = node;
+            this.parentUidToFocusNodeMap[this.currentNodeData.node.uid] = node;
 
             let rowElmId: string = "row_" + node.uid;
             util.changeOrAddClass(rowElmId, "inactive-row", "active-row");
@@ -551,8 +544,8 @@ export class Meta64 {
 
         //todo-1: need to add to this selNodeIsMine || selParentIsMine;
         this.state.canCreateNode = this.userPreferences.editMode && (this.isAdminUser || (!this.isAnonUser /* && selNodeIsMine */));
-        this.state.propsToggle = this.currentNode && !this.isAnonUser;
-        this.state.allowEditMode = this.currentNode && !this.isAnonUser;
+        this.state.propsToggle = this.currentNodeData && this.currentNodeData.node && !this.isAnonUser;
+        this.state.allowEditMode = this.currentNodeData && this.currentNodeData.node && !this.isAnonUser;
     }
 
     refreshAllGuiEnablement = () => {
@@ -567,13 +560,13 @@ export class Meta64 {
         util.setEnablement("navLogoutButton", !this.isAnonUser);
         util.setEnablement("openSignupPgButton", this.isAnonUser);
         util.setEnablement("editModeButton", this.state.allowEditMode);
-        util.setEnablement("upLevelButton", this.currentNode && nav.parentVisibleToUser());
+        util.setEnablement("upLevelButton", this.currentNodeData && this.currentNodeData.node && nav.parentVisibleToUser());
         util.setEnablement("searchMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
         util.setEnablement("timelineMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
         util.setEnablement("userPreferencesMainAppButton", !this.isAnonUser);
 
         util.setElmDisplayById("editModeButton", this.state.allowEditMode);
-        util.setElmDisplayById("upLevelButton", this.currentNode && nav.parentVisibleToUser());
+        util.setElmDisplayById("upLevelButton", this.currentNodeData && this.currentNodeData.node && nav.parentVisibleToUser());
         util.setElmDisplayById("openLoginDlgButton", this.isAnonUser);
         util.setElmDisplayById("navLogoutButton", !this.isAnonUser);
         util.setElmDisplayById("openSignupPgButton", this.isAnonUser);
@@ -581,7 +574,9 @@ export class Meta64 {
         util.setElmDisplayById("timelineMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
         util.setElmDisplayById("userPreferencesMainAppButton", !this.isAnonUser);
 
-        Polymer.dom.flush(); // <---- is this needed ? todo-3
+        /* the 'flush' call is actually only needed before interrogating the DOM
+        for things like height of components, etc */
+        //Polymer.dom.flush(); 
         Polymer.Base.updateStyles();
     }
 
@@ -619,12 +614,8 @@ export class Meta64 {
         return this.currentNodeData.children.length;
     }
 
-    setCurrentNodeData = (data): void => {
-        this.currentNodeData = data;
-        this.currentNode = data.node;
-        this.currentNodeUid = data.node.uid;
-        this.currentNodeId = data.node.id;
-        this.currentNodePath = data.node.path;
+    setCurrentNodeData = (data : I.RenderNodeResponse): void => {
+       this.currentNodeData = data;
     }
 
     anonPageLoadResponse = (res: I.AnonPageLoadResponse): void => {
@@ -870,8 +861,8 @@ export class Meta64 {
     screenSizeChange = (): void => {
         if (this.currentNodeData) {
 
-            if (this.currentNode.imgId) {
-                render.adjustImageSize(this.currentNode);
+            if (this.currentNodeData.node.imgId) {
+                render.adjustImageSize(this.currentNodeData.node);
             }
 
             util.forEachArrElm(this.currentNodeData.children, (node, i) => {

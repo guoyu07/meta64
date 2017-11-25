@@ -70,7 +70,9 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
             this.renderToDom(node);
 
-            Polymer.dom.flush(); // <---- is this needed ? todo-3
+            /* the 'flush' call is actually only needed before interrogating the DOM
+            for things like height of components, etc */
+            Polymer.dom.flush(); 
             Polymer.Base.updateStyles();
 
             // let left = tag.div( {

@@ -64,11 +64,7 @@ export declare class Meta64 {
     binaryPropertyList: any;
     selectedNodes: any;
     expandedAbbrevNodeIds: any;
-    currentNodeData: any;
-    currentNode: I.NodeInfo;
-    currentNodeUid: any;
-    currentNodeId: any;
-    currentNodePath: any;
+    currentNodeData: I.RenderNodeResponse;
     renderFunctionsByJcrType: {
         [key: string]: Function;
     };
@@ -103,7 +99,7 @@ export declare class Meta64 {
     getSingleSelectedNode: () => I.NodeInfo;
     getOrdinalOfNode: (node: I.NodeInfo) => number;
     getNumChildNodes: () => number;
-    setCurrentNodeData: (data: any) => void;
+    setCurrentNodeData: (data: I.RenderNodeResponse) => void;
     anonPageLoadResponse: (res: I.AnonPageLoadResponse) => void;
     removeBinaryByUid: (uid: any) => void;
     initNode: (node: I.NodeInfo, updateMaps?: boolean) => void;

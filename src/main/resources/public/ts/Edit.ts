@@ -13,14 +13,15 @@ import { ManageAccountDlg } from "./dlg/ManageAccountDlg";
 import { ImportFromFileDropzoneDlg } from "./dlg/ImportFromFileDropzoneDlg";
 import { Constants as cnst } from "./Constants";
 
-import { Factory } from "./types/Factory";
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Render } from "./types/Render";
-import { View } from "./types/View";
-import { Nav } from "./types/Nav";
-import { Props } from "./types/Props";
-import { User } from "./types/User";
+import { Factory } from "./Factory";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
+import { UserIntf as User } from "./intf/UserIntf";
+import { EditIntf } from "./intf/EditIntf";
 
 let meta64: Meta64;
 let util: Util;
@@ -30,7 +31,7 @@ let render: Render;
 let user: User;
 let view: View;
 
-export class Edit {
+export class Edit implements EditIntf {
 
     postConstruct(_f: any) {
         let f = <Factory>_f;
@@ -363,7 +364,7 @@ export class Edit {
     /*
      * Returns the node above the specified node or null if node is itself the top node
      */
-    getNodeAbove = (node : I.NodeInfo): any => {
+    getNodeAbove = (node: I.NodeInfo): any => {
         if (!meta64.currentNodeData) return null;
         let ordinal: number = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)

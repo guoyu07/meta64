@@ -13,7 +13,7 @@ import { RadioButton } from "../widget/RadioButton";
 import { RadioButtonGroup } from "../widget/RadioButtonGroup";
 import { Anchor } from "../widget/Anchor";
 import { VerticalLayout } from "../widget/VerticalLayout";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 

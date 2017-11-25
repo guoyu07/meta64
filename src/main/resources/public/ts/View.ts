@@ -3,13 +3,13 @@ console.log("View.ts");
 import { MessageDlg } from "./dlg/MessageDlg";
 import * as I from "./Interfaces";
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Render } from "./types/Render";
-import { Nav } from "./types/Nav";
-import { Edit } from "./types/Edit";
+import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
+import { UtilIntf as Util} from "./intf/UtilIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { NavIntf as Nav} from "./intf/NavIntf";
+import {EditIntf as Edit} from "./intf/EditIntf";
 
 let meta64: Meta64;
 let util: Util;

@@ -1,7 +1,7 @@
 console.log("DomBind.ts");
 
-import {Factory} from "./types/Factory";
-import {Util} from "./types/Util";
+import {Factory} from "./Factory";
+import {UtilIntf as Util} from "./intf/UtilIntf";
 
 let util : Util;
 

@@ -6,18 +6,19 @@ import { MessageDlg } from "./dlg/MessageDlg";
 import { SignupDlg } from "./dlg/SignupDlg";
 import { ConfirmDlg } from "./dlg/ConfirmDlg";
 import { Constants as cnst } from "./Constants";
+import { UserIntf} from "./intf/UserIntf";
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { View } from "./types/View";
+import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
+import { UtilIntf as Util} from "./intf/UtilIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
 
 let meta64: Meta64;
 let util: Util;
 let view: View;
 
-export class User {
+export class User implements UserIntf {
     
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
     postConstruct(_f: any) {

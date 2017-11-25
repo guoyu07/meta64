@@ -14,11 +14,11 @@ import { ProgressDlg } from "./dlg/ProgressDlg";
 import { PasswordDlg } from "./dlg/PasswordDlg";
 import * as I from "./Interfaces";
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 
-import { Meta64 } from "./types/Meta64";
-import { DomBind } from "./types/DomBind";
-import { Encryption } from "./types/Encryption";
+import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
+import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
+import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
 
 let meta64: Meta64;
 let encryption: Encryption;
@@ -171,7 +171,8 @@ export class Util {
      * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
      * session is only allowed one concurrent call and simultaneous calls would just "queue up".
      */
-    private _ajaxCounter: number = 0;
+    //todo-0: figure out why compiler says Interface is a problem when we make this a 'private' var here.
+    _ajaxCounter: number = 0;
 
     daylightSavingsTime: boolean = (this.dst(new Date())) ? true : false;
 

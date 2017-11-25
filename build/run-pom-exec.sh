@@ -3,7 +3,7 @@
 
 source ./setenv.sh
 
-rm -f $META64/src/main/resources/public/dist/*
+rm -rf $META64/src/main/resources/public/dist/*
 
 cd $META64/src/main/resources/public
 webpack

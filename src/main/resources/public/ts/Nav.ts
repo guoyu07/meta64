@@ -1,21 +1,22 @@
 console.log("Nav.ts");
 
 import * as I from "./Interfaces";
+import { NavIntf } from "./intf/NavIntf";
 import { LoginDlg } from "./dlg/LoginDlg";
 import { PrefsDlg } from "./dlg/PrefsDlg";
 import { SearchContentDlg } from "./dlg/SearchContentDlg";
 import { SearchTagsDlg } from "./dlg/SearchTagsDlg";
 import { SearchFilesDlg } from "./dlg/SearchFilesDlg";
 
-import { Factory } from "./types/Factory";
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Render } from "./types/Render";
-import { View } from "./types/View";
-import { User } from "./types/User";
-import { Edit } from "./types/Edit";
-import { Share } from "./types/Share";
-import { Search } from "./types/Search";
+import { Factory } from "./Factory";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
+import { UserIntf as User} from "./intf/UserIntf";
+import {EditIntf as Edit} from "./intf/EditIntf";
+import { ShareIntf as Share} from "./intf/ShareIntf";
+import {SearchIntf as Search} from "./intf/SearchIntf";
 
 let meta64: Meta64;
 let util: Util;
@@ -23,11 +24,11 @@ let render: Render;
 let user: User;
 let srch: Search;
 let view: View;
-let edit : Edit;
+let edit: Edit;
 
-export class Nav {
+export class Nav implements NavIntf {
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f : any) {
+    postConstruct(_f: any) {
         let f: Factory = _f;
         util = f.getUtil();
         meta64 = f.getMeta64();
@@ -37,7 +38,7 @@ export class Nav {
         edit = f.getEdit();
         srch = f.getSearch();
     }
-    
+
     _UID_ROWID_PREFIX: string = "row_";
 
     /* todo-1: eventually when we do paging for other lists, we will need a set of these variables for each list display (i.e. search, timeline, etc) */

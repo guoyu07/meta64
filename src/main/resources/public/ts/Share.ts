@@ -1,9 +1,9 @@
 import * as I from "./Interfaces";
 import { SharingDlg } from "./dlg/SharingDlg";
-import { Factory } from "./types/Factory";
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Search } from "./types/Search";
+import { Factory } from "./Factory";
+import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
+import { UtilIntf as Util} from "./intf/UtilIntf";
+import {SearchIntf as Search} from "./intf/SearchIntf";
 
 let meta64: Meta64;
 let util: Util;

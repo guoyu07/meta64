@@ -13,15 +13,16 @@ import { Anchor } from "./widget/Anchor";
 import { Heading } from "./widget/Heading";
 import { VerticalDivs } from "./widget/VerticalDivs";
 import { Constants as cnst } from "./Constants";
-import { Factory } from "./types/Factory";
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { View } from "./types/View";
-import { Nav } from "./types/Nav";
-import { Props } from "./types/Props";
-import { Edit } from "./types/Edit";
-import { DomBind } from "./types/DomBind";
-import { Tag } from "./types/Tag";
+import { Factory } from "./Factory";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
+import { NavIntf as Nav} from "./intf/NavIntf";
+import {PropsIntf as Props} from "./intf/PropsIntf";
+import {EditIntf as Edit} from "./intf/EditIntf";
+import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
+import { TagIntf as Tag } from "./intf/TagIntf";
+import { RenderIntf } from "./intf/RenderIntf";
 
 let meta64: Meta64;
 let util: Util;
@@ -35,8 +36,8 @@ let tag: Tag;
 declare var postTargetUrl;
 declare var prettyPrint;
 
-export class Render {
-     postConstruct(_f: any) {
+export class Render implements RenderIntf {
+    postConstruct(_f: any) {
         let f: Factory = _f;
         util = f.getUtil();
         meta64 = f.getMeta64();
@@ -47,7 +48,7 @@ export class Render {
         domBind = f.getDomBind();
         tag = f.getTag();
     }
-    
+
     private PRETTY_TAGS: boolean = true;
     private debug: boolean = false;
 

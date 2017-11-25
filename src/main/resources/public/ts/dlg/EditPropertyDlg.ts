@@ -10,7 +10,7 @@ import { TextContent } from "../widget/TextContent";
 import { Div } from "../widget/Div";
 import { Textarea } from "../widget/Textarea";
 import { Constants as cnst} from "../Constants";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 

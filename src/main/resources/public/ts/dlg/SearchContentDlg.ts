@@ -6,7 +6,7 @@ import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
 import { Constants as cnst} from "../Constants";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 

@@ -4,9 +4,10 @@ import { EncryptionKeyPair } from "./EncryptionKeyPair";
 import { LocalDB } from "./LocalDB";
 
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 
-import { Util } from "./types/Util";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { EncryptionIntf } from "./intf/EncryptionIntf";
 
 let util: Util;
 
@@ -36,22 +37,22 @@ Code complete except for we have a hardcoded password instead of prompting user 
 will be complete once we prompt user for password.
 
 */
-export class Encryption {
-    
-    postConstruct(_f : any) {
+export class Encryption implements EncryptionIntf {
+
+    postConstruct(_f: any) {
         let f: Factory = _f;
         util = f.getUtil();
     }
 
     /* jwk = JSON Format */
-    static KEY_SAVE_FORMAT = "jwk";
+    KEY_SAVE_FORMAT = "jwk";
 
-    static PK_ENC_ALGO = "RSA-OAEP";
-    static HASH_ALGO = "SHA-256";
+    PK_ENC_ALGO = "RSA-OAEP";
+    HASH_ALGO = "SHA-256";
 
-    static ALGO_OPERATIONS = ["encrypt", "decrypt"];
-    static OP_ENCRYPT: string[] = ["encrypt"];
-    static OP_DECRYPT: string[] = ["decrypt"];
+    ALGO_OPERATIONS = ["encrypt", "decrypt"];
+    OP_ENCRYPT: string[] = ["encrypt"];
+    OP_DECRYPT: string[] = ["decrypt"];
 
     crypto = window.crypto || (<any>window).msCrypto;
     subtle = null;
@@ -72,7 +73,7 @@ export class Encryption {
     public masterPassword: string;
 
     constructor() {
-        
+
         /* WARNING: Crypto (or at least subtle) will not be available except on Secure Origin, which means a SSL (https) 
         web address plus also localhost */
 
@@ -107,11 +108,11 @@ export class Encryption {
 
         /* NOTE: These parameters are all production-quality */
         let keyPromise = this.subtle.generateKey({ //
-            name: Encryption.PK_ENC_ALGO, //
+            name: this.PK_ENC_ALGO, //
             modulusLength: 2048, //
             publicExponent: new Uint8Array([0x01, 0x00, 0x01]), //
-            hash: { name: Encryption.HASH_ALGO }
-        }, true, Encryption.ALGO_OPERATIONS);
+            hash: { name: this.HASH_ALGO }
+        }, true, this.ALGO_OPERATIONS);
 
         keyPromise.then(
             (key) => {
@@ -138,26 +139,26 @@ export class Encryption {
      */
     exportKeys = (keyPair: EncryptionKeyPair) => {
         this.subtle.exportKey(
-            Encryption.KEY_SAVE_FORMAT,
+            this.KEY_SAVE_FORMAT,
             keyPair.publicKey
         )
             .then((keydata) => {
                 this.publicKeyJson = util.toJson(keydata);
                 console.log("PublicKey: " + this.publicKeyJson);
-                this.importKey(Encryption.OP_ENCRYPT, "public", this.publicKeyJson);
+                this.importKey(this.OP_ENCRYPT, "public", this.publicKeyJson);
             })
             .catch((err) => {
                 console.error(err);
             });
 
         this.subtle.exportKey(
-            Encryption.KEY_SAVE_FORMAT,
+            this.KEY_SAVE_FORMAT,
             keyPair.privateKey
         )
             .then((keydata) => {
                 this.privateKeyJson = util.toJson(keydata);
                 console.log("PrivateKey: " + this.privateKeyJson);
-                this.importKey(Encryption.OP_DECRYPT, "private", this.privateKeyJson);
+                this.importKey(this.OP_DECRYPT, "private", this.privateKeyJson);
             })
             .catch((err) => {
                 console.error(err);
@@ -166,11 +167,11 @@ export class Encryption {
 
     importKey = (algoOp: string[], keyName: string, key: string) => {
         this.subtle.importKey(
-            Encryption.KEY_SAVE_FORMAT,
+            this.KEY_SAVE_FORMAT,
             JSON.parse(key),
             {
-                name: Encryption.PK_ENC_ALGO,
-                hash: { name: Encryption.HASH_ALGO },
+                name: this.PK_ENC_ALGO,
+                hash: { name: this.HASH_ALGO },
             },
             true, algoOp
         )
@@ -183,7 +184,7 @@ export class Encryption {
     }
 
     encrypt = () => {
-        let encryptedDataPromise = this.subtle.encrypt({ name: Encryption.PK_ENC_ALGO, iv: this.vector }, //
+        let encryptedDataPromise = this.subtle.encrypt({ name: this.PK_ENC_ALGO, iv: this.vector }, //
             this.keyPair.publicKey, this.convertStringToArrayBufferView(this.data));
 
         encryptedDataPromise.then(
@@ -199,7 +200,7 @@ export class Encryption {
     }
 
     decrypt = () => {
-        let decryptedDataPromise = this.subtle.decrypt({ name: Encryption.PK_ENC_ALGO, iv: this.vector }, //
+        let decryptedDataPromise = this.subtle.decrypt({ name: this.PK_ENC_ALGO, iv: this.vector }, //
             this.keyPair.privateKey, this.encrypted_data);
 
         decryptedDataPromise.then(

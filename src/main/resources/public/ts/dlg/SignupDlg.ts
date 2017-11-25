@@ -10,7 +10,7 @@ import { Div } from "../widget/Div";
 import { Checkbox } from "../widget/Checkbox";
 import { Comp } from "../widget/base/Comp";
 import { Captcha } from "../widget/Captcha";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 

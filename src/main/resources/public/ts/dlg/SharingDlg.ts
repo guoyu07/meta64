@@ -11,7 +11,7 @@ import { Checkbox } from "../widget/Checkbox";
 import { Comp } from "../widget/base/Comp";
 import { EditPrivsTable } from "../widget/EditPrivsTable";
 import { EditPrivsTableRow } from "../widget/EditPrivsTableRow";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 

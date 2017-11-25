@@ -2,23 +2,24 @@ console.log("Meta64.ts");
 
 /// <reference types="polymer" />
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 import * as I from "./Interfaces";
 import { Span } from "./widget/Span";
 import { MenuPanel } from "./MenuPanel";
 import { ChangePasswordDlg } from "./dlg/ChangePasswordDlg";
 import { Constants as cnst } from "./Constants";
-import { DomBind } from "./types/DomBind";
-import { Render } from "./types/Render";
-import { Search } from "./types/Search";
-import { User } from "./types/User";
-import { View } from "./types/View";
+import { DomBindIntf as DomBind } from "./intf/DomBindIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { SearchIntf as Search } from "./intf/SearchIntf";
+import { UserIntf as User } from "./intf/UserIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
 import { RssPlugin } from "./plugins/RssPlugin";
-import { Util } from "./types/Util";
-import { Edit } from "./types/Edit";
-import { Nav } from "./types/Nav";
-import { Props } from "./types/Props";
-import { CoreTypesPlugin } from "./types/plugins/CoreTypesPlugin";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
+import { CoreTypesPluginIntf as CoreTypesPlugin } from "./intf/CoreTypesPluginIntf";
+import { Meta64Intf } from "./intf/Meta64Intf";
 
 declare var Polymer: polymer.PolymerStatic;
 
@@ -34,7 +35,7 @@ let domBind: DomBind;
 let rssPlugin: RssPlugin;
 let coreTypesPlugin: CoreTypesPlugin;
 
-export class Meta64 {
+export class Meta64 implements Meta64Intf {
 
     postConstruct(_f: any) {
         let f = <Factory>_f;
@@ -614,8 +615,8 @@ export class Meta64 {
         return this.currentNodeData.children.length;
     }
 
-    setCurrentNodeData = (data : I.RenderNodeResponse): void => {
-       this.currentNodeData = data;
+    setCurrentNodeData = (data: I.RenderNodeResponse): void => {
+        this.currentNodeData = data;
     }
 
     anonPageLoadResponse = (res: I.AnonPageLoadResponse): void => {

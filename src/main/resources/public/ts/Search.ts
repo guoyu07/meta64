@@ -5,16 +5,17 @@ import { MessageDlg } from "./dlg/MessageDlg";
 import { SearchContentDlg } from "./dlg/SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
-import { Constants as cnst} from "./Constants";
+import { Constants as cnst } from "./Constants";
 
-import { Factory } from "./types/Factory";
+import { Factory } from "./Factory";
 
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Render } from "./types/Render";
-import { View } from "./types/View";
-import { Nav } from "./types/Nav";
-import { Tag } from "./types/Tag";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
+import { NavIntf as Nav} from "./intf/NavIntf";
+import { TagIntf as Tag } from "./intf/TagIntf";
+import { SearchIntf } from "./intf/SearchIntf";
 
 let meta64: Meta64;
 let util: Util;
@@ -23,10 +24,10 @@ let render: Render;
 let view: View;
 let tag: Tag;
 
-export class Search {
-    
+export class Search implements SearchIntf {
+
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f : any) {
+    postConstruct(_f: any) {
         let f: Factory = _f;
         util = f.getUtil();
         meta64 = f.getMeta64();
@@ -75,17 +76,17 @@ export class Search {
      */
     uidToNodeMap: { [key: string]: I.NodeInfo } = {};
 
-    numSearchResults=() =>{
+    numSearchResults = () => {
         return this.searchResults != null && //
             this.searchResults.searchResults != null && //
             this.searchResults.searchResults.length != null ? //
             this.searchResults.searchResults.length : 0;
     }
 
-    searchTabActivated=() =>{
+    searchTabActivated = () => {
     }
 
-    searchNodesResponse=(res: I.NodeSearchResponse) =>{
+    searchNodesResponse = (res: I.NodeSearchResponse) => {
         this.searchResults = res;
 
         if (this.numSearchResults() == 0) {
@@ -100,7 +101,7 @@ export class Search {
         meta64.changePage(panel);
     }
 
-    timelineResponse=(res: I.NodeSearchResponse)=> {
+    timelineResponse = (res: I.NodeSearchResponse) => {
         this.timelineResults = res;
         let panel = new TimelineResultsPanel(null);
         let content = panel.renderHtml();
@@ -110,7 +111,7 @@ export class Search {
 
     }
 
-    searchFilesResponse=(res: I.FileSearchResponse) =>{
+    searchFilesResponse = (res: I.FileSearchResponse) => {
         nav.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
             "nodeId": res.searchResultNodeId,
@@ -121,7 +122,7 @@ export class Search {
         }, nav.navPageNodeResponse);
     }
 
-    timelineByModTime=() =>{
+    timelineByModTime = () => {
         let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
@@ -138,7 +139,7 @@ export class Search {
         }, this.timelineResponse);
     }
 
-    timelineByCreateTime=() =>{
+    timelineByCreateTime = () => {
         let node = meta64.getHighlightedNode();
         if (!node) {
             util.showMessage("No node is selected to 'timeline' under.");
@@ -155,12 +156,12 @@ export class Search {
         }, this.timelineResponse);
     }
 
-    initSearchNode=(node: I.NodeInfo) =>{
+    initSearchNode = (node: I.NodeInfo) => {
         node.uid = util.getUidForId(this.identToUidMap, node.id);
         this.uidToNodeMap[node.uid] = node;
     }
 
-    populateSearchResultsPage=(data, viewName) =>{
+    populateSearchResultsPage = (data, viewName) => {
         let output = '';
         let childCount = data.searchResults.length;
 
@@ -188,7 +189,7 @@ export class Search {
      *
      * node is a NodeInfo.java JSON
      */
-    renderSearchResultAsListItem=(node, index, count, rowCount) =>{
+    renderSearchResultAsListItem = (node, index, count, rowCount) => {
         let uid = node.uid;
         console.log("renderSearchResult: " + uid);
 
@@ -213,21 +214,21 @@ export class Search {
             }, content));
     }
 
-    makeButtonBarHtml=(uid: string) =>{
+    makeButtonBarHtml = (uid: string) => {
         let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, () => {
             meta64.clickSearchNode(uid);
         });
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
-    clickOnSearchResultRow=(rowElm: HTMLElement, uid)=> {
+    clickOnSearchResultRow = (rowElm: HTMLElement, uid) => {
         this.unhighlightRow();
         this.highlightRowNode = this.uidToNodeMap[uid];
 
         util.changeOrAddClassToElm(rowElm, "inactive-row", "active-row");
     }
 
-    clickSearchNode=(uid: string) =>{
+    clickSearchNode = (uid: string) => {
         /*
          * update highlight node to point to the node clicked on, just to persist it for later
          */
@@ -243,7 +244,7 @@ export class Search {
     /*
      * turn of row selection styling of whatever row is currently selected
      */
-    unhighlightRow=() =>{
+    unhighlightRow = () => {
 
         if (!this.highlightRowNode) {
             return;

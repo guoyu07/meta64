@@ -4,9 +4,9 @@ import { ConfirmDlg } from "./dlg/ConfirmDlg";
 import { UploadFromFileDropzoneDlg } from "./dlg/UploadFromFileDropzoneDlg";
 import { UploadFromUrlDlg } from "./dlg/UploadFromUrlDlg";
 import * as I from "./Interfaces";
-import { Factory } from "./types/Factory";
-import { Util } from "./types/Util";
-import { Meta64 } from "./types/Meta64";
+import { Factory } from "./Factory";
+import { UtilIntf as Util} from "./intf/UtilIntf";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 
 console.log("Creating attachment class");
 

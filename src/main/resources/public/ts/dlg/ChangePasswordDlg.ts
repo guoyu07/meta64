@@ -9,7 +9,7 @@ import { PasswordTextField } from "../widget/PasswordTextField";
 import { Help } from "../widget/Help";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
-import { Util } from "../types/Util";
+import { UtilIntf as Util} from "../intf/UtilIntf";
 import { Constants } from "../Constants";
 
 let util: Util;

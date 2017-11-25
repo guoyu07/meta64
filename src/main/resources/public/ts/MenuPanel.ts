@@ -4,22 +4,21 @@ import { Comp } from "./widget/base/Comp";
 import { Menu } from "./widget/Menu";
 import { MenuItem } from "./widget/MenuItem";
 
+import { Factory } from "./Factory";
 
-import { Factory } from "./types/Factory";
-
-import { Meta64 } from "./types/Meta64";
-import { Util } from "./types/Util";
-import { Render } from "./types/Render";
-import { View } from "./types/View";
-import { Nav } from "./types/Nav";
-import { Props } from "./types/Props";
-import { User } from "./types/User";
-import { Edit } from "./types/Edit";
-import { Share } from "./types/Share";
-import { Attachment } from "./types/Attachment";
-import { Search } from "./types/Search";
-import { Podcast } from "./types/Podcast";
-import { Encryption } from "./types/Encryption";
+import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
+import { UtilIntf as Util} from "./intf/UtilIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { ViewIntf as View } from "./intf/ViewIntf";
+import { NavIntf as Nav} from "./intf/NavIntf";
+import {PropsIntf as Props} from "./intf/PropsIntf";
+import { UserIntf as User} from "./intf/UserIntf";
+import {EditIntf as Edit} from "./intf/EditIntf";
+import { ShareIntf as Share} from "./intf/ShareIntf";
+import { AttachmentIntf as Attachment} from "./intf/AttachmentIntf";
+import {SearchIntf as Search} from "./intf/SearchIntf";
+import {PodcastIntf as Podcast} from "./intf/PodcastIntf";
+import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
 
 let meta64: Meta64;
 let util: Util;

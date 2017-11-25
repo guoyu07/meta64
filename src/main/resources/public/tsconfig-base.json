@@ -11,8 +11,8 @@
         //TSX files are an ugly disaster that should have neve been invented.
         //"jsx": "React",
         //"isolatedModules": false,
-        "declaration": true,
-        "declarationDir" : "./ts/types",
+        //"declaration": true,
+        //"declarationDir" : "./ts/types",
         "noImplicitAny": false,
         "noImplicitUseStrict": false,
         "removeComments": true,

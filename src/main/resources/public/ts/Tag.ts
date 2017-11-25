@@ -1,7 +1,7 @@
 console.log("Tag.ts");
 
-import { Factory } from "./types/Factory";
-import { Render } from "./types/Render";
+import { Factory } from "./Factory";
+import { RenderIntf as Render } from "./intf/RenderIntf";
 
 let render: Render;
 

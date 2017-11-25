@@ -1,3 +1,4 @@
+/* Basic Pub/Sub Implementation */
 
 export class PubSub {
 

@@ -1,5 +1,5 @@
 import * as I from "./Interfaces";
-import { EditNodeDlg } from "./EditNodeDlg";
+import { EditNodeDlg } from "./dlg/EditNodeDlg";
 export declare class Edit {
     postConstruct(_f: any): void;
     importTargetNode: any;

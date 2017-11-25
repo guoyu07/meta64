@@ -1,8 +1,8 @@
 console.log("Search.ts");
 
 import * as I from "./Interfaces";
-import { MessageDlg } from "./MessageDlg";
-import { SearchContentDlg } from "./SearchContentDlg";
+import { MessageDlg } from "./dlg/MessageDlg";
+import { SearchContentDlg } from "./dlg/SearchContentDlg";
 import { TimelineResultsPanel } from "./TimelineResultsPanel";
 import { SearchResultsPanel } from "./SearchResultsPanel";
 import { Constants as cnst} from "./Constants";

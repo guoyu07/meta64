@@ -1,8 +1,8 @@
 console.log("Attachment.ts");
 
-import { ConfirmDlg } from "./ConfirmDlg";
-import { UploadFromFileDropzoneDlg } from "./UploadFromFileDropzoneDlg";
-import { UploadFromUrlDlg } from "./UploadFromUrlDlg";
+import { ConfirmDlg } from "./dlg/ConfirmDlg";
+import { UploadFromFileDropzoneDlg } from "./dlg/UploadFromFileDropzoneDlg";
+import { UploadFromUrlDlg } from "./dlg/UploadFromUrlDlg";
 import * as I from "./Interfaces";
 import { Factory } from "./types/Factory";
 import { Util } from "./types/Util";

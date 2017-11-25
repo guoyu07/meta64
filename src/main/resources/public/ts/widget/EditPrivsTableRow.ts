@@ -4,7 +4,7 @@ import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
 import * as I from "../Interfaces";
 import { Div } from "./Div";
-import { SharingDlg } from "../SharingDlg";
+import { SharingDlg } from "../dlg/SharingDlg";
 import { Button } from "./Button";
 import { TextContent } from "./TextContent";
 

@@ -1,7 +1,7 @@
 console.log("Render.ts");
 
 import * as I from "./Interfaces"
-import { MessageDlg } from "./MessageDlg";
+import { MessageDlg } from "./dlg/MessageDlg";
 import { Comp } from "./widget/base/Comp";
 import { Button } from "./widget/Button";
 import { ButtonBar } from "./widget/ButtonBar";
@@ -13,10 +13,7 @@ import { Anchor } from "./widget/Anchor";
 import { Heading } from "./widget/Heading";
 import { VerticalDivs } from "./widget/VerticalDivs";
 import { Constants as cnst } from "./Constants";
-
-
 import { Factory } from "./types/Factory";
-
 import { Meta64 } from "./types/Meta64";
 import { Util } from "./types/Util";
 import { View } from "./types/View";
@@ -998,7 +995,12 @@ export class Render {
 
     /*
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
-     * content is non-null
+     * content is non-null.
+     * 
+     * todo-0: Is there a pure JS way (or i can use React) to render a Node like this? If the browser
+     * has a function for creating an element like this it will perform MUCH better than us
+     * building our own string here. Of course the fancy stuff hooking up functions would need to 
+     * be pre-processed and still done by us here.
      */
     tag = (tag: string, attributes?: Object, content?: string, closeTag?: boolean): string => {
 

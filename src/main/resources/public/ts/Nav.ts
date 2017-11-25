@@ -1,11 +1,11 @@
 console.log("Nav.ts");
 
 import * as I from "./Interfaces";
-import { LoginDlg } from "./LoginDlg";
+import { LoginDlg } from "./dlg/LoginDlg";
 import { PrefsDlg } from "./PrefsDlg";
-import { SearchContentDlg } from "./SearchContentDlg";
-import { SearchTagsDlg } from "./SearchTagsDlg";
-import { SearchFilesDlg } from "./SearchFilesDlg";
+import { SearchContentDlg } from "./dlg/SearchContentDlg";
+import { SearchTagsDlg } from "./dlg/SearchTagsDlg";
+import { SearchFilesDlg } from "./dlg/SearchFilesDlg";
 
 import { Factory } from "./types/Factory";
 

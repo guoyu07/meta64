@@ -1,6 +1,6 @@
 console.log("View.ts");
 
-import { MessageDlg } from "./MessageDlg";
+import { MessageDlg } from "./dlg/MessageDlg";
 import * as I from "./Interfaces";
 
 import { Factory } from "./types/Factory";

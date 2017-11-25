@@ -1,4 +1,4 @@
-import { AudioPlayerDlg } from "./AudioPlayerDlg";
+import { AudioPlayerDlg } from "./dlg/AudioPlayerDlg";
 import * as I from "./Interfaces";
 export declare class Podcast {
     postConstruct(_f: any): void;

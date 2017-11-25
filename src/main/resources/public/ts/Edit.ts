@@ -1,16 +1,16 @@
 console.log("Edit.ts");
 
 import * as I from "./Interfaces";
-import { EditNodeDlg } from "./EditNodeDlg";
-import { ConfirmDlg } from "./ConfirmDlg";
-import { CreateNodeDlg } from "./CreateNodeDlg";
-import { RenameNodeDlg } from "./RenameNodeDlg";
-import { ImportDlg } from "./ImportDlg";
-import { ExportDlg } from "./ExportDlg";
+import { EditNodeDlg } from "./dlg/EditNodeDlg";
+import { ConfirmDlg } from "./dlg/ConfirmDlg";
+import { CreateNodeDlg } from "./dlg/CreateNodeDlg";
+import { RenameNodeDlg } from "./dlg/RenameNodeDlg";
+import { ImportDlg } from "./dlg/ImportDlg";
+import { ExportDlg } from "./dlg/ExportDlg";
 import { PrefsDlg } from "./PrefsDlg";
-import { ChangePasswordDlg } from "./ChangePasswordDlg";
-import { ManageAccountDlg } from "./ManageAccountDlg";
-import { ImportFromFileDropzoneDlg } from "./ImportFromFileDropzoneDlg";
+import { ChangePasswordDlg } from "./dlg/ChangePasswordDlg";
+import { ManageAccountDlg } from "./dlg/ManageAccountDlg";
+import { ImportFromFileDropzoneDlg } from "./dlg/ImportFromFileDropzoneDlg";
 import { Constants as cnst } from "./Constants";
 
 import { Factory } from "./types/Factory";

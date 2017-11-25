@@ -9,9 +9,9 @@ declare var ace;
 declare var postTargetUrl;
 declare var prettyPrint;
 
-import { MessageDlg } from "./MessageDlg";
-import { ProgressDlg } from "./ProgressDlg";
-import { PasswordDlg } from "./PasswordDlg";
+import { MessageDlg } from "./dlg/MessageDlg";
+import { ProgressDlg } from "./dlg/ProgressDlg";
+import { PasswordDlg } from "./dlg/PasswordDlg";
 import * as I from "./Interfaces";
 
 import { Factory } from "./types/Factory";
@@ -609,10 +609,6 @@ export class Util {
 
         let elm: HTMLElement = this.domElm(id);
         let polyElm = Polymer.dom(elm);
-
-        //For Polymer 1.0.0, you need this...
-        //polyElm.node.innerHTML = content;
-
         polyElm.innerHTML = content;
 
         Polymer.dom.flush();

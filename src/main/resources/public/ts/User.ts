@@ -1,10 +1,10 @@
 console.log("User.ts");
 
 import * as I from "./Interfaces";
-import { LoginDlg } from "./LoginDlg";
-import { MessageDlg } from "./MessageDlg";
-import { SignupDlg } from "./SignupDlg";
-import { ConfirmDlg } from "./ConfirmDlg";
+import { LoginDlg } from "./dlg/LoginDlg";
+import { MessageDlg } from "./dlg/MessageDlg";
+import { SignupDlg } from "./dlg/SignupDlg";
+import { ConfirmDlg } from "./dlg/ConfirmDlg";
 import { Constants as cnst } from "./Constants";
 
 import { Factory } from "./types/Factory";

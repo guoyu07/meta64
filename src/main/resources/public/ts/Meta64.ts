@@ -1,10 +1,12 @@
 console.log("Meta64.ts");
 
+/// <reference types="polymer" />
+
 import { Factory } from "./types/Factory";
 import * as I from "./Interfaces";
 import { Span } from "./widget/Span";
 import { MenuPanel } from "./MenuPanel";
-import { ChangePasswordDlg } from "./ChangePasswordDlg";
+import { ChangePasswordDlg } from "./dlg/ChangePasswordDlg";
 import { Constants as cnst } from "./Constants";
 import { DomBind } from "./types/DomBind";
 import { Render } from "./types/Render";
@@ -18,6 +20,8 @@ import { Nav } from "./types/Nav";
 import { Props } from "./types/Props";
 import { CoreTypesPlugin } from "./types/plugins/CoreTypesPlugin";
 
+declare var Polymer: polymer.PolymerStatic;
+
 let util: Util;
 let edit: Edit;
 let nav: Nav;
@@ -29,9 +33,6 @@ let view: View;
 let domBind: DomBind;
 let rssPlugin: RssPlugin;
 let coreTypesPlugin: CoreTypesPlugin;
-
-//need to declare Polymer using *.d.ts file.
-declare var Polymer;
 
 export class Meta64 {
 
@@ -581,7 +582,7 @@ export class Meta64 {
         util.setElmDisplayById("userPreferencesMainAppButton", !this.isAnonUser);
 
         Polymer.dom.flush(); // <---- is this needed ? todo-3
-        Polymer.updateStyles();
+        Polymer.Base.updateStyles();
     }
 
     /* WARNING: This is NOT the highlighted node. This is whatever node has the CHECKBOX selection */

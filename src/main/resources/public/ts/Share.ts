@@ -1,8 +1,6 @@
 import * as I from "./Interfaces";
-import { SharingDlg } from "./SharingDlg";
-
+import { SharingDlg } from "./dlg/SharingDlg";
 import { Factory } from "./types/Factory";
-
 import { Meta64 } from "./types/Meta64";
 import { Util } from "./types/Util";
 import { Search } from "./types/Search";

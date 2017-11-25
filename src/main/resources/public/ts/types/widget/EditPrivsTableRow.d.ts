@@ -1,7 +1,7 @@
 import { Comp } from "./base/Comp";
 import * as I from "../Interfaces";
 import { Div } from "./Div";
-import { SharingDlg } from "../SharingDlg";
+import { SharingDlg } from "../dlg/SharingDlg";
 export declare class EditPrivsTableRow extends Comp {
     sharingDlg: SharingDlg;
     aclEntry: I.AccessControlEntryInfo;

@@ -1,4 +1,4 @@
-import { AudioPlayerDlg } from "./AudioPlayerDlg";
+import { AudioPlayerDlg } from "./dlg/AudioPlayerDlg";
 import * as I from "./Interfaces";
 
 import { Factory } from "./types/Factory";

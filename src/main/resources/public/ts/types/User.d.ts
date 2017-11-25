@@ -1,5 +1,5 @@
 import * as I from "./Interfaces";
-import { LoginDlg } from "./LoginDlg";
+import { LoginDlg } from "./dlg/LoginDlg";
 export declare class User {
     postConstruct(_f: any): void;
     private logoutResponse;

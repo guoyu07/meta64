@@ -1,8 +1,6 @@
 console.log("Tag.ts");
 
-
 import { Factory } from "./types/Factory";
-
 import { Render } from "./types/Render";
 
 let render: Render;

@@ -36,11 +36,12 @@ import { CoreTypesPlugin } from "./plugins/CoreTypesPlugin";
 import { Singletons } from "./Singletons";
 
 export class Factory {
-    /* We could have implemented the
+    /* 
+    We could have implemented the
     singleton pattern in every one of these modules, but I like this better, where we centralize the
     control (sort of Inversion of Control, IoC) and make it where the objects themselves don't even 
-    know they are being used as singletons (instantated only once) */
-
+    know they are being used as singletons (instantated only once).
+    */
     singletons: Singletons = {
         meta64: new Meta64(),
         tag: new Tag(),
@@ -69,6 +70,7 @@ export class Factory {
     constructAll = (): void => {
         this.setGlobals();
         this.postConstructAll();
+        debugger;
         PubSub.pub(Constants.PUBSUB_SingletonsReady, this.singletons);
         console.log("Factory.constructAll complete.");
     }

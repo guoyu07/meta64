@@ -17,13 +17,13 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
-import { NavIntf as Nav} from "./intf/NavIntf";
-import {PropsIntf as Props} from "./intf/PropsIntf";
-import {EditIntf as Edit} from "./intf/EditIntf";
-import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { DomBindIntf as DomBind } from "./intf/DomBindIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { RenderIntf } from "./intf/RenderIntf";
-import {Singletons } from "./Singletons";
+import { Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -38,7 +38,7 @@ declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render implements RenderIntf {
-    postConstruct = (s : Singletons) => {
+    postConstruct = (s: Singletons) => {
         util = s.util;
         meta64 = s.meta64;
         nav = s.nav;
@@ -85,7 +85,7 @@ export class Render implements RenderIntf {
      *
      * If 'data' is provided, this is the instance data for the dialog
      * 
-     * todo-0: wtf, there's a typo in this method name. how the hell is this working?
+     * todo-0: wtf, there's a typo in this method name. how is this working?
      */
     buidPage = (pg, data): void => {
         console.log("buildPage: pg.domId=" + pg.domId);
@@ -252,7 +252,7 @@ export class Render implements RenderIntf {
                         let comps = new VerticalDivs([
                             new Div("Encrypted Password:"),
                             decryptButton = new Button("Decrypt", () => {
-                                //todo-0: I"m commenting this out because the compiler is telling 
+                                //todo-0: I'm commenting this out because the compiler is telling 
                                 //me decryptButton is not a 'Button' type which is clearly a compiler error.
                                 //props.decryptToClipboard(passwordProp.value, decryptButton);
                             })

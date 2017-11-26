@@ -11,9 +11,10 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { UtilIntf as Util} from "../intf/UtilIntf";
 import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
 
 let util: Util;
-PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: any) => {
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
     util = ctx.util;
 });
 

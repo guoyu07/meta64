@@ -30,7 +30,6 @@ export interface UtilIntf {
     indexOfObject(arr: any[], obj);
     assertNotNull(varName);
 
-    _ajaxCounter: number;
     daylightSavingsTime: boolean;
 
     getCheckBoxStateById(id: string): boolean;

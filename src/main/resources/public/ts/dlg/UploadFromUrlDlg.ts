@@ -7,26 +7,43 @@ import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
 import { Div } from "../widget/Div";
 import { Comp } from "../widget/base/Comp";
-import { Constants as cnst} from "../Constants";
+import { Constants } from "../Constants";
+import { Meta64Intf as Meta64 } from "../intf/Meta64Intf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
+import { AttachmentIntf as Attachment } from "../intf/AttachmentIntf";
+import { RenderIntf as Render } from "../intf/RenderIntf";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, util, attachment, render; 
+let meta64: Meta64;
+let util: Util;
+let attachment: Attachment;
+let render: Render;
+
+debugger;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    debugger;
+    meta64 = ctx.meta64;
+    util = ctx.util;
+    attachment = ctx.attachment;
+    render = ctx.render;
+});
 
 export class UploadFromUrlDlg extends DialogBase {
 
-    uploadFromUrlTextField : TextField;
-    uploadButton : Button;
+    uploadFromUrlTextField: TextField;
+    uploadButton: Button;
 
     constructor() {
         super();
+        debugger;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
             new Header("Upload File"),
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
+            Constants.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
             this.uploadFromUrlTextField = new TextField("Upload from URL"),
             new ButtonBar([
                 this.uploadButton = new Button("Upload", this.upload),
@@ -40,7 +57,7 @@ export class UploadFromUrlDlg extends DialogBase {
 
         if (sourceUrl) {
             //todo-0: hacked out template params for circular ref
-            util.ajax /* <I.UploadFromUrlRequest, I.UploadFromUrlResponse> */ ("uploadFromUrl", {
+            util.ajax /* <I.UploadFromUrlRequest, I.UploadFromUrlResponse> */("uploadFromUrl", {
                 "nodeId": attachment.uploadNode.id,
                 "sourceUrl": sourceUrl
             }, this.uploadFromUrlResponse);

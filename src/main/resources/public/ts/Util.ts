@@ -19,13 +19,14 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
 import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
+import {UtilIntf} from "./intf/UtilIntf";
 import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let encryption: Encryption;
 let domBind: DomBind;
 
-export class Util {
+export class Util implements UtilIntf {
 
     postConstruct = (s : Singletons) => {
         
@@ -172,8 +173,7 @@ export class Util {
      * We use this variable to determine if we are waiting for an ajax call, but the server also enforces that each
      * session is only allowed one concurrent call and simultaneous calls would just "queue up".
      */
-    //todo-0: figure out why compiler says Interface is a problem when we make this a 'private' var here.
-    _ajaxCounter: number = 0;
+    private _ajaxCounter: number = 0;
 
     daylightSavingsTime: boolean = (this.dst(new Date())) ? true : false;
 

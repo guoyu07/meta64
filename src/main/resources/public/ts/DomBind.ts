@@ -1,24 +1,25 @@
 console.log("DomBind.ts");
 
-import {Factory} from "./Factory";
-import {UtilIntf as Util} from "./intf/UtilIntf";
-import {Singletons } from "./Singletons";
+import { Factory } from "./Factory";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { DomBindIntf } from "./intf/DomBindIntf";
+import { Singletons } from "./Singletons";
 
-let util : Util;
+let util: Util;
 
 /*
 This allows us to wire a function to a particular Element by its ID even long BEFORE the ID itself comes into existence
 on the DOM! This allows us to set things up before they get rendered! Very powerful concept for 'temporal decoupling'. In Fact
 the word I'd used to describe this innovation/technique would indeed be "Temporal Decoupling"
 */
-export class DomBind {
+export class DomBind implements DomBindIntf {
     private counter: number = 0;
 
     /* Binds DOM IDs to functions that should be called on "onClick" */
     private idToFuncMap: { [key: string]: Function } = {};
 
-    postConstruct = (s : Singletons) => {
-        
+    postConstruct = (s: Singletons) => {
+
         util = s.util;
         setInterval(() => {
             this.interval();
@@ -97,27 +98,27 @@ export class DomBind {
         });
     }
 
-    public addOnClick=(domId: string, callback: Function) => {
+    public addOnClick = (domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".onclick"] = (e) => { (<any>e).onclick = callback; };
     }
 
-    public addOnTimeUpdate=(domId: string, callback: Function) =>{
+    public addOnTimeUpdate = (domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".ontimeupdate"] = (e) => { (<any>e).ontimeupdate = callback; };
     }
 
-    public addOnCanPlay=(domId: string, callback: Function) =>{
+    public addOnCanPlay = (domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".oncanplay"] = (e) => { (<any>e).oncanplay = callback; };
     }
 
-    public addKeyPress=(domId: string, callback: Function) =>{
+    public addKeyPress = (domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".keypress"] = (e) => { (<any>e).onkeypress = callback; };
     }
 
-    public addOnChange=(domId: string, callback: Function) =>{
+    public addOnChange = (domId: string, callback: Function) => {
         this.idToFuncMap[domId + ".onchange"] = (e) => { (<any>e).onchange = callback; };
     }
 
-    public whenElm=(domId: string, callback: Function) =>{
+    public whenElm = (domId: string, callback: Function) => {
 
         /* First try to find the domId immediately and if found run the function */
         let e = util.domElm(domId);

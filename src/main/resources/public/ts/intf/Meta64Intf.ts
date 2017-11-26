@@ -5,8 +5,8 @@ import {Singletons} from "../Singletons";
 
 export interface Meta64Intf {
 
-    menuPanel: any; //todo-0: bring back type -> MenuPanel;
-    state: any; //todo-0: create an interface for State properties
+    menuPanel: any; //todo-1: bring back type -> MenuPanel;
+    state: any; //todo-1: create an interface for State properties
     appInitialized: boolean;
 
     curUrlPath: string;

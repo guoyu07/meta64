@@ -12,7 +12,7 @@ export interface EditIntf {
     editingUnsavedNode: boolean;
     sendNotificationPendingSave: boolean;
     editNode: I.NodeInfo;
-    editNodeDlgInst: any; //todo-0: add this type back -> EditNodeDlg ;
+    editNodeDlgInst: any; //todo-1: add this type back -> EditNodeDlg ;
     nodeInsertTarget: any;
 
     postConstruct(s: Singletons);

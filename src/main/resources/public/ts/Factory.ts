@@ -61,7 +61,7 @@ export class Factory {
         domBind: new DomBind(),
         rssPlugin: new RssPlugin(),
         coreTypesPlugin: new CoreTypesPlugin()
-    }
+    };
 
     /*
      * Just like in a SpringContext, we init all singletons up front and this allows circular references 
@@ -70,7 +70,6 @@ export class Factory {
     constructAll = (): void => {
         this.setGlobals();
         this.postConstructAll();
-        debugger;
         PubSub.pub(Constants.PUBSUB_SingletonsReady, this.singletons);
         console.log("Factory.constructAll complete.");
     }

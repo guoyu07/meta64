@@ -8,9 +8,10 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
-import {PropsIntf as Props} from "./intf/PropsIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
-import {Singletons } from "./Singletons";
+import { PodcastIntf } from "./intf/PodcastIntf";
+import { Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -23,11 +24,11 @@ NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and 
 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
-export class Podcast {
+export class Podcast implements PodcastIntf {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s : Singletons) => {
-        
+    postConstruct = (s: Singletons) => {
+
         util = s.util;
         meta64 = s.meta64;
         props = s.props;

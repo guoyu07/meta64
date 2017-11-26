@@ -1,12 +1,13 @@
 console.log("RssPlugin.ts");
 
 import * as I from "../Interfaces";
+import { RssPluginIntf } from "../intf/RssPluginIntf";
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var meta64, util, props, render, tag, podcast;
 
-export class RssPlugin {
+export class RssPlugin implements RssPluginIntf {
 
     init = () => {
         meta64.addTypeHandlers("sn:rssfeed", this.renderFeedNode, this.propOrderingFeedNode);

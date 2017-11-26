@@ -5,19 +5,20 @@ import { UploadFromFileDropzoneDlg } from "./dlg/UploadFromFileDropzoneDlg";
 import { UploadFromUrlDlg } from "./dlg/UploadFromUrlDlg";
 import * as I from "./Interfaces";
 import { Factory } from "./Factory";
-import { UtilIntf as Util} from "./intf/UtilIntf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
-import {Singletons } from "./Singletons";
+import { AttachmentIntf } from "./intf/AttachmentIntf";
+import { Singletons } from "./Singletons";
 
 console.log("Creating attachment class");
 
 let util: Util;
 let meta64: Meta64;
 
-export class Attachment {
+export class Attachment implements AttachmentIntf {
 
-    postConstruct = (s : Singletons) => {
-        
+    postConstruct = (s: Singletons) => {
+
         util = s.util;
         meta64 = s.meta64;
     }

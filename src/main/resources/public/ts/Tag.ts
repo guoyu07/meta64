@@ -2,16 +2,17 @@ console.log("Tag.ts");
 
 import { Factory } from "./Factory";
 import { RenderIntf as Render } from "./intf/RenderIntf";
-import {Singletons } from "./Singletons";
+import { TagIntf } from "./intf/TagIntf";
+import { Singletons } from "./Singletons";
 
 let render: Render;
 
 /* Eventually I will have ALL tags defined here, so they are decoupled from their rendering details, and
 fully pluggable. The goal here is not only clean code but full decoupling FROM Polymer.
 */
-export class Tag {
+export class Tag implements TagIntf {
 
-    postConstruct(s : Singletons) {
+    postConstruct(s: Singletons) {
         render = s.render;
     }
 

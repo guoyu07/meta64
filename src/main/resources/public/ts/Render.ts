@@ -87,18 +87,18 @@ export class Render implements RenderIntf {
      * 
      * todo-0: wtf, there's a typo in this method name. how is this working?
      */
-    buidPage = (pg, data): void => {
-        console.log("buildPage: pg.domId=" + pg.domId);
+    // buidPage = (pg, data): void => {
+    //     console.log("buildPage: pg.domId=" + pg.domId);
 
-        if (!pg.built || data) {
-            pg.render(data);
-            pg.built = true;
-        }
+    //     if (!pg.built || data) {
+    //         pg.render(data);
+    //         pg.built = true;
+    //     }
 
-        if (pg.init) {
-            pg.init(data);
-        }
-    }
+    //     if (pg.init) {
+    //         pg.init(data);
+    //     }
+    // }
 
     buildRowHeader = (node: I.NodeInfo, showPath: boolean, showName: boolean): Div => {
         let commentBy: string = props.getNodePropertyVal(cnst.COMMENT_BY, node);
@@ -252,9 +252,7 @@ export class Render implements RenderIntf {
                         let comps = new VerticalDivs([
                             new Div("Encrypted Password:"),
                             decryptButton = new Button("Decrypt", () => {
-                                //todo-0: I'm commenting this out because the compiler is telling 
-                                //me decryptButton is not a 'Button' type which is clearly a compiler error.
-                                //props.decryptToClipboard(passwordProp.value, decryptButton);
+                                props.decryptToClipboard(passwordProp.value, decryptButton);
                             })
                         ]);
                         ret += comps.renderHtml();
@@ -589,7 +587,6 @@ export class Render implements RenderIntf {
      * Renders page and always also takes care of scrolling to selected node if there is one to scroll to
      */
     renderPageFromData = (data?: I.RenderNodeResponse, scrollToTop?: boolean): string => {
-        debugger;
         meta64.codeFormatDirty = false;
         console.log("renderPageFromData()");
 

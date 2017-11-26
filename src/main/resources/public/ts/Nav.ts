@@ -266,7 +266,6 @@ export class Nav implements NavIntf {
     }
 
     navPageNodeResponse = (res: I.RenderNodeResponse): void => {
-        debugger;
         meta64.clearSelectedNodes();
         render.renderPageFromData(res);
         view.scrollToTop();

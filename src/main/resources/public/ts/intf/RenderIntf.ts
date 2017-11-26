@@ -8,7 +8,6 @@ import {Singletons} from "../Singletons";
 
 export interface RenderIntf {
     postConstruct(s: Singletons);
-    buidPage(pg, data): void;
     buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div;
     injectSubstitutions(content: string): string;
     refreshNodeOnPage(node: I.NodeInfo): void;

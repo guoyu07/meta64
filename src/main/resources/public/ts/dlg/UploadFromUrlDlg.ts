@@ -20,9 +20,7 @@ let util: Util;
 let attachment: Attachment;
 let render: Render;
 
-debugger;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    debugger;
     meta64 = ctx.meta64;
     util = ctx.util;
     attachment = ctx.attachment;
@@ -36,7 +34,6 @@ export class UploadFromUrlDlg extends DialogBase {
 
     constructor() {
         super();
-        debugger;
         this.buildGUI();
     }
 
@@ -56,8 +53,7 @@ export class UploadFromUrlDlg extends DialogBase {
         let sourceUrl = this.uploadFromUrlTextField.getValue();
 
         if (sourceUrl) {
-            //todo-0: hacked out template params for circular ref
-            util.ajax /* <I.UploadFromUrlRequest, I.UploadFromUrlResponse> */("uploadFromUrl", {
+            util.ajax <I.UploadFromUrlRequest, I.UploadFromUrlResponse> ("uploadFromUrl", {
                 "nodeId": attachment.uploadNode.id,
                 "sourceUrl": sourceUrl
             }, this.uploadFromUrlResponse);

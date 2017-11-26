@@ -7,7 +7,7 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 
-//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var meta64, prefs;
 

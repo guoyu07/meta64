@@ -2,16 +2,16 @@ console.log("Factory.ts");
 
 /* 
 This is a 'Factory', but the main thing it does is manage the singletons, somewhat analoglous to a SpringContext
-but actually existing for mostly different reasons having to do with modules choking to death on circular 
+but actually existing for mostly different reasons having to do with our need to support circular 
 references.
 
 WARNING: Singletons (just like in Spring) are not allowed to do any logic that requires other modules
-inside their constructors becasue, there is no guarantee that all (or any) of the other Singletons have
+inside their constructors becasue there is no guarantee that all (or any) of the other Singletons have
 been constructed yet.
 
 NOTE: This Factory is allowed to import anything it wants and the way we allow Circular Dependencies to exist without
 being a problem is by having the rule that no other modules are allowed to import this Factory module, 
-but only the interface of it 
+but only the interface of it.
 */
 import { PubSub } from "./PubSub";
 import { Meta64 } from "./Meta64";
@@ -36,7 +36,7 @@ import { RssPlugin } from "./plugins/RssPlugin";
 import { CoreTypesPlugin } from "./plugins/CoreTypesPlugin";
 
 export class Factory {
-    /* In case you noticed, yes we could have implemented the
+    /* We could have implemented the
     singleton pattern in every one of these modules, but I like this better, where we centralize the
     control (sort of Inversion of Control, IoC) and make it where the objects themselves don't even 
     know they are being used as singletons (instantated only once) */

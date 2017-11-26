@@ -2,7 +2,7 @@ console.log("Form.ts");
 
 import { Comp } from "./base/Comp";
 
-//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var tag;
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CompImpl } from "./CompImpl";
 
-//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var util, domBind, tag;
 

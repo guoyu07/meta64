@@ -9,7 +9,7 @@ import { Div } from "../widget/Div";
 import { Comp } from "../widget/base/Comp";
 import { Constants as cnst} from "../Constants";
 
-//todo-0: don't worry, this way of getting singletons is only temporary, because i haven't converted
+//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var meta64, util, attachment, render; 
 

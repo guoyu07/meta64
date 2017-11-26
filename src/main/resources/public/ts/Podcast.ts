@@ -1,3 +1,5 @@
+console.log("Podcast.ts");
+
 import { AudioPlayerDlg } from "./dlg/AudioPlayerDlg";
 import * as I from "./Interfaces";
 

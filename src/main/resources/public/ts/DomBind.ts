@@ -2,6 +2,7 @@ console.log("DomBind.ts");
 
 import {Factory} from "./Factory";
 import {UtilIntf as Util} from "./intf/UtilIntf";
+import {Singletons } from "./Singletons";
 
 let util : Util;
 
@@ -16,9 +17,9 @@ export class DomBind {
     /* Binds DOM IDs to functions that should be called on "onClick" */
     private idToFuncMap: { [key: string]: Function } = {};
 
-    postConstruct(_f: any) {
-        let f = <Factory>_f;
-        util = f.getUtil();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
         setInterval(() => {
             this.interval();
         }, 250);

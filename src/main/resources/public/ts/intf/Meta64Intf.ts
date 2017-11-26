@@ -1,6 +1,7 @@
 console.log("Meta64Intf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface Meta64Intf {
 
@@ -67,7 +68,7 @@ export interface Meta64Intf {
 
     userPreferences: I.UserPreferences;
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     setNodeData(uid: string, data: Object);
     getNodeData(uid: string, prop: string): any;
     updateMainMenuPanel();

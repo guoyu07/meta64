@@ -1,6 +1,7 @@
 console.log("EditIntf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface EditIntf {
     importTargetNode: any;
@@ -14,7 +15,7 @@ export interface EditIntf {
     editNodeDlgInst: any; //todo-0: add this type back -> EditNodeDlg ;
     nodeInsertTarget: any;
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     createNode(): void;
     openChangePasswordDlg(): void;
     openManageAccountDlg(): void;

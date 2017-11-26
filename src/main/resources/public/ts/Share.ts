@@ -4,6 +4,7 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
 import { UtilIntf as Util} from "./intf/UtilIntf";
 import {SearchIntf as Search} from "./intf/SearchIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -11,11 +12,11 @@ let srch: Search;
 
 export class Share {
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        srch = f.getSearch();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
+        srch = s.srch;
     }
     
     private findSharedNodesResponse = (res: I.GetSharedNodesResponse) => {

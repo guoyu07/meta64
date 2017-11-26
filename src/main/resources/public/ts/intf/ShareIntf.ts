@@ -1,7 +1,9 @@
 import * as I from "../Interfaces";
 
+import {Singletons} from "../Singletons";
+
 export interface ShareIntf {
-    postConstruct(_f: any)
+    postConstruct(s: Singletons)
 
     sharingNode: I.NodeInfo;
     editNodeSharing(): void;

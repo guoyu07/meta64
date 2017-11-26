@@ -8,6 +8,7 @@ import { Factory } from "./Factory";
 
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { EncryptionIntf } from "./intf/EncryptionIntf";
+import {Singletons } from "./Singletons";
 
 let util: Util;
 
@@ -39,9 +40,9 @@ will be complete once we prompt user for password.
 */
 export class Encryption implements EncryptionIntf {
 
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
     }
 
     /* jwk = JSON Format */

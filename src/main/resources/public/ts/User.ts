@@ -13,6 +13,7 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
 import { UtilIntf as Util} from "./intf/UtilIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -21,11 +22,11 @@ let view: View;
 export class User implements UserIntf {
     
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
+    postConstruct = (s : Singletons) => {
         let f: Factory = (<any>window).factory;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        view = f.getView();
+        util = s.util;
+        meta64 = s.meta64;
+        view = s.view;
     }
 
     private logoutResponse = (res: I.LogoutResponse): void => {

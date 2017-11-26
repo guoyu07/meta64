@@ -2,12 +2,13 @@ console.log("PodcastIntf.ts");
 
 import { AudioPlayerDlg } from "../dlg/AudioPlayerDlg";
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface PodcastIntf {
     player: HTMLAudioElement;
     startTimePending: number;
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     generateRSS(): void;
     getMediaPlayerUrlFromNode(node: I.NodeInfo): string;
     openPlayerDialog(_uid: string);

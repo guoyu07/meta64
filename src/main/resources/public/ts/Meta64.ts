@@ -20,6 +20,7 @@ import { NavIntf as Nav } from "./intf/NavIntf";
 import { PropsIntf as Props } from "./intf/PropsIntf";
 import { CoreTypesPluginIntf as CoreTypesPlugin } from "./intf/CoreTypesPluginIntf";
 import { Meta64Intf } from "./intf/Meta64Intf";
+import {Singletons } from "./Singletons";
 
 declare var Polymer: polymer.PolymerStatic;
 
@@ -37,19 +38,18 @@ let coreTypesPlugin: CoreTypesPlugin;
 
 export class Meta64 implements Meta64Intf {
 
-    postConstruct(_f: any) {
-        let f = <Factory>_f;
-        util = f.getUtil();
-        edit = f.getEdit();
-        nav = f.getNav();
-        props = f.getProps();
-        render = f.getRender();
-        srch = f.getSearch();
-        user = f.getUser();
-        view = f.getView();
-        domBind = f.getDomBind();
-        rssPlugin = f.getRssPlugin();
-        coreTypesPlugin = f.getCoreTypesPlugin();
+    postConstruct = (s : Singletons) => {
+        util = s.util;
+        edit = s.edit;
+        nav = s.nav;
+        props = s.props;
+        render = s.render;
+        srch = s.srch;
+        user = s.user;
+        view = s.view;
+        domBind = s.domBind;
+        rssPlugin = s.rssPlugin;
+        coreTypesPlugin = s.coreTypesPlugin;
     }
 
     menuPanel: MenuPanel;

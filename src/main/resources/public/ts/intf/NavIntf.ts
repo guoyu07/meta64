@@ -1,9 +1,10 @@
 console.log("NavIntf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface NavIntf {
-    postConstruct(_f: any)
+    postConstruct(s: Singletons)
 
     _UID_ROWID_PREFIX: string;
 

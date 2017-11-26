@@ -2,6 +2,7 @@ console.log("Tag.ts");
 
 import { Factory } from "./Factory";
 import { RenderIntf as Render } from "./intf/RenderIntf";
+import {Singletons } from "./Singletons";
 
 let render: Render;
 
@@ -10,9 +11,8 @@ fully pluggable. The goal here is not only clean code but full decoupling FROM P
 */
 export class Tag {
 
-    postConstruct(_f : any) {
-        let f: Factory = _f;
-        render = f.getRender();
+    postConstruct(s : Singletons) {
+        render = s.render;
     }
 
     img = (attr: Object): string => {

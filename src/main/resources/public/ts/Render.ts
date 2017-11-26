@@ -23,6 +23,7 @@ import {EditIntf as Edit} from "./intf/EditIntf";
 import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { RenderIntf } from "./intf/RenderIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -37,16 +38,15 @@ declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render implements RenderIntf {
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        nav = f.getNav();
-        props = f.getProps();
-        view = f.getView();
-        edit = f.getEdit();
-        domBind = f.getDomBind();
-        tag = f.getTag();
+    postConstruct = (s : Singletons) => {
+        util = s.util;
+        meta64 = s.meta64;
+        nav = s.nav;
+        props = s.props;
+        view = s.view;
+        edit = s.edit;
+        domBind = s.domBind;
+        tag = s.tag;
     }
 
     private PRETTY_TAGS: boolean = true;

@@ -1,12 +1,13 @@
 console.log("ViewIntf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface ViewIntf {
     compareNodeA: I.NodeInfo;
     scrollToSelNodePending: boolean;
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     updateStatusBar(): void;
     refreshTreeResponse(res?: I.RenderNodeResponse, targetId?: any, scrollToTop?: boolean): void;
     refreshTree(nodeId?: any, renderParentIfLeaf?: any, highlightId?: any, isInitialRender?: boolean): void;

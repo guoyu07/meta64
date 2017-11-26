@@ -1,7 +1,9 @@
 console.log("TagIntf.ts");
 
+import {Singletons} from "../Singletons";
+
 export interface TagIntf {
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     img(attr: Object): string;
     a(attr: Object, content: string): string;
     table(attr: Object, content: string): string;

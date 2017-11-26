@@ -17,6 +17,7 @@ import { UserIntf as User} from "./intf/UserIntf";
 import {EditIntf as Edit} from "./intf/EditIntf";
 import { ShareIntf as Share} from "./intf/ShareIntf";
 import {SearchIntf as Search} from "./intf/SearchIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -28,15 +29,15 @@ let edit: Edit;
 
 export class Nav implements NavIntf {
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        render = f.getRender();
-        user = f.getUser();
-        view = f.getView();
-        edit = f.getEdit();
-        srch = f.getSearch();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
+        render = s.render;
+        user = s.user;
+        view = s.view;
+        edit = s.edit;
+        srch = s.srch;
     }
 
     _UID_ROWID_PREFIX: string = "row_";

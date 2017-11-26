@@ -14,5 +14,5 @@ addEventListener("WebComponentsReady", function () {
 	console.log("WebComponentsReady event.");
 	let factory = new Factory();
 	factory.constructAll();
-	factory.getMeta64().initApp();
+	factory.singletons.meta64.initApp();
 });

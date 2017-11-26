@@ -16,6 +16,7 @@ import { ViewIntf as View } from "./intf/ViewIntf";
 import { NavIntf as Nav} from "./intf/NavIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { SearchIntf } from "./intf/SearchIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -27,14 +28,14 @@ let tag: Tag;
 export class Search implements SearchIntf {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        nav = f.getNav();
-        render = f.getRender();
-        view = f.getView();
-        tag = f.getTag();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
+        nav = s.nav;
+        render = s.render;
+        view = s.view;
+        tag = s.tag;
     }
 
     _UID_ROWID_PREFIX: string = "srch_row_";

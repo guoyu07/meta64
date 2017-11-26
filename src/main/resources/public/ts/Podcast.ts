@@ -10,6 +10,7 @@ import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import {PropsIntf as Props} from "./intf/PropsIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -25,12 +26,12 @@ Reference: https://www.w3.org/2010/05/video/mediaevents.html
 export class Podcast {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        props = f.getProps();
-        render = f.getRender();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
+        props = s.props;
+        render = s.render;
     }
 
     player: HTMLAudioElement = null;

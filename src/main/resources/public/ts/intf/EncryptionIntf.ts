@@ -1,8 +1,10 @@
 console.log("EncryptionIntf.ts");
 
+import {Singletons} from "../Singletons";
+
 export interface EncryptionIntf {
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
 
     KEY_SAVE_FORMAT: string;
     PK_ENC_ALGO: string;

@@ -6,19 +6,20 @@ import { MenuItem } from "./widget/MenuItem";
 
 import { Factory } from "./Factory";
 
-import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
-import { UtilIntf as Util} from "./intf/UtilIntf";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
-import { NavIntf as Nav} from "./intf/NavIntf";
-import {PropsIntf as Props} from "./intf/PropsIntf";
-import { UserIntf as User} from "./intf/UserIntf";
-import {EditIntf as Edit} from "./intf/EditIntf";
-import { ShareIntf as Share} from "./intf/ShareIntf";
-import { AttachmentIntf as Attachment} from "./intf/AttachmentIntf";
-import {SearchIntf as Search} from "./intf/SearchIntf";
-import {PodcastIntf as Podcast} from "./intf/PodcastIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
+import { UserIntf as User } from "./intf/UserIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { ShareIntf as Share } from "./intf/ShareIntf";
+import { AttachmentIntf as Attachment } from "./intf/AttachmentIntf";
+import { SearchIntf as Search } from "./intf/SearchIntf";
+import { PodcastIntf as Podcast } from "./intf/PodcastIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
+import { Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -28,7 +29,7 @@ let render: Render;
 let user: User;
 let srch: Search;
 let view: View;
-let edit : Edit;
+let edit: Edit;
 let share: Share;
 let attachment: Attachment;
 let podcast: Podcast;
@@ -44,20 +45,21 @@ export class MenuPanel extends Comp {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
     postConstruct() {
-        let f: Factory = (<any>window).factory;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        nav = f.getNav();
-        props = f.getProps();
-        render = f.getRender();
-        user = f.getUser();
-        view = f.getView();
-        edit = f.getEdit();
-        share = f.getShare();
-        attachment = f.getAttachment();
-        srch = f.getSearch();
-        podcast = f.getPodcast();
-        encryption = f.getEncryption();
+        //todo-0: need to use the PubSub technique here to get reference to singletons.
+        let s: Singletons = (<any>window).factory.singletons;
+        util = s.util;
+        meta64 = s.meta64;
+        nav = s.nav;
+        props = s.props;
+        render = s.render;
+        user = s.user;
+        view = s.view;
+        edit = s.edit;
+        share = s.share;
+        attachment = s.attachment;
+        srch = s.srch;
+        podcast = s.podcast;
+        encryption = s.encryption;
     }
 
     buildGUI = (): void => {

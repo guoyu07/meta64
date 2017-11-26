@@ -3,9 +3,10 @@ console.log("PropsIntf.ts");
 import * as I from "../Interfaces";
 import { PropTable } from "../widget/PropTable";
 import { Button } from "../widget/Button";
+import {Singletons} from "../Singletons";
 
 export interface PropsIntf {
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     orderProps(propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[];
     moveNodePosition(props: I.PropertyInfo[], idx: number, typeName: string): number;
     propsToggle(): void;

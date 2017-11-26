@@ -10,6 +10,7 @@ import { UtilIntf as Util} from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { NavIntf as Nav} from "./intf/NavIntf";
 import {EditIntf as Edit} from "./intf/EditIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -20,13 +21,13 @@ let edit: Edit;
 export class View {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        nav = f.getNav();
-        render = f.getRender();
-        edit = f.getEdit();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
+        nav = s.nav;
+        render = s.render;
+        edit = s.edit;
     }
 
     compareNodeA: I.NodeInfo;

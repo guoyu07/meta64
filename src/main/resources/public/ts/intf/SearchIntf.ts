@@ -1,9 +1,10 @@
 console.log("SearchIntf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface SearchIntf {
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
 
     _UID_ROWID_PREFIX: string;
 

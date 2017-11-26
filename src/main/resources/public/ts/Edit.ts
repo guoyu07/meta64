@@ -22,6 +22,7 @@ import { NavIntf as Nav } from "./intf/NavIntf";
 import { PropsIntf as Props } from "./intf/PropsIntf";
 import { UserIntf as User } from "./intf/UserIntf";
 import { EditIntf } from "./intf/EditIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -33,15 +34,14 @@ let view: View;
 
 export class Edit implements EditIntf {
 
-    postConstruct(_f: any) {
-        let f = <Factory>_f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        nav = f.getNav();
-        props = f.getProps();
-        render = f.getRender();
-        user = f.getUser();
-        view = f.getView();
+    postConstruct = (s : Singletons) => {
+        util = s.util;
+        meta64 = s.meta64;
+        nav = s.nav;
+        props = s.props;
+        render = s.render;
+        user = s.user;
+        view = s.view;
     }
 
     /* Node being uploaded to */

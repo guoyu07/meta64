@@ -7,6 +7,7 @@ import * as I from "./Interfaces";
 import { Factory } from "./Factory";
 import { UtilIntf as Util} from "./intf/UtilIntf";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import {Singletons } from "./Singletons";
 
 console.log("Creating attachment class");
 
@@ -15,10 +16,10 @@ let meta64: Meta64;
 
 export class Attachment {
 
-    postConstruct = (_f : any) => {
-        let f = <Factory>_f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
+    postConstruct = (s : Singletons) => {
+        
+        util = s.util;
+        meta64 = s.meta64;
     }
 
     /* Node being uploaded to */

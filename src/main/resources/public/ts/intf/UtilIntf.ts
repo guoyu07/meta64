@@ -1,6 +1,7 @@
 console.log("UtilIntf.ts");
 
 import * as I from "../Interfaces";
+import {Singletons} from "../Singletons";
 
 export interface UtilIntf {
     logAjax: boolean;
@@ -9,7 +10,7 @@ export interface UtilIntf {
     waitCounter: number;
     pgrsDlg: any;
 
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     buf2hex(arr: Uint8Array): string;
     hex2buf(str): Uint8Array;
     escapeRegExp(s: string): string;

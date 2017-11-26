@@ -1,7 +1,9 @@
 console.log("DomBindIntf.ts");
 
+import {Singletons} from "../Singletons";
+
 export interface DomBindIntf {
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     addOnClick(domId: string, callback: Function);
     addOnTimeUpdate(domId: string, callback: Function);
     addOnCanPlay(domId: string, callback: Function);

@@ -10,18 +10,18 @@ import { Div } from "./widget/Div";
 import { Span } from "./widget/Span";
 import { Constants as cnst } from "./Constants";
 
-
 import { Factory } from "./Factory";
 
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
-import { UserIntf as User} from "./intf/UserIntf";
-import {EditIntf as Edit} from "./intf/EditIntf";
+import { UserIntf as User } from "./intf/UserIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { PropsIntf } from "./intf/PropsIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let util: Util;
@@ -34,15 +34,14 @@ let tag: Tag;
 export class Props implements PropsIntf {
 
     /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        util = f.getUtil();
-        meta64 = f.getMeta64();
-        render = f.getRender();
-        view = f.getView();
-        edit = f.getEdit();
-        encryption = f.getEncryption();
-        tag = f.getTag();
+    postConstruct(f: Singletons) {
+        util = f.util;
+        meta64 = f.meta64;
+        render = f.render;
+        view = f.view;
+        edit = f.edit;
+        encryption = f.encryption;
+        tag = f.tag;
     }
 
     orderProps = (propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] => {

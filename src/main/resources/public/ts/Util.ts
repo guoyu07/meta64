@@ -19,6 +19,7 @@ import { Factory } from "./Factory";
 import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
 import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
+import {Singletons } from "./Singletons";
 
 let meta64: Meta64;
 let encryption: Encryption;
@@ -26,11 +27,11 @@ let domBind: DomBind;
 
 export class Util {
 
-    postConstruct(_f: any) {
-        let f: Factory = _f;
-        meta64 = f.getMeta64();
-        domBind = f.getDomBind();
-        encryption = f.getEncryption();
+    postConstruct = (s : Singletons) => {
+        
+        meta64 = s.meta64;
+        domBind = s.domBind;
+        encryption = s.encryption;
     }
 
     logAjax: boolean = false;

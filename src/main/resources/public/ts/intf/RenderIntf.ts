@@ -4,9 +4,10 @@ import * as I from "../Interfaces";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Div } from "../widget/Div";
 import { Img } from "../widget/Img";
+import {Singletons} from "../Singletons";
 
 export interface RenderIntf {
-    postConstruct(_f: any);
+    postConstruct(s: Singletons);
     buidPage(pg, data): void;
     buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div;
     injectSubstitutions(content: string): string;

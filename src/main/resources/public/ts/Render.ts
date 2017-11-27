@@ -27,7 +27,6 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-
 let meta64: Meta64;
 let util: Util;
 let nav: Nav;

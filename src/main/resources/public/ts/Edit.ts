@@ -12,7 +12,6 @@ import { ChangePasswordDlg } from "./dlg/ChangePasswordDlg";
 import { ManageAccountDlg } from "./dlg/ManageAccountDlg";
 import { ImportFromFileDropzoneDlg } from "./dlg/ImportFromFileDropzoneDlg";
 import { Constants as cnst } from "./Constants";
-
 import { Factory } from "./Factory";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
@@ -25,7 +24,6 @@ import { EditIntf } from "./intf/EditIntf";
 import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
-
 
 let meta64: Meta64;
 let util: Util;
@@ -48,6 +46,50 @@ export class Edit implements EditIntf {
 
     /* Node being uploaded to */
     importTargetNode: any = null;
+
+    showReadOnlyProperties: boolean = true;
+    /*
+     * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
+     */
+    nodesToMove: any = null;
+
+    /* todo-1: need to find out if there's a better way to do an ordered set in javascript so I don't need
+    both nodesToMove and nodesToMoveSet
+    */
+    nodesToMoveSet: Object = {};
+
+    parentOfNewNode: I.NodeInfo = null;
+
+    /*
+     * indicates editor is displaying a node that is not yet saved on the server
+     */
+    editingUnsavedNode: boolean = false;
+
+    /*
+     * node (NodeInfo.java) that is being created under when new node is created
+     */
+    sendNotificationPendingSave: boolean = false;
+
+    /*
+     * Node being edited
+     *
+     * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
+     * coupling/responsibility?
+     */
+    editNode: I.NodeInfo = null;
+
+    /* Instance of EditNodeDialog: For now creating new one each time */
+    editNodeDlgInst: EditNodeDlg = null;
+
+    /*
+     * type=NodeInfo.java
+     *
+     * When inserting a new node, this holds the node that was clicked on at the time the insert was requested, and
+     * is sent to server for ordinal position assignment of new node. Also if this var is null, it indicates we are
+     * creating in a 'create under parent' mode, versus non-null meaning 'insert inline' type of insert.
+     *
+     */
+    nodeInsertTarget: any = null;
 
     createNode = (): void => {
         new CreateNodeDlg().open();
@@ -161,50 +203,6 @@ export class Edit implements EditIntf {
             meta64.refresh();
         }
     }
-
-    showReadOnlyProperties: boolean = true;
-    /*
-     * Node ID array of nodes that are ready to be moved when user clicks 'Finish Moving'
-     */
-    nodesToMove: any = null;
-
-    /* todo-1: need to find out if there's a better way to do an ordered set in javascript so I don't need
-    both nodesToMove and nodesToMoveSet
-    */
-    nodesToMoveSet: Object = {};
-
-    parentOfNewNode: I.NodeInfo = null;
-
-    /*
-     * indicates editor is displaying a node that is not yet saved on the server
-     */
-    editingUnsavedNode: boolean = false;
-
-    /*
-     * node (NodeInfo.java) that is being created under when new node is created
-     */
-    sendNotificationPendingSave: boolean = false;
-
-    /*
-     * Node being edited
-     *
-     * todo-2: this and several other variables can now be moved into the dialog class? Is that good or bad
-     * coupling/responsibility?
-     */
-    editNode: I.NodeInfo = null;
-
-    /* Instance of EditNodeDialog: For now creating new one each time */
-    editNodeDlgInst: EditNodeDlg = null;
-
-    /*
-     * type=NodeInfo.java
-     *
-     * When inserting a new node, this holds the node that was clicked on at the time the insert was requested, and
-     * is sent to server for ordinal position assignment of new node. Also if this var is null, it indicates we are
-     * creating in a 'create under parent' mode, versus non-null meaning 'insert inline' type of insert.
-     *
-     */
-    nodeInsertTarget: any = null;
 
     /* returns true if we can 'try to' insert under 'node' or false if not */
     isEditAllowed = (node: any): boolean => {
@@ -531,7 +529,6 @@ export class Edit implements EditIntf {
     }
 
     cutSelNodes = (): void => {
-
         let selNodesArray = meta64.getSelectedNodeIdsArray();
         if (!selNodesArray || selNodesArray.length == 0) {
             util.showMessage("You have not selected any nodes. Select nodes first.");

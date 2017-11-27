@@ -81,7 +81,7 @@ export class Props implements PropsIntf {
         meta64.selectTab("mainTabName");
     }
 
-    deletePropertyFromLocalData = (propertyName): void => {
+    deletePropertyFromLocalData = (propertyName : string): void => {
         for (let i = 0; i < edit.editNode.properties.length; i++) {
             if (propertyName === edit.editNode.properties[i].name) {
                 // splice is how you delete array elements in js.
@@ -131,7 +131,7 @@ export class Props implements PropsIntf {
     /*
      * properties will be null or a list of PropertyInfo objects.
      */
-    renderProperties = (properties): PropTable => {
+    renderProperties = (properties: I.PropertyInfo[]): PropTable => {
         if (properties) {
             let propTable = new PropTable({
                 "border": "1",
@@ -139,7 +139,7 @@ export class Props implements PropsIntf {
                 // "sourceClass" : "[propsTable]"
             });
 
-            util.forEachArrElm(properties, (property, i) => {
+            util.forEachArrElm(properties, (property: I.PropertyInfo, i) => {
                 //console.log("Render Prop: "+property.name);
                 if (render.allowPropertyToDisplay(property.name)) {
                     var isBinaryProp = render.isBinaryProperty(property.name);
@@ -166,11 +166,8 @@ export class Props implements PropsIntf {
                         ]);
                         propValCell = new PropTableCell(comps.renderHtml(), valCellAttrs);
                     }
-                    else if (!property.values) {
-                        propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);
-                    }
                     else {
-                        propValCell = new PropTableCell(this.renderPropertyValues(property.values), valCellAttrs);
+                        propValCell = new PropTableCell(tag.div(null, property.value), valCellAttrs);
                     }
 
                     let propTableRow = new PropTableRow({
@@ -213,7 +210,7 @@ export class Props implements PropsIntf {
      * brute force searches on node (NodeInfo.java) object properties list, and returns the first property
      * (PropertyInfo.java) with name matching propertyName, else null.
      */
-    getNodeProperty = (propertyName, node): I.PropertyInfo => {
+    getNodeProperty = (propertyName: string, node: I.NodeInfo): I.PropertyInfo => {
         if (!node || !node.properties)
             return null;
 
@@ -226,7 +223,7 @@ export class Props implements PropsIntf {
         return null;
     }
 
-    getNodePropertyVal = (propertyName, node): string => {
+    getNodePropertyVal = (propertyName: string, node: I.NodeInfo): string => {
         let prop: I.PropertyInfo = this.getNodeProperty(propertyName, node);
         return prop ? prop.value : null;
     }
@@ -251,12 +248,12 @@ export class Props implements PropsIntf {
      * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
      * etc. on the GUI.
      */
-    isNonOwnedCommentNode = (node): boolean => {
+    isNonOwnedCommentNode = (node: I.NodeInfo): boolean => {
         let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
         return commentBy != null && commentBy != meta64.userName;
     }
 
-    isOwnedCommentNode = (node): boolean => {
+    isOwnedCommentNode = (node: I.NodeInfo): boolean => {
         let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
         return commentBy != null && commentBy == meta64.userName;
     }
@@ -264,36 +261,16 @@ export class Props implements PropsIntf {
     /*
      * Returns Span representation of property value, even if multiple properties
      */
-    renderProperty = (property): string => {
+    renderProperty = (property: I.PropertyInfo): string => {
         let ret: string = null;
-        /* If this is a single-value type property */
-        if (!property.values) {
 
-            /* if property is missing return empty string */
-            if (!property.value || property.value.length == 0) {
-                ret = "";
-            }
-            else {
-                ret = property.value;
-            }
+        /* if property is missing return empty string */
+        if (!property.value || property.value.length == 0) {
+            ret = "";
         }
-        /* else render multi-value property */
         else {
-            ret = this.renderPropertyValues(property.values);
+            ret = property.value;
         }
-
         return ret || "";
-    }
-
-    //todo-1: this needs to be retested after widget refactoring.
-    renderPropertyValues = (values): string => {
-        let ret = "";
-
-        util.forEachArrElm(values, (value, i: number) => {
-            ret += value;
-            ret += "\n\n";
-        });
-
-        return ret;
     }
 }

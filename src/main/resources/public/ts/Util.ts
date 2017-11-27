@@ -752,6 +752,7 @@ export class Util implements UtilIntf {
         return <T>instance;
     }
 
+    //todo-0: I probably should use browser localStore and stop using cookies.
     setCookie = (name: string, val: string): void => {
         let d = new Date();
         d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));

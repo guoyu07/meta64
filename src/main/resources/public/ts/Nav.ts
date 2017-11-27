@@ -21,7 +21,6 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-
 let meta64: Meta64;
 let util: Util;
 let render: Render;
@@ -88,7 +87,7 @@ export class Nav implements NavIntf {
     openMainMenuHelp = (): void => {
         this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/r/public/help",
+            "nodeId": "/r/public/help", //todo-1: don't hardcode this here
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": this.mainOffset,
@@ -99,7 +98,7 @@ export class Nav implements NavIntf {
     openRssFeedsNode = (): void => {
         this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/r/public/feeds",
+            "nodeId": "/r/public/feeds", //todo-1: don't hardcode this here
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": this.mainOffset,
@@ -110,7 +109,7 @@ export class Nav implements NavIntf {
     browseSampleContent = (): void => {
         this.mainOffset = 0;
         util.ajax<I.RenderNodeRequest, I.RenderNodeResponse>("renderNode", {
-            "nodeId": "/r/public/war-and-peace",
+            "nodeId": "/r/public/war-and-peace", //todo-1: don't hardcode this here
             "upLevel": null,
             "renderParentIfLeaf": null,
             "offset": this.mainOffset,
@@ -142,7 +141,6 @@ export class Nav implements NavIntf {
     }
 
     navUpLevel = (): void => {
-
         if (!meta64.currentNodeData || !meta64.currentNodeData.node) return null;
         if (!this.parentVisibleToUser()) {
             // Already at root. Can't go up.
@@ -168,7 +166,6 @@ export class Nav implements NavIntf {
      * turn of row selection DOM element of whatever row is currently selected
      */
     getSelectedDomElement = (): HTMLElement => {
-
         var currentSelNode = meta64.getHighlightedNode();
         if (currentSelNode) {
 

@@ -5,13 +5,35 @@ console.log("DialogBase.ts");
 import { Div } from "./widget/Div";
 import { Comp } from "./widget/base/Comp";
 import { Dialog } from "./widget/Dialog";
-import { DialogBaseImpl} from "./DialogBaseImpl";
+import { DialogBaseImpl } from "./DialogBaseImpl";
+import { Factory } from "./Factory";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
+import { TagIntf as View } from "./intf/TagIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { PropsIntf as Props } from "./intf/PropsIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { DomBindIntf as DomBind } from "./intf/DomBindIntf";
+import { TagIntf as Tag } from "./intf/TagIntf";
+import { RenderIntf as Render } from "./intf/RenderIntf";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
 
 declare var Polymer: polymer.PolymerStatic;
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, util, render, tag, domBind;  
+let meta64: Meta64;
+let util: Util;
+let render: Render;
+let tag: Tag;
+let domBind: DomBind;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    meta64 = s.meta64;
+    util = s.util;
+    render = s.render;
+    tag = s.tag;
+    domBind = s.domBind;
+});
 
 /*
  * Base class for all dialog boxes.
@@ -72,7 +94,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
             /* the 'flush' call is actually only needed before interrogating the DOM
             for things like height of components, etc */
-            Polymer.dom.flush(); 
+            Polymer.dom.flush();
             Polymer.Base.updateStyles();
 
             // let left = tag.div( {

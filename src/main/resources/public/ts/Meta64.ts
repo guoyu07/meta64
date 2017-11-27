@@ -24,7 +24,6 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-
 declare var Polymer: polymer.PolymerStatic;
 
 let util: Util;

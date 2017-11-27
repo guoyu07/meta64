@@ -4,17 +4,18 @@ import { Factory } from "./Factory";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { TagIntf } from "./intf/TagIntf";
 import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
 
 let render: Render;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    render = s.render;
+});
 
 /* Eventually I will have ALL tags defined here, so they are decoupled from their rendering details, and
 fully pluggable. The goal here is not only clean code but full decoupling FROM Polymer.
 */
 export class Tag implements TagIntf {
-
-    postConstruct(s: Singletons) {
-        render = s.render;
-    }
 
     img = (attr: Object): string => {
         return render.tag("img", attr, null, false);

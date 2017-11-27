@@ -13,10 +13,13 @@ import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
-import { NavIntf as Nav} from "./intf/NavIntf";
+import { NavIntf as Nav } from "./intf/NavIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { SearchIntf } from "./intf/SearchIntf";
-import {Singletons } from "./Singletons";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
@@ -24,19 +27,16 @@ let nav: Nav;
 let render: Render;
 let view: View;
 let tag: Tag;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    nav = s.nav;
+    render = s.render;
+    view = s.view;
+    tag = s.tag;
+});
 
 export class Search implements SearchIntf {
-
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s : Singletons) => {
-        
-        util = s.util;
-        meta64 = s.meta64;
-        nav = s.nav;
-        render = s.render;
-        view = s.view;
-        tag = s.tag;
-    }
 
     _UID_ROWID_PREFIX: string = "srch_row_";
 

@@ -16,24 +16,25 @@ import * as I from "./Interfaces";
 
 import { Factory } from "./Factory";
 
-import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
-import {DomBindIntf as DomBind} from "./intf/DomBindIntf";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { DomBindIntf as DomBind } from "./intf/DomBindIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
-import {UtilIntf} from "./intf/UtilIntf";
-import {Singletons } from "./Singletons";
+import { UtilIntf } from "./intf/UtilIntf";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let encryption: Encryption;
 let domBind: DomBind;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    meta64 = s.meta64;
+    domBind = s.domBind;
+    encryption = s.encryption;
+});
 
 export class Util implements UtilIntf {
-
-    postConstruct = (s : Singletons) => {
-        
-        meta64 = s.meta64;
-        domBind = s.domBind;
-        encryption = s.encryption;
-    }
 
     logAjax: boolean = false;
     timeoutMessageShown: boolean = false;

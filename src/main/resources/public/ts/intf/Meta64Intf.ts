@@ -68,7 +68,6 @@ export interface Meta64Intf {
 
     userPreferences: I.UserPreferences;
 
-    postConstruct(s: Singletons);
     setNodeData(uid: string, data: Object);
     getNodeData(uid: string, prop: string): any;
     updateMainMenuPanel();

@@ -24,6 +24,9 @@ import { DomBindIntf as DomBind } from "./intf/DomBindIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { RenderIntf } from "./intf/RenderIntf";
 import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
@@ -32,22 +35,21 @@ let props: Props;
 let view: View;
 let edit: Edit;
 let domBind: DomBind;
-let tag: Tag;
+let tag: Tag; PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    nav = s.nav;
+    props = s.props;
+    view = s.view;
+    edit = s.edit;
+    domBind = s.domBind;
+    tag = s.tag;
+});
 
 declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render implements RenderIntf {
-    postConstruct = (s: Singletons) => {
-        util = s.util;
-        meta64 = s.meta64;
-        nav = s.nav;
-        props = s.props;
-        view = s.view;
-        edit = s.edit;
-        domBind = s.domBind;
-        tag = s.tag;
-    }
 
     private PRETTY_TAGS: boolean = true;
     private debug: boolean = false;
@@ -77,28 +79,6 @@ export class Render implements RenderIntf {
             }, [anchor]);
         }
     }
-
-    /*
-     * Important little method here. All GUI page/divs are created using this sort of specification here that they
-     * all must have a 'build' method that is called first time only, and then the 'init' method called before each
-     * time the component gets displayed with new information.
-     *
-     * If 'data' is provided, this is the instance data for the dialog
-     * 
-     * todo-0: wtf, there's a typo in this method name. how is this working?
-     */
-    // buidPage = (pg, data): void => {
-    //     console.log("buildPage: pg.domId=" + pg.domId);
-
-    //     if (!pg.built || data) {
-    //         pg.render(data);
-    //         pg.built = true;
-    //     }
-
-    //     if (pg.init) {
-    //         pg.init(data);
-    //     }
-    // }
 
     buildRowHeader = (node: I.NodeInfo, showPath: boolean, showName: boolean): Div => {
         let commentBy: string = props.getNodePropertyVal(cnst.COMMENT_BY, node);

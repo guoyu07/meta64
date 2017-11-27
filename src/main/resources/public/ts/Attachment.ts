@@ -9,19 +9,18 @@ import { UtilIntf as Util } from "./intf/UtilIntf";
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { AttachmentIntf } from "./intf/AttachmentIntf";
 import { Singletons } from "./Singletons";
+import {PubSub} from "./PubSub";
+import {Constants} from "./Constants";
 
 console.log("Creating attachment class");
 
 let util: Util;
 let meta64: Meta64;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => { util = s.util;
+        meta64 = s.meta64;
+});
 
 export class Attachment implements AttachmentIntf {
-
-    postConstruct = (s: Singletons) => {
-
-        util = s.util;
-        meta64 = s.meta64;
-    }
 
     /* Node being uploaded to */
     uploadNode: any = null;

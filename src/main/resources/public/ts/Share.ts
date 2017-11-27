@@ -6,19 +6,20 @@ import { UtilIntf as Util } from "./intf/UtilIntf";
 import { SearchIntf as Search } from "./intf/SearchIntf";
 import { ShareIntf } from "./intf/ShareIntf";
 import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
 let srch: Search;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    srch = s.srch;
+});
 
 export class Share implements ShareIntf {
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s: Singletons) => {
-
-        util = s.util;
-        meta64 = s.meta64;
-        srch = s.srch;
-    }
 
     private findSharedNodesResponse = (res: I.GetSharedNodesResponse) => {
         srch.searchNodesResponse(res);

@@ -42,34 +42,35 @@ export class Factory {
     control (sort of Inversion of Control, IoC) and make it where the objects themselves don't even 
     know they are being used as singletons (instantated only once).
     */
-    singletons: Singletons = {
-        meta64: new Meta64(),
-        tag: new Tag(),
-        util: new Util(),
-        edit: new Edit(),
-        attachment: new Attachment(),
-        encryption: new Encryption(),
-        nav: new Nav(),
-        props: new Props(),
-        render: new Render(),
-        srch: new Search(),
-        share: new Share(),
-        user: new User(),
-        view: new View(),
-        podcast: new Podcast(),
-        //systemFolder: SystemFolderIntf;
-        domBind: new DomBind(),
-        rssPlugin: new RssPlugin(),
-        coreTypesPlugin: new CoreTypesPlugin()
-    };
-
+    singletons: Singletons;
+    
     /*
      * Just like in a SpringContext, we init all singletons up front and this allows circular references 
      * to exist with no problems. 
      */
     constructAll = (): void => {
+        this.singletons = {
+            meta64: new Meta64(),
+            tag: new Tag(),
+            util: new Util(),
+            edit: new Edit(),
+            attachment: new Attachment(),
+            encryption: new Encryption(),
+            nav: new Nav(),
+            props: new Props(),
+            render: new Render(),
+            srch: new Search(),
+            share: new Share(),
+            user: new User(),
+            view: new View(),
+            podcast: new Podcast(),
+            //systemFolder: SystemFolderIntf;
+            domBind: new DomBind(),
+            rssPlugin: new RssPlugin(),
+            coreTypesPlugin: new CoreTypesPlugin()
+        };
+
         this.setGlobals();
-        this.postConstructAll();
         PubSub.pub(Constants.PUBSUB_SingletonsReady, this.singletons);
         console.log("Factory.constructAll complete.");
     }
@@ -99,26 +100,5 @@ export class Factory {
         //hack for now. Constants isn't even a singleton
         w.cnst = Constants;
         w.factory = this;
-    }
-
-    postConstructAll = (): void => {
-        this.singletons.meta64.postConstruct(this.singletons);
-        this.singletons.tag.postConstruct(this.singletons);
-        this.singletons.util.postConstruct(this.singletons);
-        this.singletons.edit.postConstruct(this.singletons);
-        this.singletons.attachment.postConstruct(this.singletons);
-        this.singletons.encryption.postConstruct(this.singletons);
-        this.singletons.nav.postConstruct(this.singletons);
-        this.singletons.props.postConstruct(this.singletons);
-        this.singletons.render.postConstruct(this.singletons);
-        this.singletons.srch.postConstruct(this.singletons);
-        this.singletons.share.postConstruct(this.singletons);
-        this.singletons.user.postConstruct(this.singletons);
-        this.singletons.view.postConstruct(this.singletons);
-        this.singletons.podcast.postConstruct(this.singletons);
-        this.singletons.domBind.postConstruct(this.singletons);
-        // private systemFolder: SystemFolder;
-        // private rssPlugin: RssPlugin;
-        // private coreTypesPlugin: CoreTypesPlugin;
     }
 }

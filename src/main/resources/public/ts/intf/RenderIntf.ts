@@ -7,7 +7,6 @@ import { Img } from "../widget/Img";
 import {Singletons} from "../Singletons";
 
 export interface RenderIntf {
-    postConstruct(s: Singletons);
     buildRowHeader(node: I.NodeInfo, showPath: boolean, showName: boolean): Div;
     injectSubstitutions(content: string): string;
     refreshNodeOnPage(node: I.NodeInfo): void;

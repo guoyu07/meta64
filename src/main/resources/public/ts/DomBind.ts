@@ -4,8 +4,14 @@ import { Factory } from "./Factory";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { DomBindIntf } from "./intf/DomBindIntf";
 import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
 
 let util: Util;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    s.domBind.init();
+});
 
 /*
 This allows us to wire a function to a particular Element by its ID even long BEFORE the ID itself comes into existence
@@ -15,12 +21,7 @@ the word I'd used to describe this innovation/technique would indeed be "Tempora
 export class DomBind implements DomBindIntf {
     private counter: number = 0;
 
-    /* Binds DOM IDs to functions that should be called on "onClick" */
-    private idToFuncMap: { [key: string]: Function } = {};
-
-    postConstruct = (s: Singletons) => {
-
-        util = s.util;
+    public init() {
         setInterval(() => {
             this.interval();
         }, 250);
@@ -35,6 +36,9 @@ export class DomBind implements DomBindIntf {
         //     }
         // }, 500);
     }
+
+    /* Binds DOM IDs to functions that should be called on "onClick" */
+    private idToFuncMap: { [key: string]: Function } = {};
 
     private initMutationObserver = (): void => {
         // select the target node

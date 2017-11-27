@@ -6,7 +6,6 @@ import {Singletons} from "../Singletons";
 export interface AttachmentIntf {
     uploadNode: any;
 
-    postConstruct(s: Singletons);
     openUploadFromFileDlg(): void;
     openUploadFromUrlDlg(): void;
     deleteAttachment(): void;

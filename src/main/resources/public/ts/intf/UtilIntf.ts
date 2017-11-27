@@ -10,7 +10,6 @@ export interface UtilIntf {
     waitCounter: number;
     pgrsDlg: any;
 
-    postConstruct(s: Singletons);
     buf2hex(arr: Uint8Array): string;
     hex2buf(str): Uint8Array;
     escapeRegExp(s: string): string;

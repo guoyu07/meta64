@@ -13,11 +13,14 @@ import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
 import { ViewIntf as View } from "./intf/ViewIntf";
-import { UserIntf as User} from "./intf/UserIntf";
-import {EditIntf as Edit} from "./intf/EditIntf";
-import { ShareIntf as Share} from "./intf/ShareIntf";
-import {SearchIntf as Search} from "./intf/SearchIntf";
-import {Singletons } from "./Singletons";
+import { UserIntf as User } from "./intf/UserIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { ShareIntf as Share } from "./intf/ShareIntf";
+import { SearchIntf as Search } from "./intf/SearchIntf";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
@@ -26,19 +29,17 @@ let user: User;
 let srch: Search;
 let view: View;
 let edit: Edit;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    render = s.render;
+    user = s.user;
+    view = s.view;
+    edit = s.edit;
+    srch = s.srch;
+});
 
 export class Nav implements NavIntf {
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s : Singletons) => {
-        
-        util = s.util;
-        meta64 = s.meta64;
-        render = s.render;
-        user = s.user;
-        view = s.view;
-        edit = s.edit;
-        srch = s.srch;
-    }
 
     _UID_ROWID_PREFIX: string = "row_";
 

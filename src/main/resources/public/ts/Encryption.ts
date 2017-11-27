@@ -9,8 +9,14 @@ import { Factory } from "./Factory";
 import { UtilIntf as Util } from "./intf/UtilIntf";
 import { EncryptionIntf } from "./intf/EncryptionIntf";
 import {Singletons } from "./Singletons";
+import {PubSub} from "./PubSub";
+import {Constants} from "./Constants";
+
 
 let util: Util;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+});
 
 /*
 Currently there are both 1) PublicKey Encryption as well as 2) Symmetric password-based encryption in this 
@@ -39,11 +45,6 @@ will be complete once we prompt user for password.
 
 */
 export class Encryption implements EncryptionIntf {
-
-    postConstruct = (s : Singletons) => {
-        
-        util = s.util;
-    }
 
     /* jwk = JSON Format */
     KEY_SAVE_FORMAT = "jwk";

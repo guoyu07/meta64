@@ -4,8 +4,6 @@ import {Singletons} from "../Singletons";
 
 export interface EncryptionIntf {
 
-    postConstruct(s: Singletons);
-
     KEY_SAVE_FORMAT: string;
     PK_ENC_ALGO: string;
     HASH_ALGO: string;

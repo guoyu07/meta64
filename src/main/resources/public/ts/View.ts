@@ -5,30 +5,30 @@ import * as I from "./Interfaces";
 
 import { Factory } from "./Factory";
 
-import { Meta64Intf as Meta64} from "./intf/Meta64Intf";
-import { UtilIntf as Util} from "./intf/UtilIntf";
+import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
+import { UtilIntf as Util } from "./intf/UtilIntf";
 import { RenderIntf as Render } from "./intf/RenderIntf";
-import { NavIntf as Nav} from "./intf/NavIntf";
-import {EditIntf as Edit} from "./intf/EditIntf";
-import {Singletons } from "./Singletons";
+import { NavIntf as Nav } from "./intf/NavIntf";
+import { EditIntf as Edit } from "./intf/EditIntf";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+import { ViewIntf } from "./intf/ViewIntf";
 
 let meta64: Meta64;
 let util: Util;
 let nav: Nav;
 let render: Render;
 let edit: Edit;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    nav = s.nav;
+    render = s.render;
+    edit = s.edit;
+});
 
-export class View {
-
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s : Singletons) => {
-        
-        util = s.util;
-        meta64 = s.meta64;
-        nav = s.nav;
-        render = s.render;
-        edit = s.edit;
-    }
+export class View implements ViewIntf {
 
     compareNodeA: I.NodeInfo;
     scrollToSelNodePending: boolean = false;

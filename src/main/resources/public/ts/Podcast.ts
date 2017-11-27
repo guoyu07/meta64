@@ -12,12 +12,21 @@ import { PropsIntf as Props } from "./intf/PropsIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { PodcastIntf } from "./intf/PodcastIntf";
 import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
 let props: Props;
 let render: Render;
 let tag: Tag;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    props = s.props;
+    render = s.render;
+});
 
 /*
 NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and cooperate
@@ -25,16 +34,6 @@ NOTE: The AudioPlayerDlg AND this singleton-ish class both share some state and 
 Reference: https://www.w3.org/2010/05/video/mediaevents.html
 */
 export class Podcast implements PodcastIntf {
-
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct = (s: Singletons) => {
-
-        util = s.util;
-        meta64 = s.meta64;
-        props = s.props;
-        render = s.render;
-    }
-
     player: HTMLAudioElement = null;
     startTimePending: number = null;
 

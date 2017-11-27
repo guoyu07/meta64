@@ -15,7 +15,6 @@ export interface EditIntf {
     editNodeDlgInst: any; //todo-1: add this type back -> EditNodeDlg ;
     nodeInsertTarget: any;
 
-    postConstruct(s: Singletons);
     createNode(): void;
     openChangePasswordDlg(): void;
     openManageAccountDlg(): void;

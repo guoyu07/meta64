@@ -4,8 +4,6 @@ import * as I from "../Interfaces";
 import {Singletons} from "../Singletons";
 
 export interface NavIntf {
-    postConstruct(s: Singletons)
-
     _UID_ROWID_PREFIX: string;
 
     mainOffset: number;

@@ -22,7 +22,10 @@ import { NavIntf as Nav } from "./intf/NavIntf";
 import { PropsIntf as Props } from "./intf/PropsIntf";
 import { UserIntf as User } from "./intf/UserIntf";
 import { EditIntf } from "./intf/EditIntf";
-import {Singletons } from "./Singletons";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 
 let meta64: Meta64;
 let util: Util;
@@ -31,18 +34,17 @@ let props: Props;
 let render: Render;
 let user: User;
 let view: View;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    nav = s.nav;
+    props = s.props;
+    render = s.render;
+    user = s.user;
+    view = s.view;
+});
 
 export class Edit implements EditIntf {
-
-    postConstruct = (s : Singletons) => {
-        util = s.util;
-        meta64 = s.meta64;
-        nav = s.nav;
-        props = s.props;
-        render = s.render;
-        user = s.user;
-        view = s.view;
-    }
 
     /* Node being uploaded to */
     importTargetNode: any = null;

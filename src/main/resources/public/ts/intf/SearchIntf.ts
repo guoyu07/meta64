@@ -4,8 +4,6 @@ import * as I from "../Interfaces";
 import {Singletons} from "../Singletons";
 
 export interface SearchIntf {
-    postConstruct(s: Singletons);
-
     _UID_ROWID_PREFIX: string;
 
     searchNodes: any;

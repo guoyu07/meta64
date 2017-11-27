@@ -21,7 +21,9 @@ import { EditIntf as Edit } from "./intf/EditIntf";
 import { EncryptionIntf as Encryption } from "./intf/EncryptionIntf";
 import { TagIntf as Tag } from "./intf/TagIntf";
 import { PropsIntf } from "./intf/PropsIntf";
-import {Singletons } from "./Singletons";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
 
 let meta64: Meta64;
 let util: Util;
@@ -30,19 +32,17 @@ let view: View;
 let edit: Edit;
 let encryption: Encryption;
 let tag: Tag;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    util = s.util;
+    meta64 = s.meta64;
+    render = s.render;
+    view = s.view;
+    edit = s.edit;
+    encryption = s.encryption;
+    tag = s.tag;
+});
 
 export class Props implements PropsIntf {
-
-    /* Note this: is not a singleton so we can postConstruct during actual constructor */
-    postConstruct(f: Singletons) {
-        util = f.util;
-        meta64 = f.meta64;
-        render = f.render;
-        view = f.view;
-        edit = f.edit;
-        encryption = f.encryption;
-        tag = f.tag;
-    }
 
     orderProps = (propOrder: string[], _props: I.PropertyInfo[]): I.PropertyInfo[] => {
         let propsNew: I.PropertyInfo[] = util.arrayClone(_props);

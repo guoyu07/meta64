@@ -5,7 +5,6 @@ import { LoginDlg } from "../dlg/LoginDlg";
 import {Singletons} from "../Singletons";
 
 export interface UserIntf {
-    postConstruct(s: Singletons);
     closeAccountResponse(res: I.CloseAccountResponse): void;
     closeAccount(): void;
     isTestUserAccount(): boolean;

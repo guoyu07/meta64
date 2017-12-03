@@ -330,17 +330,14 @@ export class Render implements RenderIntf {
         let canMoveUp: boolean = (index > 0 && rowCount > 1) || prevPageExists;
         let canMoveDown: boolean = (index < count - 1) || nextPageExists;
 
-        let isRep: boolean = util.startsWith(node.name, "rep:") || /*
-														 * meta64.currentNodeData. bug?
-														 */util.contains(node.path, "/rep:");
+        // let editingAllowed: boolean = props.isOwnedCommentNode(node);
+        // if (!editingAllowed) {
+        //     editingAllowed = meta64.isAdminUser && !props.isNonOwnedCommentNode(node)
+        //         && !props.isNonOwnedNode(node);
+        // }
+        let editingAllowed = edit.isEditAllowed(node); //meta64.userPreferences.editMode && meta64.isAdminUser || meta64.userName==node.owner;
 
-        let editingAllowed: boolean = props.isOwnedCommentNode(node);
-        if (!editingAllowed) {
-            editingAllowed = (meta64.isAdminUser || !isRep) && !props.isNonOwnedCommentNode(node)
-                && !props.isNonOwnedNode(node);
-        }
-
-        // console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
+        console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
 
         /*
          * if not selected by being the new child, then we try to select based on if this node was the last one

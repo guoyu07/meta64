@@ -244,19 +244,20 @@ export class Props implements PropsIntf {
         return owner != meta64.userName;
     }
 
-    /*
-     * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
-     * etc. on the GUI.
-     */
-    isNonOwnedCommentNode = (node: I.NodeInfo): boolean => {
-        let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
-        return commentBy != null && commentBy != meta64.userName;
-    }
+    // not currently supporting the experimental 'comment nodes'
+    // /*
+    //  * Returns true if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
+    //  * etc. on the GUI.
+    //  */
+    // isNonOwnedCommentNode = (node: I.NodeInfo): boolean => {
+    //     let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
+    //     return commentBy != null && commentBy != meta64.userName;
+    // }
 
-    isOwnedCommentNode = (node: I.NodeInfo): boolean => {
-        let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
-        return commentBy != null && commentBy == meta64.userName;
-    }
+    // isOwnedCommentNode = (node: I.NodeInfo): boolean => {
+    //     let commentBy: string = this.getNodePropertyVal(cnst.COMMENT_BY, node);
+    //     return commentBy != null && commentBy == meta64.userName;
+    // }
 
     /*
      * Returns Span representation of property value, even if multiple properties

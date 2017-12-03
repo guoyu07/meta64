@@ -47,13 +47,35 @@
             }
 
             :root {
-                /* 
+                --paper-font-common-base: {
+                    /* Note: Google menu item will INSIST on Roboto, not matter what we put here, apparently their bug */
+                    font-family: Roboto, Tahoma, Verdana, Arial;
+                };
+           
+                --my-custom-color: green;
+                --paper-tab-ink: var(--my-custom-color);
+
+                /* custom CSS property */
+                --paper-tabs-selection-bar-color: blue;
+    
+                /* custom CSS mixin */
+                --paper-tabs: {
+                    color: var(--default-primary-color); /* variable defined in default-theme.html */
+                    font-size: 20px;
+                };
+                
+                    /* 
                     --icon-toggle-outline-color: red; 
                     --syntax-bg: lightGray;
                     */
             }
 
             :host {
+                /* Note: Google menu item will INSIST on Roboto, not matter what we put here, apparently their bug */
+                --paper-font-common-base: {
+                    font-family: Roboto, Tahoma, Verdana, Arial;
+                };
+            
                 display: block;
             }
 
@@ -62,6 +84,7 @@
                        bottom of the toolbar. */
                 @apply(--layout-self-end);
             }
+            
         </style>
         <prism-highlighter></prism-highlighter>
         <iron-ajax id="ironAjax"></iron-ajax>
@@ -74,16 +97,21 @@
                 </div>
             </paper-scroll-header-panel>
 
-            <!-- this tag has the styling that makes scrollbar exist -->
-            <paper-header-panel class="main" main="main" mode="waterfall">
+            <!-- I probably should use mode=scroll for mobile and mode=waterfall on desktop -
+            but i leave it now where the header can scroll off screen so that small-screen devices
+            can have the best user experience possible.
+            ->
+            <paper-header-panel class="main" main="main" xmode="waterfall" mode="scroll">
 
-                <paper-toolbar id="mainToolbar" class="medium-tall">
+                <paper-toolbar id="mainToolbar" xxclass="medium-tall">
                     <!-- when implemented this button will toggle visibility 
                         of left-side menu -->
                     <paper-icon-button icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
+                    
                     <span class="title" id="headerAppName">
                         SubNode
                     </span>
+                    
                     <!-- this tooltip isn't working, but i will keep it because hopefully is fixed in Polymer2.0 -->
                     <paper-tooltip for="headerAppName">Go to SubNode Public Home Page</paper-tooltip>
                     <paper-icon-button icon="icons:home" id="navHomeButton">Home</paper-icon-button>
@@ -107,15 +135,18 @@
                     <paper-icon-button style="display:none;" icon="icons:account-box" id="navLogoutButton">Logout</paper-icon-button>
                     <paper-tooltip for="navLogoutButton">Logout</paper-tooltip>
                     <paper-button style="display:none;" id="openSignupPgButton">Signup</paper-button>
-                    <paper-tabs id="mainPaperTabs" attr-for-selected="name" selected="{{selected}}" class="bottom self-end" style="width: 300px;">
-                        <paper-tab name="mainTabName">Main</paper-tab>
-                        <paper-tab name="searchTabName">Search</paper-tab>
-                        <paper-tab name="timelineTabName">Timeline</paper-tab>
-                    </paper-tabs>
+                    <!-- put 'paper-tabs' tag here, instead of in 'content' if you want them not to scroll, and for that you would also
+                    need to set paper-header-panel to waterfall mode (above) -->
                 </paper-toolbar>
 
                 <!-- Main Content -->
                 <div class="content">
+                    <paper-tabs id="mainPaperTabs" attr-for-selected="name" selected="{{selected}}" class="bottom self-end" xxstyle="width: 300px;">
+                        <paper-tab name="mainTabName">Main</paper-tab>
+                        <paper-tab name="searchTabName">Search</paper-tab>
+                        <paper-tab name="timelineTabName">Timeline</paper-tab>
+                    </paper-tabs>
+                    
                     <!-- Main App Tab Panel -->
                     <iron-pages id="mainIronPages" attr-for-selected="name" selected="{{selected}}">
                         <div name="mainTabName">

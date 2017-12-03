@@ -164,13 +164,14 @@ export class Edit implements EditIntf {
         if (util.checkSuccess("Editing node", res)) {
             let node: I.NodeInfo = res.nodeInfo;
 
-            /* if this is a comment node and we are the commenter */
-            let editingAllowed: boolean = props.isOwnedCommentNode(node);
+            // /* if this is a comment node and we are the commenter */
+            // let editingAllowed: boolean = props.isOwnedCommentNode(node);
 
-            if (!editingAllowed) {
-                editingAllowed = meta64.isAdminUser || (!props.isNonOwnedCommentNode(node)
-                    && !props.isNonOwnedNode(node));
-            }
+            // if (!editingAllowed) {
+            //     editingAllowed = meta64.isAdminUser || (!props.isNonOwnedCommentNode(node)
+            //         && !props.isNonOwnedNode(node));
+            // }
+            let editingAllowed = this.isEditAllowed(node);
 
             if (editingAllowed) {
                 /*
@@ -207,11 +208,12 @@ export class Edit implements EditIntf {
     /* returns true if we can 'try to' insert under 'node' or false if not */
     isEditAllowed = (node: any): boolean => {
         return meta64.userPreferences.editMode && node.path != "/" &&
-            /*
-             * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
-             */
-            (!props.isNonOwnedCommentNode(node) || props.isOwnedCommentNode(node)) //
-            && !props.isNonOwnedNode(node);
+            (meta64.isAdminUser || meta64.userName==node.owner);
+            // /*
+            //  * Check that if we have a commentBy property we are the commenter, before allowing edit button also.
+            //  */
+            // (!props.isNonOwnedCommentNode(node) || props.isOwnedCommentNode(node)) //
+            // && !props.isNonOwnedNode(node);
     }
 
     /* best we can do here is allow the disableInsert prop to be able to turn things off, node by node */

@@ -89,7 +89,7 @@ public class ImportZipService {
 	public void inputZipFileFromStream(MongoSession session, InputStream is, SubNode node) {
 
 		UserPreferences userPreferences = sessionContext.getUserPreferences();
-		boolean importAllowed = userPreferences != null ? userPreferences.isExportAllowed() : false;
+		boolean importAllowed = userPreferences != null ? userPreferences.isImportAllowed() : false;
 		if (!importAllowed && !sessionContext.isAdmin()) {
 			throw ExUtil.newEx("You are not authorized to import.");
 		}

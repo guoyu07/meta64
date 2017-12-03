@@ -165,21 +165,23 @@ export class View implements ViewIntf {
         setTimeout(() => {
             this.scrollToSelNodePending = false;
 
+            /* Check to see if we are rendering the top node (page root), and if so
+            it is better looking to just scroll to zero index, because that will always
+            be what use wants to see */
+            let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
+            if (currentSelNode && meta64.currentNodeData.node.id==currentSelNode.id) {
+                util.domElm("#mainContainer").scrollTop = 0;
+                return;
+            }
+
             let elm: any = nav.getSelectedPolyElement();
 
             if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
                 elm.node.scrollIntoView();
             }
-            // If we couldn't find a selected node on this page, scroll to
-            // top instead.
             else {
                 //sets vertical top position of scrollbar to zero (top)
                 util.domElm("#mainContainer").scrollTop = 0;
-                //todo-1: removed mainPaperTabs from visibility, but what code should go here now?
-                // elm = util.polyElm("mainPaperTabs");
-                // if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
-                //     elm.node.scrollIntoView();
-                // }
             }
         }, 1000);
     }
@@ -190,7 +192,6 @@ export class View implements ViewIntf {
 
         util.domElm("#mainContainer").scrollTop = 0;
 
-        //todo-1: not using mainPaperTabs any longer so shw should go here now ?
         setTimeout(() => {
             if (this.scrollToSelNodePending)
                 return;

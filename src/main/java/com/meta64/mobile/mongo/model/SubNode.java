@@ -362,6 +362,14 @@ public class SubNode {
 	public Boolean getBooleanProp(String key) {
 		SubNodePropVal v = properties().get(key);
 		if (v == null) return false;
+		
+		//Our current property editor only knows how to save strings, so we just cope with that here, but eventually we will have
+		//typesafety and types even in the editor.
+		if (v.getValue() instanceof String) {
+			String s = ((String)v.getValue()).toLowerCase();
+			//detect true or 1.
+			return s.contains("t") || s.contains("1");
+		}
 		return (Boolean) v.getValue();
 	}
 

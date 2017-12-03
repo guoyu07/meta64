@@ -228,21 +228,20 @@ export class Props implements PropsIntf {
         return prop ? prop.value : null;
     }
 
-    /*
-     * Returns trus if this is a comment node, that the current user doesn't own. Used to disable "edit", "delete",
-     * etc. on the GUI.
-     */
-    isNonOwnedNode = (node: I.NodeInfo): boolean => {
-        let owner: string = node.owner;
+    // /*
+    //  * Returns trus if this is a node the current user doesn't own. Used to disable "edit", "delete",
+    //  * etc. on the GUI.
+    //  */
+    // isNonOwnedNode = (node: I.NodeInfo): boolean => {
+    //     let owner: string = node.owner;
 
-        // if we don't know who owns this node assume the admin owns it.
-        if (!owner) {
-            owner = "admin";
-        }
+    //     // if we don't know who owns this node assume the admin owns it.
+    //     if (!owner) {
+    //         owner = "admin";
+    //     }
 
-        /* This is OR condition because of createdBy is null we assume we do not own it */
-        return owner != meta64.userName;
-    }
+    //     return owner != meta64.userName;
+    // }
 
     // not currently supporting the experimental 'comment nodes'
     // /*

@@ -15,7 +15,7 @@ export interface PropsIntf {
     decryptToClipboard(val: string, decryptButton: Button): void;
     getNodeProperty(propertyName: string, node: I.NodeInfo): I.PropertyInfo;
     getNodePropertyVal(propertyName : string, node: I.NodeInfo): string;
-    isNonOwnedNode(node: I.NodeInfo): boolean;
+    //isNonOwnedNode(node: I.NodeInfo): boolean;
     //isNonOwnedCommentNode(node: I.NodeInfo): boolean;
     //isOwnedCommentNode(node: I.NodeInfo): boolean;
     renderProperty(property : I.PropertyInfo): string;

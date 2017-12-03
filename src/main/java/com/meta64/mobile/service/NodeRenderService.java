@@ -72,9 +72,7 @@ public class NodeRenderService {
 		String targetId = req.getNodeId();
 
 		log.trace("renderNode targetId:" + targetId);
-
 		SubNode node = api.getNode(session, targetId);
-		
 		//log.debug("RENDER: "+XString.prettyPrint(node));
 
 		/*
@@ -124,7 +122,12 @@ public class NodeRenderService {
 
 		NodeInfo nodeInfo = convert.convertToNodeInfo(sessionContext, session, node, true, true, false, -1);
 		res.setNode(nodeInfo);
+		
+		processRenderNode(session, req, res, children, node, path, scanToNode);
+	}
 
+	private void processRenderNode(MongoSession session, RenderNodeRequest req, RenderNodeResponse res, List<NodeInfo> children, SubNode node, String path,
+			boolean scanToNode) {
 		/*
 		 * If we are scanning to a node we know we need to start from zero offset, or else we use
 		 * the offset passed in
@@ -163,7 +166,7 @@ public class NodeRenderService {
 		 * anyway. I don't think skipping to far or too little by one or two will ever be a
 		 * noticeable issue in the paginating so this should be fine, because there will be a very
 		 * small number of nodes that are not visible to the user, so I can't think of a
-		 * pathological case here.
+		 * pathological case here. Just noting that this IS an imperfection/flaw.
 		 */
 		if (!scanToNode && offset > 0) {
 			idx = api.skip(iterator, offset);

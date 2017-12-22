@@ -6,6 +6,11 @@ http://sbnode.com?id=/r/public/home
 
 http://www.sbnode.com/?id=/r/public/feeds
 
+## IMPORTANT (Date: 12/2017): 
+
+This project is moving away from Google Polymer and onto React+Bootstrap4. I have been doing the work without any 
+checkins recently into this GitHub project, but am very close to having Polymer completely removed. 
+
 ## Adding ReactJS Next (Date: 11/2017)
 
 Most of the tech notes are not in this readme, but i'm putting this ReactJS note here for the few

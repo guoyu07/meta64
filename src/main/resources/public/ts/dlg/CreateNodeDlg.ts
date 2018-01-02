@@ -11,6 +11,7 @@ import { ListBoxRow } from "../widget/ListBoxRow";
 import { Dialog } from "../widget/Dialog";
 import { Meta64 } from "../Meta64";
 import { DialogBaseImpl } from "../DialogBaseImpl";
+import { Form } from "../widget/Form";
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
@@ -22,26 +23,27 @@ export class CreateNodeDlg extends DialogBase {
     inlineButton: Button;
 
     constructor() {
-        super();
+        super("Create New Node");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Create New Node"),
-            new ListBox({ "style": "width:500px;height:500px;" }, [
-                new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),
-                /* Note: the isAdminUser is a temporary hack, and there will be a better way to do this eventually (i.e. types themselves
-                   probably will specify what roles of users they are available on or something like that) */
-                !meta64.isAdminUser ? null : new ListBoxRow("RSS Feed", () => { this.selType = "sn:rssfeed"; }, false),
-                !meta64.isAdminUser ? null : new ListBoxRow("RSS Item", () => { this.selType = "sb:rssitem"; }, false),
-                //!meta64.isAdminUser ? null : new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
-            ]),
-            new ButtonBar([
-                new Button("First", this.createFirstChild, null, true, this, true, 1500),
-                new Button("Last", this.createLastChild, null, true, this, true, 1500),
-                this.inlineButton = new Button("Inline", this.createInline, null, true, this, true, 1500),
-                new Button("Cancel", null, null, true, this)
+            new Form(null, [
+                new ListBox({ /* "style": "width:500px;height:500px;" */ }, [
+                    new ListBoxRow("Standard Type", () => { this.selType = "nt:unstructured"; }, true),
+                    /* Note: the isAdminUser is a temporary hack, and there will be a better way to do this eventually (i.e. types themselves
+                       probably will specify what roles of users they are available on or something like that) */
+                    !meta64.isAdminUser ? null : new ListBoxRow("RSS Feed", () => { this.selType = "sn:rssfeed"; }, false),
+                    !meta64.isAdminUser ? null : new ListBoxRow("RSS Item", () => { this.selType = "sb:rssitem"; }, false),
+                    //!meta64.isAdminUser ? null : new ListBoxRow("System Folder", () => { this.selType = "meta64:systemfolder"; }, false)
+                ]),
+                new ButtonBar([
+                    new Button("First", this.createFirstChild, null, true, this, true, 1500),
+                    new Button("Last", this.createLastChild, null, true, this, true, 1500),
+                    this.inlineButton = new Button("Inline", this.createInline, null, true, this, true, 1500),
+                    new Button("Cancel", null, null, true, this)
+                ])
             ])
         ]);
     }

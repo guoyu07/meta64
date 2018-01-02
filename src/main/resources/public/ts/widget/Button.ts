@@ -13,8 +13,8 @@ export class Button extends Comp {
         public dlg: DialogBase = null, initiallyVisible = true, public delayCloseCallback: number = 0) {
         super(_attribs);
         util.mergeProps(this.attribs, {
-            "raised": "raised",
-            "class": "standardButton"
+            "class": "btn btn-primary", /* also: secondary, info, success, danger, warning */
+            "type": "button"
         });
 
         if (!initiallyVisible) {

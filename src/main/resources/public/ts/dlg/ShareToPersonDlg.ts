@@ -6,10 +6,11 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -26,19 +27,20 @@ export class ShareToPersonDlg extends DialogBase {
     sharingDlg: SharingDlg;
 
     constructor(args: Object) {
-        super();
+        super("Share Node to Person");
         this.sharingDlg = (<any>args).sharingDlg;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Share Node to Person"),
-            new TextContent("Enter the username of the person you want to share this node with:"),
-            this.shareToUserTextField = new TextField("User to Share with"),
-            new ButtonBar([
-                new Button("Share", this.shareNodeToPerson, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                new TextContent("Enter the username of the person you want to share this node with:"),
+                this.shareToUserTextField = new TextField("User to Share with"),
+                new ButtonBar([
+                    new Button("Share", this.shareNodeToPerson, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
 

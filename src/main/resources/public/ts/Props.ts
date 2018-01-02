@@ -78,7 +78,7 @@ export class Props implements PropsIntf {
 
         render.renderPageFromData();
         view.scrollToSelectedNode();
-        meta64.selectTab("mainTabName");
+        meta64.selectTab("mainTab");
     }
 
     deletePropertyFromLocalData = (propertyName : string): void => {

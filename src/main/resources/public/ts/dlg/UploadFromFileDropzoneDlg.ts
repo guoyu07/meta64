@@ -8,44 +8,40 @@ import { TextContent } from "../widget/TextContent";
 import { Div } from "../widget/Div";
 import { Comp } from "../widget/base/Comp";
 import { Form } from "../widget/Form";
-import { Constants as cnst} from "../Constants";
+import { Constants as cnst } from "../Constants";
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
-declare var meta64, util, attachment, render;  
+declare var meta64, util, attachment, render, domBind;
 
 declare var Dropzone;
-declare var postTargetUrl;
 
 export class UploadFromFileDropzoneDlg extends DialogBase {
 
-    hiddenInputContaier: Div;
-    form: Form;
+    hiddenInputContainer: Div;
     uploadButton: Button;
 
     fileList: Object[] = null;
     zipQuestionAnswered: boolean = false;
     explodeZips: boolean = false;
     dropzone: any = null;
+    dropzoneDiv: Div = null;
 
     constructor() {
-        super();
+        super("Upload File");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Upload File"),
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
-            this.form = new Form({
-                "action": postTargetUrl + "upload",
-                "autoProcessQueue": false,
-                "class": "dropzone"
-            }),
-            this.hiddenInputContaier = new Div(null, { "style": "display: none;" }),
-            new ButtonBar([
-                this.uploadButton = new Button("Upload", this.upload),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
+                this.dropzoneDiv = new Div("", {class: "dropzone"}),
+                this.hiddenInputContainer = new Div(null, { "style": "display: none;" }),
+                new ButtonBar([
+                    this.uploadButton = new Button("Upload", this.upload),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -55,10 +51,14 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
     }
 
     configureDropZone = (): void => {
-
         let dlg = this;
         let config: Object = {
-            url: postTargetUrl + "upload",
+            action: util.getRpcPath() + "upload",
+            width: 500,
+            height: 500,
+            progressBarWidth: '100%',
+            zIndex: 100,
+            url: util.getRpcPath() + "upload",
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",
@@ -70,7 +70,7 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
             uploadMultiple: false,
             addRemoveLinks: true,
             dictDefaultMessage: "Drag & Drop files here, or Click",
-            hiddenInputContainer: "#" + this.hiddenInputContaier.getId(),
+            hiddenInputContainer: "#" + this.hiddenInputContainer.getId(),
 
             init: function () {
                 let dropzone = this; // closure
@@ -98,7 +98,9 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
             }
         };
 
-        this.dropzone = new Dropzone("#" + this.form.getId(), config);
+        domBind.whenElm(this.dropzoneDiv.getId(), (elm) => {
+            this.dropzone = new Dropzone("#" + this.dropzoneDiv.getId(), config);
+        });
     }
 
     updateFileList = (dropzoneEvt: any): void => {

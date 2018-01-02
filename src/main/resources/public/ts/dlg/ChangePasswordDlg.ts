@@ -9,9 +9,10 @@ import { PasswordTextField } from "../widget/PasswordTextField";
 import { Help } from "../widget/Help";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -25,19 +26,20 @@ export class ChangePasswordDlg extends DialogBase {
     private passCode: string;
 
     constructor(args: Object) {
-        super();
+        super((<any>args).passCode ? "Password Reset" : "Change Password");
         this.passCode = (<any>args).passCode;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header(this.passCode ? "Password Reset" : "Change Password"),
-            new Help("Enter your new password below..."),
-            this.passwordField = new PasswordTextField("New Password"),
-            new ButtonBar([
-                new Button("Change Password", this.changePassword, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                new Help("Enter your new password below..."),
+                this.passwordField = new PasswordTextField("New Password"),
+                new ButtonBar([
+                    new Button("Change Password", this.changePassword, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }

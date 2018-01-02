@@ -12,7 +12,7 @@ export interface RenderIntf {
     refreshNodeOnPage(node: I.NodeInfo): void;
     renderNodeContent(node: I.NodeInfo, showPath, showName, renderBin, rowStyling, showHeader): string;
     renderJsonFileSearchResultProperty(jsonContent: string): string;
-    renderNodeAsListItem(node: I.NodeInfo, index: number, count: number, rowCount: number): string;
+    renderNodeAsListItem(node: I.NodeInfo, index: number, count: number, rowCount: number, level : number): string;
     showNodeUrl();
     getTopRightImageTag(node: I.NodeInfo): Img;
     getNodeBkgImageStyle(node: I.NodeInfo): string;
@@ -29,14 +29,13 @@ export interface RenderIntf {
     prevPage(): void;
     nextPage(): void;
     lastPage(): void;
-    generateRow(i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string;
+    generateRow(i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number, level: number): string;
     getUrlForNodeAttachment(node: I.NodeInfo): string;
     adjustImageSize(node: I.NodeInfo): void;
     makeImageTag(node: I.NodeInfo): Img;
     makeImageTag_original(node: I.NodeInfo);
     tag(tag: string, attributes?: Object, content?: string, closeTag?: boolean): string;
     makeTextArea(fieldName: string, fieldId: string): string;
-    makeButton(text: string, id: string, callback: Function): string;
     allowPropertyToDisplay(propName: string): boolean;
     isReadOnlyProperty(propName: string): boolean;
     isBinaryProperty(propName: string): boolean;

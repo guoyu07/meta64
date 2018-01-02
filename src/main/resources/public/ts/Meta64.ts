@@ -1,7 +1,5 @@
 console.log("Meta64.ts");
 
-/// <reference types="polymer" />
-
 import { Factory } from "./Factory";
 import * as I from "./Interfaces";
 import { Span } from "./widget/Span";
@@ -24,7 +22,7 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-declare var Polymer: polymer.PolymerStatic;
+declare var $;
 
 let util: Util;
 let edit: Edit;
@@ -224,15 +222,19 @@ export class Meta64 implements Meta64Intf {
         return foundObj != null ? foundObj[prop] : null;
     }
 
+    rebuildMainMenu = () => {
+        this.menuPanel = new MenuPanel();
+        util.setHtml("mainAppMenu", this.menuPanel.renderHtml());
+        this.refreshAllGuiEnablement();
+    }
+
     updateMainMenuPanel = () => {
-        console.log("building main menu panel");
+        // console.log("building main menu panel");
 
         /* create menuPanel, only upon first need for it. I think really I should be creating right in the initializer code instead here, but leaving
         in this legacy location for now */
         if (!this.menuPanel) {
-            this.menuPanel = new MenuPanel();
-            util.setHtml("mainAppMenu", this.menuPanel.renderHtml());
-            this.refreshAllGuiEnablement();
+            this.rebuildMainMenu();
         }
         else {
             this.refreshAllGuiEnablement();
@@ -276,43 +278,9 @@ export class Meta64 implements Meta64Intf {
         }
     }
 
-    selectTab = (pageName): void => {
-        let ironPages = document.querySelector("#mainIronPages") as any;
-        ironPages.select(pageName);
-
-        /* this code can be made more DRY, but i'm just trying it out for now, so i'm not bothering to perfect it yet. */
-        // $ ("#mainPageButton").css("border-left", "");
-        // $ ("#searchPageButton").css("border-left", "");
-        // $ ("#timelinePageButton").css("border-left", "");
-        //
-        // if (pageName == 'mainTabName') {
-        //     $ ("#mainPageButton").css("border-left", "8px solid red");
-        // }
-        // else if (pageName == 'searchTabName') {
-        //     $ ("#searchPageButton").css("border-left", "8px solid red");
-        // }
-        // else if (pageName == 'timelineTabName') {
-        //     $ ("#timelinePageButton").css("border-left", "8px solid red");
-        // }
-    }
-
-    /*
-     * If data (if provided) must be the instance data for the current instance of the dialog, and all the dialog
-     * methods are of course singletons that accept this data parameter for any opterations. (oldschool way of doing
-     * OOP with 'this' being first parameter always).
-     *
-     * Note: each data instance is required to have a guid numberic property, unique to it.
-     *
-     */
-    changePage = (pg?: any, data?: any) => {
-        if (typeof pg.tabId === 'undefined') {
-            console.log("oops, wrong object type passed to changePage function.");
-            return null;
-        }
-
-        /* this is the same as setting using mainIronPages?? */
-        let paperTabs = document.querySelector("#mainIronPages") as any;
-        paperTabs.select(pg.tabId);
+    selectTab = (tabName): void => {
+        console.log("selectTab: " + tabName);
+        $("[href='#" + tabName + "']").tab('show');
     }
 
     isNodeBlackListed = (node): boolean => {
@@ -578,8 +546,9 @@ export class Meta64 implements Meta64Intf {
 
         /* the 'flush' call is actually only needed before interrogating the DOM
         for things like height of components, etc */
+        //This creates problems for Polymer2.0. removing.
         //Polymer.dom.flush(); 
-        Polymer.Base.updateStyles();
+        //Polymer.Base.updateStyles();
     }
 
     /* WARNING: This is NOT the highlighted node. This is whatever node has the CHECKBOX selection */
@@ -596,10 +565,10 @@ export class Meta64 implements Meta64Intf {
     getOrdinalOfNode = (node: I.NodeInfo): number => {
         let ret = -1;
 
-        if (!node || !this.currentNodeData || !this.currentNodeData.children)
+        if (!node || !this.currentNodeData || !this.currentNodeData.node.children)
             return ret;
 
-        util.forEachArrElm(this.currentNodeData.children, (iterNode, idx): boolean => {
+        util.forEachArrElm(this.currentNodeData.node.children, (iterNode, idx): boolean => {
             if (node.id === iterNode.id) {
                 ret = idx;
                 return false; //stop iterating.
@@ -610,10 +579,10 @@ export class Meta64 implements Meta64Intf {
     }
 
     getNumChildNodes = (): number => {
-        if (!this.currentNodeData || !this.currentNodeData.children)
+        if (!this.currentNodeData || !this.currentNodeData.node.children)
             return 0;
 
-        return this.currentNodeData.children.length;
+        return this.currentNodeData.node.children.length;
     }
 
     setCurrentNodeData = (data: I.RenderNodeResponse): void => {
@@ -621,22 +590,27 @@ export class Meta64 implements Meta64Intf {
     }
 
     anonPageLoadResponse = (res: I.AnonPageLoadResponse): void => {
-
-        if (res.renderNodeResponse) {
-            util.setElmDisplayById("mainNodeContent", true);
-            render.renderPageFromData(res.renderNodeResponse);
-            this.refreshAllGuiEnablement();
-        } else {
-            util.setElmDisplayById("mainNodeContent", false);
-
-            console.log("setting listview to: " + res.content);
-            util.setHtml("listView", res.content);
-        }
+        domBind.whenElm("listView", (elm) => {
+            if (res.renderNodeResponse) {
+                util.setElmDisplayById("mainNodeContent", true);
+                if (res.renderNodeResponse.noDataResponse) {
+                    util.setHtml("listView", res.renderNodeResponse.noDataResponse);
+                }
+                else {
+                    render.renderPageFromData(res.renderNodeResponse);
+                }
+                this.refreshAllGuiEnablement();
+            } else {
+                util.setElmDisplayById("mainNodeContent", false);
+                console.log("setting listview to: " + res.content);
+                util.setHtml("listView", res.content);
+            }
+        });
     }
 
     removeBinaryByUid = (uid): void => {
-        for (var i = 0; i < this.currentNodeData.children.length; i++) {
-            let node: I.NodeInfo = this.currentNodeData.children[i];
+        for (var i = 0; i < this.currentNodeData.node.children.length; i++) {
+            let node: I.NodeInfo = this.currentNodeData.node.children[i];
             if (node.uid === uid) {
                 node.hasBinary = false;
                 break;
@@ -731,30 +705,11 @@ export class Meta64 implements Meta64Intf {
         //
         // (<any>window).addEvent(window, "resize", (<any>window).windowResize);
         //
-        // this commented section is not working in my new x-app code, but it's ok to comment it out for now.
-        //
-        // This is our template element in index.html
-        // var app = document.querySelector('#x-app');
-        // // Listen for template bound event to know when bindings
-        // // have resolved and content has been stamped to the page
-        // app.addEventListener('dom-change', function() {
-        //     console.log('app ready event!');
-        // });
-
-        (window as any).addEventListener('polymer-ready', (e) => {
-            console.log('polymer-ready event!');
-        });
-        console.log("running module: cnst.js");
 
         if (this.appInitialized)
             return;
 
         this.appInitialized = true;
-
-        let tabs = util.poly("mainIronPages");
-        tabs.addEventListener("iron-select", () => {
-            this.tabChangeEvent(tabs.selected);
-        });
 
         this.initConstants();
         this.displaySignupMessage();
@@ -785,29 +740,43 @@ export class Meta64 implements Meta64Intf {
          * This call checks the server to see if we have a session already, and gets back the login information from
          * the session, and then renders page content, after that.
          */
+
+        //this.pingServer();
         user.refreshLogin();
 
-        /*
-         * Check for screen size in a timer. We don't want to monitor actual screen resize events because if a user
-         * is expanding a window we basically want to limit the CPU and chaos that would ensue if we tried to adjust
-         * things every time it changes. So we throttle back to only reorganizing the screen once per second. This
-         * timer is a throttle sort of. Yes I know how to listen for events. No I'm not doing it wrong here. This
-         * timer is correct in this case and behaves superior to events.
-         */
-        /*
-         * Polymer->disable
-         * setInterval(function() { var width = $ (window).width();
-         * if (width != _.deviceWidth) { // console.log("Screen width changed: " + width);
-         * _.deviceWidth = width; _.deviceHeight = $ (window).height();
-         * _.screenSizeChange(); } }, 1500);
-         */
         this.updateMainMenuPanel();
-        this.refreshAllGuiEnablement();
-        util.initProgressMonitor();
+
+        util.initProgressMonitor(); 
         this.processUrlParams();
-        this.initStaticHtmlOnClicks();
+        // this.initStaticHtmlOnClicks();
+
+        this.initTabClicks();
 
         console.log("initApp complete.");
+    }
+
+    initTabClicks = () => {
+        $('[href="#mainTab"]').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show'); //setTab
+        });
+
+        $('[href="#searchTab"]').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show'); //setTab
+        });
+
+        $('[href="#timelineTab"]').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show'); //setTab
+        });
+    }
+
+    pingServer = () => {
+        util.ajax<I.PingRequest, I.PingResponse>("ping", {},
+            (res: I.PingResponse) => {
+                console.log("Server Info: " + res.serverInfo);
+            });
     }
 
     addTypeHandlers = (typeName: string, renderFunction: Function, orderingFunction: Function): void => {
@@ -817,20 +786,6 @@ export class Meta64 implements Meta64Intf {
         if (orderingFunction) {
             this.propOrderingFunctionsByJcrType[typeName] = orderingFunction;
         }
-    }
-
-    /* Eventually i'll refactor to have all these domIds in a component, and the component will contain the assignment of the onclicks */
-    initStaticHtmlOnClicks = (): void => {
-        domBind.addOnClick("headerAppName", nav.navPublicHome);
-        domBind.addOnClick("navHomeButton", nav.navHome);
-        domBind.addOnClick("upLevelButton", nav.navUpLevel);
-        domBind.addOnClick("editModeButton", nav.editMode);
-        domBind.addOnClick("searchMainAppButton", nav.search);
-        domBind.addOnClick("timelineMainAppButton", srch.timelineByModTime);
-        domBind.addOnClick("userPreferencesMainAppButton", nav.preferences);
-        domBind.addOnClick("openLoginDlgButton", nav.login);
-        domBind.addOnClick("navLogoutButton", nav.logout);
-        domBind.addOnClick("openSignupPgButton", nav.signup);
     }
 
     processUrlParams = (): void => {
@@ -867,7 +822,7 @@ export class Meta64 implements Meta64Intf {
                 render.adjustImageSize(this.currentNodeData.node);
             }
 
-            util.forEachArrElm(this.currentNodeData.children, (node, i) => {
+            util.forEachArrElm(this.currentNodeData.node.children, (node, i) => {
                 if (node.imgId) {
                     render.adjustImageSize(node);
                 }

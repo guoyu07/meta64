@@ -10,19 +10,16 @@ import { Div } from "../widget/Div";
 import { Checkbox } from "../widget/Checkbox";
 import { Comp } from "../widget/base/Comp";
 import { Captcha } from "../widget/Captcha";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
     util = ctx.util;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var postTargetUrl;
 
 export class SignupDlg extends DialogBase {
 
@@ -33,22 +30,23 @@ export class SignupDlg extends DialogBase {
     captchaImage: Captcha;
 
     constructor() {
-        super();
+        super("Create SubNode Account");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Create SubNode Account"),
-            this.userTextField = new TextField("User"),
-            this.passwordTextField = new PasswordTextField("Password"),
-            this.emailTextField = new TextField("Email"),
-            this.captchaTextField = new TextField("Captcha"),
-            this.captchaImage = new Captcha(),
-            new ButtonBar([
-                new Button("Create Account", this.signup),
-                new Button("Try Different Image", this.tryAnotherCaptcha),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                this.userTextField = new TextField("User"),
+                this.passwordTextField = new PasswordTextField("Password"),
+                this.emailTextField = new TextField("Email"),
+                this.captchaTextField = new TextField("Captcha"),
+                this.captchaImage = new Captcha(),
+                new ButtonBar([
+                    new Button("Create Account", this.signup),
+                    new Button("Try Different Image", this.tryAnotherCaptcha),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -90,7 +88,7 @@ export class SignupDlg extends DialogBase {
 
     tryAnotherCaptcha = (): void => {
         let cacheBuster = util.currentTimeMillis();
-        let src = postTargetUrl + "captcha?t=" + cacheBuster;
+        let src = util.getRpcPath() + "captcha?t=" + cacheBuster;
         this.captchaImage.setSrc(src);
     }
 

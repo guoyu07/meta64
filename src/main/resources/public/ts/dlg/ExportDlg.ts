@@ -34,7 +34,7 @@ export class ExportDlg extends DialogBase {
     pdfRadioButton: RadioButton;
 
     constructor() {
-        super();
+        super("Export");
         this.buildGUI();
     }
 
@@ -42,8 +42,8 @@ export class ExportDlg extends DialogBase {
         this.setChildren([
             new Header("Export Node"),
             new RadioButtonGroup([
-                this.zipRadioButton = new RadioButton("ZIP", false),
-                this.mdRadioButton = new RadioButton("MD (Markdown)", false),
+                this.zipRadioButton = new RadioButton("ZIP", false, "exportTypeGroup"),
+                this.mdRadioButton = new RadioButton("MD (Markdown)", false, "exportTypeGroup"),
                 //had to disable PDF, because PDFBox hangs in Java, and until they fix that bug
                 //there's nothing i can do other than ditch PDF box completely, which i'm not ready to do yet.
                 //this.pdfRadioButton = new RadioButton("PDF", false),
@@ -92,7 +92,7 @@ export class ExportDlg extends DialogBase {
                     new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null)
                 ])
             }).open();
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
             view.scrollToSelectedNode();
         }
     }

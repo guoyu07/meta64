@@ -26,6 +26,10 @@ import { RenderIntf } from "./intf/RenderIntf";
 import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
+import * as marked from 'marked';
+import { setTimeout } from "timers";
+
+declare var $;
 
 let meta64: Meta64;
 let util: Util;
@@ -45,13 +49,13 @@ let tag: Tag; PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
     tag = s.tag;
 });
 
-declare var postTargetUrl;
 declare var prettyPrint;
 
 export class Render implements RenderIntf {
 
     private PRETTY_TAGS: boolean = true;
     private debug: boolean = false;
+    private markedRenderer = null;
 
     /*
      * This is the content displayed when the user signs in, and we see that they have no content being displayed. We
@@ -91,6 +95,7 @@ export class Render implements RenderIntf {
 
         if (cnst.SHOW_PATH_ON_ROWS) {
             let ordinalStr = node.logicalOrdinal != -1 ? " [" + node.logicalOrdinal + "] " : " ";
+            //todo: need a short path that converts stuff to something containing strings like "yadda/.dedbeef/yadda"
             pathDiv = new Div("Path: " + node.path + ordinalStr + typeName, {
                 "class": "path-display"
             });
@@ -204,12 +209,9 @@ export class Render implements RenderIntf {
                     let jcrContent = props.renderProperty(contentProp);
                     //console.log("**************** jcrContent for MARKDOWN:\n"+jcrContent);
 
-                    let markedContent = "<marked-element sanitize='true'>" +
-                        tag.div({ "slot": "markdown-html", "class": "markdown-html" }) +
-                        "<script type='text/markdown'>\n" +
-                        jcrContent +
-                        "</script>" +
-                        "</marked-element>";
+                    this.initMarkdown();
+
+                    let markedContent = tag.div({ "class": "markdown-html" }, marked(jcrContent));
 
                     //When doing server-side markdown we had this processing the HTML that was generated
                     //but I haven't looked into how to get this back now that we are doing markdown on client.
@@ -278,6 +280,22 @@ export class Render implements RenderIntf {
         return ret;
     }
 
+    initMarkdown = (): void => {
+        if (this.markedRenderer) return;
+        this.markedRenderer = new marked.Renderer();
+
+        marked.setOptions({
+            renderer: this.markedRenderer,
+            gfm: true,
+            tables: true,
+            breaks: false,
+            pedantic: false,
+            sanitize: false,
+            smartLists: true,
+            smartypants: false
+        });
+    }
+
     renderJsonFileSearchResultProperty = (jsonContent: string): string => {
         let content: string = "";
         try {
@@ -322,7 +340,7 @@ export class Render implements RenderIntf {
      *
      * node is a NodeInfo.java JSON
      */
-    renderNodeAsListItem = (node: I.NodeInfo, index: number, count: number, rowCount: number): string => {
+    renderNodeAsListItem = (node: I.NodeInfo, index: number, count: number, rowCount: number, level: number): string => {
 
         let uid: string = node.uid;
         let prevPageExists: boolean = nav.mainOffset > 0;
@@ -337,7 +355,7 @@ export class Render implements RenderIntf {
         // }
         let editingAllowed = edit.isEditAllowed(node); //meta64.userPreferences.editMode && meta64.isAdminUser || meta64.userName==node.owner;
 
-        console.log("Rendering Node Row[" + index + "] editingAllowed="+editingAllowed);
+        console.log("Rendering Node Row[" + index + "] editingAllowed=" + editingAllowed);
 
         /*
          * if not selected by being the new child, then we try to select based on if this node was the last one
@@ -351,13 +369,13 @@ export class Render implements RenderIntf {
         let buttonBar: ButtonBar = this.makeRowButtonBar(node, canMoveUp, canMoveDown, editingAllowed);
         let buttonBarHtmlRet: string = buttonBar.renderHtml();
         let bkgStyle: string = this.getNodeBkgImageStyle(node);
-
+        let indentStyle: string = "margin-left: " + (level * 30) + "px;";
         let cssId: string = "row_" + uid;
         return tag.div({
             "class": "node-table-row" + (selected ? " active-row" : " inactive-row"),
             "onclick": (elm) => { meta64.clickOnNodeRow(uid); }, //
             "id": cssId,
-            "style": bkgStyle
+            "style": bkgStyle + indentStyle
         },//
             buttonBarHtmlRet + tag.div({
                 "id": uid + "_content"
@@ -373,7 +391,7 @@ export class Render implements RenderIntf {
 
         let path: string = util.stripIfStartsWith(node.path, "/root");
         let url: string = window.location.origin + "?id=" + path;
-        meta64.selectTab("mainTabName");
+        meta64.selectTab("mainTab");
 
         let message: string = "URL using path: <br>" + url;
         let uuid: string = props.getNodePropertyVal("jcr:uuid", node);
@@ -482,14 +500,14 @@ export class Render implements RenderIntf {
             if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
                 createSubNodeButton = new Button("Add", () => { meta64.createSubNode(node.uid); }, {
-                    "icon": "icons:picture-in-picture-alt", //"icons:more-vert",
+                    //"icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                 });
             }
 
             if (cnst.INS_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
                 insertNodeButton = new Button("Ins", () => { meta64.insertNode(node.uid); }, {
-                    "icon": "icons:picture-in-picture" //"icons:more-horiz",
+                    //"icon": "icons:picture-in-picture" //"icons:more-horiz",
                 });
             }
         }
@@ -499,7 +517,7 @@ export class Render implements RenderIntf {
         if (meta64.userPreferences.editMode && editingAllowed) {
             /* Construct Create Subnode Button */
             editNodeButton = new Button("Edit", () => { meta64.runEditNode(node.uid); }, {
-                "icon": "editor:mode-edit"
+                //"icon": "editor:mode-edit"
             });
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && !commentBy) {
@@ -507,14 +525,14 @@ export class Render implements RenderIntf {
                 if (canMoveUp) {
                     /* Construct Create Subnode Button */
                     moveNodeUpButton = new Button("Up", () => { meta64.moveNodeUp(node.uid); }, {
-                        "icon": "icons:arrow-upward"
+                        //"icon": "icons:arrow-upward"
                     });
                 }
 
                 if (canMoveDown) {
                     /* Construct Create Subnode Button */
                     moveNodeDownButton = new Button("Dn", () => { meta64.moveNodeDown(node.uid); }, {
-                        "icon": "icons:arrow-downward"
+                        //"icon": "icons:arrow-downward"
                     });
                 }
             }
@@ -580,13 +598,17 @@ export class Render implements RenderIntf {
 
         nav.endReached = data && data.endReached;
 
-        if (!data || !data.node) {
-            util.setElmDisplayById("listView", false);
-            util.setInnerHTMLById("mainNodeContent", "No content is available here.");
-            return;
-        } else {
-            util.setElmDisplayById("listView", true);
-        }
+        let exit: boolean = false;
+        domBind.whenElm("listView", (elm) => {
+            if (!data || !data.node) {
+                util.setElmDisplayById("listView", false);
+                util.setInnerHTMLById("mainNodeContent", "No content is available here.");
+                exit = true;
+            } else {
+                util.setElmDisplayById("listView", true);
+            }
+        });
+        if (exit) return;
 
         meta64.treeDirty = false;
 
@@ -634,13 +656,8 @@ export class Render implements RenderIntf {
             let upLevelButton: string = "";
 
             if (meta64.currentNodeData.node && nav.parentVisibleToUser()) {
-                upLevelButton = tag.button({
-                    "raised": "raised",
-                    "style": "background-color: #4caf50;color:white;",
-                    "icon": "icons:change-history",
-                    "onclick": () => { nav.navUpLevel(); } //
-                }, //Note: this text "Up" won't actully appear because currently we don't support icons AND text on buttons
-                    "Up");
+
+                upLevelButton = new Button("Up", () => { nav.navUpLevel(); }).renderHtml();
             }
 
             // console.log("data.node.path="+data.node.path);
@@ -657,30 +674,18 @@ export class Render implements RenderIntf {
              */
 
             if (publicAppend && createdBy != meta64.userName && commentBy != meta64.userName) {
-                replyButton = tag.button({
-                    "raised": "raised",
-                    "onclick": () => { meta64.replyToComment(data.node.uid); }//
-                }, //
-                    "Reply");
+                replyButton = new Button("Reply", () => { meta64.replyToComment(data.node.uid); }).renderHtml();
             }
 
             if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
-                createSubNodeButton = tag.button({
-                    "icon": "icons:picture-in-picture-alt", //icons:more-vert",
-                    "raised": "raised",
-                    "onclick": () => { meta64.createSubNode(uid); }
-                }, "Add");
+                createSubNodeButton = new Button("Add", () => { meta64.createSubNode(uid); }).renderHtml();
             }
 
             /* Add edit button if edit mode and this isn't the root */
             if (edit.isEditAllowed(data.node)) {
 
                 /* Construct Create Subnode Button */
-                editNodeButton = tag.button({
-                    "icon": "editor:mode-edit",
-                    "raised": "raised",
-                    "onclick": () => { meta64.runEditNode(uid); }
-                }, "Edit");
+                editNodeButton = new Button("Edit", () => { meta64.runEditNode(uid); }).renderHtml();
             }
 
             /* Construct Create Subnode Button */
@@ -706,50 +711,45 @@ export class Render implements RenderIntf {
             util.setElmDisplayById("mainNodeContent", false);
         }
 
+        // $('[href="#main"]').click(function (e) {
+        //     e.preventDefault()
+        //     $(this).tab('show')
+        // })
+
+        // $('[href="#main"]').tab('show');
+
         // console.log("update status bar.");
         view.updateStatusBar();
 
         if (nav.mainOffset > 0) {
-            let firstButton: string = this.makeButton("First Page", "firstPageButton", this.firstPage);
-            let prevButton: string = this.makeButton("Prev Page", "prevPageButton", this.prevPage);
+            let firstButton: string = new Button("First Page", this.firstPage, { id: "firstPageButton" }).renderHtml();
+            let prevButton: string = new Button("Prev Page", this.prevPage, { id: "prevPageButton" }).renderHtml();
             output += this.centeredButtonBar(firstButton + prevButton, "paging-button-bar");
         }
 
-        let rowCount: number = 0;
-        if (data.children) {
-            let childCount: number = data.children.length;
-            // console.log("childCount: " + childCount);
-            /*
-             * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
-             * the client side for various reasons.
-             */
-            for (let i = 0; i < data.children.length; i++) {
-                let node: I.NodeInfo = data.children[i];
-                if (!edit.nodesToMoveSet[node.id]) {
-                    let row: string = this.generateRow(i, node, newData, childCount, rowCount);
-                    if (row.length != 0) {
-                        output += row;
-                        rowCount++;
-                    }
-                }
-            }
+        if (data.node.children) {
+            output += this.renderChildren(data.node, newData, 1);
         }
 
         if (edit.isInsertAllowed(data.node)) {
-            if (rowCount == 0 && !meta64.isAnonUser) {
+            if (!output && !meta64.isAnonUser) {
                 output = this.getEmptyPagePrompt();
             }
         }
 
         if (!data.endReached) {
-            let nextButton = this.makeButton("Next Page", "nextPageButton", this.nextPage);
+            let nextButton = new Button("Next Page", this.nextPage, { id: "nextPageButton" }).renderHtml();
 
             //todo-1: last page button disabled pending refactoring
             //let lastButton = this.makeButton("Last Page", "lastPageButton", this.lastPage);
             output += this.centeredButtonBar(nextButton /* + lastButton */, "paging-button-bar");
         }
 
-        util.setHtml("listView", output);
+        //console.log("rendering output=: " + util.toJson(output));
+        domBind.whenElm("listView", (elm) => {
+            util.setHtml("listView", output);
+            meta64.selectTab("mainTab");
+        });
 
         if (meta64.codeFormatDirty) {
             prettyPrint();
@@ -773,6 +773,34 @@ export class Render implements RenderIntf {
         }
     }
 
+    private renderChildren = (node: I.NodeInfo, newData: boolean, level: number): string => {
+        if (!node || !node.children) return "";
+        let output = "";
+        let childCount: number = node.children.length;
+        // console.log("childCount: " + childCount);
+        /*
+         * Number of rows that have actually made it onto the page to far. Note: some nodes get filtered out on
+         * the client side for various reasons.
+         */
+
+        let rowCount: number = 0;
+        for (let i = 0; i < node.children.length; i++) {
+            let n: I.NodeInfo = node.children[i];
+            if (!edit.nodesToMoveSet[n.id]) {
+                let row: string = this.generateRow(i, n, newData, childCount, rowCount, level);
+                if (row.length != 0) {
+                    output += row;
+                    rowCount++;
+                }
+
+                if (n.children) {
+                    output += this.renderChildren(n, newData, level + 1);
+                }
+            }
+        }
+        return output;
+    }
+
     firstPage = (): void => {
         console.log("First page button click.");
         view.firstPage();
@@ -793,8 +821,7 @@ export class Render implements RenderIntf {
         view.lastPage();
     }
 
-    generateRow = (i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number): string => {
-
+    generateRow = (i: number, node: I.NodeInfo, newData: boolean, childCount: number, rowCount: number, level: number): string => {
         if (meta64.isNodeBlackListed(node))
             return "";
 
@@ -807,13 +834,13 @@ export class Render implements RenderIntf {
         }
 
         rowCount++; // warning: this is the local variable/parameter
-        let row = this.renderNodeAsListItem(node, i, childCount, rowCount);
+        let row = this.renderNodeAsListItem(node, i, childCount, rowCount, level);
         // console.log("row[" + rowCount + "]=" + row);
         return row;
     }
 
     getUrlForNodeAttachment = (node: I.NodeInfo): string => {
-        return postTargetUrl + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
+        return util.getRpcPath() + "bin/file-name?nodeId=" + encodeURIComponent(node.path) + "&ver=" + node.binVer;
     }
 
     /* see also: makeImageTag() */
@@ -972,7 +999,7 @@ export class Render implements RenderIntf {
      * creates HTML tag with all attributes/values specified in attributes object, and closes the tag also if
      * content is non-null.
      * 
-     * todo-0: Is there a pure JS way (or i can use React) to render a Node like this? If the browser
+     * todo-1: Is there a pure JS way (or i can use React) to render a Node like this? If the browser
      * has a function for creating an element like this it will perform MUCH better than us
      * building our own string here. Of course the fancy stuff hooking up functions would need to 
      * be pre-processed and still done by us here.
@@ -1114,22 +1141,20 @@ export class Render implements RenderIntf {
         });
     }
 
-    makeButton = (text: string, id: string, callback: Function): string => {
-        let attribs = {
-            "raised": "raised",
-            "id": id,
-            "class": "standardButton"
-        };
+    // makeButton = (text: string, id: string, callback: Function): string => {
+    //     let attribs = {
+    //         "id": id,
+    //     };
 
-        if (typeof callback === "function") {
-            (<any>attribs).onclick = callback;
-        }
-        else {
-            throw "makeButton using invalid function: buttonId=" + id;
-        }
+    //     if (typeof callback === "function") {
+    //         (<any>attribs).onclick = callback;
+    //     }
+    //     else {
+    //         throw "makeButton using invalid function: buttonId=" + id;
+    //     }
 
-        return tag.button(attribs, text);
-    }
+    //     return tag.button(attribs, text);
+    // }
 
     allowPropertyToDisplay = (propName: string): boolean => {
         if (!meta64.inSimpleMode())

@@ -3,7 +3,6 @@
     "compilerOptions": {
         "outDir": "./dist/",
 
-        //todo-0: for now i want source info even in prod.
         //"sourceMap": false,
         //"inlineSources" : false
     }

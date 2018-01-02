@@ -8,8 +8,9 @@ declare var tag;
 
 export class Form extends Comp {
 
-    constructor(attribs : Object) {
+    constructor(attribs : Object, initialChildren: Comp[] = null) {
         super(attribs);
+        this.setChildren(initialChildren);
     }
 
     renderHtml = (): string => {

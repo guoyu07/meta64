@@ -1,7 +1,7 @@
 console.log("NavIntf.ts");
 
 import * as I from "../Interfaces";
-import {Singletons} from "../Singletons";
+import { Singletons } from "../Singletons";
 
 export interface NavIntf {
     _UID_ROWID_PREFIX: string;
@@ -11,6 +11,7 @@ export interface NavIntf {
 
     ROWS_PER_PAGE: number;
 
+    timelineByModTime(): void;
     search(): void;
     searchTags(): void;
     searchFiles(): void;

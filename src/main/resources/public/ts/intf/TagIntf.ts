@@ -22,9 +22,6 @@ export interface TagIntf {
     checkbox(attr?: Object): string;
     audio(attr: Object, content: string): string;
     progress(attr?: Object): string;
-    menuItem(attr?: Object, content?: string): string;
-    menu(attr?: Object, content?: string): string;
-    subMenu(attr?: Object, content?: string): string;
     form(attr: Object, content: string): string;
     dlgSectionHeading(name: string): string;
 }

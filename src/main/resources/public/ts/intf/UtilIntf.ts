@@ -38,6 +38,7 @@ export interface UtilIntf {
     initProgressMonitor(): void;
     progressInterval(): void;
     getHostAndPort(): string;
+    getRpcPath(): string;
     ajax<RequestType, ResponseType>(postName: string, postData: RequestType,
         callback?: (response: ResponseType) => void);
     logAndThrow(message: string);
@@ -57,9 +58,6 @@ export interface UtilIntf {
     domElm(id): HTMLElement;
     setInnerHTMLById(id: string, val: string): void;
     setInnerHTML(elm: HTMLElement, val: string): void;
-    poly(id): any;
-    polyElm(id: string): any;
-    polyElmNode(id: string): any;
     isObject(obj: any): boolean;
     currentTimeMillis(): number;
     emptyString(val: string): boolean;

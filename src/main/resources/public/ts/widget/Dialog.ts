@@ -1,20 +1,56 @@
 console.log("Dialog.ts");
 
+import * as React from 'react';
 import { Comp } from "./base/Comp";
+import { Div } from "../widget/Div";
+import { CloserButton } from "../widget/CloserButton";
+import { Heading } from "../widget/Heading";
 
 declare var tag;
 
 export class Dialog extends Comp {
 
-    constructor(public text: string) {
-        //Note: we end up seeing ugly scrollbar overlap if we have less than 50px (significantly less) on the padding-right value.
-        super({
-            "style": "margin:0 auto; padding-left:15px; padding-right:50px; max-width:900px; border:3px solid gray; with-backdrop:with-backdrop;",
-            "sourceClass" : "Dialog"
-        });
-    }
+  constructor(private title: string) {
+    //Note: we end up seeing ugly scrollbar overlap if we have less than 50px (significantly less) on the padding-right value.
+    super({
+      //"style": "margin:0 auto; padding-left:15px; padding-right:50px; max-width:900px; border:3px solid gray; with-backdrop:with-backdrop;",
+      //"sourceClass": "Dialog"
+    });
+  }
 
-    renderHtml = (): string => {
-        return tag.dialog(this.attribs, this.renderChildren());
-    }
+  renderHtml = (): string => {
+    let dlg = new Div(null, {
+      class: "modal fade",
+      tabindex: "-1",
+      role: "dialog",
+      "id": this.getId()
+    },
+      [
+        new Div(null, {
+          class: "modal-dialog modal-lg",
+          role: "document"
+        },
+          [
+            new Div(null, {
+              class: "modal-content"
+            },
+              [
+                new Div(null, {
+                  class: "modal-header"
+                },
+                  [
+                    new Heading(5, this.title, {
+                      class: "modal-title",
+                    }),
+                    new CloserButton()
+                  ]),
+                new Div(null, {
+                  class: "modal-body"
+                }, this.children)
+              ])
+          ])
+      ]);
+
+    return dlg.renderHtml();
+  }
 }

@@ -1,7 +1,5 @@
 console.log("DialogBase.ts");
 
-/// <reference types="polymer" />
-
 import { Div } from "./widget/Div";
 import { Comp } from "./widget/base/Comp";
 import { Dialog } from "./widget/Dialog";
@@ -20,7 +18,7 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-declare var Polymer: polymer.PolymerStatic;
+declare var $;
 
 let meta64: Meta64;
 let util: Util;
@@ -49,8 +47,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
     built: boolean;
 
-    constructor() {
-        super(null);
+    constructor(title: string) {
+        super(title);
     }
 
     /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
@@ -70,9 +68,9 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
              *
              * I'm not sure i'm going to keep modalsContainer, but it works fine for now.
              */
-            let modalsContainer = util.domElm("modalsContainer");
-            modalsContainer.style.width = "100%";
-            modalsContainer.style.height = "100%";
+            //let modalsContainer = util.domElm("modalsContainer");
+            //modalsContainer.style.width = "1px"; //"100%";
+            //modalsContainer.style.height = "1px"; //"100%";
 
             /*
              * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
@@ -82,94 +80,37 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
              * This createElement call is done with a DIV, here although it's really going to be a 'paper-dialog' when the render sets the innerHTML
              * on it, but we have to create first as a DIV because the DOM tree doesn't yet know about 'paper-dialog'
              */
-            let node = document.createElement("div");
+            //let node = document.createElement("div");
+            //modalsContainer.appendChild(node);
+            let myModal = $(this.renderHtml());
+            //this.renderToDom(node);
 
-            //NOTE: This works, but is an example of what NOT to do actually. Instead always
-            //set these properties on the 'polyElm.node' below.
-            //node.setAttribute("with-backdrop", "with-backdrop");
+            $("body").append(myModal);
+            //myModal.modal();
 
-            modalsContainer.appendChild(node);
-
-            this.renderToDom(node);
-
-            /* the 'flush' call is actually only needed before interrogating the DOM
-            for things like height of components, etc */
-            Polymer.dom.flush();
-            Polymer.Base.updateStyles();
-
-            // let left = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, "left");
-            // let center = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, this.build());
-            // let right = tag.div( {
-            //     "display": "table-column",
-            //     "style": "border: 1px solid black;"
-            // }, "right");
-            //
-            // let row = tag.div( { "display": "table-row" }, left + center + right);
-            //
-            // let table: string = tag.div(
-            //     {
-            //         "display": "table",
-            //     }, row);
-            //
-            // util.setHtml(id, table);
+            //$("#" + this.getId()).modal({
+            myModal.modal({
+                backdrop: "static",
+                keyboard: true,
+                focus: true,
+                show: true
+            });
 
             this.built = true;
 
             if (typeof this.init == 'function') {
                 this.init();
             }
-            //console.log("Showing dialog: " + id);
-
-            /* now open and display polymer dialog we just created */
-            let polyElm = util.polyElm(this.getId());
-
-            /*
-            i tried to tweak the placement of the dialog using fitInto, and it didn't work
-            so I'm just using the paper-dialog CSS styling to alter the dialog size to fullscreen
-            let ironPages = util.polyElm("mainIronPages");
-    
-            After the TypeScript conversion I noticed having a modal flag (modal = true) will cause
-            an infinite loop (completely hang) in Chrome browser, but this issue is most likely
-            not related to TypeScript at all. I just mention TS just in case, because
-            that's when I noticed it. Dialogs are fine but not a dialog on top of another dialog, which is
-            the case where it hangs if modal=true
-            */
-            //polyElm.node.modal = true;
-
-            //polyElm.node.refit();
-            polyElm.node.noCancelOnOutsideClick = true;
-            //polyElm.node.horizontalOffset = 0;
-            //polyElm.node.verticalOffset = 0;
-            //polyElm.node.fitInto = ironPages.node;
-            //polyElm.node.constrain();
-            //polyElm.node.center();
-            polyElm.node.setAttribute("with-backdrop", "with-backdrop");
-            polyElm.node.open();
-
-            //let dialog = document.getElementById('loginDialog');
-            node.addEventListener('iron-overlay-closed', (customEvent) => {
-                //let id = (<any>customEvent.currentTarget).id;
-                console.log("****************** Dialog: " + this.getId() + " is closed!");
-                this.closeEvent();
-                resolve(this);
-            });
         });
     }
 
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
     public cancel(): void {
-        let polyElm = util.polyElm(this.getId());
-        polyElm.node.cancel();
+        $("#" + this.getId()).modal('hide');
 
-        let modalsContainer = util.domElm("modalsContainer");
-        modalsContainer.style.width = "1px";
-        modalsContainer.style.height = "1px";
+        /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so i'm just leaving it 
+        orphaned for now, but probably adding a timer of a second or to will work, doing this call asynchronously plenty later */
+        //$("#" + this.getId()).remove();
     }
 }

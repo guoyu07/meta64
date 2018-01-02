@@ -25,7 +25,7 @@ cd $META64
 
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
-mvn clean package -DskipTests=true
+mvn clean exec:exec package -DskipTests=true
 
 rm -f $META64/build/*.sh~
 rm -f $META64/src/main/resources/public/*.md~

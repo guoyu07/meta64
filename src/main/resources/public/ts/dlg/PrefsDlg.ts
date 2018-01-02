@@ -9,10 +9,13 @@ import { RadioButtonGroup } from "../widget/RadioButtonGroup";
 import { Checkbox } from "../widget/Checkbox";
 import { Legend } from "../widget/Legend";
 import { Div } from "../widget/Div";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { HeaderRe } from "../widget/HeaderRe";
+import { Form } from "../widget/Form";
+import { Constants as cnst } from "../Constants";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -21,7 +24,7 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
-declare var meta64;  
+declare var meta64;
 
 export class PrefsDlg extends DialogBase {
 
@@ -30,33 +33,40 @@ export class PrefsDlg extends DialogBase {
     showMetadataCheckBox: Checkbox;
 
     constructor() {
-        super();
+        super("Preferences");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Preferences"),
-            new Div(null, null, [
-                new Legend("Edit Mode:"),
-                new RadioButtonGroup([
-                    this.simpleRadioButton = new RadioButton("Simple", meta64.editModeOption == meta64.MODE_SIMPLE),
-                    this.advancedRadioButton = new RadioButton("Advanced", meta64.editModeOption == meta64.MODE_ADVANCED),
-                ]),
-            ]),
-            new Div(null, null, [
-                this.showMetadataCheckBox = new Checkbox("Show Row Metadata", meta64.showMetaData),
-            ]),
-            new Div(null, null, [
-                new ButtonBar([
-                    new Button("Save", this.savePreferences, null, true, this),
-                    new Button("Cancel", null, null, true, this)
-                ])
+            new Form(null, [
+                new Div(null, {
+                    "class": "form-group"
+                },
+                    [
+                        this.simpleRadioButton = new RadioButton("Simple", meta64.editModeOption == meta64.MODE_SIMPLE, "exportRadioGroup"),
+                        this.advancedRadioButton = new RadioButton("Advanced", meta64.editModeOption == meta64.MODE_ADVANCED, "exportRadioGroup"),
+                    ]
+                ),
+                new Div(null, {
+                    "class": "form-group"
+                },
+                    [
+                        this.showMetadataCheckBox = new Checkbox("Show Row Metadata", meta64.showMetaData),
+                    ]
+                ),
+                new ButtonBar(
+                    [
+                        new Button("Save", this.savePreferences, null, true, this),
+                        new Button("Cancel", null, null, true, this)
+                    ])
+
             ])
         ]);
     }
 
     savePreferences = (): void => {
+        debugger;
         meta64.editModeOption = this.simpleRadioButton.getChecked() ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
         meta64.showMetaData = this.showMetadataCheckBox.getChecked();
@@ -76,7 +86,7 @@ export class PrefsDlg extends DialogBase {
 
     savePreferencesResponse = (res: I.SaveUserPreferencesResponse): void => {
         if (util.checkSuccess("Saving Preferences", res)) {
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
             meta64.refresh();
         }
     }

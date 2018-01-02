@@ -9,6 +9,7 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextContent } from "../widget/TextContent";
 import { AudioPlayer } from "../widget/AudioPlayer";
+import { Form } from "../widget/Form";
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
@@ -29,7 +30,7 @@ export class AudioPlayerDlg extends DialogBase {
     private node: I.NodeInfo;
 
     constructor(args: Object) {
-        super();
+        super("Audio Player");
 
         console.log("Configuring AudioPlayer Dialog");
         this.sourceUrl = (<any>args).sourceUrl;
@@ -53,31 +54,33 @@ export class AudioPlayerDlg extends DialogBase {
         let rssTitle: I.PropertyInfo = props.getNodeProperty("sn:rssItemTitle", this.node);
 
         this.setChildren([
-            //space is at a premium for mobile, so let's just not even show the header.
-            //new Header("Audio Player"),
-            new TextContent(rssTitle.value),
-            this.audioPlayer = new AudioPlayer({
-                "src": this.sourceUrl,
-                "style": "width: 100%; border: 3px solid gray; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
-                "ontimeupdate": () => { podcast.onTimeUpdate(this); },
-                "oncanplay": () => { podcast.onCanPlay(this); },
-                "controls": "controls",
-                "preload": "auto"
-            }),
-            new ButtonBar([
-                new Button("< 30s", this.skipBack30Button),
-                new Button("30s >", this.skipForward30Button)
-            ]),
-            new ButtonBar([
-                new Button("Normal", this.normalSpeedButton),
-                new Button("1.5X", this.speed15Button),
-                new Button("2X", this.speed2Button)
-            ]),
-            new ButtonBar([
-                new Button("Pause", this.pauseButton),
-                new Button("Play", this.playButton),
-                //todo-1: even if this button appears to work, I need it to explicitly enforce the saving of the time value AND the removal of the AUDIO element from the DOM */
-                new Button("Close", this.closeBtn)
+            new Form(null, [
+                //space is at a premium for mobile, so let's just not even show the header.
+                //new Header("Audio Player"),
+                new TextContent(rssTitle.value),
+                this.audioPlayer = new AudioPlayer({
+                    "src": this.sourceUrl,
+                    "style": "width: 100%; border: 3px solid gray; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
+                    "ontimeupdate": () => { podcast.onTimeUpdate(this); },
+                    "oncanplay": () => { podcast.onCanPlay(this); },
+                    "controls": "controls",
+                    "preload": "auto"
+                }),
+                new ButtonBar([
+                    new Button("< 30s", this.skipBack30Button),
+                    new Button("30s >", this.skipForward30Button)
+                ]),
+                new ButtonBar([
+                    new Button("Normal", this.normalSpeedButton),
+                    new Button("1.5X", this.speed15Button),
+                    new Button("2X", this.speed2Button)
+                ]),
+                new ButtonBar([
+                    new Button("Pause", this.pauseButton),
+                    new Button("Play", this.playButton),
+                    //todo-1: even if this button appears to work, I need it to explicitly enforce the saving of the time value AND the removal of the AUDIO element from the DOM */
+                    new Button("Close", this.closeBtn)
+                ])
             ])
         ]);
     }

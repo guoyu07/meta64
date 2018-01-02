@@ -47,11 +47,15 @@ export class Nav implements NavIntf {
     endReached: boolean = true;
 
     /* todo-1: need to have this value passed from server rather than coded in TypeScript, however for now 
-    this MUST match this.ROWS_PER_PAGE variable in TypeScript */
-    ROWS_PER_PAGE: number = 25;
+    this MUST match RenderNodeService.ROWS_PER_PAGE in Java on server. */
+    ROWS_PER_PAGE: number = 5;
 
     search = (): void => {
         new SearchContentDlg().open();
+    }
+
+    timelineByModTime = (): void => {
+        srch.timelineByModTime();
     }
 
     searchTags = (): void => {
@@ -59,7 +63,7 @@ export class Nav implements NavIntf {
     }
 
     searchFiles = (): void => {
-        new SearchFilesDlg().open();
+        new SearchFilesDlg("Search Files").open();
     }
 
     editMode = (): void => {
@@ -158,7 +162,7 @@ export class Nav implements NavIntf {
             "offset": this.mainOffset,
             "goToLastPage": false
         }, (res: I.RenderNodeResponse) => {
-            this.upLevelResponse(ironRes.response, meta64.currentNodeData.node.id);
+            this.upLevelResponse(res, meta64.currentNodeData.node.id);
         });
     }
 
@@ -204,7 +208,7 @@ export class Nav implements NavIntf {
                     let nodeId: string = this._UID_ROWID_PREFIX + node.uid;
                     console.log("looking up using element id: " + nodeId);
 
-                    return util.polyElm(nodeId);
+                    return util.domElm(nodeId);
                 }
             } else {
                 console.log("no node highlighted");

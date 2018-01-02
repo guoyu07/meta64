@@ -61,6 +61,7 @@ export interface NodeInfo {
     uid: string;
     lastModified: string;
     imgId: string;
+    children: NodeInfo[];
 }
 
 export interface PrivilegeInfo {
@@ -151,6 +152,9 @@ export interface GetNodePrivilegesRequest {
 }
 
 export interface GetServerInfoRequest {
+}
+
+export interface PingRequest {
 }
 
 export interface RebuildIndexesRequest {
@@ -346,6 +350,10 @@ export interface GetServerInfoResponse extends OakResponseBase {
     serverInfo: string;
 }
 
+export interface PingResponse extends OakResponseBase {
+    serverInfo: string;
+}
+
 export interface RebuildIndexesResponse extends OakResponseBase {
 }
 
@@ -408,13 +416,14 @@ export interface RenameNodeResponse extends OakResponseBase {
 
 export interface RenderNodeResponse extends OakResponseBase {
     node: NodeInfo;
-    children: NodeInfo[];
     offsetOfNodeFound: number;
 
     /* holds true if we hit the end of the list of child nodes */
     endReached: boolean;
 
     displayedParent: boolean;
+
+    noDataResponse: string;
 }
 
 export interface ResetPasswordResponse extends OakResponseBase {

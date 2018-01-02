@@ -141,7 +141,7 @@ export class Edit implements EditIntf {
 
         util.checkSuccess("Insert Book", res);
         view.refreshTree(null, false);
-        meta64.selectTab("mainTabName");
+        meta64.selectTab("mainTab");
         view.scrollToSelectedNode();
     }
 
@@ -280,7 +280,7 @@ export class Edit implements EditIntf {
             */
             //render.refreshNodeOnPage(res.node);
             view.refreshTree(null, false, payload.savedId);
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
         }
     }
 
@@ -378,25 +378,25 @@ export class Edit implements EditIntf {
         let ordinal: number = meta64.getOrdinalOfNode(node);
         if (ordinal <= 0)
             return null;
-        return meta64.currentNodeData.children[ordinal - 1];
+        return meta64.currentNodeData.node.children[ordinal - 1];
     }
 
     /*
      * Returns the node below the specified node or null if node is itself the bottom node
      */
     getNodeBelow = (node: I.NodeInfo): I.NodeInfo => {
-        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node.children) return null;
         let ordinal: number = meta64.getOrdinalOfNode(node);
         console.log("ordinal = " + ordinal);
-        if (ordinal == -1 || ordinal >= meta64.currentNodeData.children.length - 1)
+        if (ordinal == -1 || ordinal >= meta64.currentNodeData.node.children.length - 1)
             return null;
 
-        return meta64.currentNodeData.children[ordinal + 1];
+        return meta64.currentNodeData.node.children[ordinal + 1];
     }
 
     getFirstChildNode = (): any => {
-        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
-        return meta64.currentNodeData.children[0];
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node.children) return null;
+        return meta64.currentNodeData.node.children[0];
     }
 
     runEditNode = (uid: any): void => {
@@ -414,7 +414,7 @@ export class Edit implements EditIntf {
     }
 
     insertNode = (uid?: any, typeName?: string): void => {
-        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return;
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node.children) return;
         this.parentOfNewNode = meta64.currentNodeData.node;
         if (!this.parentOfNewNode) {
             console.log("Unknown parent");
@@ -449,7 +449,7 @@ export class Edit implements EditIntf {
                 this.parentOfNewNode = highlightNode;
             }
             else {
-                if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
+                if (!meta64.currentNodeData || !meta64.currentNodeData.node.children) return null;
                 this.parentOfNewNode = meta64.currentNodeData.node;
             }
         } else {
@@ -480,7 +480,7 @@ export class Edit implements EditIntf {
          * actually very efficient.
          */
         render.renderPageFromData();
-        meta64.selectTab("mainTabName");
+        meta64.selectTab("mainTab");
     }
 
     /*
@@ -515,12 +515,12 @@ export class Edit implements EditIntf {
         let bestNode: I.NodeInfo = null;
         let takeNextNode: boolean = false;
 
-        if (!meta64.currentNodeData || !meta64.currentNodeData.children) return null;
+        if (!meta64.currentNodeData || !meta64.currentNodeData.node.children) return null;
 
         /* now we scan the children, and the last child we encounterd up until we find the rist onen in nodesMap will be the
         node we will want to select and scroll the user to AFTER the deleting is done */
-        for (let i = 0; i < meta64.currentNodeData.children.length; i++) {
-            let node: I.NodeInfo = meta64.currentNodeData.children[i];
+        for (let i = 0; i < meta64.currentNodeData.node.children.length; i++) {
+            let node: I.NodeInfo = meta64.currentNodeData.node.children[i];
 
             if (takeNextNode) {
                 return node;

@@ -3,6 +3,7 @@ console.log("MenuPanel.ts");
 import { Comp } from "./widget/base/Comp";
 import { Menu } from "./widget/Menu";
 import { MenuItem } from "./widget/MenuItem";
+import { Div } from "./widget/Div";
 import { Factory } from "./Factory";
 
 import { Meta64Intf as Meta64 } from "./intf/Meta64Intf";
@@ -61,13 +62,6 @@ export class MenuPanel extends Comp {
     buildGUI = (): void => {
         this.setChildren([
 
-            // I ended up not really liking this way of selecting tabs. I can just use normal polymer tabs.
-            // let pageMenuItems = //
-            //     menuItem("Main", "mainPageButton", "meta64.selectTab('mainTabName');") + //
-            //     menuItem("Search", "searchPageButton", "meta64.selectTab('searchTabName');") + //
-            //     menuItem("Timeline", "timelinePageButton", "meta64.selectTab('timelineTabName');");
-            // let pageMenu = makeTopLevelMenu("Page", pageMenuItems);
-
             new Menu("Bookmarks", [
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
@@ -102,13 +96,11 @@ export class MenuPanel extends Comp {
             ]),
             new Menu("Share", [
                 new MenuItem("Edit Node Sharing", share.editNodeSharing, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null && meta64.state.selNodeIsMine }), //
-
                 //todo-1: temporarily disabling this during mongo conversion
                 //new MenuItem("Find Shared Subnodes", share.findSharedNodes, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })
             ]),
             new Menu("Search", [
                 new MenuItem("Content", nav.search, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null })//, //
-
                 //todo-1: disaled during mongo conversion
                 //new MenuItem("Tags", nav.searchTags, () => { return !meta64.isAnonUser && meta64.state.highlightNode != null }), //
                 //new MenuItem("Files", nav.searchFiles, () => { return !meta64.isAnonUser && meta64.allowFileSystemSearch },
@@ -133,7 +125,6 @@ export class MenuPanel extends Comp {
                     () => { return meta64.state.exportFeatureEnabled },
                     true//
                 ), //
-
                 //todo-1: disabled during mongo conversion
                 //new MenuItem("Set Node A", view.setCompareNodeA, () => { return meta64.isAdminUser && meta64.state.highlightNode != null }, () => { return meta64.isAdminUser }), //
                 //new MenuItem("Compare as B (to A)", view.compareAsBtoA, //
@@ -150,7 +141,6 @@ export class MenuPanel extends Comp {
             //     menuItem("Search", "fileSysSearchButton", "systemfolder.search();"); //
             //     //menuItem("Browse", "fileSysBrowseButton", "systemfolder.browse();");
             // let fileSystemMenu = makeTopLevelMenu("FileSys", fileSystemMenuItems);
-
             /*
              * whatever is commented is only commented for polymer conversion
              */
@@ -175,5 +165,19 @@ export class MenuPanel extends Comp {
                 new MenuItem("Main Menu Help", nav.openMainMenuHelp)
             ])
         ]);
+    }
+
+    renderHtml = (): string => {
+
+        let menuPanel =
+            new Div(null,
+                {
+                    id: "accordion",
+                    role: "tablist"
+                },
+                this.children
+            );
+
+        return menuPanel.renderHtml();
     }
 }

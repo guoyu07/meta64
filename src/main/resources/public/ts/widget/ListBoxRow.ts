@@ -13,7 +13,7 @@ export class ListBoxRow extends Comp {
 
     constructor(public content: string, onclick: Function, public selected: boolean) {
         super(null);
-        this.setClass("listItem");
+        this.setClass("list-group-item list-group-item-action");
         this.setSelectedState(selected);
         this.setOnClick(() => {
             if (this.listBox) {

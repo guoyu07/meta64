@@ -71,12 +71,12 @@ export interface Meta64Intf {
     setNodeData(uid: string, data: Object);
     getNodeData(uid: string, prop: string): any;
     updateMainMenuPanel();
+    rebuildMainMenu();
     inSimpleMode(): boolean;
     refresh(): void;
     rebuildIndexes(): void;
     goToMainPage(rerender?: boolean, forceServerRefresh?: boolean): void;
     selectTab(pageName): void;
-    changePage(pg?: any, data?: any);
     isNodeBlackListed(node): boolean;
     getSelectedNodeUidsArray(): string[];
     getSelectedNodeIdsArray(): string[];
@@ -102,7 +102,6 @@ export interface Meta64Intf {
     initConstants();
     initApp(): void;
     addTypeHandlers(typeName: string, renderFunction: Function, orderingFunction: Function): void;
-    initStaticHtmlOnClicks(): void;
     processUrlParams(): void;
     tabChangeEvent(tabName): void
     displaySignupMessage(): void

@@ -1,12 +1,7 @@
 console.log("Util.ts");
 
-/// <reference types="polymer" />
-
-declare var Polymer: polymer.PolymerStatic;
-
 declare var Dropzone;
 declare var ace;
-declare var postTargetUrl;
 declare var prettyPrint;
 
 import { MessageDlg } from "./dlg/MessageDlg";
@@ -24,6 +19,7 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
+import axios, { AxiosRequestConfig } from 'axios';
 
 let meta64: Meta64;
 let encryption: Encryption;
@@ -36,6 +32,7 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
 
 export class Util implements UtilIntf {
 
+    rhost: string;
     logAjax: boolean = false;
     timeoutMessageShown: boolean = false;
     offline: boolean = false;
@@ -236,11 +233,31 @@ export class Util implements UtilIntf {
         return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     }
 
+    /* Calls to SERVER must to to this URL. We allow CORS, and can run the server itself on port 8181 for example, and then let
+    the webpack dev server be able to be serving up the JS file(s) on a separate port 8080. Theoretically this should work even 
+    if the server is truly on a different Machine/IP, but i haven't tried that scenario yet */
+    getRemoteHost = (): string => {
+        if (this.rhost) {
+            return this.rhost;
+        }
+
+        this.rhost = this.getParameterByName("rhost");
+        if (!this.rhost) {
+            this.rhost = window.location.origin;
+        }
+
+        return this.rhost;
+    }
+
+    getRpcPath = (): string => {
+        return this.getRemoteHost() + "/mobile/api/";
+    }
+
     ajax = <RequestType, ResponseType>(postName: string, postData: RequestType, //
         callback?: (response: ResponseType) => void) => {
 
-        let ironAjax;
-        let ironRequest;
+        debugger;
+        let axiosRequest;
 
         try {
             if (this.offline) {
@@ -252,28 +269,15 @@ export class Util implements UtilIntf {
                 console.log("JSON-POST[gen]: [" + postName + "]" + JSON.stringify(postData));
             }
 
-            /* Do not delete, research this way... */
-            // let ironAjax = this.$$ ("#myIronAjax");
-            //ironAjax = Polymer.dom((<_HasRoot>)window.document.root).querySelector("#ironAjax");
-
-            ironAjax = this.polyElmNode("ironAjax");
-            ironAjax.url = postTargetUrl + postName;
-            ironAjax.verbose = true;
-            ironAjax.body = JSON.stringify(postData);
-            ironAjax.method = "POST";
-            ironAjax.contentType = "application/json";
-
-            // specify any url params this way:
-            // ironAjax.params='{"alt":"json", "q":"chrome"}';
-
-            ironAjax.handleAs = "json"; // handle-as (is prop)
-
-            /* This not a required property */
-            // ironAjax.onResponse = "this.ironAjaxResponse";
-            ironAjax.debounceDuration = "300"; // debounce-duration
-
             this._ajaxCounter++;
-            ironRequest = ironAjax.generateRequest();
+            axiosRequest = axios.post(this.getRpcPath() + postName, postData, <AxiosRequestConfig>{
+                //Without this withCredentials axios (at least for CORS requests) doesn't send enough info (cookies?) to allow the server
+                //to recognize the same "session", and makes the server malfunction becasue it basically thinks each request is a 
+                //new session and fails the login security. This reminds me that there is the classic security hole here where a sniffer
+                //can get the cookie from a request and forge a new request as any user they please, yet this will be impossible in SSL of course.
+                withCredentials: true
+            });
+
         } catch (ex) {
             this.logAndReThrow("Failed starting request: " + postName, ex);
         }
@@ -295,35 +299,45 @@ export class Util implements UtilIntf {
          * are resolved. It's a big "and condition" of resolvement, and if any of the promises passed to it end up
          * failing, it fails this "ANDed" one also.
          */
-        ironRequest.completes.then(//
+        axiosRequest.then(//
 
+            //------------------------------------------------
             // Handle Success
-            () => {
+            //------------------------------------------------
+            (response) => {
                 try {
                     this._ajaxCounter--;
                     this.progressInterval();
 
                     if (this.logAjax) {
                         console.log("    JSON-RESULT: " + postName + "\n    JSON-RESULT-DATA: "
-                            + JSON.stringify(ironRequest.response));
+                            + JSON.stringify(response));
+                    }
+
+                    if (!response.data.success && response.data.message) {
+                        this.showMessage(response.data.message);
+                        return;
                     }
 
                     if (typeof callback == "function") {
-                        callback(<ResponseType>ironRequest.response);
+                        callback(<ResponseType>response.data);
                     }
                 } catch (ex) {
                     this.logAndReThrow("Failed handling result of: " + postName, ex);
                 }
             },
+            //------------------------------------------------
             // Handle Fail
-            () => {
+            //------------------------------------------------
+            //todo-1: lookup format for what ths error object will be.
+            (error) => {
                 try {
                     this._ajaxCounter--;
                     this.progressInterval();
                     console.log("Error in this.json");
 
-                    if (ironRequest.status == "403") {
-                        console.log("Not logged in detected in this.");
+                    if (error.status == "403") {
+                        console.log("Not logged in detected.");
                         this.offline = true;
 
                         if (!this.timeoutMessageShown) {
@@ -340,8 +354,8 @@ export class Util implements UtilIntf {
 
                     /* catch block should fail silently */
                     try {
-                        msg += "Status: " + ironRequest.statusText + "\n";
-                        msg += "Code: " + ironRequest.status + "\n";
+                        msg += "Status: " + JSON.stringify(error) + "\n";
+
                     } catch (ex) {
                     }
 
@@ -362,7 +376,8 @@ export class Util implements UtilIntf {
                     this.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
                 }
             });
-        return ironRequest;
+
+        return axiosRequest;
     }
 
     logAndThrow = (message: string) => {
@@ -492,9 +507,25 @@ export class Util implements UtilIntf {
         return de.value;
     }
 
+    setInnerHTMLById = (id: string, val: string): void => {
+        let domElm: HTMLElement = this.domElm(id);
+        this.setInnerHTML(domElm, val);
+    }
+
+    setInnerHTML = (elm: HTMLElement, val: string): void => {
+        if (elm) {
+            elm.innerHTML = val;
+        }
+    }
+
+    poly = (id): any => {
+        throw "oops. polymer is gone.";
+        //return this.polyElm(id);
+    }
+
     /*
-     * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
-     */
+         * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
+         */
     domElm = (id): HTMLElement => {
 
         /* why did i do this? I thought "#id" was valid for getDomElmementById right? */
@@ -508,53 +539,7 @@ export class Util implements UtilIntf {
         }
 
         let e: HTMLElement = document.getElementById(id);
-        //if (!e) {
-        //todo-1: periorically uncomment to see if anything is showing up here
-        //console.log("domElm Error. Required element id not found: " + id);
-        //}
         return e;
-    }
-
-    setInnerHTMLById = (id: string, val: string): void => {
-        let domElm: HTMLElement = this.domElm(id);
-        this.setInnerHTML(domElm, val);
-    }
-
-    setInnerHTML = (elm: HTMLElement, val: string): void => {
-        if (elm) {
-            elm.innerHTML = val;
-        }
-    }
-
-    poly = (id): any => {
-        return this.polyElm(id).node;
-    }
-
-    /*
-     * Gets the RAW DOM element and displays an error message if it's not found. Do not prefix with "#"
-     */
-    polyElm = (id: string): any => {
-
-        if (this.startsWith(id, "#")) {
-            id = id.substring(1);
-        }
-
-        if (this.contains(id, "#")) {
-            console.log("Invalid # in domElm");
-            return null;
-        }
-        let e = document.getElementById(id);
-        if (!e) {
-            console.log("domElm Error. Required element id not found: " + id);
-        }
-
-        let elm = Polymer.dom(e);
-        return elm;
-    }
-
-    polyElmNode = (id: string): any => {
-        let e = this.polyElm(id);
-        return e.node;
     }
 
     isObject = (obj: any): boolean => {
@@ -570,7 +555,7 @@ export class Util implements UtilIntf {
     }
 
     getInputVal = (id: string): any => {
-        return this.polyElm(id).node.value;
+        return (<any>this.domElm(id)).value;
     }
 
     /* returns true if element was found, or false if element not found */
@@ -578,9 +563,10 @@ export class Util implements UtilIntf {
         if (val == null) {
             val = "";
         }
-        let elm = this.polyElm(id);
+        let elm = this.domElm(id);
         if (elm) {
-            elm.node.value = val;
+            //elm.node.value = val;
+            (<any>elm).value = val;
         }
         return elm != null;
     }
@@ -612,13 +598,11 @@ export class Util implements UtilIntf {
         }
 
         let elm: HTMLElement = this.domElm(id);
-        let polyElm = Polymer.dom(elm);
-        polyElm.innerHTML = content;
-
-        /* the 'flush' call is actually only needed before interrogating the DOM
-        for things like height of components, etc */
-        Polymer.dom.flush();
-        Polymer.Base.updateStyles();
+        if (!elm) {
+            console.log("Unable to setHtml on ID: " + id + ". Not found.");
+            return;
+        }
+        elm.innerHTML = content;
     }
 
     setElmDisplayById = (id: string, showing: boolean) => {
@@ -752,7 +736,7 @@ export class Util implements UtilIntf {
         return <T>instance;
     }
 
-    //todo-0: I probably should use browser localStore and stop using cookies.
+    //todo-1: I probably should use browser localStore and stop using cookies? issues with that?
     setCookie = (name: string, val: string): void => {
         let d = new Date();
         d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));

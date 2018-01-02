@@ -13,13 +13,12 @@ import { Comp } from "../widget/base/Comp";
 export class MessageDlg extends DialogBase {
 
     constructor(public config: Object) {
-        super();
+        super((<any>config).title || "Message");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header((<any>this.config).title || "Message"),
             new TextContent((<any>this.config).message),
             (<any>this.config).customWidget,
             new ButtonBar([

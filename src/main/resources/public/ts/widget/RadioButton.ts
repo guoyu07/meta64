@@ -6,12 +6,17 @@ import { RadioButtonGroup } from "./RadioButtonGroup";
 declare var tag, domBind, util;
 export class RadioButton extends Comp {
 
-    constructor(public label: string, public checked: boolean) {
-        super(null);
+    constructor(public label: string, public checked: boolean, groupName: string) {
+        super(null); 
+        debugger;
         if (checked) {
             (<any>this.attribs).checked = "checked";
+            //this.setChecked(true);
         }
-        (<any>this.attribs).name = this.getId();
+        (<any>this.attribs).name = groupName; 
+        (<any>this.attribs).type = "radio";
+        (<any>this.attribs).class = "form-check-input";
+        (<any>this.attribs).label = label;
     }
 
     setChecked(checked: boolean) {

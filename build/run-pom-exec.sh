@@ -1,5 +1,5 @@
 #!/bin/bash
-#NOTE: This file is called from the POM.XML file to make a maven build from inside Eclipse work.
+#NOTE: This file is called from the POM.XML file.
 
 source ./setenv.sh
 

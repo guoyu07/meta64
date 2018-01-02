@@ -11,10 +11,11 @@ import { Checkbox } from "../widget/Checkbox";
 import { Comp } from "../widget/base/Comp";
 import { EditPrivsTable } from "../widget/EditPrivsTable";
 import { EditPrivsTableRow } from "../widget/EditPrivsTableRow";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -31,21 +32,22 @@ export class SharingDlg extends DialogBase {
     //publicCommentingCheckbox: Checkbox;
 
     constructor() {
-        super();
+        super("Node Sharing");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Node Sharing"),
-            this.privsTable = new EditPrivsTable(),
-            //todo-1: disabling this for now
-            //this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),
-            new ButtonBar([
-                new Button("Share with Person", this.shareToPersonDlg),
-                new Button("Share to Public", this.shareNodeToPublic),
-                new Button("Save", this.save, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                this.privsTable = new EditPrivsTable(),
+                //todo-1: disabling this for now
+                //this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),
+                new ButtonBar([
+                    new Button("Share with Person", this.shareToPersonDlg),
+                    new Button("Share to Public", this.shareNodeToPublic),
+                    new Button("Save", this.save, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -111,7 +113,7 @@ export class SharingDlg extends DialogBase {
     }
 
     shareToPersonDlg = (): void => {
-       new ShareToPersonDlg({"sharingDlg" : this}).open();
+        new ShareToPersonDlg({ "sharingDlg": this }).open();
     }
 
     shareNodeToPublic = (): void => {

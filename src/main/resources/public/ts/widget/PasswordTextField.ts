@@ -11,8 +11,8 @@ export class PasswordTextField extends TextField {
         super(null);
 
         util.mergeProps(this.attribs, {
-            "label" : label,
-            "type" : "password"
+            "type" : "password",
+            "class" : "form-control"
         });
     }
 }

@@ -5,11 +5,12 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
-import { Constants as cnst} from "../Constants";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { Constants as cnst } from "../Constants";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -18,25 +19,26 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
-declare var meta64, srch;  
+declare var meta64, srch;
 
 export class SearchContentDlg extends DialogBase {
 
     searchTextField: TextField;
 
     constructor() {
-        super();
+        super("Search Content");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Search Content"),
-            new TextContent("Enter text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search."),
-            this.searchTextField = new TextField("Search"),
-            new ButtonBar([
-                new Button("Search", this.searchNodes, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                new TextContent("Enter text to find. Only content text will be searched. All sub-nodes under the selected node are included in the search."),
+                this.searchTextField = new TextField("Search"),
+                new ButtonBar([
+                    new Button("Search", this.searchNodes, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
 

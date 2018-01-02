@@ -14,6 +14,7 @@ import { AttachmentIntf as Attachment } from "../intf/AttachmentIntf";
 import { RenderIntf as Render } from "../intf/RenderIntf";
 import { Singletons } from "../Singletons";
 import { PubSub } from "../PubSub";
+import { Form } from "../widget/Form";
 
 let meta64: Meta64;
 let util: Util;
@@ -33,18 +34,19 @@ export class UploadFromUrlDlg extends DialogBase {
     uploadButton: Button;
 
     constructor() {
-        super();
+        super("Upload File");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Upload File"),
-            Constants.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
-            this.uploadFromUrlTextField = new TextField("Upload from URL"),
-            new ButtonBar([
-                this.uploadButton = new Button("Upload", this.upload),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                Constants.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
+                this.uploadFromUrlTextField = new TextField("Upload from URL"),
+                new ButtonBar([
+                    this.uploadButton = new Button("Upload", this.upload),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -53,7 +55,7 @@ export class UploadFromUrlDlg extends DialogBase {
         let sourceUrl = this.uploadFromUrlTextField.getValue();
 
         if (sourceUrl) {
-            util.ajax <I.UploadFromUrlRequest, I.UploadFromUrlResponse> ("uploadFromUrl", {
+            util.ajax<I.UploadFromUrlRequest, I.UploadFromUrlResponse>("uploadFromUrl", {
                 "nodeId": attachment.uploadNode.id,
                 "sourceUrl": sourceUrl
             }, this.uploadFromUrlResponse);

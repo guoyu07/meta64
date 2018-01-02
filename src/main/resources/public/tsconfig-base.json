@@ -8,8 +8,7 @@
         ],
         "module": "commonjs",
         "moduleResolution": "node",
-        //TSX files are an ugly disaster that should have neve been invented.
-        //"jsx": "React",
+        "jsx": "React",
         //"isolatedModules": false,
         //"declaration": true,
         //"declarationDir" : "./ts/types",
@@ -22,7 +21,7 @@
         "inlineSources": true,
         "noEmitOnError": true,
         "watch": true,
-        //"allowJs": true,
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "traceResolution" : true
 
@@ -40,7 +39,9 @@
         //removing. webpack manages this.
         //"./node_modules/@types/**/*.d.ts"
     ],
-    "exclude": [],
+    "exclude": [
+        "./node_modules/"
+    ],
     "compileOnSave": true,
     "buildOnSave": true
 }

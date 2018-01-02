@@ -13,9 +13,9 @@ export class HeaderRe extends Comp {
     }
 
     reactRender = () => {
-        let className = (this.centered ? "horizontal center-justified layout" : "") + " dialog-header";
+        //let className = (this.centered ? "horizontal center-justified layout" : "") + " dialog-header";
         return React.createElement("div", {
-            className : className
+            //className : className
         }, this.text);
     }
 }

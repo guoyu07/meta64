@@ -32,7 +32,9 @@ export abstract class Comp extends React.Component implements CompImpl {
         super({});
         this.attribs = attribs || {};
         this.children = [];
-        let id = "c" + Comp.nextGuid();
+
+        /* If an ID was specifically provided, then use it, or else generate one */
+        let id = (<any>this.attribs).id || "c" + Comp.nextGuid();
         (<any>this.attribs).id = id;
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup

@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,7 @@ import com.meta64.mobile.request.LoginRequest;
 import com.meta64.mobile.request.LogoutRequest;
 import com.meta64.mobile.request.MoveNodesRequest;
 import com.meta64.mobile.request.NodeSearchRequest;
+import com.meta64.mobile.request.PingRequest;
 import com.meta64.mobile.request.RebuildIndexesRequest;
 import com.meta64.mobile.request.RemovePrivilegeRequest;
 import com.meta64.mobile.request.RenameNodeRequest;
@@ -79,6 +81,7 @@ import com.meta64.mobile.response.LoginResponse;
 import com.meta64.mobile.response.LogoutResponse;
 import com.meta64.mobile.response.MoveNodesResponse;
 import com.meta64.mobile.response.NodeSearchResponse;
+import com.meta64.mobile.response.PingResponse;
 import com.meta64.mobile.response.RebuildIndexesResponse;
 import com.meta64.mobile.response.RemovePrivilegeResponse;
 import com.meta64.mobile.response.RenameNodeResponse;
@@ -140,6 +143,7 @@ import com.meta64.mobile.util.XString;
  * because it doesn't belong here. Should all be contained in service layer, utilities classes, etc.
  */
 @Controller
+@CrossOrigin
 public class AppController {
 	private static final Logger log = LoggerFactory.getLogger(AppController.class);
 
@@ -227,8 +231,8 @@ public class AppController {
 		log.debug("Rendering main page: current userName: " + sessionContext.getUserName() + " id=" + id);
 		sessionContext.setUrlId(id);
 
-		// tag: index.html
-		return "index";
+		//return "index"; 
+		return "redirect:/index.html";
 	}
 
 	@RequestMapping(value = API_PATH + "/captcha", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
@@ -608,7 +612,7 @@ public class AppController {
 	public @ResponseBody AnonPageLoadResponse anonPageLoad(@RequestBody AnonPageLoadRequest req) {
 		logRequest("anonPageLoad", req);
 		AnonPageLoadResponse res = new AnonPageLoadResponse();
-		checkHttpSession();
+		//checkHttpSession();
 		nodeRenderService.anonPageLoad(null, req, res);
 		return res;
 	}
@@ -707,6 +711,15 @@ public class AppController {
 		res.setServerInfo(systemService.getSystemInfo());
 		res.setSuccess(true);
 		checkHttpSession();
+		return res;
+	}
+	
+	@RequestMapping(value = API_PATH + "/ping", method = RequestMethod.POST)
+	public @ResponseBody PingResponse ping(@RequestBody PingRequest req) {
+		logRequest("ping", req);
+		PingResponse res = new PingResponse();
+		res.setServerInfo("Server: t="+System.currentTimeMillis());
+		res.setSuccess(true);
 		return res;
 	}
 
@@ -849,6 +862,7 @@ public class AppController {
 
 	private void checkHttpSession() throws NotLoggedInException {
 		if (!VarUtil.safeBooleanVal(ThreadLocals.getInitialSessionExisted())) {
+			log.debug("getInitialSessionExisted returns false. User assumed NOT logged in. Throwing error");
 			throw new NotLoggedInException();
 		}
 	}

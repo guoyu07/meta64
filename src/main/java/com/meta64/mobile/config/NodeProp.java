@@ -70,7 +70,8 @@ public class NodeProp {
 	public static final String NAME = "sn:name";
 	public static final String JSON_FILE_SEARCH_RESULT = "sn:jsonFileSearchResult";
 	public static final String DISABLE_INSERT = "sn:disableInsert";
-
+	public static final String WEB_PAGE = "sn:webPage";
+	
 	/*
 	 * mime type expressed as a file extension. Invented so we can set 'txt' v.s. 'md' to turn off
 	 * metadata rendering

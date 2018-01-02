@@ -17,13 +17,12 @@ export class PasswordDlg extends DialogBase {
     password: string;
 
     constructor(paramsTest: Object) {
-        super();
+        super("Encryption Password");
         this.buildGUI();
     }
 
     buildGUI(): void {
         this.setChildren([
-            new Header("Encryption Password"),
             this.passwordTextField = new PasswordTextField("Password"),
             new ButtonBar([
                 new Button("Ok", this.okButton, null, true, this),

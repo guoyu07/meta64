@@ -6,10 +6,11 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
+import { Form } from "../widget/Form";
 
 let util: Util;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
@@ -24,20 +25,21 @@ export class ResetPasswordDlg extends DialogBase {
     private user: string;
 
     constructor(args: Object) {
-        super();
+        super("Reset Password");
         this.user = (<any>args).user;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Reset Password"),
-            new TextContent("Enter your user name and email address and a change-password link will be sent to you"),
-            this.userTextField = new TextField("User"),
-            this.emailTextField = new TextField("Email Address"),
-            new ButtonBar([
-                new Button("Reset my Password", this.resetPassword, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                new TextContent("Enter your user name and email address and a change-password link will be sent to you"),
+                this.userTextField = new TextField("User"),
+                this.emailTextField = new TextField("Email Address"),
+                new ButtonBar([
+                    new Button("Reset my Password", this.resetPassword, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -47,7 +49,7 @@ export class ResetPasswordDlg extends DialogBase {
         var emailAddress = this.emailTextField.getValue();
 
         /* Note: Admin check is done also on server, so no browser hacking can get around this */
-        if (userName && emailAddress && userName.toLowerCase()!="admin") {
+        if (userName && emailAddress && userName.toLowerCase() != "admin") {
             util.ajax<I.ResetPasswordRequest, I.ResetPasswordResponse>("resetPassword", {
                 "user": userName,
                 "email": emailAddress

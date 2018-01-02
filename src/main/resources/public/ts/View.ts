@@ -39,8 +39,8 @@ export class View implements ViewIntf {
         var statusLine = "";
 
         if (meta64.editModeOption === meta64.MODE_ADVANCED) {
-            if (meta64.currentNodeData && meta64.currentNodeData.children) {
-                statusLine += "count: " + meta64.currentNodeData.children.length;
+            if (meta64.currentNodeData && meta64.currentNodeData.node.children) {
+                statusLine += "count: " + meta64.currentNodeData.node.children.length;
             }
         }
 
@@ -170,7 +170,7 @@ export class View implements ViewIntf {
             be what use wants to see */
             let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode && meta64.currentNodeData.node.id==currentSelNode.id) {
-                util.domElm("#mainContainer").scrollTop = 0;
+                util.domElm("#mainNodeContent").scrollTop = 0;
                 return;
             }
 
@@ -181,7 +181,7 @@ export class View implements ViewIntf {
             }
             else {
                 //sets vertical top position of scrollbar to zero (top)
-                util.domElm("#mainContainer").scrollTop = 0;
+                util.domElm("#mainNodeContent").scrollTop = 0;
             }
         }, 1000);
     }
@@ -190,12 +190,16 @@ export class View implements ViewIntf {
         if (this.scrollToSelNodePending)
             return;
 
-        util.domElm("#mainContainer").scrollTop = 0;
-
+        let mainContainer = util.domElm("#mainNodeContent");
+        if (!mainContainer) {
+            return;
+        }
+        mainContainer.scrollTop = 0;
+        
         setTimeout(() => {
             if (this.scrollToSelNodePending)
                 return;
-            util.domElm("#mainContainer").scrollTop = 0;
+            mainContainer.scrollTop = 0;
         }, 1000);
     }
 

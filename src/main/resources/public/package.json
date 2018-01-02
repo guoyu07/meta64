@@ -2,6 +2,7 @@
   "name": "subnode",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -9,17 +10,25 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/polymer": "^1.2.1",
-    "@types/react": "^16.0.25",
+    "@types/marked": "^0.3.0",
+    "@types/react": "^16.0.31",
     "@types/react-dom": "^16.0.3",
-    "circular-dependency-plugin": "^4.2.1",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1"
+    "@types/react-router": "^4.0.20",
+    "@types/react-router-dom": "^4.2.3",
+    "axios": "^0.17.1",
+    "circular-dependency-plugin": "^4.3.0",
+    "marked": "^0.3.9",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.17"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.4.0",
+    "awesome-typescript-loader": "^3.4.1",
+    "script-loader": "^0.7.2",
     "source-map-loader": "^0.2.3",
-    "typescript": "^2.6.1",
+    "typescript": "^2.6.2",
     "webpack-shell-plugin": "^0.5.0"
   }
 }

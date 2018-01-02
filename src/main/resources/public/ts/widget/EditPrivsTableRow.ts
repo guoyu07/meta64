@@ -16,7 +16,8 @@ export class EditPrivsTableRow extends Comp {
 
     constructor(public sharingDlg: SharingDlg, public aclEntry: I.AccessControlEntryInfo) {
         super(null);
-        (<any>this.attribs).class = "privilege-list";
+        //(<any>this.attribs).class = "privilege-list";
+        this.setClass("list-group-item list-group-item-action");
         this.addChild(new Div("<h4>User: " + aclEntry.principalName + "</h4>"));
 
         let privElementsDiv = new Div();

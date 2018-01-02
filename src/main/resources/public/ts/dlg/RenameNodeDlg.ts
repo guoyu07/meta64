@@ -6,7 +6,8 @@ import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { TextContent } from "../widget/TextContent";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { Form } from "../widget/Form";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
@@ -18,14 +19,14 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
-declare var meta64, edit, view;  
+declare var meta64, edit, view;
 
 export class RenameNodeDlg extends DialogBase {
 
     newNameTextField: TextField;
 
     constructor(args: Object) {
-        super();
+        super("Rename Node");
         this.buildGUI();
     }
 
@@ -36,13 +37,14 @@ export class RenameNodeDlg extends DialogBase {
         }
 
         this.setChildren([
-            new Header("Rename Node"),
-            new TextContent("Name: " + highlightNode.name),
-            new TextContent("Path: " + highlightNode.path, "path-display"),
-            this.newNameTextField = new TextField("Enter new name for the node"),
-            new ButtonBar([
-                new Button("Rename", this.renameNode, null, true, this),
-                new Button("Close", null, null, true, this)
+            new Form(null, [
+                new TextContent("Name: " + highlightNode.name),
+                new TextContent("Path: " + highlightNode.path, "path-display"),
+                this.newNameTextField = new TextField("Enter new name for the node"),
+                new ButtonBar([
+                    new Button("Rename", this.renameNode, null, true, this),
+                    new Button("Close", null, null, true, this)
+                ])
             ])
         ]);
     }
@@ -81,7 +83,7 @@ export class RenameNodeDlg extends DialogBase {
             } else {
                 view.refreshTree(null, false, res.newId);
             }
-            // meta64.selectTab("mainTabName");
+            // meta64.selectTab("mainTab");
         }
     }
 }

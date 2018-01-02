@@ -28,13 +28,12 @@ export class ImportDlg extends DialogBase {
   importFromFileNameTextField: TextField;
 
     constructor() {
-        super();
+        super("Import from XML");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Import From XML"),
             this.importFromFileNameTextField = new TextField("File Name to import"),
             new ButtonBar([
                 new Button("Import", this.importNodes, null, true, this),
@@ -79,7 +78,7 @@ export class ImportDlg extends DialogBase {
         if (util.checkSuccess("Import", res)) {
             new MessageDlg({ "message": "Import Successful" }).open();
             view.refreshTree(null, false);
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
             view.scrollToSelectedNode();
         }
     }

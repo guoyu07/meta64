@@ -8,16 +8,14 @@ import { Div } from "../widget/Div";
 export class ProgressDlg extends DialogBase {
 
     constructor() {
-        super();
+        super("Processing...");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Processing..."),
             new Div(null, {
-                "style": "width:300px; margin: 0 auto; margin-top:24px; margin-bottom:24px;",
-                "class": "horizontal center-justified layout"
+               class : "progress"
             }, [new Progress()])
         ]);
     }

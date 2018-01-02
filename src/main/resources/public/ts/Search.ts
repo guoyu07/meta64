@@ -19,6 +19,7 @@ import { SearchIntf } from "./intf/SearchIntf";
 import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
+import { Button } from "./widget/Button";
 
 
 let meta64: Meta64;
@@ -99,7 +100,7 @@ export class Search implements SearchIntf {
         let content = panel.renderHtml();
         util.setHtml("searchResultsPanel", content);
         panel.init();
-        meta64.changePage(panel);
+        meta64.selectTab("searchTab");
     }
 
     timelineResponse = (res: I.NodeSearchResponse) => {
@@ -108,7 +109,7 @@ export class Search implements SearchIntf {
         let content = panel.renderHtml();
         util.setHtml("timelineResultsPanel", content);
         panel.init();
-        meta64.changePage(panel);
+        meta64.selectTab("timelineTab");
 
     }
 
@@ -216,9 +217,9 @@ export class Search implements SearchIntf {
     }
 
     makeButtonBarHtml = (uid: string) => {
-        let gotoButton = render.makeButton("Go to Node", "go-to-" + uid, () => {
+        let gotoButton = new Button("Go to Node", () => {
             meta64.clickSearchNode(uid);
-        });
+        }, {id : "go-to-" + uid}).renderHtml();
         return render.makeHorizontalFieldSet(gotoButton);
     }
 
@@ -239,7 +240,7 @@ export class Search implements SearchIntf {
         }
 
         view.refreshTree(this.highlightRowNode.id, true, this.highlightRowNode.id);
-        meta64.selectTab("mainTabName");
+        meta64.selectTab("mainTab");
     }
 
     /*

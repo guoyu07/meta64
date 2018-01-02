@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>SubNode</title>
+    <meta name="description" content="{{brandingMetaContent}}" />
+    <meta name="keywords" content="jcr" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="sbnode.com" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="SubNode" />
+    <meta name="google-signin-client_id" content="696773594351-fflqhlt9enqlcvoacqhgj5jasgq2eqb0.apps.googleusercontent.com" />
+    <!-- Google recommends using the -lite version of the webcomponents, because it has massively better performance -->
+
+    <!-- bower doesn't download the .min. version of this file, which i used to have here. need to see about this. todo-0 -->
+    <script src="/polymer/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="/polymer/paper-styles/color.html" />
+    <link rel="import" href="/elements/x-app/x-app.html?ver={{cacheVersion}}" />
+    <link rel="stylesheet" href="/js/dropzone/dropzone.css?ver={{cacheVersion}}" />
+    <link rel="stylesheet" href="/css/meta64.css?ver={{cacheVersion}}" />
+
+    <!-- 
+        <script src="https://apis.google.com/js/platform.js" async="async" defer="defer"></script>    
+    -->
+    <script>
+        //These values are injected by a servlet filter. PreProcFilter.java
+        var cacheVersion = "{{cacheVersion}}";
+        var profileName = "{{profileName}}";
+        var bundleFile = "{{html.bundle}}";
+        var postTargetUrl = window.location.origin + "/mobile/api/";
+    </script>
+
+    <!-- Dependencies -->
+    <script src="/js/react/react.development.js?ver={{cacheVersion}}"></script>
+    <script src="/js/react/react-dom.development.js?ver={{cacheVersion}}"></script>
+    
+    <!-- The ace.js is the same as here: <script src="http://ajaxorg.github.io/ace-builds/src-noconflict/ace.js" 
+            charset="utf-8"></script> -->
+    <script src="/js/ace/ace.js?ver={{cacheVersion}}"></script>
+    <script src="/js/dropzone/dropzone.js?ver={{cacheVersion}}"></script>
+    <script src="/dist/bundle.js"></script>
+</head>
+
+<body unresolved>
+    <x-app/>
+</body>
+
+</html>

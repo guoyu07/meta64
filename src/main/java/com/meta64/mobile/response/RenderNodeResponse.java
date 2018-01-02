@@ -23,22 +23,13 @@ public class RenderNodeResponse extends ResponseBase {
 	 */
 	private boolean endReached;
 
-	/* orderablility of children not set in these objects, all will be false */
-	private List<NodeInfo> children;
-
 	/*
 	 * under certain situations the rendering request will be pointed to parent node instead and we
 	 * send back to the client 'true' here when that happens.
 	 */
 	private boolean displayedParent;
-
-	public List<NodeInfo> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<NodeInfo> children) {
-		this.children = children;
-	}
+	
+	private String noDataResponse;
 
 	public NodeInfo getNode() {
 		return node;
@@ -70,5 +61,13 @@ public class RenderNodeResponse extends ResponseBase {
 
 	public void setOffsetOfNodeFound(Integer offsetOfNodeFound) {
 		this.offsetOfNodeFound = offsetOfNodeFound;
+	}
+
+	public String getNoDataResponse() {
+		return noDataResponse;
+	}
+
+	public void setNoDataResponse(String noDataResponse) {
+		this.noDataResponse = noDataResponse;
 	}
 }

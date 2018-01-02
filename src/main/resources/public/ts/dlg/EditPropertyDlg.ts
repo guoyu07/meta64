@@ -36,14 +36,13 @@ export class EditPropertyDlg extends DialogBase {
     private editNodeDlg: EditNodeDlg;
 
     constructor(args: any) {
-        super();
+        super("Edit Node Property");
         this.editNodeDlg = args.editNodeDlg;
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new Header("Edit Node Property"),
             cnst.SHOW_PATH_IN_DLGS ?
                 this.editPropertyPathDisplay = new TextContent(null, "path-display-in-editor") : null,
             new Div(null, null, [

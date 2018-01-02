@@ -191,7 +191,6 @@ export class User implements UserIntf {
         util.ajax<I.LogoutRequest, I.LogoutResponse>("logout", {}, this.logoutResponse);
     }
 
-
     login = (loginDlg, usr, pwd) => {
         util.ajax<I.LoginRequest, I.LoginResponse>("login", {
             "userName": usr,

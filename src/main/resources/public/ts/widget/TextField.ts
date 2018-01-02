@@ -6,12 +6,12 @@ declare var tag, util;
 
 export class TextField extends Comp {
 
-    constructor(label: string) {
+    constructor(public label: string) {
         super(null);
         util.mergeProps(this.attribs, {
-            "label": label,
             "name": this.getId(),
-            "class": "meta64-input"
+            "type": "text",
+            "class": "form-control"
         });
     }
 
@@ -36,6 +36,13 @@ export class TextField extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.input(this.attribs);
+        let ret = "";
+        if (this.label) {
+            ret += tag.label(this.label, {
+                for: this.getId()
+            });
+        }
+        ret += tag.input(this.attribs);
+        return ret;
     }
 }

@@ -10,7 +10,7 @@ export class ListBox extends Comp {
 
     constructor(attribs: Object, initialRows: ListBoxRow[] = null) {
         super(attribs);
-        this.setClass("listBox");
+        this.setClass("list-group");
         this.setChildren(initialRows);
 
         /* For each of the ListBoxRows we need to tell them all who their parent is */

@@ -50,6 +50,14 @@ export class Tag implements TagIntf {
         return render.tag("h2", attr, content, true);
     }
 
+    ul = (attr?: Object, content?: string): string => {
+        return render.tag("ul", attr, content, true);
+    }
+
+    li = (attr?: Object, content?: string): string => {
+        return render.tag("li", attr, content, true);
+    }
+
     span = (attr?: Object, content?: string): string => {
         return render.tag("span", attr, content, true);
     }
@@ -58,12 +66,12 @@ export class Tag implements TagIntf {
         return render.tag("legend", attr, content, true);
     }
 
-    textarea = (attr?: Object): string => {
-        return render.tag("paper-textarea", attr, "", true);
+    textarea = (attr?: Object, text : string = ""): string => {
+        return render.tag("textarea", attr, text, true);
     }
 
     dialog = (attr: Object, content: string): string => {
-        return render.tag("paper-dialog", attr, content, true);
+        return render.tag("div", attr, content, true);
     }
 
     /* We encapsulate/decouple here smartly so that if there's an 'icon' property, we automatically use an paper-icon-button instead of
@@ -72,15 +80,24 @@ export class Tag implements TagIntf {
     todo-1: actually this is bad. What we need is the ability to also show a 'paper-button' that has an icon next to the text! Is this possible in polymer?
     */
     button = (attr?: Object, text?: string): string => {
-        let tagName = (<any>attr).icon ? "paper-icon-button" : "paper-button";
-        return render.tag(tagName, attr, text, true);
+        return render.tag("button", attr, text, true);
     }
 
     radioButton = (attr?: Object, text?: string): string => {
+        
         // domBind.addOnChange((<any>attr).id, (event) => {
         //     console.log("checkbox ID: " + (<any>attr).id + " checked=" + (<any>event.target).checked  + ". Proof of id: " + event.target.getAttribute("id"));
         // });
-        return render.tag("paper-radio-button", attr, text);
+        let input = render.tag("input", attr, text);
+        let labelHtml = null;
+        if ((<any>attr).label) {
+            labelHtml = render.tag("label", {
+                //"for": (<any>attr).id
+                "class": "form-check-label"
+            }, input /* + (<any>attr).label */, true);
+            return this.div({ "class": "form-check" }, labelHtml);
+        }
+        return this.div({ "class": "form-check" }, input);
     }
 
     radioGroup = (attr?: Object, content?: string): string => {
@@ -88,7 +105,11 @@ export class Tag implements TagIntf {
     }
 
     input = (attr?: Object): string => {
-        return render.tag("paper-input", attr, "", true);
+        return render.tag("input", attr, "", true);
+    }
+
+    label = (text: string, attr?: Object): string => {
+        return render.tag("label", attr, text, true);
     }
 
     checkbox = (attr?: Object): string => {
@@ -96,14 +117,25 @@ export class Tag implements TagIntf {
         //     console.log("checkbox ID: " + (<any>attr).id + " checked=" + (<any>event.target).checked + ". Proof of id: " + event.target.getAttribute("id"));
         // });
 
-        let ret = render.tag("paper-checkbox", attr, "", false);
+        // let ret = render.tag("checkbox", attr, "", false);
 
+        // if ((<any>attr).label) {
+        //     ret += render.tag("label", {
+        //         "for": (<any>attr).id
+        //     }, (<any>attr).label, true);
+        // }
+        // return this.span(null, ret);
+
+        let input = render.tag("input", attr);
+        let labelHtml = null;
         if ((<any>attr).label) {
-            ret += render.tag("label", {
-                "for": (<any>attr).id
-            }, (<any>attr).label, true);
+            labelHtml = render.tag("label", {
+                //"for": (<any>attr).id
+                "class": "form-check-label"
+            }, input + (<any>attr).label, true);
+            return this.div({ "class": "form-check" }, labelHtml);
         }
-        return this.span(null, ret);
+        return this.div({ "class": "form-check" }, input);
     }
 
     audio = (attr: Object, content: string): string => {
@@ -111,19 +143,7 @@ export class Tag implements TagIntf {
     }
 
     progress = (attr?: Object): string => {
-        return render.tag("paper-progress", attr);
-    }
-
-    menuItem = (attr?: Object, content?: string): string => {
-        return render.tag("paper-item", attr, content, true);
-    }
-
-    menu = (attr?: Object, content?: string): string => {
-        return render.tag("paper-menu", attr, content, true);
-    }
-
-    subMenu = (attr?: Object, content?: string): string => {
-        return render.tag("paper-submenu", attr, content, true);
+        return render.tag("div", attr);
     }
 
     form = (attr: Object, content: string): string => {

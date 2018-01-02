@@ -15,11 +15,12 @@ import { Checkbox } from "../widget/Checkbox";
 import { Comp } from "../widget/base/Comp";
 import { EditPropsTable } from "../widget/EditPropsTable";
 import { EditPropsTableRow } from "../widget/EditPropsTableRow";
-import { EditPropsTableCell } from "../widget/EditPropsTableCell";
 import { PasswordDlg } from "./PasswordDlg";
-import { Constants as cnst} from "../Constants";
-import { UtilIntf as Util} from "../intf/UtilIntf";
+import { Constants as cnst } from "../Constants";
+import { UtilIntf as Util } from "../intf/UtilIntf";
 import { PubSub } from "../PubSub";
+import { Form } from "../widget/Form";
+import { FormGroup } from "../widget/FormGroup";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
@@ -30,7 +31,7 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
-declare var meta64, render, edit, view, props, tag, encryption;  
+declare var meta64, render, edit, view, props, tag, encryption;
 
 declare var ace;
 
@@ -61,42 +62,42 @@ export class EditNodeDlg extends DialogBase {
     createAtTop: boolean;
 
     constructor(args: Object) {
-        super();
+        super("Edit Node");
 
         this.typeName = (<any>args).typeName;
         this.createAtTop = (<any>args).createAtTop;
-
-        // /* todo: need something better for this when supporting mobile */
 
         this.propEntries = new Array<I.PropEntry>();
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        let width = 800; //window.innerWidth * 0.6;
-        let height = 600; //window.innerHeight * 0.4;
-
         this.setChildren([
-            this.header = new Header("Edit Node"),
-            this.help = new Help(""),
-            this.propertyEditFieldContainer = new Div("", {
-                // todo-1: create CSS class for this.
-                "style": `padding-left: 0px; max-width:${width}px;height:${height}px;width:100%;overflow:scroll; border:4px solid lightGray;`,
-                "class": "vertical-layout-row",
-                "sourceClass": "propertyEditFieldContainer"
-            }),
-            this.pathDisplay = cnst.SHOW_PATH_IN_DLGS ? new Div("", {
-                "class": "path-display-in-editor"
-            }) : null,
-            this.buttonBar = new ButtonBar([
-                this.saveNodeButton = new Button("Save", this.saveNode, null, true, this),
-                this.addPropertyButton = new Button("Add Property", this.addProperty),
-                this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
+            new Form(null, [
+                this.help = new Help(""),
+                new Div(null, {
+                    //"class": "form-group"
+                },
+                    [
+                        this.propertyEditFieldContainer = new Div("", {
+                        }),
+                        this.pathDisplay = cnst.SHOW_PATH_IN_DLGS ? new Div("", {
+                            //"class": "path-display-in-editor"
+                        }) : null,
+                    ]
+                ),
+                this.buttonBar = new ButtonBar(
+                    [
+                        this.saveNodeButton = new Button("Save", this.saveNode, null, true, this),
+                        this.addPropertyButton = new Button("Add Property", this.addProperty),
+                        this.addTagsPropertyButton = new Button("Add Tags", this.addTagsProperty),
 
-                //todo-1: temporarily disabling this until we have it working in mongodb
-                //this.splitContentButton = new Button("Split", this.splitContent),
-                this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
-                this.cancelButton = new Button("Cancel", this.cancelEdit)
+                        //todo-1: temporarily disabling this until we have it working in mongodb
+                        //this.splitContentButton = new Button("Split", this.splitContent),
+                        this.deletePropButton = new Button("Delete", this.deletePropertyButtonClick),
+                        this.cancelButton = new Button("Cancel", this.cancelEdit)
+                    ])
+
             ])
         ]);
     }
@@ -120,7 +121,6 @@ export class EditNodeDlg extends DialogBase {
         if (edit.editNode) {
             console.log("Editing existing node.");
 
-            /* iterator function will have the wrong 'this' so we save the right one */
             let editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
 
             // Iterate PropertyInfo.java objects
@@ -142,15 +142,16 @@ export class EditNodeDlg extends DialogBase {
 
                 this.propEntries.push(propEntry);
 
-                let tableRow = new EditPropsTableRow({
-                    "class": ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties ? "propertyEditListItem"
-                        : "propertyEditListItemHidden")
-                    // "style" : "display: "+ (!rdOnly || meta64.showReadOnlyProperties ? "inline" : "none")
-                });
+                //todo-1: why was I HIDING readonly instead of merely disabling editing?
+                if ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties) {
 
-                this.makeSinglePropEditor(tableRow, propEntry, null /* aceFields */);
+                    let tableRow = new EditPropsTableRow({
+                    });
 
-                editPropsTable.addChild(tableRow);
+                    this.makePropEditor(tableRow, propEntry, null /* aceFields */);
+
+                    editPropsTable.addChild(tableRow);
+                }
             });
         }
         /* Editing a new node */
@@ -452,11 +453,10 @@ export class EditNodeDlg extends DialogBase {
         return Promise.resolve(val);
     }
 
-    makeSinglePropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry, aceFields: any): void => {
+    makePropEditor = (tableRow: EditPropsTableRow, propEntry: I.PropEntry, aceFields: any): void => {
         console.log("Property single-type: " + propEntry.property.name);
 
-        let checkboxTableCell = new EditPropsTableCell({ "class": "edit-prop-checkbox-col" });
-        let textareaTableCell = new EditPropsTableCell({ "class": "edit-prop-textfield-col" });
+        let formGroup = new FormGroup();
 
         let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
 
@@ -476,11 +476,11 @@ export class EditNodeDlg extends DialogBase {
                 "value": propValStr
             });
 
-            textareaTableCell.addChild(textarea);
+            formGroup.addChild(textarea);
         } else {
             let checkbox = new Checkbox();
             propEntry.checkboxId = checkbox.getId();
-            checkboxTableCell.addChild(checkbox);
+            formGroup.addChild(checkbox);
 
             if (!cnst.USE_ACE_EDITOR) {
                 //todo-1: when this is a password, disable it until value it asynchronously set.
@@ -508,7 +508,7 @@ export class EditNodeDlg extends DialogBase {
                     );
                 }
 
-                textareaTableCell.addChild(textarea);
+                formGroup.addChild(textarea);
 
                 if (propEntry.property.name == cnst.CONTENT) {
                     this.contentFieldDomId = textarea.getId();
@@ -528,7 +528,7 @@ export class EditNodeDlg extends DialogBase {
             }
         }
 
-        tableRow.addChildren([checkboxTableCell, textareaTableCell]);
+        tableRow.addChildren([formGroup]);
     }
 
     deletePropertyButtonClick = (): void => {
@@ -566,7 +566,7 @@ export class EditNodeDlg extends DialogBase {
         if (util.checkSuccess("Split content", res)) {
             this.cancel();
             view.refreshTree(null, false);
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
             view.scrollToSelectedNode();
         }
     }
@@ -576,7 +576,7 @@ export class EditNodeDlg extends DialogBase {
         if (meta64.treeDirty) {
             meta64.goToMainPage(true);
         } else {
-            meta64.selectTab("mainTabName");
+            meta64.selectTab("mainTab");
             view.scrollToSelectedNode();
         }
     }

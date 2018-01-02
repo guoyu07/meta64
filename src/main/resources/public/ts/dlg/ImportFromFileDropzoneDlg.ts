@@ -15,7 +15,6 @@ import { Constants as cnst} from "../Constants";
 declare var meta64, render, edit, util;  
 
 declare var Dropzone;
-declare var postTargetUrl;
 
 /* NOTE: This file will probably be extremely similar to UploadFromFileDropzoneDlgImpl, but I decided it was best to have
 two separate classes rather than one single more complicated class that does botoh functions
@@ -30,16 +29,16 @@ export class ImportFromFileDropzoneDlg extends DialogBase {
     dropzone: any = null;
 
     constructor() {
-        super();
+        super("Import File");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
+
         this.setChildren([
-            new Header("Import File"),
             cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + edit.importTargetNode.path, "path-display-in-editor") : null,
             this.form = new Form({
-                "action": postTargetUrl + "upload",
+                "action": util.getRpcPath() + "upload",
                 "autoProcessQueue": false,
                 "class": "dropzone"
             }),
@@ -59,7 +58,7 @@ export class ImportFromFileDropzoneDlg extends DialogBase {
 
         let dlg = this;
         let config: Object = {
-            url: postTargetUrl + "streamImport",
+            url: util.getRpcPath() + "streamImport",
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",

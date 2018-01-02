@@ -25,6 +25,8 @@ public class NodeInfo {
 	private long binVer;
 	private int width;
 	private int height;
+	
+	private List<NodeInfo> children;
 
 	/*
 	 * These next four WERE (in jcr design) set on Client Side only but I need to probably set them
@@ -55,6 +57,14 @@ public class NodeInfo {
 		this.height = height;
 		this.type = type;
 		this.logicalOrdinal = logicalOrdinal;
+	}
+	
+	public List<NodeInfo> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<NodeInfo> children) {
+		this.children = children;
 	}
 
 	public String getId() {

@@ -6,8 +6,8 @@ declare var tag;
 
 export class Heading extends Comp {
 
-    constructor(public level: number, public content: string) {
-        super(null);
+    constructor(public level: number, public content: string, attrs: Object = {}) {
+        super(attrs);
     }
 
     renderHtml = (): string => {

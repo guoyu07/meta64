@@ -60,7 +60,7 @@ public class NodeRenderService {
 	private SessionContext sessionContext;
 
 	/* Note: this MUST match nav.ROWS_PER_PAGE variable in TypeScript */
-	private static int ROWS_PER_PAGE = 5;
+	private static int ROWS_PER_PAGE = 25;
 
 	/*
 	 * This is the call that gets all the data to show on a page. Whenever user is

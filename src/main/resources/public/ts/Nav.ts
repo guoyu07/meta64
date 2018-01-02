@@ -48,7 +48,7 @@ export class Nav implements NavIntf {
 
     /* todo-1: need to have this value passed from server rather than coded in TypeScript, however for now 
     this MUST match RenderNodeService.ROWS_PER_PAGE in Java on server. */
-    ROWS_PER_PAGE: number = 5;
+    ROWS_PER_PAGE: number = 25;
 
     search = (): void => {
         new SearchContentDlg().open();

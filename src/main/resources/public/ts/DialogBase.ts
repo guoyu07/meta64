@@ -113,6 +113,10 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
         orphaned for now, but probably adding a timer of a second or to will work, doing this call asynchronously plenty later */
         setTimeout(() => {
             $("#" + this.getId()).remove();
-        }, 800);
+
+            /* this is ugly as hell, becasue it's not gonna work with dialogs on top of other dialogs, but this is a problem lots of others
+            are having and not just us, so i will need to research more */
+            $('.modal-backdrop').remove();
+        }, 500);
     }
 }

@@ -8,7 +8,7 @@ export class RadioButton extends Comp {
 
     constructor(public label: string, public checked: boolean, groupName: string) {
         super(null); 
-        debugger;
+    
         if (checked) {
             (<any>this.attribs).checked = "checked";
             //this.setChecked(true);

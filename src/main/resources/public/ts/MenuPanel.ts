@@ -78,7 +78,11 @@ export class MenuPanel extends Comp {
                 new MenuItem("Cut", edit.cutSelNodes, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine }), //
                 new MenuItem("Paste", edit.pasteSelNodes, () => { return !meta64.isAnonUser && edit.nodesToMove != null && (meta64.state.selNodeIsMine || meta64.state.homeNodeSelected) }), //
                 new MenuItem("Clear Selections", edit.clearSelections, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 }), //
-                new MenuItem("Delete", edit.deleteSelNodes, () => { return !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine })
+                new MenuItem("Delete", edit.deleteSelNodes, () => {
+                    let ret = !meta64.isAnonUser && meta64.state.selNodeCount > 0 && meta64.state.selNodeIsMine;
+                    console.log("Calling Delete Enablement: ret=" + ret);
+                    return ret;
+                })
             ]),
             new Menu("Move", [
                 new MenuItem("Up", () => { edit.moveNodeUp(); }, () => { return meta64.state.canMoveUp; }), //

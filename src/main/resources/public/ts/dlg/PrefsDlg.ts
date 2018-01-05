@@ -66,7 +66,6 @@ export class PrefsDlg extends DialogBase {
     }
 
     savePreferences = (): void => {
-        debugger;
         meta64.editModeOption = this.simpleRadioButton.getChecked() ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
         meta64.showMetaData = this.showMetadataCheckBox.getChecked();

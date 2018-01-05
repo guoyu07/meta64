@@ -23,7 +23,7 @@ export class Menu extends Comp {
         /* first we all base refreshState() so that everything under this node gets update before we do the logic we need to do in here
         or else what we are doing definitely will not work */
         super.refreshState();
-        super.setVisibleIfAnyChildrenVisible();
+        //super.setVisibleIfAnyChildrenVisible();
     }
 
     //todo-1: I think instead of 'card' here i should try out just plain 'list-group' because the card is really not the appropriate thing here.

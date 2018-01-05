@@ -38,7 +38,8 @@ export class Home extends React.Component {
                             </ul>
                             <div className="tab-content">
                                 <div id="mainTab" className="tab-pane fade">
-                                    <div id="mainNodeContent"></div>
+                                    {/* margin isn't working. trying to get space below the tabs. */}
+                                    <div id="mainNodeContent" style={{'margin-top': '1rem;'}}></div>
                                     <div id="listView"></div>
                                 </div>
                                 <div id="searchTab" className="tab-pane fade">

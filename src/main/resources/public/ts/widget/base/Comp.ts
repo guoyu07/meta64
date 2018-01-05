@@ -3,10 +3,14 @@ console.log("Comp.ts");
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CompImpl } from "./CompImpl";
+import { PubSub } from "../../PubSub";
+import { Constants } from "../../Constants";
+import { Singletons } from "../../Singletons";
 
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var util, domBind, tag;
+declare var $;
 
 export abstract class Comp extends React.Component implements CompImpl {
 
@@ -39,6 +43,13 @@ export abstract class Comp extends React.Component implements CompImpl {
 
         //This map allows us to lookup the Comp directly by its ID similar to a DOM lookup
         Comp.idToCompMap[id] = this;
+
+        PubSub.sub(Constants.PUBSUB_RefreshEnablement, (unused: Object) => {
+            this.whenElm((elm) => {
+                //console.log("PubSub driven refreshState: on ID=" + this.getId());
+                this.refreshState();
+            });
+        });
     }
 
     /* Function refreshes all enablement and visibility based on current state of app */
@@ -48,19 +59,21 @@ export abstract class Comp extends React.Component implements CompImpl {
         //todo-1: future optimization. For components that don't implement any enablement/visibilty functions, we can
         //just only do this enablement stuff ONCE and then not do it again on that same element.
         this.updateState();
-        this.setVisible(this.visible);
+        //this.setVisible(this.visible); //<----- this wreaks havoc on the menu collapsing logic...trying without for now.
         this.setEnabled(this.enabled);
+        //console.log("refreshState: id=" + this.getId() + " enabled=" + this.enabled);
 
-        //recursively drill down and do entire tree. For efficiency I need to modify this to be 'breadth' first?
-        //let visibleChildrenCount = 0;
-        util.forEachArrElm(this.children, function (child, idx) {
-            if (child) {
-                child.refreshState();
-                // if (child.visible) {
-                //     visibleChildrenCount++;
-                // }
-            }
-        });
+        // //NOTE: I decided to use PubSub to broadcast an event to all Components, so this code is no longer needed.
+        // // //recursively drill down and do entire tree. For efficiency I need to modify this to be 'breadth' first?
+        // // //let visibleChildrenCount = 0;
+        // util.forEachArrElm(this.children, function (child, idx) {
+        //     if (child) {
+        //         child.refreshState();
+        //         if (child.visible) {
+        //             visibleChildrenCount++;
+        //         }
+        //     }
+        // });
     }
 
     setDomAttr = (attrName: string, attrVal: string) => {
@@ -71,24 +84,35 @@ export abstract class Comp extends React.Component implements CompImpl {
     }
 
     bindOnClick = (callback: Function) => {
-        domBind.addOnClick(this.getId(), callback);
+        /* We must manually check if function is enabled before we call the button click for it. Polymer did this for us but
+        in bootstrap this is our responsibility */
+        domBind.addOnClick(this.getId(), () => {
+            debugger;
+            if (!this.isEnabledFunc || this.isEnabledFunc()) {
+                callback();
+            }
+        });
     }
 
-    setIsEnabledFunc(isEnabledFunc: Function) {
+    setIsEnabledFunc = (isEnabledFunc: Function) => {
         this.isEnabledFunc = isEnabledFunc;
     }
 
-    setIsVisibleFunc(isVisibleFunc: Function) {
+    setIsVisibleFunc = (isVisibleFunc: Function) => {
         this.isVisibleFunc = isVisibleFunc;
     }
 
     /* returns true if anything was done. Should I eventually make this return true if something CHAGNED ? */
-    updateState(): boolean {
+    updateState = (): boolean => {
         let ret = false;
 
         if (this.isEnabledFunc) {
             this.enabled = this.isEnabledFunc();
+            //console.log("in updateState: id=" + this.getId() + " enablement function said: " + this.enabled);
             ret = true;
+        }
+        else {
+            //console.log("in updateState: id=" + this.getId() + " has no ENABLEMENT function");
         }
 
         if (this.isVisibleFunc) {
@@ -98,23 +122,22 @@ export abstract class Comp extends React.Component implements CompImpl {
         return ret;
     }
 
-    /* Certain components decide if they are visible based on if any children are visible so we encapsulated that logic into here */
-    setVisibleIfAnyChildrenVisible() {
-        let thisVisible = false;
+    // /* Certain components decide if they are visible based on if any children are visible so we encapsulated that logic into here */
+    // setVisibleIfAnyChildrenVisible() {
+    //     let thisVisible = false;
+    //     util.forEachArrElm(this.children, function (child, idx) {
+    //         if (child) {
+    //             /* if we found a visible child, we can set visible to true, and end this forEach iteration, because we don't need any
+    //             more info. We're done. It's gonna be visible */
+    //             if (child.visible) {
+    //                 thisVisible = true;
+    //                 return false;
+    //             }
+    //         }
+    //     });
 
-        util.forEachArrElm(this.children, function (child, idx) {
-            if (child) {
-                /* if we found a visible child, we can set visible to true, and end this forEach iteration, because we don't need any
-                more info. We're done. It's gonna be visible */
-                if (child.visible) {
-                    thisVisible = true;
-                    return false;
-                }
-            }
-        });
-
-        this.setVisible(thisVisible);
-    }
+    //     this.setVisible(thisVisible);
+    // }
 
     static nextGuid(): number {
         return ++Comp.guid;
@@ -154,6 +177,14 @@ export abstract class Comp extends React.Component implements CompImpl {
     setEnabled = (enabled: boolean) => {
         domBind.whenElm(this.getId(), (elm) => {
             (<any>elm).disabled = !enabled;
+            $(elm).prop('disabled', !enabled);
+
+            if (!enabled) {
+                $(elm).addClass("disabled");
+            }
+            else {
+                $(elm).removeClass("disabled");
+            }
         });
     }
 
@@ -162,7 +193,11 @@ export abstract class Comp extends React.Component implements CompImpl {
     }
 
     setOnClick = (onclick: Function): void => {
-        (<any>this.attribs).onclick = onclick;
+        (<any>this.attribs).onclick = () => {
+            if (!this.isEnabledFunc || this.isEnabledFunc()) {
+                onclick();
+            }
+        };
     }
 
     /* If caller happens to have this element it can be passed, to avoid one DOM lookup */

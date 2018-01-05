@@ -16,11 +16,6 @@ export interface CompImpl {
 
     updateState(): boolean;
 
-    setVisibleIfAnyChildrenVisible(); 
-
-    // nextGuid(): number;
-    // findById(id: string): CompImpl; 
-
     removeAllChildren(): void;
 
     getId(): string;

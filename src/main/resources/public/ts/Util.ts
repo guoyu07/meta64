@@ -21,6 +21,8 @@ import { Constants } from "./Constants";
 
 import axios, { AxiosRequestConfig } from 'axios';
 
+declare var $;
+
 let meta64: Meta64;
 let encryption: Encryption;
 let domBind: DomBind;
@@ -256,7 +258,6 @@ export class Util implements UtilIntf {
     ajax = <RequestType, ResponseType>(postName: string, postData: RequestType, //
         callback?: (response: ResponseType) => void) => {
 
-        debugger;
         let axiosRequest;
 
         try {
@@ -613,7 +614,13 @@ export class Util implements UtilIntf {
     }
 
     setElmDisplay = (elm: any, showing: boolean) => {
-        elm.style.display = showing ? "" : "none";
+        //elm.style.display = showing ? "" : "none";
+        if (showing) {
+            $(elm).show();
+        }
+        else {
+            $(elm).hide();
+        }
     }
 
     getPropertyCount = (obj: Object): number => {

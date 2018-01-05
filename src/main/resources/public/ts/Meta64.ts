@@ -524,7 +524,9 @@ export class Meta64 implements Meta64Intf {
         //for now we simply tolerate a null menuPanel here before it's initialized.
         if (this.menuPanel) {
             /* refreh all enablement and visibility under entire menu with this recursive call! */
-            this.menuPanel.refreshState();
+            //this.menuPanel.refreshState();
+            debugger;
+            PubSub.pub(Constants.PUBSUB_RefreshEnablement, {});
         }
 
         util.setEnablement("navLogoutButton", !this.isAnonUser);
@@ -543,12 +545,6 @@ export class Meta64 implements Meta64Intf {
         util.setElmDisplayById("searchMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
         util.setElmDisplayById("timelineMainAppButton", !this.isAnonUser && this.state.highlightNode != null);
         util.setElmDisplayById("userPreferencesMainAppButton", !this.isAnonUser);
-
-        /* the 'flush' call is actually only needed before interrogating the DOM
-        for things like height of components, etc */
-        //This creates problems for Polymer2.0. removing.
-        //Polymer.dom.flush(); 
-        //Polymer.Base.updateStyles();
     }
 
     /* WARNING: This is NOT the highlighted node. This is whatever node has the CHECKBOX selection */

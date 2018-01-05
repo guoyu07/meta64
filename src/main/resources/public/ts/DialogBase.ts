@@ -86,11 +86,11 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
             //this.renderToDom(node);
 
             $("body").append(myModal);
-            //myModal.modal();
 
-            //$("#" + this.getId()).modal({
             myModal.modal({
-                backdrop: "static",
+                //i keep getting a permanent mouse block (ignored mouse) in the app and i'm trying to determine if it's this
+                //backdrop by commenting out backdrop option for now.
+                //backdrop: "static",
                 keyboard: true,
                 focus: true,
                 show: true
@@ -111,6 +111,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
         /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so i'm just leaving it 
         orphaned for now, but probably adding a timer of a second or to will work, doing this call asynchronously plenty later */
-        //$("#" + this.getId()).remove();
+        setTimeout(() => {
+            $("#" + this.getId()).remove();
+        }, 800);
     }
 }

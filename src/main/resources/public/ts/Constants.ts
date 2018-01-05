@@ -2,6 +2,7 @@ console.log("Constants.ts");
 
 export class Constants {
 
+    static readonly PUBSUB_RefreshEnablement = "pubsub-refresh-enablement";
     static readonly PUBSUB_SingletonsReady = "pubsub-singletons-ready";
 
     static readonly ANON: string = "anonymous";

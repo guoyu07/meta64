@@ -25,7 +25,7 @@ export class Home extends React.Component {
                     <div className="row">
                         <div id="mainAppMenu" className="col-sm-3 col-md-3 bg-light sidebar"
                             style={{ 'position': 'fixed', 'height': '100%'}} />
-                        <main className="col-sm-9 ml-sm-auto col-md-9 pt-3">
+                        <main className="col-sm-9 ml-sm-auto col-md-9 pt-3" style={{ 'padding': '0px' }}>
                             <ul className="nav nav-tabs">
                                 <li className="nav-item">
                                     <a data-toggle="tab" className="nav-link" href="#mainTab">Main</a>
@@ -34,7 +34,7 @@ export class Home extends React.Component {
                                     <a data-toggle="tab" className="nav-link" href="#searchTab">Search</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a data-toggle="tab" className="nav-link active" href="#timelineTab">Timeline</a>
+                                    <a data-toggle="tab" className="nav-link" href="#timelineTab">Timeline</a>
                                 </li>
                             </ul>
                             <div className="tab-content">
@@ -45,7 +45,7 @@ export class Home extends React.Component {
                                 <div id="searchTab" className="tab-pane fade">
                                     <div id="searchResultsPanel">No search displaying.</div>
                                 </div>
-                                <div id="timelineTab" className="tab-pane fade in active">
+                                <div id="timelineTab" className="tab-pane fade in">
                                     <div id="timelineResultsPanel">No timeline displaying.</div>
                                 </div>
                             </div>

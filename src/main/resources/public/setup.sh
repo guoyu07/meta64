@@ -37,7 +37,7 @@
 # sudo npm install --save react-router @types/react-router
 
 # sudo npm install --save axios
-
+# sudo npm install --save popper.js 
 # sudo npm install --save marked @types/marked
 
 # Utilities install

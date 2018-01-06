@@ -15,7 +15,7 @@ export class RadioButton extends Comp {
         }
         (<any>this.attribs).name = groupName; 
         (<any>this.attribs).type = "radio";
-        (<any>this.attribs).class = "form-check-input";
+        //(<any>this.attribs).class = "form-check-input";
         (<any>this.attribs).label = label;
     }
 
@@ -31,6 +31,11 @@ export class RadioButton extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.radioButton(this.attribs, this.label);
+        let ret = tag.input(this.attribs);
+        if (this.label) {
+            ret += tag.label(this.label, { "for": this.getId() });
+        }
+        return ret;
+        //return tag.radioButton(this.attribs, this.label);
     }
 }

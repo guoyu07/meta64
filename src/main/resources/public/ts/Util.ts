@@ -1,5 +1,7 @@
 console.log("Util.ts");
 
+/// <reference path="/node_moduels/@tyeps/jquery/index.d.ts" />
+
 declare var Dropzone;
 declare var ace;
 declare var prettyPrint;
@@ -20,8 +22,6 @@ import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
 import axios, { AxiosRequestConfig } from 'axios';
-
-declare var $;
 
 let meta64: Meta64;
 let encryption: Encryption;

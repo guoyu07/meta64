@@ -1,5 +1,7 @@
 console.log("Meta64.ts");
 
+/// <reference path="/node_moduels/@tyeps/jquery/index.d.ts" />
+
 import { Factory } from "./Factory";
 import * as I from "./Interfaces";
 import { Span } from "./widget/Span";
@@ -22,7 +24,7 @@ import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
 
-declare var $;
+//declare var $;
 
 let util: Util;
 let edit: Edit;
@@ -280,7 +282,8 @@ export class Meta64 implements Meta64Intf {
 
     selectTab = (tabName): void => {
         console.log("selectTab: " + tabName);
-        $("[href='#" + tabName + "']").tab('show');
+        let tabElm = $("[href='#" + tabName + "']");
+        (<any>tabElm).tab('show');
     }
 
     isNodeBlackListed = (node): boolean => {
@@ -753,18 +756,18 @@ export class Meta64 implements Meta64Intf {
 
     initTabClicks = () => {
         $('[href="#mainTab"]').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show'); //setTab
+            e.preventDefault();
+            (<any>$(this)).tab('show'); //setTab
         });
 
         $('[href="#searchTab"]').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show'); //setTab
+            e.preventDefault();
+            (<any>$(this)).tab('show'); //setTab
         });
 
         $('[href="#timelineTab"]').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show'); //setTab
+            e.preventDefault();
+            (<any>$(this)).tab('show'); //setTab
         });
     }
 

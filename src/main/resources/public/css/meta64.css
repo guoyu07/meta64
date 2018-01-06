@@ -1,6 +1,16 @@
 /*
 NOTE: This file uses "Less CSS Compiler" (lesscss.org)
 */
+input[type=checkbox] {
+  height: 25px;
+  width: 25px;
+  margin: 8px;
+}
+input[type=radio] {
+  height: 25px;
+  width: 25px;
+  margin: 8px;
+}
 /* This app uses all square corners which is done with this one CSS style */
 * {
   border-radius: 0 !important;

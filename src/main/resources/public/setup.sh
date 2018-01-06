@@ -39,6 +39,7 @@
 # sudo npm install --save axios
 # sudo npm install --save popper.js 
 # sudo npm install --save marked @types/marked
+# sudo npm install --save @types/jquery
 
 # Utilities install
 # sudo npm install --save-dev typescript awesome-typescript-loader source-map-loader

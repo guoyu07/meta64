@@ -17,7 +17,6 @@ export interface TagIntf {
     dialog(attr: Object, content: string): string;
     button(attr?: Object, text?: string): string;
     radioButton(attr?: Object, text?: string): string;
-    radioGroup(attr?: Object, content?: string): string;
     input(attr?: Object): string;
     checkbox(attr?: Object): string;
     audio(attr: Object, content: string): string;

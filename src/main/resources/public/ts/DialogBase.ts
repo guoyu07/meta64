@@ -1,5 +1,7 @@
 console.log("DialogBase.ts");
 
+/// <reference path="/node_moduels/@tyeps/jquery/index.d.ts" />
+
 import { Div } from "./widget/Div";
 import { Comp } from "./widget/base/Comp";
 import { Dialog } from "./widget/Dialog";
@@ -17,8 +19,6 @@ import { RenderIntf as Render } from "./intf/RenderIntf";
 import { Singletons } from "./Singletons";
 import { PubSub } from "./PubSub";
 import { Constants } from "./Constants";
-
-declare var $;
 
 let meta64: Meta64;
 let util: Util;
@@ -74,7 +74,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
             let myModal = $(this.renderHtml());
             $("body").append(myModal);
 
-            myModal.modal({
+            (<any>myModal).modal({
                 //i keep getting a permanent mouse block (ignored mouse) in the app and i'm trying to determine if it's this
                 //backdrop by commenting out backdrop option for now.
                 backdrop: "static",
@@ -94,7 +94,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
     public cancel(): void {
-        $("#" + this.getId()).modal('hide');
+        (<any>$("#" + this.getId())).modal('hide');
 
         /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so i'm just leaving it 
         orphaned for now, but probably adding a timer of a second or to will work, doing this call asynchronously plenty later */

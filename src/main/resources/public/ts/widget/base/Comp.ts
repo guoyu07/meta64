@@ -1,5 +1,7 @@
 console.log("Comp.ts");
 
+/// <reference path="/node_moduels/@tyeps/jquery/index.d.ts" />
+
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CompImpl } from "./CompImpl";
@@ -10,7 +12,6 @@ import { Singletons } from "../../Singletons";
 //todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
 //this file over to using the Factory yet
 declare var util, domBind, tag;
-declare var $;
 
 export abstract class Comp extends React.Component implements CompImpl {
 

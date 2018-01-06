@@ -64,15 +64,6 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
     open = (): Promise<Dialog> => {
         return new Promise<Dialog>((resolve, reject) => {
             /*
-             * get container where all dialogs are created (true polymer dialogs)
-             *
-             * I'm not sure i'm going to keep modalsContainer, but it works fine for now.
-             */
-            //let modalsContainer = util.domElm("modalsContainer");
-            //modalsContainer.style.width = "1px"; //"100%";
-            //modalsContainer.style.height = "1px"; //"100%";
-
-            /*
              * TODO. IMPORTANT: need to put code in to remove this dialog from the dom
              * once it's closed, but remember some dialogs will eventually be treated as singletons, meaning
              * they can STAY on the dom, but be invisible. None of this work is done yet.
@@ -80,17 +71,13 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
              * This createElement call is done with a DIV, here although it's really going to be a 'paper-dialog' when the render sets the innerHTML
              * on it, but we have to create first as a DIV because the DOM tree doesn't yet know about 'paper-dialog'
              */
-            //let node = document.createElement("div");
-            //modalsContainer.appendChild(node);
             let myModal = $(this.renderHtml());
-            //this.renderToDom(node);
-
             $("body").append(myModal);
 
             myModal.modal({
                 //i keep getting a permanent mouse block (ignored mouse) in the app and i'm trying to determine if it's this
                 //backdrop by commenting out backdrop option for now.
-                //backdrop: "static",
+                backdrop: "static",
                 keyboard: true,
                 focus: true,
                 show: true
@@ -114,9 +101,11 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
         setTimeout(() => {
             $("#" + this.getId()).remove();
 
-            /* this is ugly as hell, becasue it's not gonna work with dialogs on top of other dialogs, but this is a problem lots of others
-            are having and not just us, so i will need to research more */
-            $('.modal-backdrop').remove();
+            if ($(".modal-dialog").length == 0) {
+                /* this is ugly as hell, becasue it's not gonna work with dialogs on top of other dialogs, but this is a problem lots of others
+                are having and not just us, so i will need to research more */
+                $('.modal-backdrop').remove();
+            }
         }, 500);
     }
 }

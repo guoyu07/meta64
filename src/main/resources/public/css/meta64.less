@@ -1,9 +1,22 @@
 /*
 NOTE: This file uses "Less CSS Compiler" (lesscss.org)
-
-WARNING: I (Clay Ferguson) personally use Atom editor for editing this file in addition to the TypeScript files,
-because Eclipse hasn't caught up with the rest of the modern world on their tooling, and has no good support yet.
 */
+
+/* This app uses all square corners which is done with this one CSS style */
+* {
+	border-radius: 0 !important;
+}
+  
+  /*
+  If you are not compiling your less files just do, this for square corners
+  
+  * {
+	-webkit-border-radius: 0 !important;
+	   -moz-border-radius: 0 !important;
+			border-radius: 0 !important;
+  }
+  */
+
 @highlightBtnBkColor: #4caf50;
 @highlightBtnTxtColor: white;
 @btnBkColor: lightGray;
@@ -83,32 +96,6 @@ because Eclipse hasn't caught up with the rest of the modern world on their tool
 
 .meta64-input {
 	max-width: 50%;
-}
-
-/* somehow polymer is overriding the margin to be some amount like 50px or something, and I don't know
-why. I am setting the margins properly to zero in the API code also, so i'm not sure how to get rid of
-the margin around a fullscreen polymer dialog yet */
-paper-dialog {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	padding: 0;
-	margin: 0;
-	overflow-y: auto;
-}
-
-paper-item {
-	cursor: pointer;
-}
-
-paper-menu {
-	cursor: pointer;
-}
-
-paper-submenu {
-	cursor: pointer;
 }
 
 /*
@@ -204,11 +191,6 @@ code {
 	display: none;
 }
  
-body {
-	/* Note: Google menu item will INSIST on Roboto, not matter what we put here, apparently their bug */
-	font-family: Roboto, Tahoma, Verdana, Arial; 
-}
-
 tr td div p {
 	margin: 1px;
 	padding: 1px;
@@ -493,12 +475,7 @@ tr td div p {
   .App-intro {
 	font-size: large;
   }
-  
-  @keyframes App-logo-spin {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
-  }
-  
+    
   /* This is a documented 'correct' thing to do per this:
   https://stackoverflow.com/questions/10336194/twitter-bootstrap-top-nav-bar-blocking-top-content-of-the-page
   */
@@ -507,6 +484,6 @@ tr td div p {
 	
 	padding-top: 65px; 
   	margin: 0;
-	font-family: ubuntu, roboto, verdana, sans-serif;
+	/* font-family: ubuntu, roboto, verdana, sans-serif; */
   }
   

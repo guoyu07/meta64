@@ -23,8 +23,9 @@ export class Home extends React.Component {
 
                 <div role="main" className="container-fluid">
                     <div className="row">
-                        <div id="mainAppMenu" className="col-sm-3 col-md-2 bg-light sidebar" />
-                        <main className="col-sm-9 ml-sm-auto col-md-10 pt-3">
+                        <div id="mainAppMenu" className="col-sm-3 col-md-3 bg-light sidebar"
+                            style={{ 'position': 'fixed', 'height': '100%'}} />
+                        <main className="col-sm-9 ml-sm-auto col-md-9 pt-3">
                             <ul className="nav nav-tabs">
                                 <li className="nav-item">
                                     <a data-toggle="tab" className="nav-link" href="#mainTab">Main</a>
@@ -38,8 +39,7 @@ export class Home extends React.Component {
                             </ul>
                             <div className="tab-content">
                                 <div id="mainTab" className="tab-pane fade">
-                                    {/* margin isn't working. trying to get space below the tabs. */}
-                                    <div id="mainNodeContent" style={{'margin-top': '1rem;'}}></div>
+                                    <div id="mainNodeContent" style={{ 'marginTop': '.5rem' }}></div>
                                     <div id="listView"></div>
                                 </div>
                                 <div id="searchTab" className="tab-pane fade">

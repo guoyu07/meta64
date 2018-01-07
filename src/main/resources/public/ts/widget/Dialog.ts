@@ -10,6 +10,12 @@ declare var tag;
 
 export class Dialog extends Comp {
 
+  /* Due to limitation of bootstrap to only allow a single dialog at a time we have this stack
+  that keeps track of which dialogs are open so that we can only show one of them at a time
+  but have an entire stack 'live' at any given time. The impelementation of that stack logic is all
+  contained in DialogBase.ts */
+  public static stack: Dialog[] = [];
+
   constructor(private title: string) {
     //Note: we end up seeing ugly scrollbar overlap if we have less than 50px (significantly less) on the padding-right value.
     super({
@@ -20,7 +26,7 @@ export class Dialog extends Comp {
 
   renderHtml = (): string => {
     let dlg = new Div(null, {
-      class: "modal fade",
+      class: "modal",
       tabindex: "-1",
       role: "dialog",
       "id": this.getId()

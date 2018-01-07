@@ -144,7 +144,6 @@ export class EditNodeDlg extends DialogBase {
 
                 //todo-1: why was I HIDING readonly instead of merely disabling editing?
                 if ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties) {
-
                     let tableRow = new EditPropsTableRow({
                     });
 
@@ -487,7 +486,11 @@ export class EditNodeDlg extends DialogBase {
 
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,
-                    "value": propValStr
+                    "value": propValStr,
+
+                    /* quick and dirty way to make content allow multiple lines, but one row for others. This will
+                    be done in a better way once we have some kind of typing system in place */
+                    "rows": propEntry.property.name=="sn:content" ? "8" : "1"
                 });
 
                 if (isEncrypted) {

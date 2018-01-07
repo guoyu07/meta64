@@ -83,6 +83,13 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
                 show: true
             });
 
+            /* Hide the currently showing dialog, if there is one (top of dialog stack */
+            if (Dialog.stack.length > 0) {
+                let topDlg = Dialog.stack[Dialog.stack.length-1];
+                (<any>$("#" + topDlg.getId())).modal('hide');
+            }
+            Dialog.stack.push(this);
+
             this.built = true;
 
             if (typeof this.init == 'function') {
@@ -100,12 +107,18 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
         is the reason we have this timer here. */
         setTimeout(() => {
             $("#" + this.getId()).remove();
+            Dialog.stack.pop();
 
-            if ($(".modal-dialog").length == 0) {
+            //if ($(".modal-dialog").length == 0) {
+            if (Dialog.stack.length == 0) {
                 /* this is ugly as hell, becasue it's not gonna work with dialogs on top of other dialogs, but this is a problem lots of others
                 are having and not just us, so i will need to research more */
                 $('.modal-backdrop').remove();
             }
-        }, 500);
+            else {
+                let topDlg = Dialog.stack[Dialog.stack.length-1];
+                (<any>$("#" + topDlg.getId())).modal('show');
+            }
+        }, 250);
     }
 }

@@ -18,7 +18,7 @@ export class Textarea extends Comp {
         /* we just resort to returning the value the object was originally created to have if the gui elmement doesn't exist yet on the DOM
         when we got into here */
         else {
-            return  (<any>this.attribs).value;
+            return (<any>this.attribs).value;
         }
     }
 
@@ -41,7 +41,10 @@ export class Textarea extends Comp {
             });
         }
         (<any>this.attribs).class = "form-control";
-        (<any>this.attribs).rows = "5";
+
+        if (!(<any>this.attribs).rows) {
+            (<any>this.attribs).rows = "5";
+        }
         ret += tag.textarea(this.attribs, (<any>this.attribs).value);
         return ret;
     }

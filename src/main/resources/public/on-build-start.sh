@@ -2,6 +2,8 @@
 
 echo "Running on-build-start.sh"
 
+rm -rf ./dist/*
+
 # To install Less CSS compiler run these commands:
 #    sudo npm install -g less
 

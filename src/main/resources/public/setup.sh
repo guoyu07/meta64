@@ -46,6 +46,9 @@
 # sudo npm install --save-dev script-loader
 # sudo npm install circular-dependency-plugin
 # sudo npm install webpack-shell-plugin
+# sudo npm install webpack
+# sudo npm install --save-dev html-webpack-plugin
+# sudo npm install --save-dev html-loader
 
 # sudo apt install git
 # git config --global user.email "wclayf@gmail.com"

@@ -49,10 +49,16 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 		return new ConcurrentTaskScheduler(); // single threaded by default
 	}
 
+	//WARNING: The AppController intercepts before we ever get here, so don't expect this to work.
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/").setViewName("redirect:/index.html");
+		registry.addViewController("/").setViewName("redirect:/dist/index.html");
 	}
+	
+//	@Override
+//	public void addViewControllers(ViewControllerRegistry registry) {
+//	    registry.addViewController("/").setViewName("forward:/dist/index.html");
+//	}
 
 	// DO NOT DELETE.
 	// Leave as another way to show how to provide a bean by name in the spring

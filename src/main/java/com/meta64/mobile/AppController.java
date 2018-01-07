@@ -232,7 +232,7 @@ public class AppController {
 		sessionContext.setUrlId(id);
 
 		//return "index"; 
-		return "redirect:/index.html";
+		return "redirect:/dist/index.html";
 	}
 
 	@RequestMapping(value = API_PATH + "/captcha", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)

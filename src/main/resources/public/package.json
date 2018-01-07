@@ -24,10 +24,14 @@
     "react-dom": "^16.2.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.17"
+    "react-scripts": "1.0.17",
+    "webpack": "^3.10.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.4.1",
+    "clean-webpack-plugin": "^0.1.17",
+    "html-loader": "^0.5.4",
+    "html-webpack-plugin": "^2.30.1",
     "script-loader": "^0.7.2",
     "source-map-loader": "^0.2.3",
     "typescript": "^2.6.2",

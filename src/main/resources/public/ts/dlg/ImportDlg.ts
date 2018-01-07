@@ -5,7 +5,6 @@ import * as I from "../Interfaces";
 import { MessageDlg } from "./MessageDlg";
 import { Header } from "../widget/Header";
 import { PasswordTextField } from "../widget/PasswordTextField";
-import { Help } from "../widget/Help";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";

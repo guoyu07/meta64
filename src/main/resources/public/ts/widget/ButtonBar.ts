@@ -13,6 +13,7 @@ export class ButtonBar extends Comp {
         super(null);
         (<any>this.attribs).class = "btn-group";
         (<any>this.attribs).role = "group"; //"horizontal " + justify + " layout vertical-layout-row";
+        (<any>this.attribs).style = "margin-top: 12px";
         this.setChildren(initialButtons);
     }
 

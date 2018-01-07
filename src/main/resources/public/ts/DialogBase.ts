@@ -96,8 +96,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
     public cancel(): void {
         (<any>$("#" + this.getId())).modal('hide');
 
-        /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so i'm just leaving it 
-        orphaned for now, but probably adding a timer of a second or to will work, doing this call asynchronously plenty later */
+        /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so that
+        is the reason we have this timer here. */
         setTimeout(() => {
             $("#" + this.getId()).remove();
 

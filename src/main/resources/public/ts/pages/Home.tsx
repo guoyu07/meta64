@@ -25,8 +25,8 @@ export class Home extends React.Component {
                     <div className="row">
                         <div id="mainAppMenu" className="col-sm-3 col-md-3 bg-light sidebar"
                             style={{ 'position': 'fixed', 'height': '100%'}} />
-                        <main className="col-sm-9 ml-sm-auto col-md-9 pt-3" style={{ 'padding': '0px' }}>
-                            <ul className="nav nav-tabs">
+                        <main id="mainScrollingArea" className="col-sm-9 ml-sm-auto col-md-9 pt-3" style={{ 'padding': '0px' }}>
+                            <ul id="navTabs" className="nav nav-tabs">
                                 <li className="nav-item">
                                     <a data-toggle="tab" className="nav-link" href="#mainTab">Main</a>
                                 </li>

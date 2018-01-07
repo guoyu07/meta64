@@ -42,6 +42,15 @@ export class Button extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.button(this.attribs, this.text);
+        let iElm;
+        if ((<any>this).attribs.iconClass) {
+           // <i className="fa fa-home fa-lg"/>
+           iElm = tag.i({class: (<any>this).attribs.iconClass});
+        }
+        let content = this.text ? this.text : "";
+        if (iElm) {
+            content = iElm + content;
+        }
+        return tag.button(this.attribs, content);
     }
 }

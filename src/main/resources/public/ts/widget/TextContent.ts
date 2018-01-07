@@ -11,10 +11,12 @@ export class TextContent extends Comp {
         if (classes) {
             (<any>this.attribs).class = classes;
         }
-        //(<any>this.attribs).class = (centered ? "horizontal center-justified layout" : "");
+        (<any>this.attribs).class ="alert alert-info";
+        (<any>this.attribs).role="alert";
     }
 
     renderHtml = (): string => {
+        if (!this.text) return "";
         return tag.div(this.attribs, this.text);
     }
 }

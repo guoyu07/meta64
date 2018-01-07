@@ -65,8 +65,6 @@ export class MenuPanel extends Comp {
             new Menu("Bookmarks", [
                 new MenuItem("SubNode Home", () => { meta64.loadAnonPageHome(true) }),
                 new MenuItem("Your Home", nav.navHome),
-
-                //todo-1: disabled during mongo conversion
                 new MenuItem("RSS Feeds", nav.openRssFeedsNode),
 
                 /* currently this Sample Content is the book 'War and Peace' */

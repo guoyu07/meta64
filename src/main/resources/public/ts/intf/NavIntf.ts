@@ -28,7 +28,6 @@ export interface NavIntf {
     upLevelResponse(res: I.RenderNodeResponse, id): void;
     navUpLevel(): void;
     getSelectedDomElement(): HTMLElement;
-    getSelectedPolyElement(): HTMLElement;
     clickOnNodeRow(uid: string): void;
     openNode(uid): void;
     toggleNodeSel(selected: boolean, uid: string): void;

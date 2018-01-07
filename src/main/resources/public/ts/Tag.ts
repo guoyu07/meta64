@@ -144,4 +144,8 @@ export class Tag implements TagIntf {
     dlgSectionHeading = (name: string): string => {
         return `<h3>${name}</h3>`;
     }
+
+    i = (attr?: Object, content?: string): string => {
+        return render.tag("i", attr, content, true);
+    }
 }

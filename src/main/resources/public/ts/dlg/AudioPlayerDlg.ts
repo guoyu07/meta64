@@ -4,7 +4,6 @@ import { DialogBase } from "../DialogBase";
 import * as I from "../Interfaces";
 import { Header } from "../widget/Header";
 import { PasswordTextField } from "../widget/PasswordTextField";
-import { Help } from "../widget/Help";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextContent } from "../widget/TextContent";

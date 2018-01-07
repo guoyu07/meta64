@@ -6,7 +6,7 @@ import { MessageDlg } from "./MessageDlg";
 import * as I from "../Interfaces";
 import { Header } from "../widget/Header";
 import { PasswordTextField } from "../widget/PasswordTextField";
-import { Help } from "../widget/Help";
+import { TextContent } from "../widget/TextContent";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { UtilIntf as Util } from "../intf/UtilIntf";
@@ -34,7 +34,7 @@ export class ChangePasswordDlg extends DialogBase {
     buildGUI = (): void => {
         this.setChildren([
             new Form(null, [
-                new Help("Enter your new password below..."),
+                new TextContent("Enter your new password below..."),
                 this.passwordField = new PasswordTextField("New Password"),
                 new ButtonBar([
                     new Button("Change Password", this.changePassword, null, true, this),

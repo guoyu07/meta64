@@ -516,23 +516,23 @@ export class Render implements RenderIntf {
 
         if (meta64.userPreferences.editMode && editingAllowed) {
             /* Construct Create Subnode Button */
-            editNodeButton = new Button("Edit", () => { meta64.runEditNode(node.uid); }, {
-                //"icon": "editor:mode-edit"
+            editNodeButton = new Button(null, () => { meta64.runEditNode(node.uid); }, {
+                "iconClass": "fa fa-pencil fa-lg"
             });
 
             if (cnst.MOVE_UPDOWN_ON_TOOLBAR && !commentBy) {
 
                 if (canMoveUp) {
                     /* Construct Create Subnode Button */
-                    moveNodeUpButton = new Button("Up", () => { meta64.moveNodeUp(node.uid); }, {
-                        //"icon": "icons:arrow-upward"
+                    moveNodeUpButton = new Button(null, () => { meta64.moveNodeUp(node.uid); }, {
+                        "iconClass" : "fa fa-arrow-up fa-lg"
                     });
                 }
 
                 if (canMoveDown) {
                     /* Construct Create Subnode Button */
-                    moveNodeDownButton = new Button("Dn", () => { meta64.moveNodeDown(node.uid); }, {
-                        //"icon": "icons:arrow-downward"
+                    moveNodeDownButton = new Button(null, () => { meta64.moveNodeDown(node.uid); }, {
+                        "iconClass" : "fa fa-arrow-down fa-lg"
                     });
                 }
             }
@@ -657,7 +657,7 @@ export class Render implements RenderIntf {
 
             if (meta64.currentNodeData.node && nav.parentVisibleToUser()) {
 
-                upLevelButton = new Button("Up", () => { nav.navUpLevel(); }).renderHtml();
+                upLevelButton = new Button("Up Level", () => { nav.navUpLevel(); }).renderHtml();
             }
 
             // console.log("data.node.path="+data.node.path);
@@ -685,7 +685,8 @@ export class Render implements RenderIntf {
             if (edit.isEditAllowed(data.node)) {
 
                 /* Construct Create Subnode Button */
-                editNodeButton = new Button("Edit", () => { meta64.runEditNode(uid); }).renderHtml();
+                editNodeButton = new Button(null, () => { meta64.runEditNode(uid); },
+                    { "iconClass": "fa fa-pencil fa-lg" }).renderHtml();
             }
 
             /* Construct Create Subnode Button */

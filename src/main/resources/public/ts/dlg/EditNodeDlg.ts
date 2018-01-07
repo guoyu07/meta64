@@ -8,7 +8,7 @@ import { Button } from "../widget/Button";
 import { Header } from "../widget/Header";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Div } from "../widget/Div";
-import { Help } from "../widget/Help";
+import { TextContent } from "../widget/TextContent";
 import { Textarea } from "../widget/Textarea";
 import { EditPropTextarea } from "../widget/EditPropTextarea";
 import { Checkbox } from "../widget/Checkbox";
@@ -45,7 +45,7 @@ export class EditNodeDlg extends DialogBase {
     header: Header;
     buttonBar: ButtonBar;
     pathDisplay: Div;
-    help: Help;
+    help: TextContent;
     propertyEditFieldContainer: Div;
 
     saveNodeButton: Button;
@@ -74,7 +74,7 @@ export class EditNodeDlg extends DialogBase {
     buildGUI = (): void => {
         this.setChildren([
             new Form(null, [
-                this.help = new Help(""),
+                this.help = new TextContent(""),
                 new Div(null, {
                     //"class": "form-group"
                 },
@@ -483,7 +483,7 @@ export class EditNodeDlg extends DialogBase {
             formGroup.addChild(checkbox);
 
             if (!cnst.USE_ACE_EDITOR) {
-                //todo-1: when this is a password, disable it until value it asynchronously set.
+                //todo-1: when this is a password, disable it until value is asynchronously set.
 
                 let textarea = new EditPropTextarea(propEntry, null, {
                     "label": label,

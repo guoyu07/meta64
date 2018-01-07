@@ -17,7 +17,8 @@ export class ButtonBarRe extends Comp {
     reactRender = () => {
         let className =  "horizontal " + this.justify + " layout vertical-layout-row";
         return React.createElement("div", {
-            className
+            className,
+            style: "marginTop: 12px;"
         }, this.reactRenderChildren());
     }
 }

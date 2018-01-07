@@ -549,7 +549,6 @@ export class Edit implements EditIntf {
                 () => {
                     this.nodesToMove = selNodesArray;
                     this.loadNodesToMoveSet(selNodesArray);
-                    /* todo-1: need to have a way to find all selected checkboxes in the gui and reset them all to unchecked */
                     meta64.selectedNodes = {}; // clear selections.
 
                     /* now we render again and the nodes that were cut will disappear from view */

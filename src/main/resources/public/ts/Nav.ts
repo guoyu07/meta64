@@ -190,35 +190,6 @@ export class Nav implements NavIntf {
         return null;
     }
 
-    /*
-     * turn of row selection DOM element of whatever row is currently selected
-     */
-    getSelectedPolyElement = (): HTMLElement => {
-        try {
-            let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
-            if (currentSelNode) {
-
-                /* get node by node identifier */
-                let node: I.NodeInfo = meta64.uidToNodeMap[currentSelNode.uid];
-
-                if (node) {
-                    console.log("found highlighted node.id=" + node.id);
-
-                    /* now make CSS id from node */
-                    let nodeId: string = this._UID_ROWID_PREFIX + node.uid;
-                    console.log("looking up using element id: " + nodeId);
-
-                    return util.domElm(nodeId);
-                }
-            } else {
-                console.log("no node highlighted");
-            }
-        } catch (e) {
-            util.logAndThrow("getSelectedPolyElement failed.");
-        }
-        return null;
-    }
-
     clickOnNodeRow = (uid: string): void => {
         console.log("clickOnNodeRow: uid=" + uid);
         let node: I.NodeInfo = meta64.uidToNodeMap[uid];

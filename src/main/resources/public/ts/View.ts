@@ -160,28 +160,41 @@ export class View implements ViewIntf {
      * and then scrolling to a different place a fraction of a second later)
      */
     scrollToSelectedNode = () => {
+        debugger;
         this.scrollToSelNodePending = true;
 
         setTimeout(() => {
+            debugger;
             this.scrollToSelNodePending = false;
 
             /* Check to see if we are rendering the top node (page root), and if so
             it is better looking to just scroll to zero index, because that will always
-            be what use wants to see */
+            be what user wants to see */
+            //NOTE this quit working once switched to bootstrap. need to research. (todo-1)
             let currentSelNode: I.NodeInfo = meta64.getHighlightedNode();
             if (currentSelNode && meta64.currentNodeData.node.id==currentSelNode.id) {
-                util.domElm("#mainNodeContent").scrollTop = 0;
+                console.log("Scroll top!");
+                //util.domElm("#mainScrollingArea").scrollTop = 0;
+                //document.body.scrollTop = 0;
+                let elm = util.domElm("#navTabs");
+                if (elm && typeof elm.scrollIntoView == 'function') {
+                    elm.scrollIntoView();
+                }
                 return;
             }
 
-            let elm: any = nav.getSelectedPolyElement();
+            let elm: any = nav.getSelectedDomElement();
 
-            if (elm && elm.node && typeof elm.node.scrollIntoView == 'function') {
-                elm.node.scrollIntoView();
+            if (elm && typeof elm.scrollIntoView == 'function') {
+                elm.scrollIntoView();
             }
             else {
                 //sets vertical top position of scrollbar to zero (top)
-                util.domElm("#mainNodeContent").scrollTop = 0;
+                //util.domElm("#mainScrollingArea").scrollTop = 0;
+                let elm = util.domElm("#navTabs");
+                if (elm && typeof elm.scrollIntoView == 'function') {
+                    elm.scrollIntoView();
+                }
             }
         }, 1000);
     }
@@ -190,16 +203,20 @@ export class View implements ViewIntf {
         if (this.scrollToSelNodePending)
             return;
 
-        let mainContainer = util.domElm("#mainNodeContent");
-        if (!mainContainer) {
-            return;
-        }
-        mainContainer.scrollTop = 0;
+        // let mainContainer = util.domElm("#mainScrollingArea");
+        // if (!mainContainer) {
+        //     return;
+        // }
+        // mainContainer.scrollTop = 0;
         
         setTimeout(() => {
             if (this.scrollToSelNodePending)
                 return;
-            mainContainer.scrollTop = 0;
+            //mainContainer.scrollTop = 0;
+            let elm = util.domElm("#navTabs");
+            if (elm && typeof elm.scrollIntoView == 'function') {
+                elm.scrollIntoView();
+            }
         }, 1000);
     }
 

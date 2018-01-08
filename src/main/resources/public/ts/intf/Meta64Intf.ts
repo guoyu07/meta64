@@ -49,6 +49,7 @@ export interface Meta64Intf {
     editModeOption: string;
     showProperties: boolean;
     showMetaData: boolean;
+    showPath: boolean;
 
     simpleModeNodePrefixBlackList: any;
 

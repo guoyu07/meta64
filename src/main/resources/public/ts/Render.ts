@@ -138,9 +138,17 @@ export class Render implements RenderIntf {
             nodeNameSpan = new Span(`Name: ${node.name} [uid=${node.uid}]`);
         }
 
+        let renderChildren = [];
+        if (meta64.showPath) {
+            renderChildren.push(pathDiv);
+        }
+        if (meta64.showMetaData) {
+            renderChildren.push(allSpansDiv, nodeNameSpan);
+        }
+
         return new Div(null, {
             "class": "header-text"
-        }, [pathDiv, allSpansDiv, nodeNameSpan]);
+        }, renderChildren);
     }
 
     injectSubstitutions = (content: string): string => {
@@ -176,7 +184,7 @@ export class Render implements RenderIntf {
         let ret: string = topRightImgTag ? topRightImgTag.renderHtml() : "";
 
         /* todo-2: enable headerText when appropriate here */
-        if (meta64.showMetaData) {
+        if (meta64.showMetaData || meta64.showPath) {
             ret += showHeader ? this.buildRowHeader(node, showPath, showName).renderHtml() : "";
         }
 

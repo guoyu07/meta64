@@ -98,6 +98,7 @@ export class User implements UserIntf {
         meta64.userPreferences = res.userPreferences;
         meta64.editModeOption = res.userPreferences.advancedMode ? meta64.MODE_ADVANCED : meta64.MODE_SIMPLE;
         meta64.showMetaData = res.userPreferences.showMetaData;
+        meta64.showPath = res.userPreferences.showPath;
 
         console.log("from server: meta64.editModeOption=" + meta64.editModeOption);
     }

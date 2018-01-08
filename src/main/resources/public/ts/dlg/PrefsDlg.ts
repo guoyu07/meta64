@@ -31,6 +31,7 @@ export class PrefsDlg extends DialogBase {
     simpleRadioButton: RadioButton;
     advancedRadioButton: RadioButton;
     showMetadataCheckBox: Checkbox;
+    showPathCheckBox: Checkbox;
 
     constructor() {
         super("Preferences");
@@ -53,6 +54,7 @@ export class PrefsDlg extends DialogBase {
                 },
                     [
                         this.showMetadataCheckBox = new Checkbox("Show Row Metadata", meta64.showMetaData),
+                        this.showPathCheckBox = new Checkbox("Show Path", meta64.showPath),
                     ]
                 ),
                 new ButtonBar(
@@ -69,6 +71,7 @@ export class PrefsDlg extends DialogBase {
         meta64.editModeOption = this.simpleRadioButton.getChecked() ? meta64.MODE_SIMPLE
             : meta64.MODE_ADVANCED;
         meta64.showMetaData = this.showMetadataCheckBox.getChecked();
+        meta64.showPath = this.showPathCheckBox.getChecked();
 
         util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-1: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
@@ -78,7 +81,8 @@ export class PrefsDlg extends DialogBase {
                 /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
                 "importAllowed": false,
                 "exportAllowed": false,
-                "showMetaData": meta64.showMetaData
+                "showMetaData": meta64.showMetaData,
+                "showPath": meta64.showPath
             }
         }, this.savePreferencesResponse);
     }

@@ -9,10 +9,16 @@ import { Button } from "../widget/Button";
 import { TextContent } from "../widget/TextContent";
 import { AudioPlayer } from "../widget/AudioPlayer";
 import { Form } from "../widget/Form";
+import { UtilIntf } from "../intf/UtilIntf";
+import { Singletons } from "../Singletons";
+import { Constants } from "../Constants";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, podcast, render, props;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
+    S = s;
+});
+
 
 /* This is an audio player dialog that has ad-skipping technology provided by podcast.ts
 
@@ -36,21 +42,21 @@ export class AudioPlayerDlg extends DialogBase {
         this.nodeUid = (<any>args).nodeUid;
         this.startTimePending = (<any>args).startTimePending;
 
-        this.node = meta64.uidToNodeMap[this.nodeUid];
+        this.node = S.meta64.uidToNodeMap[this.nodeUid];
         if (!this.node) {
             throw `unknown node uid: ${this.nodeUid}`;
         }
 
         console.log("AudioPlayer: url=" + this.sourceUrl);
         console.log(`startTimePending in constructor: ${this.startTimePending}`);
-        podcast.startTimePending = this.startTimePending;
+        S.podcast.startTimePending = this.startTimePending;
 
         console.log("AudioPlayer Dialog biuldGUI");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        let rssTitle: I.PropertyInfo = props.getNodeProperty("sn:rssItemTitle", this.node);
+        let rssTitle: I.PropertyInfo = S.props.getNodeProperty("sn:rssItemTitle", this.node);
 
         this.setChildren([
             new Form(null, [
@@ -60,8 +66,8 @@ export class AudioPlayerDlg extends DialogBase {
                 this.audioPlayer = new AudioPlayer({
                     "src": this.sourceUrl,
                     "style": "width: 100%; border: 3px solid gray; padding:0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;",
-                    "ontimeupdate": () => { podcast.onTimeUpdate(this); },
-                    "oncanplay": () => { podcast.onCanPlay(this); },
+                    "ontimeupdate": () => { S.podcast.onTimeUpdate(this); },
+                    "oncanplay": () => { S.podcast.onCanPlay(this); },
                     "controls": "controls",
                     "preload": "auto"
                 }),
@@ -107,44 +113,44 @@ export class AudioPlayerDlg extends DialogBase {
     }
 
     pauseButton = (): void => {
-        podcast.pause();
+        S.podcast.pause();
     }
 
     playButton = (): void => {
-        podcast.play();
+        S.podcast.play();
     }
 
     speed2Button = (): void => {
-        podcast.speed(2);
+        S.podcast.speed(2);
     }
 
     speed15Button = (): void => {
-        podcast.speed(1.5);
+        S.podcast.speed(1.5);
     }
 
     normalSpeedButton = (): void => {
-        podcast.speed(1.0);
+        S.podcast.speed(1.0);
     }
 
     skipBack30Button = (): void => {
-        podcast.skip(-30);
+        S.podcast.skip(-30);
     }
 
     skipForward30Button = (): void => {
-        podcast.skip(30);
+        S.podcast.skip(30);
     }
 
     closeEvent = (): void => {
-        podcast.destroyPlayer(null);
+        S.podcast.destroyPlayer(null);
     }
 
     closeBtn = (): void => {
-        podcast.destroyPlayer(this);
+        S.podcast.destroyPlayer(this);
     }
 
     init = (): void => {
         this.audioPlayer.whenElm((elm) => {
-            podcast.player = elm;
+            S.podcast.player = elm;
         });
     }
 }

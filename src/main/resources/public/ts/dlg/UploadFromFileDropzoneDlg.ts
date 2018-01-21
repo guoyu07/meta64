@@ -8,11 +8,14 @@ import { TextContent } from "../widget/TextContent";
 import { Div } from "../widget/Div";
 import { Comp } from "../widget/base/Comp";
 import { Form } from "../widget/Form";
-import { Constants as cnst } from "../Constants";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, util, attachment, render, domBind;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 declare var Dropzone;
 
@@ -35,7 +38,7 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
     buildGUI = (): void => {
         this.setChildren([
             new Form(null, [
-                cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + attachment.uploadNode.path, "path-display-in-editor") : null,
+                Constants.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + S.attachment.uploadNode.path, "path-display-in-editor") : null,
                 this.dropzoneDiv = new Div("", {class: "dropzone"}),
                 this.hiddenInputContainer = new Div(null, { "style": "display: none;" }),
                 new ButtonBar([
@@ -53,12 +56,12 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
     configureDropZone = (): void => {
         let dlg = this;
         let config: Object = {
-            action: util.getRpcPath() + "upload",
+            action: S.util.getRpcPath() + "upload",
             width: 500,
             height: 500,
             progressBarWidth: '100%',
             zIndex: 100,
-            url: util.getRpcPath() + "upload",
+            url: S.util.getRpcPath() + "upload",
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",
@@ -86,19 +89,19 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
                 });
 
                 this.on("sending", function (file, xhr, formData) {
-                    formData.append("nodeId", attachment.uploadNode.id);
+                    formData.append("nodeId", S.attachment.uploadNode.id);
                     formData.append("explodeZips", dlg.explodeZips ? "true" : "false");
                     dlg.zipQuestionAnswered = false;
                 });
 
                 this.on("queuecomplete", function (file) {
                     dlg.cancel();
-                    meta64.refresh();
+                    S.meta64.refresh();
                 });
             }
         };
 
-        domBind.whenElm(this.dropzoneDiv.getId(), (elm) => {
+        S.domBind.whenElm(this.dropzoneDiv.getId(), (elm) => {
             this.dropzone = new Dropzone("#" + this.dropzoneDiv.getId(), config);
         });
     }
@@ -129,7 +132,7 @@ export class UploadFromFileDropzoneDlg extends DialogBase {
     hasAnyZipFiles = (): boolean => {
         let ret: boolean = false;
         for (let file of this.fileList) {
-            if (util.endsWith(file["name"].toLowerCase(), ".zip")) {
+            if (S.util.endsWith(file["name"].toLowerCase(), ".zip")) {
                 return true;
             }
         }

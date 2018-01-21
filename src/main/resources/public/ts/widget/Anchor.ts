@@ -1,19 +1,23 @@
 console.log("Div.ts");
 
 import { Comp } from "./base/Comp";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
+import { Constants } from "../Constants";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Anchor extends Comp {
 
     constructor(public url: string, public content: string, _attribs: Object = null) {
         super({ href: url });
-        util.mergeProps(this.attribs, _attribs);
+        S.util.mergeProps(this.attribs, _attribs);
     }
 
     renderHtml = (): string => {
-        return tag.a(this.attribs, this.content || this.url);
+        return S.tag.a(this.attribs, this.content || this.url);
     }
 }

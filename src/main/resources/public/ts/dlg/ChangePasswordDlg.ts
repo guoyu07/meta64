@@ -26,7 +26,7 @@ export class ChangePasswordDlg extends DialogBase {
     private passCode: string;
 
     constructor(args: Object) {
-        super((<any>args).passCode ? "Password Reset" : "Change Password");
+        super((<any>args).passCode ? "Password Reset" : "Change Password", "modal-md");
         this.passCode = (<any>args).passCode;
         this.buildGUI();
     }

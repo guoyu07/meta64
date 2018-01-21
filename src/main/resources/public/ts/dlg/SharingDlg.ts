@@ -17,14 +17,10 @@ import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 import { Form } from "../widget/Form";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var share, meta64, tag;
 
 export class SharingDlg extends DialogBase {
 
@@ -62,8 +58,8 @@ export class SharingDlg extends DialogBase {
     reload = (): void => {
         console.log("Loading node sharing info.");
 
-        util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
-            "nodeId": share.sharingNode.id,
+        S.util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
+            "nodeId": S.share.sharingNode.id,
             "includeAcl": true,
             "includeOwners": true
         }, this.populate);
@@ -75,7 +71,7 @@ export class SharingDlg extends DialogBase {
     populate = (res: I.GetNodePrivilegesResponse): void => {
         this.privsTable.removeAllChildren();
 
-        util.forEachArrElm(res.aclEntries, (aclEntry, index) => {
+        S.util.forEachArrElm(res.aclEntries, (aclEntry, index) => {
             this.privsTable.addChild(new EditPrivsTableRow(this, aclEntry));
         });
 
@@ -86,9 +82,9 @@ export class SharingDlg extends DialogBase {
 
     /* Note: this really only saves the checkbox value because the other list modifications are made as soon as user does them */
     save = (): void => {
-        meta64.treeDirty = true;
-        util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
-            "nodeId": share.sharingNode.id,
+        S.meta64.treeDirty = true;
+        S.util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+            "nodeId": S.share.sharingNode.id,
             "privileges": null,
             "principal": null,
             "publicAppend": false //this.publicCommentingCheckbox.getChecked()
@@ -96,17 +92,17 @@ export class SharingDlg extends DialogBase {
     }
 
     removePrivilege = (principalNodeId: string, privilege: string): void => {
-        meta64.treeDirty = true;
-        util.ajax<I.RemovePrivilegeRequest, I.RemovePrivilegeResponse>("removePrivilege", {
-            "nodeId": share.sharingNode.id,
+        S.meta64.treeDirty = true;
+        S.util.ajax<I.RemovePrivilegeRequest, I.RemovePrivilegeResponse>("removePrivilege", {
+            "nodeId": S.share.sharingNode.id,
             "principalNodeId": principalNodeId,
             "privilege": privilege
         }, this.removePrivilegeResponse);
     }
 
     removePrivilegeResponse = (res: I.RemovePrivilegeResponse): void => {
-        util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
-            "nodeId": share.sharingNode.path,
+        S.util.ajax<I.GetNodePrivilegesRequest, I.GetNodePrivilegesResponse>("getNodePrivileges", {
+            "nodeId": S.share.sharingNode.path,
             "includeAcl": true,
             "includeOwners": true
         }, this.populate);
@@ -118,15 +114,15 @@ export class SharingDlg extends DialogBase {
 
     shareNodeToPublic = (): void => {
         console.log("Sharing node to public.");
-        meta64.treeDirty = true;
+        S.meta64.treeDirty = true;
 
         /*
          * Add privilege and then reload share nodes dialog from scratch doing another callback to server
          *
          * TODO: this additional call can be avoided as an optimization
          */
-        util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
-            "nodeId": share.sharingNode.id,
+        S.util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+            "nodeId": S.share.sharingNode.id,
             "principal": "public",
             "privileges": ["rd"],
             "publicAppend": false

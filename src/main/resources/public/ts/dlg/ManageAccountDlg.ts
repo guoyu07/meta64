@@ -6,10 +6,14 @@ import { PasswordTextField } from "../widget/PasswordTextField";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, prefs;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class ManageAccountDlg extends DialogBase {
 
@@ -28,6 +32,6 @@ export class ManageAccountDlg extends DialogBase {
     }
 
     closeAccount = (): void => {
-        prefs.closeAccount();
+        S.user.closeAccount();
     }
 }

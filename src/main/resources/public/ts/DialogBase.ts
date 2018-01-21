@@ -47,8 +47,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
     built: boolean;
 
-    constructor(title: string) {
-        super(title);
+    constructor(title: string, sizeStyle: string="modal-lg") {
+        super(title, sizeStyle);
     }
 
     /* this method is called to initialize the content of the dialog when it's displayed, and should be the place where
@@ -100,6 +100,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
     //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
+    //NOTE: Update, i think the issue with overriding is that only after an object with an overridden property is FULLY CONSTRUCTED
+    //      will you be able to count on the function NOT being the base class version, becasue it's a property and behaves as such.
     public cancel(): void {
         (<any>$("#" + this.getId())).modal('hide');
 

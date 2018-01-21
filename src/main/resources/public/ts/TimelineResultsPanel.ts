@@ -1,8 +1,13 @@
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+import { Constants } from "./Constants";
+
 console.log("TimelineResultsPanel.ts");
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var srch, util, tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class TimelineResultsPanel {
 
@@ -14,18 +19,18 @@ export class TimelineResultsPanel {
     }
 
     renderHtml = () => {
-        let header = tag.h2({
+        let header = S.tag.h2({
             "id": "timelinePageTitle",
             "class": "page-title"
         });
-        let mainContent = tag.div({
+        let mainContent = S.tag.div({
             "id": "timelineView"
         });
         return header + mainContent;
     }
 
     init = () => {
-        util.setInnerHTMLById("timelinePageTitle", srch.timelinePageTitle);
-        srch.populateSearchResultsPage(srch.timelineResults, "timelineView");
+        S.util.setInnerHTMLById("timelinePageTitle", S.srch.timelinePageTitle);
+        S.srch.populateSearchResultsPage(S.srch.timelineResults, "timelineView");
     }
 }

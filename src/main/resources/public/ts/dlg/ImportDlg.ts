@@ -13,21 +13,17 @@ import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, view;  
 
 export class ImportDlg extends DialogBase {
 
   importFromFileNameTextField: TextField;
 
     constructor() {
-        super("Import from XML");
+        super("Import from XML", "modal-md");
         this.buildGUI();
     }
 
@@ -57,16 +53,16 @@ export class ImportDlg extends DialogBase {
     // }
 
     importNodes = (): void => {
-        var highlightNode = meta64.getHighlightedNode();
+        var highlightNode = S.meta64.getHighlightedNode();
         var sourceFileName = this.importFromFileNameTextField.getValue();
 
-        if (util.emptyString(sourceFileName)) {
+        if (S.util.emptyString(sourceFileName)) {
             new MessageDlg({ "message": "Please enter a name for the import file." }).open();
             return;
         }
 
         if (highlightNode) {
-            util.ajax<I.ImportRequest, I.ImportResponse>("import", {
+            S.util.ajax<I.ImportRequest, I.ImportResponse>("import", {
                 "nodeId": highlightNode.id,
                 "sourceFileName": sourceFileName
             }, this.importResponse);
@@ -74,11 +70,11 @@ export class ImportDlg extends DialogBase {
     }
 
     importResponse = (res: I.ImportResponse): void => {
-        if (util.checkSuccess("Import", res)) {
+        if (S.util.checkSuccess("Import", res)) {
             new MessageDlg({ "message": "Import Successful" }).open();
-            view.refreshTree(null, false);
-            meta64.selectTab("mainTab");
-            view.scrollToSelectedNode();
+            S.view.refreshTree(null, false);
+            S.meta64.selectTab("mainTab");
+            S.view.scrollToSelectedNode();
         }
     }
 }

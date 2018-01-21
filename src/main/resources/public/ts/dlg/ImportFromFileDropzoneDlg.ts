@@ -9,10 +9,14 @@ import { Div } from "../widget/Div";
 import { Comp } from "../widget/base/Comp";
 import { Form } from "../widget/Form";
 import { Constants as cnst} from "../Constants";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, render, edit, util;  
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 declare var Dropzone;
 
@@ -36,9 +40,9 @@ export class ImportFromFileDropzoneDlg extends DialogBase {
     buildGUI = (): void => {
 
         this.setChildren([
-            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + edit.importTargetNode.path, "path-display-in-editor") : null,
+            cnst.SHOW_PATH_IN_DLGS ? new TextContent("Path: " + S.edit.importTargetNode.path, "path-display-in-editor") : null,
             this.form = new Form({
-                "action": util.getRpcPath() + "upload",
+                "action": S.util.getRpcPath() + "upload",
                 "autoProcessQueue": false,
                 "class": "dropzone"
             }),
@@ -58,7 +62,7 @@ export class ImportFromFileDropzoneDlg extends DialogBase {
 
         let dlg = this;
         let config: Object = {
-            url: util.getRpcPath() + "streamImport",
+            url: S.util.getRpcPath() + "streamImport",
             // Prevents Dropzone from uploading dropped files immediately
             autoProcessQueue: false,
             paramName: "files",
@@ -86,12 +90,12 @@ export class ImportFromFileDropzoneDlg extends DialogBase {
                 });
 
                 this.on("sending", function(file, xhr, formData) {
-                    formData.append("nodeId", edit.importTargetNode.id);
+                    formData.append("nodeId", S.edit.importTargetNode.id);
                 });
 
                 this.on("queuecomplete", function(file) {
                     dlg.cancel();
-                    meta64.refresh();
+                    S.meta64.refresh();
                 });
             }
         };

@@ -6,18 +6,21 @@ import { PasswordTextField } from "../widget/PasswordTextField";
 import { ButtonBar } from "../widget/ButtonBar";
 import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
-import { Constants as cnst} from "../Constants";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var user, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class PasswordDlg extends DialogBase {
     passwordTextField: PasswordTextField;
     password: string;
 
     constructor(paramsTest: Object) {
-        super("Encryption Password");
+        super("Encryption Password", "modal-md");
         this.buildGUI();
     }
 

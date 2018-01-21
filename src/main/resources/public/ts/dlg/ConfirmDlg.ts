@@ -14,7 +14,7 @@ new architecture)
 export class ConfirmDlg extends DialogBase {
 
     constructor(public config: any) {
-        super(config.title);
+        super(config.title, "modal-md");
         this.buildGUI();
     }
 

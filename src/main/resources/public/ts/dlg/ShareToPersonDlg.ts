@@ -12,14 +12,10 @@ import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 import { Form } from "../widget/Form";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var share, meta64;
 
 export class ShareToPersonDlg extends DialogBase {
 
@@ -27,7 +23,7 @@ export class ShareToPersonDlg extends DialogBase {
     sharingDlg: SharingDlg;
 
     constructor(args: Object) {
-        super("Share Node to Person");
+        super("Share Node to Person", "modal-md");
         this.sharingDlg = (<any>args).sharingDlg;
         this.buildGUI();
     }
@@ -50,15 +46,15 @@ export class ShareToPersonDlg extends DialogBase {
     shareNodeToPerson = (): void => {
         let targetUser = this.shareToUserTextField.getValue();
         if (!targetUser) {
-            util.showMessage("Please enter a username");
+            S.util.showMessage("Please enter a username");
             return;
         }
 
         /* Trigger update from server at next main page refresh */
-        meta64.treeDirty = true;
+        S.meta64.treeDirty = true;
 
-        util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
-            "nodeId": share.sharingNode.id,
+        S.util.ajax<I.AddPrivilegeRequest, I.AddPrivilegeResponse>("addPrivilege", {
+            "nodeId": S.share.sharingNode.id,
             "principal": targetUser,
             "privileges": ["rd", "wr"],
             "publicAppend": false
@@ -66,7 +62,7 @@ export class ShareToPersonDlg extends DialogBase {
     }
 
     reloadFromShareWithPerson = (res: I.AddPrivilegeResponse): void => {
-        if (util.checkSuccess("Share Node with Person", res)) {
+        if (S.util.checkSuccess("Share Node with Person", res)) {
             this.sharingDlg.reload();
         }
     }

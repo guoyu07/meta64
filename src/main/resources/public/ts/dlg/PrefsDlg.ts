@@ -17,14 +17,10 @@ import { HeaderRe } from "../widget/HeaderRe";
 import { Form } from "../widget/Form";
 import { Constants as cnst } from "../Constants";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64;
 
 export class PrefsDlg extends DialogBase {
 
@@ -45,16 +41,16 @@ export class PrefsDlg extends DialogBase {
                     "class": "form-group"
                 },
                     [
-                        this.simpleRadioButton = new RadioButton("Simple", meta64.editModeOption == meta64.MODE_SIMPLE, "exportRadioGroup"),
-                        this.advancedRadioButton = new RadioButton("Advanced", meta64.editModeOption == meta64.MODE_ADVANCED, "exportRadioGroup"),
+                        this.simpleRadioButton = new RadioButton("Simple", S.meta64.editModeOption == S.meta64.MODE_SIMPLE, "exportRadioGroup"),
+                        this.advancedRadioButton = new RadioButton("Advanced", S.meta64.editModeOption == S.meta64.MODE_ADVANCED, "exportRadioGroup"),
                     ]
                 ),
                 new Div(null, {
                     "class": "form-group"
                 },
                     [
-                        this.showMetadataCheckBox = new Checkbox("Show Row Metadata", meta64.showMetaData),
-                        this.showPathCheckBox = new Checkbox("Show Path", meta64.showPath),
+                        this.showMetadataCheckBox = new Checkbox("Show Row Metadata", S.meta64.showMetaData),
+                        this.showPathCheckBox = new Checkbox("Show Path", S.meta64.showPath),
                     ]
                 ),
                 new ButtonBar(
@@ -68,29 +64,29 @@ export class PrefsDlg extends DialogBase {
     }
 
     savePreferences = (): void => {
-        meta64.editModeOption = this.simpleRadioButton.getChecked() ? meta64.MODE_SIMPLE
-            : meta64.MODE_ADVANCED;
-        meta64.showMetaData = this.showMetadataCheckBox.getChecked();
-        meta64.showPath = this.showPathCheckBox.getChecked();
+        S.meta64.editModeOption = this.simpleRadioButton.getChecked() ? S.meta64.MODE_SIMPLE
+            : S.meta64.MODE_ADVANCED;
+            S.meta64.showMetaData = this.showMetadataCheckBox.getChecked();
+            S.meta64.showPath = this.showPathCheckBox.getChecked();
 
-        util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
+            S.util.ajax<I.SaveUserPreferencesRequest, I.SaveUserPreferencesResponse>("saveUserPreferences", {
             //todo-1: both of these options should come from meta64.userPrefernces, and not be stored directly on meta64 scope.
             "userPreferences": {
-                "advancedMode": meta64.editModeOption === meta64.MODE_ADVANCED,
-                "editMode": meta64.userPreferences.editMode,
+                "advancedMode": S.meta64.editModeOption === S.meta64.MODE_ADVANCED,
+                "editMode": S.meta64.userPreferences.editMode,
                 /* todo-1: how can I flag a property as optional in TypeScript generator ? Would be probably some kind of json/jackson @required annotation */
                 "importAllowed": false,
                 "exportAllowed": false,
-                "showMetaData": meta64.showMetaData,
-                "showPath": meta64.showPath
+                "showMetaData": S.meta64.showMetaData,
+                "showPath": S.meta64.showPath
             }
         }, this.savePreferencesResponse);
     }
 
     savePreferencesResponse = (res: I.SaveUserPreferencesResponse): void => {
-        if (util.checkSuccess("Saving Preferences", res)) {
-            meta64.selectTab("mainTab");
-            meta64.refresh();
+        if (S.util.checkSuccess("Saving Preferences", res)) {
+            S.meta64.selectTab("mainTab");
+            S.meta64.refresh();
         }
     }
 }

@@ -2,10 +2,14 @@ console.log("Legend.ts");
 
 import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Legend extends Comp {
 
@@ -14,6 +18,6 @@ export class Legend extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.legend(this.attribs, this.text);
+        return S.tag.legend(this.attribs, this.text);
     }
 }

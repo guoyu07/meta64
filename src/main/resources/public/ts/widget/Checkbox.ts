@@ -4,10 +4,14 @@ console.log("Checkbox.ts");
 
 import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
+import { Singletons } from "../Singletons";
+import { Constants } from "../Constants";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag, domBind, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Checkbox extends Comp {
 
@@ -21,13 +25,13 @@ export class Checkbox extends Comp {
     }
 
     setChecked(checked: boolean) {
-        domBind.whenElm(/*"cci" + */this.getId(), (elm) => {
+        S.domBind.whenElm(/*"cci" + */this.getId(), (elm) => {
             (<any>elm).checked = checked;
         });
     }
 
     getChecked(): boolean {
-        let elm: HTMLElement = util.domElm(/* "cci" + */this.getId());
+        let elm: HTMLElement = S.util.domElm(/* "cci" + */this.getId());
         return elm && (<any>elm).checked;
     }
 
@@ -35,14 +39,14 @@ export class Checkbox extends Comp {
 
         /* If we have an onclick provided, then wait for element to exist, and then setup the change listener on it as this same function */
         if ((<any>this.attribs).onclick) {
-            domBind.whenElm(/*"cci" + */ this.getId(), (elm) => {
+            S.domBind.whenElm(/*"cci" + */ this.getId(), (elm) => {
                 $(/*"#cci" + */this.getId()).change((<any>this.attribs).onclick);
             });
         }
 
-        let ret = tag.input(this.attribs);
+        let ret = S.tag.input(this.attribs);
         if (this.label) {
-            ret += tag.label(this.label, { "for": this.getId() });
+            ret += S.tag.label(this.label, { "for": this.getId() });
         }
         return ret;
 

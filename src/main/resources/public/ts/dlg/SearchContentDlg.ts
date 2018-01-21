@@ -12,21 +12,17 @@ import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 import { Form } from "../widget/Form";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, srch;
 
 export class SearchContentDlg extends DialogBase {
 
     searchTextField: TextField;
 
     constructor() {
-        super("Search Content");
+        super("Search Content", "modal-md");
         this.buildGUI();
     }
 
@@ -50,25 +46,25 @@ export class SearchContentDlg extends DialogBase {
     }
 
     searchProperty = (searchProp: string) => {
-        if (!util.ajaxReady("searchNodes")) {
+        if (!S.util.ajaxReady("searchNodes")) {
             return;
         }
 
         // until we have better validation
-        let node = meta64.getHighlightedNode();
+        let node = S.meta64.getHighlightedNode();
         if (!node) {
-            util.showMessage("No node is selected to search under.");
+            S.util.showMessage("No node is selected to search under.");
             return;
         }
 
         // until better validation
         let searchText = this.searchTextField.getValue();
-        if (util.emptyString(searchText)) {
-            util.showMessage("Enter search text.");
+        if (S.util.emptyString(searchText)) {
+            S.util.showMessage("Enter search text.");
             return;
         }
 
-        util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
+        S.util.ajax<I.NodeSearchRequest, I.NodeSearchResponse>("nodeSearch", {
             "nodeId": node.id,
             "searchText": searchText,
             "sortDir": "",
@@ -78,7 +74,7 @@ export class SearchContentDlg extends DialogBase {
     }
 
     searchNodesResponse = (res: I.NodeSearchResponse) => {
-        srch.searchNodesResponse(res);
+        S.srch.searchNodesResponse(res);
         this.cancel();
     }
 

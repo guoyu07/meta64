@@ -2,23 +2,27 @@ console.log("CoreTypesPlugin.ts");
 
 import * as I from "../Interfaces";
 import { CoreTypesPluginIntf } from "../intf/CoreTypesPluginIntf";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, props, render;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class CoreTypesPlugin implements CoreTypesPluginIntf {
 
     init = () => {
-        meta64.addTypeHandlers("meta64:folder", this.renderFolderNode, null);
+        S.meta64.addTypeHandlers("meta64:folder", this.renderFolderNode, null);
     }
 
     renderFolderNode = (node: I.NodeInfo, rowStyling: boolean): string => {
         let ret: string = "";
-        let name: I.PropertyInfo = props.getNodeProperty("meta64:name", node);
+        let name: I.PropertyInfo = S.props.getNodeProperty("meta64:name", node);
 
         if (name) {
-            ret += render.tag("h2", {
+            ret += S.render.tag("h2", {
                 "style": "margin-left: 15px;"
             }, name.value);
         }

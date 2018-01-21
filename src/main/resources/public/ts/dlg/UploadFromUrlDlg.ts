@@ -34,7 +34,7 @@ export class UploadFromUrlDlg extends DialogBase {
     uploadButton: Button;
 
     constructor() {
-        super("Upload File");
+        super("Upload File", "modal-md");
         this.buildGUI();
     }
 

@@ -24,14 +24,10 @@ import { FormGroup } from "../widget/FormGroup";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, render, edit, view, props, tag, encryption;
 
 declare var ace;
 
@@ -108,7 +104,7 @@ export class EditNodeDlg extends DialogBase {
      */
     populateEditNodePg = (): void => {
         /* display the node path at the top of the edit page */
-        view.initEditPathDisplayById(this.pathDisplay.getId());
+        S.view.initEditPathDisplayById(this.pathDisplay.getId());
 
         let counter = 0;
         //let aceFields = [];
@@ -118,32 +114,32 @@ export class EditNodeDlg extends DialogBase {
         let editPropsTable = new EditPropsTable();
 
         /* editNode will be null if this is a new node being created */
-        if (edit.editNode) {
+        if (S.edit.editNode) {
             console.log("Editing existing node.");
 
-            let editOrderedProps = props.getPropertiesInEditingOrder(edit.editNode, edit.editNode.properties);
+            let editOrderedProps = S.props.getPropertiesInEditingOrder(S.edit.editNode, S.edit.editNode.properties);
 
             // Iterate PropertyInfo.java objects
-            util.forEachArrElm(editOrderedProps, (prop: I.PropertyInfo, index) => {
+            S.util.forEachArrElm(editOrderedProps, (prop: I.PropertyInfo, index) => {
 
                 /*
                  * if property not allowed to display return to bypass this property/iteration
                  */
-                if (!render.allowPropertyToDisplay(prop.name)) {
+                if (!S.render.allowPropertyToDisplay(prop.name)) {
                     console.log("Hiding property: " + prop.name);
                     return;
                 }
 
                 console.log("Creating edit field for property " + prop.name);
 
-                let isReadOnlyProp = render.isReadOnlyProperty(prop.name);
-                let isBinaryProp = render.isBinaryProperty(prop.name);
+                let isReadOnlyProp = S.render.isReadOnlyProperty(prop.name);
+                let isBinaryProp = S.render.isBinaryProperty(prop.name);
                 let propEntry: I.PropEntry = new I.PropEntry(/* fieldId */ null, /* checkboxId */ null, prop, isReadOnlyProp, isBinaryProp, null);
 
                 this.propEntries.push(propEntry);
 
                 //todo-1: why was I HIDING readonly instead of merely disabling editing?
-                if ((!isReadOnlyProp && !isBinaryProp) || edit.showReadOnlyProperties) {
+                if ((!isReadOnlyProp && !isBinaryProp) || S.edit.showReadOnlyProperties) {
                     let tableRow = new EditPropsTableRow({
                     });
 
@@ -205,7 +201,7 @@ export class EditNodeDlg extends DialogBase {
             // }
         }
 
-        let instr = edit.editingUnsavedNode ? //
+        let instr = S.edit.editingUnsavedNode ? //
             "You may leave this field blank and a unique ID will be assigned. You only need to provide a name if you want this node to have a more meaningful URL."
             : //
             "";
@@ -217,9 +213,9 @@ export class EditNodeDlg extends DialogBase {
          * managing new properties on the client side. We need a genuine node already saved on the server before we allow
          * any property editing to happen.
          */
-        this.addPropertyButton.setVisible(!edit.editingUnsavedNode);
+        this.addPropertyButton.setVisible(!S.edit.editingUnsavedNode);
 
-        let tagsPropExists = props.getNodePropertyVal("tags", edit.editNode) != null;
+        let tagsPropExists = S.props.getNodePropertyVal("tags", S.edit.editNode) != null;
         // console.log("hasTagsProp: " + tagsProp);
         this.addTagsPropertyButton.setVisible(!tagsPropExists);
     }
@@ -238,29 +234,29 @@ export class EditNodeDlg extends DialogBase {
     }
 
     addTagsProperty = (): void => {
-        if (props.getNodePropertyVal(edit.editNode, "tags")) {
+        if (S.props.getNodePropertyVal("tags", S.edit.editNode)) {
             return;
         }
 
         let postData = {
-            nodeId: edit.editNode.id,
+            nodeId: S.edit.editNode.id,
             propertyName: "tags",
             propertyValue: ""
         };
-        util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse);
+        S.util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.addTagsPropertyResponse);
     }
 
     addTagsPropertyResponse(res: I.SavePropertyResponse): void {
-        if (util.checkSuccess("Add Tags Property", res)) {
+        if (S.util.checkSuccess("Add Tags Property", res)) {
             this.savePropertyResponse(res);
         }
     }
 
     savePropertyResponse(res: any): void {
-        util.checkSuccess("Save properties", res);
+        S.util.checkSuccess("Save properties", res);
 
-        edit.editNode.properties.push(res.propertySaved);
-        meta64.treeDirty = true;
+        S.edit.editNode.properties.push(res.propertySaved);
+        S.meta64.treeDirty = true;
 
         this.populateEditNodePg();
     }
@@ -269,7 +265,7 @@ export class EditNodeDlg extends DialogBase {
     addSubProperty = (fieldId: string): void => {
         let prop = null; //refactored. need other way to get property here..... was this ---> this.fieldIdToPropMap[fieldId].property; (todo-1)
 
-        let isMulti = util.isObject(prop.values);
+        let isMulti = S.util.isObject(prop.values);
 
         /* convert to multi-type if we need to */
         if (!isMulti) {
@@ -304,8 +300,8 @@ export class EditNodeDlg extends DialogBase {
     }
 
     deletePropertyImmediate = (propName: string) => {
-        util.ajax<I.DeletePropertyRequest, I.DeletePropertyResponse>("deleteProperty", {
-            "nodeId": edit.editNode.id,
+        S.util.ajax<I.DeletePropertyRequest, I.DeletePropertyResponse>("deleteProperty", {
+            "nodeId": S.edit.editNode.id,
             "propName": propName
         }, (res) => {
             this.deletePropertyResponse(res, propName);
@@ -314,16 +310,16 @@ export class EditNodeDlg extends DialogBase {
 
     deletePropertyResponse = (res: any, propertyToDelete: any) => {
 
-        if (util.checkSuccess("Delete property", res)) {
+        if (S.util.checkSuccess("Delete property", res)) {
 
             /*
              * remove deleted property from client side data, so we can re-render screen without making another call to
              * server
              */
-            props.deletePropertyFromLocalData(propertyToDelete);
+            S.props.deletePropertyFromLocalData(propertyToDelete);
 
             /* now just re-render screen from local variables */
-            meta64.treeDirty = true;
+            S.meta64.treeDirty = true;
 
             this.populateEditNodePg();
         }
@@ -338,7 +334,7 @@ export class EditNodeDlg extends DialogBase {
          * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
          * server, and will initiate further editing like for properties, etc.
          */
-        if (edit.editingUnsavedNode) {
+        if (S.edit.editingUnsavedNode) {
             // todo-1: need to make this compatible with Ace Editor.
             this.saveNewNode();
         }
@@ -355,26 +351,26 @@ export class EditNodeDlg extends DialogBase {
          * If we didn't create the node we are inserting under, and neither did "admin", then we need to send notification
          * email upon saving this new node.
          */
-        if (meta64.userName != edit.parentOfNewNode.owner && //
-            edit.parentOfNewNode.owner != "admin") {
-            edit.sendNotificationPendingSave = true;
+        if (S.meta64.userName != S.edit.parentOfNewNode.owner && //
+            S.edit.parentOfNewNode.owner != "admin") {
+            S.edit.sendNotificationPendingSave = true;
         }
 
-        meta64.treeDirty = true;
-        if (edit.nodeInsertTarget) {
-            util.ajax<I.InsertNodeRequest, I.InsertNodeResponse>("insertNode", {
-                "parentId": edit.parentOfNewNode.id,
-                "targetOrdinal": edit.nodeInsertTarget.ordinal,
+        S.meta64.treeDirty = true;
+        if (S.edit.nodeInsertTarget) {
+            S.util.ajax<I.InsertNodeRequest, I.InsertNodeResponse>("insertNode", {
+                "parentId": S.edit.parentOfNewNode.id,
+                "targetOrdinal": S.edit.nodeInsertTarget.ordinal,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured"
-            }, edit.insertNodeResponse);
+            }, S.edit.insertNodeResponse);
         } else {
-            util.ajax<I.CreateSubNodeRequest, I.CreateSubNodeResponse>("createSubNode", {
-                "nodeId": edit.parentOfNewNode.id,
+            S.util.ajax<I.CreateSubNodeRequest, I.CreateSubNodeResponse>("createSubNode", {
+                "nodeId": S.edit.parentOfNewNode.id,
                 "newNodeName": newNodeName,
                 "typeName": this.typeName ? this.typeName : "nt:unstructured",
                 "createAtTop": this.createAtTop
-            }, edit.createSubNodeResponse);
+            }, S.edit.createSubNodeResponse);
         }
     }
 
@@ -385,7 +381,7 @@ export class EditNodeDlg extends DialogBase {
         let saveList: I.PropertyInfo[] = [];
         let valPromises: Promise<string>[] = [];
 
-        util.forEachArrElm(this.propEntries, (prop: I.PropEntry, index: number) => {
+        S.util.forEachArrElm(this.propEntries, (prop: I.PropEntry, index: number) => {
 
             /* Ignore this property if it's one that cannot be edited as text */
             if (prop.readOnly || prop.binary)
@@ -403,7 +399,7 @@ export class EditNodeDlg extends DialogBase {
                 //     throw "Unable to find Ace Editor for ID: " + prop.id;
                 // propVal = editor.getValue();
             } else {
-                propVal = util.getTextAreaValById(prop.id);
+                propVal = S.util.getTextAreaValById(prop.id);
             }
 
             if (propVal !== prop.property.value) {
@@ -428,17 +424,17 @@ export class EditNodeDlg extends DialogBase {
             /* if anything changed, save to server */
             if (saveList.length > 0) {
                 let postData = {
-                    nodeId: edit.editNode.id,
+                    nodeId: S.edit.editNode.id,
                     properties: saveList,
-                    sendNotification: edit.sendNotificationPendingSave
+                    sendNotification: S.edit.sendNotificationPendingSave
                 };
                 //console.log("calling saveNode(). PostData=" + util.toJson(postData));
-                util.ajax<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, (res) => {
-                    edit.saveNodeResponse(res, {
-                        savedId: edit.editNode.id
+                S.util.ajax<I.SaveNodeRequest, I.SaveNodeResponse>("saveNode", postData, (res) => {
+                    S.edit.saveNodeResponse(res, {
+                        savedId: S.edit.editNode.id
                     });
                 });
-                edit.sendNotificationPendingSave = false;
+                S.edit.sendNotificationPendingSave = false;
             } else {
                 console.log("nothing changed. Nothing to save.");
             }
@@ -447,7 +443,7 @@ export class EditNodeDlg extends DialogBase {
 
     encryptIfPassword = (prop: I.PropEntry, val: string): Promise<string> => {
         if (prop.property.name == cnst.PASSWORD) {
-            return encryption.passwordEncryptString(val, util.getPassword());
+            return S.encryption.passwordEncryptString(val, S.util.getPassword());
         }
         return Promise.resolve(val);
     }
@@ -460,10 +456,10 @@ export class EditNodeDlg extends DialogBase {
         let propVal = propEntry.binary ? "[binary]" : propEntry.property.value;
 
         let isPassword = propEntry.property.name == cnst.PASSWORD;
-        let label = render.sanitizePropertyName(propEntry.property.name);
+        let label = S.render.sanitizePropertyName(propEntry.property.name);
         let propValStr = propVal ? propVal : "";
-        let isEncrypted = isPassword && util.startsWith(propValStr, "|");
-        propValStr = util.escapeForAttrib(propValStr);
+        let isEncrypted = isPassword && S.util.startsWith(propValStr, "|");
+        propValStr = S.util.escapeForAttrib(propValStr);
         console.log("making single prop editor: prop[" + propEntry.property.name + "] val[" + propEntry.property.value
             + "] fieldId=" + propEntry.id);
 
@@ -494,7 +490,7 @@ export class EditNodeDlg extends DialogBase {
                 });
 
                 if (isEncrypted) {
-                    let decryptedValPromise = encryption.passwordDecryptString(propValStr, util.getPassword());
+                    let decryptedValPromise = S.encryption.passwordDecryptString(propValStr, S.util.getPassword());
                     decryptedValPromise.then((decryptedVal) => {
                         textarea.setValue(decryptedVal);
                     },
@@ -506,7 +502,7 @@ export class EditNodeDlg extends DialogBase {
 
                             //if we failed with this password set back to null so that we end up prompting user again rather
                             //than using this one again and failing again.
-                            encryption.masterPassword = null;
+                            S.encryption.masterPassword = null;
                         }
                     );
                 }
@@ -536,7 +532,7 @@ export class EditNodeDlg extends DialogBase {
 
     deletePropertyButtonClick = (): void => {
         /* Iterate over all properties */
-        util.forEachArrElm(this.propEntries, (propEntry: I.PropEntry, index: number) => {
+        S.util.forEachArrElm(this.propEntries, (propEntry: I.PropEntry, index: number) => {
 
             /* Ignore this property if it's one that cannot be edited as text */
             if (propEntry.readOnly || propEntry.binary)
@@ -544,7 +540,7 @@ export class EditNodeDlg extends DialogBase {
 
             //console.log("checking to delete prop=" + propEntry.property.name);
 
-            if (util.getCheckBoxStateById(propEntry.checkboxId)) {
+            if (S.util.getCheckBoxStateById(propEntry.checkboxId)) {
                 //console.log("prop IS CHECKED=" + propEntry.property.name);
                 this.deleteProperty(propEntry.property.name);
 
@@ -557,30 +553,30 @@ export class EditNodeDlg extends DialogBase {
     }
 
     splitContent = (): void => {
-        let nodeBelow: I.NodeInfo = edit.getNodeBelow(edit.editNode);
-        util.ajax<I.SplitNodeRequest, I.SplitNodeResponse>("splitNode", {
-            "nodeId": edit.editNode.id,
+        let nodeBelow: I.NodeInfo = S.edit.getNodeBelow(S.edit.editNode);
+        S.util.ajax<I.SplitNodeRequest, I.SplitNodeResponse>("splitNode", {
+            "nodeId": S.edit.editNode.id,
             "nodeBelowId": (nodeBelow == null ? null : nodeBelow.id),
             "delimiter": null
         }, this.splitContentResponse);
     }
 
     splitContentResponse = (res: I.SplitNodeResponse): void => {
-        if (util.checkSuccess("Split content", res)) {
+        if (S.util.checkSuccess("Split content", res)) {
             this.cancel();
-            view.refreshTree(null, false);
-            meta64.selectTab("mainTab");
-            view.scrollToSelectedNode();
+            S.view.refreshTree(null, false);
+            S.meta64.selectTab("mainTab");
+            S.view.scrollToSelectedNode();
         }
     }
 
     cancelEdit = (): void => {
         this.cancel();
-        if (meta64.treeDirty) {
-            meta64.goToMainPage(true);
+        if (S.meta64.treeDirty) {
+            S.meta64.goToMainPage(true);
         } else {
-            meta64.selectTab("mainTab");
-            view.scrollToSelectedNode();
+            S.meta64.selectTab("mainTab");
+            S.view.scrollToSelectedNode();
         }
     }
 
@@ -588,7 +584,7 @@ export class EditNodeDlg extends DialogBase {
         console.log("EditNodeDlg.init");
         this.populateEditNodePg();
         if (this.contentFieldDomId) {
-            util.delayedFocus("#" + this.contentFieldDomId);
+            S.util.delayedFocus("#" + this.contentFieldDomId);
         }
     }
 }

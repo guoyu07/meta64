@@ -13,7 +13,7 @@ import { Comp } from "../widget/base/Comp";
 export class MessageDlg extends DialogBase {
 
     constructor(public config: Object) {
-        super((<any>config).title || "Message");
+        super((<any>config).title || "Message", "modal-md");
         this.buildGUI();
     }
 

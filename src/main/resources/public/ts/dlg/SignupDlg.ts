@@ -30,7 +30,7 @@ export class SignupDlg extends DialogBase {
     captchaImage: Captcha;
 
     constructor() {
-        super("Create SubNode Account");
+        super("Create SubNode Account", "modal-md");
         this.buildGUI();
     }
 

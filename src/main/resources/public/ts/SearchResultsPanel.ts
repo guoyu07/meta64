@@ -1,6 +1,11 @@
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var srch, util, tag;
+import { Constants } from "./Constants";
+import { Singletons } from "./Singletons";
+import { PubSub } from "./PubSub";
+
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class SearchResultsPanel {
 
@@ -12,18 +17,18 @@ export class SearchResultsPanel {
     }
 
     renderHtml = () => {
-        var header = tag.h2({
+        var header = S.tag.h2({
             "id": "searchPageTitle",
             "class": "page-title"
         });
-        var mainContent = tag.div({
+        var mainContent = S.tag.div({
             "id": "searchResultsView"
         });
         return header + mainContent;
     };
 
     init = () => {
-        util.setInnerHTMLById("searchPageTitle", srch.searchPageTitle);
-        srch.populateSearchResultsPage(srch.searchResults, "searchResultsView");
+        S.util.setInnerHTMLById("searchPageTitle", S.srch.searchPageTitle);
+        S.srch.populateSearchResultsPage(S.srch.searchResults, "searchResultsView");
     }
 }

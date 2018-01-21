@@ -1,10 +1,14 @@
 console.log("Form.ts");
 
 import { Comp } from "./base/Comp";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Form extends Comp {
 
@@ -14,6 +18,6 @@ export class Form extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.form(this.attribs, this.renderChildren());
+        return S.tag.form(this.attribs, this.renderChildren());
     }
 }

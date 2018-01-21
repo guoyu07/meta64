@@ -11,11 +11,14 @@ import { Button } from "../widget/Button";
 import { TextField } from "../widget/TextField";
 import { Form } from "../widget/Form";
 import { Div } from "../widget/Div";
-import { Constants as cnst } from "../Constants";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var user, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class LoginDlg extends DialogBase {
 
@@ -23,7 +26,7 @@ export class LoginDlg extends DialogBase {
     passwordTextField: PasswordTextField;
 
     constructor(paramsTest: Object) {
-        super("Login");
+        super("Login", "modal-md");
         this.buildGUI();
     }
 
@@ -57,14 +60,14 @@ export class LoginDlg extends DialogBase {
     }
 
     populateFromCookies = (): void => {
-        this.userTextField.setValue(util.getCookie(cnst.COOKIE_LOGIN_USR));
-        this.passwordTextField.setValue(util.getCookie(cnst.COOKIE_LOGIN_PWD));
+        this.userTextField.setValue(S.util.getCookie(Constants.COOKIE_LOGIN_USR));
+        this.passwordTextField.setValue(S.util.getCookie(Constants.COOKIE_LOGIN_PWD));
     }
 
     login = (): void => {
         let usr = this.userTextField.getValue();
         let pwd = this.passwordTextField.getValue();
-        user.login(this, usr, pwd);
+        S.user.login(this, usr, pwd);
     }
 
     resetPassword = (): any => {

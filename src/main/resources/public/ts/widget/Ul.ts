@@ -1,10 +1,14 @@
 console.log("Div.ts");
 
 import { Comp } from "./base/Comp";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 /* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class Ul extends Comp {
@@ -16,6 +20,6 @@ export class Ul extends Comp {
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
     renderHtml = (): string => {
-        return tag.ul(this.attribs, (this.content || "") + this.renderChildren());
+        return S.tag.ul(this.attribs, (this.content || "") + this.renderChildren());
     }
 }

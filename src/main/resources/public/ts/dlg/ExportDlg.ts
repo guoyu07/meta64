@@ -17,14 +17,10 @@ import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, view;  
 
 export class ExportDlg extends DialogBase {
 
@@ -33,7 +29,7 @@ export class ExportDlg extends DialogBase {
     pdfRadioButton: RadioButton;
 
     constructor() {
-        super("Export");
+        super("Export", "modal-md");
         this.buildGUI();
     }
 
@@ -55,9 +51,9 @@ export class ExportDlg extends DialogBase {
     }
 
     exportNodes = (): void => {
-        var highlightNode = meta64.getHighlightedNode();
+        var highlightNode = S.meta64.getHighlightedNode();
         if (highlightNode) {
-            util.ajax<I.ExportRequest, I.ExportResponse>("export", {
+            S.util.ajax<I.ExportRequest, I.ExportResponse>("export", {
                 "nodeId": highlightNode.id,
                 "exportExt": this.getSelectedFormat()
             }, (res: I.ExportResponse) => {
@@ -81,8 +77,8 @@ export class ExportDlg extends DialogBase {
     }
 
     exportResponse = (res: I.ExportResponse): void => {
-        let hostAndPort: string = util.getHostAndPort();
-        if (util.checkSuccess("Export", res)) {
+        let hostAndPort: string = S.util.getHostAndPort();
+        if (S.util.checkSuccess("Export", res)) {
             new MessageDlg({
                 "message": "Export successful.",
                 "customWidget": new VerticalLayout([
@@ -91,8 +87,8 @@ export class ExportDlg extends DialogBase {
                     new Anchor(hostAndPort + "/file/" + res.fileName + "?disp=attachment", "Download", null)
                 ])
             }).open();
-            meta64.selectTab("mainTab");
-            view.scrollToSelectedNode();
+            S.meta64.selectTab("mainTab");
+            S.view.scrollToSelectedNode();
         }
     }
 }

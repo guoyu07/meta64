@@ -8,6 +8,8 @@ import { Heading } from "../widget/Heading";
 
 declare var tag;
 
+//ref: https://getbootstrap.com/docs/4.0/components/modal/
+
 export class Dialog extends Comp {
 
   /* Due to limitation of bootstrap to only allow a single dialog at a time we have this stack
@@ -16,7 +18,7 @@ export class Dialog extends Comp {
   contained in DialogBase.ts */
   public static stack: Dialog[] = [];
 
-  constructor(private title: string) {
+  constructor(private title: string, private sizeStyle: string="modal-lg") {
     //Note: we end up seeing ugly scrollbar overlap if we have less than 50px (significantly less) on the padding-right value.
     super({
       //"style": "margin:0 auto; padding-left:15px; padding-right:50px; max-width:900px; border:3px solid gray; with-backdrop:with-backdrop;",
@@ -33,7 +35,7 @@ export class Dialog extends Comp {
     },
       [
         new Div(null, {
-          class: "modal-dialog modal-lg",
+          class: "modal-dialog "+this.sizeStyle, //modal-sm, modal-md, modal-lg
           role: "document"
         },
           [

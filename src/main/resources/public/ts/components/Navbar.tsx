@@ -5,7 +5,7 @@ import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Nav } from "../Nav";
 
-//todo-1: routers are disabled for now. Only basic SPA for now.
+//todo-2: routers are disabled for now. Only basic SPA for now.
 //import { Link } from 'react-router-dom';
 
 let nav: Nav;

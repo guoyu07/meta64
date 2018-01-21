@@ -7,10 +7,14 @@ import { Div } from "./Div";
 import { SharingDlg } from "../dlg/SharingDlg";
 import { Button } from "./Button";
 import { TextContent } from "./TextContent";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
+import { Constants } from "../Constants";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag, util, render;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class EditPrivsTableRow extends Comp {
 
@@ -27,7 +31,7 @@ export class EditPrivsTableRow extends Comp {
 
     renderAclPrivileges = (div: Div, aclEntry: I.AccessControlEntryInfo): void => {
 
-        util.forEachArrElm(aclEntry.privileges, (privilege, index) => {
+        S.util.forEachArrElm(aclEntry.privileges, (privilege, index) => {
             let removeButton = new Button("Remove", () => {
                 this.sharingDlg.removePrivilege(aclEntry.principalNodeId, privilege.privilegeName);
             })
@@ -39,6 +43,6 @@ export class EditPrivsTableRow extends Comp {
 
     /* Div element is a special case where it renders just its children if there are any, and if not it renders 'content' */
     renderHtml = (): string => {
-        return tag.div(this.attribs, this.renderChildren());
+        return S.tag.div(this.attribs, this.renderChildren());
     }
 }

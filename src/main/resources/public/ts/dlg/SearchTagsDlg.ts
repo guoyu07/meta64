@@ -24,7 +24,7 @@ export class SearchTagsDlg extends DialogBase {
     searchTextField: TextField;
 
     constructor() {
-        super("Search Tags");
+        super("Search Tags", "modal-md");
         this.buildGUI();
     }
 

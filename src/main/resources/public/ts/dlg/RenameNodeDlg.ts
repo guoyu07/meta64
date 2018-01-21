@@ -12,26 +12,22 @@ import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
-
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, edit, view;
 
 export class RenameNodeDlg extends DialogBase {
 
     newNameTextField: TextField;
 
     constructor(args: Object) {
-        super("Rename Node");
+        super("Rename Node", "modal-md");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
-        let highlightNode = meta64.getHighlightedNode();
+        let highlightNode = S.meta64.getHighlightedNode();
         if (!highlightNode) {
             return;
         }
@@ -52,23 +48,23 @@ export class RenameNodeDlg extends DialogBase {
     renameNode = (): void => {
         let newName = this.newNameTextField.getValue();
 
-        if (util.emptyString(newName)) {
-            util.showMessage("Please enter a new node name.");
+        if (S.util.emptyString(newName)) {
+            S.util.showMessage("Please enter a new node name.");
             return;
         }
 
-        let highlightNode = meta64.getHighlightedNode();
+        let highlightNode = S.meta64.getHighlightedNode();
         if (!highlightNode) {
-            util.showMessage("Select a node to rename.");
+            S.util.showMessage("Select a node to rename.");
             return;
         }
 
         /* if no node below this node, returns null */
-        let nodeBelow = edit.getNodeBelow(highlightNode);
+        let nodeBelow = S.edit.getNodeBelow(highlightNode);
 
-        let renamingRootNode = (highlightNode.id === meta64.currentNodeId);
+        let renamingRootNode = (highlightNode.id === S.meta64.currentNodeData.node.id);
 
-        util.ajax<I.RenameNodeRequest, I.RenameNodeResponse>("renameNode", {
+        S.util.ajax<I.RenameNodeRequest, I.RenameNodeResponse>("renameNode", {
             "nodeId": highlightNode.id,
             "newName": newName
         }, (res: I.RenameNodeResponse) => {
@@ -77,11 +73,11 @@ export class RenameNodeDlg extends DialogBase {
     }
 
     renameNodeResponse = (res: I.RenameNodeResponse, renamingPageRoot: boolean): void => {
-        if (util.checkSuccess("Rename node", res)) {
+        if (S.util.checkSuccess("Rename node", res)) {
             if (renamingPageRoot) {
-                view.refreshTree(res.newId, true);
+                S.view.refreshTree(res.newId, true);
             } else {
-                view.refreshTree(null, false, res.newId);
+                S.view.refreshTree(null, false, res.newId);
             }
             // meta64.selectTab("mainTab");
         }

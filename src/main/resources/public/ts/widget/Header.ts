@@ -2,10 +2,14 @@ console.log("Header.ts");
 
 import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Header extends Comp {
 
@@ -15,6 +19,6 @@ export class Header extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.div(this.attribs, this.text);
+        return S.tag.div(this.attribs, this.text);
     }
 }

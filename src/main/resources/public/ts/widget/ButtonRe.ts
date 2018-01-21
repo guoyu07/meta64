@@ -4,10 +4,14 @@ import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 /* React version of Button class */
 export class ButtonRe extends Comp {
@@ -15,7 +19,7 @@ export class ButtonRe extends Comp {
     constructor(public text: string, public callback: Function, _attribs: Object = null, public isDlgCloser: boolean = false, //
         public dlg: DialogBase = null, initiallyVisible = true, public delayCloseCallback: number = 0) {
         super(_attribs, true);
-        util.mergeProps(this.attribs, {
+        S.util.mergeProps(this.attribs, {
             "raised": "raised",
             "class": "standardButton"
         });

@@ -15,14 +15,11 @@ import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
 import { Singletons } from "../Singletons";
 
-let util: Util;
+let S : Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
-    util = ctx.util;
+    S = ctx;
 });
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var meta64, view, edit, encryption;  
 
 /*
  * Property Editor Dialog (Edits Node Properties)
@@ -65,7 +62,7 @@ export class EditPropertyDlg extends DialogBase {
 
     populatePropertyEdit = (): void => {
         /* display the node path at the top of the edit page */
-        view.initEditPathDisplayById(this.editPropertyPathDisplay.getId());
+        S.view.initEditPathDisplayById(this.editPropertyPathDisplay.getId());
     }
 
     saveProperty = (): void => {
@@ -74,7 +71,7 @@ export class EditPropertyDlg extends DialogBase {
 
         let valPromise: Promise<string> = null;
         if (propertyNameData == cnst.PASSWORD) {
-            valPromise = encryption.passwordEncryptString(propertyValueData, util.getPassword());
+            valPromise = S.encryption.passwordEncryptString(propertyValueData, S.util.getPassword());
         }
         else {
             valPromise = Promise.resolve(propertyValueData);
@@ -82,19 +79,19 @@ export class EditPropertyDlg extends DialogBase {
 
         valPromise.then((saveVal) => {
             var postData = {
-                nodeId: edit.editNode.id,
+                nodeId: S.edit.editNode.id,
                 propertyName: propertyNameData,
                 propertyValue: saveVal
             };
-            util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
+            S.util.ajax<I.SavePropertyRequest, I.SavePropertyResponse>("saveProperty", postData, this.savePropertyResponse);
         });
     }
 
     savePropertyResponse = (res: I.SavePropertyResponse): void => {
-        util.checkSuccess("Save properties", res);
+        S.util.checkSuccess("Save properties", res);
 
-        edit.editNode.properties.push(res.propertySaved);
-        meta64.treeDirty = true;
+        S.edit.editNode.properties.push(res.propertySaved);
+        S.meta64.treeDirty = true;
 
         this.editNodeDlg.populateEditNodePg();
     }

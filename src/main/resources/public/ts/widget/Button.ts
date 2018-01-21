@@ -2,17 +2,21 @@ console.log("Button.ts");
 
 import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
+import { Constants } from "../Constants";
+import { Singletons } from "../Singletons";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag, util;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export class Button extends Comp {
 
     constructor(public text: string, public callback: Function, _attribs: Object = null, public isDlgCloser: boolean = false, //
         public dlg: DialogBase = null, initiallyVisible = true, public delayCloseCallback: number = 0) {
         super(_attribs);
-        util.mergeProps(this.attribs, {
+        S.util.mergeProps(this.attribs, {
             "class": "btn btn-primary", /* also: secondary, info, success, danger, warning */
             "type": "button"
         });
@@ -45,12 +49,12 @@ export class Button extends Comp {
         let iElm;
         if ((<any>this).attribs.iconClass) {
            // <i className="fa fa-home fa-lg"/>
-           iElm = tag.i({class: (<any>this).attribs.iconClass});
+           iElm = S.tag.i({class: (<any>this).attribs.iconClass});
         }
         let content = this.text ? this.text : "";
         if (iElm) {
             content = iElm + content;
         }
-        return tag.button(this.attribs, content);
+        return S.tag.button(this.attribs, content);
     }
 }

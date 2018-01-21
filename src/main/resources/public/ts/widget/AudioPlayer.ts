@@ -2,10 +2,14 @@ console.log("AudioPlayer.ts");
 
 import { Comp } from "./base/Comp";
 import { DialogBase } from "../DialogBase";
+import { Singletons } from "../Singletons";
+import { Constants } from "../Constants";
+import { PubSub } from "../PubSub";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 //references:
 //http://www.w3schools.com/tags/ref_av_dom.asp
@@ -21,6 +25,6 @@ export class AudioPlayer extends Comp {
     }
 
     renderHtml = (): string => {
-        return tag.audio(this.attribs, this.renderChildren());
+        return S.tag.audio(this.attribs, this.renderChildren());
     }
 }

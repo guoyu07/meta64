@@ -9,9 +9,10 @@ import { PubSub } from "../../PubSub";
 import { Constants } from "../../Constants";
 import { Singletons } from "../../Singletons";
 
-//todo-1: don't worry, this way of getting singletons is only temporary, because i haven't converted
-//this file over to using the Factory yet
-declare var util, domBind, tag;
+let S : Singletons;
+PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
+    S = ctx;
+});
 
 export abstract class Comp extends React.Component implements CompImpl {
 
@@ -87,7 +88,7 @@ export abstract class Comp extends React.Component implements CompImpl {
     bindOnClick = (callback: Function) => {
         /* We must manually check if function is enabled before we call the button click for it. Polymer did this for us but
         in bootstrap this is our responsibility */
-        domBind.addOnClick(this.getId(), () => {
+        S.domBind.addOnClick(this.getId(), () => {
             debugger;
             if (!this.isEnabledFunc || this.isEnabledFunc()) {
                 callback();
@@ -163,20 +164,20 @@ export abstract class Comp extends React.Component implements CompImpl {
     }
 
     whenElm = (func: Function) => {
-        domBind.whenElm(this.getId(), func);
+        S.domBind.whenElm(this.getId(), func);
     }
 
     /* WARNING: this is NOT a setter for 'this.visible'. Perhaps i need to rename it for better clarity, it takes
     this.visible as its input sometimes. Slightly confusing */
     setVisible = (visible: boolean) => {
-        domBind.whenElm(this.getId(), (elm) => {
-            util.setElmDisplay(elm, visible);
+        S.domBind.whenElm(this.getId(), (elm) => {
+            S.util.setElmDisplay(elm, visible);
         });
     }
 
     /* WARNING: this is NOT the setter for 'this.enabled' */
     setEnabled = (enabled: boolean) => {
-        domBind.whenElm(this.getId(), (elm) => {
+        S.domBind.whenElm(this.getId(), (elm) => {
             (<any>elm).disabled = !enabled;
             $(elm).prop('disabled', !enabled);
 
@@ -214,7 +215,7 @@ export abstract class Comp extends React.Component implements CompImpl {
         }
 
         this.renderPending = true;
-        domBind.whenElm(this.getId(), (elm) => {
+        S.domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = this.renderHtml();
             this.renderPending = false;
         });
@@ -232,14 +233,14 @@ export abstract class Comp extends React.Component implements CompImpl {
         }
 
         this.renderPending = true;
-        domBind.whenElm(this.getId(), (elm) => {
+        S.domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = this.renderChildren();
             this.renderPending = false;
         });
     }
 
     setInnerHTML = (html: string) => {
-        domBind.whenElm(this.getId(), (elm) => {
+        S.domBind.whenElm(this.getId(), (elm) => {
             elm.innerHTML = html;
         });
     }
@@ -261,7 +262,7 @@ export abstract class Comp extends React.Component implements CompImpl {
             throw "Don't call renderChildren on react component. Call reactRenderChildren instead.";
         }
         let html = "";
-        util.forEachArrElm(this.children, function (child: Comp, idx) {
+        S.util.forEachArrElm(this.children, function (child: Comp, idx) {
             if (child) {
                 let childRender = child.renderHtml();
                 if (childRender) {
@@ -279,7 +280,7 @@ export abstract class Comp extends React.Component implements CompImpl {
         let ret: React.ReactNode[] = [];
 
         //todo-1: use a mapper ('array.map(x=>{})') to perform this transformation 
-        util.forEachArrElm(this.children, function (child: Comp, idx) {
+        S.util.forEachArrElm(this.children, function (child: Comp, idx) {
             if (child) {
                 ret.push(child.reactRender());
             }
@@ -301,7 +302,7 @@ export abstract class Comp extends React.Component implements CompImpl {
                 ReactDOM.render(this.reactRender(), document.getElementById(this.getId()));
             });
 
-            return tag.div(this.attribs, "");
+            return S.tag.div(this.attribs, "");
         }
         else {
             return this.renderChildren();

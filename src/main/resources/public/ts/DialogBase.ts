@@ -99,8 +99,8 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
     }
 
     /* todo-1: need to cleanup the registered IDs that are in maps for this dialog */
-    //TypeScript has a limitation where => cannot be used on methods intended to be overridden,
-    //NOTE: Update, i think the issue with overriding is that only after an object with an overridden property is FULLY CONSTRUCTED
+    //NOTE 1: TypeScript has a limitation where => cannot be used on methods intended to be overridden,
+    //NOTE 2: Update, i think the issue with overriding is that only after an object with an overridden property is FULLY CONSTRUCTED
     //      will you be able to count on the function NOT being the base class version, becasue it's a property and behaves as such.
     public cancel(): void {
         (<any>$("#" + this.getId())).modal('hide');
@@ -111,7 +111,6 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
             $("#" + this.getId()).remove();
             Dialog.stack.pop();
 
-            //if ($(".modal-dialog").length == 0) {
             if (Dialog.stack.length == 0) {
                 /* this is ugly as hell, becasue it's not gonna work with dialogs on top of other dialogs, but this is a problem lots of others
                 are having and not just us, so i will need to research more */

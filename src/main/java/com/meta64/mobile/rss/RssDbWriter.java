@@ -15,6 +15,7 @@ import com.meta64.mobile.mongo.model.SubNode;
 import com.meta64.mobile.mongo.model.SubNodeTypes;
 import com.meta64.mobile.rss.model.FeedNodeInfo;
 import com.meta64.mobile.util.ExUtil;
+import com.meta64.mobile.util.Util;
 import com.meta64.mobile.util.XString;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -134,6 +135,7 @@ public class RssDbWriter {
 			//todo-0: This works, with the save HERE, and i consider it a bug, because i called createNode above AND this is inside an admin runner
 			//which SHOULD be triggering the save, so the fact that I have to force a save here, IS a bug.
 			api.save(session,  newNode);
+			Util.sleep(1000); 
 		}
 		catch (Exception e) {
 			throw ExUtil.newEx(e);

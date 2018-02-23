@@ -88,7 +88,7 @@ public class RssService {
 	 */
 	private HashMap<String, PlayerInfo> playerInfoMap = new HashMap<String, PlayerInfo>();
 
-	private static final int HOURS_BETWEEN_RUNS = 6;
+	private static final int HOURS_BETWEEN_RUNS = 12;
 
 	/* Number of hours between RSS runs. Set initial run to happen only 1 hour after startup */
 	private int hoursCountdown = 1;

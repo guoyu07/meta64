@@ -24,7 +24,7 @@ public class ExUtil {
 		}
 		return new RuntimeEx(ex);
 	}
-
+	
 	public static RuntimeEx newEx(String msg) {
 		RuntimeEx ex = new RuntimeEx(msg);
 		// removing logging, because some exception throwing is intentional (not error)

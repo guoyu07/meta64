@@ -31,11 +31,6 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 
 declare var ace;
 
-/*
-todo-1 No longer support multi-value property editing. I have a lot of code dedicated to it, but never tested that
-after refactoring, so i'm gonna hazard a guess that multi-value properts currently DO NOT work, because i'm unsure
-but i know i didn't test it during refactoring, and don't even see buttons in place for management of them
-*/
 export class EditNodeDlg extends DialogBase {
 
     header: Header;
@@ -152,8 +147,6 @@ export class EditNodeDlg extends DialogBase {
         /* Editing a new node */
         else {
             let tableRow = new EditPropsTableRow();
-
-            // todo-1: this entire block needs review now (redesign)
             console.log("Editing new node.");
 
             if (cnst.USE_ACE_EDITOR) {
@@ -265,6 +258,7 @@ export class EditNodeDlg extends DialogBase {
     addSubProperty = (fieldId: string): void => {
         let prop = null; //refactored. need other way to get property here..... was this ---> this.fieldIdToPropMap[fieldId].property; (todo-1)
 
+        //todo-0: in mongo, we don't have 'prop.values'. need to remove this from all code.
         let isMulti = S.util.isObject(prop.values);
 
         /* convert to multi-type if we need to */
@@ -330,6 +324,7 @@ export class EditNodeDlg extends DialogBase {
      * itself from any kind of damage.
      */
     saveNode = (): void => {
+        debugger;
         /*
          * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
          * server, and will initiate further editing like for properties, etc.
@@ -347,6 +342,7 @@ export class EditNodeDlg extends DialogBase {
     }
 
     saveNewNode = (newNodeName?: string): void => {
+        debugger;
         /*
          * If we didn't create the node we are inserting under, and neither did "admin", then we need to send notification
          * email upon saving this new node.

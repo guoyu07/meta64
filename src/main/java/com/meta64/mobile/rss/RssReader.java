@@ -29,6 +29,7 @@ import com.meta64.mobile.service.SystemService;
 import com.meta64.mobile.util.ExUtil;
 import com.meta64.mobile.util.LimitedInputStreamEx;
 import com.meta64.mobile.util.StreamUtil;
+import com.meta64.mobile.util.Util;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -73,6 +74,7 @@ public class RssReader {
 		for (FeedNodeInfo feedNodeInfo : feedNodeInfos) {
 			AppServer.shutdownCheck();
 			RssFeedWrapper wFeed = readFeed(feedNodeInfo.getUrl());
+			Util.sleep(1000);
 			if (wFeed != null) {
 				try {
 					feedNodeInfo.setInProgress(true);
@@ -148,7 +150,7 @@ public class RssReader {
 
 				log.debug("RSS Entry in Feed: " + entry.getLink());
 				wFeed.getEntryList().add(new RssEntryWrapper(entry));
-
+				Util.sleep(1000);
 				if (++entryCounter >= MAX_RSS_ENTRIES) break;
 			}
 		}
@@ -291,16 +293,6 @@ public class RssReader {
 				finally {
 					entryCounter++;
 					feedNodeInfo.setEntriesComplete(entryCounter);
-
-					/*
-					 * I'm seeing up to 1GB appear to be used by VisualVM monitor, and to see if
-					 * that's real, for now, I want to agressively cleanup garbage after every 10
-					 * row inserts, and make sure JCR isn't truely eating that much memory, up but
-					 * just in reality releasing it all.
-					 */
-					if (entryCounter % 10 == 0) {
-						System.gc();
-					}
 				}
 			}
 
@@ -308,7 +300,5 @@ public class RssReader {
 			//api.saveSession(session);
 			SystemService.logMemory();
 		});
-
-		System.gc();
 	}
 }

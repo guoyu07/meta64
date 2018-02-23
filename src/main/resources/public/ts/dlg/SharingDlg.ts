@@ -36,7 +36,7 @@ export class SharingDlg extends DialogBase {
         this.setChildren([
             new Form(null, [
                 this.privsTable = new EditPrivsTable(),
-                //todo-1: disabling this for now
+                //todo-2: disabling this for now
                 //this.publicCommentingCheckbox = new Checkbox("Allow Public Commenting"),
                 new ButtonBar([
                     new Button("Share with Person", this.shareToPersonDlg),

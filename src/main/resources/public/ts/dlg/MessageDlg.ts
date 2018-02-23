@@ -12,14 +12,14 @@ import { Comp } from "../widget/base/Comp";
  */
 export class MessageDlg extends DialogBase {
 
-    constructor(public config: Object) {
+    constructor(public config: Object, private preformatted: boolean = false) {
         super((<any>config).title || "Message", "modal-md");
         this.buildGUI();
     }
 
     buildGUI = (): void => {
         this.setChildren([
-            new TextContent((<any>this.config).message),
+            new TextContent((<any>this.config).message, null, this.preformatted),
             (<any>this.config).customWidget,
             new ButtonBar([
                 new Button("Ok", (<any>this.config).callback, null, true, this)

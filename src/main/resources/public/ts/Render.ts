@@ -507,7 +507,7 @@ export class Render implements RenderIntf {
 
             if (cnst.NEW_ON_TOOLBAR && !commentBy) {
                 /* Construct Create Subnode Button */
-                createSubNodeButton = new Button("Add", () => { meta64.createSubNode(node.uid); }, {
+                createSubNodeButton = new Button("New", () => { meta64.createSubNode(node.uid, null, true); }, {
                     //"icon": "icons:picture-in-picture-alt", //"icons:more-vert",
                 });
             }
@@ -686,7 +686,7 @@ export class Render implements RenderIntf {
             }
 
             if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
-                createSubNodeButton = new Button("Add", () => { meta64.createSubNode(uid); }).renderHtml();
+                createSubNodeButton = new Button("New", () => { meta64.createSubNode(uid, null, true); }).renderHtml();
             }
 
             /* Add edit button if edit mode and this isn't the root */

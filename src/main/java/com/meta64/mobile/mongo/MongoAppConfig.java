@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import com.meta64.mobile.util.ExUtil;
 import com.mongodb.MongoClient;
 
 /* 
@@ -20,6 +21,7 @@ import com.mongodb.MongoClient;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.meta64.mobile.mongo")
+//see also: ServerMonitorListener to detect heartbeats, etc.
 public class MongoAppConfig extends AbstractMongoConfiguration {
 	private static final Logger log = LoggerFactory.getLogger(MongoAppConfig.class);
 
@@ -53,7 +55,15 @@ public class MongoAppConfig extends AbstractMongoConfiguration {
 			// ServerAddress serverAddress = new ServerAddress(mongoHost, mongoPort);
 
 			// mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
-			mongoClient = new MongoClient();
+			log.info("Connecting to MongoDb...");
+			try {
+				mongoClient = new MongoClient();
+				mongoClient.getAddress();
+				//MongoDatabase database = mongoClient.getDatabase("myMongoDb");
+			} catch (Exception e) {
+				ExUtil.error(log, "********** Unable to connect to MongoDb. Did you forget to start Mongo? **********", e);
+				throw e;
+			}
 		}
 		return mongoClient;
 	}

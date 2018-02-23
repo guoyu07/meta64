@@ -1,7 +1,7 @@
 import * as ReactRouter from 'react-router-dom';
 import * as React from 'react';
 
-//todo-1: get these types of imports working.
+//todo-2: get these types of imports working.
 //see: https://github.com/webpack-contrib/css-loader
 //import './App.css';
 import { Search } from './pages/Search';

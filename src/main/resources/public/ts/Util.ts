@@ -191,6 +191,11 @@ export class Util implements UtilIntf {
         return JSON.stringify(obj, null, 4);
     }
 
+    /* I'm duplicating toJson for now, because i always expect "prettyPrint", so i need to refactor to be all prettyPrint */
+    prettyPrint = (obj: Object) => {
+        return JSON.stringify(obj, null, 4);
+    }
+
     /*
      * This came from here:
      * http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
@@ -337,7 +342,7 @@ export class Util implements UtilIntf {
                     this.progressInterval();
                     console.log("Error in this.json");
 
-                    if (error.status == "403") {
+                    if (error.response && error.response.status == 403) {
                         console.log("Not logged in detected.");
                         this.offline = true;
 
@@ -346,8 +351,14 @@ export class Util implements UtilIntf {
                             this.showMessage("Session timed out. Page will refresh.");
                         }
 
-                        window.onbeforeunload = null;
-                        window.location.href = window.location.origin;
+                        //we wait about a second for user to have time to see the message that their session had timed out.
+                        setTimeout(() => {
+                            debugger;
+                            window.onbeforeunload = null;
+                            window.location.href = window.location.origin;
+                        }, 1000);
+
+
                         return;
                     }
 
@@ -355,8 +366,7 @@ export class Util implements UtilIntf {
 
                     /* catch block should fail silently */
                     try {
-                        msg += "Status: " + JSON.stringify(error) + "\n";
-
+                        msg += "Status: " + this.prettyPrint(error) + "\n";
                     } catch (ex) {
                     }
 
@@ -372,7 +382,7 @@ export class Util implements UtilIntf {
                     // JSON.parse(xhr.responseText).exception;
                     // } catch (ex) {
                     // }
-                    this.showMessage(msg);
+                    this.showMessage(msg, true);
                 } catch (ex) {
                     this.logAndReThrow("Failed processing server-side fail of: " + postName, ex);
                 }
@@ -453,8 +463,8 @@ export class Util implements UtilIntf {
         return res.success;
     }
 
-    showMessage = (message: string): void => {
-        new MessageDlg({ "message": message }).open();
+    showMessage = (message: string, preformatted: boolean = false): void => {
+        new MessageDlg({ "message": message }, preformatted).open();
     }
 
     /* adds all array objects to obj as a set */

@@ -8,7 +8,7 @@ import { Div } from "../widget/Div";
 export class ProgressDlg extends DialogBase {
 
     constructor() {
-        super("Processing...", "modal-md");
+        super("Processing...", "modal-sm");
         this.buildGUI();
     }
 

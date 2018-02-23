@@ -160,11 +160,9 @@ export class View implements ViewIntf {
      * and then scrolling to a different place a fraction of a second later)
      */
     scrollToSelectedNode = () => {
-        debugger;
         this.scrollToSelNodePending = true;
 
         setTimeout(() => {
-            debugger;
             this.scrollToSelNodePending = false;
 
             /* Check to see if we are rendering the top node (page root), and if so

@@ -1,11 +1,12 @@
 console.log("Meta64Intf.ts");
 
 import * as I from "../Interfaces";
-import {Singletons} from "../Singletons";
+import { Singletons } from "../Singletons";
+import { MenuPanelIntf } from "./MenuPanelIntf";
 
 export interface Meta64Intf {
 
-    menuPanel: any; //todo-1: bring back type -> MenuPanel;
+    // menuPanel: MenuPanelIntf;
     state: any; //todo-1: create an interface for State properties
     appInitialized: boolean;
 

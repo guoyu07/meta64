@@ -532,7 +532,6 @@ export class Meta64 implements Meta64Intf {
         if (this.menuPanel) {
             /* refreh all enablement and visibility under entire menu with this recursive call! */
             //this.menuPanel.refreshState();
-            debugger;
             PubSub.pub(Constants.PUBSUB_RefreshEnablement, {});
         }
 
@@ -882,6 +881,7 @@ export class Meta64 implements Meta64Intf {
     }
 
     createSubNode = (uid?: any, typeName?: string, createAtTop?: boolean): void => {
+        debugger;
         edit.createSubNode(uid, typeName, createAtTop);
     }
 

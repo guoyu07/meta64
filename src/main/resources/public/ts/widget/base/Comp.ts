@@ -89,7 +89,6 @@ export abstract class Comp extends React.Component implements CompImpl {
         /* We must manually check if function is enabled before we call the button click for it. Polymer did this for us but
         in bootstrap this is our responsibility */
         S.domBind.addOnClick(this.getId(), () => {
-            debugger;
             if (!this.isEnabledFunc || this.isEnabledFunc()) {
                 callback();
             }

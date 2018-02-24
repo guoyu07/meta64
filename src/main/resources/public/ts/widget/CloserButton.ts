@@ -4,8 +4,10 @@ import { Comp } from "./base/Comp";
 import { Singletons } from "../Singletons";
 import { PubSub } from "../PubSub";
 import { Constants } from "../Constants";
+import { DialogImpl } from "./DialogImpl";
+import { DialogBaseImpl } from "../DialogBaseImpl";
 
-let S : Singletons;
+let S: Singletons;
 PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
     S = ctx;
 });
@@ -13,7 +15,7 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (ctx: Singletons) => {
 /* General Widget that doesn't fit any more reusable or specific category other than a plain Div, but inherits capability of Comp class */
 export class CloserButton extends Comp {
 
-    constructor() {
+    constructor(private closeFunc: Function) {
         super(null);
     }
 
@@ -21,9 +23,10 @@ export class CloserButton extends Comp {
     renderHtml = (): string => {
         return S.tag.button({
             class: "close",
-            "data-dismiss":
-                "modal", "aria-label": "Close"
+            "data-dismiss": "modal", 
+            "aria-label": "Close",
+            "onclick": this.closeFunc
         },
-        S.tag.span({ "aria-hidden": "true" }, "&times;"));
+            S.tag.span({ "aria-hidden": "true" }, "&times;"));
     }
 }

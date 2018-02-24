@@ -881,7 +881,6 @@ export class Meta64 implements Meta64Intf {
     }
 
     createSubNode = (uid?: any, typeName?: string, createAtTop?: boolean): void => {
-        debugger;
         edit.createSubNode(uid, typeName, createAtTop);
     }
 

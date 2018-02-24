@@ -324,7 +324,6 @@ export class EditNodeDlg extends DialogBase {
      * itself from any kind of damage.
      */
     saveNode = (): void => {
-        debugger;
         /*
          * If editing an unsaved node it's time to run the insertNode, or createSubNode, which actually saves onto the
          * server, and will initiate further editing like for properties, etc.
@@ -342,7 +341,6 @@ export class EditNodeDlg extends DialogBase {
     }
 
     saveNewNode = (newNodeName?: string): void => {
-        debugger;
         /*
          * If we didn't create the node we are inserting under, and neither did "admin", then we need to send notification
          * email upon saving this new node.

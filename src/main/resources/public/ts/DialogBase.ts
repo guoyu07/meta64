@@ -47,7 +47,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
 
     built: boolean;
 
-    constructor(title: string, sizeStyle: string="modal-lg") {
+    constructor(title: string, sizeStyle: string = "modal-lg") {
         super(title, sizeStyle);
     }
 
@@ -74,22 +74,30 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
             let myModal = $(this.renderHtml());
             $("body").append(myModal);
 
+            //NOTE: This is bootstrap4 stuff not just vanilla JQuery dialog.
             (<any>myModal).modal({
                 //i keep getting a permanent mouse block (ignored mouse) in the app and i'm trying to determine if it's this
                 //backdrop by commenting out backdrop option for now.
                 backdrop: "static",
-                keyboard: true,
+                keyboard: false, //<--- no close on escape key
                 focus: true,
                 show: true
             });
 
-            /* Hide the currently showing dialog, if there is one (top of dialog stack */
+            //OOPS. hooking into HIDE isn't the right event for us because we hide dialogs that we are
+            //not DONE with yet, just because we want only one displayed at a time
+            // domBind.whenElm("#" + this.getId(), (elm) => {
+            //     $(elm).on('hidden.bs.modal', (event) => {
+            //         this.processClose();
+            //     })
+            // });
+
+            /* Hide the currently visible dialog, if there is one (top of dialog stack) */
             if (Dialog.stack.length > 0) {
-                let topDlg = Dialog.stack[Dialog.stack.length-1];
+                let topDlg = Dialog.stack[Dialog.stack.length - 1];
                 (<any>$("#" + topDlg.getId())).modal('hide');
             }
             Dialog.stack.push(this);
-
             this.built = true;
 
             if (typeof this.init == 'function') {
@@ -103,10 +111,15 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
     //NOTE 2: Update, i think the issue with overriding is that only after an object with an overridden property is FULLY CONSTRUCTED
     //      will you be able to count on the function NOT being the base class version, becasue it's a property and behaves as such.
     public cancel(): void {
+        this.processClose();
+    }
+
+    processClose = () => {
+        console.log("processClose()");
         (<any>$("#" + this.getId())).modal('hide');
 
-        /* todo-1: removing element immediately breaks the ability for JQuery to correctly remove the backdrop, so that
-        is the reason we have this timer here. */
+        /* todo-1: removing element immediately (i.e. without a delay timer here) breaks the ability for JQuery to correctly remove the backdrop, so that
+       is the reason we have this timer here. */
         setTimeout(() => {
             $("#" + this.getId()).remove();
             Dialog.stack.pop();
@@ -117,7 +130,7 @@ export abstract class DialogBase extends Dialog implements DialogBaseImpl {
                 $('.modal-backdrop').remove();
             }
             else {
-                let topDlg = Dialog.stack[Dialog.stack.length-1];
+                let topDlg = Dialog.stack[Dialog.stack.length - 1];
                 (<any>$("#" + topDlg.getId())).modal('show');
             }
         }, 250);

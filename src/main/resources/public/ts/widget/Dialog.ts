@@ -18,12 +18,19 @@ export class Dialog extends Comp {
   contained in DialogBase.ts */
   public static stack: Dialog[] = [];
 
-  constructor(private title: string, private sizeStyle: string="modal-lg") {
+  constructor(private title: string, private sizeStyle: string = "modal-lg") {
     //Note: we end up seeing ugly scrollbar overlap if we have less than 50px (significantly less) on the padding-right value.
     super({
       //"style": "margin:0 auto; padding-left:15px; padding-right:50px; max-width:900px; border:3px solid gray; with-backdrop:with-backdrop;",
       //"sourceClass": "Dialog"
     });
+  }
+
+  //NOTE: The pattern of use for an overriden method (one we intend to override in derived classes), is to declare it without
+  //capturing 'this' (no fat-arror operator), and then as you see below to get the bound function at runtime
+  //we do 'this.cancel.bind(this)'
+  public cancel(): void {
+    console.log("warning: cancel not overridden.");
   }
 
   renderHtml = (): string => {
@@ -35,7 +42,7 @@ export class Dialog extends Comp {
     },
       [
         new Div(null, {
-          class: "modal-dialog "+this.sizeStyle, //modal-sm, modal-md, modal-lg
+          class: "modal-dialog " + this.sizeStyle, //modal-sm, modal-md, modal-lg
           role: "document"
         },
           [
@@ -50,7 +57,7 @@ export class Dialog extends Comp {
                     new Heading(5, this.title, {
                       class: "modal-title",
                     }),
-                    new CloserButton()
+                    new CloserButton(this.cancel.bind(this))
                   ]),
                 new Div(null, {
                   class: "modal-body"

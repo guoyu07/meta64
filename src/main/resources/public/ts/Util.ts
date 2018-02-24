@@ -353,10 +353,9 @@ export class Util implements UtilIntf {
 
                         //we wait about a second for user to have time to see the message that their session had timed out.
                         setTimeout(() => {
-                            debugger;
                             window.onbeforeunload = null;
                             window.location.href = window.location.origin;
-                        }, 1000);
+                        }, 1500);
 
 
                         return;

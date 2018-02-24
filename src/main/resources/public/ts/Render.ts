@@ -505,7 +505,7 @@ export class Render implements RenderIntf {
                 "onclick": () => { nav.toggleNodeSel(selButton.getChecked(), node.uid) },
             });
 
-            if (cnst.NEW_ON_TOOLBAR && !commentBy) {
+            if (cnst.NEW_ON_TOOLBAR && !commentBy && !meta64.isAnonUser) {
                 /* Construct Create Subnode Button */
                 createSubNodeButton = new Button("New", () => { meta64.createSubNode(node.uid, null, true); }, {
                     //"icon": "icons:picture-in-picture-alt", //"icons:more-vert",
@@ -685,7 +685,7 @@ export class Render implements RenderIntf {
                 replyButton = new Button("Reply", () => { meta64.replyToComment(data.node.uid); }).renderHtml();
             }
 
-            if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && edit.isInsertAllowed(data.node)) {
+            if (meta64.userPreferences.editMode && cnst.NEW_ON_TOOLBAR && !meta64.isAnonUser && edit.isInsertAllowed(data.node)) {
                 createSubNodeButton = new Button("New", () => { meta64.createSubNode(uid, null, true); }).renderHtml();
             }
 

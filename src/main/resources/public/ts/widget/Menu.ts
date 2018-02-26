@@ -17,6 +17,7 @@ export class Menu extends Comp {
         this.setChildren(menuItems);
     }
 
+    
     /* Override refreshState for menus to simply make them visible based on whether any of the
     contained items are visible */
     refreshState(): void {

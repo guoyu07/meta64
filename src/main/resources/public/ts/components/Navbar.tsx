@@ -13,15 +13,16 @@ PubSub.sub(Constants.PUBSUB_SingletonsReady, (s: Singletons) => {
     nav = s.nav;
 });
 
+
 export class Navbar extends React.Component {
 
     render() {
         return (
-            <nav className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+            <nav className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0" style={{ 'height': '48px' }}>
                 <div id="headerAppName" className="navbar-brand col-sm-3 col-md-2 mr-0" onClick={e => { nav.navPublicHome(); }}>SubNode</div>
 
                 <div className="nav-item w-100">
-                    <div style={{ 'float': 'right', 'margin-right': '8px' }}>
+                    <div style={{ 'float': 'right', 'marginRight': '8px' }}>
                         <button type="button" onClick={e => { nav.navUpLevel(); }} title="Go to Parent SubNode" className="btn" id="upLevelButton">Up Level</button>
                         <button type="button" onClick={e => { nav.navHome(); }} title="Go to Your Root SubNode" className="btn" id="navHomeButton"><i className="fa fa-home fa-lg" /></button>
                         <button type="button" onClick={e => { nav.preferences(); }} title="Modify your preferences" className="btn" id="userPreferencesMainAppButton"><i className="fa fa-gear fa-lg" /></button>
@@ -31,6 +32,7 @@ export class Navbar extends React.Component {
                         <button type="button" onClick={e => { nav.timelineByModTime(); }} title="View Timeline of selected node (by Mod Time)" className="btn" id="timelineMainAppButton"><i className="fa fa-clock-o fa-lg" /></button>
                         <button type="button" onClick={e => { nav.login(); }} title="Login" className="btn" id="openLoginDlgButton"><i className="fa fa-sign-in fa-lg" /></button>
                         <button type="button" onClick={e => { nav.logout(); }} title="Logout" className="btn" id="navLogoutButton"><i className="fa fa-sign-out fa-lg" /></button>
+                    
                     
                      {/*                 
                     <!-- 

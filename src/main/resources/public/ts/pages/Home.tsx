@@ -17,15 +17,19 @@ export class Home extends React.Component {
     render() {
         return (
             <div>
-                <header>
-                    <Navbar />
-                </header>
+                <Navbar />
 
-                <div role="main" className="container-fluid">
+                <div className="container-fluid">
                     <div className="row">
-                        <div id="mainAppMenu" className="col-sm-3 col-md-3 bg-light sidebar"
-                            style={{ 'position': 'fixed', 'height': '100%'}} />
-                        <main id="mainScrollingArea" className="col-sm-9 ml-sm-auto col-md-9 pt-3" style={{ 'padding': '0px' }}>
+                        <nav className="col-md-2 d-none d-md-block bg-light sidebar">
+                            <div className="sidebar-sticky">
+                                <div id="mainAppMenu" className="nav flex-column">
+                                </div>
+                            </div>
+                        </nav>
+
+                        <main id="mainScrollingArea" role="main" className="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4" style={{ 'padding': '0px' }}>
+
                             <ul id="navTabs" className="nav nav-tabs">
                                 <li className="nav-item">
                                     <a data-toggle="tab" className="nav-link" href="#mainTab">Main</a>
@@ -49,6 +53,7 @@ export class Home extends React.Component {
                                     <div id="timelineResultsPanel">No timeline displaying.</div>
                                 </div>
                             </div>
+
                         </main>
                     </div>
                 </div>

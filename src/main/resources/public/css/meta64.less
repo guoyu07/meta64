@@ -205,11 +205,13 @@ code {
 	.propertyEditListItem;
 	display: none;
 }
- 
+
+/*
 tr td div p {
 	margin: 1px;
 	padding: 1px;
 }
+*/
 
 .content-area {
 	padding-top: 0;
@@ -459,12 +461,25 @@ tr td div p {
 
 .page-title {
 	margin-left: @smallGapSize;
+	font-size: 24px !important;
 }
 
-@media ( max-width : 600px) {
-	.page-title {
-		font-size: 24px !important;
-	}
+/* Media Queries below are per Bootstap 4 standard */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) { 
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
 }
 
 .App {
@@ -491,14 +506,3 @@ tr td div p {
 	font-size: large;
   }
     
-  /* This is a documented 'correct' thing to do per this:
-  https://stackoverflow.com/questions/10336194/twitter-bootstrap-top-nav-bar-blocking-top-content-of-the-page
-  */
-  body { 
-	padding: 0;
-	
-	padding-top: 65px; 
-  	margin: 0;
-	/* font-family: ubuntu, roboto, verdana, sans-serif; */
-  }
-  

@@ -418,6 +418,12 @@ body {
   position: -webkit-sticky;
   position: sticky;
   top: 48px;
+  /* 
+	Note: The ~"a-b" expression below is called escaping and per the following very confusing thread on 
+	stack overflow i figured out how to fix the bug i was seeing, by doing this, because the default behavior
+	of LESS processor is VERY flawed, becasue it assumes it can hard code a calculation involving DIFFERENT units and come up
+	with an anserw at compile time which is obviously impossible (ergo LESS has a bug here). 
+	*/
   height: calc(100vh - 48px);
   padding-top: .5rem;
   overflow-x: hidden;

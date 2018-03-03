@@ -3,10 +3,13 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Attach)",
-            "request": "attach",
-            "hostName": "localhost",
-            "port": 8000
+            "name": "RUN-DEBUG",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "com.meta64.mobile.AppServer",
+            "args": "--spring.config.location=classpath:/application.properties,file:/home/clay/ferguson/meta64Oak-private/dev-run.properties",
         }
     ]
 }
